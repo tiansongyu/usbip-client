@@ -90,7 +90,7 @@ Rust 用户态后端没有在数据路径里调用 `usbip_host`；将同一设�
 
 QEMU还观测到 `usb 1-1: seqnum max` 及大量 `the urb (seqnum …) was already given back`。输入功能通过不能掩盖空interrupt响应导致的忙轮询风险，不能将这次结果描述为性能、长时稳定性、取消语义或断线恢复通过。QEMU脚本只测试list/attach与单向串口字符/按键；没有测试detach/reconnect、异常包、物理设备、双主机网络或存储一致性。[guest验收逻辑](https://github.com/jiegec/usbip/blob/61938f8c48ed01c508faaacfa7cb3fc3810b5ae0/scripts/qemu/init.sh#L113-L150)。输出`VERIFY_SERIAL=2`/`VERIFY_KEYBOARD=2`同时计入shell xtrace与echo，不能理解成做了两次测试。
 
-首次完整QEMU日志位置 `/tmp/rustusb-upstream-jiegec/.qemu-serial.log`，SHA256 `855ded6a502b13b9f195928c45bd5f4559ed168dc7349bb5c8d17bbe141f4153`。上游首次解析的Cargo.lock SHA256 `9949289f5a0fc20ef87d471e91610e1ef6b79783bdb60ee40f48dba8dfb31339`。这些是本次本地证据指纹，临时目录不是发布物，后续复现会因时间戳/解析依赖而变化。审计脚本将保留本次运行目录并输出路径，便于另行归档。
+首次完整QEMU日志位置 `/tmp/rustusb-upstream-jiegec/.qemu-serial.log`，SHA256 `855ded6a502b13b9f195928c45bd5f4559ed168dc7349bb5c8d17bbe141f4153`。上游首次解析的Cargo.lock SHA256 `9949289f5a0fc20ef87d471e91610e1ef6b79783bdb60ee40f48dba8dfb31339`。永久摘要见[测试记录](../evidence/rust-upstream-2026-10-22.json)、[release probe结果](../evidence/rust-upstream-probes-2026-10-22.txt)、[QEMU通过与异常诊断节选](../evidence/rust-upstream-qemu-2026-10-22.txt)。这些是本次证据，后续复现会因时间戳/解析依赖而变化。审计脚本将保留完整本次运行目录并输出路径，便于另行归档。RustUSB自身的双guest Native验证独立记录于[Native QEMU报告](native-qemu.md)，不混为同一测试。
 
 ```bash
 # 无硬件测试；新建临时clone，校验固定commit并运行上游测试/对抗性probe

@@ -1,0 +1,38 @@
+{
+  "started_at_utc": "20261022T100708Z",
+  "kernel": "6.8.0-106-generic",
+  "scope": "two isolated guests; QEMU simulated USB keyboard; no physical USB",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "ef1220904f85694e828c293ade6bbce5f9b270e4",
+  "working_tree_dirty": true,
+  "binary_sha256": {
+    "rustusb": "0514bc03f5e8446a81b3643b862ef4875373b649777d8a1102dd19d22170fe7e",
+    "rustusb-helper": "61226e46542c4849de749f26fbc92fd38c79f9eb2ede79c9fd8bbf13f457fb97"
+  },
+  "result": "PASS",
+  "acceleration": "kvm",
+  "qmp_key_injections": [
+    1,
+    2
+  ],
+  "server_checks": [
+    "RUSTUSB_QEMU_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_SERVER_READY bus_id=1-1 cli_uid=1000",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=1 local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_SERVER_REEXPORTED cycle=2",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=2 local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_QEMU_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_QEMU_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_WAIT_INPUT cycle=1 local_bus_id=1-1 driver=usbhid",
+    "RUSTUSB_HID_INPUT: PASS cycle=1 KEY_1_down",
+    "RUSTUSB_CLIENT_DETACHED cycle=1 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_WAIT_INPUT cycle=2 local_bus_id=1-1 driver=usbhid",
+    "RUSTUSB_HID_INPUT: PASS cycle=2 KEY_1_down",
+    "RUSTUSB_CLIENT_DETACHED cycle=2 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_QEMU_RESULT: PASS role=client"
+  ]
+}
