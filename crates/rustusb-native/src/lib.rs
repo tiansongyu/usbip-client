@@ -125,12 +125,20 @@ impl NativeBackend {
     /// Read all VHCI ports, including unused ports, validating every status table.
     /// Every `status.N` is consumed and the row count must agree with `nports`.
     pub async fn port_states(&self) -> Result<Vec<NativeSession>> {
-        tokio::time::timeout(Duration::from_secs(5), self.read_port_states())
+        tokio::time::timeout(Duration::from_secs(5), self.observe_port_states())
             .await
-            .map_err(|_| Error::Timeout("VHCI sysfs snapshot exceeded deadline".into()))?
+            .map_err(|_| Error::Timeout("VHCI sysfs snapshot exceeded deadline".into()))??
+            .ok_or_else(|| {
+                Error::State(
+                    "VHCI status changed during device observation; reconciliation required".into(),
+                )
+            })
     }
 
-    async fn read_port_states(&self) -> Result<Vec<NativeSession>> {
+    // None is restricted to two successfully parsed, unequal reads of the same
+    // status attribute. Missing metadata, changed local generations and malformed
+    // snapshots remain errors; they must not be treated as an ordinary transition.
+    async fn observe_port_states(&self) -> Result<Option<Vec<NativeSession>>> {
         let configuration = &self.configuration;
         let mut directories = fs::read_dir(&configuration.platform).await?;
         let mut owners = Vec::new();
@@ -208,9 +216,7 @@ impl NativeBackend {
                 }
             }
             if parse_status(&read_text(&name).await?)? != observed {
-                return Err(Error::State(
-                    "VHCI status changed during device observation; reconciliation required".into(),
-                ));
+                return Ok(None);
             }
         }
         if ports.len() != count {
@@ -218,7 +224,7 @@ impl NativeBackend {
                 "incomplete VHCI status snapshot; reconciliation required".into(),
             ));
         }
-        Ok(ports.into_values().collect())
+        Ok(Some(ports.into_values().collect()))
     }
 
     /// Import and return the uniquely identified, enumerated session created by this operation.
@@ -303,6 +309,8 @@ impl NativeBackend {
     /// Release a previously claimed session only if its current identity still matches.
     /// An unused port succeeds only once the previously observed generation has disappeared.
     /// A replacement session is never detached.
+    /// After one successful detach command, changing status snapshots are reobserved
+    /// within the existing cleanup deadline without repeating the command.
     pub async fn detach_session(&self, expected: &NativeSession) -> Result<()> {
         self.detach_checked(expected.port, Some(expected)).await
     }
@@ -365,15 +373,39 @@ impl NativeBackend {
             return Err(self.reconciliation_error("detach", error).await);
         }
         let deadline = Instant::now() + self.configuration.settle_timeout;
+        let unsettled = || {
+            Error::Timeout(
+                "detach tool completed but port or old local device generation is still present; reconciliation required"
+                    .into(),
+            )
+        };
         loop {
-            let after = self
-                .port_states()
-                .await
-                .map_err(|e| uncertain("detach", e))?;
-            let old_device_removed = !same_generation_present(&old_generation)
-                .await
-                .map_err(|error| uncertain("detach generation verification", error))?;
-            if after.iter().any(|s| s.port == port && s.status == NULL) && old_device_removed {
+            let released = tokio::time::timeout_at(deadline, async {
+                let Some(after) = self
+                    .observe_port_states()
+                    .await
+                    .map_err(|error| uncertain("detach", error))?
+                else {
+                    return Ok(false);
+                };
+                let current = after
+                    .iter()
+                    .find(|session| session.port == port)
+                    .ok_or_else(|| Error::State("VHCI port is outside current nports".into()))?;
+                if current.status == USED && !same_identity(state, current) {
+                    return Err(Error::Permission(
+                        "VHCI port identity changed after detach; replacement session will not be detached"
+                            .into(),
+                    ));
+                }
+                let old_device_removed = !same_generation_present(&old_generation)
+                    .await
+                    .map_err(|error| uncertain("detach generation verification", error))?;
+                Ok(current.status == NULL && old_device_removed)
+            })
+            .await
+            .map_err(|_| unsettled())??;
+            if released {
                 tracing::info!(
                     operation = "detach",
                     port = port.0,
@@ -382,12 +414,12 @@ impl NativeBackend {
                 return Ok(());
             }
             if Instant::now() >= deadline {
-                return Err(Error::Timeout(
-                    "detach tool completed but port or old local device generation is still present; reconciliation required"
-                        .into(),
-                ));
+                return Err(unsettled());
             }
-            sleep(self.configuration.poll_interval).await;
+            tokio::time::sleep_until(
+                (Instant::now() + self.configuration.poll_interval).min(deadline),
+            )
+            .await;
         }
     }
 
@@ -1109,6 +1141,41 @@ mod tests {
         }
     }
 
+    fn rendezvous_fifo_writer(path: &Path) -> io::Result<std::fs::File> {
+        use std::os::unix::fs::{FileTypeExt, OpenOptionsExt};
+
+        let deadline = std::time::Instant::now() + Duration::from_secs(3);
+        let nonblocking = i32::try_from(rustix::fs::OFlags::NONBLOCK.bits())
+            .map_err(|_| io::Error::other("nonblocking flag exceeds native API"))?;
+        loop {
+            if std::time::Instant::now() >= deadline {
+                return Err(io::Error::new(
+                    io::ErrorKind::TimedOut,
+                    "fixture FIFO reader did not rendezvous",
+                ));
+            }
+            match std::fs::metadata(path) {
+                Ok(metadata) if metadata.file_type().is_fifo() => {
+                    match std::fs::OpenOptions::new()
+                        .write(true)
+                        .custom_flags(nonblocking)
+                        .open(path)
+                    {
+                        Ok(writer) => return Ok(writer),
+                        Err(error)
+                            if error.raw_os_error()
+                                == Some(rustix::io::Errno::NXIO.raw_os_error()) => {}
+                        Err(error) => return Err(error),
+                    }
+                }
+                Ok(_) => {}
+                Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+                Err(error) => return Err(error),
+            }
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
     async fn remote_peer() -> Result<(Peer, tokio::task::JoinHandle<io::Result<()>>)> {
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
         let port = NonZeroU16::new(listener.local_addr()?.port())
@@ -1365,6 +1432,118 @@ mod tests {
         ));
         Ok(())
     }
+
+    #[tokio::test]
+    async fn detach_reobserves_changed_status_without_repeating_the_command() -> Result<()> {
+        use std::io::Write;
+
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new(
+            "set -e\nprintf 'detach\\n' >>\"$BASE/calls\"\nrm \"$BASE/devices/9-1/idProduct\"\nmkfifo \"$BASE/devices/9-1/idProduct\"",
+        )?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let expected = fixture.backend.sessions().await?.remove(0);
+        let path = fixture.path("devices/9-1");
+        let product = path.join("idProduct");
+        let status = fixture.path("platform/vhci_hcd.0/status");
+        let nports = fixture.path("platform/vhci_hcd.0/nports");
+        let removed = fixture.path("released");
+        let transition = tokio::task::spawn_blocking(move || -> io::Result<()> {
+            // The tool installs this FIFO only after the authorization snapshot.
+            // Its reader has already read USED and the original device receipt.
+            let mut product_writer = rendezvous_fifo_writer(&product)?;
+            std::fs::write(status, EMPTY)?;
+            std::fs::remove_file(&nports)?;
+            rustix::fs::mkfifoat(
+                rustix::fs::CWD,
+                &nports,
+                rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+            )
+            .map_err(io::Error::from)?;
+            product_writer.write_all(b"abcd\n")?;
+            drop(product_writer);
+
+            // This rendezvous is reached only by a subsequent full snapshot,
+            // after the first snapshot has observed USED -> NULL. Keep the old
+            // directory until then so missing local metadata cannot mimic it.
+            let mut count_writer = rendezvous_fifo_writer(&nports)?;
+            std::fs::rename(path, removed)?;
+            std::fs::remove_file(&nports)?;
+            std::fs::write(nports, "2\n")?;
+            count_writer.write_all(b"2\n")
+        });
+        let result = fixture.backend.detach_session(&expected).await;
+        let transition_result = transition
+            .await
+            .map_err(|error| Error::State(error.to_string()))?;
+        assert!(result.is_ok(), "detach result: {result:?}");
+        transition_result?;
+        assert_eq!(std::fs::read_to_string(fixture.path("calls"))?, "detach\n");
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("argv"))?,
+            "detach\n--port\n0\n"
+        );
+        assert!(fixture.backend.session_cleanup_complete(&expected).await?);
+        assert!(!fixture.path("devices/9-1").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn public_snapshot_still_rejects_status_changed_during_observation() -> Result<()> {
+        use std::io::Write;
+
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let product = fixture.path("devices/9-1/idProduct");
+        std::fs::remove_file(&product)?;
+        rustix::fs::mkfifoat(
+            rustix::fs::CWD,
+            &product,
+            rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+        )
+        .map_err(io::Error::from)?;
+        let status = fixture.path("platform/vhci_hcd.0/status");
+        let transition = tokio::task::spawn_blocking(move || -> io::Result<()> {
+            let mut writer = rendezvous_fifo_writer(&product)?;
+            std::fs::write(status, EMPTY)?;
+            writer.write_all(b"abcd\n")
+        });
+        let result = fixture.backend.port_states().await;
+        transition
+            .await
+            .map_err(|error| Error::State(error.to_string()))??;
+        assert!(
+            matches!(result, Err(Error::State(ref message)) if message.contains("VHCI status changed")),
+            "snapshot result: {result:?}"
+        );
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detach_rejects_post_command_replacement_and_unknown_generation() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new(
+            "set -e\nprintf 'detach\\n' >>\"$BASE/calls\"\nmv \"$BASE/devices/9-1\" \"$BASE/released\"\nmkdir \"$BASE/devices/9-1\"\nprintf '1234\\n' >\"$BASE/devices/9-1/idVendor\"\nprintf 'abcd\\n' >\"$BASE/devices/9-1/idProduct\"\nprintf '2\\n' >\"$BASE/devices/9-1/devnum\"",
+        )?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let expected = fixture.backend.sessions().await?.remove(0);
+        let mut unknown = expected.clone();
+        unknown.local_device_generation = None;
+        assert!(matches!(
+            fixture.backend.detach_session(&unknown).await,
+            Err(Error::Permission(_))
+        ));
+        assert!(!fixture.path("argv").exists());
+        let result = fixture.backend.detach_session(&expected).await;
+        assert!(matches!(result, Err(Error::Permission(_))), "{result:?}");
+        assert_eq!(std::fs::read_to_string(fixture.path("calls"))?, "detach\n");
+        assert!(fixture.path("devices/9-1").is_dir());
+        assert!(!fixture.backend.session_cleanup_complete(&expected).await?);
+        Ok(())
+    }
+
     #[tokio::test]
     async fn checked_detach_rejects_a_reused_port_without_running_tool() -> Result<()> {
         let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
