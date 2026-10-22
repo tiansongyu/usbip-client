@@ -59,3 +59,22 @@
 - `git push -u origin main` exit0，首批完整发布到用户指定SSH仓库；`git ls-remote origin refs/heads/main`返回`af14f88a85be7f8c4659453796b2e231e53b6c26`，与当时本地HEAD完全相等。未强推或删除历史。
 - GitHub Actions运行[39762479133](https://github.com/tiansongyu/usbip-client/actions/runs/39762479133)已completed/success；Ubuntu22.04 job119769782769与Ubuntu24.04 job119769783193均success，包含固定稳定工具链、全部软件检查和只读CLI smoke。完整出版摘要见`evidence/publication-2026-10-22.json`。
 - 将上述远端事实和验收表中的历史“待复测”说明同步为最终结果，作为单独文档提交推送；产品源码与最终QEMU验证的97c2914保持一致。真实硬件及长期阶段仍未标完成。
+
+## Phase 1 后续工作启动（基线21e98f9）
+
+- 重新读取原任务、当前AGENTS/项目Skill、架构/路线与实际源码；确认上一轮为进展，工作树clean。继续Phase1软件与仿真，物理及长期范围不缩减。
+- 独立审查定位：doctor只有路径存在性；helper内存旧端口在内核外部释放后未协调，可能在新attach已产生副作用后因map冲突拒绝；单靠可复用busid/VIDPID不足以保护新连接代际。当前为源码风险，尚未伪称已复现。
+- 先在architecture记录运行诊断、sysfs generation receipt、先协调再attach及QEMU互操作/FTDI/reconnect设计，再并行实施与验证。用户继续授权QEMU、阶段commit和最终push；不操作宿主真实USB。
+
+## 运行诊断、代际修复与矩阵扩展
+
+- 用独立clone冻结已发布21e98f9、核对CLI/helper原SHA256，执行新reconnect脚本。cycle1键盘输入、官方detach、sessions=0及旧设备消失通过；cycle2直接RustUSB attach却在产生新内核连接后报`new import used an already recorded port`，旧缓存还将新代际标为managed。完整FAIL保存在`evidence/qemu-reconnect-old-20261022/`，不是环境失败。
+- NativeSession新增可选本地地址和sysfs dev/inode receipt；USED快照前后复核属性、代际与VHCI行。helper在attach前仅清除已NULL且旧代际消失的记录；新外部连接不继承旧所有权，未知状态仍保守要求协调。并发冲突的最终防护使用新连接自己的receipt清理并如实报告结果。
+- doctor改为固定可信工具的有界版本执行、模块安装/loaded/有效sysfs独立观察和OS root peer校验后的只读Status。helper状态schema1；CLI人类/JSON双输出，退出0表示观察完成。原生工具/IPC的任意stderr、策略和设备标识不进入doctor报告。没有自动加载模块、启动服务或测试网络/USB I/O。
+- 新QEMU脚本覆盖三方向Native互操作、HID和FTDI双向字节、旧缓存重连及新代际拒绝控制；先用冻结旧产物验证3项harness，原始PASS/FAIL独立保留。官方QEMU6.2源码确认usb-serial为FTDI0403:6001而非CDC；本轮不把串口测试扩充为CDC、WAN、多客户端或物理设备通过。
+- 软件gate首轮在既有子进程timeout测试失败，随后native28项单独通过；第二轮完整gate59项与fmt/clippy/release/rustdoc通过（保留intermediate输出）。补齐人类doctor内核/版本显示后，第三轮在新版versionrunner测试得到IoError。所有失败日志保留，正在增补测试错误上下文和调查竞态；尚不认定根因或最终gate通过。
+- 调查时30轮完整syscall筛选和100轮execve追踪均未复现；增强断言后无strace第2轮明确捕获既有timeout fixture的`Err(Io(Os{code:26,kind:ExecutableFileBusy,...}))`，证据单独保留。已确认这一次失败是临时脚本spawn ETXTBSY；此前diagnostics IoError无errno，不能认定同一根因。只在测试端用共享异步锁覆盖可执行脚本生成到子进程清理窗口，不给生产命令增加重试、不放宽超时或断言。
+- `python3 scripts/dependency-inventory.py`仍输出81包，清单无变化；新CLI依赖为既有workspace native，无新增第三方包。QEMU Python编译、shell语法和宿主直接执行guest-init拒绝(exit2)已核对。
+- 测试夹具锁实施后，无strace、64测试线程的Native28项连续20轮全部通过；`evidence/native-fixture-stability-2026-10-22.txt`记录命令、每轮结果与源码哈希，未把文件描述符继承机制写成已证实事实。最终`bash scripts/check.sh` exit0：**59项测试**（core2/protocol4/scanner8/native28/daemon16/CLI1）、fmt、Clippy -D warnings、release、Rustdoc -D warnings全部通过，完整输出`evidence/software-checks-phase1-runtime-2026-10-22.txt`。
+- 普通UID1000执行release doctor的人类/JSON输出均exit0并持久保存；宿主两原生工具安全版本2.0可用、两模块未加载/sysfs缺失、helper missing，断言schema和未验证安全/硬件标志通过。只执行固定version和只读Status，未改宿主USB、模块或服务。
+- 产品与测试脚本将分开提交后冻结；最终7项QEMU矩阵待在同一干净提交运行，以上59项软件测试不能代替本轮实际内核验收。

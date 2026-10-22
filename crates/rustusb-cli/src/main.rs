@@ -2,8 +2,10 @@
 
 use clap::{Parser, Subcommand};
 use rustusb_core::{BusId, DeviceDiscovery, Error, Host, Peer, Result, VhciPort};
+use rustusb_daemon::diagnostics::{HelperDiagnostics, diagnose_helper};
 use rustusb_daemon::{Request, request};
 use rustusb_linux::SysfsDiscovery;
+use rustusb_native::diagnostics::{DiagnosticCheck, NativeDiagnostics, diagnose_native};
 use serde::Serialize;
 use std::{
     io::{self, Write},
@@ -69,17 +71,70 @@ enum Command {
 
 #[derive(Serialize)]
 struct Doctor {
-    operating_system: &'static str,
-    architecture: &'static str,
-    usbip_tool_present: bool,
-    usbipd_tool_present: bool,
-    usbip_host_loaded: bool,
-    vhci_hcd_loaded: bool,
-    usb_sysfs_present: bool,
-    helper_socket_present: bool,
+    schema_version: u32,
+    native: NativeDiagnostics,
+    helper: HelperDiagnostics,
+    required_for_export: [&'static str; 3],
+    required_for_import: [&'static str; 3],
     built_in_encryption: bool,
-    hardware_redirection_verified: bool,
+    network_security_verified: bool,
+    hardware_test_performed: bool,
     note: &'static str,
+}
+
+fn doctor_text(report: &Doctor, writer: &mut impl Write) -> Result<()> {
+    let native = &report.native;
+    writeln!(writer, "RustUSB local diagnostics (read-only)")?;
+    writeln!(
+        writer,
+        "System: {} / {} / kernel {}",
+        native.system.os,
+        native.system.architecture,
+        native.system.kernel_release.as_deref().unwrap_or("unknown")
+    )?;
+    let mut show = |name: &str, check: &DiagnosticCheck| -> Result<()> {
+        writeln!(writer, "{name}: {:?} — {}", check.status, check.detail)?;
+        writeln!(writer, "  Action: {}", check.action)?;
+        Ok(())
+    };
+    show("kernel release", &native.system.kernel)?;
+    for (name, tool) in [("usbip", &native.usbip), ("usbipd", &native.usbipd)] {
+        show(name, &tool.check)?;
+    }
+    for driver in [&native.usbip_host, &native.vhci_hcd] {
+        show(&format!("{} loaded", driver.module), &driver.loaded)?;
+        show(&format!("{} sysfs", driver.module), &driver.sysfs)?;
+        show(
+            &format!("{} availability", driver.module),
+            &driver.availability,
+        )?;
+    }
+    for tool in [&native.usbip, &native.usbipd] {
+        writeln!(
+            writer,
+            "Tool: {} / version {}",
+            tool.path,
+            tool.version.as_deref().unwrap_or("unknown")
+        )?;
+    }
+    writeln!(
+        writer,
+        "Helper: {:?} — {}",
+        report.helper.status, report.helper.detail
+    )?;
+    writeln!(writer, "  Action: {}", report.helper.action)?;
+    writeln!(
+        writer,
+        "Export requires: {}",
+        report.required_for_export.join(", ")
+    )?;
+    writeln!(
+        writer,
+        "Import requires: {}",
+        report.required_for_import.join(", ")
+    )?;
+    writeln!(writer, "{}", report.note)?;
+    Ok(())
 }
 
 fn output<T: Serialize>(value: &T) -> Result<()> {
@@ -138,18 +193,23 @@ async fn run(cli: Cli) -> Result<()> {
             Ok(())
         }
         Command::Doctor => {
-            let socket = cli.socket.clone();
-            let result=tokio::task::spawn_blocking(move || Doctor {
-                operating_system:std::env::consts::OS,architecture:std::env::consts::ARCH,
-                usbip_tool_present:std::path::Path::new("/usr/bin/usbip").exists(),
-                usbipd_tool_present:std::path::Path::new("/usr/bin/usbipd").exists(),
-                usbip_host_loaded:std::path::Path::new("/sys/module/usbip_host").exists(),
-                vhci_hcd_loaded:std::path::Path::new("/sys/module/vhci_hcd").exists(),
-                usb_sysfs_present:std::path::Path::new("/sys/bus/usb/devices").is_dir(),
-                helper_socket_present:socket.exists(),built_in_encryption:false,hardware_redirection_verified:false,
-                note:"Read-only checks; installed wrappers may need matching linux-tools. Load modules and configure VPN/firewall as administrator. No device was bound or imported.",
-            }).await.map_err(|e|Error::State(e.to_string()))?;
-            output(&result)
+            let (native, helper) = tokio::join!(diagnose_native(), diagnose_helper(&cli.socket));
+            let result = Doctor {
+                schema_version: 1,
+                native,
+                helper,
+                required_for_export: ["native.usbip", "native.usbip_host.sysfs", "helper"],
+                required_for_import: ["native.usbip", "native.vhci_hcd.sysfs", "helper"],
+                built_in_encryption: false,
+                network_security_verified: false,
+                hardware_test_performed: false,
+                note: "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported.",
+            };
+            if cli.json {
+                output(&result)
+            } else {
+                doctor_text(&result, &mut io::stdout().lock())
+            }
         }
         Command::Discover { host, port } => {
             let devices = rustusb_protocol::discover(

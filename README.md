@@ -20,6 +20,18 @@ target/release/rustusb doctor
 
 设备 ID 使用 VID/PID、序列号（若有）和物理控制器/端口拓扑的 SHA256 候选指纹。Bus ID 只是当前地址。无序列号的同型号设备在同一物理端口替换无法可靠区分；指纹不是硬件身份认证。JSON 设备详情含序列号，分享前自行脱敏，默认日志不输出它。
 
+## 本机诊断
+
+普通用户运行 `rustusb doctor` 查看逐项结果和处理建议；`rustusb doctor --json` 输出供脚本读取的结构化报告，当前 `schema_version` 为 `1`。诊断完成时退出码为 `0`，其中仍可能包含 `missing`、`not_loaded`、`unknown` 或失败结果；退出码不表示整体已经就绪。
+
+各项观察独立报告：
+
+- `native.usbip_host` / `native.vhci_hcd` 分别包含 `loaded`（已加载模块）、`sysfs`（有效驱动接口/状态）和 `availability`（匹配运行内核的模块文件或配置证据）。模块已安装不表示已加载，读取不到也不推断为内核禁用。
+- `native.usbip` / `native.usbipd` 校验固定工具路径及其权限后，仅执行有截止和输出上限的 `/usr/bin/usbip version` / `/usr/bin/usbipd --version`。工具版本可用不表示导出/导入成功；某些发行版的 `usbipd` 会拒绝普通用户的版本请求，非零退出的 root 拒绝报告 `requires_root`。仅打印 root 提示但成功返回安全版本时仍为 `available`。
+- `helper` 校验受保护的 Unix socket 路径和对端 root 身份，再发送只读 `Status` 请求；socket 文件存在不代表 helper 正常。helper 可响应、VHCI 可读取和管理员的可信网络声明也分别报告。脚本可结合 `required_for_export` / `required_for_import` 查看各角色所需项。
+
+doctor 不加载模块、不启动服务、不绑定 USB，也不建立 USB/IP 会话；不会验证 VPN、TLS、远端可达性或真实 USB 枚举/I/O。完成诊断后仍需两端授权、设备/远端策略和单独的网络与设备测试。
+
 ## Native 共享流程
 
 CLI 普通权限运行；只有受限的 `rustusb-helper` 作为系统管理员运行。helper 不启动 `usbipd`、不改防火墙、不加载模块。开始前，两端管理员建立受管 VPN/安全隧道和 IPv4/IPv6 防火墙，只让授权对端访问 USB/IP 端口。原生 USB/IP 自身没有认证或加密，`trusted_network: true` 只是管理员确认，不会创建安全通道。

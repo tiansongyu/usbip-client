@@ -8,10 +8,16 @@ use rustusb_core::{BusId, Error, Peer, Result, VhciPort};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
+/// Read-only helper readiness diagnostics shared by all frontends.
+pub mod diagnostics;
+
 /// Maximum line size, including the terminating newline, for local IPC.
 pub const MAX_FRAME_BYTES: usize = 64 * 1024;
 /// Maximum simultaneous local connections; rejected connections receive no work.
 pub const MAX_CONNECTIONS: usize = 32;
+/// Status schema providing generation-aware native session observations.
+/// This versions the additive diagnostic response, not the Linux USB/IP wire protocol.
+pub const STATUS_SCHEMA_VERSION: u32 = 1;
 
 /// One bounded, explicitly enumerated privileged request.
 #[derive(Debug, Clone, Serialize)]

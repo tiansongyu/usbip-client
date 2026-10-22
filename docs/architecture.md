@@ -13,7 +13,7 @@ flowchart LR
   Core --> List[有界 USB/IP DEVLIST]
   Core --> IPC[本机 Unix socket]
   IPC --> Helper[root helper / UID 与策略校验]
-  Helper --> Native[固定 usbip 与 modprobe 操作]
+  Helper --> Native[固定 usbip 操作]
   Native --> Host[usbip_host]
   Native --> VHCI[vhci_hcd]
   Host <-->|USB/IP TCP 经受管 VPN 或后续 TLS 代理| VHCI
@@ -95,3 +95,27 @@ Bus ID 是当前寻址，不是持久身份。持久候选 ID 将 VID/PID、可�
 完整内核与 Rust 审计将写入 `research/`。Rust 2024 起点为 [1.85](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)，当前构建使用安装的稳定 1.97.1；最终依赖版本以 Cargo.lock 为准。
 [Tokio timeout](https://docs.rs/tokio/latest/tokio/time/fn.timeout.html) 通过丢弃 future 取消；[process Command](https://docs.rs/tokio/latest/tokio/process/struct.Command.html) 默认不终止子进程，因此实现必须 kill/reap，不能只包 timeout。
 [clap derive](https://docs.rs/clap/latest/clap/_derive/) 用于一致输入解析，[tracing subscriber](https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/index.html) 提供人类可读/JSON 日志。上述版本在锁文件生成后记录，不用 latest 代替测试版本。
+
+## Phase 1 后续：运行诊断与内核代际协调（实施设计）
+
+2026-10-22，基线21e98f9。上一轮交付是实质进展；当前仍按Phase1推进，不以物理设备缺席跳过可自动完成的工作，也不将后续阶段标成已实现。本节先定义本轮变更，运行结果见工作日志和独立证据。
+
+### 运行诊断
+
+原doctor只有Path.exists布尔值，无法证明发行版wrapper有匹配工具或socket为可信服务。新增 `rustusb_native::diagnostics::diagnose_native()`，返回可序列化的system、usbip_host、vhci_hcd、usbip、usbipd诊断。内核模块的已加载、有效sysfs和对应内核的可用模块/config证据分开；读取不到只能是unknown，不推断缺失。工具仅允许固定的`/usr/bin/usbip version`与`/usr/bin/usbipd --version`，校验可执行文件及原/canonical父链权限，固定argv与环境、读取/执行截止、输出上限、kill/reap。每个探针总截止3秒，stdout/stderr各8KiB，kill后最多2秒reap；成功退出且安全版本输出才能available，非零退出的root拒绝为requires_root，不启动服务。当前helper不加载模块。
+
+helper诊断属于共享客户端接口：复用已有root路径/类型/权限和SO_PEERCRED验证后调用只读Status，总截止8秒，区分missing、untrusted、unreachable、timeout、permission_denied、available等结果。CLI组装两份诊断，不直接写sysfs或调用管理命令。doctor与helper Status的JSON均声明schema_version=1；旧helper无此版本会报告unexpected_response，需同时升级。NativeSession新增字段允许旧JSON反序列化为None，但无代际receipt不能授权detach。字段附可操作建议；可用组件不等于角色整体ready，角色所需组件分别列出。doctor退出0仅表示完成观察。网络、VPN、TLS、真实硬件仍明确未被doctor验证；`trusted_network`只表示管理员声明。
+
+### 会话代际与直接重连
+
+现有NativeSession仅有可复用的端口/local_busid/remote_devid/VIDPID，不能区分同一设备在同一端口的新连接。新增本地设备地址及sysfs目录的dev/inode代际receipt，只有状态USED且前后元信息来自同一代际才返回。Native与helper的身份比较必须包含receipt；旧ownership不得控制外部重新导入的同型号同地址设备。
+
+在新attach产生副作用前，helper协调缓存的旧受管记录：以权威内核快照为依据，只有端口已NULL且旧设备代际已消失才移除旧记录；保留未知/仍活跃资源。对NULL端口的detach只观察旧代际，不影响同路径新代际。新attach成功后保留冲突防护；若发生本地记录冲突，使用本次已核验receipt安全清理新连接并报告结果，不能先创建内核会话再无清理地拒绝认领。
+
+本轮不引入完整持久会话日志、自动存储恢复或Phase3心跳状态机。内核ERROR状态身份不明时继续明确要求协调；安全拒绝不能被写成自动恢复完成。
+
+### QEMU 验证矩阵
+
+保留默认双guest HID两周期，增加独立场景：RustUSB export→官方Linux client、官方bind/usbipd→RustUSB client，以及受管连接被内核外部释放→直接RustUSB重连→外部释放→同port外部重新导入(旧helper必须拒绝控制)。每项要求实际输入/字节传输、驱动及资源释放，未知外部资源仍由官方工具清理。
+
+可选QEMU usb-serial经官方6.2源码核实为FTDI FT232BM(0403:6001，厂商类、Bulk)，使用ftdi_sio并测试双向固定序号字节；它不是CDC ACM证据。只有HID reconnect场景测试代际；串口覆盖两后端端点互操作和两周期释放。三个guest多客户端争用、netem延迟/丢包、完整CDC/Rust服务端仍在原计划中，不能由本轮矩阵替代。测试只用临时VM、私有socketpair/Unix chardev；不触宿主USB、内核模块或公共网络。

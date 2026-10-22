@@ -24,6 +24,7 @@ const READ_TIMEOUT: Duration = Duration::from_secs(5);
 const WRITE_TIMEOUT: Duration = Duration::from_secs(5);
 const QUEUE_TIMEOUT: Duration = Duration::from_secs(30);
 const RESPONSE_TIMEOUT: Duration = Duration::from_secs(120);
+const CLEANUP_TIMEOUT: Duration = Duration::from_secs(10);
 
 #[derive(Default)]
 struct ManagedState {
@@ -52,6 +53,20 @@ impl ManagedState {
         self.exports.insert(after.id.clone(), after);
         Ok(())
     }
+
+    fn released_port_candidates(&self, current: &[NativeSession]) -> Result<Vec<NativeSession>> {
+        let mut candidates = Vec::new();
+        for owned in self.ports.values() {
+            let observed = current.iter().find(|session| session.port == owned.port)
+                .ok_or_else(|| Error::State("a managed port is absent from the kernel snapshot; reconciliation required".into()))?;
+            if observed.status == 4 {
+                candidates.push(owned.clone());
+            } else if !same_session(owned, observed) {
+                return Err(Error::State("a managed port has changed or has unknown identity; reconcile it before importing another device".into()));
+            }
+        }
+        Ok(candidates)
+    }
 }
 
 struct App {
@@ -73,6 +88,7 @@ impl App {
                 }
             };
             return Ok(serde_json::json!({
+                "schema_version": super::STATUS_SCHEMA_VERSION,
                 "helper": "running",
                 "backend": "linux-native",
                 "native_data_encryption": false,
@@ -171,12 +187,25 @@ impl App {
             }
             Request::Attach { peer, bus_id } => {
                 self.policy.authorize_peer(&peer)?;
+                // The old local generation must be gone before a new attach
+                // can reuse its port. Reconcile before the tool creates any
+                // kernel connection, not after discovering a map collision.
+                timeout(CLEANUP_TIMEOUT, self.reconcile_released_ports(&mut state))
+                    .await
+                    .map_err(|_| Error::Timeout("prior managed session cleanup is incomplete; no new import was started; inspect kernel state".into()))??;
                 // The backend must verify a unique before/after port, remote
                 // device ID, current USB identity and native endpoint record.
                 let session = self.backend.attach_session(peer, bus_id).await?;
                 let port = session.port;
                 if state.ports.contains_key(&port) {
-                    return Err(Error::State("new import used an already recorded port; administrator reconciliation required".into()));
+                    // An external administrator can still change kernel state
+                    // between snapshots. Only this operation's freshly verified
+                    // receipt may authorize compensation; never use the old map.
+                    let cleanup = self.backend.detach_session(&session).await;
+                    return Err(Error::State(match cleanup {
+                        Ok(()) => "new import conflicted with a managed record; the newly verified connection was released; prior ownership requires reconciliation".into(),
+                        Err(error) => format!("new import conflicted with a managed record; cleanup of the newly verified connection could not be confirmed: {error}; administrator reconciliation required"),
+                    }));
                 }
                 state.released_ports.remove(&port);
                 let data = serde_json::to_value(&session).map_err(json_error)?;
@@ -224,6 +253,26 @@ impl App {
             Request::Status => Err(Error::State("status dispatch invariant".into())),
         }
     }
+
+    async fn reconcile_released_ports(&self, state: &mut ManagedState) -> Result<()> {
+        let current = self.backend.port_states().await?;
+        let candidates = state.released_port_candidates(&current)?;
+        for owned in candidates {
+            loop {
+                if self.backend.session_cleanup_complete(&owned).await? {
+                    state.ports.remove(&owned.port);
+                    state.released_ports.insert(owned.port);
+                    tracing::info!(
+                        port = owned.port.0,
+                        "previous managed kernel session release verified before import"
+                    );
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(100)).await;
+            }
+        }
+        Ok(())
+    }
 }
 
 fn same_device_generation(before: &Device, after: &Device) -> bool {
@@ -236,13 +285,19 @@ fn same_device_generation(before: &Device, after: &Device) -> bool {
 }
 
 fn same_session(before: &NativeSession, after: &NativeSession) -> bool {
-    // Status may move to ERROR without transferring ownership. Stable kernel
-    // identity must remain known; otherwise fail closed for administrator help.
+    // Reused port and USB addresses are insufficient. ERROR snapshots lacking
+    // the receipt remain unknown and cannot transfer ownership or authorize I/O.
     before.port == after.port
+        && before.local_bus_id.is_some()
         && before.local_bus_id == after.local_bus_id
+        && before.remote_device_id.is_some()
         && before.remote_device_id == after.remote_device_id
         && before.vendor_id == after.vendor_id
         && before.product_id == after.product_id
+        && before.local_device_address.is_some()
+        && before.local_device_address == after.local_device_address
+        && before.local_device_generation.is_some()
+        && before.local_device_generation == after.local_device_generation
 }
 
 async fn current_device(id: &str) -> Result<Device> {
@@ -507,6 +562,78 @@ pub(super) async fn serve(config: &Path, socket: &Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn session(port: u8, inode: u64) -> Result<NativeSession> {
+        Ok(NativeSession {
+            port: VhciPort(port),
+            status: 6,
+            local_bus_id: Some(rustusb_core::BusId::new("9-1")?),
+            remote_device_id: Some(0x10002),
+            vendor_id: Some(0x1234),
+            product_id: Some(0xabcd),
+            local_device_address: Some(2),
+            local_device_generation: Some(rustusb_native::LocalDeviceGeneration {
+                filesystem_device: 1,
+                inode,
+            }),
+        })
+    }
+
+    #[test]
+    fn attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports() -> Result<()> {
+        let owned = session(0, 11)?;
+        let mut state = ManagedState::default();
+        state.ports.insert(owned.port, owned.clone());
+        let mut free = session(1, 12)?;
+        free.status = 4;
+        // A healthy first connection must not prevent importing a second device.
+        assert!(
+            state
+                .released_port_candidates(&[owned.clone(), free])
+                .is_ok_and(|candidates| candidates.is_empty())
+        );
+        let mut released = owned.clone();
+        released.status = 4;
+        released.local_bus_id = None;
+        released.local_device_generation = None;
+        let candidates = state.released_port_candidates(&[released])?;
+        assert_eq!(candidates, vec![owned.clone()]);
+        // NULL alone is not proof of cleanup: retain ownership until the
+        // backend separately confirms disappearance of the old generation.
+        assert_eq!(state.ports.get(&owned.port), Some(&owned));
+        assert!(state.released_ports.is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn replacement_and_unknown_port_identities_block_attach_before_mutation() -> Result<()> {
+        let owned = session(0, 11)?;
+        let mut state = ManagedState::default();
+        state.ports.insert(owned.port, owned.clone());
+        let replacement = session(0, 12)?;
+        assert!(!same_session(&owned, &replacement));
+        assert!(state.released_port_candidates(&[replacement]).is_err());
+        for missing_address in [false, true] {
+            let mut incomplete = owned.clone();
+            if missing_address {
+                incomplete.local_device_address = None;
+            } else {
+                incomplete.local_device_generation = None;
+            }
+            assert!(!same_session(&incomplete, &incomplete));
+            assert!(state.released_port_candidates(&[incomplete]).is_err());
+        }
+        let mut unknown = owned.clone();
+        unknown.status = 7;
+        unknown.local_bus_id = None;
+        unknown.remote_device_id = None;
+        unknown.local_device_address = None;
+        unknown.local_device_generation = None;
+        assert!(state.released_port_candidates(&[unknown]).is_err());
+        assert!(state.released_port_candidates(&[]).is_err());
+        assert_eq!(state.ports.get(&owned.port), Some(&owned));
+        Ok(())
+    }
 
     fn device(exported: bool, address: u32) -> Result<Device> {
         Ok(Device {

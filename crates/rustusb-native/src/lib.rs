@@ -5,6 +5,9 @@
 //! Dropping an operation future kills an active child, but cannot undo a kernel write;
 //! callers must reconcile kernel state after cancellation. No method guesses a rollback.
 
+/// Read-only Linux tools, modules, and kernel-interface diagnosis.
+pub mod diagnostics;
+
 use rustusb_core::{BusId, Error, ExportBackend, ImportBackend, Peer, Result, VhciPort};
 use rustusb_protocol::RemoteDevice;
 use serde::{Deserialize, Serialize};
@@ -30,6 +33,21 @@ const NULL: u32 = 4;
 const USED: u32 = 6;
 const HEADER: &str = "hub port sta spd dev sockfd local_busid";
 
+// Parallel temporary-executable fixtures have produced Linux ETXTBSY at spawn.
+// Keep script creation through child cleanup in one test-only critical section.
+#[cfg(all(test, unix))]
+static PROCESS_FIXTURE_LOCK: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
+
+/// Identity of one local sysfs USB directory observed during enumeration.
+/// This receipt is scoped to the current kernel and is not a durable device identity.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct LocalDeviceGeneration {
+    /// Filesystem device number of the dereferenced sysfs USB directory.
+    pub filesystem_device: u64,
+    /// Inode number of that same directory; a replacement directory is a new generation.
+    pub inode: u64,
+}
+
 /// One authoritative VHCI port observation, not a durable session or caller identity.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NativeSession {
@@ -45,6 +63,14 @@ pub struct NativeSession {
     pub vendor_id: Option<u16>,
     /// Enumerated product ID; this is metadata, not a cryptographic identity.
     pub product_id: Option<u16>,
+    /// Local USB device address read consistently with the sysfs generation.
+    /// Missing on non-USED ports and in older serialized observations.
+    #[serde(default)]
+    pub local_device_address: Option<u32>,
+    /// Kernel-local sysfs receipt preventing ownership transfer across re-enumeration.
+    /// An observation without this receipt cannot authorize destructive operations.
+    #[serde(default)]
+    pub local_device_generation: Option<LocalDeviceGeneration>,
 }
 
 #[derive(Debug)]
@@ -162,7 +188,8 @@ impl NativeBackend {
         names.sort();
         let mut ports = BTreeMap::new();
         for name in names {
-            for mut session in parse_status(&read_text(&name).await?)? {
+            let observed = parse_status(&read_text(&name).await?)?;
+            for mut session in observed.iter().cloned() {
                 if usize::from(session.port.0) >= count {
                     return Err(Error::State("VHCI port exceeds nports".into()));
                 }
@@ -172,14 +199,18 @@ impl NativeBackend {
                         .as_ref()
                         .ok_or_else(|| Error::State("used VHCI port has no local bus ID".into()))?;
                     let path = configuration.devices.join(bus_id.as_str());
-                    session.vendor_id = Some(read_hex_u16(&path.join("idVendor")).await?);
-                    session.product_id = Some(read_hex_u16(&path.join("idProduct")).await?);
+                    observe_local_device(&path, &mut session).await?;
                 }
                 if ports.insert(session.port.0, session).is_some() {
                     return Err(Error::State(
                         "duplicate VHCI port across status attributes".into(),
                     ));
                 }
+            }
+            if parse_status(&read_text(&name).await?)? != observed {
+                return Err(Error::State(
+                    "VHCI status changed during device observation; reconciliation required".into(),
+                ));
             }
         }
         if ports.len() != count {
@@ -270,10 +301,28 @@ impl NativeBackend {
     }
 
     /// Release a previously claimed session only if its current identity still matches.
-    /// An unused port succeeds only if no prior local device remains at its path.
+    /// An unused port succeeds only once the previously observed generation has disappeared.
     /// A replacement session is never detached.
     pub async fn detach_session(&self, expected: &NativeSession) -> Result<()> {
         self.detach_checked(expected.port, Some(expected)).await
+    }
+
+    /// Check without changing devices whether an observed session has been fully released.
+    /// Both a NULL kernel port and disappearance of the old sysfs generation are required.
+    /// A replacement at the same path does not keep the old generation alive. Missing
+    /// receipts, incomplete snapshots and unknown ports are errors, never proof of release.
+    pub async fn session_cleanup_complete(&self, expected: &NativeSession) -> Result<bool> {
+        let _lock = self.mutation.lock().await;
+        let generation = expected_generation(&self.configuration.devices, expected)?;
+        let before = self.port_states().await?;
+        if !port_is_null(&before, expected.port)? {
+            return Ok(false);
+        }
+        if same_generation_present(&generation).await? {
+            return Ok(false);
+        }
+        Ok(port_is_null(&self.port_states().await?, expected.port)?
+            && !same_generation_present(&generation).await?)
     }
 
     async fn detach_checked(&self, port: VhciPort, expected: Option<&NativeSession>) -> Result<()> {
@@ -284,29 +333,26 @@ impl NativeBackend {
             .find(|s| s.port == port)
             .ok_or_else(|| Error::State("VHCI port is outside current nports".into()))?;
         if state.status == NULL {
-            if let Some(bus_id) = expected.and_then(|session| session.local_bus_id.as_ref()) {
-                let path = self.configuration.devices.join(bus_id.as_str());
+            if let Some(expected) = expected {
+                let generation = expected_generation(&self.configuration.devices, expected)?;
                 let deadline = Instant::now() + self.configuration.settle_timeout;
-                while fs::try_exists(&path).await? {
+                while same_generation_present(&generation).await? {
                     if Instant::now() >= deadline {
-                        return Err(Error::State("port is unused but prior local device generation cannot be proven removed (address may have been reused); reconciliation required".into()));
+                        return Err(Error::State("port is unused but the prior local device generation remains; reconciliation required".into()));
                     }
                     sleep(self.configuration.poll_interval).await;
                 }
             }
             return Ok(());
         }
-        let old_generation = match state.local_bus_id.as_ref() {
-            Some(bus_id) => {
-                capture_generation(self.configuration.devices.join(bus_id.as_str())).await?
-            }
-            None => None,
-        };
         if expected.is_some_and(|identity| !same_identity(identity, state)) {
             return Err(Error::Permission(
                 "VHCI port identity changed; replacement session will not be detached".into(),
             ));
         }
+        // Even the low-level port-only adapter refuses unknown ERROR/enumerating
+        // ownership. A complete USED observation is the minimum cleanup receipt.
+        let old_generation = expected_generation(&self.configuration.devices, state)?;
         tracing::info!(
             operation = "detach",
             port = port.0,
@@ -324,12 +370,9 @@ impl NativeBackend {
                 .port_states()
                 .await
                 .map_err(|e| uncertain("detach", e))?;
-            let old_device_removed = match &old_generation {
-                Some(generation) => !same_generation_present(generation)
-                    .await
-                    .map_err(|error| uncertain("detach generation verification", error))?,
-                None => true,
-            };
+            let old_device_removed = !same_generation_present(&old_generation)
+                .await
+                .map_err(|error| uncertain("detach generation verification", error))?;
             if after.iter().any(|s| s.port == port && s.status == NULL) && old_device_removed {
                 tracing::info!(
                     operation = "detach",
@@ -616,7 +659,7 @@ impl ImportBackend for NativeBackend {
 #[derive(Debug)]
 struct LocalGeneration {
     path: PathBuf,
-    identity: (u64, u64),
+    identity: LocalDeviceGeneration,
 }
 
 async fn capture_generation(path: PathBuf) -> Result<Option<LocalGeneration>> {
@@ -637,11 +680,88 @@ async fn same_generation_present(generation: &LocalGeneration) -> Result<bool> {
         .is_some_and(|current| current.identity == generation.identity))
 }
 
-fn metadata_identity(metadata: &std::fs::Metadata) -> Result<(u64, u64)> {
+fn expected_generation(devices: &Path, session: &NativeSession) -> Result<LocalGeneration> {
+    let bus_id = session.local_bus_id.as_ref().ok_or_else(|| {
+        Error::State("session has no local device identity; reconciliation required".into())
+    })?;
+    if !session
+        .local_device_address
+        .is_some_and(|address| (1..=255).contains(&address))
+    {
+        return Err(Error::State(
+            "session has no verified local device address; reconciliation required".into(),
+        ));
+    }
+    let identity = session.local_device_generation.ok_or_else(|| {
+        Error::State(
+            "session has no local device generation receipt; reconciliation required".into(),
+        )
+    })?;
+    Ok(LocalGeneration {
+        path: devices.join(bus_id.as_str()),
+        identity,
+    })
+}
+
+async fn observe_local_device(path: &Path, session: &mut NativeSession) -> Result<()> {
+    let before = capture_generation(path.to_owned())
+        .await?
+        .ok_or_else(|| Error::State("enumerated USB device disappeared".into()))?;
+    let address = read_device_address(path).await?;
+    let vendor = read_hex_u16(&path.join("idVendor")).await?;
+    let product = read_hex_u16(&path.join("idProduct")).await?;
+    let after_address = read_device_address(path).await?;
+    let after = capture_generation(path.to_owned()).await?.ok_or_else(|| {
+        Error::State("enumerated USB device disappeared during observation".into())
+    })?;
+    if before.identity != after.identity || address != after_address {
+        return Err(Error::State(
+            "local USB device generation changed during observation; reconciliation required"
+                .into(),
+        ));
+    }
+    session.vendor_id = Some(vendor);
+    session.product_id = Some(product);
+    session.local_device_address = Some(address);
+    session.local_device_generation = Some(before.identity);
+    Ok(())
+}
+
+async fn read_device_address(path: &Path) -> Result<u32> {
+    let address = read_text(&path.join("devnum"))
+        .await?
+        .trim()
+        .parse::<u32>()
+        .map_err(|_| Error::State("invalid local USB device address".into()))?;
+    if !(1..=255).contains(&address) {
+        return Err(Error::State(
+            "local USB device address is outside 1..=255".into(),
+        ));
+    }
+    Ok(address)
+}
+
+fn port_is_null(sessions: &[NativeSession], port: VhciPort) -> Result<bool> {
+    sessions
+        .iter()
+        .find(|session| session.port == port)
+        .map(|session| session.status == NULL)
+        .ok_or_else(|| Error::State("VHCI port is outside current nports".into()))
+}
+
+fn metadata_identity(metadata: &std::fs::Metadata) -> Result<LocalDeviceGeneration> {
+    if !metadata.is_dir() {
+        return Err(Error::State(
+            "local USB sysfs entry is not a directory".into(),
+        ));
+    }
     #[cfg(unix)]
     {
         use std::os::unix::fs::MetadataExt;
-        Ok((metadata.dev(), metadata.ino()))
+        Ok(LocalDeviceGeneration {
+            filesystem_device: metadata.dev(),
+            inode: metadata.ino(),
+        })
     }
     #[cfg(not(unix))]
     {
@@ -730,6 +850,8 @@ fn parse_status(text: &str) -> Result<Vec<NativeSession>> {
             remote_device_id: (status == USED).then_some(remote),
             vendor_id: None,
             product_id: None,
+            local_device_address: None,
+            local_device_generation: None,
         });
     }
     Ok(result)
@@ -917,6 +1039,10 @@ fn same_identity(left: &NativeSession, right: &NativeSession) -> bool {
         && left.remote_device_id == right.remote_device_id
         && left.vendor_id == right.vendor_id
         && left.product_id == right.product_id
+        && left.local_device_address.is_some()
+        && left.local_device_address == right.local_device_address
+        && left.local_device_generation.is_some()
+        && left.local_device_generation == right.local_device_generation
 }
 
 #[cfg(all(test, unix))]
@@ -945,6 +1071,7 @@ mod tests {
             std::fs::create_dir_all(root.join("devices/9-1"))?;
             std::fs::write(root.join("devices/9-1/idVendor"), "1234\n")?;
             std::fs::write(root.join("devices/9-1/idProduct"), "abcd\n")?;
+            std::fs::write(root.join("devices/9-1/devnum"), "2\n")?;
             std::fs::create_dir_all(root.join("platform/vhci_hcd.0"))?;
             std::fs::write(root.join("platform/vhci_hcd.0/nports"), "2\n")?;
             std::fs::write(root.join("platform/vhci_hcd.0/status"), EMPTY)?;
@@ -1039,6 +1166,7 @@ mod tests {
 
     #[tokio::test]
     async fn snapshots_cover_every_status_attribute_and_reject_missing_rows() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new("exit 0")?;
         let owner = fixture.path("platform/vhci_hcd.0");
         std::fs::write(
@@ -1063,6 +1191,7 @@ mod tests {
 
     #[tokio::test]
     async fn export_and_unexport_require_observed_driver_changes() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new(
             "if [ \"$1\" = bind ]; then\nln -s usbip-host \"$BASE/devices/1-2/driver\"\nprintf 1 >\"$BASE/devices/1-2/usbip_status\"\nelse\nrm \"$BASE/devices/1-2/driver\"\nln -s usb \"$BASE/devices/1-2/driver\"\nfi",
         )?;
@@ -1098,6 +1227,7 @@ mod tests {
 
     #[tokio::test]
     async fn failed_tool_can_leave_exported_state_and_busy_export_is_rejected() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new(
             "ln -s usbip-host \"$BASE/devices/1-2/driver\"\nprintf 1 >\"$BASE/devices/1-2/usbip_status\"\nexit 1",
         )?;
@@ -1122,9 +1252,10 @@ mod tests {
 
     #[tokio::test]
     async fn subprocess_timeout_is_killed_and_reaped_and_output_is_bounded() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new("exec /bin/sleep 5")?;
         let result = fixture.backend.run_tool(&["bind".into()]).await;
-        assert!(matches!(result, Err(Error::Timeout(_))));
+        assert!(matches!(result, Err(Error::Timeout(_))), "{result:?}");
         let pid = std::fs::read_to_string(fixture.path("pid"))?;
         assert!(!PathBuf::from(format!("/proc/{}", pid.trim())).exists());
         let noisy = Fixture::new("exec /usr/bin/head -c 1000000 /dev/zero")?;
@@ -1138,6 +1269,7 @@ mod tests {
     #[tokio::test]
     async fn attach_claims_only_verified_session_and_failure_does_not_hide_side_effects()
     -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let body = format!(
             "cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{ATTACHED}STATE\nprintf '%s %s %s\\n' \"$5\" \"$2\" \"$7\" >\"$BASE/records/port0\""
         );
@@ -1173,6 +1305,7 @@ mod tests {
 
     #[tokio::test]
     async fn attach_does_not_claim_missing_record_wrong_metadata_or_existing_port() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let body =
             format!("cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{ATTACHED}STATE\n");
         let fixture = Fixture::new(&body)?;
@@ -1212,6 +1345,7 @@ mod tests {
 
     #[tokio::test]
     async fn detach_is_idempotent_and_waits_for_actual_kernel_release() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let body = format!(
             "cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\nmv \"$BASE/devices/9-1\" \"$BASE/released\"\n"
         );
@@ -1233,6 +1367,7 @@ mod tests {
     }
     #[tokio::test]
     async fn checked_detach_rejects_a_reused_port_without_running_tool() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new("exit 99")?;
         std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
         let mut expected = fixture.backend.sessions().await?.remove(0);
@@ -1251,7 +1386,145 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn same_device_on_reused_port_requires_the_original_generation_receipt() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let owned = fixture.backend.sessions().await?.remove(0);
+        assert_eq!(owned.local_device_address, Some(2));
+        assert!(owned.local_device_generation.is_some());
+
+        // Simulate an external release and import of the identical device,
+        // preserving its port, bus IDs, VID/PID and even the local USB address.
+        std::fs::rename(fixture.path("devices/9-1"), fixture.path("released"))?;
+        std::fs::create_dir(fixture.path("devices/9-1"))?;
+        for (name, value) in [("idVendor", "1234"), ("idProduct", "abcd"), ("devnum", "2")] {
+            std::fs::write(fixture.path(&format!("devices/9-1/{name}")), value)?;
+        }
+        let replacement = fixture.backend.sessions().await?.remove(0);
+        assert_eq!(owned.local_bus_id, replacement.local_bus_id);
+        assert_eq!(owned.remote_device_id, replacement.remote_device_id);
+        assert_eq!(owned.vendor_id, replacement.vendor_id);
+        assert_eq!(owned.local_device_address, replacement.local_device_address);
+        assert_ne!(
+            owned.local_device_generation,
+            replacement.local_device_generation
+        );
+        assert!(!same_identity(&owned, &replacement));
+        assert!(matches!(
+            fixture.backend.detach_session(&owned).await,
+            Err(Error::Permission(_))
+        ));
+        assert!(!fixture.backend.session_cleanup_complete(&owned).await?);
+        assert!(!fixture.path("argv").exists());
+
+        // A NULL port plus disappearance of the original receipt is sufficient.
+        // The replacement directory at the same address must not be touched.
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), EMPTY)?;
+        assert!(fixture.backend.session_cleanup_complete(&owned).await?);
+        fixture.backend.detach_session(&owned).await?;
+        assert!(fixture.path("devices/9-1").is_dir());
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup() -> Result<()>
+    {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let original = fixture.backend.sessions().await?.remove(0);
+        for missing_address in [false, true] {
+            let mut incomplete = original.clone();
+            if missing_address {
+                incomplete.local_device_address = None;
+            } else {
+                incomplete.local_device_generation = None;
+            }
+            assert!(fixture.backend.detach_session(&incomplete).await.is_err());
+            assert!(
+                fixture
+                    .backend
+                    .session_cleanup_complete(&incomplete)
+                    .await
+                    .is_err()
+            );
+            std::fs::write(fixture.path("platform/vhci_hcd.0/status"), EMPTY)?;
+            assert!(fixture.backend.detach_session(&incomplete).await.is_err());
+            std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        }
+        assert!(!fixture.path("argv").exists());
+        for invalid in ["0", "256", "invalid"] {
+            std::fs::write(fixture.path("devices/9-1/devnum"), invalid)?;
+            assert!(fixture.backend.sessions().await.is_err());
+        }
+        std::fs::remove_file(fixture.path("devices/9-1/devnum"))?;
+        assert!(fixture.backend.sessions().await.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn snapshot_rejects_replacement_between_usb_attribute_reads() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        use std::{io::Write, os::unix::fs::OpenOptionsExt};
+
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let path = fixture.path("devices/9-1");
+        let product = path.join("idProduct");
+        std::fs::remove_file(&product)?;
+        rustix::fs::mkfifoat(
+            rustix::fs::CWD,
+            &product,
+            rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+        )
+        .map_err(io::Error::from)?;
+        let removed = fixture.path("released");
+        let replacement = tokio::task::spawn_blocking(move || -> io::Result<()> {
+            // The FIFO rendezvous places replacement after the initial inode
+            // and address reads, while the product attribute is being read.
+            // Nonblocking opens plus a deadline also bound the failure path.
+            let deadline = std::time::Instant::now() + Duration::from_secs(3);
+            let nonblocking = i32::try_from(rustix::fs::OFlags::NONBLOCK.bits())
+                .map_err(|_| io::Error::other("nonblocking flag exceeds native API"))?;
+            let mut writer = loop {
+                match std::fs::OpenOptions::new()
+                    .write(true)
+                    .custom_flags(nonblocking)
+                    .open(&product)
+                {
+                    Ok(writer) => break writer,
+                    Err(error)
+                        if error.raw_os_error() == Some(rustix::io::Errno::NXIO.raw_os_error())
+                            && std::time::Instant::now() < deadline =>
+                    {
+                        std::thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => return Err(error),
+                }
+            };
+            std::fs::rename(&path, removed)?;
+            std::fs::create_dir(&path)?;
+            for (name, value) in [("idVendor", "1234"), ("idProduct", "abcd"), ("devnum", "2")] {
+                std::fs::write(path.join(name), value)?;
+            }
+            writer.write_all(b"abcd\n")
+        });
+        let result = fixture.backend.sessions().await;
+        replacement
+            .await
+            .map_err(|error| Error::State(error.to_string()))??;
+        assert!(
+            matches!(result, Err(Error::State(message)) if message.contains("generation changed"))
+        );
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
     async fn native_record_limit_is_rejected_before_network_or_kernel_mutations() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new("exit 99")?;
         let host = format!("{}.{}.example", "a".repeat(63), "b".repeat(63));
         let peer = Peer {
@@ -1271,6 +1544,7 @@ mod tests {
 
     #[tokio::test]
     async fn dropping_future_terminates_child_but_never_claims_kernel_rollback() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new("exec /bin/sleep 5")?;
         let backend = fixture.backend.clone();
         let operation = tokio::spawn(async move { backend.run_tool(&[]).await });
@@ -1292,6 +1566,7 @@ mod tests {
 
     #[tokio::test]
     async fn executable_verification_rejects_writable_configured_parent_chain() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let fixture = Fixture::new("exit 0")?;
         let mut configuration = Configuration {
             usbip: fixture.path("redirect"),
@@ -1336,6 +1611,7 @@ mod tests {
     }
     #[tokio::test]
     async fn unknown_export_state_and_untrusted_endpoint_records_are_rejected() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         for status in [2, 3, 99] {
             let fixture = Fixture::new("exit 99")?;
             fixture.binding("usbip-host", status)?;
@@ -1355,6 +1631,7 @@ mod tests {
     }
     #[tokio::test]
     async fn detach_waits_for_old_sysfs_generation_after_port_becomes_null() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let body = format!("cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\n");
         let fixture = Fixture::new(&body)?;
         std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
@@ -1378,6 +1655,7 @@ mod tests {
 
     #[tokio::test]
     async fn detach_does_not_wait_for_replacement_generation_at_same_path() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let body = format!("cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\n");
         let fixture = Fixture::new(&body)?;
         std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
@@ -1405,6 +1683,7 @@ mod tests {
     }
     #[tokio::test]
     async fn unsafe_record_directory_is_rejected_before_running_attach_tool() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
         let mut fixture = Fixture::new("exit 99")?;
         Arc::get_mut(&mut fixture.backend.configuration)
             .ok_or_else(|| Error::State("fixture configuration unexpectedly shared".into()))?
