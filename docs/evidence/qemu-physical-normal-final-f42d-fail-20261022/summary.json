@@ -1,0 +1,95 @@
+{
+  "started_at_utc": "20261022T130926Z",
+  "scope": "ordinary UID1000 helper-authorized nusb/usbfs server over QEMU HID/FTDI devices to Linux VHCI; no host USB",
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "f42d0f6c7c7c0b1416e6d5e06ae7cfc8b2806c5f",
+  "working_tree_dirty": false,
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--all-features"
+  ],
+  "cargo_lock_sha256": "9f21f12977a9d4f228917a00502cae17a0ee8801df2a9f6d7edb9d1f69f702ca",
+  "source_fingerprint_sha256": "a83b6db8c6a0ecc650c21411a3d24d5f82489233262d59f6a42a145d000ca3e3",
+  "script_sha256": {
+    "run-physical-qemu.py": "ec283dc7aff2bbdb183216d84a96833722ce9c22200bde0a0618053ffca2eec6",
+    "guest-physical-init.sh": "540563cc20fee64608786ee26cd3edf871c18b67c659d20d43e5978fcd847e70",
+    "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "link": [
+      "server:192.0.2.1",
+      "client:192.0.2.2"
+    ],
+    "ip_forward": false,
+    "qemu_usb_devices": 2,
+    "host_network_listener": false
+  },
+  "result": "FAIL",
+  "hot_unplug_requested": false,
+  "binary_sha256": {
+    "rustusb": "a28ec443f6e4d418d4e0f445e4548a2db5b93af64b842bf1804404c6d86e9d6b",
+    "rustusb-helper": "45901b13944cc6436f0165026c7b633dd422a46a74a1df658def132ab7f11f0f"
+  },
+  "probe_binary_sha256": "bbe04aa8c2f7d73a54ac4505ecc6814216b6718b3d49666d182901a2ffcbb857",
+  "guest_binary_sha256": {
+    "rustusb": "a28ec443f6e4d418d4e0f445e4548a2db5b93af64b842bf1804404c6d86e9d6b",
+    "rustusb-helper": "45901b13944cc6436f0165026c7b633dd422a46a74a1df658def132ab7f11f0f"
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "d8e32f4665f611771f004f82aacfcfea6033e06577b5aac40f3a97b702e7a057",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "error": "a physical guest reported failure",
+  "qmp_events": [],
+  "injections": [
+    "key-1",
+    "probe",
+    "probe-serial",
+    "serial-1"
+  ],
+  "serial_received_bytes": 35,
+  "serial_received_sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef",
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "server_checks": [
+    "RUSTUSB_PHYSICAL_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_PHYSICAL_SERVER_MODULES: PASS usbip_host=false vhci_hcd=false",
+    "RUSTUSB_PHYSICAL_ISOLATION role=server ip_forward=0",
+    "RUSTUSB_PHYSICAL_FD_GATE: PASS direct_uid1000=denied direct_uid1001=denied nodes=root0600",
+    "RUSTUSB_PHYSICAL_HELPER_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_PHYSICAL_HELPER_CONNECTION_CLOSED method=reset_after_frame",
+    "RUSTUSB_PHYSICAL_OPEN_FD_DENIED: PASS uid=1001 route=open_physical json_refusal=true closed=true",
+    "RUSTUSB_PHYSICAL_SERVER_UID: PASS uid=1000 app_root=false capabilities=0",
+    "RUSTUSB_PHYSICAL_PROBE_CLEANUP: PASS original_drivers=true inflight=0",
+    "RUSTUSB_PHYSICAL_SERVER_HELD: PASS cycle=1 drivers=usbfs leases=2"
+  ],
+  "client_checks": [
+    "RUSTUSB_PHYSICAL_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_PHYSICAL_ISOLATION role=client ip_forward=0",
+    "RUSTUSB_PHYSICAL_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_PHYSICAL_PROBE_WAIT_INPUT key=3",
+    "RUSTUSB_PHYSICAL_PROBE_WAIT_SERIAL bytes=13",
+    "RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=1 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio",
+    "RUSTUSB_PHYSICAL_WAIT_INPUT cycle=1",
+    "RUSTUSB_PHYSICAL_WAIT_SERIAL cycle=1",
+    "RUSTUSB_PHYSICAL_HID: PASS cycle=1 key_code=2 down=true up=true same_receipt=true",
+    "RUSTUSB_PHYSICAL_FTDI: PASS cycle=1 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true",
+    "RUSTUSB_PHYSICAL_RESULT: FAIL role=client stage=client-cycle-1 exit=1"
+  ]
+}

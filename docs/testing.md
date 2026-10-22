@@ -12,6 +12,8 @@
 
 在仓库根目录、已安装兼容稳定 Rust 且依赖可获取的环境执行：
 
+`scripts/check.sh`还运行固定vendor/nusb的14项纯内存library测试，构建产物放在根target子目录；它们覆盖raw Control错误/partial/长度边界，不枚举或打开USB设备，并在四个平台CI中执行。
+
 ```bash
 rustc --version
 cargo --version
