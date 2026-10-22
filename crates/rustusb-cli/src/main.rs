@@ -1,5 +1,7 @@
 //! Unprivileged RustUSB frontend. Mutations use the common authenticated local service.
 
+#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+mod physical_server;
 #[cfg(feature = "rust-backend")]
 mod virtual_server;
 
@@ -43,6 +45,25 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS).
+    #[cfg(feature = "physical-nusb")]
+    PhysicalServer {
+        /// Exact fingerprints in the helper's separate physical_device_ids allowlist.
+        #[arg(long = "device-id", required = true)]
+        device_ids: Vec<String>,
+        /// Bind a literal address; default loopback only.
+        #[arg(long, default_value = "127.0.0.1:3240")]
+        listen: std::net::SocketAddr,
+        /// Acknowledge an isolated administrator-managed test network.
+        #[arg(long)]
+        allow_insecure_test_network: bool,
+        /// Exact permitted source IP; required for a non-loopback listener.
+        #[arg(long)]
+        allow_peer: Vec<std::net::IpAddr>,
+        /// Read local snapshot/shutdown JSONL controls; EOF also closes the server.
+        #[arg(long)]
+        control_stdin: bool,
+    },
     /// Serve two virtual test devices; this experimental mode provides no authentication or TLS.
     #[cfg(feature = "rust-backend")]
     VirtualServer {
@@ -177,6 +198,40 @@ async fn invoke(cli: &Cli, req: Request) -> Result<()> {
 
 async fn run(cli: Cli) -> Result<()> {
     match &cli.command {
+        #[cfg(feature = "physical-nusb")]
+        Command::PhysicalServer {
+            device_ids,
+            listen,
+            allow_insecure_test_network,
+            allow_peer,
+            control_stdin,
+        } => {
+            #[cfg(target_os = "linux")]
+            {
+                physical_server::run(
+                    &cli.socket,
+                    device_ids.clone(),
+                    *listen,
+                    *allow_insecure_test_network,
+                    allow_peer.clone(),
+                    *control_stdin,
+                )
+                .await
+            }
+            #[cfg(not(target_os = "linux"))]
+            {
+                let _ = (
+                    device_ids,
+                    listen,
+                    allow_insecure_test_network,
+                    allow_peer,
+                    control_stdin,
+                );
+                Err(Error::Unsupported(
+                    "physical USBFS serving requires Linux".into(),
+                ))
+            }
+        }
         #[cfg(feature = "rust-backend")]
         Command::VirtualServer {
             listen,
@@ -345,6 +400,9 @@ async fn main() -> ExitCode {
     }
     #[cfg(feature = "rust-backend")]
     let owns_signal_cleanup = matches!(&cli.command, Command::VirtualServer { .. });
+    #[cfg(feature = "physical-nusb")]
+    let owns_signal_cleanup =
+        owns_signal_cleanup || matches!(&cli.command, Command::PhysicalServer { .. });
     #[cfg(not(feature = "rust-backend"))]
     let owns_signal_cleanup = false;
     let result = if owns_signal_cleanup {

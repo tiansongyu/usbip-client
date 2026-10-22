@@ -15,7 +15,7 @@ const MAX_LINE: usize = 4096;
 
 #[derive(Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
-enum Control {
+pub(super) enum Control {
     HidKey { id: String, key: u8 },
     CdcEmit { id: String, hex: String },
     Snapshot { id: String },
@@ -23,7 +23,7 @@ enum Control {
 }
 
 impl Control {
-    fn id(&self) -> &str {
+    pub(super) fn id(&self) -> &str {
         match self {
             Self::HidKey { id, .. }
             | Self::CdcEmit { id, .. }
@@ -33,7 +33,7 @@ impl Control {
     }
 }
 
-fn parse(line: &[u8]) -> Result<Control> {
+pub(super) fn parse(line: &[u8]) -> Result<Control> {
     // Parser errors can embed input fragments, so never forward serde's error text.
     let control: Control = serde_json::from_slice(line)
         .map_err(|_| Error::InvalidInput("invalid local control JSON or fields".into()))?;
@@ -69,14 +69,14 @@ fn hex_bytes(hex: &str) -> Result<Vec<u8>> {
         .collect()
 }
 
-struct EventOutput {
+pub(super) struct EventOutput {
     sender: mpsc::Sender<(Vec<u8>, oneshot::Sender<std::io::Result<()>>)>,
     // Cancellation leaves this true: its OS write may still be blocked.
-    in_flight: bool,
+    pub(super) in_flight: bool,
 }
 
 impl EventOutput {
-    fn new() -> Result<Self> {
+    pub(super) fn new() -> Result<Self> {
         let (sender, mut receiver) =
             mpsc::channel::<(Vec<u8>, oneshot::Sender<std::io::Result<()>>)>(2);
         // This std thread holds only bounded encoded events and stdout. It
@@ -100,7 +100,7 @@ impl EventOutput {
         })
     }
 
-    async fn event(&mut self, value: Value) -> Result<()> {
+    pub(super) async fn event(&mut self, value: Value) -> Result<()> {
         let mut bytes = serde_json::to_vec(&value)
             .map_err(|_| Error::State("could not encode server event".into()))?;
         if bytes.len() >= 65_536 {
@@ -139,7 +139,7 @@ fn read_line(reader: &mut impl BufRead) -> Result<Option<Vec<u8>>> {
     if count == 0 { Ok(None) } else { Ok(Some(line)) }
 }
 
-fn controls() -> Result<mpsc::Receiver<Result<Vec<u8>>>> {
+pub(super) fn controls() -> Result<mpsc::Receiver<Result<Vec<u8>>>> {
     let (sender, receiver) = mpsc::channel(2);
     // stdin is a blocking OS stream. A dedicated std thread avoids pinning a Tokio
     // worker or making runtime shutdown wait on an uncancellable Tokio stdin read.
