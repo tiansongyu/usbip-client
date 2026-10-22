@@ -133,3 +133,12 @@
 - 普通`git push origin main` exit0已推送两个提交，随后`git ls-remote`准确等于cfeffd3。实际四格[CI39774177011](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011) completed/success：Ubuntu22.04 x86_64 job119808847152、22.04 aarch64 job119808847387、24.04 aarch64 job119808847498、24.04 x86_64 job119808847541。root读取每job原始logs，核对native Rust host、默认75/allfeatures76（合计151）/0失败/0忽略与两项stdout背压回归；全部通过。完整步骤和链接`evidence/publication-virtual-20261022.json`。
 - 最终验收/README/协议/架构/兼容性/计划同步固定虚拟支持范围；真实G1及G2物理、ISO/通用Composite/alternate、G3认证/TLS/完整恢复、TUI/GUI/部署/性能/Windows仍未完成。Native核心和旧九场景脚本相对被测cfeffd3无更改；不会以文档修饰缺失功能。
 - root全Markdown本地链接159处检查通过，所有虚拟原始产物SHA/长度通过；最终文档/evidence单独commit普通push，再核对Git存储字节、远端SHA和clean状态。最后提交自身SHA以实际Git历史/push结果为准，不伪造自引用证据。
+
+## Rust 物理 USBFS adapter（基线037a9c7，实施中）
+
+- 上一轮是实质进展：2d6aadf/cfeffd3/037a9c7均push，最终四格CI39774946417全success、工作树clean。重新读取完整原始目标与项目skill，继续G2真实用户态设备路径，不把已测两个虚拟profile当作物理后端。
+- 并行审查nusb/rusb、共享engine和QEMU物理模型。固定nusb0.2.8公开API会丢Control partial/OUT实际长度、限制IN MPS倍数、只有cancel_all且Control Drop不立即取消；Linuxerrno类别折叠。不能直接套便利API宣称正确USB/IP。
+- 设计先行`research/rust-physical-backend-design.md`：固定许可vendor小扩展复用原usbfs底层；唯一网络engine下统一异步会话、真实terminal前保留lease/预算；helper精确授权OwnedFd能力、物理/Native策略互斥；普通UID服务，不接触宿主USB。/tmp纯编译原型已证明约140行safe API扩展可编译，尚不是设备或取消通过。
+- helper新增`physical-usb`可选操作：固定root节点/代际receipt、两阶段JSON→ACK→SCM_RIGHTS，旧策略缺字段默认空，Native/physical列表不能重叠。22项daemon all-features测试及Clippy通过，覆盖UID/ID/可信网声明在扫描前拒绝、无授权不传FD、CLOEXEC、标记/多FD/截断和普通文件拒绝。首次拒绝测试把未知UID关闭时的ECONNRESET误当失败；核对Unix stream未读数据行为后，只额外接受该明确错误，仍要求无FD与关闭，复跑全过。
+- 共享engine默认24项测试通过，原虚拟16项保持通过；新回归包含Control/IN/OUT异步errno与partial、真实terminal前保持busy/预算、完成/取消竞态、10秒清理截止和空active设备断开。空active此前不会poll事件，补独立disconnect观察，验证TCP关闭与USB清理所有权分别保持。
+- CLI提前验证设备数量/重复和网络策略，再联系helper；helper拒绝保留脱敏原因，不误报“未安装物理功能”。初版完整CLI `cargo check --all-features --locked`通过；随后vendor Control API补flag时的一次并行CLI测试遇到新旧签名中间态，待adapter冻结后统一复跑，不把实施中的编译结果写成最终gate。
