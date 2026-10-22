@@ -562,8 +562,29 @@ async fn connect_trusted(socket: &Path) -> Result<UnixStream> {
 
 pub(super) async fn request(socket: &Path, req: Request) -> Result<Response> {
     let mut stream = connect_trusted(socket).await?;
-    write_frame(&mut stream, &req).await?;
-    let frame = read_frame(&mut stream, RESPONSE_TIMEOUT).await?;
+    exchange(&mut stream, &req).await
+}
+
+// A helper can reject SO_PEERCRED and close before the caller writes anything.
+// Preserve that already-buffered refusal instead of replacing it with EPIPE.
+// This is used only on the same socket after connect_trusted; never retry work.
+async fn exchange(stream: &mut UnixStream, req: &Request) -> Result<Response> {
+    if let Err(write_error) = write_frame(stream, req).await {
+        if matches!(write_error, Error::Io(_) | Error::Timeout(_))
+            && let Ok(frame) = read_frame(stream, READ_TIMEOUT).await
+            && let Ok(response) = serde_json::from_slice::<Response>(&frame)
+            && !response.ok
+            && response.data.is_null()
+            && response
+                .error
+                .as_deref()
+                .is_some_and(|message| !message.trim().is_empty())
+        {
+            return Ok(response);
+        }
+        return Err(write_error);
+    }
+    let frame = read_frame(stream, RESPONSE_TIMEOUT).await?;
     serde_json::from_slice(&frame).map_err(json_error)
 }
 
@@ -574,9 +595,7 @@ pub(super) async fn open_physical(
 ) -> Result<super::PhysicalGrant> {
     super::validate_device_id(&device_id)?;
     let mut stream = connect_trusted(socket).await?;
-    write_frame(&mut stream, &Request::OpenPhysical { device_id }).await?;
-    let frame = read_frame(&mut stream, RESPONSE_TIMEOUT).await?;
-    let response: Response = serde_json::from_slice(&frame).map_err(json_error)?;
+    let response = exchange(&mut stream, &Request::OpenPhysical { device_id }).await?;
     if !response.ok {
         return Err(Error::State(
             response
@@ -835,6 +854,62 @@ mod tests {
             assert_eq!(response.ok, allowed);
             task.await
                 .map_err(|_| Error::State("test server task failed".into()))??;
+        }
+        Ok(())
+    }
+
+    async fn early_uid_refusal(req: Request) -> Result<()> {
+        let (mut client, server) = UnixStream::pair()?;
+        // Finish the actual SO_PEERCRED rejection before sending the request,
+        // deterministically reproducing the QEMU EPIPE ordering.
+        serve_connection(server, app(vec![])).await?;
+        let response = exchange(&mut client, &req).await?;
+        assert!(!response.ok && response.data.is_null());
+        assert!(
+            response
+                .error
+                .is_some_and(|message| message.starts_with("permission denied:"))
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn early_uid_refusal_survives_a_failed_status_request_write() -> Result<()> {
+        early_uid_refusal(Request::Status).await
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[tokio::test]
+    async fn early_uid_refusal_of_physical_capability_requires_no_acknowledgement() -> Result<()> {
+        early_uid_refusal(Request::OpenPhysical {
+            device_id: format!("usb-{}", "a".repeat(64)),
+        })
+        .await
+    }
+
+    #[tokio::test]
+    async fn failed_request_write_cannot_be_replaced_by_invalid_or_success_response() -> Result<()>
+    {
+        for frame in [
+            "{\"ok\":true,\"data\":null,\"error\":null}\n",
+            "{\"ok\":false,\"data\":null,\"error\":null}\n",
+            "{\"ok\":false,\"data\":true,\"error\":\"denied\"}\n",
+            "{\"ok\":false,\"data\":null,\"error\":\" \"}\n",
+            "{\"ok\":false,\"data\":null,\"error\":\"denied\",\"extra\":true}\n",
+            "malformed\n",
+            "{\"ok\":false}",
+            "",
+        ] {
+            let (mut client, mut server) = UnixStream::pair()?;
+            server.write_all(frame.as_bytes()).await?;
+            drop(server);
+            let error = exchange(&mut client, &Request::Status)
+                .await
+                .err()
+                .ok_or_else(|| Error::State("invalid refusal replaced the failed write".into()))?;
+            assert!(
+                matches!(error, Error::Io(ref error) if error.kind() == std::io::ErrorKind::BrokenPipe)
+            );
         }
         Ok(())
     }
