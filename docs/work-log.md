@@ -191,3 +191,9 @@
 - 原HID/FTDI正常/热拔各15probe、各两个客户端导入周期和真实输入/精确串口通过，host输出分别70B SHA a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5与140B SHA 7d2284a6df1220f6daa02362b9cc884b2aca1a86386c045f8157f27b090c5e2c。热拔期间FTDI同receipt继续、旧HID Gone和重插不自动授权、剩余原driver恢复/末资源0均通过。三项CLI/helper SHA全部相同，分别c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9和5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0。
 - 最终三项原始runtime/runner共23份和源码快照、独立解码、清单/sequence共33份索引产物已归档，root独立核对全部长度/SHA及与/tmp原字节一致。另核96份当前软件输入与软件gate和192640c Gitblob完全一致；本轮最终证据之后仅修改文档/证据，未修改产品或脚本。最终文档提交自身SHA和push实况以Git实际历史为准，避免伪造自引用哈希。
 - 独立第二复核78项全部PASS，`evidence/composite-final-independent-review-20261022.json`记录PCAP/USBMON/ownership/driver/config/alt/资源核对及复核时仅文档变动与run-start clean的区别；没有把归档后的脏文档误判为运行时源码变化。
+
+## 继续：不可取消 host-state 操作的确定性观察
+
+- 用户在Asia/Shanghai 2026-10-23要求继续，原完整goal仍active。fbc856c已普通push、远端main同SHA、clean；最终该head四原生CI job均实际completed/success，root逐份核原生日志216次执行、0失败/忽略及两项背压，原aggregate API仍显示旧in_progress，未伪造aggregate结论；单job事实保存`evidence/publication-composite-final-20261022.json`。
+- 重新读取项目skill/AGENTS、架构和Composite恢复设计，并并行只读审查测试缺口。现抽象AsyncBackend不能覆盖physical Special；Slot包含真实nusb::Device，不为纯fixture伪造USB FD或新增unsafe。只为测试引入全套I/O façade会扩大生产改动，优先评估仅QEMU ptrace syscall-entry门：保持实际ordinary server/helper/USBFS，单独暂停blocking TID，其余runtime处理UNLINK/EOF。设计见`research/usbfs-host-state-race-design.md`，尚无实现或本轮PASS。
+- 明确边界：syscall-entry尚未执行kernel ioctl，不能称kernel内部active；SETCONFIG有合法的前置旧claim释放，不和EOF最终恢复混淆；Special不是raw URB，snapshot usbfs_inflight=0不能证明其终态。后续采用门命中/真实terminal/slot与预算、FD及独立恢复观察作为裁决，保留真实QEMU错误。
