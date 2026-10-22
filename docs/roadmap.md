@@ -1,0 +1,94 @@
+# 分阶段开发与验收计划
+
+本计划以真实 Linux USB 设备级重定向为目标。阶段严格按证据推进：文档、编译、模拟测试、真实设备枚举和日常可靠使用是不同完成条件。所有未附运行记录的条目都属于**规划 / 未验证**；不会因为创建目录、实现命令入口或依赖具有某项能力而自动完成阶段。
+
+## 1. 第一阶段技术边界
+
+首期目标平台是 Ubuntu 22.04 / 24.04、x86_64 / aarch64。Linux Native 优先复用 `usbip_host`、`vhci_hcd`、`usbip` 和 `usbipd`，Rust 管理设备发现、策略、生命周期与诊断，不重写成熟内核数据通路。Rust 后端走用户态 USB 设备访问和独立 USB/IP 服务路线，不能与 usbip_host 叠加成同一设备数据路径。客户端首先使用 Linux VHCI；Windows 单独研究。
+
+CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定且设备级授权的操作。Phase 1 依赖管理员提供的可信 VPN / 受管通道，不把管理 API 加密当成 USB 数据加密。存储设备默认拒绝导出；完成排他、安全释放和保守恢复机制后才能扩大范围。Phase 0 / 1 不实现 GUI，不创建无实际职责的空 crate。
+
+## 2. 需求追踪与证据格式
+
+每项验收记录须包含代码 commit、日期、执行者、OS / 内核、架构、Rust 与原生工具版本、设备身份（脱敏）、后端、网络路径、命令、退出码、日志 / 抓包位置、预期与实际、清理结果及遗留问题。记录中分别使用 `已通过`、`失败`、`未执行`、`不适用（含理由）`；不能把未执行写成通过。
+
+发现矩阵必须与支持矩阵分开。发现某个 USB 类、列出描述符或看到已有驱动，只证明枚举和识别；支持声明还要求真实重定向、设备功能、异常处理和对应设备实例的证据。每次修改更新工作记录，重要技术结论关联上游版本、实际文件和测试，源码参考和许可证清单不可仅引用 README。
+
+## 3. Phase 0：源码调研和设计
+
+交付物：
+
+1. 固定 Linux 与 `jiegec/usbip` 上游 commit，审查用户态工具、内核驱动和协议文档，记录源码位置与差距。
+2. 分析 Rust 上游协议范围、Tokio 会话、rusb / nusb 路线、虚拟 HID / CDC ACM、QEMU、transfer types、Composite / alternate settings、错误处理、长度界限、阻塞、热插拔及独占恢复。
+3. 生成源码复用清单、依赖与许可证清单、协议报告和设备矩阵，不把 GPL 用户态源码无评估地复制到 MIT 代码。
+4. 定义架构与可编译 API：所有权、异步 / Send / Sync、错误、取消、状态事件、平台边界，详见架构文档。
+5. 安全威胁模型、阶段 gate、测试操作手册、项目 `AGENTS.md` 和实际可发现的开发 Skill。
+
+**G0 gate：** 每项关键技术判断有具体源文件 / 上游文档依据；所有能力标明源码证据、动态测试或未验证；可复用范围与许可证边界明确；Native 与 Rust 路径分离；平台、权限、存储、网络和硬件风险不留隐含默认。未形成这些产物前不以 GUI 或大规模 crate 骨架替代调研。
+
+## 4. Phase 1：最小可运行系统
+
+实现顺序：
+
+1. 建立稳定 Rust 2024 Cargo workspace、锁定依赖和 MSRV；先验证工具链及依赖兼容性。
+2. 读取 sysfs / 描述符，发现 VID/PID、名称、序列号、Bus ID、地址、USB 版本 / 速度、类、接口 / 端点、驱动、绑定 / 共享状态以及明确的未知 / 忙状态。
+3. `doctor` 检查 OS、内核配置 / 模块、原生工具、helper、权限及受管网络前提；缺依赖时给可操作的错误。
+4. 实现 root allowlist、Unix socket helper、参数校验和有界请求；固定工具调用和设备级策略，不自动扩大 root 权限。
+5. 完成设备导出 / 取消导出、远端发现、导入、断开、会话与状态查询、基础 `tracing` 日志；返回结构化错误。
+6. 设备独占与最小恢复：只管理本工具拥有的资源；明确失败 / 取消 / 拔出时的清理结果；存储和未知高风险接口保守拒绝。
+7. 提供 CLI 实际帮助与命令文档。目标命令为 `devices [--json]`、`export`、`unexport`、`discover`、`attach`、`detach`、`sessions`、`status`、`doctor`；`peers`、`logs`、`config`、`benchmark` 在有实际功能时加入，不伪造占位成功。
+
+**G1 软件 gate：** fmt / clippy / test / release build 全通过；设备解析、协议字节序 / 截断 / 上限、ID、配置、错误、超时 / 取消、helper 授权和命令参数均有自动测试；非 Linux 编译路径或平台错误明确；不使用 core `unwrap()` / `expect()` 隐藏外部错误。
+
+**G1 硬件 gate（必须）：** 两台测试 Ubuntu 通过受管安全网络，服务器导出至少一种真实、非存储测试 USB 设备，客户端经 RustUSB 管理的 Native 路径由 Linux 内核枚举，原生驱动完成实际功能操作；验证 detach / unexport、重新连接和清理。记录两端内核、工具、设备及网络路径。单主机、容器、mock、编译或 `usbip list` 通过均不能替代这一条件。
+
+**阶段状态规则：** 可交付“Phase 1 代码和自动检查完成、双机硬件验收待执行”，但只有 G1 软件与硬件 gate 均通过才称 Phase 1 完成。目标矩阵中未测的 OS / 架构仍标未验证。
+
+## 5. Phase 2：可选 Rust USB/IP 后端
+
+集成经过审查的 `jiegec/usbip`，保留统一发现 / 导出 / 导入 / 会话接口；选择性 feature 启用，不让 Native 默认路径承担实验依赖。实现虚拟设备、物理设备共享和阻塞 USB I/O 隔离，处理取消、热插拔和 exclusive claim 的释放。
+
+**G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
+
+## 6. Phase 3：安全远程连接和恢复
+
+增加身份认证、设备级授权、安全隧道、会话状态机、超时 / 心跳、错误分类、可取消操作、启动协调和审计。支持 IPv4、IPv6、主机名、局域网及 VPN；RTT、字节计数和带宽只在可观测时提供。安全通道与原生数据平面明确分离；内置 TLS 使用成熟库和本地转发代理，处理列表及长连接。
+
+**G3 gate：** [安全模型](security.md) S1–S6 的适用项全部有证据；无认证、错误 / 过期 / 撤销凭据、非法设备、重放 / 重复连接和并发争用全部拒绝；外部抓包证明 DEVLIST 和 IMPORT 后的 URB 均走加密通道，直连 3240 在 IPv4 / IPv6 被阻断。状态机覆盖 Discovered / Available / Exporting / Connecting / Connected / Disconnecting / Disconnected / Error / Recovering，所有关键路径有超时、取消、幂等清理和重启恢复测试。不能在故障后无条件恢复存储写入。
+
+## 7. Phase 4：完整 TUI
+
+使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。
+
+**G4 gate：** 全部页面使用同一核心接口；无 root TUI；键盘完整可达，窄终端 / resize 不崩溃，刷新保留选择；拔插、断网和权限拒绝有明确反馈；确认对话框不能成为 helper 授权替代品；CLI 既有测试保持通过。
+
+## 8. Phase 5：GUI 与安装体验
+
+评估 Tauri 后再实施 GUI，与 CLI / TUI 共用核心；提供双端设备列表、连接 / 断开、搜索、延迟、状态、设备详情、自动共享规则、错误和访问控制。制作 `.deb`、systemd 服务、配置参考、安装 / 卸载脚本、升级与回滚指引。root helper 的部署和策略默认拒绝；卸载不随意解绑不属于本工具的资源。
+
+**G5 gate：** 干净 Ubuntu 安装、升级、卸载、重装和重启验证；普通用户 GUI 不具 root 权限；包文件权限和单元隔离有效；自动共享规则遵守设备代际、权限和存储限制；安装示例能按步骤复现；移除程序后策略、凭据和数据的保留 / 删除行为明确且可验证。
+
+## 9. Phase 6：性能与兼容性
+
+扩大存储、Serial、HID、JTAG / Debug Probe、UVC、USB Audio、网卡、Composite 和其他类设备测试。支持声明精确到设备、固件、接口、USB 速度、后端、OS / 内核和网络条件。优先修复协议语义与资源问题，再优化复制和并发，不为吞吐破坏 URB 时序或错误语义。
+
+**G6 gate：** 基准记录 RTT、吞吐、P50 / P95 / P99 延迟、CPU、RSS、并发数、错误率和恢复表现；同时记录本地直连 / Native 基线、数据集、采样窗口和原始结果。存储测试覆盖一致性与保守恢复；Serial / HID / JTAG 测稳定性和延迟；摄像头 / 音频逐项验证带宽、帧时序、Isochronous 与 alternate settings。没有实测结果的指标只列测试目标，不给伪造数值。
+
+## 10. Phase 7：Windows
+
+独立审查 `usbipd-win`、`usbip-win2` 的驱动路线、许可证、维护状态、签名、安装、权限、系统兼容性和安全风险。不能假定 Linux `vhci_hcd` 可在 Windows 运行；原生内核驱动也不因为跨平台 Rust API 自动出现。
+
+**G7 gate：** 明确受支持 Windows 版本 / 架构、驱动来源和签名；独立威胁模型；干净系统安装 / 卸载 / 升级与双机互操作；设备和异常矩阵实际通过；禁止要求用户关闭平台安全机制作为常规安装步骤。完成前 Windows USB 直通保持未实现。
+
+## 11. 每阶段共同完成标准
+
+每阶段必须执行以下真实命令并保留退出码和输出，不能只在文档中列命令：
+
+```bash
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo test --workspace
+cargo build --workspace --release
+```
+
+核心公共 API 有文档；外部输入有长度 / 资源上限；关键业务有有效测试；错误不静默丢弃；异步 worker 不执行长时间阻塞 I/O；资源确定性释放；依赖和许可证清单随变更更新；所有功能注明平台 / 内核限制。过程记录覆盖变更目的、测试、失败原因、修复、遗留项和对应 commit。任何未通过的硬件、安全或互操作 gate 都不能被绿色 CI 覆盖。
