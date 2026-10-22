@@ -78,6 +78,32 @@ struct App {
 }
 
 impl App {
+    #[cfg(feature = "physical-usb")]
+    async fn open_physical(&self, uid: u32, id: String) -> Result<super::PhysicalGrant> {
+        self.policy.authorize_uid(uid)?;
+        self.policy.authorize_physical(&id)?;
+        let _state = timeout(QUEUE_TIMEOUT, self.state.lock())
+            .await
+            .map_err(|_| Error::Timeout("physical capability authorization queue".into()))?;
+        let before = current_device(&id).await?;
+        super::physical::ensure_eligible(&before)?;
+        let grant = tokio::task::spawn_blocking(move || super::physical::open_current(before))
+            .await
+            .map_err(|_| Error::State("physical capability open task failed".into()))??;
+        let after = current_device(&id).await?;
+        super::physical::ensure_eligible(&after)?;
+        let sysfs = fs::metadata(Path::new("/sys/bus/usb/devices").join(after.bus_id.as_str()))?;
+        if !same_device_generation(&grant.device, &after)
+            || sysfs.dev() != grant.receipt.sysfs_device
+            || sysfs.ino() != grant.receipt.sysfs_inode
+        {
+            return Err(Error::State(
+                "device generation changed before physical capability delegation".into(),
+            ));
+        }
+        Ok(grant)
+    }
+
     async fn handle(&self, uid: u32, req: Request) -> Result<serde_json::Value> {
         self.policy.authorize_uid(uid)?;
         if let Request::Status = req {
@@ -91,6 +117,8 @@ impl App {
                 "schema_version": super::STATUS_SCHEMA_VERSION,
                 "helper": "running",
                 "backend": "linux-native",
+                "physical_usb_capability_enabled": cfg!(feature = "physical-usb"),
+                "physical_device_allowlist_count": self.policy.physical_device_ids.len(),
                 "native_data_encryption": false,
                 "external_trusted_network_confirmed": self.policy.trusted_network,
                 "kernel": kernel,
@@ -106,6 +134,10 @@ impl App {
             })?;
         let export = matches!(&req, Request::Export { .. });
         match req {
+            #[cfg(feature = "physical-usb")]
+            Request::OpenPhysical { .. } => Err(Error::InvalidInput(
+                "physical capability requires descriptor handoff".into(),
+            )),
             Request::Export { device_id } | Request::Unexport { device_id } => {
                 self.policy.authorize_device(&device_id)?;
                 let before = current_device(&device_id).await?;
@@ -332,7 +364,7 @@ fn validate_metadata(metadata: &fs::Metadata, expected_uid: u32) -> Result<()> {
     Ok(())
 }
 
-fn protected_directory(path: &Path, expected_uid: u32) -> Result<()> {
+pub(super) fn protected_directory(path: &Path, expected_uid: u32) -> Result<()> {
     if !path.is_absolute() {
         return Err(Error::InvalidInput("helper paths must be absolute".into()));
     }
@@ -422,12 +454,16 @@ async fn write_frame<W: AsyncWrite + Unpin, T: Serialize>(writer: &mut W, value:
 async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
     let uid = stream.peer_cred()?.uid();
     let mut operation = "unauthorized_or_invalid";
+    #[cfg(feature = "physical-usb")]
+    let mut physical_grant = None;
     let response = match app.policy.authorize_uid(uid) {
         Err(error) => Response::failure(error),
         Ok(()) => match read_frame(&mut stream, READ_TIMEOUT).await {
             Ok(frame) => match serde_json::from_slice::<Request>(&frame).map_err(json_error) {
                 Ok(req) => {
                     operation = match &req {
+                        #[cfg(feature = "physical-usb")]
+                        Request::OpenPhysical { .. } => "open_physical",
                         Request::Export { .. } => "export",
                         Request::Unexport { .. } => "unexport",
                         Request::Attach { .. } => "attach",
@@ -435,6 +471,31 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                         Request::Sessions => "sessions",
                         Request::Status => "status",
                     };
+                    #[cfg(feature = "physical-usb")]
+                    if let Request::OpenPhysical { device_id } = req {
+                        match app.open_physical(uid, device_id).await {
+                            Ok(grant) => {
+                                let description = super::physical::GrantDescription {
+                                    device: grant.device.clone(),
+                                    receipt: grant.receipt.clone(),
+                                };
+                                match serde_json::to_value(description).map_err(json_error) {
+                                    Ok(data) => {
+                                        physical_grant = Some(grant);
+                                        Response::success(data)
+                                    }
+                                    Err(error) => Response::failure(error),
+                                }
+                            }
+                            Err(error) => Response::failure(error),
+                        }
+                    } else {
+                        match app.handle(uid, req).await {
+                            Ok(data) => Response::success(data),
+                            Err(error) => Response::failure(error),
+                        }
+                    }
+                    #[cfg(not(feature = "physical-usb"))]
                     match app.handle(uid, req).await {
                         Ok(data) => Response::success(data),
                         Err(error) => Response::failure(error),
@@ -454,14 +515,32 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
     if let Err(error) = write_frame(&mut stream, &response).await {
         if matches!(error, Error::Protocol(_)) {
             write_frame(&mut stream, &Response::failure(error)).await?;
+            // The grant description was not delivered. Never send its FD after
+            // the fallback failure, even if a caller sends an acknowledgement.
+            return Ok(());
         } else {
             return Err(error);
         }
     }
+    #[cfg(feature = "physical-usb")]
+    if let Some(grant) = physical_grant {
+        // JSON readers may buffer beyond a newline. Send ancillary data only
+        // after a separate acknowledgement, so no ordinary read can eat it.
+        let mut acknowledgement = [0; 1];
+        timeout(READ_TIMEOUT, stream.read_exact(&mut acknowledgement))
+            .await
+            .map_err(|_| Error::Timeout("physical descriptor handoff acknowledgement".into()))??;
+        if acknowledgement != [super::physical::FD_MARKER] {
+            return Err(Error::Protocol(
+                "invalid physical descriptor acknowledgement".into(),
+            ));
+        }
+        super::physical::send_fd(&stream, &grant.fd).await?;
+    }
     Ok(())
 }
 
-pub(super) async fn request(socket: &Path, req: Request) -> Result<Response> {
+async fn connect_trusted(socket: &Path) -> Result<UnixStream> {
     let parent = socket
         .parent()
         .ok_or_else(|| Error::InvalidInput("socket parent directory required".into()))?;
@@ -472,15 +551,49 @@ pub(super) async fn request(socket: &Path, req: Request) -> Result<Response> {
             "helper socket must be root-owned and not a symlink".into(),
         ));
     }
-    let mut stream = timeout(READ_TIMEOUT, UnixStream::connect(socket))
+    let stream = timeout(READ_TIMEOUT, UnixStream::connect(socket))
         .await
         .map_err(|_| Error::Timeout("connecting to local helper".into()))??;
     if stream.peer_cred()?.uid() != 0 {
         return Err(Error::Permission("helper peer is not root".into()));
     }
+    Ok(stream)
+}
+
+pub(super) async fn request(socket: &Path, req: Request) -> Result<Response> {
+    let mut stream = connect_trusted(socket).await?;
     write_frame(&mut stream, &req).await?;
     let frame = read_frame(&mut stream, RESPONSE_TIMEOUT).await?;
     serde_json::from_slice(&frame).map_err(json_error)
+}
+
+#[cfg(feature = "physical-usb")]
+pub(super) async fn open_physical(
+    socket: &Path,
+    device_id: String,
+) -> Result<super::PhysicalGrant> {
+    super::validate_device_id(&device_id)?;
+    let mut stream = connect_trusted(socket).await?;
+    write_frame(&mut stream, &Request::OpenPhysical { device_id }).await?;
+    let frame = read_frame(&mut stream, RESPONSE_TIMEOUT).await?;
+    let response: Response = serde_json::from_slice(&frame).map_err(json_error)?;
+    if !response.ok {
+        return Err(Error::State(
+            response
+                .error
+                .unwrap_or_else(|| "physical capability was denied".into()),
+        ));
+    }
+    let description: super::physical::GrantDescription =
+        serde_json::from_value(response.data).map_err(json_error)?;
+    timeout(
+        WRITE_TIMEOUT,
+        stream.write_all(&[super::physical::FD_MARKER]),
+    )
+    .await
+    .map_err(|_| Error::Timeout("physical capability acknowledgement".into()))??;
+    let fd = super::physical::receive_fd(&stream).await?;
+    super::physical::validate_received(fd, description)
 }
 
 pub(super) async fn serve(config: &Path, socket: &Path) -> Result<()> {
@@ -697,6 +810,7 @@ mod tests {
         Arc::new(App {
             policy: Policy {
                 allowed_uids,
+                physical_device_ids: vec![],
                 export_device_ids: vec![],
                 peers: vec![],
                 trusted_network: false,
@@ -794,6 +908,60 @@ mod tests {
                 .await,
             Err(Error::Permission(_))
         ));
+        Ok(())
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[tokio::test]
+    async fn physical_capability_denial_precedes_scanning_or_opening_usb() -> Result<()> {
+        for (allow_uid, allow_device, trusted_network) in [
+            (false, true, true),
+            (true, false, true),
+            (true, true, false),
+        ] {
+            let (mut client, server) = UnixStream::pair()?;
+            let uid = server.peer_cred()?.uid();
+            let id = format!("usb-{}", "b".repeat(64));
+            let service = Arc::new(App {
+                policy: Policy {
+                    allowed_uids: if allow_uid { vec![uid] } else { vec![] },
+                    physical_device_ids: if allow_device {
+                        vec![id.clone()]
+                    } else {
+                        vec![]
+                    },
+                    export_device_ids: vec![],
+                    peers: vec![],
+                    trusted_network,
+                },
+                backend: NativeBackend::default(),
+                state: Mutex::new(ManagedState::default()),
+            });
+            let task = tokio::spawn(serve_connection(server, service));
+            write_frame(&mut client, &Request::OpenPhysical { device_id: id }).await?;
+            let response: Response =
+                serde_json::from_slice(&read_frame(&mut client, READ_TIMEOUT).await?)
+                    .map_err(json_error)?;
+            assert!(!response.ok);
+            assert!(
+                response
+                    .error
+                    .is_some_and(|message| message.starts_with("permission denied:"))
+            );
+            task.await
+                .map_err(|_| Error::State("capability denial test server failed".into()))??;
+            match super::super::physical::receive_fd(&client).await {
+                Err(Error::Protocol(_)) => {}
+                // An unknown UID is rejected before reading its frame. Closing
+                // a Unix stream with unread bytes can report ECONNRESET.
+                Err(Error::Io(error)) if error.kind() == std::io::ErrorKind::ConnectionReset => {}
+                _ => {
+                    return Err(Error::State(
+                        "denied capability connection did not close without an FD".into(),
+                    ));
+                }
+            }
+        }
         Ok(())
     }
 

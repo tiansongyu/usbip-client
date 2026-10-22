@@ -242,6 +242,25 @@ pub struct Device {
     pub export_blockers: Vec<String>,
 }
 
+/// Linux identity receipt for an explicitly authorized usbfs device descriptor.
+/// This ties a capability to one current device generation, not persistent identity.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PhysicalDeviceReceipt {
+    /// Filesystem device number containing the canonical sysfs device directory.
+    pub sysfs_device: u64,
+    /// Inode of that sysfs directory; replacement must not inherit authorization.
+    pub sysfs_inode: u64,
+    /// Character-node st_rdev, identifying the opened usbfs device.
+    pub node_device: u64,
+    /// Inode of the opened usbfs character node.
+    pub node_inode: u64,
+    /// Current USB address (1..=127), distinct from the port chain.
+    pub usb_device_number: u32,
+    /// Current USB bus number, used only to construct the fixed usbfs node path.
+    pub bus_number: u16,
+}
+
 /// All lifecycle states required by the full service design.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SessionState {
