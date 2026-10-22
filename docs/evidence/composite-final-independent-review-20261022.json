@@ -1,0 +1,577 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "reviewed_at_utc": "2026-10-22T14:51:52.157138+00:00",
+  "review_type": "independent read-only artifact and frozen-script verification; no Cargo, QEMU, USB or network operation",
+  "evidence_directory": "/tmp/rustusb-composite-final-20261022",
+  "git_commit": "22d172d84779d92fe51f5a1c6f9c99e5ff747049",
+  "checks": [
+    {
+      "check": "frozen_commit_22d172d",
+      "passed": true,
+      "detail": "22d172d84779d92fe51f5a1c6f9c99e5ff747049"
+    },
+    {
+      "check": "clean_worktree_at_final_run_start",
+      "passed": true
+    },
+    {
+      "check": "default_locked_all_features_build",
+      "passed": true
+    },
+    {
+      "check": "private_uhci_topology",
+      "passed": true
+    },
+    {
+      "check": "all_recorded_scripts_still_match_frozen_hashes",
+      "passed": true,
+      "detail": {
+        "run-composite-qemu.py": true,
+        "guest-composite-init.sh": true,
+        "composite-wire-probe.rs": true,
+        "run-native-qemu.py": true,
+        "guest-init.sh": true
+      }
+    },
+    {
+      "check": "guest_binaries_match_built_release",
+      "passed": true
+    },
+    {
+      "check": "terminal_guest_server_pass",
+      "passed": true
+    },
+    {
+      "check": "terminal_guest_client_pass",
+      "passed": true
+    },
+    {
+      "check": "one_complete_usbmon_block",
+      "passed": true
+    },
+    {
+      "check": "usbmon_same_urb_one_byte_submission_completion",
+      "passed": true
+    },
+    {
+      "check": "usbmon_submission_precedes_completion",
+      "passed": true
+    },
+    {
+      "check": "unique_physical_interrupt_error_completion",
+      "passed": true
+    },
+    {
+      "check": "wire_matches_independent_kernel_status_actual_and_opaque_byte",
+      "passed": true,
+      "detail": [
+        {
+          "event": "composite_probe_case",
+          "case": "real_interrupt_stall_preserves_connection",
+          "result": "PASS",
+          "status": -32,
+          "actual_length": 1,
+          "buffer_hex": "00",
+          "provenance": "kernel_reported_qemu_uhci"
+        }
+      ]
+    },
+    {
+      "check": "exact_lifecycle_busy_and_health_cases",
+      "passed": true,
+      "detail": {
+        "descriptor_index_is_not_configuration_value": 1,
+        "configuration_two_data_alt_zero_is_active": 1,
+        "configuration_barrier_uses_new_empty_endpoint_map": 1,
+        "alternate_one_enables_real_pending_bulk_endpoint": 1,
+        "alternate_barrier_retires_old_queued_and_active_requests": 1,
+        "nonexistent_alternate_stalls_without_state_change": 1,
+        "real_control_stall_preserves_connection": 1,
+        "real_interrupt_stall_preserves_connection": 1,
+        "model_clear_halt_failure_is_not_faked_success": 1,
+        "configuration_zero_and_reconfiguration_are_observed": 1,
+        "host_state_unlink_has_real_winner": 1,
+        "pending_real_endpoint_eof_recovers_original_device": 1,
+        "submitted_host_state_eof_cleanup_converges": 1,
+        "unsupported_iso_frame_is_explicitly_rejected": 1,
+        "all_lifecycle_checks": 1,
+        "ecm_exclusive_busy": 2,
+        "original_ecm_available": 2
+      }
+    },
+    {
+      "check": "data-usb.pcap_ethernet_link_type",
+      "passed": true
+    },
+    {
+      "check": "data-usb.pcap_request1_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-usb.pcap_response1_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-usb.pcap_request2_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-usb.pcap_response2_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-usb.pcap_complete_records",
+      "passed": true
+    },
+    {
+      "check": "data-usb.pcap_exact38B_requests39B_responses_once_per_cycle",
+      "passed": true,
+      "detail": {
+        "request1": 1,
+        "response1": 1,
+        "request2": 1,
+        "response2": 1
+      }
+    },
+    {
+      "check": "data-peer.pcap_ethernet_link_type",
+      "passed": true
+    },
+    {
+      "check": "data-peer.pcap_request1_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-peer.pcap_response1_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-peer.pcap_request2_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-peer.pcap_response2_correct_endpoint",
+      "passed": true
+    },
+    {
+      "check": "data-peer.pcap_complete_records",
+      "passed": true
+    },
+    {
+      "check": "data-peer.pcap_exact38B_requests39B_responses_once_per_cycle",
+      "passed": true,
+      "detail": {
+        "request1": 1,
+        "response1": 1,
+        "request2": 1,
+        "response2": 1
+      }
+    },
+    {
+      "check": "one_complete_peer_events_block",
+      "passed": true
+    },
+    {
+      "check": "application_client_exact_two_cycles",
+      "passed": true,
+      "detail": [
+        {
+          "event": "composite_udp_client",
+          "cycle": 1,
+          "request_bytes": 38,
+          "response_bytes": 39,
+          "exact": true
+        },
+        {
+          "event": "composite_udp_client",
+          "cycle": 2,
+          "request_bytes": 38,
+          "response_bytes": 39,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "check": "application_peer_exact_two_cycles",
+      "passed": true,
+      "detail": [
+        {
+          "event": "composite_udp_peer",
+          "cycle": 1,
+          "request_bytes": 38,
+          "response_bytes": 39,
+          "exact": true
+        },
+        {
+          "event": "composite_udp_peer",
+          "cycle": 2,
+          "request_bytes": 38,
+          "response_bytes": 39,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "check": "one_complete_events_block",
+      "passed": true
+    },
+    {
+      "check": "physical_server_events_no_error_schema1",
+      "passed": true
+    },
+    {
+      "check": "seven_exact_snapshots",
+      "passed": true
+    },
+    {
+      "check": "single_terminal_stopped_event",
+      "passed": true
+    },
+    {
+      "check": "baseline_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "baseline_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "baseline_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "baseline_verified_release_and_both_original_drivers",
+      "passed": true
+    },
+    {
+      "check": "held-1_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "held-1_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "held-1_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "held-1_both_interfaces_owned",
+      "passed": true
+    },
+    {
+      "check": "io-1_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "io-1_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "io-1_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "io-1_both_interfaces_owned",
+      "passed": true
+    },
+    {
+      "check": "released-1_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "released-1_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "released-1_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "released-1_verified_release_and_both_original_drivers",
+      "passed": true
+    },
+    {
+      "check": "held-2_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "held-2_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "held-2_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "held-2_both_interfaces_owned",
+      "passed": true
+    },
+    {
+      "check": "io-2_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "io-2_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "io-2_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "io-2_both_interfaces_owned",
+      "passed": true
+    },
+    {
+      "check": "released-2_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "released-2_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "released-2_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "released-2_verified_release_and_both_original_drivers",
+      "passed": true
+    },
+    {
+      "check": "stopped_one_physical_device",
+      "passed": true
+    },
+    {
+      "check": "stopped_same_registered_device",
+      "passed": true
+    },
+    {
+      "check": "stopped_original_configuration_speed_ep0",
+      "passed": true
+    },
+    {
+      "check": "stopped_verified_release_and_both_original_drivers",
+      "passed": true
+    },
+    {
+      "check": "cycle1_real_bulk_counters_advance",
+      "passed": true
+    },
+    {
+      "check": "cycle1_ownership_receipt_and_kernel_cleanup",
+      "passed": true
+    },
+    {
+      "check": "cycle1_original_alternate_and_driver_restoration",
+      "passed": true
+    },
+    {
+      "check": "cycle2_real_bulk_counters_advance",
+      "passed": true
+    },
+    {
+      "check": "cycle2_ownership_receipt_and_kernel_cleanup",
+      "passed": true
+    },
+    {
+      "check": "cycle2_original_alternate_and_driver_restoration",
+      "passed": true
+    },
+    {
+      "check": "official_cycle_is_unmanaged_and_helper_refuses_detach",
+      "passed": true
+    },
+    {
+      "check": "initial_baseline_each_release_and_stopped_original_state_observed",
+      "passed": true
+    },
+    {
+      "check": "server_and_udp_peer_unprivileged",
+      "passed": true
+    },
+    {
+      "check": "fixed_test_payload_absent_from_production_output",
+      "passed": true
+    },
+    {
+      "check": "current_changes_are_only_documentation_or_archived_evidence",
+      "passed": true
+    }
+  ],
+  "kernel_reported_interrupt_error": [
+    {
+      "tag": "ffff892843b5b300",
+      "pipe": "Ii:1:002:1",
+      "status": -32,
+      "actual_length": 1,
+      "buffer_hex": "00",
+      "submission": "ffff892843b5b300 4903802 S Ii:1:002:1 -115:32 1 <",
+      "completion": "ffff892843b5b300 4927656 C Ii:1:002:1 -32:32 1 = 00"
+    }
+  ],
+  "private_pcap_udp": {
+    "data-usb.pcap": {
+      "packets": 18,
+      "matches": [
+        {
+          "label": "request1",
+          "source": "198.18.0.2",
+          "destination": "198.18.0.1",
+          "ports": [
+            48002,
+            48001
+          ],
+          "bytes": 38,
+          "sha256": "b9abcb127658042be40504080bb98334017f55441d409754d3caf9a029e1e517"
+        },
+        {
+          "label": "response1",
+          "source": "198.18.0.1",
+          "destination": "198.18.0.2",
+          "ports": [
+            48001,
+            48002
+          ],
+          "bytes": 39,
+          "sha256": "fddb52db9d2bd15bb5cdecc54c50ef4782323780612e8d1534b6f3fab504cb38"
+        },
+        {
+          "label": "request2",
+          "source": "198.18.0.2",
+          "destination": "198.18.0.1",
+          "ports": [
+            48002,
+            48001
+          ],
+          "bytes": 38,
+          "sha256": "68d3135d64ee4d6bbdb12d211859bf4498c24caa985a7e5ac976fcec1e7a851d"
+        },
+        {
+          "label": "response2",
+          "source": "198.18.0.1",
+          "destination": "198.18.0.2",
+          "ports": [
+            48001,
+            48002
+          ],
+          "bytes": 39,
+          "sha256": "bb1890f05c3bf9cb296b6706db9ad3bcff9c9a28697564994700014829f5be72"
+        }
+      ],
+      "bytes": 1710,
+      "sha256": "dbacb227eb049360463098f7b7f35d0ea2a6599a529145766cb98685ee34a79f"
+    },
+    "data-peer.pcap": {
+      "packets": 18,
+      "matches": [
+        {
+          "label": "request1",
+          "source": "198.18.0.2",
+          "destination": "198.18.0.1",
+          "ports": [
+            48002,
+            48001
+          ],
+          "bytes": 38,
+          "sha256": "b9abcb127658042be40504080bb98334017f55441d409754d3caf9a029e1e517"
+        },
+        {
+          "label": "response1",
+          "source": "198.18.0.1",
+          "destination": "198.18.0.2",
+          "ports": [
+            48001,
+            48002
+          ],
+          "bytes": 39,
+          "sha256": "fddb52db9d2bd15bb5cdecc54c50ef4782323780612e8d1534b6f3fab504cb38"
+        },
+        {
+          "label": "request2",
+          "source": "198.18.0.2",
+          "destination": "198.18.0.1",
+          "ports": [
+            48002,
+            48001
+          ],
+          "bytes": 38,
+          "sha256": "68d3135d64ee4d6bbdb12d211859bf4498c24caa985a7e5ac976fcec1e7a851d"
+        },
+        {
+          "label": "response2",
+          "source": "198.18.0.1",
+          "destination": "198.18.0.2",
+          "ports": [
+            48001,
+            48002
+          ],
+          "bytes": 39,
+          "sha256": "bb1890f05c3bf9cb296b6706db9ad3bcff9c9a28697564994700014829f5be72"
+        }
+      ],
+      "bytes": 1710,
+      "sha256": "325017cc8b2c9b0734820ddf8a877355aa8e275cc37aa00f12f2b863c4d309d4"
+    }
+  },
+  "artifacts": {
+    "summary.json": {
+      "bytes": 39756,
+      "sha256": "d8c436360b7457c69924ae9fcaca2f9b4857a3651f191d211326844d7fa93db6"
+    },
+    "server-serial.log": {
+      "bytes": 52075,
+      "sha256": "4fbc3951cb6659759db53bc68aa56b4b7a8d901892910a8a503404beefaa20c2"
+    },
+    "client-serial.log": {
+      "bytes": 38518,
+      "sha256": "0805fc1cc000ecb83eaf25af3100710bb7713ff2c89ed31e1432a449f213bc7d"
+    },
+    "server-qemu.stderr": {
+      "bytes": 1873,
+      "sha256": "2eba343beed27c2256b716576fd91500e1bd3d519b7ded12e2cad397db21913b"
+    },
+    "client-qemu.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build.log": {
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08"
+    },
+    "data-usb.pcap": {
+      "bytes": 1710,
+      "sha256": "dbacb227eb049360463098f7b7f35d0ea2a6599a529145766cb98685ee34a79f"
+    },
+    "data-peer.pcap": {
+      "bytes": 1710,
+      "sha256": "325017cc8b2c9b0734820ddf8a877355aa8e275cc37aa00f12f2b863c4d309d4"
+    }
+  },
+  "limitations": [
+    "The UHCI -32/actual1 value and its opaque buffer match the guest kernel completion; this is not evidence that the USB device transferred one byte or that real hardware partial-error behavior was tested.",
+    "Original driver=None with nonzero alternate recovery, arbitrary Composite/alternate devices, ISO support, and real physical hardware are not established by this ECM model."
+  ],
+  "review_worktree_changes": {
+    "clean": false,
+    "paths": [
+      "AGENTS.md",
+      "README.md",
+      "docs/acceptance.md",
+      "docs/compatibility.md",
+      "docs/research/composite-qemu.md",
+      "docs/roadmap.md",
+      "docs/testing.md",
+      "docs/work-log.md",
+      "docs/evidence/composite-capture-final-verification-20261022.json",
+      "docs/evidence/composite-final-20261022.json",
+      "docs/evidence/composite-final-sequence-20261022.json",
+      "docs/evidence/qemu-composite-final-20261022/",
+      "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/",
+      "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/"
+    ],
+    "interpretation": "Post-run documentation and final-evidence archival changes are recorded separately; the final run started clean and all frozen script hashes match."
+  }
+}

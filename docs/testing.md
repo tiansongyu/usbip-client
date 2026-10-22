@@ -1,6 +1,6 @@
 # 测试手册与证据要求
 
-本手册定义 RustUSB 的自动检查、双 Ubuntu 实机验收、异常、安全和性能测试。命令面向稳定 Rust 及 Linux；本文本身不是已执行测试结果。**当前所有硬件与端到端场景均需实际执行后登记，不能以编译成功推断 USB 直通成功。** 最终状态以仓库工作记录中的命令、退出码和原始证据为准。
+本手册定义 RustUSB 的自动检查、双 Ubuntu 实机验收、异常、安全和性能测试。命令面向稳定 Rust 及 Linux；本文本身不是已执行测试结果。**硬件与新增端到端场景均需实际执行后登记，不能以编译成功推断 USB 直通成功。** 最终状态以仓库工作记录中的命令、退出码和原始证据为准。
 
 ## 1. 环境与安全前提
 
@@ -108,7 +108,9 @@ G1-Q 入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-init.sh
 | 虚拟 HID / CDC ACM | 参考固定上游 commit 的 QEMU 脚本，记录 QEMU / 来宾内核、设备模型和具体启动参数；验证枚举、事件 / 字节传输 | Phase 2 |
 | 异常与重连 | QEMU / 协议 harness 断开、重新枚举、非法头、截断、错误序号、版本不兼容，验证错误和资源回收 | Phase 2 |
 
-原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。当前已提供Native双guest脚本；后续Rust服务端、CDC和网络故障测试须分别建立入口并记录结果，不能复用本轮Native通过标签。
+可选Rust虚拟服务、USBFS物理adapter及ECM各有独立入口：`scripts/qemu/run-userspace-qemu.py`、`scripts/qemu/run-physical-qemu.py`（热拔加`--hot-unplug`）、`scripts/qemu/run-composite-qemu.py`。ECM的两个私有netdev捕获只含合成测试数据，可用`python3 docs/evidence/verify-composite-captures.py <evidence-directory>`独立检查精确UDP字节和帧边界；USBMON仅在来宾显式诊断。最新ECM与原物理正常/热拔在同一干净22d172d三项通过，范围和所有失败见[报告](research/composite-qemu.md)。默认均构建，顺序运行避免共享release产物变化；检查期间禁止仓库写入，最终summary须记录clean、来源和guest退出码。
+
+原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。上述独立入口与各自报告分别记录已执行范围，不能复用Native通过标签替代其他后端或设备的验证。
 
 ## 5. 状态机和异常测试
 

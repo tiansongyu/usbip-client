@@ -1,6 +1,6 @@
 # 兼容性与支持证据
 
-2026-10-22：目标 Linux Ubuntu22.04/24.04 × x86_64/aarch64。四格[原生软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011)全部通过，各自native Rust host、默认75项/allfeatures76项测试、fmt/Clippy/release/Rustdoc、只读smoke及两项stdout背压回归均有[持久证据](evidence/publication-virtual-20261022.json)。历史Native59项CI另有[记录](evidence/ci-native-matrix-2026-10-22.json)。USB内核互操作仍仅在22.04宿主/6.8 x86_64 guest的QEMU模拟设备上验证；真实硬件、24.04内核USB互操作、aarch64 USB内核路径均未验证，不能宣称完整设备兼容矩阵通过。Windows、macOS、TUI、GUI均为后续阶段。
+2026-10-22：目标 Linux Ubuntu22.04/24.04 × x86_64/aarch64。最新四格[原生软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39795249579)全部通过，各自native Rust host、默认89项/allfeatures113项及vendor14项测试、fmt/Clippy/release/Rustdoc、只读smoke及两项stdout背压回归均有[持久证据](evidence/publication-composite-20261022.json)。历史虚拟服务75/76项和Native59项CI分别保留[记录](evidence/publication-virtual-20261022.json)与[Native记录](evidence/ci-native-matrix-2026-10-22.json)。USB内核互操作仍仅在22.04宿主/6.8 x86_64 guest的QEMU模拟设备上验证；真实硬件、24.04内核USB互操作、aarch64 USB内核路径均未验证，不能宣称完整设备兼容矩阵通过。Windows、macOS、TUI、GUI均为后续阶段。
 
 | 设备类型 | sysfs 可发现 | Linux Native 候选路径 | jiegec 后端审计边界 | RustUSB 真实设备验证 |
 | --- | --- | --- | --- | --- |
@@ -28,3 +28,5 @@
 可选Rust虚拟后端在干净cfeffd3的[独立双QEMU测试](research/userspace-qemu.md)通过：普通UID1000服务，无usbip_host或QEMU USB设备；真实Linux6.8 x86_64 VHCI同时枚举1234:0001键盘/usbhid和1234:0002标准双接口CDC/cdc_acm，两周期真实按下/释放、57600/8控制状态和精确串口注入/回显、busy/UNLINK/畸形包/释放均验证。此两个Full-Speed测试profile不改变上表真实硬件未执行的状态，也不代表任意HID/CDC、物理rusb/nusb、ISO或通用Composite/alternate兼容。
 
 新增可选USBFS/nusb0.2.8 adapter在同一Linux6.8 x86_64 QEMU环境完成[正常/热拔场景](research/physical-qemu.md)：QEMU HID0627:0001为High-Speed/EP0=64、FTDI0403:6001为Full-Speed/EP0=8；普通UID1000只经helper获取root0600节点FD，client实际usbhid/ftdi_sio枚举与I/O。干净37bc6b4的正常两轮与热拔时FTDI继续、重插不继承授权均通过，原虚拟HID/CDC回归也通过；同一提交的[四格原生CI](evidence/publication-physical-20261022.json)各89/103/14项与stdout背压全通过。它验证真实usbfs调用上的模拟USB设备，不改变上表真实硬件未执行、ISO/任意Composite/alternate未验证的状态。
+
+最新配置安全/多接口恢复在同一干净22d172d完成[三项最终回归](research/composite-qemu.md)：CDC ECM usb-net 0525:a4a2/Full-Speed/EP0=64，UHCI下真实USBFS→VHCI→cdc_ether，两次精确UDP请求38B/响应39B、两接口原驱动/config1/alt0,1恢复；原HID/FTDI正常与热拔回归也通过，6guest均exit0。QEMU6.2 xHCI搭配该ECM模型仍有网络帧拼接FAIL，原抓包完整保留；成功CLEAR_HALT、真实设备partial-error、任意混合Composite、无原驱动且非零alternate恢复和ISO未验证。

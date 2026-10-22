@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "scope": "Clean-commit final isolated QEMU ECM plus unchanged physical HID/FTDI normal and hot-unplug regression; no host USB/module/network changes; not real hardware acceptance",
+  "final_clean_commit": "22d172d84779d92fe51f5a1c6f9c99e5ff747049",
+  "checks": {
+    "three_runs_same_clean_commit": true,
+    "all_results_pass": true,
+    "all_default_locked_all_features_build": true,
+    "all_guest_exit_codes_zero": true,
+    "all_guest_binary_sha256_match_build": true,
+    "same_binary_sha256_across_three_runs": true,
+    "common_binary_sha256": {
+      "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+      "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+    },
+    "all_final_pending_queued_inflight_and_buffer_zero": true
+  },
+  "sequence_artifact": {
+    "path": "docs/evidence/composite-final-sequence-20261022.json",
+    "bytes": 594,
+    "sha256": "de31398c1311a48f3cca1ed55f5cdabbd7a8f3c7402e1c5a2845cf355fcc8220",
+    "provenance": "original sequence JSON byte-identical to /tmp/rustusb-composite-final-sequence-20261022.json"
+  },
+  "runs": [
+    {
+      "run": "composite",
+      "result": "PASS",
+      "evidence_directory": "docs/evidence/qemu-composite-final-20261022",
+      "original_tmp_directory": "/tmp/rustusb-composite-final-20261022",
+      "git_commit": "22d172d84779d92fe51f5a1c6f9c99e5ff747049",
+      "working_tree_dirty": false,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "source_fingerprint_sha256": "d34ff1f5962e27399eb86c1d94eb5670c00b749203c9b50c4a2f7e5723006ada",
+      "script_sha256": {
+        "run-composite-qemu.py": "5b3b070d8adf29e07f19a67e62df265bc62a1549ae5f756817581a72ab6c6048",
+        "guest-composite-init.sh": "6b9e08c26f67250fc0bfaa960919f6ad81873e021f9df5818853e4712ceed527",
+        "composite-wire-probe.rs": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_matches_build": true,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "protocol_probe_case_count": 19,
+      "final_device_states": [
+        [
+          "1-1",
+          "available"
+        ]
+      ],
+      "final_buffer_bytes_reserved": 0,
+      "artifact_count": 16,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/artifacts.sha256",
+          "bytes": 1292,
+          "sha256": "8e13bf53c433031c197ef1cc2e42756c0b8e998717aa95b6705327da4af2b98f",
+          "provenance": "derived SHA256 manifest of all other artifacts in this run directory"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/build.log",
+          "bytes": 62,
+          "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/client-serial.log",
+          "bytes": 38518,
+          "sha256": "0805fc1cc000ecb83eaf25af3100710bb7713ff2c89ed31e1432a449f213bc7d",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/data-peer.pcap",
+          "bytes": 1710,
+          "sha256": "325017cc8b2c9b0734820ddf8a877355aa8e275cc37aa00f12f2b863c4d309d4",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/data-peer.pcap"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/data-usb.pcap",
+          "bytes": 1710,
+          "sha256": "dbacb227eb049360463098f7b7f35d0ea2a6599a529145766cb98685ee34a79f",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/data-usb.pcap"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/independent-analysis.json",
+          "bytes": 3122,
+          "sha256": "b3302366413ca84d4c0d6be811c163d4faf7266bb4c8e277bb57eba6429727f9",
+          "provenance": "derived from independent-analysis.py executed against this final runtime PCAP and guest USBMON artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/independent-analysis.py",
+          "bytes": 4164,
+          "sha256": "1c7cf0745138d1baa3e8fb3c3112e9fe2cdef8779c1d0b4e3f861d34f5021d2f",
+          "provenance": "byte-identical offline decoder from qemu-composite-dev08-20261022; independently rerun on this final directory"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/runner.log",
+          "bytes": 78,
+          "sha256": "2c6e7f4541c61f35696d38161aa2af1379b5206b08eeca1aaef225b1a4f7ad6f",
+          "provenance": "original runner stdout/stderr; byte-identical to /tmp/rustusb-composite-final-20261022-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/server-qemu.stderr",
+          "bytes": 1873,
+          "sha256": "2eba343beed27c2256b716576fd91500e1bd3d519b7ded12e2cad397db21913b",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/server-serial.log",
+          "bytes": 52075,
+          "sha256": "4fbc3951cb6659759db53bc68aa56b4b7a8d901892910a8a503404beefaa20c2",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/source/artifacts.sha256",
+          "bytes": 268,
+          "sha256": "3c41de88258adf78f8be14b97b8160575e4360f0f8231413768a39c3514e2107",
+          "provenance": "derived SHA256 manifest of exact Git source snapshots"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/source/composite-wire-probe.rs",
+          "bytes": 29860,
+          "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2",
+          "provenance": "exact Git blob 22d172d84779d92fe51f5a1c6f9c99e5ff747049:scripts/qemu/composite-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/source/guest-composite-init.sh",
+          "bytes": 20780,
+          "sha256": "6b9e08c26f67250fc0bfaa960919f6ad81873e021f9df5818853e4712ceed527",
+          "provenance": "exact Git blob 22d172d84779d92fe51f5a1c6f9c99e5ff747049:scripts/qemu/guest-composite-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/source/run-composite-qemu.py",
+          "bytes": 22328,
+          "sha256": "5b3b070d8adf29e07f19a67e62df265bc62a1549ae5f756817581a72ab6c6048",
+          "provenance": "exact Git blob 22d172d84779d92fe51f5a1c6f9c99e5ff747049:scripts/qemu/run-composite-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-composite-final-20261022/summary.json",
+          "bytes": 39756,
+          "sha256": "d8c436360b7457c69924ae9fcaca2f9b4857a3651f191d211326844d7fa93db6",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-composite-final-20261022/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "physical-normal",
+      "result": "PASS",
+      "evidence_directory": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022",
+      "original_tmp_directory": "/tmp/rustusb-physical-normal-composite-regression-final-20261022",
+      "git_commit": "22d172d84779d92fe51f5a1c6f9c99e5ff747049",
+      "working_tree_dirty": false,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "source_fingerprint_sha256": "8934682b74cab7d5aa3d46444e6a02f8c35b6efbd5321b6fa973212ad09f9dcf",
+      "script_sha256": {
+        "run-physical-qemu.py": "ec283dc7aff2bbdb183216d84a96833722ce9c22200bde0a0618053ffca2eec6",
+        "guest-physical-init.sh": "540563cc20fee64608786ee26cd3edf871c18b67c659d20d43e5978fcd847e70",
+        "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_matches_build": true,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "protocol_probe_case_count": 15,
+      "final_device_states": [
+        [
+          "1-1",
+          "available"
+        ],
+        [
+          "1-2",
+          "available"
+        ]
+      ],
+      "final_buffer_bytes_reserved": 0,
+      "artifact_count": 8,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/artifacts.sha256",
+          "bytes": 570,
+          "sha256": "dbd3796a7cd0cde5926b31eea535436f353adf0030cf34a6bbdbe15eb79a0d17",
+          "provenance": "derived SHA256 manifest of all other artifacts in this run directory"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/client-serial.log",
+          "bytes": 40880,
+          "sha256": "ffc720b16441d3800cf980a941ccfd032f638090073286a809649922a964c0fa",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/runner.log",
+          "bytes": 105,
+          "sha256": "ed39535fbf5f632aea90ad5ac3f04007f084b3aee67539024e7b085c5766e8c3",
+          "provenance": "original runner stdout/stderr; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/server-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/server-serial.log",
+          "bytes": 49108,
+          "sha256": "d1efc49adbd67ff1b5631cfa2840a2b09ee71c3065f0436b5f20e5c585875955",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-normal-composite-regression-final-20261022/summary.json",
+          "bytes": 49644,
+          "sha256": "9a59d2881c0505fe2b69bdbe92f640507f6ca8e69fbfb4e9d5cf698af28e784b",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-normal-composite-regression-final-20261022/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "physical-hot",
+      "result": "PASS",
+      "evidence_directory": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022",
+      "original_tmp_directory": "/tmp/rustusb-physical-hot-composite-regression-final-20261022",
+      "git_commit": "22d172d84779d92fe51f5a1c6f9c99e5ff747049",
+      "working_tree_dirty": false,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "source_fingerprint_sha256": "8934682b74cab7d5aa3d46444e6a02f8c35b6efbd5321b6fa973212ad09f9dcf",
+      "script_sha256": {
+        "run-physical-qemu.py": "ec283dc7aff2bbdb183216d84a96833722ce9c22200bde0a0618053ffca2eec6",
+        "guest-physical-init.sh": "540563cc20fee64608786ee26cd3edf871c18b67c659d20d43e5978fcd847e70",
+        "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_matches_build": true,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "protocol_probe_case_count": 15,
+      "final_device_states": [
+        [
+          "1-1",
+          "gone"
+        ],
+        [
+          "1-2",
+          "available"
+        ]
+      ],
+      "final_buffer_bytes_reserved": 0,
+      "artifact_count": 8,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/artifacts.sha256",
+          "bytes": 570,
+          "sha256": "b37f072f2b8417a18a0b460aac0aea5f7ec7c98cc7899421db98be96ae58e996",
+          "provenance": "derived SHA256 manifest of all other artifacts in this run directory"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/client-serial.log",
+          "bytes": 44194,
+          "sha256": "998804c7a960e0bff24c708b88862d1d323bd11dd4c55a4dd9c36aa4419a17b9",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/runner.log",
+          "bytes": 102,
+          "sha256": "1152a87f3ac55c7eebc4103d32d41bc5cc20405260b0bf656377749d81ff7b08",
+          "provenance": "original runner stdout/stderr; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/server-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/server-serial.log",
+          "bytes": 56757,
+          "sha256": "275c02c0cce6497d4a5598c69966832033c455cf2b7321c3df10f3aa10b9737c",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-physical-hot-composite-regression-final-20261022/summary.json",
+          "bytes": 75214,
+          "sha256": "4af8f5a61e229274c69e07f21488aeb4c7d2001dc73d12f1ad0c2189a5a61a79",
+          "provenance": "original runtime artifact; byte-identical to /tmp/rustusb-physical-hot-composite-regression-final-20261022/summary.json"
+        }
+      ]
+    }
+  ],
+  "indexed_artifact_count": 33,
+  "real_hardware_test_performed": false,
+  "limitations": [
+    "QEMU6.2 UHCI CDC ECM two-interface function, not arbitrary mixed Composite or real hardware",
+    "Short interrupt -32/actual1 is a kernel-reported opaque buffer cross-checked with guest USBMON, not a claim of device partial transfer",
+    "Observed host-state UNLINK winner is queued cancel_won/configuration1; deterministic active ioctl completion/unlink and active EOF windows remain unproven",
+    "ECM model CLEAR_FEATURE returns real failure; successful CLEAR_HALT recovery is not demonstrated",
+    "ISO wire rejection is observed, not real ISO transfers"
+  ]
+}

@@ -1,6 +1,6 @@
 # USBFS 多接口 CDC ECM 与 alternate 的隔离 QEMU 验证
 
-2026-10-22。状态：dev08开发验证通过，两guest exit0；最终clean提交验证仍待执行。设计与恢复修复见[专门设计](usbfs-composite-qemu-design.md)，已有HID/FTDI结果见[原物理报告](physical-qemu.md)。本轮不将单个CDC功能的两个接口外推为任意混合Composite、任意配置、ISO或真实硬件兼容性。
+2026-10-22。状态：clean提交`22d172d84779d92fe51f5a1c6f9c99e5ff747049`的最终ECM、原物理normal/hot回归均PASS，六个guest均exit0。设计与恢复修复见[专门设计](usbfs-composite-qemu-design.md)，已有HID/FTDI结果见[原物理报告](physical-qemu.md)。本轮不将单个CDC功能的两个接口外推为任意混合Composite、任意配置、ISO或真实硬件兼容性。
 
 ## 固定模型与网络边界
 
@@ -22,7 +22,7 @@ root仅在来宾加载usbnet/cdc_ether/mii、设置固定网卡、节点root0600
 - 非法alt2明确-32且GET_INTERFACE仍为0；随后选择alt1。真实厂商Control和过短Interrupt IN触发模型-32，后续同连接控制读取仍成功。
 - UHCI的短Interrupt IN还须独立USBMON交叉验证：wire严格`status=-32/actual=1`，同URB tag/pipe的USBMON S长度1、C状态-32/长度1及本次opaque buffer逐字节一致；不硬编码buffer应为00。这是当前QEMU UHCI/Linux组合的kernel-reported长度保留，不能称设备实际传了1B或真实硬件partial-error已通过。
 - QEMU ECM模型不实现endpoint CLEAR_FEATURE，真实失败须保留-32，不能为测试通过伪造clear成功；本轮不提供成功clearhalt恢复证据。
-- host-state UNLINK只接受queued取消赢、没有旧completion且实际配置保持1，或不可取消ioctl完成赢、原成功completion与UNLINK0且配置读回2。记录实际winner，不声称一次运行覆盖全部竞态。请求配置后EOF只证明其清理收敛，不假称强制命中了不可取消ioctl的active窗口；该特定窗口仍待确定性回归覆盖。
+- host-state UNLINK只接受queued取消赢、没有旧completion且实际配置保持1，或不可取消ioctl完成赢、原成功completion与UNLINK0且配置读回2。记录实际winner，不声称一次运行覆盖全部竞态。向TCP写入SET_CONFIGURATION帧后立即断开，只证明此提交方式下重新available；没有同步确认server已接受请求或ioctl已进入active窗口，该窗口仍待专门确定性测试。
 - 另以真实pending端点EOF、unsupported ISO frame拒绝及重新available验证有界清理。ISO未做真实等时传输，也不因此整机禁用混合设备的其他端点。
 
 两次内核周期分别由UID1000 RustUSB helper管理导入及guest root官方usbip直接导入。每次确认config1、两个cdc_ether接口、alt0/1、对应网卡路由，再发送含cycle和固定nonce的UDP请求；普通UID peer返回不同固定内容，客户端逐字节核对。两端都记录精确长度/周期，server快照两方向Bulk计数必须增长。占用IMPORT须返回status2。官方导入显示unmanaged，RustUSB detach明确拒绝后仍完成精确I/O；分别由原所有者释放，不用helper冒领官方端口。
@@ -70,7 +70,23 @@ dev08准确起始为dirty `d361ea3c99bdafc8c8dd0b10304258a98c537a47`，19条prob
 
 root另以[独立PCAP校验器](../evidence/verify-composite-captures.py)核对两份捕获的完整Ethernet/IP/UDP长度、校验和及两周期四组精确内容：[dev08验证通过](../evidence/composite-capture-dev08-verification-20261022.json)，[dev04负向验证拒绝](../evidence/composite-capture-negative-verification-20261022.json)。当前产品四平台软件CI见[发布核对](../evidence/publication-composite-20261022.json)。
 
-最终clean提交的ECM与原physical normal/hot三项仍待执行，不能使用dev08替代最终裁决。
+## 最终clean验证与原physical回归
+
+root在clean提交`22d172d84779d92fe51f5a1c6f9c99e5ff747049`依次执行ECM、原physical normal、原physical hot；各summary均记录`working_tree_dirty=false`。三项均实际执行默认`cargo build --workspace --release --locked --all-features`，没有skip-build；运行中源码和二进制变化会使runner拒绝PASS。三项的guest实际CLI/helper副本与构建产物逐项相等，三项产物也都等于前述`c033d393…`/`5d40d8e3…`。完整commit、构建命令、各harness指纹、二进制SHA与全部产物见[最终聚合索引](../evidence/composite-final-20261022.json)及[原始顺序记录](../evidence/composite-final-sequence-20261022.json)。
+
+| 最终场景 | 实际结果与范围 | 原始结果与全部SHA |
+| --- | --- | --- |
+| ECM | PASS，双guest exit0，19条probe含15条lifecycle/汇总、两次busy和两次available；RustUSB managed与官方usbip unmanaged各一个周期，两个cdc_ether接口/配置1/alt0,1、精确UDP、所有权拒绝后的I/O及原状态恢复均通过。 | [summary](../evidence/qemu-composite-final-20261022/summary.json)、[SHA](../evidence/qemu-composite-final-20261022/artifacts.sha256) |
+| 原physical normal | PASS，双guest exit0、15条probe，两周期真实来宾HID按下/释放及FTDI每周期35B双向内容；host收到70B且精确相等，两设备原驱动及末资源恢复。沿用旧harness，未修改脚本。 | [summary](../evidence/qemu-physical-normal-composite-regression-final-20261022/summary.json)、[SHA](../evidence/qemu-physical-normal-composite-regression-final-20261022/artifacts.sha256) |
+| 原physical hot | PASS，双guest exit0、15条probe；正常两周期之外，QMP拔HID后FTDI同receipt继续精确I/O，重新插入的新代际不自动授权；host收到140B且精确相等，HID为Gone、FTDI恢复原驱动、末资源0。沿用旧harness，未修改脚本。 | [summary](../evidence/qemu-physical-hot-composite-regression-final-20261022/summary.json)、[SHA](../evidence/qemu-physical-hot-composite-regression-final-20261022/artifacts.sha256) |
+
+最终ECM两份PCAP各1710B，各自包含两周期的38B请求/39B响应；其Ethernet帧长仍为80/81B。将dev08的[离线解析脚本](../evidence/qemu-composite-final-20261022/independent-analysis.py)原字节复制到最终目录并重新执行，生成[本次独立分析](../evidence/qemu-composite-final-20261022/independent-analysis.json)：四个UDP报文的顺序、端点及内容分别精确匹配；本次短IRQ同tag USBMON S/C的`-32/actual1`和opaque buffer与wire逐字节一致。该结果仍只证明kernel-reported长度/字节保留，不证明模型实际传输1B。
+
+root另用前述独立PCAP校验器重新检查本次两份捕获的完整Ethernet/IP/UDP边界、校验和及精确内容，[最终验证JSON](../evidence/composite-capture-final-verification-20261022.json)为PASS，不以summary中的marker替代实际报文字节。第二独立只读复核的[78项检查](../evidence/composite-final-independent-review-20261022.json)也全部PASS；复核不运行Cargo、QEMU或设备操作。
+
+本次host-state UNLINK实际为`cancel_won`且配置读回1；不可取消ioctl完成赢以及active ioctl期间EOF的确定性窗口仍待fixture覆盖。最终ECM真实`usbfs_reaped=88`，pending/queued/inflight/buffer均0，available/cleanup_verified、原配置1、alt0/1及两个原cdc_ether驱动恢复。三项最终snapshot的待处理资源均0；热拔HID不再存在，故不声称恢复不存在设备的驱动。
+
+23份原始运行产物及runner日志逐字节等于`/tmp`原件；仅ECM补充冻结commit的准确三脚本Git blob快照和离线分析。每目录附SHA清单，最终索引共覆盖33份产物（含原始sequence及生成的清单/分析）。原7次FAIL和dirty dev08全部保持，不覆盖或改写为最终证据。真实硬件G1/G2、任意混合Composite、原无driver的非零alt恢复、成功CLEAR_HALT、真实partial-error、ISO实际传输及长期性能仍未验证。
 
 ## 固定来源
 

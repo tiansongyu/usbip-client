@@ -52,7 +52,7 @@ CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定�
 
 当前子步骤：依据[复用决策](research/rust-virtual-backend-design.md)选择性使用MIT HID描述符、自有有界服务/会话引擎，未直接依赖存在已审计缺陷的上游crate。固定虚拟HID和标准CDC在干净cfeffd3双QEMU的真实VHCI/evdev/ttyACM两周期通过，详见[报告](research/userspace-qemu.md)。共享engine下新增固定nusb0.2.8 USBFS adapter、helper精确FD授权、真实终态清理及原驱动核对；干净37bc6b4的QEMU HID/FTDI正常、热拔及原虚拟回归均通过，最终记录见[专项报告](research/physical-qemu.md)。ISO/通用Composite/alternate、真实硬件及完整G2仍未完成。真实G1仍保持未执行，用户选择QEMU没有被改写为物理通过。
 
-最新[Composite配置/恢复子步骤](research/usbfs-composite-qemu-design.md)已实现逐IF重观察及新配置claim/恢复前scanner复核，本机[216次软件测试执行及完整质量gate](evidence/composite-software-validation-20261022.json)和[四平台CI](evidence/publication-composite-20261022.json)通过；ECM模型的[dirty开发实际I/O](research/composite-qemu.md)已通过，最终clean冻结回归尚待执行，不外推真实设备支持。
+最新[Composite配置/恢复子步骤](research/usbfs-composite-qemu-design.md)已实现逐IF重观察及新配置claim/恢复前scanner复核，本机[216次软件测试执行及完整质量gate](evidence/composite-software-validation-20261022.json)和[四平台CI](evidence/publication-composite-20261022.json)通过；ECM模型及原HID/FTDI正常、热拔在同一干净22d172d默认locked构建的[最终三项回归](research/composite-qemu.md)全部通过，6guest正常退出。7次开发FAIL和dirty PASS保留，不外推真实设备支持；不可取消host-state ioctl的active窗口、无原驱动且非零alternate恢复仍需专门验证。
 
 **G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
 
