@@ -87,3 +87,4 @@
 - 根进程独立核对七个summary、运行前clean/locked构建、两端退出码、当前生产源码/脚本与b4cbfc3无差异；旧21e98f9真实重连FAIL及中间harness证据保留。本轮结果不证明CDC ACM、真实设备、netem/WAN、多客户端、TLS或长期性能；完整Phase1物理及Phase2–7仍未标完成。
 - `git push origin main` exit0推送b4cbfc3，`git ls-remote origin refs/heads/main`与本地HEAD一致。GitHub Actions [39766360288](https://github.com/tiansongyu/usbip-client/actions/runs/39766360288) completed/success；Ubuntu24.04 job119782683028、Ubuntu22.04 job119782683326均success，含全部质量检查与只读CLI smoke。本轮出版事实记录`evidence/publication-runtime-2026-10-22.json`。
 - 最终验收文档、全部QEMU原始日志与出版证据作为独立提交普通push；其后核对远端main与HEAD及工作树，产品/scripts保持b4cbfc3被测内容。最后一次自身提交的SHA以Git历史和实际push/ls-remote输出为准，文档不虚构自引用哈希。
+- 验收/日志提交`3dc7fb8`普通push exit0。归档复核发现全局`*.log`忽略了6份已复制且被索引hash引用的runner.log；补充evidence专用忽略例外并提交这些runner日志，未改任何被测产品或脚本。最终额外核对机器索引的每个artifact均被Git跟踪且SHA256匹配，避免本地存在而远端缺文件。
