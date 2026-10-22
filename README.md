@@ -37,7 +37,7 @@ CLI 普通权限运行；只有受限的 `rustusb-helper` 作为系统管理员�
 
    ```bash
    # 服务端：只允许root策略中批准的指纹
-   rustusb export usb-<64位小写指纹>
+   rustusb export 'usb-<64位小写指纹>'
 
    # 客户端：host和port必须与其helper的策略完全匹配
    rustusb discover 192.0.2.1 --port 3240 --json
@@ -48,12 +48,12 @@ CLI 普通权限运行；只有受限的 `rustusb-helper` 作为系统管理员�
    rustusb detach 0
 
    # 服务端确认对端已经释放后
-   rustusb unexport usb-<64位小写指纹>
+   rustusb unexport 'usb-<64位小写指纹>'
    ```
 
 示例地址 `192.0.2.1` 仅用于文档/隔离仿真。请使用实际受管地址和扫描得到的Bus ID。所有命令支持 `--json`，日志写 stderr，`--log-json` 启用 JSON tracing，`RUST_LOG=info` 配置级别。普通用户不使用 `sudo rustusb` 代替 helper。
 
-helper 的所有允许 UID 共同管理已批准设备和本实例建立的连接；这不是多租户隔离。仅能自动断开本运行实例准确认领的端口；重启后未知端口会显示但拒绝自动接管，需管理员核对。设备操作超时或取消不代表没有副作用；请检查 `sessions/status` 和内核，避免盲目重试。卸载/重启不自动强制断开未知设备。详见 [安全边界](docs/security.md)。
+helper 的所有允许 UID 共同管理已批准设备和本实例建立的连接；这不是多租户隔离。仅能自动断开本运行实例准确认领的端口、取消本实例成功创建并验证的导出绑定。重启后的未知端口和导出、外部工具建立的导出均拒绝自动接管，需管理员核对。设备操作失败、超时或取消不代表没有副作用，也不保证驱动或资源已经恢复；请检查 `devices/sessions/status` 和内核，避免盲目重试。失败后来源不明的绑定不会自动认领或撤销。卸载/重启不自动强制断开未知设备。详见 [安全边界](docs/security.md)。
 
 ## 测试与研究
 
@@ -65,6 +65,12 @@ scripts/fuzz-smoke.sh
 ```
 
 QEMU 仿真用于验证本项目导出、发现、导入、Linux 枚举、实际输入、断开与重连；运行方法和结果见 [测试手册](docs/testing.md)。仿真与真实物理 USB 测试分别记录。
+
+```bash
+python3 scripts/qemu/run-native-qemu.py
+```
+
+该脚本创建两个一次性x86_64 Linux guest，以私有socketpair网络连接，只导出QEMU模拟键盘。它不会直通宿主USB或在宿主加载USB/IP模块。需要QEMU、BusyBox、cpio、jq、setpriv、当前内核镜像/模块和匹配linux-tools；无法直接读取`/boot`时，仅复制测试内核到临时目录可能需要预先可用的`sudo -n`。完整日志保存在`docs/evidence/`，通过标记不代表真实硬件兼容或内建加密。
 
 - [架构与接口](docs/architecture.md)、[协议](docs/protocol.md)、[源码差距](docs/research/gap-analysis.md)
 - [Linux 官方实现审计](docs/research/linux-usbip-audit.md)、[jiegec Rust 实现审计](docs/research/rust-backend-audit.md)

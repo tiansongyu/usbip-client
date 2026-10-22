@@ -117,7 +117,8 @@ async fn run(cli: Cli) -> Result<()> {
             let mut stdout = io::stdout().lock();
             writeln!(
                 stdout,
-                "DEVICE ID                             BUS ID      VID:PID    PRODUCT / EXPORT CONDITION"
+                "{:<68} {:<11} {:<9} PRODUCT / EXPORT CONDITION",
+                "DEVICE ID", "BUS ID", "VID:PID"
             )?;
             for d in devices {
                 let condition = if d.exported {
@@ -130,7 +131,7 @@ async fn run(cli: Cli) -> Result<()> {
                 let product = d.product.as_deref().unwrap_or("unknown");
                 writeln!(
                     stdout,
-                    "{:<37} {:<11} {:04x}:{:04x}  {} / {}",
+                    "{:<68} {:<11} {:04x}:{:04x}  {} / {}",
                     d.id, d.bus_id, d.vendor_id, d.product_id, product, condition
                 )?;
             }

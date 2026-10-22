@@ -34,3 +34,15 @@
 - 实现增量已补：原生工具canonical与原路径父链权限、100字节状态文件限制、端口身份在Native锁内再次校验、kill/reap和sysfs读截止、helper Status真实内核快照、未知IPC字段和未授权mutation拒绝、协议精确计数上限。
 - 第二轮完整` scripts/check.sh ` exit0：**32项测试全部通过**，fmt/clippy/release/rustdoc均通过，完整输出存`evidence/software-checks-2026-10-22.txt`。在此之后的产品变更需重新验证。
 - QEMU首轮测试环境失败：BusyBox standalone ash命中内建setpriv，不支持`--reuid`；显式使用已复制的`/usr/bin/setpriv`修复测试脚本。initramfs显式root ownership/0755目录，保持产品权限校验。失败证据单独保留，未放宽helper安全约束。
+
+## QEMU 闭环与安全复核
+
+- Native workspace/CLI首版提交为`ef12209`。daemon初期还曾定位Rust partial-move编译错误，改为match前保存操作标志；最终所有权改动后的Clippy nested-if提示按2024 let-chain修正，没有删除功能消除告警。
+- 本项目QEMU共5轮初测，前4轮FAIL原因和原始日志均保留：BusyBox setpriv选择、/run tmpfs模式过宽、BusyBox timeout退出码差异、VHCI端口NULL早于sysfs设备移除。具体修复和边界见`research/native-qemu.md`。
+- 第5轮`evidence/qemu-native-20261022T100708Z/summary.json`完整PASS：隔离双guest、模拟键盘、UID1001拒绝、UID1000完整Native路径、真实Linux VHCI/usbhid/evdev KEY_1、两次导出/导入/断开/取消共享、本地usb/usbhid恢复。它属于中间二进制证据，最终修复版本另行验证；没有操作宿主USB。
+- QEMU揭示的产品问题已修：active detach必须等旧sysfs目录(dev,inode)代际消失和portNULL，不能只看端口；如果端口已NULL但期望地址仍存在而无原代际证据，只读有界等待后明确要求协调，不操作新设备。
+- 独立复核补强Native状态文件root可信路径/NOFOLLOW/元数据检查、attach前置检查、unexport仅AVAILABLE可执行。helper新增export ownership，只认领本实例成功创建且代际核验的绑定；外部/重启未知绑定拒绝接管。失败后新出现但来源不明的绑定不凭差分认领，全面自动恢复仍未验收。
+- 文档状态转换与core规则同步，明确USB setup保持小端，doctor仅存在性探测；CLI表格适配完整指纹。项目架构/安全声明与实际能力分别记录，不把规划变成支持承诺。
+- 新一轮`software-checks-final-2026-10-22.txt`曾验证38项测试及全部Cargo/rustdoc检查通过；随后存储quirk驱动/块设备后代边界检查新增，最终快照需再次核验，历史32项记录仍保存在前次commit。
+- 最终冻结前新增存储安全回归：usb-storage/uas/ums-*驱动、真实目录中的block后代、遍历深度/数量上限；不跟随subsystem等symlink逃逸。scanner共8项测试通过。
+- 最终冻结源码完整` scripts/check.sh ` exit0：**41项测试全部通过**，fmt、clippy -D warnings、release和rustdoc -D warnings均通过；以`evidence/software-checks-final-2026-10-22.txt`为最终软件证据。所有本地Markdown链接检查通过，QEMU脚本语法检查及宿主误执行拒绝测试通过。等待最终提交QEMU复测和push。

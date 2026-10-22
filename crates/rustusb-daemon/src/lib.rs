@@ -114,7 +114,7 @@ impl Response {
         // Native stderr is untrusted and may contain descriptor strings. Never
         // forward it across the privileged interface or into default logs.
         let message = match error {
-            Error::Command(_) => "native operation failed; kernel state may have changed; inspect status and device binding before retrying".into(),
+            Error::Command(_) => "native operation failed; kernel state may have changed; inspect status and device binding before retrying; unconfirmed resources require administrator reconciliation".into(),
             Error::Io(e) => format!("I/O failure ({:?}); check system permissions and required files", e.kind()),
             other => other.to_string(),
         };

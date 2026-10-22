@@ -14,6 +14,8 @@ use std::{
 const MAX_ATTRIBUTE: usize = 4096;
 const MAX_DESCRIPTORS: usize = 256 * 1024;
 const MAX_ENTRIES: usize = 16384;
+const MAX_WALK_DEPTH: usize = 16;
+const MAX_WALK_DIRECTORIES: usize = 1024;
 
 /// A bounded, read-only scanner for a Linux USB sysfs device directory.
 #[derive(Debug, Clone)]
@@ -117,6 +119,20 @@ impl SysfsDiscovery {
         class_safety(class, true, &mut blockers);
         for interface in &interfaces {
             class_safety(interface.class, false, &mut blockers);
+            // usb-storage quirks may match a vendor-specific class. A known
+            // storage driver remains a blocker even when class 08 is absent.
+            if interface.driver.as_deref().is_some_and(|name| {
+                matches!(name, "usb-storage" | "uas") || name.starts_with("ums-")
+            }) {
+                blockers.push(
+                    "storage_driver_requires_mount_open_handle_lun_and_encryption_audit".into(),
+                );
+            }
+        }
+        match block_descendant(&canonical) {
+            Ok(true) => blockers.push("storage_block_device_descendant_present".into()),
+            Ok(false) => {}
+            Err(_) => blockers.push("storage_descendant_safety_unproven".into()),
         }
         // Inspect every cached configuration and alternate setting, including inactive
         // storage interfaces that are absent from the current sysfs interface tree.
@@ -366,6 +382,39 @@ fn class_safety(class: u8, device: bool, blockers: &mut Vec<String>) {
         0x01..=0x07 | 0x0a..=0x11 | 0xdc | 0xe0 | 0xef | 0xfe | 0xff => {}
         _ => blockers.push("unknown_usb_interface_or_device_class".into()),
     }
+}
+
+// Sysfs driver quirks can expose block storage without class 08. Walk only
+// actual child directories within this device; never follow subsystem/driver
+// symlinks back into the rest of sysfs. All uncertainty denies export.
+fn block_descendant(path: &Path) -> io::Result<bool> {
+    let mut pending = vec![(path.to_path_buf(), 0)];
+    let mut directories = 0;
+    let mut entries = 0;
+    while let Some((directory, depth)) = pending.pop() {
+        directories += 1;
+        if directories > MAX_WALK_DIRECTORIES {
+            return Err(io::Error::other("USB descendant directory budget exceeded"));
+        }
+        for child in fs::read_dir(&directory)? {
+            let child = child?;
+            entries += 1;
+            if entries > MAX_ENTRIES {
+                return Err(io::Error::other("USB descendant entry budget exceeded"));
+            }
+            let kind = child.file_type()?;
+            if child.file_name() == "block" && (kind.is_dir() || kind.is_symlink()) {
+                return Ok(true);
+            }
+            if kind.is_dir() {
+                if depth >= MAX_WALK_DEPTH {
+                    return Err(io::Error::other("USB descendant depth budget exceeded"));
+                }
+                pending.push((child.path(), depth + 1));
+            }
+        }
+    }
+    Ok(false)
 }
 
 fn inspect_descriptors(path: &Path, blockers: &mut Vec<String>) {

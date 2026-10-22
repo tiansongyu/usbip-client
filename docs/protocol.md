@@ -1,6 +1,6 @@
 # USB/IP 协议与互操作边界
 
-状态：设计及源码审计；实现覆盖见测试记录。USB/IP wire version 0x0111，TCP 默认 3240；所有多字节整数字段使用网络字节序。
+状态：设计及源码审计；实现覆盖见测试记录。USB/IP wire version 0x0111，TCP 默认 3240；USB/IP 头和描述符记录的多字节整数字段使用网络字节序。原始USB Control setup的8字节保持USB规定的小端格式，不做USB/IP大端转换。
 
 DEVLIST 请求公共头8字节：version u16、opcode 0x8005 u16、status u32=0。响应 opcode 0x0005、status=0，接 u32 设备数。每个设备312字节：path[256]、busid[32]、busnum/devnum/speed 各u32、VID/PID/bcdDevice各u16、class/subclass/protocol/configuration/numConfigurations/numInterfaces 各u8。每个接口4字节（class/subclass/protocol/padding）。这里 bcdDevice 是设备发布版本，不是 USB bcdUSB。
 

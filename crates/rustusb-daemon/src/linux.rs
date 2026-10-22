@@ -27,8 +27,31 @@ const RESPONSE_TIMEOUT: Duration = Duration::from_secs(120);
 
 #[derive(Default)]
 struct ManagedState {
+    exports: HashMap<String, Device>,
     ports: HashMap<VhciPort, NativeSession>,
     released_ports: HashSet<VhciPort>,
+}
+
+impl ManagedState {
+    fn authorize_current_binding(&self, device: &Device) -> Result<()> {
+        match self.exports.get(&device.id) {
+            Some(owned) if same_device_generation(owned, device) => Ok(()),
+            Some(_) => Err(Error::State("exported device generation changed; administrator reconciliation required".into())),
+            None if device.exported => Err(Error::Permission("existing export is not owned by this helper instance; administrator reconciliation required".into())),
+            None => Ok(()),
+        }
+    }
+
+    fn record_new_export(&mut self, before: &Device, after: Device) -> Result<()> {
+        if before.exported || !after.exported || !same_device_generation(before, &after) {
+            return Err(Error::State(
+                "new export ownership cannot be proven; administrator reconciliation required"
+                    .into(),
+            ));
+        }
+        self.exports.insert(after.id.clone(), after);
+        Ok(())
+    }
 }
 
 struct App {
@@ -56,6 +79,7 @@ impl App {
                 "external_trusted_network_confirmed": self.policy.trusted_network,
                 "kernel": kernel,
                 "port_ownership": "only ports created by this helper instance; unknown ports after restart require administrator reconciliation",
+                "export_ownership": "only bindings successfully created and verified by this helper instance; unknown exports after restart require administrator reconciliation",
                 "policy_reload": "restart required"
             }));
         }
@@ -69,8 +93,25 @@ impl App {
             Request::Export { device_id } | Request::Unexport { device_id } => {
                 self.policy.authorize_device(&device_id)?;
                 let before = current_device(&device_id).await?;
+                state.authorize_current_binding(&before)?;
                 if before.occupied != Some(false) && before.exported {
                     return Err(Error::UnsafeDevice("exported device is occupied or its occupancy is unknown; release the client first".into()));
+                }
+                // Both paths are idempotent without changing existing kernel
+                // resources. An already-exported device passed ownership above.
+                if before.exported == export {
+                    if !export {
+                        state.exports.remove(&device_id);
+                    }
+                    return Ok(
+                        serde_json::json!({ "device_id": device_id, "bus_id": before.bus_id, "exported": before.exported }),
+                    );
+                }
+                if export {
+                    // An earlier owned export may already have been released
+                    // externally. A failed fresh attempt must not retain that
+                    // stale ownership record and adopt a later binding.
+                    state.exports.remove(&device_id);
                 }
                 if export && !before.export_blockers.is_empty() {
                     return Err(Error::UnsafeDevice("current device is not eligible for safe export; inspect devices and the safety policy".into()));
@@ -79,6 +120,7 @@ impl App {
                 // is not an atomic storage-exclusion mechanism; storage remains
                 // blocked by discovery for Phase 1.
                 let immediate = current_device(&device_id).await?;
+                state.authorize_current_binding(&immediate)?;
                 if !same_device_generation(&before, &immediate) {
                     return Err(Error::State(
                         "device changed during authorization; rescan and retry explicitly".into(),
@@ -103,10 +145,25 @@ impl App {
                 // Reconcile even when the native command failed. Never report
                 // a successful rollback or retry an uncertain operation.
                 let after = current_device(&device_id).await;
-                operation?;
+                if let Err(error) = operation {
+                    // Even a matching new binding after failure is insufficient
+                    // proof of its origin when external root tools may run. Do
+                    // not claim or undo it on a before/after difference alone.
+                    if export && after.as_ref().is_ok_and(|device| device.exported) {
+                        tracing::warn!(
+                            "export failed with a binding now present; ownership was not claimed; administrator reconciliation required"
+                        );
+                    }
+                    return Err(error);
+                }
                 let after = after?;
                 if !same_device_generation(&immediate, &after) || after.exported != export {
                     return Err(Error::State("native operation postcondition is uncertain; inspect kernel state before another change".into()));
+                }
+                if export {
+                    state.record_new_export(&immediate, after.clone())?;
+                } else {
+                    state.exports.remove(&device_id);
                 }
                 Ok(
                     serde_json::json!({ "device_id": device_id, "bus_id": after.bus_id, "exported": after.exported }),
@@ -138,12 +195,14 @@ impl App {
                     }
                     return Err(Error::Permission("port is not owned by this helper instance; unknown or restart-surviving ports require administrator reconciliation".into()));
                 };
-                if let Some(actual) = at_port {
-                    if !same_session(owned, actual) {
-                        return Err(Error::State("port identity changed since import; refusing to detach a possibly unrelated session".into()));
-                    }
-                    self.backend.detach_session(owned).await?;
+                if let Some(actual) = at_port
+                    && !same_session(owned, actual)
+                {
+                    return Err(Error::State("port identity changed since import; refusing to detach a possibly unrelated session".into()));
                 }
+                // NULL can precede USB device removal. Always let Native check
+                // the previously claimed USB generation before reporting done.
+                self.backend.detach_session(owned).await?;
                 state.ports.remove(&port);
                 state.released_ports.insert(port);
                 Ok(serde_json::json!({ "port": port, "detached": true }))
@@ -448,6 +507,64 @@ pub(super) async fn serve(config: &Path, socket: &Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn device(exported: bool, address: u32) -> Result<Device> {
+        Ok(Device {
+            id: format!("usb-{}", "a".repeat(64)),
+            bus_id: rustusb_core::BusId::new("1-1")?,
+            vendor_id: 0x1234,
+            product_id: 0x5678,
+            manufacturer: None,
+            product: None,
+            serial: None,
+            device_address: address,
+            usb_version: "2.00".into(),
+            speed: "12".into(),
+            class: 0,
+            subclass: 0,
+            protocol: 0,
+            topology: "devices/controller/ports/1".into(),
+            driver: None,
+            interfaces: vec![],
+            exported,
+            occupied: Some(false),
+            export_blockers: vec![],
+        })
+    }
+
+    #[test]
+    fn unknown_export_cannot_be_adopted_or_released_after_restart() -> Result<()> {
+        let bound = device(true, 2)?;
+        let state = ManagedState::default();
+        assert!(matches!(
+            state.authorize_current_binding(&bound),
+            Err(Error::Permission(_))
+        ));
+        let mut owned = ManagedState::default();
+        owned.record_new_export(&device(false, 2)?, bound.clone())?;
+        owned.authorize_current_binding(&bound)?;
+        let restarted = ManagedState::default();
+        assert!(restarted.authorize_current_binding(&bound).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn owned_export_requires_same_generation_and_verified_new_binding() -> Result<()> {
+        let mut state = ManagedState::default();
+        let unbound = device(false, 2)?;
+        let bound = device(true, 2)?;
+        assert!(state.record_new_export(&unbound, unbound.clone()).is_err());
+        assert!(state.record_new_export(&bound, bound.clone()).is_err());
+        assert!(state.record_new_export(&unbound, device(true, 3)?).is_err());
+        assert!(state.exports.is_empty());
+        state.record_new_export(&unbound, bound.clone())?;
+        assert!(state.authorize_current_binding(&device(true, 3)?).is_err());
+        state.authorize_current_binding(&bound)?;
+        state.exports.remove(&bound.id);
+        state.authorize_current_binding(&unbound)?;
+        assert!(state.authorize_current_binding(&bound).is_err());
+        Ok(())
+    }
 
     fn app(allowed_uids: Vec<u32>) -> Arc<App> {
         Arc::new(App {

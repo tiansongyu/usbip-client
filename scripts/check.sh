@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 cargo fmt --all -- --check
-cargo clippy --workspace --all-targets -- -D warnings
-cargo test --workspace
-cargo build --workspace --release
-RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps
+cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo test --workspace --locked
+cargo build --workspace --release --locked
+RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps --locked

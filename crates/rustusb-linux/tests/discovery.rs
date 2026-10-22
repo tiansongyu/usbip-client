@@ -247,3 +247,57 @@ fn missing_root_is_reported_instead_of_successful_empty_scan() {
             .is_err()
     );
 }
+
+#[test]
+fn storage_driver_is_blocked_even_for_vendor_class_quirks() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let path = fixture.device(1, 3, &[0xff], false)?;
+    for driver in ["usb-storage", "uas", "ums-realtek"] {
+        let link = path.join("1-2.3:1.0/driver");
+        std::os::unix::fs::symlink(format!("/sys/bus/usb/drivers/{driver}"), &link)?;
+        let devices = fixture.scan()?;
+        assert!(
+            devices[0]
+                .export_blockers
+                .iter()
+                .any(|blocker| blocker.starts_with("storage_driver_"))
+        );
+        fs::remove_file(link)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn block_descendants_are_denied_without_following_subsystem_symlinks() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let path = fixture.device(1, 3, &[0xff], false)?;
+    let outside = fixture.temp.path().join("outside-subsystem");
+    fs::create_dir_all(outside.join("block/sda"))?;
+    std::os::unix::fs::symlink(&outside, path.join("subsystem"))?;
+    assert!(fixture.scan()?[0].export_blockers.is_empty());
+    fs::create_dir_all(path.join("1-2.3:1.0/host0/target0/0:0:0:0/block/sda"))?;
+    assert!(
+        fixture.scan()?[0]
+            .export_blockers
+            .iter()
+            .any(|blocker| blocker == "storage_block_device_descendant_present")
+    );
+    Ok(())
+}
+
+#[test]
+fn descendant_budget_exhaustion_refuses_to_claim_storage_safety() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let mut path = fixture.device(1, 3, &[3], false)?;
+    for _ in 0..18 {
+        path = path.join("nested");
+        fs::create_dir(&path)?;
+    }
+    assert!(
+        fixture.scan()?[0]
+            .export_blockers
+            .iter()
+            .any(|blocker| blocker == "storage_descendant_safety_unproven")
+    );
+    Ok(())
+}
