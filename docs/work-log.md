@@ -53,3 +53,9 @@
 - 最终`python3 scripts/qemu/run-native-qemu.py` exit0，证据`evidence/qemu-native-20261022T101910Z/`：开始时工作树clean，默认`cargo build --workspace --release --locked`，commit97c2914，源码/lock/scripts/binary指纹完整；两周期全部断言PASS，两guest均exit0。运行后只修改文档/证据，不再修改产品源码。
 - 最终验收逐条对照原需求在`acceptance.md`。Phase0产物交付、Phase1软件与G1-Q仿真通过；真实物理G1、完整恢复、Rust后端、TLS/TUI/GUI/安装/性能/Windows仍保留未完成，不标完整长期目标完成。
 - 最后将提交最终证据并执行`git push -u origin main`，使用`git ls-remote origin refs/heads/main`与本地HEAD比较验证；远端结果在后续出版记录追加。
+
+## 已推送与远端CI验证
+
+- `git push -u origin main` exit0，首批完整发布到用户指定SSH仓库；`git ls-remote origin refs/heads/main`返回`af14f88a85be7f8c4659453796b2e231e53b6c26`，与当时本地HEAD完全相等。未强推或删除历史。
+- GitHub Actions运行[39762479133](https://github.com/tiansongyu/usbip-client/actions/runs/39762479133)已completed/success；Ubuntu22.04 job119769782769与Ubuntu24.04 job119769783193均success，包含固定稳定工具链、全部软件检查和只读CLI smoke。完整出版摘要见`evidence/publication-2026-10-22.json`。
+- 将上述远端事实和验收表中的历史“待复测”说明同步为最终结果，作为单独文档提交推送；产品源码与最终QEMU验证的97c2914保持一致。真实硬件及长期阶段仍未标完成。

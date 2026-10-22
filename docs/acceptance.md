@@ -1,6 +1,6 @@
 # 需求逐项验收审计
 
-审计日期：2026-10-22。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目双 QEMU 在一个中间快照已通过；最终修复快照尚待复测，双 Ubuntu 真实设备、安全远程产品及长期功能不能据此宣告完成。**
+审计日期：2026-10-22。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目双QEMU在最终干净提交97c2914已完整通过；双Ubuntu真实设备、安全远程产品及长期功能仍未完成。**
 
 状态约定：`已交付` 表示文档 / 源码存在且已核对；`软件已验证` 表示适用自动测试有结果；`部分` 表示功能或证据尚不覆盖原要求；`待验收` 表示有实现或计划但缺必需运行证据；`后续阶段` 表示明确尚未实现。文档存在、测试通过和产品支持互不替代。
 
@@ -13,9 +13,9 @@
 | E03 | [最终软件检查完整输出](evidence/software-checks-final-2026-10-22.txt) 与 [检查脚本](../scripts/check.sh) | 最终冻结源码的 fmt、Clippy、41 项测试、release 和 Rustdoc 全部通过；源码修复提交 `0c3e85a`，最终QEMU基线 `97c2914` |
 | E04 | [DEVLIST fuzz 摘要](evidence/fuzz-devlist-2026-10-22.json)、[target](../fuzz/fuzz_targets/devlist.rs)、[脚本](../scripts/fuzz-smoke.sh) | ASan 3,412,047 次 / 21 秒未观察到崩溃；不证明穷尽安全、IPC / 内核 URB 或性能 |
 | E05 | [工作日志](work-log.md)、Git `log / status / remote / ls-remote` | 过程、失败、修复、提交与远端事实；工作日志不能覆盖与实际命令相反的结论 |
-| E06 | [本项目双 QEMU 脚本](../scripts/qemu/run-native-qemu.py)、[来宾脚本](../scripts/qemu/guest-init.sh)、[初次全链路 PASS](evidence/qemu-native-20261022T100708Z/summary.json) 与历史 FAIL 记录 | 中间快照 Native 全链路初测通过，`working_tree_dirty=true` 且记录二进制哈希；后续 Native / helper 修复后的最终快照须复测 |
+| E06 | [本项目双 QEMU 脚本](../scripts/qemu/run-native-qemu.py)、[来宾脚本](../scripts/qemu/guest-init.sh)、[最终全链路PASS](evidence/qemu-native-20261022T101910Z/summary.json) 与历史 FAIL 记录 | 最终干净提交97c2914完整PASS，两guest退出0，全部标记及source/lock/scripts/binary哈希核验；历史FAIL保留 |
 
-当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。目标 Ubuntu 24.04 与 aarch64 仍需各自验证。[CI 配置](../.github/workflows/ci.yml) 中列出 Ubuntu 22.04 / 24.04 只证明已配置检查，不能声称远端 workflow 已运行或矩阵通过。
+当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。Ubuntu22.04/24.04 x86_64远端软件CI均已通过，[实际运行](https://github.com/tiansongyu/usbip-client/actions/runs/39762479133)和publication证据可核对；真实硬件、Ubuntu24.04内核USB互操作及aarch64仍未验证。
 
 ## 2. Phase 0 九项产物
 
@@ -60,7 +60,7 @@
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出 | 已实现并有 schema 测试 / 只读 smoke；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
 | G1 软件 gate | E03 四项 Cargo 检查及 Rustdoc | 最终冻结源码41项测试及四项Cargo检查通过；后续代码变更仍须重新验证 |
-| G1-Q 用户要求的本项目 QEMU gate | E06 两来宾脚本、实际 product binary 哈希及日志 | **中间快照初测通过，最终修复快照待复测**；两次实际 KEY_1、detach 后 sessions=0 / 设备移除、unexport 恢复 usb / usbhid 及 UID1001 拒绝均有证据；历史失败不抹除 |
+| G1-Q 用户要求的本项目 QEMU gate | E06 两来宾脚本、实际 product binary 哈希及日志 | **最终冻结提交97c2914已完整通过**；两次实际 KEY_1、detach 后 sessions=0 / 设备移除、unexport 恢复 usb / usbhid 及 UID1001 拒绝均有证据；历史失败不抹除 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
 Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。helper 不开放任意命令或服务名 RPC，也没有以模块需求让整个 CLI 默认 root。模块未加载时必须报告缺口；这些部署前提不应在交付说明中隐去。
@@ -101,9 +101,9 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 原要求测试类别 | 当前证据 | 状态和缺失 |
 | --- | --- | --- |
-| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | E03：core 2、protocol 4、scanner 5、native 12、daemon 8、CLI 1，共 32 项 | 软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
+| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | E03：core 2、protocol 4、scanner 8、native 16、daemon 10、CLI 1，共41项 | 软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
 | 三方向互操作 | 原生 / RustUSB Native 可运行路径与 E06 脚本 | 本项目完整独立互操作 gate 待验收；Rust Server 的独立协议后端未集成；不能用上游测试补本项目结果 |
-| QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游 HID / CDC 有 E02；本项目双来宾虚拟 HID 两轮输入与释放 / 重连有 E06 | 本项目中间快照初测通过，最终修复待复测；上游测试范围有限；本项目 CDC 和完整 QEMU 异常矩阵后续 |
+| QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游 HID / CDC 有 E02；本项目双来宾虚拟 HID 两轮输入与释放 / 重连有 E06 | 本项目最终干净提交双QEMU完整PASS；上游测试范围有限；本项目 CDC 和完整 QEMU 异常矩阵后续 |
 | 真实 U 盘 / 串口 / HID / JTAG / 摄像头 | compatibility 与 testing 定义逐设备测试 | 全部未执行；存储拒绝；UVC / Audio / Composite / alt / ISO 各需独立证据 |
 | 断网 / 高延迟 / 丢包 / 进程退出 / 拔出 / 客户端退出 / 争用 / 忙 / 权限 / 版本 | 软件 fixture 覆盖工具失败 / timeout / drop / 身份复用 / busy / UID；protocol 版本拒绝 | 完整真实内核与网络注入矩阵未执行，不能声称异常恢复全部通过 |
 | 未授权 / 非法设备 / 畸形消息 / 超长 / 认证失败 / 重复 / 恶意配置 / 日志 / 特权滥用 | helper strict schema / UID / policy / metadata / 帧边界；DEVLIST 严格解析和 E04 | 尚无远端认证 / TLS / replay gate、全面日志秘密扫描与完整 IPC / 配置 / 描述符 fuzz；未测试项保持未完成 |
@@ -115,28 +115,28 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | --- | --- |
 | `cargo fmt --all -- --check` | scripts/check.sh 首项，E03 脚本整体通过；成功无输出正常。最终代码修改后需重跑 |
 | `cargo clippy --workspace --all-targets -- -D warnings` | E03 `Finished dev` 且整体退出 0；工作区 forbid unsafe / deny unwrap_used / expect_used / panic。它不证明协议与硬件语义正确 |
-| `cargo test --workspace` | E03 32 项通过、0 失败；各 test 名称和范围可核对；无硬件通过结论 |
+| `cargo test --workspace` | E03 41项通过、0 失败；各 test 名称和范围可核对；无硬件通过结论 |
 | `cargo build --workspace --release` | E03 release 成功；编译产物不是双机 USB 验收 |
 | 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 已加至 check.sh，E03 通过；不代表所有架构能力均实装 |
 | 工具链 / 依赖 / 许可 | 锁定稳定 1.97.1 和 2024；Cargo.lock / inventory / third-party；最终变更后更新清单；未声称完成发布合规认证 |
 | 平台 / 资源 / 清理 | 有界输入、明确平台错误、阻塞隔离、固定进程、真实 sysfs 与保守未知资源处理 | 目标所有 OS / 架构及长期异常路径仍需独立 gate，不用 lint 或绿色 CI 覆盖 |
 
-审计时 E03 对应的检查之后还有未提交的 Native / lock / 文档 / QEMU 改动。最终交付应重新执行 `scripts/check.sh`，把输出与最终 commit / 源码快照关联；不能只沿用旧绿色输出。持续集成任务尚待 push 后按真实远端状态核验。
+E03已针对最终冻结源码重新执行` scripts/check.sh `并保留41项测试及完整检查结果；其后只有文档和证据变更。QEMU针对同一源码的干净提交97c2914复测PASS。远端CI运行39762479133已完成success，Ubuntu22.04和24.04两job均success，见出版证据。
 
 ## 9. 用户追加的过程记录、commit、push 和 QEMU
 
 | 用户要求 | 审计时事实 | 最终必须补足的证据 |
 | --- | --- | --- |
-| 合适 commit | Git 已有 `9800dd4 docs: audit USB/IP upstreams and define phased RustUSB architecture`、`ef12209 feat: add guarded Linux Native USB/IP workspace and CLI` | 后续修复 / 仿真 / 验收文档按有意义单元提交；不能把未提交工作当作已推送 |
+| 合适 commit | Git已有9800dd4研究、ef12209实现、0c3e85a修复、97c2914仿真、af14f88验收记录；其后只有文档/出版证据更新 | 后续修复 / 仿真 / 验收文档按有意义单元提交；不能把未提交工作当作已推送 |
 | 记录所有过程 | work-log 保存环境、上游研究、试验、编译 / 测试失败及修复；evidence 保留软件 / fuzz / QEMU 失败日志 | 补最后 QEMU 裁决、最终软件检查、commit 与 push 结果；失败记录保留而非删成“全绿” |
-| push 指定仓库 | origin fetch / push 均为 `git@github.com:tiansongyu/usbip-client.git`；审计读取 `git ls-remote --heads origin` exit 0、无 refs | **审计时未完成 push**；应提供 push 成功和远端 main SHA 与本地最终 commit 相等的验证，禁止强推覆盖历史 |
-| 使用 QEMU 仿真 | 两隔离来宾、本项目二进制、UID 1000 CLI → root helper → usbip_host / usbipd → VHCI、QMP虚拟键盘 / evdev | `qemu-native-20261022T100708Z/summary.json` 中间快照完整 PASS；早期 FAIL 证据保留；后续 ownership / sysfs 清理修复改变产品代码，最终提交仍需复测 |
+| push 指定仓库 | origin fetch / push 均为 `git@github.com:tiansongyu/usbip-client.git`；审计读取 `git ls-remote --heads origin` exit 0、无 refs | 首次push exit0；ls-remote核实远端main与本地af14f88完全相等，见publication证据；后续文档提交继续普通push，无强推 |
+| 使用 QEMU 仿真 | 两隔离来宾、本项目二进制、UID 1000 CLI → root helper → usbip_host / usbipd → VHCI、QMP虚拟键盘 / evdev | `qemu-native-20261022T101910Z/summary.json`最终提交97c2914完整PASS；早期FAIL证据保留；两个guest退出0且源码未变 |
 
 ### 最终裁决追加区（必须由实际运行结果填写）
 
 - 本项目 G1-Q 最终命令、summary、两个来宾日志、二进制哈希及结果：`python3 scripts/qemu/run-native-qemu.py` exit0；[最终summary](evidence/qemu-native-20261022T101910Z/summary.json)，同目录server/client原始日志；干净提交97c2914、默认locked构建、两guest退出0、全部标记核验通过。
 - 最终修改后四项 Cargo / Rustdoc 检查输出及对应提交：[最终软件输出](evidence/software-checks-final-2026-10-22.txt)：41项测试、fmt、Clippy、release、Rustdoc均exit0；源码修复0c3e85a，QEMU基线97c2914。
-- 最终 commit 清单、push 退出状态、远端 `refs/heads/main` 与本地 `HEAD` 比较：**待补**。
+- 最终 commit 清单、push 退出状态、远端 `refs/heads/main` 与本地 `HEAD` 比较：[出版证据](evidence/publication-2026-10-22.json)：首次push exit0，远端main=本地af14f88；源码/脚本基线97c2914，后续仅文档/证据提交，最终HEAD再核对。
 - 两台真实 Ubuntu 与真实 USB 设备 G1：**未执行，不能因 QEMU 通过改为已完成**。
 
 ## 10. 长期阶段仍保持完整
