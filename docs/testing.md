@@ -86,6 +86,8 @@ G1-Q 入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-init.sh
 
 互操作场景使用 `--scenario managed|linux-client|linux-server`，各支持上述两种设备；`--scenario reconnect` 用HID验证外部释放后直接重连和同端口新代际拒绝控制。两端另有helper启动前/后和未授权UID的真实doctor断言，核对schema1、版本、有效sysfs、root peer和状态分类；doctor退出0不能代替授权判断。完整命令、源码依据、负向所有权断言及实际结果见[矩阵记录](research/native-qemu-matrix.md)。
 
+新增独立入口：`python3 scripts/qemu/run-contention-qemu.py`用三个guest验证A持有时B拒绝、A同receipt继续输入、A释放后B接手；B普通UID的RustUSB错误与独立IMPORT busy状态分别记录，见[争用报告](research/native-qemu-contention.md)。它不证明两个fresh attach同时竞速或完整多客户端调度。`python3 scripts/qemu/run-fault-qemu.py`在guest内对唯一ESTABLISHED四元组执行ss SOCK_DESTROY，验证内核NULL/旧节点消失、自有记录幂等清理、无显式detach直接再次导入和最终驱动恢复，见[主动TCP中止报告](research/native-qemu-transport-abort.md)。它不修改宿主网络/模块，也不模拟WAN黑洞或默认心跳检测。两入口均默认locked构建、180秒总观察截止、要求原始标记与各guest正常退出；开发PASS与clean提交最终证据单独保留。
+
 若仿真使用隔离的明文测试网络，明确它仅是测试环境，不宣称已满足 VPN / TLS 安全远程 gate；不能用设置 `trusted_network` 布尔值代替外部网络控制证据。脚本落地后在工作记录给出实际命令及结果；在此之前标未执行。双来宾仿真通过仍不证明物理设备兼容性或两个真实 Ubuntu 系统的 G1 硬件 gate。
 
 | 场景 | 路径与判定 | 阶段 |

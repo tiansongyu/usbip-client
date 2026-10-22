@@ -47,7 +47,20 @@ python3 scripts/qemu/run-contention-qemu.py
 
 ## 最终冻结复测
 
-待 root 提交冻结脚本及本轮源码后执行，开发运行不能替代最终 clean 证据。
+最终在干净提交 **`b48714429841611c626c2c92311f66f38d8966f4`** 执行 `python3 scripts/qemu/run-contention-qemu.py --evidence <新的临时目录>/evidence`，默认 locked release 构建，**PASS / runner exit0**。开始时 `working_tree_dirty=false`、`build_performed=true`，三个 guest 均正常退出0。测试期间仓库保持只读；与独立 TCP 故障测试均结束后，才复制原始文件入 [最终目录](../evidence/qemu-contention-final-20261022/summary.json)。
+
+| 最终断言 | 实测证据 |
+| --- | --- |
+| 三个独立 guest / 两条隔离链路 | 三份 boot/isolation/UID 断言，`ip_forward=0`，各自 QEMU 进程正常退出 |
+| RustUSB B 管理拒绝 | UID1000 attach 明确 `requested device is absent from remote export list`，`reason=not_advertised`，sessions=0；没有把此错误描述成 CLI 直接观察到 busy |
+| 内核/原生工具 busy | B 的原始 IMPORT 精确回复 `0111000300000002`，官方 attach 明确 `Device busy (exported)`、非0且无新增 VHCI |
+| A 不受失败请求影响 | A 数字1后 reader 持续；B拒绝后完整 session 与原 receipt 相等、仍managed，实际数字2通过；server前后均status2 |
+| B 正常接手 | A helper detach后sessions0/设备消失、server AVAILABLE；B UID1000 helper attach、数字3、正常 detach与设备移除全部通过 |
+| 最终清理 | server正常unexport后usb/usbhid恢复；两client的DEVLIST均0 |
+
+原始三方 serial、三方 QEMU stderr、summary 与 runner stdout/stderr 共8个文件均逐字节复制并核对 SHA256；[artifacts.sha256](../evidence/qemu-contention-final-20261022/artifacts.sha256) 列出这些原始文件的哈希，不对索引本身形成循环校验。完整运行信息见 [summary](../evidence/qemu-contention-final-20261022/summary.json)，实际构建及 runner 结果见 [runner.log](../evidence/qemu-contention-final-20261022/runner.log)。01的真实 FAIL 和02开发 PASS 均保留。
+
+运行前后组合源码/脚本指纹相等，为 `2ac610bf4fb85260d7671f729f40a26b235c5e927c395ef01d6ff81e44888eb1`。CLI SHA256 为 `fc1cc5ebb9ecd8fd8094438137bc3577c59a5876c3faba978abcb8586b9b82a7`，helper 为 `cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad`，与先前七项矩阵产品产物相同；新增的是独立争用验证，未修改 Native Rust 实现或原七项脚本。
 
 ## 故障复用边界
 

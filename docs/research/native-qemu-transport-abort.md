@@ -45,4 +45,13 @@ runner 复用现有 `run-native-qemu.py` 的二进制/库/模块复制和 QMP �
 
 第三轮 [`dev-3`](../evidence/qemu-transport-abort-dev-3-20261022/summary.json) 完整 **PASS**，两 guest 均 exit 0，运行后源码指纹未变：两条实际 TCP tuple 各由唯一 ESTABLISHED 变为零，服务端回到 AVAILABLE，客户端三次释放、三次 `KEY_1`、已释放自有记录清理、无显式 detach 的新代际重连及服务端本地驱动恢复全部通过。原始内核日志包含服务端 `recv a header, -103` 和客户端 `connection reset by peer`。本轮是 dirty 工作树的开发验证，尚不是冻结提交的发布证据。
 
-后续开发及冻结提交的最终裁决由实际 summary 和工作日志记录。未经最终冻结重跑的开发 PASS 不能替代发布证据。此测试不证明存储异常恢复、长期并发、多客户端争用、网络丢包/延迟、断网黑洞、TLS、CDC 或真实设备支持。
+## 冻结提交的最终结果
+
+`b48714429841611c626c2c92311f66f38d8966f4` 在干净工作树上以默认 locked release 构建重跑，最终 **PASS**，server/client 两 guest 均 exit 0。运行命令为 `python3 scripts/qemu/run-fault-qemu.py --evidence /tmp/rustusb-qemu-transport-abort-final-20261022T111612Z/evidence`；[摘要](../evidence/qemu-transport-abort-final-20261022/summary.json)、[runner 输出](../evidence/qemu-transport-abort-final-20261022/runner.log)、[构建输出](../evidence/qemu-transport-abort-final-20261022/build.log)与[逐文件 SHA256 清单](../evidence/qemu-transport-abort-final-20261022/artifact-sha256.json)均已按原始字节归档，复制后逐文件核对一致。
+
+- 两次精确中止的对端端口为 `35982` / `36014`，本地均为 `192.0.2.1:3240`。每次注入前唯一 ESTABLISHED、注入后目标连接为零、server AVAILABLE、监听器与原 usbipd/helper 存活。没有用本地 detach 代替故障。
+- 客户端三次实际 `KEY_1` 输入、三次端口 NULL / 活动 sessions=0 / 旧 sysfs 设备消失均通过。第一次故障后通过 helper 清理已释放的自有记录；第二次故障后不显式 detach 而直接 attach 成功，仍为 managed。
+- 三次 receipt 都为 port 0、local Bus ID `1-1`，地址依次 `2/3/4`，sysfs inode 依次 `25391/25625/25859`（同一 guest 的 filesystem device 23），证明重连结果来自新代际。原始 server 内核日志观测到 `recv a header, -103`，client 观测到 `connection reset by peer`。
+- 最终正常 detach/unexport 后服务端设备驱动 `usb`、接口驱动 `usbhid` 恢复。运行后完整源码与依赖脚本指纹仍匹配，实际 ss 仍为摘要记录的 iproute2 5.15.0；没有修改 keepalive 或 TCP sysctl。
+
+这是隔离模拟 HID 在主动 TCP abort 下的确定性恢复证据。它不证明存储异常恢复、长期并发、网络丢包/延迟、断网黑洞、TLS、CDC 或真实设备支持；多客户端争用由[独立测试](native-qemu-contention.md)验收，不能由本故障测试代替。

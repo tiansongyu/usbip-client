@@ -101,3 +101,12 @@
 - 双guest传输中止dev1 FAIL：真实SOCK_DESTROY及第一次内核释放/清理已过，但服务端采样AVAILABLE前客户端已重连，测试同步不足。新增guest私有确认barrier；dev2两次abort、三次输入/NULL和直接重连都过，最终立即unexport前服务端异步reset尚未完成，仍保留FAIL。使用同一15秒截止等待AVAILABLE并提前打开evdev后，dev3完整PASS、2guest exit0；各次原始日志/summary/build.log在`evidence/qemu-transport-abort-dev-{1,2,3}-20261022`，未改产品占用拒绝或内核超时。
 - 独立安全复核确认两个harness无剩余must-fix；Native源码和原七项脚本与67c83d5无差异，ERROR仍拒绝猜测清理。新增生命周期审查准确区分TCP→NULL与ERROR身份缺口。root分别执行两Python编译/--help、两shell语法和宿主直接运行拒绝(exit2)、Markdown本地链接及whitespace检查通过；补证据专用通用*-serial.log/build.log规则，覆盖client-a/b的原始日志。
 - 本轮两个新harness开发PASS仍是dirty工作树，最终需要统一commit冻结后，在/tmp独立目录默认locked构建并复跑；root不以开发输出代替发布证据。
+
+## 新增争用与TCP中止的最终冻结裁决
+
+- 新harness、全部开发FAIL/PASS与源码依据提交`b487144`，root确认工作树clean后两项分别在/tmp独立目录运行，运行中禁止任何仓库写入；两项都结束后才归档证据。**最终两项PASS，5guest全部exit0**，两次默认locked构建、同一b487144、运行前dirty=false、运行后完整源码/新旧依赖脚本指纹一致。
+- 三guest最终证据`evidence/qemu-contention-final-20261022/`：B的UID1000 RustUSB明确not_advertised且sessions0；独立IMPORT完整8字节`0111000300000002`与官方Device busy证明内核拒绝。A同完整receipt及同一evdev reader在B失败前后分别收到数字1/2；A释放后B受管导入、数字3和清理通过，最后server恢复usb/usbhid、两个client DEVLIST0。8份原始日志/summary/runner逐字节归档，附SHA清单。
+- 双guest最终证据`evidence/qemu-transport-abort-final-20261022/`：两次仅对唯一已建立USB/IP四元组执行guest root ss SOCK_DESTROY，目标ESTABLISHED各从1到0、server AVAILABLE且listener/原usbipd/helper仍活。三周期KEY_1、NULL/旧节点消失、自有已释放记录幂等清理、第二次不显式detach直接new-generation attach和最终驱动恢复全部通过。实测ss5.15.0、Linux6.8原生工具/module/hash均记录；官方5.15源码路径已核对，6.1仅为先前研究。7份原始产物及独立SHA/长度清单保留。
+- root独立验证两个final summary、源码/脚本、全部原始文件SHA和长度、5退出码及原七项矩阵CLI/helper产物哈希相同；聚合索引`evidence/qemu-native-contention-transport-20261022.json`。Native Rust、Cargo和原七项脚本与b4cbfc3无差异，既有七项证据仍适用，没有为通过测试放宽ERROR或占用检查。
+- b487144已普通push、remote main=本地HEAD；其四格[CI 39769296031](https://github.com/tiansongyu/usbip-client/actions/runs/39769296031)全部success，Ubuntu22.04 x86_64 job119792492182、Ubuntu24.04 aarch64 job119792492683、Ubuntu24.04 x86_64 job119792492762、Ubuntu22.04 aarch64 job119792492855。事实记录`evidence/publication-native-validation-2026-10-22.json`，最终文档/evidence随后独立提交并普通push，再核对远端SHA与clean状态。
+- 完整目标仍active：物理G1、CDC/Rust后端、真实设备兼容性、完整会话恢复、WAN黑洞/延迟/丢包、加密、TUI/GUI/安装/性能/Windows各gate均保持原需求；本轮不把安全拒绝或主动中止的手动重连称为完整自动恢复。

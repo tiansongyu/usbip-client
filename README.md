@@ -6,6 +6,8 @@
 
 当前证据：59项软件测试及全部Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
 
+另在干净b487144完成[三机争用与交接](docs/research/native-qemu-contention.md)、[主动TCP中止后清理/重连](docs/research/native-qemu-transport-abort.md)，五个guest均正常退出。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI全部通过；这不替代ARM USB内核路径或真实硬件测试。
+
 ## 构建与检查
 
 目标系统 Ubuntu 22.04/24.04，x86_64/aarch64；当前验证环境和未测项见 [兼容性](docs/compatibility.md)。需要稳定 Rust ≥1.97（2024 Edition）和匹配运行内核的发行版 `usbip` / `usbipd`。Ubuntu 通常由 `linux-tools-common`、`linux-tools-$(uname -r)` 提供工具；模块由对应内核包提供。
@@ -86,6 +88,10 @@ python3 scripts/qemu/run-native-qemu.py
 python3 scripts/qemu/run-native-qemu.py --scenario linux-client --device ftdi-serial
 # 外部释放后直接重连，以及同端口新连接的所有权保护
 python3 scripts/qemu/run-native-qemu.py --scenario reconnect
+# 独立三guest争用与释放后交接
+python3 scripts/qemu/run-contention-qemu.py
+# 已建立USB/IP TCP被精确中止后的清理与再次导入
+python3 scripts/qemu/run-fault-qemu.py
 ```
 
 该脚本创建两个一次性x86_64 Linux guest，以私有socketpair网络连接，使用QEMU模拟键盘或FTDI0403:6001串口（不是CDC ACM）。它不会直通宿主USB或在宿主加载USB/IP模块。需要QEMU、BusyBox、cpio、jq、setpriv、当前内核镜像/模块和匹配linux-tools；无法直接读取`/boot`时，仅复制测试内核到临时目录可能需要预先可用的`sudo -n`。完整日志保存在`docs/evidence/`，通过标记不代表真实硬件兼容或内建加密。

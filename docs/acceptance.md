@@ -1,6 +1,6 @@
 # 需求逐项验收审计
 
-审计日期：2026-10-22。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目七项Native双QEMU矩阵在干净提交b4cbfc3全部通过；双Ubuntu真实设备、安全远程产品及长期功能仍未完成。**
+审计日期：2026-10-22。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目七项Native双QEMU矩阵在干净b4cbfc3全部通过，新增三机争用与主动TCP中止在干净b487144通过；双Ubuntu真实设备、安全远程产品及长期功能仍未完成。**
 
 状态约定：`已交付` 表示文档 / 源码存在且已核对；`软件已验证` 表示适用自动测试有结果；`部分` 表示功能或证据尚不覆盖原要求；`待验收` 表示有实现或计划但缺必需运行证据；`后续阶段` 表示明确尚未实现。文档存在、测试通过和产品支持互不替代。
 
@@ -16,6 +16,7 @@
 | E06 | [本项目双 QEMU 脚本](../scripts/qemu/run-native-qemu.py)、[来宾脚本](../scripts/qemu/guest-init.sh)、[首次基线PASS](evidence/qemu-native-20261022T101910Z/summary.json) 与历史 FAIL 记录 | 首次干净提交97c2914完整PASS；这是历史HID基线，后续矩阵以E07为准；历史FAIL保留 |
 | E07 | [本轮Native互操作/重连矩阵](research/native-qemu-matrix.md)，七个summary及双端原始日志；[旧bug证据](evidence/qemu-reconnect-old-20261022/summary.json) | 冻结b4cbfc3，七次clean/locked构建，HID与FTDI实际功能、所有权负向、doctor及释放验证，14guest exit0；不覆盖CDC/真实硬件/WAN |
 | E08 | [原生架构CI证据](evidence/ci-native-matrix-2026-10-22.json)，[实际运行](https://github.com/tiansongyu/usbip-client/actions/runs/39768009618) | bf08652的Ubuntu22.04/24.04 × x86_64/aarch64四job全部success，各59项/0失败/0忽略，uname及Rust host证明原生架构；不证明USB内核/物理功能 |
+| E09 | [三guest争用](research/native-qemu-contention.md)、[主动TCP中止](research/native-qemu-transport-abort.md)，各自最终summary和原始日志、[聚合索引](evidence/qemu-native-contention-transport-20261022.json) | 干净b487144/默认locked构建，5guest exit0；busy wire+原owner持续输入+handoff，两次SOCK_DESTROY后的NULL/旧代际消失和直接重连；不证明黑洞/自动恢复/完整调度 |
 
 当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI均已通过，见E08；真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
@@ -62,7 +63,7 @@
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出 | 已实现并有 schema 测试 / 只读 smoke；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
 | G1 软件 gate | E03 四项 Cargo 检查及 Rustdoc | 最终冻结源码59项测试及四项Cargo检查通过；后续代码变更仍须重新验证 |
-| G1-Q 用户要求的本项目 QEMU gate | E07七项矩阵，两来宾原始日志与完整指纹 | **干净提交b4cbfc3七项全部PASS**；三方向Native互操作各HID/FTDI两周期，reconnect三周期及新代际拒绝控制，14guest exit0；doctor/UID/资源释放逐项核验 |
+| G1-Q 用户要求的本项目 QEMU gate | E07七项矩阵、E09三机争用/双机传输中止，原始日志与完整指纹 | **干净提交b4cbfc3七项全部PASS**；三方向Native互操作各HID/FTDI两周期，reconnect三周期及新代际拒绝控制，14guest exit0；E09另5guest exit0，争用交接与真实TCPabort清理通过；doctor/UID/资源释放逐项核验 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
 Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。helper 不开放任意命令或服务名 RPC，也没有以模块需求让整个 CLI 默认 root。模块未加载时必须报告缺口；这些部署前提不应在交付说明中隐去。
@@ -77,7 +78,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 状态机 | core 列出九种 SessionState 并测试合法转移；Native 从内核观察导出 / 端口状态 | **helper 尚未把九状态接入完整会话状态机**；没有持久状态事件流、心跳、连接健康 / Recovering 调度 |
 | 取消 | CLI Ctrl-C 报告取消和“已接受 helper 操作可能继续”；Native future drop 测试表明活动子进程被终止，未声称内核回滚 | 没有 Cancel RPC / 操作令牌 / 取消结果确认；客户端断开不撤销已接受的 helper 操作；不能称完整可取消业务事务 |
 | 独占 | 设备级导出由内核占用、helper 变更串行化；只记录本实例成功绑定并复核的 export generation，拒绝接管未知绑定；native 只认领唯一匹配新增端口，detach 再校验原身份 | 锁不能排除管理员同时运行外部 usbip；未证明所有并发 / 多客户端 / 热插拔竞态已闭合；只凭失败操作前后差分无法证明绑定来源时不认领 |
-| 清理与恢复 | 幂等 detach / unexport、命令失败后读内核、未知绑定 / 端口 fail-closed；fixture 验证部分成功与端口复用；本地sysfs dev/inode+USB地址receipt阻断新代际继承，attach前仅清理已释放旧记录；E07复现旧bug并验证直接重连及外部资源拒绝 | 没有持久 export / port ownership journal；重启后的外部 / 旧资源只报告并要求管理员协调；失败后出现来源不明绑定仍需人工处理，不满足“所有失败均自动释放”的长期目标；断线自动恢复未实现 |
+| 清理与恢复 | 幂等 detach / unexport、命令失败后读内核、未知绑定 / 端口 fail-closed；fixture 验证部分成功与端口复用；本地sysfs dev/inode+USB地址receipt阻断新代际继承，attach前仅清理已释放旧记录；E07复现旧bug并验证直接重连及外部资源拒绝 | E09验证主动TCP中止后NULL/旧节点移除、自有记录清理和手动再次导入；没有持久export/port ownership journal，重启后的外部/旧资源只报告并要求管理员协调；失败后出现来源不明绑定仍需人工处理，不满足“所有失败均自动释放”的长期目标；断线自动恢复未实现 |
 | 设备身份 | VID/PID + 可用序列号 + 控制器 / 端口拓扑散列，排除动态 Bus ID / address；fixture 验证重枚举 | 无序列号同型号同端口替换仍可能不可区分；不构成设备密码学身份或完整 hotplug 事件机制 |
 | 平台边界 | 当前 Native 路径为 Linux；helper 非 Linux 明确 Unsupported；两Ubuntu × x86_64/aarch64原生软件CI通过(E08)，目标矩阵在compatibility | 非Linux全workspace构建、Ubuntu24.04内核USB互操作、aarch64 USB内核/物理设备、Windows驱动未完成 |
 
@@ -88,7 +89,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 原要求 | 当前已做 | 部分 / 后续和必需证明 |
 | --- | --- | --- |
 | 4.1 全类本地发现与元数据 | VID/PID、manufacturer / product / serial、Bus ID、address、USB version / speed、device / interface 类、active endpoint、驱动和绑定；错误 / blocker 显式 | 当前使用者 / 系统服务忙状态不能全面判定；所有 alternate setting 的完整展示后续；各设备“可发现”不能标“重定向支持” |
-| 4.2 共享、取消、远端列表、导入 / 断开、独占、多设备、多客户端、权限、监控 | Native / helper / CLI 具备基本路径和设备 / peer allowlist，内核 / 软件独占 | 多设备并发、多客户端分配、持续监控和所有失败模式未完成系统验收；存储不共享；没有两主机同时写同文件系统的许可 |
+| 4.2 共享、取消、远端列表、导入 / 断开、独占、多设备、多客户端、权限、监控 | Native / helper / CLI 具备基本路径和设备 / peer allowlist，内核 / 软件独占 | E09已验证单设备被A持有时B拒绝、释放后B接手；多设备并发、两个首次导入同时竞速、长期多客户端调度、持续监控和完整故障矩阵仍未完成；存储不共享；没有两主机同时写同文件系统的许可 |
 | 4.3 热插拔、重枚举、元信息 / 总线变化 | 重新扫描与候选持久 ID、代际复核、重枚举 fixture | 自动事件订阅 / 列表推送及完整会话协调未实现；无序列号歧义依靠明确拓扑策略，非自动安全识别 |
 | 4.4 IPv4 / IPv6 / LAN / VPN / 主机名 / 超时 / 心跳 / RTT / 带宽 / 异常 / 多客户端 | Host 支持 IPv4 / IPv6 / DNS，网络总超时；外置安全网络设计；DEVLIST 与真实数据路径区分 | 实际平台与 IPv6 / VPN 矩阵、心跳 / RTT / 带宽 / 内置安全隧道、两条连接加密证据待做；管理 API 不能冒充数据加密 |
 | 4.5 九状态、超时、取消、幂等、失败释放、重启恢复 | 领域九状态、各边界截止、部分幂等与命令前后核验，未知资源拒绝自动处理 | 完整应用状态机 / 取消 / 并发 / 重启协调未实现；存储断网后不自动恢复写入 |
@@ -107,7 +108,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 三方向互操作 | E07：managed / linux-client / linux-server各HID和FTDI | Native三方向实际功能及清理通过；Rust Server独立协议后端尚未集成，此结果不替代G2 |
 | QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游HID/CDC有E02；本项目HID/FTDI、外部释放/同端口新代际有E07 | 七项Native矩阵通过；FTDI不是CDC，本项目CDC、完整网络/热插拔异常矩阵后续 |
 | 真实 U 盘 / 串口 / HID / JTAG / 摄像头 | compatibility 与 testing 定义逐设备测试 | 全部未执行；存储拒绝；UVC / Audio / Composite / alt / ISO 各需独立证据 |
-| 断网 / 高延迟 / 丢包 / 进程退出 / 拔出 / 客户端退出 / 争用 / 忙 / 权限 / 版本 | 软件 fixture 覆盖工具失败 / timeout / drop / 身份复用 / busy / UID；protocol 版本拒绝 | 完整真实内核与网络注入矩阵未执行，不能声称异常恢复全部通过 |
+| 断网 / 高延迟 / 丢包 / 进程退出 / 拔出 / 客户端退出 / 争用 / 忙 / 权限 / 版本 | 软件fixture覆盖工具失败/timeout/drop/身份复用/busy/UID；protocol版本拒绝；E09真实SOCK_DESTROY与三guest争用 | 已验证两次主动TCP中止和单设备交接；黑洞、延迟/丢包、进程崩溃、USB热拔、同时竞速及完整异常矩阵仍未验证 |
 | 未授权 / 非法设备 / 畸形消息 / 超长 / 认证失败 / 重复 / 恶意配置 / 日志 / 特权滥用 | helper strict schema / UID / policy / metadata / 帧边界；DEVLIST 严格解析和 E04 | 尚无远端认证 / TLS / replay gate、全面日志秘密扫描与完整 IPC / 配置 / 描述符 fuzz；未测试项保持未完成 |
 | 性能：RTT / 吞吐 / P50 P95 P99 / CPU / 内存 / 并发 / 错误 / 恢复 | testing 与 roadmap G6 定义方案 | **无产品性能实测**；fuzz runs / RSS、QEMU启动时长和上游输入通过都不是 USB 性能基准 |
 
@@ -123,7 +124,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 工具链 / 依赖 / 许可 | 锁定稳定 1.97.1 和 2024；Cargo.lock / inventory / third-party；最终变更后更新清单；未声称完成发布合规认证 |
 | 平台 / 资源 / 清理 | 有界输入、明确平台错误、阻塞隔离、固定进程、真实 sysfs 与保守未知资源处理 | 目标所有 OS / 架构及长期异常路径仍需独立 gate，不用 lint 或绿色 CI 覆盖 |
 
-E03最终59项及全部质量检查通过。E07针对同一源码、干净提交b4cbfc3的七项QEMU矩阵全部PASS；此后仅文档/证据变更。远端CI运行39766360288已completed/success，两Ubuntu job均success，见本轮出版证据。
+E03最终59项及全部质量检查通过。E07针对同一源码、干净提交b4cbfc3的七项QEMU矩阵全部PASS；该Native源码及七项脚本保持未变；此后新增四格原生CI(E08)、独立争用/传输中止harness(E09)和文档/证据。b487144的四job CI运行39769296031也已completed/success，见后续出版记录。
 
 ## 9. 用户追加的过程记录、commit、push 和 QEMU
 

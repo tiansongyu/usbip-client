@@ -22,3 +22,5 @@
 本项目Native模拟HID验证：最终干净提交97c2914在两QEMU guest、Linux6.8/KVM中完成两周期导出、发现、导入、VHCI/usbhid枚举、真实evdev按键、断开、取消共享和本地驱动恢复，见[报告](research/native-qemu.md)和[最终证据](evidence/qemu-native-20261022T101910Z/summary.json)。仅验证QEMU键盘0627:0001，不将其扩大为任意物理HID、其他USB类或安全WAN支持。
 
 本轮扩展在干净b4cbfc3完成[七项Native矩阵](research/native-qemu-matrix.md)：三方向互操作（RustUSB→RustUSB、RustUSB→官方client、官方server→RustUSB）各HID/FTDI两周期，另有HID外部释放后直接重连及同端口新代际拒绝控制，14guest均exit0。模拟FTDI0403:6001使用ftdi_sio，两周期每方向各35字节；它是厂商类Bulk设备，不是CDC ACM，不能推断任意串口、流控、持续吞吐或物理设备支持。doctor的工具/模块/helper真实诊断和未授权UID分类在两端验证；网络安全与硬件标志仍明确false。
+
+补充的[三机争用](research/native-qemu-contention.md)和[主动TCP中止](research/native-qemu-transport-abort.md)在干净b487144/相同Native二进制上通过：一台QEMU键盘被A持有时B被明确拒绝，A继续输入，释放后B接手；两次实际SOCK_DESTROY后内核NULL、旧节点移除、自有记录清理和再次导入均通过，五guest exit0。它不是两个fresh attach的同时竞速，也不证明WAN黑洞检测、自动重连存储或真实设备。
