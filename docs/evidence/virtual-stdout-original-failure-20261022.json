@@ -1,0 +1,26 @@
+{
+  "observed_at_utc": "2026-10-22T11:47:26.954748+00:00",
+  "binary": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+  "binary_sha256": "cbcdfc4f0e34a3cc99e3c06fac566826b05d7c8eece92de6b5a5f78493236af6",
+  "git_commit": "85e87fa39537aa83d67e68c447f967e6010dabf1",
+  "working_tree_dirty": true,
+  "scope": "ordinary-user localhost virtual-server subprocess only; no USB or module operations",
+  "command": [
+    "/home/ubuntu/github/usbip-client/target/release/rustusb",
+    "virtual-server",
+    "--listen",
+    "127.0.0.1:0",
+    "--control-stdin"
+  ],
+  "steps": [
+    "Read only the initial ready line.",
+    "Write 100 bounded snapshot JSONL commands, leave stdin open, and stop reading stdout.",
+    "Send SIGINT after 300 ms; wait 2 seconds without draining stdout.",
+    "Resume stdout draining in a reader thread, keep stdin open, and wait up to 3 seconds."
+  ],
+  "ready_bytes": 1336,
+  "blocked_after_sigint_seconds": 2,
+  "still_running_after_drain_seconds": 3,
+  "drained_stdout_bytes": 136090,
+  "stderr": ""
+}

@@ -43,3 +43,7 @@ jobs:
           target/release/rustusb --help
           target/release/rustusb doctor --json
           target/release/rustusb devices --json
+      - name: Unprivileged virtual-server lifecycle smoke (all-features binary)
+        run: |
+          printf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin
+          python3 scripts/test-virtual-backpressure.py

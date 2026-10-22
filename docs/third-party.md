@@ -1,11 +1,11 @@
 # 第三方来源与许可证
 
-RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件，也未将 jiegec 代码加入工作区。公开协议的独立实现不应包含上游大段实现文本。本清单是工程登记，不代替发布时逐文件合规审查。
+RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件。可选 Rust 虚拟后端按 MIT 选择性复用固定 jiegec 的 HID report 描述符，源码注明来源、修改与版权，完整许可见 [LICENSES/jiegec-usbip-MIT.txt](../LICENSES/jiegec-usbip-MIT.txt)。公开协议其余部分独立实现。本清单是工程登记，不代替发布时逐文件合规审查。
 
 | 组件 | 固定研究版本 / 来源 | 许可证与处理 |
 | --- | --- | --- |
 | Linux USB/IP | [7be4bc52](https://github.com/torvalds/linux/tree/7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614/tools/usb/usbip)；补核5.15/6.8 | 工具/驱动主要GPL-2.0-or-later或文件SPDX；协议文档与各文件须分别核对。只外部调用发行版程序，不重标MIT；若发布包捆绑需履行对应源码/许可义务 |
-| jiegec/usbip | [61938f8c](https://github.com/jiegec/usbip/tree/61938f8c48ed01c508faaacfa7cb3fc3810b5ae0) | MIT，版权Jiajie Chen。只研究/独立审计probe；尚未作为产品依赖 |
+| jiegec/usbip | [61938f8c](https://github.com/jiegec/usbip/tree/61938f8c48ed01c508faaacfa7cb3fc3810b5ae0) | MIT，版权2020–2025 Jiajie Chen。HID report descriptor 片段选择性复用；不依赖上游 crate、网络 engine 或物理 host 实现；来源见新后端 descriptors.rs，完整许可随仓库保留 |
 | rusb / nusb / libusb | 上游实验依赖，详见Rust审计 | rusb MIT；nusb MIT OR Apache-2.0；libusb LGPL-2.1-or-later，若以后采用需评估链接和再分发 |
 | Rust/Cargo | 本次安装1.97.1，Edition2024 | 工具链外部依赖，不捆绑 |
 

@@ -21,6 +21,8 @@ cargo test --workspace
 cargo build --workspace --release
 ```
 
+`scripts/check.sh` 另运行 all-features Clippy、test、release 与严格 rustdoc，覆盖可选 `rust-backend` CLI。默认 CLI 保持 Native；CI 最后使用 all-features 产物在普通 UID/回环临时端口执行一次虚拟服务启动、stdin shutdown 和释放 smoke，不接触宿主 USB。网络 wire 与 QEMU 实际功能仍须分别验证，见[设计](research/rust-virtual-backend-design.md)。
+
 每条命令分别保存退出码。`Cargo.lock` 必须纳入仓库，CI 可追加 `--locked` 固定解析。若尚无 workspace 或某阶段代码未落地，相应检查记录未执行 / 失败并说明原因，不创建空测试掩盖缺口。交叉 `cargo check --target` 只能验证该 target 的编译，不能证明 aarch64 实机运行或 USB 功能。
 
 | 自动测试层 | 必须覆盖 | 成功证明范围 |

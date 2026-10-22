@@ -10,10 +10,19 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 rustusb-protocol = { path = "../crates/rustusb-protocol" }
+rustusb-rust-backend = { path = "../crates/rustusb-rust-backend" }
+tokio = { version = "1", features = ["rt", "time"] }
 
 [[bin]]
 name = "devlist"
 path = "fuzz_targets/devlist.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "server_frame"
+path = "fuzz_targets/server_frame.rs"
 test = false
 doc = false
 bench = false

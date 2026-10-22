@@ -110,3 +110,17 @@
 - root独立验证两个final summary、源码/脚本、全部原始文件SHA和长度、5退出码及原七项矩阵CLI/helper产物哈希相同；聚合索引`evidence/qemu-native-contention-transport-20261022.json`。Native Rust、Cargo和原七项脚本与b4cbfc3无差异，既有七项证据仍适用，没有为通过测试放宽ERROR或占用检查。
 - b487144已普通push、remote main=本地HEAD；其四格[CI 39769296031](https://github.com/tiansongyu/usbip-client/actions/runs/39769296031)全部success，Ubuntu22.04 x86_64 job119792492182、Ubuntu24.04 aarch64 job119792492683、Ubuntu24.04 x86_64 job119792492762、Ubuntu22.04 aarch64 job119792492855。事实记录`evidence/publication-native-validation-2026-10-22.json`，最终文档/evidence随后独立提交并普通push，再核对远端SHA与clean状态。
 - 完整目标仍active：物理G1、CDC/Rust后端、真实设备兼容性、完整会话恢复、WAN黑洞/延迟/丢包、加密、TUI/GUI/安装/性能/Windows各gate均保持原需求；本轮不把安全拒绝或主动中止的手动重连称为完整自动恢复。
+
+## 可选 Rust 虚拟服务端（基线85e87fa，实施中）
+
+- 重新读取原始完整目标、当前源码/审计、项目技能和技术文档/技术设计技能。Native九项QEMU及四平台软件CI是已有进展；真实设备G1与后续完整目标仍未完成。用户指定QEMU，继续可自动验证的虚拟Rust后端子步骤，不等待未提供的物理设备。
+- 设计先行写入`research/rust-virtual-backend-design.md`：对比固定依赖、维护fork、自有有界adapter三条路线。固定上游同步接口和私有状态不能通过薄wrapper解决已有真实缺陷，且无条件拉入物理USB依赖；选择复用领域类型/VHCI与MIT HID描述符，独立实现有界session。完整上游许可保留，不复制Linux GPL实现。
+- 并行实施wire/session、HID/标准两接口CDC模型、隔离QEMU/独立wireprobe；root负责feature CLI、质量检查和文档。默认CLI不启用Rust服务，非loopback须显式受管测试网声明和精确peer IP allowlist；无认证/TLS的边界保留。
+- 本轮初步资源契约：2设备、16连接、64pending/session、64KiB transfer/CDC queue、64完整HID reports，握手/半包/写5秒；pending IN不假回空成功，UNLINK成功=-104且不发原completion。物理R06/R07、ISO、任意Composite/alternate不因虚拟profile而标完成。
+- 新crate实际实现完成：共享DeviceDiscovery/ExportBackend、显式virtual来源、两设备RAII独占、标准HID/CDC控制与有界队列/计数/SHA。初审发现CDC OUT队列满误返回pending，修为ENOSPC/actual0且不改变原数据；SET_CONFIGURATION明确退休旧pending并清USB状态。flags统一0x03c5、默认HID idle0，描述符USB2.00/FullSpeed和MIT来源保持一致。
+- 栈内pinned reader与actor并发，半包跨输入/timer唤醒保存进度，外层JoinSet统一16连接abort+join；避免嵌套reader任务只abort未等待。新crate16项有效tests包括真实TCP、UNLINK/无迟到completion、seqwrap保序、重复seq/pending65拒绝、busy/阶段、写失败/Drop、peer/连接预算、配置重置和队列满恢复。
+- root独立loopback std wireprobe全13marker通过，CLI负向监听/秘密marker trace日志脱敏、SIGINT清理均通过。实时时钟deadline：半包management5.001秒、data5.002秒主动关闭；完整import空闲5.506秒仍可GET_DESCRIPTOR，不伪造无输入的成功completion。对应开发证据保留，不等于QEMU/物理验收。
+- 新生产parser fuzz入口与10个确定性seed已加入；开发ASan smoke3,702,581runs/31秒、cov562/ft718、无观测崩溃。它覆盖有界management/data framing，不覆盖设备handler、全部网络调度或安全证明；最终冻结source后另行复跑。
+- 独立review实际复现stdout满pipe会卡worker、阻止CtrlC清理（原FAIL材料完整保留）。修为仅持编码事件的专用std线程、有界2队列/64KiB事件/5秒确认；整个控制future参与CtrlC select，虚拟模式错误不回落同步stdoutJSON。root持真实HID lease、固定4096B pipe不排空：SIGINT exit0/0.001秒且socketEOF；不发信号时--json超时exit1/4.819秒且socketEOF；独立原probe复核新binary也PASS。blocked事件被信号取消后不再等待stopped；显式debug stderr回压仍属既有日志sink缺口，未声称任意sink有界退出。回归脚本进入CI。
+- stdout修复后完整scripts/check.sh exit0：默认75tests、allfeatures76tests，0失败/0忽略，fmt、两组Clippy/release/严格Rustdoc全过；原始输出`evidence/software-checks-virtual-20261022.txt`。Cargo仅增加自有crate，外部依赖版本未变，清单82packages均有license metadata。
+- QEMU开发dev01 FAIL为runner首轮读取尚未创建serial日志；dev02实际两个kernel驱动已枚举，但bNumInterfaces的%2d空格被错误字符串断言拒绝；均保留FAIL/原脚本，不修改产品绕过。harness修复后dev03双guest完整PASS，HID两轮按下/释放、CDC exact35B注入与35B回显/轮、总OUT86/IN156/injected70（含独立probe16B）、末lease/pending/queues0。dev03是dirty开发证据，不作为最终冻结发布验收。

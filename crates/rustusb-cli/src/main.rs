@@ -1,5 +1,8 @@
 //! Unprivileged RustUSB frontend. Mutations use the common authenticated local service.
 
+#[cfg(feature = "rust-backend")]
+mod virtual_server;
+
 use clap::{Parser, Subcommand};
 use rustusb_core::{BusId, DeviceDiscovery, Error, Host, Peer, Result, VhciPort};
 use rustusb_daemon::diagnostics::{HelperDiagnostics, diagnose_helper};
@@ -19,7 +22,7 @@ use std::{
 #[command(
     name = "rustusb",
     version,
-    about = "Linux USB/IP device management (Phase 1 preview)"
+    about = "Linux USB/IP device management (experimental preview)"
 )]
 struct Cli {
     /// Emit machine-readable JSON to stdout; logs remain on stderr.
@@ -40,6 +43,22 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Serve two virtual test devices; this experimental mode provides no authentication or TLS.
+    #[cfg(feature = "rust-backend")]
+    VirtualServer {
+        /// Bind a literal address. The default is loopback only.
+        #[arg(long, default_value = "127.0.0.1:3240")]
+        listen: std::net::SocketAddr,
+        /// Explicitly acknowledge an isolated administrator-managed test network.
+        #[arg(long)]
+        allow_insecure_test_network: bool,
+        /// Exact allowed peer IP; required together with the acknowledgement for non-loopback.
+        #[arg(long)]
+        allow_peer: Vec<std::net::IpAddr>,
+        /// Accept bounded local JSONL test controls on stdin; EOF shuts the server down.
+        #[arg(long)]
+        control_stdin: bool,
+    },
     /// Scan local devices without changing drivers. Discovery is not compatibility validation.
     Devices,
     /// Read installed tool, module and helper capabilities without loading modules.
@@ -158,6 +177,21 @@ async fn invoke(cli: &Cli, req: Request) -> Result<()> {
 
 async fn run(cli: Cli) -> Result<()> {
     match &cli.command {
+        #[cfg(feature = "rust-backend")]
+        Command::VirtualServer {
+            listen,
+            allow_insecure_test_network,
+            allow_peer,
+            control_stdin,
+        } => {
+            virtual_server::run(
+                *listen,
+                *allow_insecure_test_network,
+                allow_peer.clone(),
+                *control_stdin,
+            )
+            .await
+        }
         Command::Devices => {
             let devices = tokio::task::spawn_blocking(|| SysfsDiscovery::default().scan())
                 .await
@@ -309,17 +343,28 @@ async fn main() -> ExitCode {
         eprintln!("logging initialization failed: {error}");
         return ExitCode::FAILURE;
     }
-    let result = tokio::select! {
-        result=run(cli)=>result,
-        signal=tokio::signal::ctrl_c()=>match signal {
-            Ok(())=>Err(Error::State("cancelled; an accepted helper operation may still complete. Inspect sessions/status before retrying".into())),
-            Err(e)=>Err(Error::Io(e)),
-        },
+    #[cfg(feature = "rust-backend")]
+    let owns_signal_cleanup = matches!(&cli.command, Command::VirtualServer { .. });
+    #[cfg(not(feature = "rust-backend"))]
+    let owns_signal_cleanup = false;
+    let result = if owns_signal_cleanup {
+        // The virtual service must await its connection/lease tree on Ctrl-C.
+        // Racing it with the helper-client cancellation branch would drop that
+        // cleanup future and incorrectly return a helper-operation diagnostic.
+        run(cli).await
+    } else {
+        tokio::select! {
+            result=run(cli)=>result,
+            signal=tokio::signal::ctrl_c()=>match signal {
+                Ok(())=>Err(Error::State("cancelled; an accepted helper operation may still complete. Inspect sessions/status before retrying".into())),
+                Err(e)=>Err(Error::Io(e)),
+            },
+        }
     };
     match result {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
-            if json {
+            if json && !owns_signal_cleanup {
                 let _ = output(&serde_json::json!({"ok":false,"error":error.to_string()}));
             }
             tracing::error!(error=%error,"operation failed");

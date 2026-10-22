@@ -1,0 +1,106 @@
+{
+  "scope": "development CLI signal/policy/redaction smoke; no physical USB",
+  "host_uid": 1000,
+  "checks": [
+    {
+      "nonloopback_args": [],
+      "exit": 1,
+      "rejected": true
+    },
+    {
+      "nonloopback_args": [
+        "--allow-insecure-test-network"
+      ],
+      "exit": 1,
+      "rejected": true
+    },
+    {
+      "nonloopback_args": [
+        "--allow-peer",
+        "127.0.0.1"
+      ],
+      "exit": 1,
+      "rejected": true
+    },
+    {
+      "sigint_exit": 0,
+      "leases_pending_queues_zero": true,
+      "trace_payload_redaction": true,
+      "invalid_local_input_redaction": true,
+      "stopped_snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 0,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 0,
+              "unlink": 0,
+              "unlink_cancelled": 0
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "23315448f65efbd6a1539ec1be71aaff20bf9fa4c25474181da5bd91fe6bee09",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 1,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 31,
+              "control": 1,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 1,
+              "unlink": 0,
+              "unlink_cancelled": 0
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      },
+      "stderr": ""
+    }
+  ]
+}

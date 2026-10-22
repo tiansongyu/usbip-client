@@ -32,8 +32,9 @@ flowchart LR
 | rustusb-native | 固定 usbip 命令、超时、内核状态读取 | core、linux、Tokio |
 | rustusb-daemon | root helper、root 管理的策略、OS 身份和 IPC；客户端库 | 前述 crate |
 | rustusb-cli | clap 命令与日志 | 前述公开服务接口，不直接写 sysfs |
+| rustusb-rust-backend | 有界用户态 USB/IP 服务和两个虚拟测试 profile | core、protocol、Tokio；CLI 通过 rust-backend feature 选择，无物理 USB 依赖 |
 
-没有为未来 TUI/GUI/Rust 后端建立空壳 crate。
+没有为未来 TUI/GUI 建立空壳 crate。Rust 虚拟服务端实施设计见 [研究记录](research/rust-virtual-backend-design.md)；这不代表完整物理后端或 G2 已完成。
 
 ## 具体接口契约
 
