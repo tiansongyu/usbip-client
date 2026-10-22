@@ -22,8 +22,9 @@
 | E12 | [可选后端出版/CI证据](evidence/publication-virtual-20261022.json)、[实际运行39774177011](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011) | cfeffd3已普通push/remote一致；四原生OS/架构job全部success，每格默认75/allfeatures76、0失败/忽略、两项stdout背压回归；不代替ARM内核USB或物理验证 |
 | E13 | [USBFS物理adapter专项报告](research/physical-qemu.md)、[软件与vendor检查](evidence/physical-software-validation-20261022.json)、[最终索引](evidence/physical-validation-final-20261022.json) | 默认89/allfeatures103及全部Cargo gates、vendor14纯测试通过；干净37bc6b4默认locked的USBFS正常/热拔与原虚拟回归全部PASS，6guest exit0、普通UID/root0600、0/1/15B/取消/释放/driver恢复/新代际拒绝均有证据；全部开发及f42d最终FAIL保留，不替代真实硬件 |
 | E14 | [USBFS出版及四平台CI记录](evidence/publication-physical-20261022.json)、[实际CI39786348508](https://github.com/tiansongyu/usbip-client/actions/runs/39786348508) | 37bc6b4普通push且远端一致，Ubuntu22.04/24.04 × x86_64/aarch64四job全部success；每格默认89/allfeatures103/vendor14合计206项、0失败/忽略及两项stdout背压通过；不是ARM USB内核或真实硬件验收 |
+| E15 | [Composite配置/恢复设计](research/usbfs-composite-qemu-design.md)、[软件检查与96份输入SHA](evidence/composite-software-validation-20261022.json) | 192640c产品与软件输入一致；本机默认89/allfeatures113/vendor14共216项及完整Cargo gates通过；逐IF恢复和新配置claim/回滚前安全复核已实现，ECM QEMU及新的四平台CI仍待实际运行裁决 |
 
-当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI均已通过，当前可选后端四格结果见E14，历史虚拟服务结果见E12；真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
+当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。37bc6b4的Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI均已通过(E14)，历史虚拟服务结果见E12；最新192640c的本机软件检查见E15，新的QEMU/四格CI待裁决。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
 ## 2. Phase 0 九项产物
 
@@ -67,7 +68,7 @@
 | 设备断开 | helper 受管端口 → native detach_session 比对原身份 → 确认NULL及旧设备generation已移除 | 软件已验证端口复用拒绝 / 幂等 / 真实状态等待；重启未知端口不能由普通 CLI 接管 |
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出；feature可选virtual-server / physical-server | 已实现并有 schema 测试 / 只读 smoke及E10/E13仿真；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
-| G1 软件 gate | E13完整软件检查、E14四平台CI；E03保留历史记录 | 默认89/allfeatures103项、vendor14纯测试及两组Clippy/release/Rustdoc通过；历史虚拟与Native结果分别保留，后续源码变更仍须重新验证 |
+| G1 软件 gate | E15当前本机完整软件检查；E14保留37bc四平台CI | 默认89/allfeatures113项、vendor14纯测试及两组Clippy/release/Rustdoc通过；新的四平台CI待运行；历史结果保留，后续源码变更仍须重新验证 |
 | G1-Q 用户要求的本项目 QEMU gate | E07七项矩阵、E09三机争用/双机传输中止，原始日志与完整指纹 | **干净提交b4cbfc3七项全部PASS**；三方向Native互操作各HID/FTDI两周期，reconnect三周期及新代际拒绝控制，14guest exit0；E09另5guest exit0，争用交接与真实TCPabort清理通过；doctor/UID/资源释放逐项核验 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
@@ -109,7 +110,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 原要求测试类别 | 当前证据 | 状态和缺失 |
 | --- | --- | --- |
-| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E13/E14：默认89/allfeatures103、vendor14，共206项；历史E03为59、E10为75/76项 | 软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
+| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E15：默认89/allfeatures113、vendor14，共216项；历史E13/E14为89/103/14、E03为59、E10为75/76项 | 本机软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
 | 三方向互操作 | E07：managed / linux-client / linux-server各HID和FTDI | Native三方向实际功能及清理通过；E10另验证自有虚拟Rust Server→RustUSB Native client/VHCI；独立官方CLI专场、物理及完整G2仍待验收 |
 | QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游HID/CDC有E02；本项目Native有E07；虚拟与USBFS有E10/E13 | 七项Native矩阵通过；FTDI不是CDC，E13新增USBFS HID/FTDI正常与热拔，并复跑本项目标准双接口CDC虚拟服务；完整网络/热插拔异常矩阵后续 |
 | 真实 U 盘 / 串口 / HID / JTAG / 摄像头 | compatibility 与 testing 定义逐设备测试 | 全部未执行；存储拒绝；UVC / Audio / Composite / alt / ISO 各需独立证据 |
@@ -121,11 +122,11 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 必需命令 / 约束 | 证据及判定 |
 | --- | --- |
-| `cargo fmt --all -- --check` | scripts/check.sh 首项，E13/E14脚本整体通过；成功无输出正常。后续源码修改需重跑 |
-| `cargo clippy --workspace --all-targets -- -D warnings` | E13/E14默认与all-features两组通过；自有工作区 forbid unsafe / deny unwrap_used / expect_used / panic；vendor原有unsafe另见许可/来源记录。它不证明协议与硬件语义正确 |
-| `cargo test --workspace` | E13/E14默认89/allfeatures103项，另有vendor14纯测试，0失败/0忽略；E03/E10保留历史59及75/76项，各test名称和范围可核对；无硬件通过结论 |
-| `cargo build --workspace --release` | E13/E14默认与all-features release成功；编译产物不是双机 USB 验收 |
-| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E13/E14两组通过；不代表所有架构能力均实装 |
+| `cargo fmt --all -- --check` | scripts/check.sh 首项，当前E15本机脚本整体通过；成功无输出正常。后续源码修改需重跑 |
+| `cargo clippy --workspace --all-targets -- -D warnings` | E15默认与all-features两组通过；自有工作区 forbid unsafe / deny unwrap_used / expect_used / panic；vendor原有unsafe另见许可/来源记录。它不证明协议与硬件语义正确 |
+| `cargo test --workspace` | E15默认89/allfeatures113项，另有vendor14纯测试，0失败/0忽略；历史数量保留于E03/E10/E13/E14，各test名称和范围可核对；无硬件通过结论 |
+| `cargo build --workspace --release` | E15默认与all-features release成功；编译产物不是双机 USB 验收 |
+| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E15两组通过；不代表所有架构能力均实装 |
 | 工具链 / 依赖 / 许可 | 锁定稳定 1.97.1 和 2024；Cargo.lock / inventory / third-party；最终变更后更新清单；未声称完成发布合规认证 |
 | 平台 / 资源 / 清理 | 有界输入、明确平台错误、阻塞隔离、固定进程、真实 sysfs 与保守未知资源处理 | 目标所有 OS / 架构及长期异常路径仍需独立 gate，不用 lint 或绿色 CI 覆盖 |
 
@@ -160,9 +161,13 @@ Phase2已交付并验证固定虚拟服务子步骤(E10/E11)及USBFS adapter的Q
 - 该时点软件默认75/allfeatures76tests、无失败/忽略，fmt/两组Clippy/release/严格rustdoc通过；Native源码和旧九场景脚本当时未修改，新增服务路径为feature opt-in。最新数量和Native修复见E13/E14及第12节。
 - 真实G1仍未执行；G2物理/ISO/通用Composite/alternate、G3认证/TLS/完整恢复、TUI/GUI/安装/性能/Windows保持原完整目标，未标完成。
 
-## 12. USBFS adapter子步骤最终裁决（2026-10-22）
+## 12. 历史：37bc6b4 USBFS adapter子步骤裁决（2026-10-22）
 
 - E13在干净37bc6b4默认locked构建完成USBFS正常、热拔及原虚拟回归三项PASS，6guest均exit0。普通UID1000/零cap经helper取得root0600设备FD；HID/FTDI实际I/O、0/1/15B请求、取消/释放/原驱动恢复、热拔后另一设备继续及新代际不自动授权均有原始证据。QEMU模型不外推真实设备兼容性。
 - f42d最终FAIL促成9b0da33的Native最小修复：仅成功detach后，在原截止内对变化快照只读重观测，不重复detach，不放宽稳定replacement拒绝。原失败、3项确定性回归和修复后最终PASS均保留。
-- 当前默认89/allfeatures103及vendor14纯测试、全部质量gate通过；E14四平台每格206项且两项stdout背压回归通过。物理adapter及虚拟服务仍为feature opt-in，未提供远端认证/TLS。
+- 该时点默认89/allfeatures103及vendor14纯测试、全部质量gate通过；E14四平台每格206项且两项stdout背压回归通过。物理adapter及虚拟服务仍为feature opt-in，未提供远端认证/TLS。
 - 真实G1/G2硬件和第10节长期目标仍未完成；该子步骤的软件/仿真裁决不改变完整产品验收范围。
+
+## 13. Composite配置与恢复子步骤（实施中）
+
+E15软件gate与独立源码复核通过，新增两个接口由同一driver probe恢复的确定性回归，以及当前配置storage/块后代/外部占用拒绝检查。新的ECM双来宾测试仍在开发验证，开发FAIL保留，尚不能称为该模型实际I/O通过。原driver无绑定且为非零alternate的恢复、任意Composite/ISO、真实硬件和完整G2仍未完成。

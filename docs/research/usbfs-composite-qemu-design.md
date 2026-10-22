@@ -6,6 +6,8 @@
 
 使用本机 QEMU 6.2.0 的 `usb-net`。其 [固定描述符源码](https://github.com/qemu/qemu/blob/v6.2.0/hw/usb/dev-network.c) 中 descriptor index 0 对应 RNDIS 配置值 **2**，index 1 对应 CDC ECM 配置值 **1**，不能把索引当配置值。ECM 有控制接口 0（Interrupt IN 0x81）和数据接口 1；数据接口 alt 0 没有端点，alt 1 提供 Bulk IN/OUT 0x82/0x02。运行时须重新读取实际配置、alternate 和描述符，不仅依据模型名称断言。
 
+开发dev04的私有双网线PCAP确认了QEMU6.2旧ECM模型与xHCI聚合的兼容问题：一个132B Ethernet frame中，IPv6头声明的原帧为90B，后面拼入了完整42B ARP请求（198.18.0.2→198.18.0.1）。模型仅在单个USBPacket小于64B时flush，xHCI聚合整个较长TD时不能提供模型所依赖的逐包短包边界；两端carrier均为1，不能把它当作链路未就绪。后续新runner使用与该Full-Speed模型匹配的UHCI，补来宾`uhci-hcd`；保留原超过MPS的UDP内容、5秒接收期限和全部协议断言，不改产品传输长度或缩小payload。xHCI失败、PCAP与解析保留，UHCI结果不外推此旧模型在xHCI上的网络功能。
+
 Linux 6.8 的 [CDC 驱动](https://github.com/torvalds/linux/blob/v6.8/drivers/net/usb/cdc_ether.c) 在 probe 控制接口时会同步认领数据接口；同一驱动管理两个接口是必须验证的正常场景。[usbfs CONNECT](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/devio.c) 对已绑定驱动的接口返回 EBUSY。现有恢复循环使用一次性的全部接口快照，先 CONNECT 接口 0 后仍可能把接口 1 当成未绑定，再次 CONNECT 并误报隔离。
 
 ## 恢复修复契约
@@ -19,6 +21,8 @@ Linux 6.8 的 [CDC 驱动](https://github.com/torvalds/linux/blob/v6.8/drivers/n
 5. 保留最终全部驱动、配置、alternate、grant 验证及既有截止；不改变 URB 回收、预算和 quarantined 状态规则。
 
 确定性 fixture 应模拟恢复接口 0 时同步绑定接口 1，验证第二次 CONNECT 没有发生；同时覆盖真实并发收敛、不同外部驱动、代际/配置变化和未取得接口不被主动操作。QEMU 再证明实际 CDC 驱动行为。
+
+本轮的非零 alternate 恢复对象有原 `cdc_ether` 驱动。[Linux 6.8 interface unbind](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/driver.c) 会把释放接口恢复到 alt0；原来无驱动且为非零 alternate 的场景，不能由“claim 后设置再 release”推断已恢复。当前最终 grant 检查仍会拒绝不匹配并隔离；该场景的恢复设计和实际证据保留为后续项，不从 CDC probe 重建 alt1 外推任意 alternate 恢复。
 
 配置切换后还必须在任何新的 detach/claim 前重新执行只读安全检查，不能把旧 active 配置的授权快照当成新配置的当前安全状态。通过 `physical-nusb` 的可选 workspace path 依赖复用现有 `rustusb-linux::SysfsDiscovery`，核对同代际、实际配置、原设备 ID、完整接口集合及全部 export blockers；新出现的 usb-storage/uas/ums-*、block 后代、usbfs/usbip-host 外部占用或观察不完整均拒绝 claim。配置 0 没有接口，仅验证配置和代际，不将未配置的空接口误报为设备支持。扫描在 blocking task 中完成，保持监督器的既有截止/隔离语义。该检查不声称撤销已经触发的内核配置变更、预知所有 inactive vendor quirk 或消除管理员并发 TOCTOU；失败仍须按原契约报告并清理/隔离。
 
