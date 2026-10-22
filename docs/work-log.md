@@ -162,3 +162,9 @@
 - 最终36份原日志、验收/README/架构/安全/兼容性同步作为独立文档证据提交后普通push，再核对Git存储bytes、远端SHA与clean。自有代码/scripts相对被测37bc不再改变；最后提交自身SHA以实际Git历史与push为准，不伪造自引用记录。真实G1/G2硬件、ISO/任意Composite/alternate、认证/TLS/完整恢复、TUI/GUI/安装/性能/Windows仍保留原目标，完整goal仍active。
 - 文档证据提交`03d8a88`普通push后，remote main与本地一致、工作树clean；root核对Git存储的36份最终QEMU及9份软件产物SHA/长度通过。其四平台[CI39787450720](https://github.com/tiansongyu/usbip-client/actions/runs/39787450720)已completed/success，4job全部success；产品/scripts仍与被测37bc6b4一致。
 - 最后独立文档复核再次确认45份索引产物及本地链接，发现acceptance仍有旧75/76测试数量、未限定历史的Native源码未变、E12当前CI引用及USBFS热拔未验证表述。统一明确cfeffd3历史范围，更新为E13/E14的89/103/vendor14、9b0da33最小修复与37bc三项QEMU裁决；保留全部旧结果，不更改产品、脚本或测试证据。此次仅文档更正，完成diff/本地链接核对后另行commit/push。
+
+## 继续 Phase 2：Composite 与备用接口（基线7d06ffa）
+
+- 上一轮为实际进展：USBFS adapter、Native修复、206项软件检查、3项最终QEMU/6guest、四平台CI和全部原始证据已提交推送。最后文档更正7d06ffa与远端一致、工作树clean，CI39788484935四job全部success；完整目标仍active，真实硬件不因QEMU通过改成完成。
+- 本轮重新读取原始附件、AGENTS、项目skill、roadmap和物理设计，并并行审查模型/实现/验收边界。QEMU6.2 usb-net实际ECM配置值为1、RNDIS为2，ECM IF1 alt0无端点、alt1有Bulk；以固定源码和运行观察区分descriptor index与configuration value。
+- 源码审查发现真实Composite恢复缺口：CDC控制接口probe会同步认领数据接口，而当前恢复循环仍用此前的全接口快照，可能对已恢复的第二接口再次CONNECT并因EBUSY误隔离。先写入`research/usbfs-composite-qemu-design.md`的窄修复与确定性回归契约，再实施；目前尚未通过新的QEMU，不提前声明修复或兼容性通过。
