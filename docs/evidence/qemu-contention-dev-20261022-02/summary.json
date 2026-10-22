@@ -1,0 +1,101 @@
+{
+  "started_at_utc": "20261022T110825Z",
+  "scope": "three isolated guests; one QEMU USB keyboard; Native Linux USB/IP; no physical USB",
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "bf08652b5cc27319bc1615e89637ffca9c891bd0",
+  "working_tree_dirty": true,
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "build_performed": true,
+  "cargo_lock_sha256": "8eda390a92981dcb31bfab196acd440eb7fef4df5b84a5645277d0474bda2309",
+  "source_fingerprint_sha256": "2ac610bf4fb85260d7671f729f40a26b235c5e927c395ef01d6ff81e44888eb1",
+  "script_sha256": {
+    "run-contention-qemu.py": "0018450fa59adb1f4a8551d5a669b8868f8fcbc0ea1aa26548e1ba1f59ba6aec",
+    "guest-contention-init.sh": "afa6a4e52729c44893fd5e23a423db7b59cc875e98c5e67ab8f3b82ece4d0e64",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "binary_sha256": {
+    "rustusb": "fc1cc5ebb9ecd8fd8094438137bc3577c59a5876c3faba978abcb8586b9b82a7",
+    "rustusb-helper": "cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad"
+  },
+  "topology": {
+    "link_a": [
+      "server:192.0.2.1",
+      "client-a:192.0.2.2"
+    ],
+    "link_b": [
+      "server:192.0.3.1",
+      "client-b:192.0.3.2"
+    ],
+    "ip_forward": false
+  },
+  "result": "PASS",
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "b1a1f2f973c6a0a4dd99f2444cad44d3b02e2974cb35346b2879ffc9a23fd035",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "pass_markers_verified": true,
+  "qmp_key_injections": [
+    {
+      "role": "client-a",
+      "phase": "after",
+      "key": "2"
+    },
+    {
+      "role": "client-a",
+      "phase": "before",
+      "key": "1"
+    },
+    {
+      "role": "client-b",
+      "phase": "handoff",
+      "key": "3"
+    }
+  ],
+  "guest_exit_codes": {
+    "server": 0,
+    "client-a": 0,
+    "client-b": 0
+  },
+  "server_checks": [
+    "RUSTUSB_CONTENTION_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_CONTENTION_ISOLATION role=server ip_forward=0",
+    "RUSTUSB_CONTENTION_UID_GATE: PASS role=server denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_CONTENTION_SERVER_READY bus_id=1-1",
+    "RUSTUSB_CONTENTION_SERVER_USED owner=client-a status=2",
+    "RUSTUSB_CONTENTION_SERVER_STILL_USED owner=client-a status=2",
+    "RUSTUSB_CONTENTION_SERVER_RESTORED local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_CONTENTION_RESULT: PASS role=server"
+  ],
+  "client-a_checks": [
+    "RUSTUSB_CONTENTION_BOOT role=client-a kernel=6.8.0-106-generic",
+    "RUSTUSB_CONTENTION_ISOLATION role=client-a ip_forward=0",
+    "RUSTUSB_CONTENTION_UID_GATE: PASS role=client-a denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_CONTENTION_WAIT_INPUT role=client-a phase=before key=1",
+    "RUSTUSB_CONTENTION_INPUT: PASS role=client-a phase=before key_code=2",
+    "RUSTUSB_CONTENTION_WAIT_INPUT role=client-a phase=after key=2",
+    "RUSTUSB_CONTENTION_INPUT: PASS role=client-a phase=after key_code=3",
+    "RUSTUSB_CONTENTION_OWNER_UNCHANGED: PASS role=client-a receipt=true reader_continuous=true",
+    "RUSTUSB_CONTENTION_RELEASED role=client-a kernel_sessions=0 device_removed=true",
+    "RUSTUSB_CONTENTION_EMPTY: PASS role=client-a remote_devices=0",
+    "RUSTUSB_CONTENTION_RESULT: PASS role=client-a"
+  ],
+  "client-b_checks": [
+    "RUSTUSB_CONTENTION_BOOT role=client-b kernel=6.8.0-106-generic",
+    "RUSTUSB_CONTENTION_ISOLATION role=client-b ip_forward=0",
+    "RUSTUSB_CONTENTION_UID_GATE: PASS role=client-b denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_CONTENTION_MANAGED_REJECT: PASS role=client-b kernel_sessions=0 reason=not_advertised",
+    "RUSTUSB_CONTENTION_WIRE_BUSY: PASS role=client-b reply_hex=0111000300000002 status=2",
+    "RUSTUSB_CONTENTION_NATIVE_REJECT: PASS role=client-b kernel_sessions=0",
+    "RUSTUSB_CONTENTION_WAIT_INPUT role=client-b phase=handoff key=3",
+    "RUSTUSB_CONTENTION_INPUT: PASS role=client-b phase=handoff key_code=4",
+    "RUSTUSB_CONTENTION_RELEASED role=client-b kernel_sessions=0 device_removed=true",
+    "RUSTUSB_CONTENTION_EMPTY: PASS role=client-b remote_devices=0",
+    "RUSTUSB_CONTENTION_RESULT: PASS role=client-b"
+  ]
+}

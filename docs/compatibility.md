@@ -1,6 +1,6 @@
 # 兼容性与支持证据
 
-2026-10-22：目标 Linux Ubuntu 22.04/24.04，x86_64/aarch64。Ubuntu22.04/24.04 x86_64的[软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39766360288)两job均通过；内核USB互操作仅在22.04宿主/6.8 guest的QEMU模拟设备上验证。真实硬件、24.04内核互操作和aarch64未验证，不能宣称完整发行版/架构矩阵已通过。Windows、macOS、TUI、GUI 均为后续阶段。
+2026-10-22：目标 Linux Ubuntu22.04/24.04 × x86_64/aarch64。四格[原生软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39768009618)全部通过，各自uname架构断言、59项测试、fmt/Clippy/release/Rustdoc与只读smoke均有[持久证据](evidence/ci-native-matrix-2026-10-22.json)。USB内核互操作仍仅在22.04宿主/6.8 x86_64 guest的QEMU模拟设备上验证；真实硬件、24.04内核USB互操作、aarch64 USB内核路径均未验证，不能宣称完整设备兼容矩阵通过。Windows、macOS、TUI、GUI均为后续阶段。
 
 | 设备类型 | sysfs 可发现 | Linux Native 候选路径 | jiegec 后端审计边界 | RustUSB 真实设备验证 |
 | --- | --- | --- | --- | --- |
