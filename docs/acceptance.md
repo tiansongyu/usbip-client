@@ -20,6 +20,7 @@
 | E10 | [虚拟Rust服务QEMU](research/userspace-qemu.md)、[最终索引](evidence/virtual-validation-final-20261022.json)、[软件检查](evidence/software-checks-virtual-20261022.txt) | cfeffd3 clean/locked，两guest exit0、两设备并发/两周期evdev与CDC实际I/O/busy/UNLINK/畸形/清理；默认75/allfeatures76tests及全部Cargo gate通过；两个虚拟profile不代替物理/ISO/完整G2 |
 | E11 | [最终server parser fuzz](evidence/server-fuzz-final-20261022.json)、[原始输出](evidence/server-fuzz-final-20261022.txt)、[stdout背压最终回归](evidence/virtual-backpressure-final-20261022.json)与保留原FAIL | 同一clean cfeffd3，ASan3,615,249runs/31秒无观测崩溃；满stdout不drain仍SIGINT/5秒deadline释放lease；不是全部调度、物理、任意stderr或安全证明 |
 | E12 | [可选后端出版/CI证据](evidence/publication-virtual-20261022.json)、[实际运行39774177011](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011) | cfeffd3已普通push/remote一致；四原生OS/架构job全部success，每格默认75/allfeatures76、0失败/忽略、两项stdout背压回归；不代替ARM内核USB或物理验证 |
+| E13 | [USBFS物理adapter专项报告](research/physical-qemu.md)、[软件与vendor检查](evidence/physical-software-validation-20261022.json) | 默认86/allfeatures100及全部Cargo gates、vendor14纯测试通过；普通UID/root0600授权、HID/FTDI实际USBFS正常两周期与热拔开发场景通过，全部开发FAIL保留；最终clean验证另行登记，不替代真实硬件 |
 
 当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI均已通过，当前可选后端四格结果见E12；真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
@@ -65,7 +66,7 @@
 | 设备断开 | helper 受管端口 → native detach_session 比对原身份 → 确认NULL及旧设备generation已移除 | 软件已验证端口复用拒绝 / 幂等 / 真实状态等待；重启未知端口不能由普通 CLI 接管 |
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出 | 已实现并有 schema 测试 / 只读 smoke；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
-| G1 软件 gate | E03 四项 Cargo 检查及 Rustdoc | E10默认75/allfeatures76项及两组Clippy/release/Rustdoc通过；历史Native59项另存E03，后续变更仍须重新验证 |
+| G1 软件 gate | E03 四项 Cargo 检查及 Rustdoc | E13默认86/allfeatures100项及两组Clippy/release/Rustdoc通过；历史虚拟与Native结果分别保留，后续变更仍须重新验证 |
 | G1-Q 用户要求的本项目 QEMU gate | E07七项矩阵、E09三机争用/双机传输中止，原始日志与完整指纹 | **干净提交b4cbfc3七项全部PASS**；三方向Native互操作各HID/FTDI两周期，reconnect三周期及新代际拒绝控制，14guest exit0；E09另5guest exit0，争用交接与真实TCPabort清理通过；doctor/UID/资源释放逐项核验 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
@@ -76,7 +77,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 要求维度 | 已有实现 / 可验证依据 | 未实装或尚不充分的部分 |
 | --- | --- | --- |
 | 所有权、生命周期、Send / Sync | core 的 DeviceDiscovery、ExportBackend、ImportBackend 均 Send + Sync；future 借用后端；Native Arc 配置 / 共享 mutation 锁；helper Arc + Mutex | 完整 SessionManager / PrivilegedOperations trait 没有按长期方案落为独立抽象；当前 Request + App + Native 承担职责 |
-| 类型和错误 | BusId / Host / Peer / VhciPort，类型化 Error / Result；严格 IPC wire；公共 API 文档及 Rustdoc | 尚无 Rust USB I/O 错误到 Linux errno 的完整映射，因 Rust 物理后端未集成；跨前端统一详细错误码体系后续 |
+| 类型和错误 | BusId / Host / Peer / VhciPort，类型化 Error / Result；严格 IPC wire；公共 API 文档及 Rustdoc | USBFS raw保留负errno、错误partial/actual与OUT实际长度，纯内存回归及QEMU短请求/真实取消已验证；不能据此推断全部真实设备/ISO；跨前端统一详细错误码体系后续 |
 | 异步与资源边界 | sysfs 扫描 spawn_blocking；Tokio 有界网络与 IPC；Native 固定进程超时 / kill / reap / 有界输出 | spawn_blocking 取消不会终止底层系统读取；实际内核阻塞和断网生命周期仍需异常测试 |
 | 状态机 | core 列出九种 SessionState 并测试合法转移；Native 从内核观察导出 / 端口状态 | **helper 尚未把九状态接入完整会话状态机**；没有持久状态事件流、心跳、连接健康 / Recovering 调度 |
 | 取消 | CLI Ctrl-C 报告取消和“已接受 helper 操作可能继续”；Native future drop 测试表明活动子进程被终止，未声称内核回滚 | 没有 Cancel RPC / 操作令牌 / 取消结果确认；客户端断开不撤销已接受的 helper 操作；不能称完整可取消业务事务 |

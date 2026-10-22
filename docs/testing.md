@@ -25,6 +25,8 @@ cargo build --workspace --release
 
 虚拟用户态路径入口：`python3 scripts/qemu/run-userspace-qemu.py --evidence /tmp/rustusb-virtual-test`。它使用新服务端和独立std wireprobe，QEMU不添加USB设备，客户端实际VHCI验证两个profile的evdev/ttyACM两周期；冻结cfeffd3结果见[完整报告](research/userspace-qemu.md)。普通UID本机stdout回压回归为`python3 scripts/test-virtual-backpressure.py`，验证持有租约时不drain输出仍能SIGINT或5秒截止关闭。它们不能代替物理验收。
 
+真实USBFS adapter的QEMU入口为`python3 scripts/qemu/run-physical-qemu.py --evidence /tmp/rustusb-physical-test`，加`--hot-unplug`验证拔出HID时FTDI同会话继续I/O、同端口重插不继承授权。服务端使用QEMU创建的HID/FTDI，普通UID通过helper接收FD，节点保持root0600；客户端实际VHCI/usbhid/ftdi_sio验证。它默认locked/all-features构建，独立std probe检查0/1/15B、配置pipeline、取消、EOF、busy，结果与全部开发FAIL见[专项报告](research/physical-qemu.md)。不能把此路径称为真实硬件G1/G2或标准CDC物理设备测试。
+
 新服务parser fuzz可先执行`python3 scripts/seed-server-fuzz.py`，再运行`cargo +nightly fuzz run server_frame -- -max_len=65584 -max_total_time=30 -timeout=5`；[最终冻结记录](evidence/server-fuzz-final-20261022.json)包含nightly、cargo-fuzz、精确source/lock哈希与exit0，[原始输出](evidence/server-fuzz-final-20261022.txt)保留3,615,249次/31秒无观测崩溃。该目标不含设备handler或完整网络调度，不以短时fuzz表示全部安全或USB性能。
 
 每条命令分别保存退出码。`Cargo.lock` 必须纳入仓库，CI 可追加 `--locked` 固定解析。若尚无 workspace 或某阶段代码未落地，相应检查记录未执行 / 失败并说明原因，不创建空测试掩盖缺口。交叉 `cargo check --target` 只能验证该 target 的编译，不能证明 aarch64 实机运行或 USB 功能。

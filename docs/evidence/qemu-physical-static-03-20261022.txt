@@ -1,0 +1,34 @@
+{"argv": ["python3", "-m", "py_compile", "scripts/qemu/run-physical-qemu.py"], "expected_exit": 0, "actual_exit": 0}
+{"argv": ["sh", "-n", "scripts/qemu/guest-physical-init.sh"], "expected_exit": 0, "actual_exit": 0}
+{"argv": ["sh", "scripts/qemu/guest-physical-init.sh"], "expected_exit": 2, "actual_exit": 2}
+Refusing to run outside the disposable QEMU guest init
+{"argv": ["python3", "scripts/qemu/run-physical-qemu.py", "--kernel", "../invalid"], "expected_exit": 2, "actual_exit": 2}
+usage: run-physical-qemu.py [-h] [--kernel KERNEL] [--timeout TIMEOUT]
+                            [--skip-build] [--hot-unplug]
+                            [--evidence EVIDENCE]
+run-physical-qemu.py: error: --kernel must be one safe kernel-release token
+{"argv": ["python3", "scripts/qemu/run-physical-qemu.py", "--help"], "expected_exit": 0, "actual_exit": 0}
+usage: run-physical-qemu.py [-h] [--kernel KERNEL] [--timeout TIMEOUT]
+                            [--skip-build] [--hot-unplug]
+                            [--evidence EVIDENCE]
+
+Verify ordinary-user usbfs forwarding of QEMU HID/FTDI devices to Linux VHCI.
+Two disposable guests communicate through one inherited Unix socketpair. No
+host USB, host module mutation, tap or public listener is used.
+
+options:
+  -h, --help           show this help message and exit
+  --kernel KERNEL
+  --timeout TIMEOUT
+  --skip-build         development only; final evidence requires the default
+                       locked build
+  --hot-unplug         also remove HID during active I/O, continue FTDI and
+                       reject automatic reauthorization on reinsertion
+  --evidence EVIDENCE
+{"argv": ["rustfmt", "--check", "--edition", "2024", "scripts/qemu/physical-wire-probe.rs"], "expected_exit": 0, "actual_exit": 0}
+{"argv": ["rustc", "--edition=2024", "-O", "-D", "warnings", "scripts/qemu/physical-wire-probe.rs", "-o", "/tmp/rustusb-physical-static-probe"], "expected_exit": 0, "actual_exit": 0}
+SOURCE_SHA256
+5c41e6de74d220663b247392f248a6fd38bf9a4e21c9195a578cabc03c6c2b81  scripts/qemu/run-physical-qemu.py
+f8b940a234e19049f3c865b6baed986abddacbceff26a39305a12cfd9582c55e  scripts/qemu/guest-physical-init.sh
+ca5154874b97e41725366aca682b6b2ddda40c70c4b8798ace82ef98d84d548e  scripts/qemu/physical-wire-probe.rs
+RESULT: PASS; no QEMU or USB operation executed

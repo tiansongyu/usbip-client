@@ -1,0 +1,15 @@
+Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS)
+
+Usage: rustusb physical-server [OPTIONS] --device-id <DEVICE_IDS>
+
+Options:
+      --device-id <DEVICE_IDS>       Exact fingerprints in the helper's separate physical_device_ids allowlist
+      --json                         Emit machine-readable JSON to stdout; logs remain on stderr
+      --listen <LISTEN>              Bind a literal address; default loopback only [default: 127.0.0.1:3240]
+      --socket <SOCKET>              Root-owned local helper socket [default: /run/rustusb/control.sock]
+      --allow-insecure-test-network  Acknowledge an isolated administrator-managed test network
+      --timeout <TIMEOUT>            Discovery timeout covering DNS, connect and response [default: 10]
+      --allow-peer <ALLOW_PEER>      Exact permitted source IP; required for a non-loopback listener
+      --log-json                     Emit JSON tracing logs on stderr
+      --control-stdin                Read local snapshot/shutdown JSONL controls; EOF also closes the server
+  -h, --help                         Print help

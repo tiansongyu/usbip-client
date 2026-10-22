@@ -1,6 +1,6 @@
 # 安全模型与发布门槛
 
-本文面向实现者、部署管理员和安全审查者。它记录 RustUSB 的**设计约束和待验证控制**，不是安全认证或已实现功能清单。实际实现、测试环境和遗留风险须在工作记录中逐项登记。首期范围是 Ubuntu 22.04 / 24.04、Linux x86_64 / aarch64，使用 Native 后端；Windows、Rust 用户态设备后端和内置 TLS 隧道均须独立验收。
+本文面向实现者、部署管理员和安全审查者。它记录 RustUSB 的**已实现边界、设计约束和待验证控制**，不是安全认证或完整验收清单。实际实现、测试环境和遗留风险须在工作记录中逐项登记。首期范围是 Ubuntu 22.04 / 24.04、Linux x86_64 / aarch64。Native 与固定 Rust 虚拟 HID/CDC 已有隔离 QEMU 证据；实验性 Linux USBFS adapter 正在验证，物理硬件、Windows 和内置 TLS 隧道均须独立验收。
 
 ## 1. 资产、前提和边界
 
@@ -12,9 +12,10 @@
 | --- | --- | --- | --- |
 | 普通 CLI / TUI → 应用服务 | 用户意图、设备 ID、会话 ID | 越权导出、绕过确认、重复操作 | 统一应用服务、类型化请求、操作授权、幂等键；负向集成测试 |
 | 应用服务 → root helper | Unix socket 请求、内核操作 | 命令注入、任意文件写入、混淆代理 | socket 文件权限 + 内核 peer credentials + root 配置策略；非法请求不调用外部命令 |
-| root helper → usbip / modprobe / sysfs | Bus ID、固定动作、进程环境 | 选项注入、PATH 劫持、符号链接、设备替换 | 固定绝对可执行路径、枚举动作、参数白名单、可信文件权限、执行前重新校验 |
+| root helper → usbip / sysfs / 固定 usbfs 节点 | Bus ID、固定动作、进程环境、设备 FD | 选项注入、PATH 劫持、符号链接、设备替换 | 固定程序/路径、枚举动作、参数白名单、可信文件权限、执行前后代际核对 |
+| root helper → 普通 USBFS 服务 | SCM_RIGHTS FD、设备元数据、代际 receipt | FD 混淆、跨设备授权、把整设备能力误作沙箱 | root peer、单 FD/标记/截断检查、节点和代际匹配；明确能力范围与不可即时撤销 |
 | 远端 → USB/IP TCP | 列表、描述符、URB、长度字段 | 内存耗尽、畸形包、客户端内核漏洞 | 可信网络、连接和字节上限、超时、协议 fuzz、内核更新；不虚称 Native 路径由 Rust 校验全部 URB |
-| 物理设备 → 本机和远端驱动 | 描述符、接口、热插拔 | 恶意 HID、伪造序列号、重新枚举 | root 设备策略、接口完整检查、歧义拒绝、代际身份；断开即撤销旧授权 |
+| 物理设备 → 本机和远端驱动 | 描述符、接口、热插拔 | 恶意 HID、伪造序列号、重新枚举 | root 设备策略、接口完整检查、歧义拒绝、代际身份；新代际不继承旧能力 |
 | 设备状态 → 持久状态文件 | 会话、导出记录、恢复意图 | 旧状态越权、崩溃永久占用 | 系统实况优先、记录版本、原子写入、启动协调、保守恢复 |
 | 配置 / 凭据 → 服务 | 策略、证书、密钥 | 配置注入、密钥泄露、弱权限 | 严格 schema、root 拥有且非组/其他可写、拒绝符号链接、敏感字段脱敏 |
 
@@ -22,15 +23,23 @@
 
 ## 2. 权限分离与特权接口
 
-CLI、未来 TUI / GUI 和普通应用服务使用普通账户。只有最小 root helper 执行固定内核操作；不得以“需要加载模块”为由让整个应用常驻 root。helper 不监听 TCP，不接受脚本、命令行字符串、任意可执行路径、任意 sysfs 路径或任意环境变量。
+CLI、未来 TUI / GUI 和普通应用服务使用普通账户。只有最小 root helper 以 root 身份执行受控操作或授权设备 FD；取得 FD 的 USBFS 服务以普通账户执行设备操作。不得以“需要加载模块”为由让整个应用常驻 root。helper 不监听 TCP，不接受脚本、命令行字符串、任意可执行路径、任意 sysfs 路径或任意环境变量。
 
-helper 的目标接口仅允许：加载预先批准的 `usbip_host` / `vhci_hcd`，读取固定系统状态，绑定 / 解绑被批准的设备，连接 / 拆除受管 VHCI 会话。启停 `usbipd` 应由管理员管理的固定服务单元承担；以后如引入服务控制 RPC，也只能操作编译期固定单元，不能接受任意服务名。操作层不执行 `sh -c`，不使用来自用户的 `PATH` 选择程序，不传递 `LD_PRELOAD`、动态库搜索目录或不必要环境。超时必须终止并回收子进程；超时后要读取系统实况，不能把“子进程被杀”当作回滚完成。
+当前 helper 仅读取固定系统状态，绑定 / 解绑批准的 Native 设备，连接 / 拆除受管 VHCI 会话，并在可选 `physical-usb` feature 下交付批准设备的 USBFS FD。加载 `usbip_host` / `vhci_hcd`、启停 `usbipd` 和防火墙仍由管理员负责；以后如引入服务控制 RPC，也只能操作编译期固定单元，不能接受任意服务名。操作层不执行 `sh -c`，不使用来自用户的 `PATH` 选择程序，不传递 `LD_PRELOAD`、动态库搜索目录或不必要环境。超时必须终止并回收子进程；超时后要读取系统实况，不能把“子进程被杀”当作回滚完成。
 
 Unix socket 置于 root 管理且普通用户不可替换的运行目录。初期 socket 可连接不表示可执行操作：连接建立后读取内核提供的 UID / GID / PID，并以 root 配置中的 allowed UID 做授权；不相信请求中的用户名或 UID。Linux `SO_PEERCRED` 提供连接时的对端凭据。后续可收紧专用组 ACL，但不能移除逐请求身份和策略检查。[Linux unix(7)](https://man7.org/linux/man-pages/man7/unix.7.html)
 
-root 拥有的设备 allowlist 是 helper 的授权依据，普通用户配置不能扩大它。初期策略区分 allowed UID、可导出设备 ID、可导入目标 host / port 和显式 trusted_network 确认；没有可信网络确认则拒绝 attach。默认拒绝；不存在规则、文件权限不安全、无法确认身份或配置损坏时拒绝变更。后续可再细化 UID / 动作 / 设备的逐条授权，不把初期全局 UID 集合描述成逐用户规则。所有 allowed UID 共同管理策略批准的受管会话，这一共享管理权必须告知管理员；不得因此允许 detach 不属于本工具的任意 VHCI 端口。
+root 拥有的设备 allowlist 是 helper 的授权依据，普通用户配置不能扩大它。当前策略区分 `allowed_uids`、Native `export_device_ids`、物理 `physical_device_ids`、可导入目标 host / port 和显式 `trusted_network` 确认；两个设备列表必须不相交，物理列表缺失时默认空。没有可信网络确认则拒绝 attach 和物理 FD 授权。默认拒绝；不存在规则、文件权限不安全、无法确认身份或配置损坏时拒绝变更。后续可再细化 UID / 动作 / 设备的逐条授权，不把初期全局 UID 集合描述成逐用户规则。所有 allowed UID 共同管理策略批准的受管资源，这一共享管理权必须告知管理员；不得因此允许 detach 不属于本工具的任意 VHCI 端口。
 
-systemd 安装阶段应对普通服务启用只读文件系统、禁止新增权限、最小地址族及能力集合等隔离；helper 的 writable sysfs 和模块权限只能按实际操作放行。`ProtectKernelModules=yes` 会阻止显式加载模块，不能盲目套到负责 modprobe 的 helper；`ProtectSystem` 也不能替代 socket ACL。每个单元须在目标 Ubuntu 的 systemd 版本上验证实际限制和功能，不能把配置文本当成有效隔离。[systemd.exec 官方说明](https://www.freedesktop.org/software/systemd/man/250/systemd.exec.html)
+### 实验性 USBFS FD 能力
+
+`OpenPhysical` 只接受精确设备指纹，不接受设备路径。helper 先检查 UID、物理 allowlist、可信网络声明和当前完整接口安全状态，拒绝存储、Hub、未知/不完整接口以及 `usbfs` / `usbip-host` 已占用的设备；再打开固定 `/dev/bus/usb/BBB/DDD`。路径父链受 root 保护，节点须为匹配设备号的 root 字符设备，使用 NOFOLLOW/CLOEXEC，节点/sysfs 的 dev/inode、地址和元数据前后匹配。普通服务不需要改变节点所有者，也不直接打开调用者指定路径。
+
+客户端验证受保护 UDS 路径和 root `SO_PEERCRED`。helper 先发送有界 JSON 描述，收到单字节 ACK 后才用 SCM_RIGHTS 发送一个 FD；接收方拒绝错误标记、多 FD、截断或未知 ancillary，检查 CLOEXEC、读写模式、节点与代际 receipt。UID 可在 helper 读取请求前被拒绝；首次发送失败时仅允许在同一已验证 socket 上有界读取完整 `ok=false` 拒绝，不重发操作，不把 EPIPE 当作权限证明。拒绝路径不进入 ACK/FD 阶段。
+
+**该 FD 是整台设备的写能力。** helper 不逐条代理 URB，不能限制拿到 FD 的进程只发某些控制请求，也不能通过关闭 socket、修改策略或重启 helper 撤销已交付 FD。信任获得能力的普通服务进程是本轮明确前提；它不是逐请求沙箱、持久租约或远端用户身份授权。Native/物理 allowlist 互斥只防止本工具策略中的交叉控制，不能阻止外部管理员或其他进程改动设备。策略变更须重启 helper，并单独协调已有能力和正在使用的设备。
+
+systemd 安装阶段应对普通服务启用只读文件系统、禁止新增权限、最小地址族及能力集合等隔离；helper 的系统访问只能按实际操作放行。当前 helper 不加载模块；未来若引入该操作，须重新验证 `ProtectKernelModules` 等限制。`ProtectSystem` 不能替代 socket ACL，也不能撤销已传递的 USBFS FD。每个单元须在目标 Ubuntu 的 systemd 版本上验证实际限制和功能，不能把配置文本当成有效隔离。[systemd.exec 官方说明](https://www.freedesktop.org/software/systemd/man/250/systemd.exec.html)
 
 ## 3. 输入、解析和资源限额
 
@@ -46,13 +55,17 @@ systemd 安装阶段应对普通服务启用只读文件系统、禁止新增权
 | IPC / 配置 | 限制报文、字符串、数组、字段数和文件总大小；明确版本；拒绝未知动作和不合规字段；读取和响应均设截止时间 |
 | USB/IP | 检查版本、状态、端序、固定字段宽度、接口数量和长度乘法；分配前校验上限；未完整消息不得更新会话 |
 
-对于 Native 后端，内核和原生工具处理数据连接，RustUSB 只对自己实现的解析入口负责；不可声称 Rust 的内存安全替代 Linux USB/IP 协议栈安全。对 Rust 后端将来处理的 URB、iso packet 数量、长度总和、序号映射和在途请求另设配额。慢速请求、半包、无换行 IPC、持续失败认证和连接洪泛均须有截止时间、最大并发和速率限制。日志也须限长，避免错误循环填满磁盘。
+对于 Native 后端，内核和原生工具处理数据连接，RustUSB 只对自己实现的解析入口负责；不可声称 Rust 的内存安全替代 Linux USB/IP 协议栈安全。可选 Rust 虚拟与 USBFS adapter 复用唯一 engine：最多16连接、每会话64请求、每传输64KiB；方向、端点、长度和不支持的 ISO 在分配前检查。握手、首字节后的半包及写入各5秒，已导入的空闲连接不因此超时。物理缓冲另有全服务16MiB配额，覆盖排队、实际在途、取消待回收及回复持有的数据；未完成响应写入或网络关闭并排空前不能释放预算。连接任务和 watchdog 均随所有者回收。慢速请求、半包、无换行 IPC、持续失败认证和连接洪泛还须按部署需要验证限速；当前配额不等于完整抗拒绝服务证明。日志也须限长，避免错误循环填满磁盘。
 
 ## 4. 设备身份、独占和存储一致性
 
 持久身份以 VID/PID、序列号、接口集合、物理端口拓扑组成候选描述，不把 Bus ID 当成永久设备身份。序列号可以缺失、重复或伪造，物理端口也会变更，因此身份只用于匹配管理员意图，不是密码学认证。缺少序列号或同型号设备歧义时要求 root 策略绑定具体拓扑；无法唯一确定时拒绝自动导出。热插拔和重新枚举生成新代际，旧请求与旧锁不能继续应用。
 
 一个物理设备默认只允许一个客户端；Composite Device 以完整物理设备为独占单元，不按接口偷偷拆分共享。导出、导入和清理须串行化到设备级并协调外部 `usbip` 状态。发现已有外部占用时不得强行接管。锁文件只解决应用间并发，不能证明内核、桌面 automounter 或其他进程没有操作设备。
+
+USBFS adapter 仅在 IMPORT 时 claim 全部已验证接口；同一端点最多一个真实在途请求，其余有界 FIFO。配置/alternate 操作协调受影响请求，后续端点请求等待状态确认。部分 claim 失败也只清理本会话实际取得的接口。恢复 alternate 时不能 detach 新绑定的驱动；恢复原配置仅允许本会话确曾修改且当前仍为最后确认配置，随后独立核对原配置、alternate、驱动和代际。观察失败或外部改动进入 quarantine，不以历史元数据接管现有所有者。
+
+设备代际由已打开能力、节点/sysfs receipt 和 USB 地址共同约束。热拔使旧 slot 进入 Gone 并关闭其 TCP，不能因 Bus ID、VID/PID 或候选指纹相同而重新打开节点。重插需管理员重新核验并显式注册新代际 FD；这不提供硬件密码学身份或自动重授权。
 
 导出 USB Mass Storage 前，必须检查所有接口、LUN、分区及其下游块设备：mountinfo、活动文件使用、swap、device-mapper / LUKS、LVM、RAID、holders、loop 关系和系统服务使用。只检查 `/proc/mounts` 的一个设备节点不充分；权限不足或看不见其他挂载命名空间时不能得出空闲结论。不得强制卸载，不执行 `umount -f`、`fuser -k` 或自动关闭加密卷。
 
@@ -65,6 +78,8 @@ systemd 安装阶段应对普通服务启用只读文件系统、禁止新增权
 Native 数据路径为 `vhci_hcd ↔ TCP ↔ usbip_host`，独立于管理 API。USB/IP 列表查询使用独立连接，导入成功后的连接继续承载 URB；因此只保护设备列表或管理 API 不能保护实际 USB 数据。[Linux USB/IP 协议](https://cdn.kernel.org/doc/html/latest/usb/usbip_protocol.html)
 
 Phase 1 只在管理员已建立的可信 VPN / 受管隧道上使用，明确记录通道边界；不实现内置远端认证，不宣称原生 3240 已被 RustUSB 加密。`usbipd` 可能监听通配地址，部署必须先以防火墙限定 VPN 接口和允许的对端，再启动服务。IPv4 和 IPv6 都要验证；不能仅因 IPv4 规则正确就默认 IPv6 安全。`doctor` 仅查询本机组件和已验证身份的helper，不探测远端监听、路由、防火墙或 VPN。
+
+可选 Rust 服务默认仅监听 `127.0.0.1:3240`；非 loopback 须同时提供可信测试网声明和非空精确 peer IP allowlist，CLI 在请求设备 FD 前校验该条件。IP allowlist 和 helper 本机 UID 认证都不等于远端 USB/IP 身份认证或加密；DEVLIST 与 IMPORT 后 URB 长连接仍须由外部受管网络保护。
 
 Phase 3 如提供 TLS，使用成熟 TLS 实现和双向认证，客户端本地 TCP 代理只监听 loopback，将**列表连接和导入长连接**都送入认证 TLS 隧道，服务端代理仅连受控本地 USB/IP 端点。必须同时阻断绕过代理的直接 3240 路径。验证 hostname / 身份、证书链、有效期、用途和撤销 / 轮换策略；不允许跳过证书校验。对端认证后还要进行设备级授权，并绑定身份、会话和所选设备，避免通用转发隧道绕过策略。
 
@@ -90,6 +105,8 @@ Phase 3 如提供 TLS，使用成熟 TLS 实现和双向认证，客户端本地
 
 重复 export / unexport / detach / cancel 必须安全且幂等。先确认 ownership，再只清理本工具创建的端口、绑定和代理。落盘记录不是事实来源：启动时读取 sysfs、VHCI 端口、usbip_host 和会话记录，报告外部资源，不能清空所有 VHCI 端口或接管所有共享设备。进程重启、记录截断、断电和清理重试均须有故障注入测试。状态恢复不能在不确定时给出 Connected。
 
+USBFS 的当前局部状态为 Available/Claiming/Leased/Closing/Quarantined/Gone，不等于上述完整业务状态机已接入。Control/IN/OUT 的取消请求都须等待真实 terminal：queued 请求可不触碰硬件地取消；active 请求由实际完成裁决。取消赢回复 UNLINK -104 且不再回复原 SUBMIT；完成赢保留原 errno 和 partial，再回复 UNLINK0。OUT 的部分副作用不可因取消而隐藏。EOF、写失败、Drop 和 shutdown 仅发起关闭，监督器继续拥有真实请求与缓冲，等待回收、接口释放和原驱动核验。shutdown 最多等待10秒；超时或不确定须报告隔离，不能标 Available，也不能用 `spawn_blocking` future 被丢弃冒充底层调用已取消。真实消失可报告 Gone，无需恢复不存在的驱动，但不能据此授权重插设备。
+
 ## 7. 日志、指标与诊断
 
 使用 `tracing` 记录发现、权限判定、导入 / 导出、连接、状态转移、取消、网络故障、清理和结束，支持 JSON / 人类可读格式。日志包含可关联的操作 / 会话 ID、后端、结果和安全错误码；设备序列号、地址和用户信息按隐私策略脱敏。禁止默认记录原始 URB、HID 按键、存储内容、证书私钥、token 或完整认证请求。
@@ -101,6 +118,8 @@ Phase 3 如提供 TLS，使用成熟 TLS 实现和双向认证，客户端本地
 当前 Phase 1 helper 只在本进程内记录经过 Native 后端确认的端口身份和本实例成功创建且核对代际的导出绑定；所有配置中的 allowed UID 共同管理这些资源。它没有持久化的逐用户租约，重启后的已有端口/导出、外部工具建立的导出均不自动认领，普通 CLI 不能释放这些未知资源；管理员须先核对内核实况并人工协调。操作失败后即使出现新绑定，也不凭前后差分认领或撤销来源不明的资源，驱动/资源完整恢复尚未验收。已有 socket 路径也不会自动删除，避免误替换仍活跃的 helper。这是明确的保守降级，**不等于完整断线恢复或重启协调已验收**。模块加载、usbipd 生命周期、防火墙和 VPN 仍由管理员负责，`trusted_network` 只记录前提确认。
 
 受管导入的身份还包含本地USB地址和sysfs目录dev/inode代际，快照前后复核属性及VHCI行；这些是本次内核实例内的凭据，不能跨重启持久认证，也不能抵御特权管理员修改系统。外部释放后，下一次attach仅在端口NULL且旧代际消失时移除旧记录。相同端口、Bus ID、VID/PID的新外部连接不继承旧所有权；ERROR或未知身份阻止新导入，需管理员协调。doctor的版本子进程和只读Status均有资源截止，仅输出受限安全版本及固定诊断文字，不回传任意工具stderr、策略内容或设备标识。
+
+实验性物理 adapter 的边界与实现细节见[架构](architecture.md#可选-rust-服务共享-engine-与-usbfs-生命周期)和[实施设计](research/rust-physical-backend-design.md)。USBFS正常/热拔QEMU开发场景已通过，最终clean验证单独登记；完整 G2、真实硬件兼容性、ISO、任意 Composite/alternate、持久可撤销授权及 R11 认证均未完成。固定虚拟 profile 的成功也不能填补这些验收项，结果以[工作日志](work-log.md)和[验收记录](acceptance.md)为准。
 
 | Gate | 必须提供的证据 | 未通过的处理 |
 | --- | --- | --- |

@@ -4,7 +4,7 @@
 
 修改 USB/IP 核心、设备操作、协议解析或特权代码前，必须先读取 `.agents/skills/rustusb-development/SKILL.md`，再读相关设计和源码审计。此显式入口确保不依赖特定 Agent 的技能自动发现机制。Codex 项目技能位于 `.agents/skills/`；其他 Agent 应通过本文件显式读取，不假定通用自动加载。
 
-沿用用户级 UI/UX 和技术文档技能选择偏好。当前 Native 已有 QEMU 证据、真实设备 G1 未完成；继续可选 Rust 虚拟后端子步骤，设计见 `docs/research/rust-virtual-backend-design.md`，不将整个 Phase2 标成完成。无 GUI/TUI 视觉实现；技术文档以代码和固定上游版本为依据。
+沿用用户级 UI/UX 和技术文档技能选择偏好。当前 Native 和 Rust 虚拟profile已有 QEMU 证据、真实设备 G1 未完成；正在实施可选 USBFS 物理adapter，设计见 `docs/research/rust-physical-backend-design.md`，不将整个 Phase2 标成完成。无 GUI/TUI 视觉实现；技术文档以代码和固定上游版本为依据。
 
 ## 每次交付
 

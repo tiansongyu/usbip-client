@@ -1,10 +1,10 @@
 # RustUSB 技术架构
 
-状态：Phase 0 设计草案；2026-10-22。实现范围及验证结果以工作日志为准。
+状态：已实现结构与分阶段设计约束；2026-10-22。实现范围及验证结果以工作日志为准。
 
 ## 路线
 
-Phase 1 使用 Linux 原生数据通路，Rust 负责发现、校验、权限和操作编排。可选 Rust 后端已独立实现固定虚拟设备服务端，复用同一领域模型和应用接口；物理 rusb/nusb adapter 后续。客户端使用 Linux VHCI，不自行重写内核 USB 请求转发。
+Phase 1 使用 Linux 原生数据通路，Rust 负责发现、校验、权限和操作编排。可选 Rust 后端的同一 USB/IP engine 支持固定虚拟 HID/CDC 和实验性 Linux nusb/USBFS adapter；物理 adapter 的设备来源是 helper 授权的已打开 FD。两条物理路线互斥，同一设备不能同时交给 `usbip_host` 与 USBFS。客户端使用 Linux VHCI，不自行重写内核 USB 请求转发。
 
 ```mermaid
 flowchart LR
@@ -17,9 +17,11 @@ flowchart LR
   Native --> Host[usbip_host]
   Native --> VHCI[vhci_hcd]
   Host <-->|USB/IP TCP 经受管 VPN 或后续 TLS 代理| VHCI
-  Core --> Rust[可选 Rust 虚拟 HID / CDC 服务]
+  Core --> Rust[可选 Rust 共享 USB/IP engine]
   Rust <-->|USB/IP TCP| VHCI
-  Physical[后续 rusb / nusb 物理 adapter] -.-> Rust
+  Virtual[固定虚拟 HID / CDC] --> Rust
+  Helper -->|SCM_RIGHTS 固定设备 FD| Physical[普通用户 nusb / USBFS adapter]
+  Physical --> Rust
 ```
 
 安全管理和 USB 数据通道分离。Phase 1 需要管理员预先建立可信 VPN/隧道与防火墙；没有声称内建加密。不得自动以默认全地址监听启动 usbipd。
@@ -34,9 +36,9 @@ flowchart LR
 | rustusb-native | 固定 usbip 命令、超时、内核状态读取 | core、linux、Tokio |
 | rustusb-daemon | root helper、root 管理的策略、OS 身份和 IPC；客户端库 | 前述 crate |
 | rustusb-cli | clap 命令与日志 | 前述公开服务接口，不直接写 sysfs |
-| rustusb-rust-backend | 有界用户态 USB/IP 服务和两个虚拟测试 profile | core、protocol、Tokio；CLI 通过 rust-backend feature 选择，无物理 USB 依赖 |
+| rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
 
-没有为未来 TUI/GUI 建立空壳 crate。Rust 虚拟服务端实施设计见 [研究记录](research/rust-virtual-backend-design.md)；这不代表完整物理后端或 G2 已完成。
+没有为未来 TUI/GUI 建立空壳 crate。CLI 的 `rust-backend` feature 选择虚拟服务；`physical-nusb` 另启用物理 adapter 和 daemon 的 `physical-usb` FD 授权接口。默认 Native 和纯虚拟构建不承担 nusb 依赖。设计分别见[虚拟服务端](research/rust-virtual-backend-design.md)与[物理 adapter](research/rust-physical-backend-design.md)；物理路径正在验证，完整 G2 尚未完成。
 
 ## 具体接口契约
 
@@ -91,7 +93,32 @@ Bus ID 是当前寻址，不是持久身份。持久候选 ID 将 VID/PID、可�
 | 内核settle | 10秒轮询；快照5秒/单属性2秒 | 不把命令成功当成状态成功 |
 | 普通客户端等应答 | 120秒 | 已接受helper变更可继续完成，检查status/sessions后再操作 |
 
+helper 可在读取请求前拒绝未授权 UID。普通客户端首次写入失败时，仅在同一已验证 root socket 上有界读取完整拒绝响应；不得重连重发，也不能把 EPIPE 本身解释为权限拒绝。物理 FD 的 ACK 和接收仍只发生在正常成功响应之后。
+
 完整九状态业务状态机当前提供已测的转换类型；热插拔事件流、操作ID/进度事件、所有状态的持久超时记录、重启后未知端口认领和存储恢复仍属于Phase3，未冒充已实现。后续状态事件应包含操作ID、非敏感设备ID、from/to、稳定错误码和单调时间，使用有界事件队列；丢事件后客户端重新拉取权威快照。
+
+## 可选 Rust 服务：共享 engine 与 USBFS 生命周期
+
+`ServerHandle::bind` 和 Linux 可选的 `bind_physical` 委托同一 listener、wire parser 与单会话 actor。内部 `ServingBackend` 负责列表、异步 claim 和关闭协调；`SessionLease` 负责拥有请求、观察真实 completion、请求取消、回复后退休及清理。虚拟设备通过 wrapper 接入，保留已有 pending IN、FIFO 和 UNLINK 语义。Control、IN、OUT 都进入统一活动表；内部递增 ID 独立于可回绕的 wire seqnum，回复上下文不复制 OUT 数据。
+
+| 边界 | 当前实现 |
+| --- | --- |
+| 网络 | 最多16连接，取得 permit 后才建立任务；JoinSet 回收所有连接任务 |
+| 会话与帧 | 每会话最多64请求；每传输最多64KiB；分配前检查方向、端点、长度与不支持的 ISO |
+| 截止 | 握手、收到首字节后的半包及单次写入各5秒；已导入但无数据的空闲连接不按此超时 |
+| 物理缓冲 | 全服务16MiB，覆盖排队、USB在途、取消待回收和待回复数据；回复完成或网络关闭并排空队列前不提前归还 |
+| 物理调度 | 每端点一个真实在途请求，其余有界 FIFO；配置/alternate 变更先协调受影响请求，后续请求等待新状态 |
+| 关闭 | 停止 accept，终止并回收网络任务，再等待 backend 最多10秒；未确认清理返回隔离错误，不标为可用 |
+
+Linux 物理 adapter 使用固定 nusb 0.2.8 本地许可源码的小扩展，保留原 usbfs 提交、取消和回收实现。扩展暴露真实 Control/端点 status、actual 和 partial 数据，允许合法的原始 IN 长度；不以扩大缓冲后丢弃字节代替正确传输。依赖版本、差异和许可见[第三方记录](third-party.md)。ISO 明确不支持；HID/FTDI 或固定虚拟 profile 的结果不证明任意 Composite、alternate、物理 CDC、摄像头或音频可用。
+
+物理注册只接受 `PhysicalSource` 中已打开的 FD、设备元数据和代际 receipt，CLI 不接受任意 USB 路径。root helper 按调用 UID、`physical_device_ids`、可信网络声明及当前全部接口安全状态授权，打开固定 `/dev/bus/usb/BBB/DDD` 字符节点。该列表与 Native 的 `export_device_ids` 必须不相交，旧策略缺少物理列表时默认空。节点类型、权限、设备号及节点/sysfs 的 dev/inode、USB 地址前后匹配，并使用 NOFOLLOW/CLOEXEC。受保护 UDS 先交付有界 JSON，收到单字节 ACK 后才通过 SCM_RIGHTS 交付一个 FD；接收方复核 root peer、FD 数量、标记、截断和 receipt。
+
+打开能力不等于 claim：服务在 IMPORT 时独占当前设备的全部已验证接口。slot 经 `available → claiming → leased → closing`，成功清理才回到 `available`；无法确认进入 `quarantined`，真实消失进入 `gone`。queued UNLINK 不提交硬件；active UNLINK 等真实 terminal 裁决，取消赢才回复 -104 且不再回复原 SUBMIT，完成赢则保留原 errno/partial 并回复 UNLINK0。取消不能撤回已送出的部分 OUT 数据。
+
+EOF、写失败、Drop 和 shutdown 只发起关闭。监督器保留真实请求直到回收，释放实际取得的接口；恢复 alternate 和驱动仅限本会话确证取得的原接口，不接管新外部占用。仅当本会话修改过配置且当前仍匹配最后确认状态时，才可恢复原配置。原配置、alternate、驱动和代际须独立核对；超时或不确定时保持隔离，不能用丢弃 future 冒充取消。热拔会关闭对应 TCP，即使没有活动 URB；旧 slot 不重新打开 Bus ID，重插需要重新核验并获取新代际 FD。
+
+FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策略变更或关闭 helper socket 无法撤销已经交付的 FD。它不是逐请求沙箱，也没有实现可撤销的持久租约。部署边界见[安全模型](security.md)，使用方法见[物理服务指南](rust-physical-server.md)。当前USBFS正常/热拔QEMU开发场景通过，最终clean验证单独登记；软件检查不能代替双端实际 I/O、驱动恢复、热拔及真实硬件验收，最新结果见[工作日志](work-log.md)。
 
 ## 技术依据
 
