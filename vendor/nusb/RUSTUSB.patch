@@ -1,0 +1,512 @@
+--- a/src/device.rs
++++ b/src/device.rs
+@@ -110,6 +110,23 @@
+             .map_ok(Interface::wrap)
+     }
+ 
++    /// Atomically detach and claim a Linux interface without automatic reattachment.
++    ///
++    /// The caller must explicitly release every interface, restore the original
++    /// configuration, and then reattach and verify the original drivers. This is
++    /// useful for whole-device ownership of composite devices. It never steals
++    /// an interface already owned by another usbfs descriptor.
++    #[cfg(target_os = "linux")]
++    pub fn detach_and_claim_interface_no_reattach(
++        &self,
++        interface: u8,
++    ) -> impl MaybeFuture<Output = Result<Interface, Error>> {
++        self.backend
++            .clone()
++            .detach_and_claim_interface_no_reattach(interface)
++            .map_ok(Interface::wrap)
++    }
++
+     /// Detach kernel drivers for the specified interface.
+     ///
+     /// ### Platform-specific details
+@@ -146,6 +163,34 @@
+     /// Get the device's connection speed.
+     pub fn speed(&self) -> Option<Speed> {
+         self.backend.speed()
++    }
++
++    /// Submit a Linux device-wide control request with raw completion status.
++    /// The owner must retain every claimed interface until this handle completes.
++    #[cfg(target_os = "linux")]
++    pub fn control_in_raw(
++        &self,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> crate::RawControlTransfer {
++        self.backend.control_in_raw(data, timeout, short_not_ok)
++    }
++
++    /// Submit a Linux device-wide OUT request, retaining its actual byte count.
++    #[cfg(target_os = "linux")]
++    pub fn control_out_raw(
++        &self,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> Result<crate::RawControlTransfer, Error> {
++        if data.data.len() > usize::from(u16::MAX) {
++            return Err(Error::new(
++                ErrorKind::Unsupported,
++                "control OUT data exceeds u16",
++            ));
++        }
++        Ok(self.backend.control_out_raw(data, timeout))
+     }
+ 
+     /// Get information about the active configuration.
+@@ -500,6 +545,34 @@
+     }
+ 
+     /// Get the interface number.
++    /// Linux control completion preserving errors and partial bytes; retains the claim until completion.
++    #[cfg(target_os = "linux")]
++    pub fn control_in_raw(
++        &self,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> crate::RawControlTransfer {
++        self.backend.control_in_raw(data, timeout, short_not_ok)
++    }
++
++    /// Linux control OUT completion preserving actual bytes, including errors.
++    #[cfg(target_os = "linux")]
++    pub fn control_out_raw(
++        &self,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> Result<crate::RawControlTransfer, Error> {
++        if data.data.len() > usize::from(u16::MAX) {
++            return Err(Error::new(
++                ErrorKind::Unsupported,
++                "control OUT data exceeds u16",
++            ));
++        }
++        Ok(self.backend.control_out_raw(data, timeout))
++    }
++
++    /// Get the number of this claimed interface.
+     pub fn interface_number(&self) -> u8 {
+         self.backend.interface_number
+     }
+@@ -789,6 +862,7 @@
+     /// `TransferError::InvalidArgument`. Up to `requested_len /
+     /// max_packet_size` packets will be received, ending early when any packet
+     /// is shorter than `max_packet_size`.
++    /// Submit using the unmodified portable length constraints.
+     pub fn submit(&mut self, buf: Buffer) {
+         if Dir::DIR == Direction::In {
+             let req_len = buf.requested_len();
+@@ -926,3 +1000,68 @@
+     require_send_sync::<Endpoint<Interrupt, In>>();
+     require_send_sync::<Endpoint<Interrupt, Out>>();
+ }
++
++#[cfg(target_os = "linux")]
++impl<EpType: BulkOrInterrupt, Dir: EndpointDirection> Endpoint<EpType, Dir> {
++    /// Submit a Linux URB with the exact requested IN length, including zero.
++    ///
++    /// Unlike the portable method, this allows lengths smaller than or not
++    /// divisible by MPS. The kernel receives the original length: no extra USB
++    /// bytes are read, cached, or discarded. Each buffer is limited to 64KiB.
++    /// SHORT_NOT_OK is valid only for IN, ZERO_PACKET only for bulk OUT.
++    /// DMA ownership flags from a remote host must never be passed here.
++    #[cfg(target_os = "linux")]
++    pub fn submit_raw(
++        &mut self,
++        buf: Buffer,
++        short_not_ok: bool,
++        zero_packet: bool,
++    ) -> Result<(), Error> {
++        if buf.requested_len() > 65_536
++            || buf.len() > 65_536
++            || (short_not_ok && Dir::DIR != Direction::In)
++            || (zero_packet
++                && (Dir::DIR != Direction::Out
++                    || EpType::TYPE != crate::descriptors::TransferType::Bulk))
++        {
++            return Err(Error::new(
++                ErrorKind::Unsupported,
++                "unsupported raw transfer options",
++            ));
++        }
++        let flags = u32::from(short_not_ok) | (u32::from(zero_packet) << 6);
++        self.backend.submit_raw(buf, flags);
++        Ok(())
++    }
++
++    /// Linux kernel status and partial bytes, also on failure/cancellation.
++    #[cfg(target_os = "linux")]
++    pub fn next_complete_raw(
++        &mut self,
++    ) -> impl Future<Output = Result<crate::RawCompletion, Error>> + '_ {
++        poll_fn(|cx| self.poll_complete_raw(cx))
++    }
++
++    /// Poll one Linux raw completion without borrowing a temporary future.
++    ///
++    /// No queued transfer is an error rather than a panic. Completion retains
++    /// the original errno and partial bytes, including after cancellation.
++    #[cfg(target_os = "linux")]
++    pub fn poll_complete_raw(
++        &mut self,
++        cx: &mut Context<'_>,
++    ) -> Poll<Result<crate::RawCompletion, Error>> {
++        if self.pending() == 0 {
++            return Poll::Ready(Err(Error::new(ErrorKind::Other, "no raw transfer pending")));
++        }
++        self.backend.poll_next_complete_raw(cx).map(Ok)
++    }
++
++    /// Request cancellation only when exactly one Linux URB is pending.
++    /// Returns whether DISCARDURB accepted this request, not whether cancellation
++    /// won. Continue polling the endpoint to obtain the actual terminal result.
++    #[cfg(target_os = "linux")]
++    pub fn cancel_one_raw(&mut self) -> bool {
++        self.backend.cancel_one_raw()
++    }
++}
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -234,6 +234,8 @@
+ 
+ mod device;
+ pub use device::{Device, Endpoint, Interface};
++#[cfg(target_os = "linux")]
++pub use platform::{RawCompletion, RawControlTransfer};
+ 
+ pub mod transfer;
+ 
+--- a/src/platform/linux_usbfs/device.rs
++++ b/src/platform/linux_usbfs/device.rs
+@@ -449,6 +449,16 @@
+         })
+     }
+ 
++    pub(crate) fn detach_and_claim_interface_no_reattach(
++        self: Arc<Self>,
++        interface_number: u8,
++    ) -> impl MaybeFuture<Output = Result<Arc<LinuxInterface>, Error>> {
++        Blocking::new(move || {
++            let result = usbfs::detach_and_claim_interface(&self.fd, interface_number);
++            self.handle_claim_interface_result(interface_number, result, false)
++        })
++    }
++
+     #[cfg(target_os = "linux")]
+     pub(crate) fn detach_kernel_driver(
+         self: &Arc<Self>,
+@@ -527,13 +537,15 @@
+         r
+     }
+ 
+-    pub(crate) fn cancel(&self, transfer: &mut Pending<TransferData>) {
++    pub(crate) fn cancel(&self, transfer: &mut Pending<TransferData>) -> bool {
+         let urb = transfer.urb_ptr();
+         unsafe {
+             if let Err(e) = usbfs::discard_urb(&self.fd, urb) {
+                 debug!("Failed to cancel URB {urb:?}: {e}");
++                false
+             } else {
+                 debug!("Requested cancellation of URB {urb:?}");
++                true
+             }
+         }
+     }
+@@ -795,6 +807,7 @@
+ 
+     pub(crate) fn submit(&mut self, data: Buffer) {
+         let mut transfer = self.get_transfer();
++        transfer.urb_mut().flags = 0;
+         transfer.set_buffer(data);
+         self.pending
+             .push_back(self.inner.interface.device.submit(transfer));
+@@ -876,3 +889,249 @@
+         state.endpoints.clear(self.address);
+     }
+ }
++
++/// Linux-only raw completion; status is zero or the original negative errno.
++#[derive(Debug)]
++pub struct RawCompletion {
++    /// Kernel status, normalized to negative errno for submit errors.
++    pub status: i32,
++    /// Actual bytes transferred, including on failure.
++    pub actual_len: usize,
++    /// IN bytes only; OUT is empty.
++    pub data: Vec<u8>,
++}
++
++/// An owned physical control request; cancellation must still be reaped.
++pub struct RawControlTransfer {
++    transfer: TransferFuture<RawControlContext, TransferData>,
++    direction: Direction,
++}
++
++enum RawControlContext {
++    Device(Arc<LinuxDevice>),
++    Interface(Arc<LinuxInterface>),
++}
++
++impl RawControlContext {
++    fn device(&self) -> &Arc<LinuxDevice> {
++        match self {
++            Self::Device(device) => device,
++            Self::Interface(interface) => &interface.device,
++        }
++    }
++}
++
++impl RawControlTransfer {
++    /// Request cancellation and report whether DISCARDURB accepted it.
++    /// Continue awaiting this same handle: acceptance does not mean that
++    /// cancellation won or that kernel-owned memory has already been reclaimed.
++    pub fn cancel(&mut self) -> bool {
++        self.transfer
++            .cancel_with(|context, pending| context.device().cancel(pending))
++            .unwrap_or(false)
++    }
++}
++
++impl Drop for RawControlTransfer {
++    fn drop(&mut self) {
++        self.cancel();
++    }
++}
++
++impl std::future::Future for RawControlTransfer {
++    type Output = RawCompletion;
++    fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
++        let direction = self.direction;
++        std::pin::Pin::new(&mut self.transfer)
++            .poll(cx)
++            .map(|mut transfer| raw_control_completion(&mut transfer, direction))
++    }
++}
++
++impl LinuxInterface {
++    pub(crate) fn control_in_raw(
++        self: &Arc<Self>,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> RawControlTransfer {
++        let mut data = TransferData::new_control_in(data);
++        data.urb_mut().flags = u32::from(short_not_ok);
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Interface(self.clone()),
++                data,
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::In,
++        }
++    }
++    pub(crate) fn control_out_raw(
++        self: &Arc<Self>,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> RawControlTransfer {
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Interface(self.clone()),
++                TransferData::new_control_out(data),
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::Out,
++        }
++    }
++}
++
++impl LinuxDevice {
++    pub(crate) fn control_in_raw(
++        self: &Arc<Self>,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> RawControlTransfer {
++        let mut data = TransferData::new_control_in(data);
++        data.urb_mut().flags = u32::from(short_not_ok);
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Device(self.clone()),
++                data,
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::In,
++        }
++    }
++    pub(crate) fn control_out_raw(
++        self: &Arc<Self>,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> RawControlTransfer {
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Device(self.clone()),
++                TransferData::new_control_out(data),
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::Out,
++        }
++    }
++}
++
++impl LinuxEndpoint {
++    pub(crate) fn cancel_one_raw(&mut self) -> bool {
++        if self.pending.len() != 1 {
++            return false;
++        }
++        let Some(transfer) = self.pending.front_mut() else {
++            return false;
++        };
++        if transfer.is_complete() {
++            return false;
++        }
++        self.inner.interface.device.cancel(transfer)
++    }
++    pub(crate) fn submit_raw(&mut self, data: Buffer, flags: u32) {
++        let mut transfer = self.get_transfer();
++        transfer.set_buffer(data);
++        transfer.urb_mut().flags = flags;
++        self.pending
++            .push_back(self.inner.interface.device.submit(transfer));
++    }
++    pub(crate) fn poll_next_complete_raw(&mut self, cx: &mut Context<'_>) -> Poll<RawCompletion> {
++        self.inner.notify.subscribe(cx);
++        if let Some(mut transfer) = take_completed_from_queue(&mut self.pending) {
++            if transfer.urb().actual_length < 0
++                || transfer.urb().actual_length > transfer.urb().buffer_length
++            {
++                transfer.urb_mut().actual_length = 0;
++                transfer.urb_mut().status = -75;
++            }
++            let raw_status = transfer.urb().status;
++            let completion = transfer.take_completion();
++            let is_in = self.inner.address & 0x80 != 0;
++            self.idle_transfer = Some(transfer);
++            Poll::Ready(RawCompletion {
++                status: if raw_status > 0 {
++                    -raw_status
++                } else {
++                    raw_status
++                },
++                actual_len: completion.actual_len,
++                data: if is_in {
++                    completion.buffer.into_vec()
++                } else {
++                    Vec::new()
++                },
++            })
++        } else {
++            Poll::Pending
++        }
++    }
++}
++
++fn raw_control_completion(transfer: &mut TransferData, direction: Direction) -> RawCompletion {
++    let limit = transfer.urb().buffer_length.saturating_sub(8);
++    if transfer.urb().actual_length < 0 || transfer.urb().actual_length > limit {
++        transfer.urb_mut().actual_length = 0;
++        transfer.urb_mut().status = -75;
++    }
++    let status = transfer.urb().status;
++    RawCompletion {
++        status: if status > 0 { -status } else { status },
++        actual_len: transfer.urb().actual_length as usize,
++        data: if direction == Direction::In {
++            transfer.control_in_data().to_vec()
++        } else {
++            Vec::new()
++        },
++    }
++}
++
++#[cfg(test)]
++mod raw_completion_tests {
++    use super::*;
++
++    fn control(direction: Direction, actual: i32, status: i32) -> TransferData {
++        let mut transfer = TransferData::new(direction as u8, TransferType::Control);
++        let mut buffer = Buffer::new(12);
++        buffer.extend_from_slice(&[0; 8]);
++        buffer.extend_from_slice(&[11, 22, 33, 44]);
++        transfer.set_buffer(buffer);
++        transfer.urb_mut().actual_length = actual;
++        transfer.urb_mut().status = status;
++        transfer
++    }
++
++    #[test]
++    fn control_in_preserves_errno_and_partial_bytes_without_setup() {
++        let mut transfer = control(Direction::In, 3, -71);
++        let completed = raw_control_completion(&mut transfer, Direction::In);
++        assert_eq!(completed.status, -71);
++        assert_eq!(completed.actual_len, 3);
++        assert_eq!(completed.data, [11, 22, 33]);
++    }
++
++    #[test]
++    fn control_out_keeps_actual_bytes_on_error_without_echoing_payload() {
++        let mut transfer = control(Direction::Out, 2, -32);
++        let completed = raw_control_completion(&mut transfer, Direction::Out);
++        assert_eq!(completed.status, -32);
++        assert_eq!(completed.actual_len, 2);
++        assert!(completed.data.is_empty());
++        let mut failed_submit = control(Direction::Out, 0, 13);
++        assert_eq!(
++            raw_control_completion(&mut failed_submit, Direction::Out).status,
++            -13
++        );
++    }
++
++    #[test]
++    fn invalid_kernel_length_is_rejected_before_accessing_control_buffer() {
++        for actual in [-1, 5] {
++            let mut transfer = control(Direction::In, actual, 0);
++            let completed = raw_control_completion(&mut transfer, Direction::In);
++            assert_eq!(completed.status, -75);
++            assert_eq!(completed.actual_len, 0);
++            assert!(completed.data.is_empty());
++        }
++    }
++}
+--- a/src/platform/linux_usbfs/mod.rs
++++ b/src/platform/linux_usbfs/mod.rs
+@@ -24,6 +24,7 @@
+ pub(crate) use device::LinuxDevice as Device;
+ pub(crate) use device::LinuxEndpoint as Endpoint;
+ pub(crate) use device::LinuxInterface as Interface;
++pub use device::{RawCompletion, RawControlTransfer};
+ 
+ use crate::transfer::TransferError;
+ use crate::ErrorKind;
+--- a/src/transfer/internal.rs
++++ b/src/transfer/internal.rs
+@@ -304,6 +304,21 @@
+     }
+ }
+ 
++impl<C, T> TransferFuture<C, T> {
++    pub(crate) fn cancel_with<R>(
++        &mut self,
++        cancel: impl FnOnce(&C, &mut Pending<T>) -> R,
++    ) -> Option<R> {
++        if let Some(transfer) = self.transfer.as_mut() {
++            if transfer.is_complete() {
++                return None;
++            }
++            return Some(cancel(&self.inner.context, transfer));
++        }
++        None
++    }
++}
++
+ impl<C, T> Future for TransferFuture<C, T> {
+     type Output = Idle<T>;
+ 

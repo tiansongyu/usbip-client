@@ -1,13 +1,17 @@
 //! Owned listener, connection task tree and serialized USB/IP session actors.
 
 use crate::{
-    device::{DeviceLease, VirtualBackend},
-    wire::{self, DataCommand, Management, Submit},
+    device::VirtualBackend,
+    session::{ServingBackend, SessionLease, Started, TransferEvent, TransferId},
+    wire::{self, DataCommand, Management, ReplyContext},
 };
 use rustusb_core::{Error, Result};
 use std::{
     collections::VecDeque,
+    future::poll_fn,
     net::{IpAddr, Ipv4Addr, SocketAddr},
+    ops::{Deref, DerefMut},
+    sync::atomic::{AtomicU64, Ordering},
     time::Duration,
 };
 use tokio::{
@@ -19,8 +23,28 @@ use tokio::{
 
 const MAX_CONNECTIONS: usize = 16;
 const MAX_PENDING: usize = 64;
+const CLEANUP_DEADLINE: Duration = Duration::from_secs(10);
+static NEXT_TRANSFER: AtomicU64 = AtomicU64::new(1);
 
-/// Explicit network policy for the experimental virtual service.
+struct CloseOnDrop<L: SessionLease>(L);
+impl<L: SessionLease> Deref for CloseOnDrop<L> {
+    type Target = L;
+    fn deref(&self) -> &L {
+        &self.0
+    }
+}
+impl<L: SessionLease> DerefMut for CloseOnDrop<L> {
+    fn deref_mut(&mut self) -> &mut L {
+        &mut self.0
+    }
+}
+impl<L: SessionLease> Drop for CloseOnDrop<L> {
+    fn drop(&mut self) {
+        self.0.begin_close();
+    }
+}
+
+/// Explicit network policy for the experimental USB/IP service.
 #[derive(Debug, Clone)]
 pub struct ServerConfig {
     /// Listen address; default loopback prevents accidental public exposure.
@@ -42,11 +66,13 @@ impl Default for ServerConfig {
 }
 
 impl ServerConfig {
-    fn validate(&self) -> Result<()> {
+    /// Validate the explicit listen/peer policy without opening sockets or
+    /// acquiring devices. Frontends should call this before requesting USB capabilities.
+    pub fn validate(&self) -> Result<()> {
         if !self.listen.ip().is_loopback()
             && (!self.trusted_network || self.allowed_peers.is_empty())
         {
-            return Err(Error::Permission("non-loopback virtual serving requires a trusted-network declaration and exact peer allowlist".into()));
+            return Err(Error::Permission("non-loopback USB/IP serving requires a trusted-network declaration and exact peer allowlist".into()));
         }
         if self.allowed_peers.len() > 64
             || self
@@ -55,7 +81,7 @@ impl ServerConfig {
                 .any(|ip| ip.is_unspecified() || ip.is_multicast())
         {
             return Err(Error::InvalidInput(
-                "virtual peer allowlist must contain at most 64 concrete unicast IP addresses"
+                "USB/IP peer allowlist must contain at most 64 concrete unicast IP addresses"
                     .into(),
             ));
         }
@@ -83,6 +109,19 @@ pub struct ServerHandle {
 impl ServerHandle {
     /// Bind an explicit policy and start the two-profile virtual service.
     pub async fn bind(config: ServerConfig, backend: VirtualBackend) -> Result<Self> {
+        Self::bind_backend(config, backend).await
+    }
+
+    /// Serve explicitly registered USBFS devices through the same bounded engine.
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    pub async fn bind_physical(
+        config: ServerConfig,
+        backend: crate::physical::PhysicalBackend,
+    ) -> Result<Self> {
+        Self::bind_backend(config, backend).await
+    }
+
+    async fn bind_backend<B: ServingBackend>(config: ServerConfig, backend: B) -> Result<Self> {
         config.validate()?;
         let listener = TcpListener::bind(config.listen).await?;
         let address = listener.local_addr()?;
@@ -107,7 +146,7 @@ impl ServerHandle {
         }
         if let Some(task) = self.task.as_mut() {
             task.await.map_err(|_| {
-                Error::State("virtual listener task failed during shutdown".into())
+                Error::State("USB/IP listener task failed during shutdown".into())
             })??;
         }
         self.task.take();
@@ -126,10 +165,10 @@ impl Drop for ServerHandle {
     }
 }
 
-async fn listen(
+async fn listen<B: ServingBackend>(
     listener: TcpListener,
     config: ServerConfig,
-    backend: VirtualBackend,
+    backend: B,
     mut stop: oneshot::Receiver<()>,
 ) -> Result<()> {
     let limit = std::sync::Arc::new(Semaphore::new(MAX_CONNECTIONS));
@@ -150,12 +189,12 @@ async fn listen(
                 connections.spawn(async move {
                     let _permit = permit;
                     let result = connection(stream, backend).await;
-                    tracing::debug!(success = result.is_ok(), "virtual USB/IP connection finished");
+                    tracing::debug!(success = result.is_ok(), "USB/IP connection finished");
                 });
             }
             Some(result) = connections.join_next(), if !connections.is_empty() => {
                 if result.is_err() {
-                    tracing::warn!("virtual USB/IP connection task failed; its lease was dropped");
+                    tracing::warn!("USB/IP connection task failed; device cleanup was requested");
                 }
             }
         }
@@ -163,21 +202,28 @@ async fn listen(
     drop(listener);
     connections.abort_all();
     while connections.join_next().await.is_some() {}
+    tokio::time::timeout(CLEANUP_DEADLINE, backend.settle_closed())
+        .await
+        .map_err(|_| {
+            Error::Timeout(
+                "USB/IP cleanup did not settle; unresolved devices remain quarantined".into(),
+            )
+        })??;
     outcome
 }
 
 async fn write_frame(writer: &mut (impl AsyncWrite + Unpin), frame: &[u8]) -> Result<()> {
     tokio::time::timeout(wire::FRAME_DEADLINE, writer.write_all(frame))
         .await
-        .map_err(|_| Error::Timeout("virtual USB/IP response write".into()))??;
+        .map_err(|_| Error::Timeout("USB/IP response write".into()))??;
     Ok(())
 }
 
-async fn handshake(
+async fn handshake<B: ServingBackend>(
     reader: &mut (impl AsyncRead + Unpin),
     writer: &mut (impl AsyncWrite + Unpin),
-    backend: &VirtualBackend,
-) -> Result<Option<DeviceLease>> {
+    backend: &B,
+) -> Result<Option<CloseOnDrop<B::Lease>>> {
     match wire::read_management(reader).await? {
         Management::Devlist => {
             write_frame(
@@ -188,7 +234,13 @@ async fn handshake(
             Ok(None)
         }
         Management::Import(bus_id) => {
-            let lease = match backend.claim(&bus_id) {
+            let lease = match tokio::time::timeout(wire::FRAME_DEADLINE, backend.claim(&bus_id))
+                .await
+                .map_err(|_| {
+                    Error::Timeout(
+                        "USB/IP device claim; unfinished cleanup remains quarantined".into(),
+                    )
+                })? {
                 Ok(lease) => lease,
                 Err(Error::State(_)) => {
                     write_frame(writer, &wire::import_reply(2, None)?).await?;
@@ -200,16 +252,17 @@ async fn handshake(
                 }
                 Err(error) => return Err(error),
             };
+            let lease = CloseOnDrop(lease);
             write_frame(writer, &wire::import_reply(0, Some(&lease.device()))?).await?;
             Ok(Some(lease))
         }
     }
 }
 
-async fn connection(stream: TcpStream, backend: VirtualBackend) -> Result<()> {
+async fn connection<B: ServingBackend>(stream: TcpStream, backend: B) -> Result<()> {
     stream.set_nodelay(true)?;
     let (mut reader, mut writer) = stream.into_split();
-    let Some(lease) = handshake(&mut reader, &mut writer, &backend).await? else {
+    let Some(mut lease) = handshake(&mut reader, &mut writer, &backend).await? else {
         return Ok(());
     };
     let metadata = lease.device();
@@ -221,7 +274,7 @@ async fn connection(stream: TcpStream, backend: VirtualBackend) -> Result<()> {
                 && metadata.device_number <= u32::from(u16::MAX)
         })
         .map(|bus| bus | metadata.device_number)
-        .ok_or_else(|| Error::State("virtual device addressing exceeds USB/IP devid".into()))?;
+        .ok_or_else(|| Error::State("device addressing exceeds USB/IP devid".into()))?;
     // Two queued bounded frames plus one being read prevent a slow writer from
     // creating unbounded TCP-to-heap buffering. Only this reader owns read_exact.
     let (sender, mut receiver) = mpsc::channel(2);
@@ -234,92 +287,134 @@ async fn connection(stream: TcpStream, backend: VirtualBackend) -> Result<()> {
             }
         }
     };
-    let actor = imported(&lease, &mut writer, &mut receiver);
-    tokio::pin!(read_frames, actor);
     // The reader future retains its partial frame across every actor wake.
     // Both futures live inside this connection task, so aborting/joining that
     // task also drops its reader synchronously, without a detached child.
-    tokio::select! {
-        _ = &mut read_frames => actor.await,
-        result = &mut actor => result,
-    }
+    let result = {
+        let actor = imported(&mut *lease, &mut writer, &mut receiver);
+        tokio::pin!(read_frames, actor);
+        tokio::select! {
+            _ = &mut read_frames => actor.await,
+            result = &mut actor => result,
+        }
+    };
+    // Protocol/transport teardown must close TCP promptly even when USB cleanup
+    // needs a longer supervised reap. The backend continues owning its URBs.
+    drop(writer);
+    lease.begin_close();
+    tokio::time::timeout(CLEANUP_DEADLINE, poll_fn(|cx| lease.poll_cleanup(cx)))
+        .await
+        .map_err(|_| {
+            Error::Timeout(
+                "USB/IP session cleanup is incomplete; device remains quarantined".into(),
+            )
+        })??;
+    result
 }
 
-async fn imported(
-    lease: &DeviceLease,
+struct Active {
+    id: TransferId,
+    reply: ReplyContext,
+    unlink: Option<u32>,
+}
+
+fn active_sequence(active: &VecDeque<Active>, seq: u32) -> bool {
+    active
+        .iter()
+        .any(|request| request.reply.seqnum == seq || request.unlink == Some(seq))
+}
+
+async fn imported<L: SessionLease>(
+    lease: &mut L,
     writer: &mut (impl AsyncWrite + Unpin),
     receiver: &mut mpsc::Receiver<Result<Option<DataCommand>>>,
 ) -> Result<()> {
-    let mut pending: VecDeque<Submit> = VecDeque::new();
+    let mut pending: VecDeque<Active> = VecDeque::new();
     loop {
-        let notified = lease.notify().notified();
-        tokio::pin!(notified);
-        notified.as_mut().enable();
-        // Sequence numbers can wrap and are peer-chosen. Input is assigned in
-        // submission order, never in numeric sequence-number order.
-        let count = pending.len();
-        for _ in 0..count {
-            let Some(request) = pending.pop_front() else {
-                break;
-            };
-            if let Some(completion) = lease.poll_pending(&request)? {
-                lease.set_pending_count(pending.len())?;
-                write_frame(writer, &wire::submit_reply(&request, completion)?).await?;
-            } else {
-                pending.push_back(request);
-            }
-        }
         let command = tokio::select! {
+            // Already-observable completion wins before another network command.
+            biased;
+            event = poll_fn(|cx| {
+                if let std::task::Poll::Ready(result) = lease.poll_disconnect(cx) {
+                    return std::task::Poll::Ready(result.map(|()| None));
+                }
+                if pending.is_empty() { std::task::Poll::Pending }
+                else { lease.poll_event(cx).map(|result| result.map(Some)) }
+            }) => {
+                let Some(event) = event? else {
+                    return Err(Error::State("USB/IP device session ended; supervised cleanup required".into()));
+                };
+                let (id, completion, cancelled) = match event {
+                    TransferEvent::Completed { id, completion } => (id, completion, false),
+                    TransferEvent::Cancelled { id, completion } => (id, completion, true),
+                };
+                let index = pending.iter().position(|request| request.id == id)
+                    .ok_or_else(|| Error::State("backend returned an unknown transfer generation".into()))?;
+                let request = pending.remove(index)
+                    .ok_or_else(|| Error::State("active transfer disappeared".into()))?;
+                if let Some(unlink) = request.unlink {
+                    if !cancelled {
+                        write_frame(writer, &wire::submit_reply(&request.reply, completion)?).await?;
+                    } else {
+                        // Cancelled IN may still own partial bytes. Retire its
+                        // buffer before returning the physical budget permit.
+                        drop(completion);
+                    }
+                    lease.record_unlink(cancelled)?;
+                    write_frame(writer, &wire::unlink_reply(unlink, if cancelled { -104 } else { 0 })).await?;
+                } else {
+                    write_frame(writer, &wire::submit_reply(&request.reply, completion)?).await?;
+                }
+                lease.retire(id)?;
+                continue;
+            },
             message = receiver.recv() => match message {
                 Some(Ok(Some(command))) => command,
                 Some(Ok(None)) | None => return Ok(()),
                 Some(Err(error)) => return Err(error),
             },
-            _ = &mut notified, if !pending.is_empty() => continue,
-            // HID SET_IDLE is a timer condition; this does not emit empty IN
-            // successes, and runs only while there are bounded pending URBs.
-            _ = tokio::time::sleep(Duration::from_millis(10)), if !pending.is_empty() => continue,
         };
         match command {
             DataCommand::Submit(request) => {
-                if pending.iter().any(|active| active.seqnum == request.seqnum) {
+                if active_sequence(&pending, request.seqnum) || pending.len() >= MAX_PENDING {
                     return Err(Error::Protocol(
                         "duplicate active URB sequence number".into(),
                     ));
                 }
-                match lease.submit(&request)? {
-                    Some(completion) => {
-                        write_frame(writer, &wire::submit_reply(&request, completion)?).await?
+                let reply = ReplyContext::from(&request);
+                let id = NEXT_TRANSFER
+                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+                    .map_err(|_| Error::State("internal transfer generation exhausted".into()))?;
+                match lease.start(id, request)? {
+                    Started::Ready(completion) => {
+                        write_frame(writer, &wire::submit_reply(&reply, completion)?).await?;
+                        lease.retire(id)?;
                     }
-                    None => {
-                        if request.direction != 1 || pending.len() >= MAX_PENDING {
-                            return Err(Error::Protocol(
-                                "pending URB count or direction is invalid".into(),
-                            ));
-                        }
-                        pending.push_back(request);
-                        lease.set_pending_count(pending.len())?;
+                    Started::Queued => {
+                        pending.push_back(Active {
+                            id,
+                            reply,
+                            unlink: None,
+                        });
                     }
                 }
             }
             DataCommand::Unlink { seqnum, target } => {
-                if pending.iter().any(|active| active.seqnum == seqnum) {
+                if active_sequence(&pending, seqnum) {
                     return Err(Error::Protocol(
                         "UNLINK reuses an active URB sequence number".into(),
                     ));
                 }
-                let removed = pending
-                    .iter()
-                    .position(|request| request.seqnum == target)
-                    .and_then(|index| pending.remove(index))
-                    .is_some();
-                lease.set_pending_count(pending.len())?;
-                lease.record_unlink(removed)?;
-                write_frame(
-                    writer,
-                    &wire::unlink_reply(seqnum, if removed { -104 } else { 0 }),
-                )
-                .await?;
+                if let Some(request) = pending
+                    .iter_mut()
+                    .find(|request| request.reply.seqnum == target && request.unlink.is_none())
+                {
+                    lease.request_cancel(request.id)?;
+                    request.unlink = Some(seqnum);
+                } else {
+                    lease.record_unlink(false)?;
+                    write_frame(writer, &wire::unlink_reply(seqnum, 0)).await?;
+                }
             }
         }
     }
@@ -681,6 +776,593 @@ mod tests {
         let mut overflow = TcpStream::connect(server.local_addr()).await?;
         closed(&mut overflow).await?;
         drop(held);
+        server.shutdown().await
+    }
+
+    // A controlled asynchronous USB driver: completions and cancellation
+    // acknowledgements are injected independently of network scheduling.
+    #[derive(Clone)]
+    struct AsyncBackend(std::sync::Arc<std::sync::Mutex<AsyncState>>);
+    struct AsyncState {
+        metadata: rustusb_protocol::RemoteDevice,
+        leased: bool,
+        closing: bool,
+        cleanup_allowed: bool,
+        disconnected: bool,
+        requests: Vec<(TransferId, crate::wire::Submit)>,
+        held: std::collections::HashSet<TransferId>,
+        cancellations: std::collections::HashSet<TransferId>,
+        events: VecDeque<TransferEvent>,
+        event_waker: Option<std::task::Waker>,
+        cleanup_waker: Option<std::task::Waker>,
+        disconnect_waker: Option<std::task::Waker>,
+        retired: usize,
+    }
+    struct AsyncLease {
+        backend: AsyncBackend,
+        closed: bool,
+    }
+    impl AsyncBackend {
+        fn new() -> Result<Self> {
+            let metadata = VirtualBackend::new()?
+                .remote_devices(false)?
+                .into_iter()
+                .next()
+                .ok_or_else(|| Error::State("fixture metadata missing".into()))?;
+            Ok(Self(std::sync::Arc::new(std::sync::Mutex::new(
+                AsyncState {
+                    metadata,
+                    leased: false,
+                    closing: false,
+                    cleanup_allowed: true,
+                    disconnected: false,
+                    requests: Vec::new(),
+                    held: std::collections::HashSet::new(),
+                    cancellations: std::collections::HashSet::new(),
+                    events: VecDeque::new(),
+                    event_waker: None,
+                    cleanup_waker: None,
+                    disconnect_waker: None,
+                    retired: 0,
+                },
+            ))))
+        }
+        fn state(&self) -> Result<std::sync::MutexGuard<'_, AsyncState>> {
+            self.0
+                .lock()
+                .map_err(|_| Error::State("fixture lock poisoned".into()))
+        }
+        async fn server(&self) -> Result<ServerHandle> {
+            ServerHandle::bind_backend(
+                ServerConfig {
+                    listen: SocketAddr::from((Ipv4Addr::LOCALHOST, 0)),
+                    ..ServerConfig::default()
+                },
+                self.clone(),
+            )
+            .await
+        }
+        async fn wait_request(&self, seq: u32, cancelled: bool) -> Result<TransferId> {
+            tokio::time::timeout(Duration::from_secs(2), async {
+                loop {
+                    {
+                        let state = self.state()?;
+                        if let Some((id, _)) = state.requests.iter().find(|(id, request)| {
+                            request.seqnum == seq
+                                && (!cancelled || state.cancellations.contains(id))
+                        }) {
+                            return Ok(*id);
+                        }
+                    }
+                    tokio::time::sleep(Duration::from_millis(1)).await;
+                }
+            })
+            .await
+            .map_err(|_| Error::Timeout("fixture request observation".into()))?
+        }
+        fn terminal(
+            &self,
+            seq: u32,
+            completion: crate::wire::Completion,
+            cancelled: bool,
+        ) -> Result<()> {
+            let mut state = self.state()?;
+            let index = state
+                .requests
+                .iter()
+                .position(|(_, request)| request.seqnum == seq)
+                .ok_or_else(|| Error::State("fixture terminal target missing".into()))?;
+            let (id, _) = state.requests.remove(index);
+            assert!(state.held.contains(&id));
+            state.events.push_back(if cancelled {
+                TransferEvent::Cancelled { id, completion }
+            } else {
+                TransferEvent::Completed { id, completion }
+            });
+            if let Some(waker) = state.event_waker.take() {
+                waker.wake();
+            }
+            Ok(())
+        }
+        fn reap_closed(&self) -> Result<()> {
+            let mut state = self.state()?;
+            assert!(state.closing);
+            // The fixture's hardware controller confirms every outstanding
+            // request is terminal before permitting the registry transition.
+            state.requests.clear();
+            state.events.clear();
+            state.held.clear();
+            state.cleanup_allowed = true;
+            state.closing = false;
+            state.leased = false;
+            if let Some(waker) = state.cleanup_waker.take() {
+                waker.wake();
+            }
+            Ok(())
+        }
+    }
+    impl AsyncBackend {
+        fn disconnect(&self) -> Result<()> {
+            let mut state = self.state()?;
+            state.disconnected = true;
+            state.cleanup_allowed = false;
+            if let Some(waker) = state.disconnect_waker.take() {
+                waker.wake();
+            }
+            Ok(())
+        }
+    }
+    impl ServingBackend for AsyncBackend {
+        type Lease = AsyncLease;
+        fn remote_devices(
+            &self,
+            available_only: bool,
+        ) -> Result<Vec<rustusb_protocol::RemoteDevice>> {
+            let state = self.state()?;
+            Ok(
+                if state.disconnected || available_only && (state.leased || state.closing) {
+                    vec![]
+                } else {
+                    vec![state.metadata.clone()]
+                },
+            )
+        }
+        async fn claim(&self, bus_id: &str) -> Result<Self::Lease> {
+            let mut state = self.state()?;
+            if bus_id != state.metadata.bus_id.as_str() {
+                return Err(Error::InvalidInput("fixture unknown device".into()));
+            }
+            if state.leased || state.closing {
+                return Err(Error::State("fixture device busy or quarantined".into()));
+            }
+            if state.disconnected {
+                return Err(Error::InvalidInput(
+                    "fixture device generation is gone".into(),
+                ));
+            }
+            state.leased = true;
+            Ok(AsyncLease {
+                backend: self.clone(),
+                closed: false,
+            })
+        }
+        async fn settle_closed(&self) -> Result<()> {
+            poll_fn(|cx| {
+                let mut state = match self.state() {
+                    Ok(state) => state,
+                    Err(error) => return std::task::Poll::Ready(Err(error)),
+                };
+                if state.closing {
+                    state.cleanup_waker = Some(cx.waker().clone());
+                    std::task::Poll::Pending
+                } else {
+                    std::task::Poll::Ready(Ok(()))
+                }
+            })
+            .await
+        }
+    }
+    impl SessionLease for AsyncLease {
+        fn device(&self) -> rustusb_protocol::RemoteDevice {
+            // Metadata is immutable; poison is avoided entirely for this accessor.
+            match self.backend.0.lock() {
+                Ok(state) => state.metadata.clone(),
+                Err(poisoned) => poisoned.into_inner().metadata.clone(),
+            }
+        }
+        fn start(&mut self, id: TransferId, request: crate::wire::Submit) -> Result<Started> {
+            let mut state = self.backend.state()?;
+            state.held.insert(id);
+            if request.endpoint == 0 && request.setup[1] == 0x7e {
+                return Ok(Started::Ready(crate::wire::Completion {
+                    status: 0,
+                    actual_length: 0,
+                    data: vec![],
+                }));
+            }
+            state.requests.push((id, request));
+            Ok(Started::Queued)
+        }
+        fn poll_event(
+            &mut self,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<Result<TransferEvent>> {
+            let mut state = match self.backend.state() {
+                Ok(state) => state,
+                Err(error) => return std::task::Poll::Ready(Err(error)),
+            };
+            if let Some(event) = state.events.pop_front() {
+                std::task::Poll::Ready(Ok(event))
+            } else {
+                state.event_waker = Some(cx.waker().clone());
+                std::task::Poll::Pending
+            }
+        }
+        fn request_cancel(&mut self, id: TransferId) -> Result<()> {
+            let mut state = self.backend.state()?;
+            assert!(state.held.contains(&id));
+            state.cancellations.insert(id);
+            Ok(())
+        }
+        fn poll_disconnect(
+            &mut self,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<Result<()>> {
+            let mut state = match self.backend.state() {
+                Ok(state) => state,
+                Err(error) => return std::task::Poll::Ready(Err(error)),
+            };
+            if state.disconnected {
+                std::task::Poll::Ready(Ok(()))
+            } else {
+                state.disconnect_waker = Some(cx.waker().clone());
+                std::task::Poll::Pending
+            }
+        }
+        fn retire(&mut self, id: TransferId) -> Result<()> {
+            let mut state = self.backend.state()?;
+            assert!(state.held.remove(&id));
+            state.retired += 1;
+            Ok(())
+        }
+        fn record_unlink(&mut self, _cancelled: bool) -> Result<()> {
+            Ok(())
+        }
+        fn begin_close(&mut self) {
+            if self.closed {
+                return;
+            }
+            self.closed = true;
+            if let Ok(mut state) = self.backend.state() {
+                state.closing = true;
+                if state.cleanup_allowed && state.requests.is_empty() && state.held.is_empty() {
+                    state.closing = false;
+                    state.leased = false;
+                }
+            }
+        }
+        fn poll_cleanup(&mut self, cx: &mut std::task::Context<'_>) -> std::task::Poll<Result<()>> {
+            let mut state = match self.backend.state() {
+                Ok(state) => state,
+                Err(error) => return std::task::Poll::Ready(Err(error)),
+            };
+            if state.closing {
+                state.cleanup_waker = Some(cx.waker().clone());
+                std::task::Poll::Pending
+            } else {
+                std::task::Poll::Ready(Ok(()))
+            }
+        }
+    }
+    impl Drop for AsyncLease {
+        fn drop(&mut self) {
+            self.begin_close();
+        }
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn asynchronous_control_in_out_preserve_original_errno_and_partial_bytes() -> Result<()> {
+        let backend = AsyncBackend::new()?;
+        let server = backend.server().await?;
+        let (mut peer, status) = import(server.local_addr(), "1-1").await?;
+        assert_eq!(status, 0);
+        for (seq, status, bytes) in [
+            (1, -32, vec![1, 2]),
+            (2, -19, vec![]),
+            (3, -75, vec![3]),
+            (4, -71, vec![]),
+            (5, -5, vec![4]),
+        ] {
+            peer.write_all(&submit(
+                seq,
+                0x10001,
+                1,
+                0,
+                4,
+                [0xc0, 0x70, 0, 0, 0, 0, 4, 0],
+            ))
+            .await?;
+            backend.wait_request(seq, false).await?;
+            backend.terminal(
+                seq,
+                crate::wire::Completion {
+                    status,
+                    actual_length: bytes.len() as u32,
+                    data: bytes.clone(),
+                },
+                false,
+            )?;
+            let (header, actual) = reply(&mut peer, true).await?;
+            assert_eq!(
+                (
+                    word(&header, 4),
+                    word(&header, 20) as i32,
+                    word(&header, 24),
+                    actual
+                ),
+                (seq, status, bytes.len() as u32, bytes)
+            );
+        }
+        let mut output = submit(6, 0x10001, 0, 2, 4, [0; 8]);
+        output.extend_from_slice(b"abcd");
+        peer.write_all(&output).await?;
+        backend.wait_request(6, false).await?;
+        backend.terminal(
+            6,
+            crate::wire::Completion {
+                status: -32,
+                actual_length: 2,
+                data: vec![],
+            },
+            false,
+        )?;
+        let (header, _) = reply(&mut peer, false).await?;
+        assert_eq!((word(&header, 20) as i32, word(&header, 24)), (-32, 2));
+        assert_eq!(backend.state()?.retired, 6);
+        server.shutdown().await
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out() -> Result<()>
+    {
+        let backend = AsyncBackend::new()?;
+        let server = backend.server().await?;
+        let (mut peer, _) = import(server.local_addr(), "1-1").await?;
+        for (seq, direction, endpoint, setup) in [
+            (10, 1, 0, [0xc0, 0x70, 0, 0, 0, 0, 4, 0]),
+            (20, 1, 2, [0; 8]),
+            (30, 0, 2, [0; 8]),
+        ] {
+            let mut frame = submit(seq, 0x10001, direction, endpoint, 4, setup);
+            if direction == 0 {
+                frame.extend_from_slice(b"abcd");
+            }
+            peer.write_all(&frame).await?;
+            backend.wait_request(seq, false).await?;
+            peer.write_all(&unlink(seq + 1, 0x10001, seq)).await?;
+            let id = backend.wait_request(seq, true).await?;
+            let mut byte = [0; 1];
+            assert!(
+                tokio::time::timeout(Duration::from_millis(20), peer.read(&mut byte))
+                    .await
+                    .is_err()
+            );
+            assert!(backend.state()?.held.contains(&id));
+            backend.terminal(
+                seq,
+                crate::wire::Completion {
+                    status: -104,
+                    actual_length: 0,
+                    data: vec![],
+                },
+                true,
+            )?;
+            let (header, _) = reply(&mut peer, false).await?;
+            assert_eq!(
+                (word(&header, 0), word(&header, 4), word(&header, 20) as i32),
+                (4, seq + 1, -104)
+            );
+        }
+        let mut frame = submit(40, 0x10001, 0, 2, 4, [0; 8]);
+        frame.extend_from_slice(b"abcd");
+        peer.write_all(&frame).await?;
+        backend.wait_request(40, false).await?;
+        peer.write_all(&unlink(41, 0x10001, 40)).await?;
+        backend.wait_request(40, true).await?;
+        backend.terminal(
+            40,
+            crate::wire::Completion {
+                status: -32,
+                actual_length: 2,
+                data: vec![],
+            },
+            false,
+        )?;
+        let (header, _) = reply(&mut peer, false).await?;
+        assert_eq!(
+            (
+                word(&header, 0),
+                word(&header, 4),
+                word(&header, 20) as i32,
+                word(&header, 24)
+            ),
+            (3, 40, -32, 2)
+        );
+        let (header, _) = reply(&mut peer, false).await?;
+        assert_eq!(
+            (word(&header, 0), word(&header, 4), word(&header, 20)),
+            (4, 41, 0)
+        );
+        assert_eq!(backend.state()?.retired, 4);
+        server.shutdown().await
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn hung_usb_does_not_block_control_discovery_or_single_thread_timer() -> Result<()> {
+        let backend = AsyncBackend::new()?;
+        let server = backend.server().await?;
+        let (mut peer, _) = import(server.local_addr(), "1-1").await?;
+        peer.write_all(&submit(1, 0x10001, 1, 2, 4, [0; 8])).await?;
+        backend.wait_request(1, false).await?;
+        peer.write_all(&submit(2, 0x10001, 0, 0, 0, [0x40, 0x7e, 0, 0, 0, 0, 0, 0]))
+            .await?;
+        let (header, _) = reply(&mut peer, false).await?;
+        assert_eq!((word(&header, 4), word(&header, 20)), (2, 0));
+        let mut list = TcpStream::connect(server.local_addr()).await?;
+        list.write_all(&rustusb_protocol::DEVLIST_REQUEST).await?;
+        assert!(rustusb_protocol::read_devlist(&mut list).await?.is_empty());
+        tokio::time::sleep(Duration::from_millis(5)).await;
+        peer.write_all(&unlink(3, 0x10001, 1)).await?;
+        backend.wait_request(1, true).await?;
+        backend.terminal(
+            1,
+            crate::wire::Completion {
+                status: -104,
+                actual_length: 0,
+                data: vec![],
+            },
+            true,
+        )?;
+        let (header, _) = reply(&mut peer, false).await?;
+        assert_eq!((word(&header, 4), word(&header, 20) as i32), (3, -104));
+        server.shutdown().await
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping() -> Result<()> {
+        let backend = AsyncBackend::new()?;
+        backend.state()?.cleanup_allowed = false;
+        let server = backend.server().await?;
+        let (mut peer, _) = import(server.local_addr(), "1-1").await?;
+        peer.write_all(&submit(1, 0x10001, 1, 2, 4, [0; 8])).await?;
+        backend.wait_request(1, false).await?;
+        // Close malformed TCP promptly while the supervised USB reap remains
+        // blocked; neither transport failure nor EOF grants a fresh lease.
+        peer.write_all(&[0, 0, 0, 9]).await?;
+        closed(&mut peer).await?;
+        drop(peer);
+        tokio::time::timeout(Duration::from_secs(2), async {
+            loop {
+                if backend.state()?.closing {
+                    return Ok::<_, Error>(());
+                }
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .map_err(|_| Error::Timeout("fixture closing state".into()))??;
+        let (_, status) = import(server.local_addr(), "1-1").await?;
+        assert_eq!(status, 2);
+        assert!(backend.remote_devices(true)?.is_empty());
+        let shutdown = server.shutdown();
+        tokio::pin!(shutdown);
+        assert!(
+            tokio::time::timeout(Duration::from_millis(20), &mut shutdown)
+                .await
+                .is_err()
+        );
+        assert!(backend.state()?.closing && !backend.state()?.held.is_empty());
+        backend.reap_closed()?;
+        shutdown.await?;
+        assert_eq!(backend.remote_devices(true)?.len(), 1);
+        assert!(backend.state()?.held.is_empty());
+        Ok(())
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn response_budget_is_retained_until_the_complete_frame_is_written() -> Result<()> {
+        let backend = AsyncBackend::new()?;
+        let mut lease = ServingBackend::claim(&backend, "1-1").await?;
+        let (mut writer, mut reader) = tokio::io::duplex(1);
+        let (sender, mut receiver) = mpsc::channel(2);
+        let frame = submit(1, 0x10001, 0, 0, 0, [0x40, 0x7e, 0, 0, 0, 0, 0, 0]);
+        let command = wire::read_data(&mut frame.as_slice(), 0x10001)
+            .await?
+            .ok_or_else(|| Error::State("fixture request missing".into()))?;
+        sender
+            .send(Ok(Some(command)))
+            .await
+            .map_err(|_| Error::State("fixture channel closed".into()))?;
+        {
+            let actor = imported(&mut lease, &mut writer, &mut receiver);
+            tokio::pin!(actor);
+            assert!(
+                tokio::time::timeout(Duration::from_millis(20), &mut actor)
+                    .await
+                    .is_err()
+            );
+            assert_eq!(backend.state()?.held.len(), 1);
+            assert_eq!(backend.state()?.retired, 0);
+            let drain = async {
+                let mut header = [0; 48];
+                reader.read_exact(&mut header).await?;
+                assert_eq!(word(&header, 4), 1);
+                sender
+                    .send(Ok(None))
+                    .await
+                    .map_err(|_| Error::State("fixture channel closed".into()))?;
+                Ok::<_, Error>(())
+            };
+            let (result, drained) = tokio::join!(actor, drain);
+            result?;
+            drained?;
+        }
+        assert_eq!(backend.state()?.retired, 1);
+        assert!(backend.state()?.held.is_empty());
+        lease.begin_close();
+        Ok(())
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn shutdown_deadline_reports_quarantine_without_releasing_pending_hardware() -> Result<()>
+    {
+        let backend = AsyncBackend::new()?;
+        backend.state()?.cleanup_allowed = false;
+        let server = backend.server().await?;
+        let (mut peer, _) = import(server.local_addr(), "1-1").await?;
+        peer.write_all(&submit(1, 0x10001, 1, 2, 4, [0; 8])).await?;
+        let id = backend.wait_request(1, false).await?;
+        let result = server.shutdown().await;
+        assert!(
+            matches!(result, Err(Error::Timeout(ref context)) if context.contains("quarantined")),
+            "{result:?}"
+        );
+        assert!(backend.state()?.closing);
+        assert!(backend.state()?.held.contains(&id));
+        assert!(backend.remote_devices(true)?.is_empty());
+        assert!(matches!(
+            ServingBackend::claim(&backend, "1-1").await,
+            Err(Error::State(_))
+        ));
+        backend.reap_closed()?;
+        backend.settle_closed().await?;
+        assert_eq!(backend.remote_devices(true)?.len(), 1);
+        closed(&mut peer).await
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation() -> Result<()>
+    {
+        let backend = AsyncBackend::new()?;
+        let server = backend.server().await?;
+        let (mut peer, status) = import(server.local_addr(), "1-1").await?;
+        assert_eq!(status, 0);
+        assert!(backend.state()?.requests.is_empty());
+        assert!(backend.state()?.held.is_empty());
+        // No SUBMIT is needed to subscribe to a generation's lifetime signal.
+        backend.disconnect()?;
+        closed(&mut peer).await?;
+        assert!(backend.state()?.leased && backend.state()?.closing);
+        assert!(backend.remote_devices(true)?.is_empty());
+        let (_, status) = import(server.local_addr(), "1-1").await?;
+        assert_eq!(status, 2);
+        backend.reap_closed()?;
+        // Cleanup completion for a removed generation must not advertise it.
+        assert!(backend.remote_devices(true)?.is_empty());
+        assert!(matches!(
+            ServingBackend::claim(&backend, "1-1").await,
+            Err(Error::InvalidInput(_))
+        ));
         server.shutdown().await
     }
 }

@@ -1,0 +1,372 @@
+{
+  "crate": "nusb",
+  "version": "0.2.8",
+  "git_commit": "c80218d342740321190436bc45304ebbbf16bef0",
+  "repository": "https://github.com/kevinmehall/nusb",
+  "archive_url": "https://static.crates.io/crates/nusb/nusb-0.2.8.crate",
+  "archive_sha256": "03fba503685f5c3e9f6a11ff9711c16086ab6beacaa6ad3df9e217a91a8d4c82",
+  "licenses": "MIT OR Apache-2.0",
+  "archive_file_count": 70,
+  "modified_files": [
+    "src/device.rs",
+    "src/lib.rs",
+    "src/platform/linux_usbfs/device.rs",
+    "src/platform/linux_usbfs/mod.rs",
+    "src/transfer/internal.rs"
+  ],
+  "source_unsafe_tokens_before": 346,
+  "source_unsafe_tokens_after": 346,
+  "patch_sha256": "e47c18a6be9904672076afd063f34e22e7cd18fd2ce1dc25fb198f2a12451ff3",
+  "files": {
+    ".cargo/config.toml": {
+      "original_sha256": "f5b1b851f34df8f243d1c29a91631e10bfd3e69ffb238d036af8053a5b8c7112",
+      "vendored_sha256": "f5b1b851f34df8f243d1c29a91631e10bfd3e69ffb238d036af8053a5b8c7112",
+      "modified": false
+    },
+    ".cargo_vcs_info.json": {
+      "original_sha256": "89794bdfff78f264d27f63ccbd8f0226665e0c6a7a5934c7b588c7f6204996be",
+      "vendored_sha256": "89794bdfff78f264d27f63ccbd8f0226665e0c6a7a5934c7b588c7f6204996be",
+      "modified": false
+    },
+    ".github/workflows/release.yml": {
+      "original_sha256": "ad9ea3934695992edd2530210add7f65600d3e06acec56a83378f543a896e60e",
+      "vendored_sha256": "ad9ea3934695992edd2530210add7f65600d3e06acec56a83378f543a896e60e",
+      "modified": false
+    },
+    ".github/workflows/rust.yml": {
+      "original_sha256": "36954cb2eff77a21c1fa677db9b1d4fe0dafbe4d0596e6f7ec16636ab912e650",
+      "vendored_sha256": "36954cb2eff77a21c1fa677db9b1d4fe0dafbe4d0596e6f7ec16636ab912e650",
+      "modified": false
+    },
+    ".gitignore": {
+      "original_sha256": "2ebe6cb6f5289849dce5a8a6cdd77e06b1385302c862982f8e181c4782d19214",
+      "vendored_sha256": "2ebe6cb6f5289849dce5a8a6cdd77e06b1385302c862982f8e181c4782d19214",
+      "modified": false
+    },
+    "Cargo.lock": {
+      "original_sha256": "60849bf7a37ffcfb4e10fbe9b8e43d3cc2165edd76365ae73fdd78757dd7496b",
+      "vendored_sha256": "60849bf7a37ffcfb4e10fbe9b8e43d3cc2165edd76365ae73fdd78757dd7496b",
+      "modified": false
+    },
+    "Cargo.toml": {
+      "original_sha256": "f2af75b4007e76200009ac103e5981339495108751b8aad19eca0617a89ed255",
+      "vendored_sha256": "f2af75b4007e76200009ac103e5981339495108751b8aad19eca0617a89ed255",
+      "modified": false
+    },
+    "Cargo.toml.orig": {
+      "original_sha256": "63e1f6228b22bc965009415dda0aa1a85b62f1912b8f2344cf319fa87bcc6855",
+      "vendored_sha256": "63e1f6228b22bc965009415dda0aa1a85b62f1912b8f2344cf319fa87bcc6855",
+      "modified": false
+    },
+    "LICENSE-APACHE": {
+      "original_sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "vendored_sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "modified": false
+    },
+    "LICENSE-MIT": {
+      "original_sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "vendored_sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+      "modified": false
+    },
+    "README.md": {
+      "original_sha256": "66263c7c324845390d2fa6e1c5c543a96e6a1576e0573aed9e8d23d88485d05f",
+      "vendored_sha256": "66263c7c324845390d2fa6e1c5c543a96e6a1576e0573aed9e8d23d88485d05f",
+      "modified": false
+    },
+    "examples/bulk.rs": {
+      "original_sha256": "e4ea05b7d65a9e2c926463165d04a631c3d30e8edbe915c8b023d2765510a556",
+      "vendored_sha256": "e4ea05b7d65a9e2c926463165d04a631c3d30e8edbe915c8b023d2765510a556",
+      "modified": false
+    },
+    "examples/bulk_io.rs": {
+      "original_sha256": "108b631d729eea7125895c890e20e0524b65769b1c66fb1c70745b9057c49924",
+      "vendored_sha256": "108b631d729eea7125895c890e20e0524b65769b1c66fb1c70745b9057c49924",
+      "modified": false
+    },
+    "examples/bulk_io_smol.rs": {
+      "original_sha256": "5b035fd8930f5de293744bd095ac2900d136af7c9169893e8f2069ec41f1d929",
+      "vendored_sha256": "5b035fd8930f5de293744bd095ac2900d136af7c9169893e8f2069ec41f1d929",
+      "modified": false
+    },
+    "examples/bulk_io_tokio.rs": {
+      "original_sha256": "7ba2889e22d358139e978efcea93e6f9e63ac3e6c51124b455355778fe43b76d",
+      "vendored_sha256": "7ba2889e22d358139e978efcea93e6f9e63ac3e6c51124b455355778fe43b76d",
+      "modified": false
+    },
+    "examples/buses.rs": {
+      "original_sha256": "9b332b0b95f08f731b92cda8c5549402652a09562665a477acd7427a4c653805",
+      "vendored_sha256": "9b332b0b95f08f731b92cda8c5549402652a09562665a477acd7427a4c653805",
+      "modified": false
+    },
+    "examples/control.rs": {
+      "original_sha256": "d1539fd9fd4f0ae29bdd4016d7a8eed40c01f2c231707540c5430fa72eadf504",
+      "vendored_sha256": "d1539fd9fd4f0ae29bdd4016d7a8eed40c01f2c231707540c5430fa72eadf504",
+      "modified": false
+    },
+    "examples/descriptors.rs": {
+      "original_sha256": "b9b365c2cddd03a539fde1e9735e03884f83b5005f05eee9122e3fa073ce6d33",
+      "vendored_sha256": "b9b365c2cddd03a539fde1e9735e03884f83b5005f05eee9122e3fa073ce6d33",
+      "modified": false
+    },
+    "examples/detach.rs": {
+      "original_sha256": "57453d05019f9713f91738f8b37eeee71587d1a7ef58b5cc342fbfbdfba2999a",
+      "vendored_sha256": "57453d05019f9713f91738f8b37eeee71587d1a7ef58b5cc342fbfbdfba2999a",
+      "modified": false
+    },
+    "examples/detach_claim.rs": {
+      "original_sha256": "3671f8008ac161794d4bfa34172094e324830cbb65f682081d1ce65f631b814e",
+      "vendored_sha256": "3671f8008ac161794d4bfa34172094e324830cbb65f682081d1ce65f631b814e",
+      "modified": false
+    },
+    "examples/hotplug.rs": {
+      "original_sha256": "4953ed2ecfcaa8457be4014f197af6e7acb76a5bc05a4800bee77f1e0b30b541",
+      "vendored_sha256": "4953ed2ecfcaa8457be4014f197af6e7acb76a5bc05a4800bee77f1e0b30b541",
+      "modified": false
+    },
+    "examples/list.rs": {
+      "original_sha256": "b493a0ebca72f8647ae165cfaa17a2ef1c63d43edc30d0e4f8da6728ea391423",
+      "vendored_sha256": "b493a0ebca72f8647ae165cfaa17a2ef1c63d43edc30d0e4f8da6728ea391423",
+      "modified": false
+    },
+    "examples/string_descriptors.rs": {
+      "original_sha256": "2d9f1394a3b5da789016851ec5b2508430098db2ea4f2633bf1104e5befae052",
+      "vendored_sha256": "2d9f1394a3b5da789016851ec5b2508430098db2ea4f2633bf1104e5befae052",
+      "modified": false
+    },
+    "src/bitset.rs": {
+      "original_sha256": "c2e653f425bc186e6a0beffb971d7359e16b3d1b2380bc68812f3238f3db32c3",
+      "vendored_sha256": "c2e653f425bc186e6a0beffb971d7359e16b3d1b2380bc68812f3238f3db32c3",
+      "modified": false
+    },
+    "src/descriptors.rs": {
+      "original_sha256": "ee215896f2434a8cdd7c752cb3d8de731d24c42063641a24466f34d5ce8bd6ac",
+      "vendored_sha256": "ee215896f2434a8cdd7c752cb3d8de731d24c42063641a24466f34d5ce8bd6ac",
+      "modified": false
+    },
+    "src/device.rs": {
+      "original_sha256": "c2953d62ab05de6ab7d9956d706c00e96725dd70890b4ce210c0a04cd2aec92a",
+      "vendored_sha256": "c9365dee270ad98715170dad7451ad771d6bb21d0f48c0ce3f77ea2a3a6358ef",
+      "modified": true
+    },
+    "src/enumeration.rs": {
+      "original_sha256": "6acc0021cfcf90b643904eeb13e4c6816e3b15a64ff0f3ce7c4c91783a3d9662",
+      "vendored_sha256": "6acc0021cfcf90b643904eeb13e4c6816e3b15a64ff0f3ce7c4c91783a3d9662",
+      "modified": false
+    },
+    "src/error.rs": {
+      "original_sha256": "23072fc2b1b6e2695629577fc60570d27e8c5acddf5f4b9031e613d89c2c685f",
+      "vendored_sha256": "23072fc2b1b6e2695629577fc60570d27e8c5acddf5f4b9031e613d89c2c685f",
+      "modified": false
+    },
+    "src/hotplug.rs": {
+      "original_sha256": "3705d6b683eabd5c78873ac5f4cebb677b81dad905035b493246a214e143d539",
+      "vendored_sha256": "3705d6b683eabd5c78873ac5f4cebb677b81dad905035b493246a214e143d539",
+      "modified": false
+    },
+    "src/io/mod.rs": {
+      "original_sha256": "822eeb8a278adb29bc208a6919423e3a240b24b4f08ebe4bd12346e279353724",
+      "vendored_sha256": "822eeb8a278adb29bc208a6919423e3a240b24b4f08ebe4bd12346e279353724",
+      "modified": false
+    },
+    "src/io/read.rs": {
+      "original_sha256": "9d4e2734b32d3cd11c84380f778d8ea384e18dcb82b705646ba0495dc9552bf9",
+      "vendored_sha256": "9d4e2734b32d3cd11c84380f778d8ea384e18dcb82b705646ba0495dc9552bf9",
+      "modified": false
+    },
+    "src/io/write.rs": {
+      "original_sha256": "5277f2ea5b4363ab0f1b13aeb5531ce26fe7fbe45e87966572656194cdaf4141",
+      "vendored_sha256": "5277f2ea5b4363ab0f1b13aeb5531ce26fe7fbe45e87966572656194cdaf4141",
+      "modified": false
+    },
+    "src/lib.rs": {
+      "original_sha256": "e57885440859a82fe3006b383de7ff7b256fbcccce468e7fdba94a0a27644b80",
+      "vendored_sha256": "2c733626ee5a31e47503a8476492b4bb1dd645a43b467039f5e349e63471d779",
+      "modified": true
+    },
+    "src/maybe_future.rs": {
+      "original_sha256": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e",
+      "vendored_sha256": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e",
+      "modified": false
+    },
+    "src/platform/linux_usbfs/device.rs": {
+      "original_sha256": "762bac9bdf5d9ffd6e0cb5f94d335672f45c863c7564232e0503ab14e36ee44b",
+      "vendored_sha256": "70ff6f451d16129b51324e2a530e8ea9b1ddedd1d11408cd8d0fd48262fbfe4e",
+      "modified": true
+    },
+    "src/platform/linux_usbfs/enumeration.rs": {
+      "original_sha256": "378e3f422a2e8e462c9bc2e7809a4c49dc12db29cb0803a178f627839485a98c",
+      "vendored_sha256": "378e3f422a2e8e462c9bc2e7809a4c49dc12db29cb0803a178f627839485a98c",
+      "modified": false
+    },
+    "src/platform/linux_usbfs/events.rs": {
+      "original_sha256": "41bb15c95986744c66d8c14863c16a8266d144818306e55fe4b41f86365efa46",
+      "vendored_sha256": "41bb15c95986744c66d8c14863c16a8266d144818306e55fe4b41f86365efa46",
+      "modified": false
+    },
+    "src/platform/linux_usbfs/hotplug.rs": {
+      "original_sha256": "4fb3b2d2c62935c79aa3bc0a566ec50a2c72434c421dc5a05dd33f8a5d48a7f2",
+      "vendored_sha256": "4fb3b2d2c62935c79aa3bc0a566ec50a2c72434c421dc5a05dd33f8a5d48a7f2",
+      "modified": false
+    },
+    "src/platform/linux_usbfs/mod.rs": {
+      "original_sha256": "f1a843a4a6957a8efe63453e510b5d2346fe21a468162a524e1d7019073c737f",
+      "vendored_sha256": "21d82a7ad9853031c998d7c7a32baf7cc275d9ea077e8b8e5e7e30f59271e5b1",
+      "modified": true
+    },
+    "src/platform/linux_usbfs/transfer.rs": {
+      "original_sha256": "e86a87ef5202f18798a607bff6de4f1521838d0de475df74938872770dfaf00c",
+      "vendored_sha256": "e86a87ef5202f18798a607bff6de4f1521838d0de475df74938872770dfaf00c",
+      "modified": false
+    },
+    "src/platform/linux_usbfs/usbfs.rs": {
+      "original_sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011",
+      "vendored_sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011",
+      "modified": false
+    },
+    "src/platform/macos_iokit/device.rs": {
+      "original_sha256": "0e3da8e10f830b967c509f02294c6aebcc57812fb44ffd6be15c4b8926566781",
+      "vendored_sha256": "0e3da8e10f830b967c509f02294c6aebcc57812fb44ffd6be15c4b8926566781",
+      "modified": false
+    },
+    "src/platform/macos_iokit/enumeration.rs": {
+      "original_sha256": "83756d12a4d6a4d489411faa482c3c47d4c6f086a2c055bb7c84ef13ef69e384",
+      "vendored_sha256": "83756d12a4d6a4d489411faa482c3c47d4c6f086a2c055bb7c84ef13ef69e384",
+      "modified": false
+    },
+    "src/platform/macos_iokit/events.rs": {
+      "original_sha256": "3504d9bb500cb16694c2e9ca802b362cab75f8e10a7f81e5124cfa75f9222fa9",
+      "vendored_sha256": "3504d9bb500cb16694c2e9ca802b362cab75f8e10a7f81e5124cfa75f9222fa9",
+      "modified": false
+    },
+    "src/platform/macos_iokit/hotplug.rs": {
+      "original_sha256": "0ee322f9f96bca1883a52ace10764714181e4c64c64bb76b32e45e54d479608c",
+      "vendored_sha256": "0ee322f9f96bca1883a52ace10764714181e4c64c64bb76b32e45e54d479608c",
+      "modified": false
+    },
+    "src/platform/macos_iokit/iokit.rs": {
+      "original_sha256": "1ce59fd235e72422ddb0438d3cc1baf85c2ff2e50d86922e14037a42fbfbbc40",
+      "vendored_sha256": "1ce59fd235e72422ddb0438d3cc1baf85c2ff2e50d86922e14037a42fbfbbc40",
+      "modified": false
+    },
+    "src/platform/macos_iokit/iokit_c.rs": {
+      "original_sha256": "5e135448f66e3a4fddd401b9a3af601806fdda914e00f48e48c633665e5e3f39",
+      "vendored_sha256": "5e135448f66e3a4fddd401b9a3af601806fdda914e00f48e48c633665e5e3f39",
+      "modified": false
+    },
+    "src/platform/macos_iokit/iokit_usb.rs": {
+      "original_sha256": "900df5766f774f7171065432d3e8285160b1b1c96f46c5642bf66e068e9a8a1c",
+      "vendored_sha256": "900df5766f774f7171065432d3e8285160b1b1c96f46c5642bf66e068e9a8a1c",
+      "modified": false
+    },
+    "src/platform/macos_iokit/mod.rs": {
+      "original_sha256": "74b150fd46f984313142c2d85929e98a60ff61efd65f91e90648a8d7e12346c9",
+      "vendored_sha256": "74b150fd46f984313142c2d85929e98a60ff61efd65f91e90648a8d7e12346c9",
+      "modified": false
+    },
+    "src/platform/macos_iokit/transfer.rs": {
+      "original_sha256": "30e95c949b4c48a19a4680ddfbb7b7d6a071ecb073dcdf3f024f493f93c41e6b",
+      "vendored_sha256": "30e95c949b4c48a19a4680ddfbb7b7d6a071ecb073dcdf3f024f493f93c41e6b",
+      "modified": false
+    },
+    "src/platform/mod.rs": {
+      "original_sha256": "33ff54e027f3bbca69beca75028dbea748a5fcf3f91c8855acb941e9c5b10471",
+      "vendored_sha256": "33ff54e027f3bbca69beca75028dbea748a5fcf3f91c8855acb941e9c5b10471",
+      "modified": false
+    },
+    "src/platform/webusb/device.rs": {
+      "original_sha256": "c4c338f4fc49129cf5b6ef217a7ea9c2979e1ac5a70b9e971a592f5ef509dafc",
+      "vendored_sha256": "c4c338f4fc49129cf5b6ef217a7ea9c2979e1ac5a70b9e971a592f5ef509dafc",
+      "modified": false
+    },
+    "src/platform/webusb/enumeration.rs": {
+      "original_sha256": "5e331b677188dab89a6c67d7ffcf36131140b27dea2673766dbe1ffb19f5f443",
+      "vendored_sha256": "5e331b677188dab89a6c67d7ffcf36131140b27dea2673766dbe1ffb19f5f443",
+      "modified": false
+    },
+    "src/platform/webusb/hotplug.rs": {
+      "original_sha256": "08c4b2f926b20dd37def7630fe484a4d4b301b6b7f8d98d1b8cb940c0247dcf1",
+      "vendored_sha256": "08c4b2f926b20dd37def7630fe484a4d4b301b6b7f8d98d1b8cb940c0247dcf1",
+      "modified": false
+    },
+    "src/platform/webusb/mod.rs": {
+      "original_sha256": "3abe26f3cd8500c43c55de3d6e78a7f722ab02b68ddac96067cf86c2d1a767d2",
+      "vendored_sha256": "3abe26f3cd8500c43c55de3d6e78a7f722ab02b68ddac96067cf86c2d1a767d2",
+      "modified": false
+    },
+    "src/platform/windows_winusb/cfgmgr32.rs": {
+      "original_sha256": "319a163c6233bcea1606995447eb31e4cbd6b14f356741c5b862b7986b4b15b1",
+      "vendored_sha256": "319a163c6233bcea1606995447eb31e4cbd6b14f356741c5b862b7986b4b15b1",
+      "modified": false
+    },
+    "src/platform/windows_winusb/device.rs": {
+      "original_sha256": "4e96b7da7a055d6c4d9581c36c9c7f43e8e922fe2c182c879d98b5f06a2b9c97",
+      "vendored_sha256": "4e96b7da7a055d6c4d9581c36c9c7f43e8e922fe2c182c879d98b5f06a2b9c97",
+      "modified": false
+    },
+    "src/platform/windows_winusb/enumeration.rs": {
+      "original_sha256": "b0a596f3a97b4815d9ec4f03d088748fbf738f96ffde45d8424174c3ec1cbeb1",
+      "vendored_sha256": "b0a596f3a97b4815d9ec4f03d088748fbf738f96ffde45d8424174c3ec1cbeb1",
+      "modified": false
+    },
+    "src/platform/windows_winusb/hotplug.rs": {
+      "original_sha256": "b7a7fd868088cc288f65cd9cf635d9061c072fe8d78e09b04a1905b59bb18c4b",
+      "vendored_sha256": "b7a7fd868088cc288f65cd9cf635d9061c072fe8d78e09b04a1905b59bb18c4b",
+      "modified": false
+    },
+    "src/platform/windows_winusb/hotplug_win7.rs": {
+      "original_sha256": "d0a7e791add8a3a44c3772c40cab6bde8b75dedf360d46c58474b85b5c392b04",
+      "vendored_sha256": "d0a7e791add8a3a44c3772c40cab6bde8b75dedf360d46c58474b85b5c392b04",
+      "modified": false
+    },
+    "src/platform/windows_winusb/hub.rs": {
+      "original_sha256": "e3da370b594c97801a3f5fd7bdf814c5b47a845a7789f4f2d7cb00a552e1ac25",
+      "vendored_sha256": "e3da370b594c97801a3f5fd7bdf814c5b47a845a7789f4f2d7cb00a552e1ac25",
+      "modified": false
+    },
+    "src/platform/windows_winusb/mod.rs": {
+      "original_sha256": "6c1d403e150c1615f85aeb9266b86776fda05eddcee9b0b9dc2589ecc14c9df2",
+      "vendored_sha256": "6c1d403e150c1615f85aeb9266b86776fda05eddcee9b0b9dc2589ecc14c9df2",
+      "modified": false
+    },
+    "src/platform/windows_winusb/registry.rs": {
+      "original_sha256": "59ad436a255bf63ab8485b414d22640c9924f1c4995097ba64a775f8208ae30e",
+      "vendored_sha256": "59ad436a255bf63ab8485b414d22640c9924f1c4995097ba64a775f8208ae30e",
+      "modified": false
+    },
+    "src/platform/windows_winusb/threadpool.rs": {
+      "original_sha256": "5878d09f04fc69e12c2bbf8727de60b4f8de499c6f91b2adcbb9225fde62e101",
+      "vendored_sha256": "5878d09f04fc69e12c2bbf8727de60b4f8de499c6f91b2adcbb9225fde62e101",
+      "modified": false
+    },
+    "src/platform/windows_winusb/transfer.rs": {
+      "original_sha256": "edc9936990cdd3be01506fe3444b9ca3e09e2fbee7bfeebfddce6baf25ba95c6",
+      "vendored_sha256": "edc9936990cdd3be01506fe3444b9ca3e09e2fbee7bfeebfddce6baf25ba95c6",
+      "modified": false
+    },
+    "src/platform/windows_winusb/util.rs": {
+      "original_sha256": "d81c10a0a2d15f45f4ea8f1d4b0ccb21956476ad21444b746dc4386fd73f39ca",
+      "vendored_sha256": "d81c10a0a2d15f45f4ea8f1d4b0ccb21956476ad21444b746dc4386fd73f39ca",
+      "modified": false
+    },
+    "src/transfer/buffer.rs": {
+      "original_sha256": "032d73a85281115aada917dd8ab046dc47b86593d4ace33248d074abdbc15e1a",
+      "vendored_sha256": "032d73a85281115aada917dd8ab046dc47b86593d4ace33248d074abdbc15e1a",
+      "modified": false
+    },
+    "src/transfer/control.rs": {
+      "original_sha256": "c897832b372c69962b2b984423bb59ee217ef3c5b888c46dafaf45b4a080ca0e",
+      "vendored_sha256": "c897832b372c69962b2b984423bb59ee217ef3c5b888c46dafaf45b4a080ca0e",
+      "modified": false
+    },
+    "src/transfer/internal.rs": {
+      "original_sha256": "a289d0c694f0e095d254ea78ad683f8192d388138518468529bf7f6cd6b79554",
+      "vendored_sha256": "32495a2f7971513d6da152395bf0ab1d140477f5f346cd9b89613a73dddf792d",
+      "modified": true
+    },
+    "src/transfer/mod.rs": {
+      "original_sha256": "4cd09ea81c16f75de0f785d7f85108814b8489bf37a71e0136fb055c84727963",
+      "vendored_sha256": "4cd09ea81c16f75de0f785d7f85108814b8489bf37a71e0136fb055c84727963",
+      "modified": false
+    }
+  }
+}

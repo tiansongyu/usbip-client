@@ -6,7 +6,7 @@ import subprocess
 
 root = pathlib.Path(__file__).resolve().parent.parent
 metadata = json.loads(subprocess.check_output(
-    ["cargo", "metadata", "--format-version", "1", "--locked"], cwd=root
+    ["cargo", "metadata", "--format-version", "1", "--all-features", "--locked"], cwd=root
 ))
 packages = sorted(({
     "name": p["name"], "version": p["version"], "license": p["license"],

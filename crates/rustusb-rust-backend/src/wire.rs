@@ -41,6 +41,30 @@ pub(crate) struct Completion {
     pub data: Vec<u8>,
 }
 
+/// Response metadata deliberately excludes the owned OUT transfer buffer.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct ReplyContext {
+    pub seqnum: u32,
+    pub direction: u32,
+    pub endpoint: u32,
+    pub flags: u32,
+    pub length: u32,
+    pub setup: [u8; 8],
+}
+
+impl From<&Submit> for ReplyContext {
+    fn from(request: &Submit) -> Self {
+        Self {
+            seqnum: request.seqnum,
+            direction: request.direction,
+            endpoint: request.endpoint,
+            flags: request.flags,
+            length: request.length,
+            setup: request.setup,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub(crate) enum DataCommand {
     Submit(Submit),
@@ -241,7 +265,7 @@ pub(crate) fn import_reply(status: u32, device: Option<&RemoteDevice>) -> Result
     Ok(output)
 }
 
-pub(crate) fn submit_reply(request: &Submit, mut completion: Completion) -> Result<Vec<u8>> {
+pub(crate) fn submit_reply(request: &ReplyContext, mut completion: Completion) -> Result<Vec<u8>> {
     if completion.status > 0 {
         return Err(protocol(
             "device completion must use zero or negative Linux errno",
@@ -256,8 +280,13 @@ pub(crate) fn submit_reply(request: &Submit, mut completion: Completion) -> Resu
         request.length
     };
     if request.direction == 1 {
-        completion.data.truncate(limit as usize);
-        completion.actual_length = completion.data.len() as u32;
+        if completion.actual_length > limit
+            || completion.actual_length as usize != completion.data.len()
+        {
+            return Err(protocol(
+                "device returned an invalid IN completion; data cannot be silently truncated",
+            ));
+        }
         if completion.status == 0
             && request.flags & 1 != 0
             && completion.actual_length < request.length
@@ -340,5 +369,36 @@ mod tests {
             Some(DataCommand::Submit(_))
         ));
         Ok(())
+    }
+
+    #[test]
+    fn inconsistent_or_overlong_completion_is_rejected_without_silent_truncation() {
+        let context = ReplyContext {
+            seqnum: 1,
+            direction: 1,
+            endpoint: 2,
+            flags: 0,
+            length: 1,
+            setup: [0; 8],
+        };
+        for completion in [
+            Completion {
+                status: 0,
+                actual_length: 2,
+                data: vec![1, 2],
+            },
+            Completion {
+                status: -75,
+                actual_length: 1,
+                data: vec![1, 2],
+            },
+            Completion {
+                status: 1,
+                actual_length: 0,
+                data: vec![],
+            },
+        ] {
+            assert!(submit_reply(&context, completion).is_err());
+        }
     }
 }
