@@ -1,0 +1,58 @@
+{
+  "started_at_utc": "20261022T114404Z",
+  "scope": "ordinary UID1000 userspace virtual HID/standard CDC ACM server to real Linux VHCI; two isolated guests; no physical USB",
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "85e87fa39537aa83d67e68c447f967e6010dabf1",
+  "working_tree_dirty": true,
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--features",
+    "rustusb-cli/rust-backend"
+  ],
+  "cargo_lock_sha256": "1296a9ca5595329d5e6c75501709ee882f16171e299d33c5dacc9769d492e484",
+  "source_fingerprint_sha256": "c36c78f047010f1e318051d005a11bde9d5918bb855d3a161b3bc91250062036",
+  "script_sha256": {
+    "run-userspace-qemu.py": "36495108e4abf7437ba341737e7d3579f38653c30a1b36dcc81c5e3026648c01",
+    "guest-userspace-init.sh": "881d06abf6cc06e90662e8e650c5684fb4a36dbe2a7ed0046fadf4d97882e93d",
+    "userspace-wire-probe.rs": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "link": [
+      "server:192.0.2.1",
+      "client:192.0.2.2"
+    ],
+    "ip_forward": false,
+    "qemu_usb_devices": 0,
+    "host_network_listener": false
+  },
+  "result": "FAIL",
+  "binary_sha256": {
+    "rustusb": "cbcdfc4f0e34a3cc99e3c06fac566826b05d7c8eece92de6b5a5f78493236af6",
+    "rustusb-helper": "cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad"
+  },
+  "probe_binary_sha256": "0d781b28820e94ee818e3c0cf3ff23e502e892d9d911faeb3991c42e7da6e8b1",
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "3eaf6d7352dfd8ce6740d35c2f30a208f1cd4c132d86805f201e255b9a73be97",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "error": "[Errno 2] No such file or directory: '/tmp/rustusb-userspace-dev-01-20261022/server-serial.log'",
+  "guest_exit_codes": {
+    "server": -15,
+    "client": 1
+  },
+  "client_checks": []
+}

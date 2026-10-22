@@ -1,0 +1,11 @@
+{"argv": ["python3", "-m", "py_compile", "scripts/qemu/run-userspace-qemu.py"], "expected_exit": 0, "actual_exit": 0}
+{"argv": ["sh", "-n", "scripts/qemu/guest-userspace-init.sh"], "expected_exit": 0, "actual_exit": 0}
+{"argv": ["sh", "scripts/qemu/guest-userspace-init.sh"], "expected_exit": 2, "actual_exit": 2}
+Refusing to run outside the disposable QEMU guest init
+{"argv": ["python3", "scripts/qemu/run-userspace-qemu.py", "--kernel", "../invalid"], "expected_exit": 2, "actual_exit": 2}
+usage: run-userspace-qemu.py [-h] [--kernel KERNEL] [--timeout TIMEOUT]
+                             [--skip-build] [--evidence EVIDENCE]
+run-userspace-qemu.py: error: --kernel must be one safe kernel-release token
+{"argv": ["rustfmt", "--check", "--edition", "2024", "scripts/qemu/userspace-wire-probe.rs"], "expected_exit": 0, "actual_exit": 0}
+{"argv": ["rustc", "--edition=2024", "-O", "-D", "warnings", "scripts/qemu/userspace-wire-probe.rs", "-o", "/tmp/rustusb-userspace-static-probe"], "expected_exit": 0, "actual_exit": 0}
+RESULT: PASS

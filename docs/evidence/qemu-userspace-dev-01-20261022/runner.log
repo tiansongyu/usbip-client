@@ -1,0 +1,16 @@
+{
+  "result": "FAIL",
+  "evidence": "/tmp/rustusb-userspace-dev-01-20261022"
+}
+Traceback (most recent call last):
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-userspace-qemu.py", line 275, in <module>
+    main()
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-userspace-qemu.py", line 197, in main
+    logs = {role: (evidence / f"{role}-serial.log").read_text(errors="replace") for role in ROLES}
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-userspace-qemu.py", line 197, in <dictcomp>
+    logs = {role: (evidence / f"{role}-serial.log").read_text(errors="replace") for role in ROLES}
+  File "/usr/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/rustusb-userspace-dev-01-20261022/server-serial.log'
