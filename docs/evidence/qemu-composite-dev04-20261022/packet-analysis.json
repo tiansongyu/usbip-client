@@ -1,0 +1,155 @@
+{
+  "capture_sha256": {
+    "data-usb.pcap": "743894e0d3dedfc43d6d53dc6a1d52fe2e0618d6562cad21591aaf39811b4e8f",
+    "data-peer.pcap": "a0769f433e464c00488e6e95f603ac63d31db5d07b9ebda375620d8d2c605733"
+  },
+  "client_frames": [
+    {
+      "capture": "data-usb.pcap",
+      "packet": 2,
+      "captured_ethernet_length": 132,
+      "segments": [
+        {
+          "offset": 0,
+          "ether_type": "86dd",
+          "length": 90
+        },
+        {
+          "offset": 90,
+          "ether_type": "0806",
+          "length": 42,
+          "op": 1,
+          "sender_ip": "198.18.0.2",
+          "target_ip": "198.18.0.1"
+        }
+      ],
+      "segments_exactly_fill_one_captured_frame": true
+    },
+    {
+      "capture": "data-usb.pcap",
+      "packet": 5,
+      "captured_ethernet_length": 218,
+      "segments": [
+        {
+          "offset": 0,
+          "ether_type": "86dd",
+          "length": 90
+        },
+        {
+          "offset": 90,
+          "ether_type": "86dd",
+          "length": 86
+        },
+        {
+          "offset": 176,
+          "ether_type": "0806",
+          "length": 42,
+          "op": 1,
+          "sender_ip": "198.18.0.2",
+          "target_ip": "198.18.0.1"
+        }
+      ],
+      "segments_exactly_fill_one_captured_frame": true
+    },
+    {
+      "capture": "data-usb.pcap",
+      "packet": 6,
+      "captured_ethernet_length": 202,
+      "segments": [
+        {
+          "offset": 0,
+          "ether_type": "86dd",
+          "length": 90
+        },
+        {
+          "offset": 90,
+          "ether_type": "86dd",
+          "length": 70
+        },
+        {
+          "offset": 160,
+          "ether_type": "0806",
+          "length": 42,
+          "op": 1,
+          "sender_ip": "198.18.0.2",
+          "target_ip": "198.18.0.1"
+        }
+      ],
+      "segments_exactly_fill_one_captured_frame": true
+    },
+    {
+      "capture": "data-peer.pcap",
+      "packet": 2,
+      "captured_ethernet_length": 132,
+      "segments": [
+        {
+          "offset": 0,
+          "ether_type": "86dd",
+          "length": 90
+        },
+        {
+          "offset": 90,
+          "ether_type": "0806",
+          "length": 42,
+          "op": 1,
+          "sender_ip": "198.18.0.2",
+          "target_ip": "198.18.0.1"
+        }
+      ],
+      "segments_exactly_fill_one_captured_frame": true
+    },
+    {
+      "capture": "data-peer.pcap",
+      "packet": 5,
+      "captured_ethernet_length": 218,
+      "segments": [
+        {
+          "offset": 0,
+          "ether_type": "86dd",
+          "length": 90
+        },
+        {
+          "offset": 90,
+          "ether_type": "86dd",
+          "length": 86
+        },
+        {
+          "offset": 176,
+          "ether_type": "0806",
+          "length": 42,
+          "op": 1,
+          "sender_ip": "198.18.0.2",
+          "target_ip": "198.18.0.1"
+        }
+      ],
+      "segments_exactly_fill_one_captured_frame": true
+    },
+    {
+      "capture": "data-peer.pcap",
+      "packet": 9,
+      "captured_ethernet_length": 202,
+      "segments": [
+        {
+          "offset": 0,
+          "ether_type": "86dd",
+          "length": 90
+        },
+        {
+          "offset": 90,
+          "ether_type": "86dd",
+          "length": 70
+        },
+        {
+          "offset": 160,
+          "ether_type": "0806",
+          "length": 42,
+          "op": 1,
+          "sender_ip": "198.18.0.2",
+          "target_ip": "198.18.0.1"
+        }
+      ],
+      "segments_exactly_fill_one_captured_frame": true
+    }
+  ],
+  "interpretation": "Multiple complete Ethernet frames are concatenated inside each captured client-origin Ethernet packet. The trailing frame is ARP request 198.18.0.2 -> 198.18.0.1, not a standalone packet. Correlates with QEMU6.2 usb-net ECM OUT buffering until a USBPacket length below64."
+}

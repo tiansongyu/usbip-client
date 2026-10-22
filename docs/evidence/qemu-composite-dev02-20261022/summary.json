@@ -1,0 +1,156 @@
+{
+  "result": "FAIL",
+  "started_at_utc": "20261022T141137Z",
+  "scope": "one QEMU CDC ECM multi-interface USBFS device/configuration/alternate to Linux VHCI; no host USB",
+  "git_commit": "192640cc7f61041a2e3f5c070cc2f71e2bae9af2",
+  "working_tree_dirty": true,
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--all-features"
+  ],
+  "source_fingerprint_sha256": "f2e348c10b38203aeb7bef0c5ded188407704890948558b99c7e1de0ba52743f",
+  "cargo_lock_sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a",
+  "script_sha256": {
+    "run-composite-qemu.py": "2aed28fda67989a7012d45673c73c2a60168d080085765b6759a4b155021d525",
+    "guest-composite-init.sh": "807b99ac5c776afde586758123a9bf41cef8d0c265db27758e454bdfcda6e31f",
+    "composite-wire-probe.rs": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "management": "192.0.2.0/24",
+    "data": "198.18.0.0/30",
+    "guests": 2,
+    "private_socketpairs": 2,
+    "data_endpoints_same_server_qemu_process": true,
+    "host_network_listener": false,
+    "ip_forward": false
+  },
+  "binary_sha256": {
+    "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "probe_binary_sha256": "04dda106125fe35479dd0317a6097373331f8faaf65090df668afca33cfec442",
+  "guest_binary_sha256": {
+    "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "network_modules": {
+    "mii": {
+      "kind": "module",
+      "guest_sha256": "ab2aca8f273cf6d9eeb490da250cb63015d7643412b4fb53c381617124a0842a"
+    },
+    "usbnet": {
+      "kind": "module",
+      "guest_sha256": "5505494b5a09bd7c3bf99075eb92b78c5954428abd8c3abd8ba0a37248307093"
+    },
+    "cdc_ether": {
+      "kind": "module",
+      "guest_sha256": "c574b54eab157d0e140dedb494f092b65ddfb505cc418d986221d13912150b86"
+    }
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "b57f24a13b54ae0206148c9a55e68fe1a470899194238f5ed7580c9d358b80f3",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "qemu_commands": {
+    "server": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-composite-qemu-017u8vtk/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-composite-qemu-017u8vtk/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=server",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-composite-dev02-20261022/server-serial.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=control,fd=3",
+      "-device",
+      "e1000,id=control-nic,netdev=control,mac=52:54:00:00:00:51",
+      "-device",
+      "qemu-xhci,id=usb",
+      "-netdev",
+      "socket,id=usbdata,fd=5",
+      "-device",
+      "usb-net,id=ecm,bus=usb.0,port=1,netdev=usbdata,mac=52:54:00:cc:00:02",
+      "-netdev",
+      "socket,id=peerdata,fd=6",
+      "-device",
+      "e1000,id=peer-nic,netdev=peerdata,mac=52:54:00:cc:00:01"
+    ],
+    "client": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-composite-qemu-017u8vtk/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-composite-qemu-017u8vtk/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=client",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-composite-dev02-20261022/client-serial.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=control,fd=4",
+      "-device",
+      "e1000,id=control-nic,netdev=control,mac=52:54:00:00:00:52"
+    ]
+  },
+  "error": "a composite guest reported failure",
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "server_checks": [
+    "RUSTUSB_COMPOSITE_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_COMPOSITE_PEER_QUIET: PASS interface=eth1 down=true raw_probe_isolated=true",
+    "RUSTUSB_COMPOSITE_ISOLATION: PASS role=server ip_forward=0",
+    "RUSTUSB_COMPOSITE_OBSERVED bus=1-1 speed=12 bNumInterfaces= 2",
+    "RUSTUSB_COMPOSITE_RESULT: FAIL role=server stage=original-model-attributes exit=1"
+  ],
+  "client_checks": [
+    "RUSTUSB_COMPOSITE_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_COMPOSITE_ISOLATION: PASS role=client ip_forward=0",
+    "RUSTUSB_COMPOSITE_UID_GATE: PASS role=client allowed_uid=1000 denied_uid=1001"
+  ]
+}

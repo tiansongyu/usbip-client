@@ -1,0 +1,19 @@
+$ python3 -m py_compile scripts/qemu/run-composite-qemu.py
+exit=0 expected=0
+$ sh -n scripts/qemu/guest-composite-init.sh
+exit=0 expected=0
+$ sh scripts/qemu/guest-composite-init.sh
+Refusing to run outside the disposable QEMU guest init
+exit=2 expected=2
+$ python3 scripts/qemu/run-composite-qemu.py --kernel ../bad --evidence /tmp/rustusb-composite-must-not-create
+usage: run-composite-qemu.py [-h] [--kernel KERNEL] [--timeout TIMEOUT]
+                             [--skip-build] [--evidence EVIDENCE]
+run-composite-qemu.py: error: --kernel must be one safe kernel-release token
+exit=2 expected=2
+$ rustfmt --edition 2024 --check scripts/qemu/composite-wire-probe.rs
+exit=0 expected=0
+$ rustc --edition 2024 -O -D warnings scripts/qemu/composite-wire-probe.rs -o /tmp/rustusb-composite-wire-probe-static
+exit=0 expected=0
+2aed28fda67989a7012d45673c73c2a60168d080085765b6759a4b155021d525  scripts/qemu/run-composite-qemu.py
+b3a7166e15184fdcb746c697aef88f33652c477a1d1e8130b807916516a3e03a  scripts/qemu/guest-composite-init.sh
+c49c342855c91154f2589f21316e7860c72c4ac07a0ca083ef07c296cb3a0a36  scripts/qemu/composite-wire-probe.rs

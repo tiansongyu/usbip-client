@@ -1,0 +1,92 @@
+{
+  "private_udp_captures": {
+    "data-usb.pcap": {
+      "sha256": "2d4ae0b8aeea2ac5232d3c58fdd34357aab5944c107b165653fb50a836744233",
+      "udp_frames": [
+        {
+          "cycle": 1,
+          "direction": "request",
+          "ethernet_length": 80,
+          "udp_payload_bytes": 38,
+          "actual_payload_sha256": "b9abcb127658042be40504080bb98334017f55441d409754d3caf9a029e1e517",
+          "exact_match": true
+        },
+        {
+          "cycle": 1,
+          "direction": "response",
+          "ethernet_length": 81,
+          "udp_payload_bytes": 39,
+          "actual_payload_sha256": "fddb52db9d2bd15bb5cdecc54c50ef4782323780612e8d1534b6f3fab504cb38",
+          "exact_match": true
+        },
+        {
+          "cycle": 2,
+          "direction": "request",
+          "ethernet_length": 80,
+          "udp_payload_bytes": 38,
+          "actual_payload_sha256": "68d3135d64ee4d6bbdb12d211859bf4498c24caa985a7e5ac976fcec1e7a851d",
+          "exact_match": true
+        },
+        {
+          "cycle": 2,
+          "direction": "response",
+          "ethernet_length": 81,
+          "udp_payload_bytes": 39,
+          "actual_payload_sha256": "bb1890f05c3bf9cb296b6706db9ad3bcff9c9a28697564994700014829f5be72",
+          "exact_match": true
+        }
+      ]
+    },
+    "data-peer.pcap": {
+      "sha256": "058460637df1d24ed7844812952d13f0b7f716b980a00856382a3f3118d4dff4",
+      "udp_frames": [
+        {
+          "cycle": 1,
+          "direction": "request",
+          "ethernet_length": 80,
+          "udp_payload_bytes": 38,
+          "actual_payload_sha256": "b9abcb127658042be40504080bb98334017f55441d409754d3caf9a029e1e517",
+          "exact_match": true
+        },
+        {
+          "cycle": 1,
+          "direction": "response",
+          "ethernet_length": 81,
+          "udp_payload_bytes": 39,
+          "actual_payload_sha256": "fddb52db9d2bd15bb5cdecc54c50ef4782323780612e8d1534b6f3fab504cb38",
+          "exact_match": true
+        },
+        {
+          "cycle": 2,
+          "direction": "request",
+          "ethernet_length": 80,
+          "udp_payload_bytes": 38,
+          "actual_payload_sha256": "68d3135d64ee4d6bbdb12d211859bf4498c24caa985a7e5ac976fcec1e7a851d",
+          "exact_match": true
+        },
+        {
+          "cycle": 2,
+          "direction": "response",
+          "ethernet_length": 81,
+          "udp_payload_bytes": 39,
+          "actual_payload_sha256": "bb1890f05c3bf9cb296b6706db9ad3bcff9c9a28697564994700014829f5be72",
+          "exact_match": true
+        }
+      ]
+    }
+  },
+  "kernel_reported_interrupt_partial": {
+    "submission": "ffff8d9b81b40600 4907456 S Ii:1:002:1 -115:32 1 <",
+    "completion": "ffff8d9b81b40600 4923283 C Ii:1:002:1 -32:32 1 = 00",
+    "wire": {
+      "event": "composite_probe_case",
+      "case": "real_interrupt_stall_preserves_connection",
+      "result": "PASS",
+      "status": -32,
+      "actual_length": 1,
+      "buffer_hex": "00",
+      "provenance": "kernel_reported_qemu_uhci"
+    },
+    "classification": "QEMU UHCI kernel-reported partial/opaque buffer; not a claim that device transferred one byte"
+  }
+}

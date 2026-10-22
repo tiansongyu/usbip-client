@@ -1,0 +1,979 @@
+[    0.000000] Linux version 6.8.0-106-generic (buildd@lcy02-amd64-085) (x86_64-linux-gnu-gcc-12 (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #106~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar  6 08:44:59 UTC  (Ubuntu 6.8.0-106.106~22.04.1-generic 6.8.12)
+[    0.000000] Command line: console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=server
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   Hygon HygonGenuine
+[    0.000000]   Centaur CentaurHauls
+[    0.000000]   zhaoxin   Shanghai  
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000001ffdefff] usable
+[    0.000000] BIOS-e820: [mem 0x000000001ffdf000-0x000000001fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] SMBIOS 2.8 present.
+[    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[    0.000000] Hypervisor detected: KVM
+[    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+[    0.000000] kvm-clock: using sched offset of 200679469 cycles
+[    0.000002] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+[    0.000003] tsc: Detected 4291.916 MHz processor
+[    0.000424] last_pfn = 0x1ffdf max_arch_pfn = 0x400000000
+[    0.000441] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+[    0.000444] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.002615] found SMP MP-table at [mem 0x000f5b90-0x000f5b9f]
+[    0.002632] Using GB pages for direct mapping
+[    0.002722] RAMDISK: [mem 0x1f7e9000-0x1ffcffff]
+[    0.002725] ACPI: Early table checksum verification disabled
+[    0.002728] ACPI: RSDP 0x00000000000F59D0 000014 (v00 BOCHS )
+[    0.002731] ACPI: RSDT 0x000000001FFE196E 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002736] ACPI: FACP 0x000000001FFE181A 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002739] ACPI: DSDT 0x000000001FFE0040 0017DA (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002741] ACPI: FACS 0x000000001FFE0000 000040
+[    0.002743] ACPI: APIC 0x000000001FFE188E 000080 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002744] ACPI: HPET 0x000000001FFE190E 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002746] ACPI: WAET 0x000000001FFE1946 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002747] ACPI: Reserving FACP table memory at [mem 0x1ffe181a-0x1ffe188d]
+[    0.002748] ACPI: Reserving DSDT table memory at [mem 0x1ffe0040-0x1ffe1819]
+[    0.002748] ACPI: Reserving FACS table memory at [mem 0x1ffe0000-0x1ffe003f]
+[    0.002749] ACPI: Reserving APIC table memory at [mem 0x1ffe188e-0x1ffe190d]
+[    0.002749] ACPI: Reserving HPET table memory at [mem 0x1ffe190e-0x1ffe1945]
+[    0.002750] ACPI: Reserving WAET table memory at [mem 0x1ffe1946-0x1ffe196d]
+[    0.002883] No NUMA configuration found
+[    0.002883] Faking a node at [mem 0x0000000000000000-0x000000001ffdefff]
+[    0.002886] NODE_DATA(0) allocated [mem 0x1f7be000-0x1f7e8fff]
+[    0.002948] Zone ranges:
+[    0.002949]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.002950]   DMA32    [mem 0x0000000001000000-0x000000001ffdefff]
+[    0.002951]   Normal   empty
+[    0.002951]   Device   empty
+[    0.002952] Movable zone start for each node
+[    0.002953] Early memory node ranges
+[    0.002953]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.002954]   node   0: [mem 0x0000000000100000-0x000000001ffdefff]
+[    0.002955] Initmem setup node 0 [mem 0x0000000000001000-0x000000001ffdefff]
+[    0.003053] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.003059] On node 0, zone DMA: 97 pages in unavailable ranges
+[    0.003456] On node 0, zone DMA32: 33 pages in unavailable ranges
+[    0.003578] ACPI: PM-Timer IO Port: 0x608
+[    0.003585] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.003600] IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+[    0.003602] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.003603] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.003604] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.003605] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.003605] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.003607] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.003608] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.003611] TSC deadline timer available
+[    0.003612] smpboot: Allowing 2 CPUs, 0 hotplug CPUs
+[    0.003621] kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+[    0.003630] kvm-guest: KVM setup pv remote TLB flush
+[    0.003632] kvm-guest: setup PV sched yield
+[    0.003636] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.003636] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.003638] [mem 0x20000000-0xfeffbfff] available for PCI devices
+[    0.003639] Booting paravirtualized kernel on KVM
+[    0.003640] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.003643] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+[    0.003770] percpu: Embedded 85 pages/cpu s225280 r8192 d114688 u1048576
+[    0.003795] kvm-guest: PV spinlocks enabled
+[    0.003796] PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.003797] Kernel command line: console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=server
+[    0.003828] Unknown kernel command line parameters "RUSTUSB_QEMU_GUEST=1", will be passed to user space.
+[    0.003835] random: crng init done
+[    0.003850] Dentry cache hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.003857] Inode-cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.003878] Fallback order for Node 0: 0 
+[    0.003881] Built 1 zonelists, mobility grouping on.  Total pages: 128735
+[    0.003882] Policy zone: DMA32
+[    0.003885] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+[    0.004227] Memory: 453636K/523764K available (22528K kernel code, 4432K rwdata, 13988K rodata, 4912K init, 4808K bss, 69868K reserved, 0K cma-reserved)
+[    0.004917] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.004936] ftrace: allocating 58284 entries in 228 pages
+[    0.014774] ftrace: allocated 228 pages with 4 groups
+[    0.015490] Dynamic Preempt: voluntary
+[    0.015641] rcu: Preemptible hierarchical RCU implementation.
+[    0.015642] rcu: 	RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=2.
+[    0.015643] 	Trampoline variant of Tasks RCU enabled.
+[    0.015643] 	Rude variant of Tasks RCU enabled.
+[    0.015644] 	Tracing variant of Tasks RCU enabled.
+[    0.015644] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.015645] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.015651] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.015652] RCU Tasks Rude: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.015653] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.017278] NR_IRQS: 524544, nr_irqs: 440, preallocated irqs: 16
+[    0.017481] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.020069] Console: colour VGA+ 80x25
+[    0.020089] printk: legacy console [ttyS0] enabled
+[    0.045418] ACPI: Core revision 20230628
+[    0.045654] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.046025] APIC: Switch to symmetric I/O mode setup
+[    0.046285] x2apic enabled
+[    0.046511] APIC: Switched APIC routing to: physical x2apic
+[    0.046707] kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+[    0.046961] kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+[    0.047290] kvm-guest: setup PV IPIs
+[    0.047896] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.048124] tsc: Marking TSC unstable due to TSCs unsynchronized
+[    0.048339] Calibrating delay loop (skipped) preset value.. 8583.83 BogoMIPS (lpj=4291916)
+[    0.048666] RDSEED32 is broken. Disabling the corresponding CPUID bit.
+[    0.048900] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+[    0.049376] Last level iTLB entries: 4KB 512, 2MB 255, 4MB 127
+[    0.049580] Last level dTLB entries: 4KB 512, 2MB 255, 4MB 127, 1GB 0
+[    0.049805] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.050100] Spectre V2 : Mitigation: Retpolines
+[    0.050336] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+[    0.050624] Spectre V2 : Enabling Restricted Speculation for firmware calls
+[    0.050866] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+[    0.051158] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
+[    0.051350] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.051627] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.051855] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.052086] x86/fpu: Supporting XSAVE feature 0x020: 'AVX-512 opmask'
+[    0.052336] x86/fpu: Supporting XSAVE feature 0x040: 'AVX-512 Hi256'
+[    0.052566] x86/fpu: Supporting XSAVE feature 0x080: 'AVX-512 ZMM_Hi256'
+[    0.052805] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.053086] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.053336] x86/fpu: xstate_offset[5]:  832, xstate_sizes[5]:   64
+[    0.053558] x86/fpu: xstate_offset[6]:  896, xstate_sizes[6]:  512
+[    0.053779] x86/fpu: xstate_offset[7]: 1408, xstate_sizes[7]: 1024
+[    0.054000] x86/fpu: xstate_offset[9]: 2432, xstate_sizes[9]:    8
+[    0.054336] x86/fpu: Enabled xstate features 0x2e7, context size is 2440 bytes, using 'compacted' format.
+[    0.072797] Freeing SMP alternatives memory: 48K
+[    0.072988] pid_max: default: 32768 minimum: 301
+[    0.073192] LSM: initializing lsm=lockdown,capability,landlock,yama,apparmor,integrity
+[    0.073343] landlock: Up and running.
+[    0.073476] Yama: becoming mindful.
+[    0.073627] AppArmor: AppArmor initialized
+[    0.073798] Mount-cache hash table entries: 1024 (order: 1, 8192 bytes, linear)
+[    0.074058] Mountpoint-cache hash table entries: 1024 (order: 1, 8192 bytes, linear)
+[    0.074542] smpboot: CPU0: AMD Ryzen 9 9950X 16-Core Processor (family: 0x1a, model: 0x44, stepping: 0x0)
+[    0.075103] Performance Events: Fam17h+ core perfctr, AMD PMU driver.
+[    0.075335] ... version:                0
+[    0.075335] ... bit width:              48
+[    0.075338] ... generic registers:      6
+[    0.075483] ... value mask:             0000ffffffffffff
+[    0.075672] ... max period:             00007fffffffffff
+[    0.075862] ... fixed-purpose events:   0
+[    0.076006] ... event mask:             000000000000003f
+[    0.076257] signal: max sigframe size: 3376
+[    0.076357] rcu: Hierarchical SRCU implementation.
+[    0.076529] rcu: 	Max phase no-delay instances is 400.
+[    0.076915] smp: Bringing up secondary CPUs ...
+[    0.077144] smpboot: x86: Booting SMP configuration:
+[    0.077324] .... node  #0, CPUs:      #1
+[    0.077410] smp: Brought up 1 node, 2 CPUs
+[    0.077654] smpboot: Max logical packages: 1
+[    0.077811] smpboot: Total of 2 processors activated (17167.66 BogoMIPS)
+[    0.078510] devtmpfs: initialized
+[    0.078510] x86/mm: Memory block size: 128MB
+[    0.078756] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.079343] futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+[    0.079624] pinctrl core: initialized pinctrl subsystem
+[    0.079887] PM: RTC time: 14:19:46, date: 2026-10-22
+[    0.080311] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.080472] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.080738] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.081014] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.081300] audit: initializing netlink subsys (disabled)
+[    0.081357] audit: type=2000 audit(1792678786.888:1): state=initialized audit_enabled=0 res=1
+[    0.081410] thermal_sys: Registered thermal governor 'fair_share'
+[    0.081688] thermal_sys: Registered thermal governor 'bang_bang'
+[    0.081908] thermal_sys: Registered thermal governor 'step_wise'
+[    0.082122] thermal_sys: Registered thermal governor 'user_space'
+[    0.082340] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.082566] cpuidle: using governor ladder
+[    0.082946] cpuidle: using governor menu
+[    0.083273] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    0.083391] PCI: Using configuration type 1 for base access
+[    0.083590] PCI: Using configuration type 1 for extended access
+[    0.083863] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.088608] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.088869] HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+[    0.089114] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.089337] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.090182] ACPI: Added _OSI(Module Device)
+[    0.090182] ACPI: Added _OSI(Processor Device)
+[    0.090182] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.090615] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    0.100687] ACPI: _OSC evaluation for CPUs failed, trying _PDC
+[    0.100687] ACPI: Interpreter enabled
+[    0.100687] ACPI: PM: (supports S0 S3 S4 S5)
+[    0.100721] ACPI: Using IOAPIC for interrupt routing
+[    0.100990] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.101318] PCI: Using E820 reservations for host bridge windows
+[    0.101398] ACPI: Enabled 2 GPEs in block 00 to 0F
+[    0.102402] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    0.102633] acpi PNP0A03:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI EDR HPX-Type3]
+[    0.103108] acpiphp: Slot [3] registered
+[    0.103257] acpiphp: Slot [4] registered
+[    0.103342] acpiphp: Slot [5] registered
+[    0.103490] acpiphp: Slot [6] registered
+[    0.103637] acpiphp: Slot [7] registered
+[    0.103785] acpiphp: Slot [8] registered
+[    0.103934] acpiphp: Slot [9] registered
+[    0.104086] acpiphp: Slot [10] registered
+[    0.104236] acpiphp: Slot [11] registered
+[    0.104341] acpiphp: Slot [12] registered
+[    0.104514] acpiphp: Slot [13] registered
+[    0.104667] acpiphp: Slot [14] registered
+[    0.104818] acpiphp: Slot [15] registered
+[    0.104968] acpiphp: Slot [16] registered
+[    0.105121] acpiphp: Slot [17] registered
+[    0.105275] acpiphp: Slot [18] registered
+[    0.105342] acpiphp: Slot [19] registered
+[    0.105492] acpiphp: Slot [20] registered
+[    0.105642] acpiphp: Slot [21] registered
+[    0.105792] acpiphp: Slot [22] registered
+[    0.105942] acpiphp: Slot [23] registered
+[    0.106093] acpiphp: Slot [24] registered
+[    0.106245] acpiphp: Slot [25] registered
+[    0.107341] acpiphp: Slot [26] registered
+[    0.107492] acpiphp: Slot [27] registered
+[    0.107642] acpiphp: Slot [28] registered
+[    0.107791] acpiphp: Slot [29] registered
+[    0.107941] acpiphp: Slot [30] registered
+[    0.108106] acpiphp: Slot [31] registered
+[    0.108260] PCI host bridge to bus 0000:00
+[    0.108338] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    0.108582] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    0.108824] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    0.109093] pci_bus 0000:00: root bus resource [mem 0x20000000-0xfebfffff window]
+[    0.109336] pci_bus 0000:00: root bus resource [mem 0x100000000-0x17fffffff window]
+[    0.109610] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.109874] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.110529] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
+[    0.110984] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
+[    0.111501] pci 0000:00:01.1: BAR 4 [io  0xc080-0xc08f]
+[    0.111701] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
+[    0.111947] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
+[    0.112167] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
+[    0.112337] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
+[    0.112620] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+[    0.113028] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+[    0.113290] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
+[    0.113396] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+[    0.114321] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+[    0.114342] pci 0000:00:02.0: BAR 2 [mem 0xfebd4000-0xfebd4fff]
+[    0.114567] pci 0000:00:02.0: ROM [mem 0xfebc0000-0xfebcffff pref]
+[    0.114808] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    0.115362] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.116130] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
+[    0.116339] pci 0000:00:03.0: BAR 1 [io  0xc000-0xc03f]
+[    0.116560] pci 0000:00:03.0: ROM [mem 0xfea80000-0xfeafffff pref]
+[    0.117058] pci 0000:00:04.0: [1b36:000d] type 00 class 0x0c0330 conventional PCI endpoint
+[    0.117608] pci 0000:00:04.0: BAR 0 [mem 0xfebd0000-0xfebd3fff 64bit]
+[    0.118095] pci 0000:00:05.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.118877] pci 0000:00:05.0: BAR 0 [mem 0xfeba0000-0xfebbffff]
+[    0.119099] pci 0000:00:05.0: BAR 1 [io  0xc040-0xc07f]
+[    0.119304] pci 0000:00:05.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
+[    0.123786] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    0.124051] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    0.124301] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    0.124366] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    0.124601] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
+[    0.124942] iommu: Default domain type: Translated
+[    0.125337] iommu: DMA domain TLB invalidation policy: lazy mode
+[    0.125651] SCSI subsystem initialized
+[    0.125792] ACPI: bus type USB registered
+[    0.125792] usbcore: registered new interface driver usbfs
+[    0.125792] usbcore: registered new interface driver hub
+[    0.125929] usbcore: registered new device driver usb
+[    0.126349] pps_core: LinuxPPS API ver. 1 registered
+[    0.126528] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.126859] PTP clock support registered
+[    0.127009] EDAC MC: Ver: 3.0.0
+[    0.127363] NetLabel: Initializing
+[    0.127489] NetLabel:  domain hash size = 128
+[    0.127646] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.127864] NetLabel:  unlabeled traffic allowed by default
+[    0.128345] mctp: management component transport protocol core
+[    0.128558] NET: Registered PF_MCTP protocol family
+[    0.128558] PCI: Using ACPI for IRQ routing
+[    0.128558] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    0.128558] pci 0000:00:02.0: vgaarb: bridge control possible
+[    0.128774] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    0.129077] vgaarb: loaded
+[    0.129367] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    0.129550] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+[    0.132366] clocksource: Switched to clocksource kvm-clock
+[    0.132879] VFS: Disk quotas dquot_6.6.0
+[    0.133059] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.133355] AppArmor: AppArmor Filesystem Enabled
+[    0.133539] pnp: PnP ACPI init
+[    0.133793] pnp: PnP ACPI: found 6 devices
+[    0.139135] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    0.139476] NET: Registered PF_INET protocol family
+[    0.139665] IP idents hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.146471] tcp_listen_portaddr_hash hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.146763] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.147026] TCP established hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.147284] TCP bind hash table entries: 4096 (order: 5, 131072 bytes, linear)
+[    0.147525] TCP: Hash tables configured (established 4096 bind 4096)
+[    0.147754] MPTCP token hash table entries: 512 (order: 2, 12288 bytes, linear)
+[    0.148012] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.148228] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.148477] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.148667] NET: Registered PF_XDP protocol family
+[    0.148832] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    0.149044] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    0.149248] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    0.149475] pci_bus 0000:00: resource 7 [mem 0x20000000-0xfebfffff window]
+[    0.149702] pci_bus 0000:00: resource 8 [mem 0x100000000-0x17fffffff window]
+[    0.149952] pci 0000:00:01.0: PIIX3: Enabling Passive Release
+[    0.150149] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    0.156583] ACPI: \_SB_.LNKD: Enabled at IRQ 11
+[    0.163058] pci 0000:00:04.0: quirk_usb_early_handoff+0x0/0x190 took 12398 usecs
+[    0.163319] PCI: CLS 0 bytes, default 64
+[    0.163518] Trying to unpack rootfs image as initramfs...
+[    0.164015] Initialise system trusted keyrings
+[    0.164174] Key type blacklist registered
+[    0.164326] workingset: timestamp_bits=36 max_order=17 bucket_order=0
+[    0.164546] zbud: loaded
+[    0.164717] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.164945] fuse: init (API version 7.39)
+[    0.165137] integrity: Platform Keyring initialized
+[    0.165300] integrity: Machine keyring initialized
+[    0.169644] Key type asymmetric registered
+[    0.169782] Asymmetric key parser 'x509' registered
+[    0.169953] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 243)
+[    0.170213] io scheduler mq-deadline registered
+[    0.170520] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[    0.170793] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+[    0.171095] ACPI: button: Power Button [PWRF]
+[    0.171340] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled
+[    0.192516] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.193352] Linux agpgart interface v0.103
+[    0.195506] loop: module loaded
+[    0.195942] scsi host0: ata_piix
+[    0.196087] scsi host1: ata_piix
+[    0.196202] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0xc080 irq 14 lpm-pol 0
+[    0.196451] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0xc088 irq 15 lpm-pol 0
+[    0.196824] ACPI: bus type drm_connector registered
+[    0.197088] tun: Universal TUN/TAP device driver, 1.6
+[    0.197269] PPP generic driver version 2.4.2
+[    0.197455] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    0.198039] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    0.198205] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    0.198412] mousedev: PS/2 mouse device common for all mice
+[    0.198678] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+[    0.199092] rtc_cmos 00:05: RTC can wake from S4
+[    0.199386] rtc_cmos 00:05: registered as rtc0
+[    0.199552] rtc_cmos 00:05: setting system clock to 2026-10-22T14:19:46 UTC (1792678786)
+[    0.199839] rtc_cmos 00:05: alarms up to one day, y3k, 242 bytes nvram, hpet irqs
+[    0.200091] i2c_dev: i2c /dev entries driver
+[    0.200238] device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+[    0.200633] device-mapper: uevent: version 1.0.3
+[    0.200798] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    0.201080] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    0.201379] ledtrig-cpu: registered to indicate activity on CPUs
+[    0.201599] drop_monitor: Initializing network drop monitor service
+[    0.201844] NET: Registered PF_INET6 protocol family
+[    0.215563] Freeing initrd memory: 8092K
+[    0.215878] Segment Routing with IPv6
+[    0.216015] In-situ OAM (IOAM) with IPv6
+[    0.216157] NET: Registered PF_PACKET protocol family
+[    0.216337] Key type dns_resolver registered
+[    0.216571] IPI shorthand broadcast: enabled
+[    0.217261] sched_clock: Marking stable (188009664, 28850262)->(219176701, -2316775)
+[    0.217596] registered taskstats version 1
+[    0.217794] Loading compiled-in X.509 certificates
+[    0.218159] Loaded X.509 cert 'Build time autogenerated kernel key: 456e54511b8b6ecbbc2d6cfc1b8060287c67b744'
+[    0.218638] Loaded X.509 cert 'Canonical Ltd. Live Patch Signing 2025 Kmod: d541cef61dc7e793b7eb7e899970a2eef0b5dc8c'
+[    0.219152] Loaded X.509 cert 'Canonical Ltd. Live Patch Signing: 14df34d1a87cf37625abec039ef2bf521249b969'
+[    0.219626] Loaded X.509 cert 'Canonical Ltd. Kernel Module Signing: 88f752e560a1e0737e31163a466ad7b70a850c19'
+[    0.219950] blacklist: Loading compiled-in revocation X.509 certificates
+[    0.220176] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing: 61482aa2830d0ab2ad5af10b7250da9033ddcef0'
+[    0.220495] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2017): 242ade75ac4a15e50d50c84b0d45ff3eae707a03'
+[    0.220832] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (ESM 2018): 365188c1d374d6b07c3c8f240f8ef722433d6a8b'
+[    0.221187] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2019): c0746fd6c5da3ae827864651ad66ae47fe24b3e8'
+[    0.221527] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v1): a8d54bbb3825cfb94fa13c9f8a594a195c107b8d'
+[    0.221878] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v2): 4cf046892d6fd3c9a5b03f98d845f90851dc6a8c'
+[    0.222230] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v3): 100437bb6de6e469b581e61cd66bce3ef4ed53af'
+[    0.222580] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (Ubuntu Core 2019): c1d57b8f6b743f23ee41f4f7ee292f06eecadfb9'
+[    0.224075] Key type .fscrypt registered
+[    0.224205] Key type fscrypt-provisioning registered
+[    0.224626] Key type encrypted registered
+[    0.224760] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.225094] ima: No TPM chip found, activating TPM-bypass!
+[    0.225278] Loading compiled-in module X.509 certificates
+[    0.225636] Loaded X.509 cert 'Build time autogenerated kernel key: 456e54511b8b6ecbbc2d6cfc1b8060287c67b744'
+[    0.225966] ima: Allocated hash algorithm: sha256
+[    0.226131] ima: No architecture policies found
+[    0.226285] evm: Initialising EVM extended attributes:
+[    0.226454] evm: security.selinux
+[    0.226565] evm: security.SMACK64
+[    0.226676] evm: security.SMACK64EXEC
+[    0.226798] evm: security.SMACK64TRANSMUTE
+[    0.226936] evm: security.SMACK64MMAP
+[    0.227061] evm: security.apparmor
+[    0.227174] evm: security.ima
+[    0.227274] evm: security.capability
+[    0.227393] evm: HMAC attrs: 0x1
+[    0.227666] PM:   Magic number: 14:434:334
+[    0.227812] PM:   hash matches drivers/base/power/main.c:826
+[    0.228023] tty tty55: hash matches
+[    0.229429] RAS: Correctable Errors collector initialized.
+[    0.229650] clk: Disabling unused clocks
+[    0.349955] ata2: found unknown device (class 0)
+[    0.350401] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    0.351087] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    0.366088] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    0.366281] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    0.372194] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    0.372784] Freeing unused decrypted memory: 2028K
+[    0.373140] Freeing unused kernel image (initmem) memory: 4912K
+[    0.373284] Write protecting the kernel read-only data: 36864k
+[    0.373498] Freeing unused kernel image (rodata/data gap) memory: 348K
+[    0.395702] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    0.395877] Run /init as init process
+RUSTUSB_COMPOSITE_BOOT role=server kernel=6.8.0-106-generic
+[    0.399382] e1000: Intel(R) PRO/1000 Network Driver
+[    0.399528] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    0.407519] ACPI: \_SB_.LNKC: Enabled at IRQ 10
+[    0.687298] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:00:00:51
+[    0.687479] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    0.693896] ACPI: \_SB_.LNKA: Enabled at IRQ 10
+[    0.973268] e1000 0000:00:05.0 eth1: (PCI:33MHz:32-bit) 52:54:00:cc:00:01
+[    0.973459] e1000 0000:00:05.0 eth1: Intel(R) PRO/1000 Network Connection
+[    0.975284] usbcore: registered new interface driver cdc_ether
+[    0.982787] xhci_hcd 0000:00:04.0: xHCI Host Controller
+[    0.982934] xhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 1
+[    0.983207] xhci_hcd 0000:00:04.0: hcc params 0x00087001 hci version 0x100 quirks 0x0000000000000010
+[    0.983613] xhci_hcd 0000:00:04.0: xHCI Host Controller
+[    0.983739] xhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 2
+[    0.983921] xhci_hcd 0000:00:04.0: Host supports USB 3.0 SuperSpeed
+[    0.984107] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.08
+[    0.984300] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.984469] usb usb1: Product: xHCI Host Controller
+[    0.984586] usb usb1: Manufacturer: Linux 6.8.0-106-generic xhci-hcd
+[    0.984735] usb usb1: SerialNumber: 0000:00:04.0
+[    0.984913] hub 1-0:1.0: USB hub found
+[    0.985015] hub 1-0:1.0: 4 ports detected
+[    0.985182] usb usb2: We don't know the algorithms for LPM for this host, disabling LPM.
+[    0.985377] usb usb2: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 6.08
+[    0.985568] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.985737] usb usb2: Product: xHCI Host Controller
+[    0.985854] usb usb2: Manufacturer: Linux 6.8.0-106-generic xhci-hcd
+[    0.986009] usb usb2: SerialNumber: 0000:00:04.0
+[    0.986146] hub 2-0:1.0: USB hub found
+[    0.986243] hub 2-0:1.0: 4 ports detected
+RUSTUSB_COMPOSITE_PEER_QUIET: PASS interface=eth1 down=true raw_probe_isolated=true
+RUSTUSB_COMPOSITE_ISOLATION: PASS role=server ip_forward=0
+2026-10-22T14:19:47.290230Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-22T14:19:47.349416Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-22T14:19:47.408373Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-22T14:19:47.467391Z  INFO rustusb: local device discovery completed device_count=0
+[    1.225886] usb 1-1: new full-speed USB device number 2 using xhci_hcd
+2026-10-22T14:19:47.527052Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-22T14:19:47.586549Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-22T14:19:47.645822Z  INFO rustusb: local device discovery completed device_count=0
+[    1.353195] usb 1-1: New USB device found, idVendor=0525, idProduct=a4a2, bcdDevice= 0.00
+[    1.353600] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=10
+[    1.353948] usb 1-1: Product: RNDIS/QEMU USB Network Device
+[    1.354141] usb 1-1: Manufacturer: QEMU
+[    1.354234] usb 1-1: SerialNumber: 1-0000:00:04.0-1
+[    1.354742] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+2026-10-22T14:19:47.706206Z  INFO rustusb: local device discovery completed device_count=1
+RUSTUSB_COMPOSITE_OBSERVED bus=1-1 speed=12 bNumInterfaces=2
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_OBSERVED original_net=eth2 peer_net=eth1
+RUSTUSB_COMPOSITE_ROUTE_ISOLATION: PASS server_usb_ipv4=false forwarding=false
+RUSTUSB_COMPOSITE_OBSERVED node=/dev/bus/usb/001/002 metadata=character special file 0:0 600
+RUSTUSB_COMPOSITE_ORIGINAL: PASS config=1 interfaces=2 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1 speed=12 node=root0600
+  "error": "state: permission denied: caller UID is not approved by the administrator",
+2026-10-22T14:19:47.808942Z ERROR rustusb: operation failed error=state: permission denied: caller UID is not approved by the administrator
+RUSTUSB_COMPOSITE_UID_GATE: PASS role=server allowed_uid=1000 denied_uid=1001
+RUSTUSB_COMPOSITE_HELPER_CONNECTION_CLOSED method=reset_after_frame
+{"ok":false,"data":null,"error":"permission denied: caller UID is not approved by the administrator"}
+RUSTUSB_COMPOSITE_OPEN_DENIED: PASS uid=1001 explicit_refusal=true
+RUSTUSB_COMPOSITE_SERVER_UID: PASS uid=1000 capabilities=0 helper_fd=true server_native_modules=false
+[    3.022340] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[    4.041731] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.205430] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.206018] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.538970] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.539603] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.813193] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.864461] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.874158] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.925962] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.933322] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_BASELINE: PASS original_config_alt_drivers=true inflight=0 budget=0
+RUSTUSB_COMPOSITE_PEER_NETWORK: PASS interface=eth1 address=198.18.0.1 host_network=false
+[    5.029248] e1000: eth1 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+RUSTUSB_COMPOSITE_PEER_UID: PASS uid=1000 capabilities=0
+[    5.083690] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+RUSTUSB_COMPOSITE_HELD: PASS cycle=1 config=1 alt1=1 both_drivers=usbfs
+unexpected control message: cycle-1-io-failed expected=cycle-1-io
+RUSTUSB_COMPOSITE_DIAGNOSTIC role=server stage=cycle-1 exit=1
+eth0      Link encap:Ethernet  HWaddr 52:54:00:00:00:51  
+          inet addr:192.0.2.1  Bcast:192.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::5054:ff:fe00:51/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:192 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:172 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:17806 (17.3 KiB)  TX bytes:19190 (18.7 KiB)
+
+eth1      Link encap:Ethernet  HWaddr 52:54:00:CC:00:01  
+          inet addr:198.18.0.1  Bcast:198.18.0.3  Mask:255.255.255.252
+          inet6 addr: fe80::5054:ff:fecc:1/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:516 (516.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  eth0:   17806     192    0    0    0     0          0         0    19190     172    0    0    0     0       0          0
+  eth1:       0       0    0    0    0     0          0         0      516       6    0    0    0     0       0          0
+IP address       HW type     Flags       HW address            Mask     Device
+192.0.2.2        0x1         0x2         52:54:00:00:00:52     *        eth0
+Iface	Destination	Gateway 	Flags	RefCnt	Use	Metric	Mask		MTU	Window	IRTT                                                       
+eth0	000200C0	00000000	0001	0	0	0	00FFFFFF	0	0	0                                                                               
+eth1	000012C6	00000000	0001	0	0	0	FCFFFFFF	0	0	0                                                                               
+NETWORK_STATE interface=eth0 operstate=up carrier=1
+NETWORK_STATE interface=eth1 operstate=up carrier=1
+NETWORK_STATE interface=lo operstate=unknown carrier=1
+DIAGNOSTIC /tmp/denied.log
+{
+  "error": "state: permission denied: caller UID is not approved by the administrator",
+  "ok": false
+}
+2026-10-22T14:19:47.808942Z ERROR rustusb: operation failed error=state: permission denied: caller UID is not approved by the administrator
+DIAGNOSTIC /tmp/direct-open.log
+sh: line 1: can't create /dev/bus/usb/001/002: Permission denied
+DIAGNOSTIC /tmp/helper.log
+[2m2026-10-22T14:19:47.748767Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m root helper listening; unknown kernel ports are not owned; no built-in data encryption
+[2m2026-10-22T14:19:47.800031Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"unsupported"
+[2m2026-10-22T14:19:47.800047Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"status" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-22T14:19:47.808903Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"permission_denied"
+[2m2026-10-22T14:19:47.808909Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1001 [3moperation[0m[2m=[0m"unauthorized_or_invalid" [3msuccess[0m[2m=[0mfalse
+[2m2026-10-22T14:19:47.810381Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"permission_denied"
+[2m2026-10-22T14:19:47.810384Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1001 [3moperation[0m[2m=[0m"unauthorized_or_invalid" [3msuccess[0m[2m=[0mfalse
+[2m2026-10-22T14:19:47.819456Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"unsupported"
+[2m2026-10-22T14:19:47.819470Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"status" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-22T14:19:47.819975Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"open_physical" [3msuccess[0m[2m=[0mtrue
+DIAGNOSTIC /tmp/peer.log
+RUSTUSB_COMPOSITE_UDP_PEER_READY
+DIAGNOSTIC /tmp/server.log
+DIAGNOSTIC /tmp/baseline.json
+{
+  "buffer_bytes_reserved": 0,
+  "devices": [
+    {
+      "bus_id": "1-1",
+      "cancelled": 4,
+      "cleanup_verified": true,
+      "configuration": 1,
+      "counters": {
+        "bulk_in": 5,
+        "bulk_out": 0,
+        "bytes_in": 181,
+        "bytes_out": 0,
+        "controls": 34,
+        "errors": 13,
+        "interrupt_in": 1,
+        "interrupt_out": 0,
+        "unlink_cancelled": 3,
+        "unlinks": 3
+      },
+      "current_drivers": [
+        {
+          "driver": "cdc_ether",
+          "interface": 0
+        },
+        {
+          "driver": "cdc_ether",
+          "interface": 1
+        }
+      ],
+      "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+      "ep0_max_packet_size": 64,
+      "leased": false,
+      "original_drivers": [
+        {
+          "driver": "cdc_ether",
+          "interface": 0
+        },
+        {
+          "driver": "cdc_ether",
+          "interface": 1
+        }
+      ],
+      "pending_urbs": 0,
+      "queued_urbs": 0,
+      "speed": 2,
+      "state": "available",
+      "usbfs_inflight": 0,
+      "usbfs_reaped": 25
+    }
+  ],
+  "schema_version": 1
+}
+DIAGNOSTIC /tmp/denied-open.json
+{"ok":false,"data":null,"error":"permission denied: caller UID is not approved by the administrator"}
+DIAGNOSTIC /tmp/devices.json
+[
+  {
+    "id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+    "bus_id": "1-1",
+    "vendor_id": 1317,
+    "product_id": 42146,
+    "manufacturer": "QEMU",
+    "product": "RNDIS/QEMU USB Network Device",
+    "serial": "1-0000:00:04.0-1",
+    "device_address": 2,
+    "usb_version": "2.00",
+    "speed": "12",
+    "class": 2,
+    "subclass": 0,
+    "protocol": 0,
+    "topology": "devices/pci0000:00/0000:00:04.0/ports/1",
+    "driver": "usb",
+    "interfaces": [
+      {
+        "number": 0,
+        "alternate_setting": 0,
+        "class": 2,
+        "subclass": 6,
+        "protocol": 0,
+        "driver": "cdc_ether",
+        "endpoints": [
+          {
+            "address": 129,
+            "attributes": 3,
+            "max_packet_size": 16,
+            "interval": 32
+          }
+        ]
+      },
+      {
+        "number": 1,
+        "alternate_setting": 1,
+        "class": 10,
+        "subclass": 0,
+        "protocol": 0,
+        "driver": "cdc_ether",
+        "endpoints": [
+          {
+            "address": 2,
+            "attributes": 2,
+            "max_packet_size": 64,
+            "interval": 0
+          },
+          {
+            "address": 130,
+            "attributes": 2,
+            "max_packet_size": 64,
+            "interval": 0
+          }
+        ]
+      }
+    ],
+    "exported": false,
+    "occupied": null,
+    "export_blockers": []
+  }
+]
+DIAGNOSTIC /tmp/doctor.json
+{
+  "schema_version": 1,
+  "native": {
+    "system": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "kernel_release": "6.8.0-106-generic",
+      "kernel": {
+        "status": "available",
+        "detail": "Running Linux kernel release identified",
+        "action": "Use tools and modules packaged for this exact running kernel"
+      }
+    },
+    "usbip_host": {
+      "module": "usbip_host",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "usbip-host driver directory unavailable (NotFound)",
+        "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "vhci_hcd": {
+      "module": "vhci_hcd",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "No supported VHCI controller/status interface observed",
+        "action": "An administrator should verify vhci_hcd is loaded; the adapter requires 1..=256 ports"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "usbip": {
+      "path": "/usr/bin/usbip",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbip (usbip-utils 2.0)"
+    },
+    "usbipd": {
+      "path": "/usr/bin/usbipd",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbipd (usbip-utils 2.0)"
+    },
+    "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+  },
+  "helper": {
+    "status": "available",
+    "detail": "A verified root helper accepted this caller's read-only status query.",
+    "action": "Device/peer authorization and a trusted data network still need separate verification.",
+    "peer_verified": true,
+    "kernel_available": false,
+    "active_sessions": null,
+    "external_trusted_network_confirmed": true
+  },
+  "required_for_export": [
+    "native.usbip",
+    "native.usbip_host.sysfs",
+    "helper"
+  ],
+  "required_for_import": [
+    "native.usbip",
+    "native.vhci_hcd.sysfs",
+    "helper"
+  ],
+  "built_in_encryption": false,
+  "network_security_verified": false,
+  "hardware_test_performed": false,
+  "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+}
+DIAGNOSTIC /tmp/failure-observation.json
+{
+  "buffer_bytes_reserved": 16708,
+  "devices": [
+    {
+      "bus_id": "1-1",
+      "cancelled": 4,
+      "cleanup_verified": false,
+      "configuration": 1,
+      "counters": {
+        "bulk_in": 6,
+        "bulk_out": 9,
+        "bytes_in": 758,
+        "bytes_out": 642,
+        "controls": 55,
+        "errors": 18,
+        "interrupt_in": 1,
+        "interrupt_out": 0,
+        "unlink_cancelled": 3,
+        "unlinks": 3
+      },
+      "current_drivers": [
+        {
+          "driver": "usbfs",
+          "interface": 0
+        },
+        {
+          "driver": "usbfs",
+          "interface": 1
+        }
+      ],
+      "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+      "ep0_max_packet_size": 64,
+      "leased": true,
+      "original_drivers": [
+        {
+          "driver": "cdc_ether",
+          "interface": 0
+        },
+        {
+          "driver": "cdc_ether",
+          "interface": 1
+        }
+      ],
+      "pending_urbs": 6,
+      "queued_urbs": 4,
+      "speed": 2,
+      "state": "leased",
+      "usbfs_inflight": 2,
+      "usbfs_reaped": 54
+    }
+  ],
+  "schema_version": 1
+}
+DIAGNOSTIC /tmp/held-1.json
+{
+  "buffer_bytes_reserved": 16708,
+  "devices": [
+    {
+      "bus_id": "1-1",
+      "cancelled": 4,
+      "cleanup_verified": false,
+      "configuration": 1,
+      "counters": {
+        "bulk_in": 6,
+        "bulk_out": 0,
+        "bytes_in": 758,
+        "bytes_out": 0,
+        "controls": 55,
+        "errors": 18,
+        "interrupt_in": 1,
+        "interrupt_out": 0,
+        "unlink_cancelled": 3,
+        "unlinks": 3
+      },
+      "current_drivers": [
+        {
+          "driver": "usbfs",
+          "interface": 0
+        },
+        {
+          "driver": "usbfs",
+          "interface": 1
+        }
+      ],
+      "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+      "ep0_max_packet_size": 64,
+      "leased": true,
+      "original_drivers": [
+        {
+          "driver": "cdc_ether",
+          "interface": 0
+        },
+        {
+          "driver": "cdc_ether",
+          "interface": 1
+        }
+      ],
+      "pending_urbs": 6,
+      "queued_urbs": 4,
+      "speed": 2,
+      "state": "leased",
+      "usbfs_inflight": 2,
+      "usbfs_reaped": 45
+    }
+  ],
+  "schema_version": 1
+}
+DIAGNOSTIC /tmp/server.events
+{"address":"192.0.2.1:3240","event":"ready","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+{"event":"snapshot","id":"baseline","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":4,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":5,"bulk_out":0,"bytes_in":181,"bytes_out":0,"controls":34,"errors":13,"interrupt_in":1,"interrupt_out":0,"unlink_cancelled":3,"unlinks":3},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":25}],"schema_version":1}}
+{"event":"snapshot","id":"held-1","schema_version":1,"snapshot":{"buffer_bytes_reserved":16708,"devices":[{"bus_id":"1-1","cancelled":4,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":6,"bulk_out":0,"bytes_in":758,"bytes_out":0,"controls":55,"errors":18,"interrupt_in":1,"interrupt_out":0,"unlink_cancelled":3,"unlinks":3},"current_drivers":[{"driver":"usbfs","interface":0},{"driver":"usbfs","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":6,"queued_urbs":4,"speed":2,"state":"leased","usbfs_inflight":2,"usbfs_reaped":45}],"schema_version":1}}
+{"event":"snapshot","id":"failure-observation","schema_version":1,"snapshot":{"buffer_bytes_reserved":16708,"devices":[{"bus_id":"1-1","cancelled":4,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":6,"bulk_out":9,"bytes_in":758,"bytes_out":642,"controls":55,"errors":18,"interrupt_in":1,"interrupt_out":0,"unlink_cancelled":3,"unlinks":3},"current_drivers":[{"driver":"usbfs","interface":0},{"driver":"usbfs","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":6,"queued_urbs":4,"speed":2,"state":"leased","usbfs_inflight":2,"usbfs_reaped":54}],"schema_version":1}}
+DIAGNOSTIC /tmp/peer.err
+[    0.229650] clk: Disabling unused clocks
+[    0.349955] ata2: found unknown device (class 0)
+[    0.350401] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    0.351087] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    0.366088] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    0.366281] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    0.372120] sr 1:0:0:0: Attached scsi CD-ROM sr0
+[    0.372194] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    0.372784] Freeing unused decrypted memory: 2028K
+[    0.373140] Freeing unused kernel image (initmem) memory: 4912K
+[    0.373284] Write protecting the kernel read-only data: 36864k
+[    0.373498] Freeing unused kernel image (rodata/data gap) memory: 348K
+[    0.395702] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    0.395877] Run /init as init process
+[    0.395967]   with arguments:
+[    0.395968]     /init
+[    0.395969]   with environment:
+[    0.395969]     HOME=/
+[    0.395969]     TERM=linux
+[    0.395969]     RUSTUSB_QEMU_GUEST=1
+[    0.399382] e1000: Intel(R) PRO/1000 Network Driver
+[    0.399528] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    0.407519] ACPI: \_SB_.LNKC: Enabled at IRQ 10
+[    0.687298] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:00:00:51
+[    0.687479] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    0.693896] ACPI: \_SB_.LNKA: Enabled at IRQ 10
+[    0.973268] e1000 0000:00:05.0 eth1: (PCI:33MHz:32-bit) 52:54:00:cc:00:01
+[    0.973459] e1000 0000:00:05.0 eth1: Intel(R) PRO/1000 Network Connection
+[    0.975284] usbcore: registered new interface driver cdc_ether
+[    0.982787] xhci_hcd 0000:00:04.0: xHCI Host Controller
+[    0.982934] xhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 1
+[    0.983207] xhci_hcd 0000:00:04.0: hcc params 0x00087001 hci version 0x100 quirks 0x0000000000000010
+[    0.983613] xhci_hcd 0000:00:04.0: xHCI Host Controller
+[    0.983739] xhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 2
+[    0.983921] xhci_hcd 0000:00:04.0: Host supports USB 3.0 SuperSpeed
+[    0.984107] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.08
+[    0.984300] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.984469] usb usb1: Product: xHCI Host Controller
+[    0.984586] usb usb1: Manufacturer: Linux 6.8.0-106-generic xhci-hcd
+[    0.984735] usb usb1: SerialNumber: 0000:00:04.0
+[    0.984913] hub 1-0:1.0: USB hub found
+[    0.985015] hub 1-0:1.0: 4 ports detected
+[    0.985182] usb usb2: We don't know the algorithms for LPM for this host, disabling LPM.
+[    0.985377] usb usb2: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 6.08
+[    0.985568] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.985737] usb usb2: Product: xHCI Host Controller
+[    0.985854] usb usb2: Manufacturer: Linux 6.8.0-106-generic xhci-hcd
+[    0.986009] usb usb2: SerialNumber: 0000:00:04.0
+[    0.986146] hub 2-0:1.0: USB hub found
+[    0.986243] hub 2-0:1.0: 4 ports detected
+[    1.225886] usb 1-1: new full-speed USB device number 2 using xhci_hcd
+[    1.353195] usb 1-1: New USB device found, idVendor=0525, idProduct=a4a2, bcdDevice= 0.00
+[    1.353600] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=10
+[    1.353948] usb 1-1: Product: RNDIS/QEMU USB Network Device
+[    1.354141] usb 1-1: Manufacturer: QEMU
+[    1.354234] usb 1-1: SerialNumber: 1-0000:00:04.0-1
+[    1.354742] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    3.022340] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[    4.041731] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.205430] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.206018] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.538970] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.539603] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.813193] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.864461] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.874158] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.925962] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.933322] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    5.029248] e1000: eth1 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[    5.083690] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+RUSTUSB_COMPOSITE_RESULT: FAIL role=server stage=cycle-1 exit=1
+[   10.833938] ACPI: PM: Preparing to enter system sleep state S5
+[   10.834119] reboot: Power down

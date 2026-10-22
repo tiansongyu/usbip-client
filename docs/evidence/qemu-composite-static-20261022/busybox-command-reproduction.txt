@@ -1,0 +1,4 @@
+$ printf ' 2\n' | /usr/bin/busybox tr -d '[:space:]' | od -An -tx1
+20 32 0a
+$ printf ' 2\n' | /usr/bin/busybox tr -d ' \t\r\n' | od -An -tx1
+32

@@ -8,6 +8,8 @@
 
 开发dev04的私有双网线PCAP确认了QEMU6.2旧ECM模型与xHCI聚合的兼容问题：一个132B Ethernet frame中，IPv6头声明的原帧为90B，后面拼入了完整42B ARP请求（198.18.0.2→198.18.0.1）。模型仅在单个USBPacket小于64B时flush，xHCI聚合整个较长TD时不能提供模型所依赖的逐包短包边界；两端carrier均为1，不能把它当作链路未就绪。后续新runner使用与该Full-Speed模型匹配的UHCI，补来宾`uhci-hcd`；保留原超过MPS的UDP内容、5秒接收期限和全部协议断言，不改产品传输长度或缩小payload。xHCI失败、PCAP与解析保留，UHCI结果不外推此旧模型在xHCI上的网络功能。
 
+UHCI dev05/06的Interrupt短IN实测为`-EPIPE/actual1`，与最初从xHCI结果沿用的actual0预期不同；两轮均准确FAIL。dev07保留旧断言并显式启用仅来宾USBMON，独立观察同一URB的`S Ii ... len1`和`C Ii ... -32 ... len1`，与wire seq43及其单字节数据一致。[QEMU UHCI错误处理](https://github.com/qemu/qemu/blob/v6.2.0/hw/usb/hcd-uhci.c)在STALL时未更新TD实际长度编码；[Linux 6.8长度解码](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/host/uhci-hcd.h)和[完成处理](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/host/uhci-q.c)形成该上报值。后续按UHCI模型的已核实际契约验证`-32/actual1`，并将wire单字节与同URBtag USBMON完成数据交叉比较。它证明保留kernel-reported partial，不证明设备实际传输1B或真实硬件partial-error；USBMON是合成测试设备的显式诊断，不是生产默认payload日志。
+
 Linux 6.8 的 [CDC 驱动](https://github.com/torvalds/linux/blob/v6.8/drivers/net/usb/cdc_ether.c) 在 probe 控制接口时会同步认领数据接口；同一驱动管理两个接口是必须验证的正常场景。[usbfs CONNECT](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/devio.c) 对已绑定驱动的接口返回 EBUSY。现有恢复循环使用一次性的全部接口快照，先 CONNECT 接口 0 后仍可能把接口 1 当成未绑定，再次 CONNECT 并误报隔离。
 
 ## 恢复修复契约

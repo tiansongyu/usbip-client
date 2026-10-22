@@ -22,9 +22,10 @@
 | E12 | [可选后端出版/CI证据](evidence/publication-virtual-20261022.json)、[实际运行39774177011](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011) | cfeffd3已普通push/remote一致；四原生OS/架构job全部success，每格默认75/allfeatures76、0失败/忽略、两项stdout背压回归；不代替ARM内核USB或物理验证 |
 | E13 | [USBFS物理adapter专项报告](research/physical-qemu.md)、[软件与vendor检查](evidence/physical-software-validation-20261022.json)、[最终索引](evidence/physical-validation-final-20261022.json) | 默认89/allfeatures103及全部Cargo gates、vendor14纯测试通过；干净37bc6b4默认locked的USBFS正常/热拔与原虚拟回归全部PASS，6guest exit0、普通UID/root0600、0/1/15B/取消/释放/driver恢复/新代际拒绝均有证据；全部开发及f42d最终FAIL保留，不替代真实硬件 |
 | E14 | [USBFS出版及四平台CI记录](evidence/publication-physical-20261022.json)、[实际CI39786348508](https://github.com/tiansongyu/usbip-client/actions/runs/39786348508) | 37bc6b4普通push且远端一致，Ubuntu22.04/24.04 × x86_64/aarch64四job全部success；每格默认89/allfeatures103/vendor14合计206项、0失败/忽略及两项stdout背压通过；不是ARM USB内核或真实硬件验收 |
-| E15 | [Composite配置/恢复设计](research/usbfs-composite-qemu-design.md)、[软件检查与96份输入SHA](evidence/composite-software-validation-20261022.json) | 192640c产品与软件输入一致；本机默认89/allfeatures113/vendor14共216项及完整Cargo gates通过；逐IF恢复和新配置claim/回滚前安全复核已实现，ECM QEMU及新的四平台CI仍待实际运行裁决 |
+| E15 | [Composite配置/恢复设计](research/usbfs-composite-qemu-design.md)、[软件检查与96份输入SHA](evidence/composite-software-validation-20261022.json) | 192640c产品与软件输入一致；本机默认89/allfeatures113/vendor14共216项及完整Cargo gates通过；逐IF恢复和新配置claim/回滚前安全复核已实现；ECM开发PASS/全部FAIL见[报告](research/composite-qemu.md)，最终clean回归尚待运行 |
+| E16 | [Composite四平台CI记录](evidence/publication-composite-20261022.json)、[实际CI39795249579](https://github.com/tiansongyu/usbip-client/actions/runs/39795249579) | d361ea3与192640c产品源码一致，Ubuntu22.04/24.04 × x86_64/aarch64四job均completed/success；每格89/113/14共216项、0失败/忽略及两项stdout背压通过；不代替USB内核或硬件验收 |
 
-当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。37bc6b4的Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI均已通过(E14)，历史虚拟服务结果见E12；最新192640c的本机软件检查见E15，新的QEMU/四格CI待裁决。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
+当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。最新192640c产品本机软件检查见E15，四格原生软件CI均已通过(E16)；37bc与虚拟服务历史分别见E14/E12。新的ECM最终冻结回归待裁决；真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
 ## 2. Phase 0 九项产物
 
@@ -68,7 +69,7 @@
 | 设备断开 | helper 受管端口 → native detach_session 比对原身份 → 确认NULL及旧设备generation已移除 | 软件已验证端口复用拒绝 / 幂等 / 真实状态等待；重启未知端口不能由普通 CLI 接管 |
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出；feature可选virtual-server / physical-server | 已实现并有 schema 测试 / 只读 smoke及E10/E13仿真；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
-| G1 软件 gate | E15当前本机完整软件检查；E14保留37bc四平台CI | 默认89/allfeatures113项、vendor14纯测试及两组Clippy/release/Rustdoc通过；新的四平台CI待运行；历史结果保留，后续源码变更仍须重新验证 |
+| G1 软件 gate | E15当前本机完整软件检查、E16当前四平台CI | 默认89/allfeatures113项、vendor14纯测试及两组Clippy/release/Rustdoc通过；四平台全部通过；历史结果保留，后续源码变更仍须重新验证 |
 | G1-Q 用户要求的本项目 QEMU gate | E07七项矩阵、E09三机争用/双机传输中止，原始日志与完整指纹 | **干净提交b4cbfc3七项全部PASS**；三方向Native互操作各HID/FTDI两周期，reconnect三周期及新代际拒绝控制，14guest exit0；E09另5guest exit0，争用交接与真实TCPabort清理通过；doctor/UID/资源释放逐项核验 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
@@ -170,4 +171,4 @@ Phase2已交付并验证固定虚拟服务子步骤(E10/E11)及USBFS adapter的Q
 
 ## 13. Composite配置与恢复子步骤（实施中）
 
-E15软件gate与独立源码复核通过，新增两个接口由同一driver probe恢复的确定性回归，以及当前配置storage/块后代/外部占用拒绝检查。新的ECM双来宾测试仍在开发验证，开发FAIL保留，尚不能称为该模型实际I/O通过。原driver无绑定且为非零alternate的恢复、任意Composite/ISO、真实硬件和完整G2仍未完成。
+E15软件gate、E16四平台CI与独立源码复核通过，新增两个接口由同一driver probe恢复的确定性回归，以及当前配置storage/块后代/外部占用拒绝检查。ECM双来宾dirty开发dev08已完成19probe和两个导入周期的实际38/39B UDP、USBMON/wire错误字段一致及原双driver恢复，全部开发FAIL保留；最终clean冻结回归待执行。原driver无绑定且为非零alternate的恢复、任意Composite/ISO、真实硬件和完整G2仍未完成。
