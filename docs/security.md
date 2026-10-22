@@ -119,7 +119,7 @@ USBFS 的当前局部状态为 Available/Claiming/Leased/Closing/Quarantined/Gon
 
 受管导入的身份还包含本地USB地址和sysfs目录dev/inode代际，快照前后复核属性及VHCI行；这些是本次内核实例内的凭据，不能跨重启持久认证，也不能抵御特权管理员修改系统。外部释放后，下一次attach仅在端口NULL且旧代际消失时移除旧记录。相同端口、Bus ID、VID/PID的新外部连接不继承旧所有权；ERROR或未知身份阻止新导入，需管理员协调。doctor的版本子进程和只读Status均有资源截止，仅输出受限安全版本及固定诊断文字，不回传任意工具stderr、策略内容或设备标识。
 
-实验性物理 adapter 的边界与实现细节见[架构](architecture.md#可选-rust-服务共享-engine-与-usbfs-生命周期)和[实施设计](research/rust-physical-backend-design.md)。USBFS正常/热拔QEMU开发场景已通过，最终clean验证单独登记；完整 G2、真实硬件兼容性、ISO、任意 Composite/alternate、持久可撤销授权及 R11 认证均未完成。固定虚拟 profile 的成功也不能填补这些验收项，结果以[工作日志](work-log.md)和[验收记录](acceptance.md)为准。
+实验性物理 adapter 的边界与实现细节见[架构](architecture.md#可选-rust-服务共享-engine-与-usbfs-生命周期)和[实施设计](research/rust-physical-backend-design.md)。干净37bc6b4的USBFS正常/热拔及原虚拟回归均已通过；完整 G2、真实硬件兼容性、ISO、任意 Composite/alternate、持久可撤销授权及 R11 认证均未完成。固定虚拟 profile 的成功也不能填补这些验收项，结果以[工作日志](work-log.md)和[验收记录](acceptance.md)为准。
 
 | Gate | 必须提供的证据 | 未通过的处理 |
 | --- | --- | --- |

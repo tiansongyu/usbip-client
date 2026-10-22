@@ -1,0 +1,1010 @@
+{
+  "started_at_utc": "20261022T132117Z",
+  "scope": "ordinary UID1000 userspace virtual HID/standard CDC ACM server to real Linux VHCI; two isolated guests; no physical USB",
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "37bc6b48906844fd6fd6cb6ded8680ed7fe2d7b2",
+  "working_tree_dirty": false,
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--features",
+    "rustusb-cli/rust-backend"
+  ],
+  "cargo_lock_sha256": "9f21f12977a9d4f228917a00502cae17a0ee8801df2a9f6d7edb9d1f69f702ca",
+  "source_fingerprint_sha256": "16db71caf344ab2887c722cebec2ef417b8f388ee36162f0d27746630f3264dc",
+  "script_sha256": {
+    "run-userspace-qemu.py": "b7a2c3ca75fd7edcc57c8cf56dac997ae29dd2b1e248b8c48dbe552108a51c38",
+    "guest-userspace-init.sh": "a9cce38d4fef0e7724ae040248085da65d84548e3cf1b7211c74615a7e81368f",
+    "userspace-wire-probe.rs": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "link": [
+      "server:192.0.2.1",
+      "client:192.0.2.2"
+    ],
+    "ip_forward": false,
+    "qemu_usb_devices": 0,
+    "host_network_listener": false
+  },
+  "result": "PASS",
+  "binary_sha256": {
+    "rustusb": "f8c5d2fe008ee92d9f5842f6a8b0e2d59bc55c63ce4c51c8570a51c0a6f3e5eb",
+    "rustusb-helper": "df767b8092f00a4f0301651193327332ee3bfc799e5d5f168b716315af0e03b6"
+  },
+  "probe_binary_sha256": "d51014a5e1df3dc54946711afa22ef8d1b2e0d14018c83e3b405e06ab6c2e30b",
+  "cdc_acm_module": {
+    "source": "/lib/modules/6.8.0-106-generic/kernel/drivers/usb/class/cdc-acm.ko",
+    "uncompressed_sha256": "00d8b3658398532dfc9514839c4071bee8e34f499a1ad1f7c5746904afe11e58",
+    "builtin": false
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "6856caff76c47f35cf2b4e129827ef8f112a5d30ff23e1cb010cd4a77d370b7f",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "protocol_probe_cases": [
+    {
+      "event": "probe_case",
+      "case": "control_bound_and_invalid_interface_stall",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "pending_unlink_suppresses_old_completion",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "cdc_bulk_out_and_bounded_in_fifo",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "unknown_version",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "submit_before_import",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "truncated_handshake",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "duplicate_import",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "oversized_out",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "negative_length",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "invalid_direction",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "invalid_endpoint",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "wrong_device",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "iso_rejected",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "truncated_data_header",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "all_protocol_checks",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "both_profiles_exclusive_busy",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "health_two_profiles",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "both_profiles_exclusive_busy",
+      "result": "PASS"
+    },
+    {
+      "event": "probe_case",
+      "case": "health_two_profiles",
+      "result": "PASS"
+    }
+  ],
+  "server_observations": {
+    "cdc_cumulative_bytes": {
+      "out": 86,
+      "in": 156,
+      "injected": 70
+    },
+    "cdc_kernel_cycles_bytes": {
+      "out": 70,
+      "in": 140,
+      "injected": 70
+    },
+    "probe_cdc_bytes_each_direction": 16,
+    "cdc_out_sha256": "21f6226c014ad7bd7a1c68f7d20fe787590101e157ba830835e0efc636fcb6b8",
+    "cdc_in_sha256": "fffea8f2a7c85c587c25ea687e295f7f4b4e35c6787ba5eaec9bd71a43309908",
+    "final_snapshot": {
+      "devices": [
+        {
+          "break_active": false,
+          "bus_id": "1-1",
+          "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_loopback": true,
+          "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_queued_bytes": 0,
+          "configuration": 0,
+          "counters": {
+            "bulk_in": 0,
+            "bulk_out": 0,
+            "cdc_in_bytes": 0,
+            "cdc_injected_bytes": 0,
+            "cdc_out_bytes": 0,
+            "control": 39,
+            "hid_taps": 2,
+            "interrupt": 4,
+            "sessions_started": 11,
+            "unlink": 2,
+            "unlink_cancelled": 1
+          },
+          "exported": true,
+          "hid_queued_reports": 0,
+          "leased": false,
+          "line_coding": {
+            "data_bits": 8,
+            "parity": 0,
+            "rate": 115200,
+            "stop_bits": 0
+          },
+          "line_state": 0,
+          "pending_urbs": 0,
+          "profile": "hid_keyboard"
+        },
+        {
+          "break_active": false,
+          "bus_id": "1-2",
+          "cdc_in_sha256": "fffea8f2a7c85c587c25ea687e295f7f4b4e35c6787ba5eaec9bd71a43309908",
+          "cdc_loopback": true,
+          "cdc_out_sha256": "21f6226c014ad7bd7a1c68f7d20fe787590101e157ba830835e0efc636fcb6b8",
+          "cdc_queued_bytes": 0,
+          "configuration": 0,
+          "counters": {
+            "bulk_in": 6,
+            "bulk_out": 3,
+            "cdc_in_bytes": 156,
+            "cdc_injected_bytes": 70,
+            "cdc_out_bytes": 86,
+            "control": 33,
+            "hid_taps": 0,
+            "interrupt": 4,
+            "sessions_started": 3,
+            "unlink": 34,
+            "unlink_cancelled": 34
+          },
+          "exported": true,
+          "hid_queued_reports": 0,
+          "leased": false,
+          "line_coding": {
+            "data_bits": 8,
+            "parity": 0,
+            "rate": 115200,
+            "stop_bits": 0
+          },
+          "line_state": 0,
+          "pending_urbs": 0,
+          "profile": "cdc_acm"
+        }
+      ],
+      "schema_version": 1
+    }
+  },
+  "server_events": [
+    {
+      "address": "192.0.2.1:3240",
+      "devices": [
+        {
+          "break_active": false,
+          "bus_id": "1-1",
+          "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_loopback": true,
+          "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_queued_bytes": 0,
+          "configuration": 0,
+          "counters": {
+            "bulk_in": 0,
+            "bulk_out": 0,
+            "cdc_in_bytes": 0,
+            "cdc_injected_bytes": 0,
+            "cdc_out_bytes": 0,
+            "control": 0,
+            "hid_taps": 0,
+            "interrupt": 0,
+            "sessions_started": 0,
+            "unlink": 0,
+            "unlink_cancelled": 0
+          },
+          "exported": true,
+          "hid_queued_reports": 0,
+          "leased": false,
+          "line_coding": {
+            "data_bits": 8,
+            "parity": 0,
+            "rate": 115200,
+            "stop_bits": 0
+          },
+          "line_state": 0,
+          "pending_urbs": 0,
+          "profile": "hid_keyboard"
+        },
+        {
+          "break_active": false,
+          "bus_id": "1-2",
+          "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_loopback": true,
+          "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_queued_bytes": 0,
+          "configuration": 0,
+          "counters": {
+            "bulk_in": 0,
+            "bulk_out": 0,
+            "cdc_in_bytes": 0,
+            "cdc_injected_bytes": 0,
+            "cdc_out_bytes": 0,
+            "control": 0,
+            "hid_taps": 0,
+            "interrupt": 0,
+            "sessions_started": 0,
+            "unlink": 0,
+            "unlink_cancelled": 0
+          },
+          "exported": true,
+          "hid_queued_reports": 0,
+          "leased": false,
+          "line_coding": {
+            "data_bits": 8,
+            "parity": 0,
+            "rate": 115200,
+            "stop_bits": 0
+          },
+          "line_state": 0,
+          "pending_urbs": 0,
+          "profile": "cdc_acm"
+        }
+      ],
+      "event": "ready",
+      "schema_version": 1
+    },
+    {
+      "event": "snapshot",
+      "id": "baseline",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 7,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 9,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "17ce279bac9f64b9ca579dbf4de4cd2b837ac42051c1e323e18782ef0ad553da",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "17ce279bac9f64b9ca579dbf4de4cd2b837ac42051c1e323e18782ef0ad553da",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 2,
+              "bulk_out": 1,
+              "cdc_in_bytes": 16,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 16,
+              "control": 1,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 1,
+              "unlink": 0,
+              "unlink_cancelled": 0
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "held-1",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 23,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 10,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 1,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "17ce279bac9f64b9ca579dbf4de4cd2b837ac42051c1e323e18782ef0ad553da",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "17ce279bac9f64b9ca579dbf4de4cd2b837ac42051c1e323e18782ef0ad553da",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 2,
+              "bulk_out": 1,
+              "cdc_in_bytes": 16,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 16,
+              "control": 17,
+              "hid_taps": 0,
+              "interrupt": 2,
+              "sessions_started": 2,
+              "unlink": 17,
+              "unlink_cancelled": 17
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 57600,
+              "stop_bits": 0
+            },
+            "line_state": 3,
+            "pending_urbs": 17,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "ack",
+      "id": "key-1",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "ack",
+      "id": "emit-1",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "snapshot",
+      "id": "io-1",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 23,
+              "hid_taps": 1,
+              "interrupt": 2,
+              "sessions_started": 10,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 1,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "1dcf8b6d508cefb075b0644394df6ef8ff4a22fb168cbe2d8d39cfaf1dc7d655",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "bf73b84798d79624ee950bb729014303eb755f45abd8e9b9082580f291dad51c",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 4,
+              "bulk_out": 2,
+              "cdc_in_bytes": 86,
+              "cdc_injected_bytes": 35,
+              "cdc_out_bytes": 51,
+              "control": 17,
+              "hid_taps": 0,
+              "interrupt": 2,
+              "sessions_started": 2,
+              "unlink": 17,
+              "unlink_cancelled": 17
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 57600,
+              "stop_bits": 0
+            },
+            "line_state": 3,
+            "pending_urbs": 17,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "released-1",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 23,
+              "hid_taps": 1,
+              "interrupt": 2,
+              "sessions_started": 10,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "1dcf8b6d508cefb075b0644394df6ef8ff4a22fb168cbe2d8d39cfaf1dc7d655",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "bf73b84798d79624ee950bb729014303eb755f45abd8e9b9082580f291dad51c",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 4,
+              "bulk_out": 2,
+              "cdc_in_bytes": 86,
+              "cdc_injected_bytes": 35,
+              "cdc_out_bytes": 51,
+              "control": 17,
+              "hid_taps": 0,
+              "interrupt": 2,
+              "sessions_started": 2,
+              "unlink": 17,
+              "unlink_cancelled": 17
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "held-2",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 39,
+              "hid_taps": 1,
+              "interrupt": 2,
+              "sessions_started": 11,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 1,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "1dcf8b6d508cefb075b0644394df6ef8ff4a22fb168cbe2d8d39cfaf1dc7d655",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "bf73b84798d79624ee950bb729014303eb755f45abd8e9b9082580f291dad51c",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 4,
+              "bulk_out": 2,
+              "cdc_in_bytes": 86,
+              "cdc_injected_bytes": 35,
+              "cdc_out_bytes": 51,
+              "control": 33,
+              "hid_taps": 0,
+              "interrupt": 4,
+              "sessions_started": 3,
+              "unlink": 34,
+              "unlink_cancelled": 34
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 57600,
+              "stop_bits": 0
+            },
+            "line_state": 3,
+            "pending_urbs": 17,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "ack",
+      "id": "key-2",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "ack",
+      "id": "emit-2",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "snapshot",
+      "id": "io-2",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 39,
+              "hid_taps": 2,
+              "interrupt": 4,
+              "sessions_started": 11,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 1,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "fffea8f2a7c85c587c25ea687e295f7f4b4e35c6787ba5eaec9bd71a43309908",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "21f6226c014ad7bd7a1c68f7d20fe787590101e157ba830835e0efc636fcb6b8",
+            "cdc_queued_bytes": 0,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 6,
+              "bulk_out": 3,
+              "cdc_in_bytes": 156,
+              "cdc_injected_bytes": 70,
+              "cdc_out_bytes": 86,
+              "control": 33,
+              "hid_taps": 0,
+              "interrupt": 4,
+              "sessions_started": 3,
+              "unlink": 34,
+              "unlink_cancelled": 34
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": true,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 57600,
+              "stop_bits": 0
+            },
+            "line_state": 3,
+            "pending_urbs": 17,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "released-2",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 39,
+              "hid_taps": 2,
+              "interrupt": 4,
+              "sessions_started": 11,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "fffea8f2a7c85c587c25ea687e295f7f4b4e35c6787ba5eaec9bd71a43309908",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "21f6226c014ad7bd7a1c68f7d20fe787590101e157ba830835e0efc636fcb6b8",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 6,
+              "bulk_out": 3,
+              "cdc_in_bytes": 156,
+              "cdc_injected_bytes": 70,
+              "cdc_out_bytes": 86,
+              "control": 33,
+              "hid_taps": 0,
+              "interrupt": 4,
+              "sessions_started": 3,
+              "unlink": 34,
+              "unlink_cancelled": 34
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "ack",
+      "id": "stop",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "stopped",
+      "schema_version": 1,
+      "snapshot": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 39,
+              "hid_taps": 2,
+              "interrupt": 4,
+              "sessions_started": 11,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "fffea8f2a7c85c587c25ea687e295f7f4b4e35c6787ba5eaec9bd71a43309908",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "21f6226c014ad7bd7a1c68f7d20fe787590101e157ba830835e0efc636fcb6b8",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 6,
+              "bulk_out": 3,
+              "cdc_in_bytes": 156,
+              "cdc_injected_bytes": 70,
+              "cdc_out_bytes": 86,
+              "control": 33,
+              "hid_taps": 0,
+              "interrupt": 4,
+              "sessions_started": 3,
+              "unlink": 34,
+              "unlink_cancelled": 34
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      }
+    }
+  ],
+  "pass_markers_verified": true,
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "server_checks": [
+    "RUSTUSB_USERSPACE_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_USERSPACE_SERVER_MODULES: PASS usbip_host=false vhci_hcd=false",
+    "RUSTUSB_USERSPACE_ISOLATION role=server ip_forward=0",
+    "RUSTUSB_USERSPACE_SERVER_UID: PASS uid=1000 app_root=false",
+    "RUSTUSB_USERSPACE_MALFORMED_SURVIVAL: PASS same_pid=true uid=1000 lease=0 pending=0",
+    "RUSTUSB_USERSPACE_COUNTERS: PASS cycle=1 hid_taps=1 cdc_out=35 cdc_in=70 cdc_injected=35 probe_bytes_excluded=16",
+    "RUSTUSB_USERSPACE_SERVER_RELEASED: PASS cycle=1 lease=0 pending=0 queues=0",
+    "RUSTUSB_USERSPACE_COUNTERS: PASS cycle=2 hid_taps=2 cdc_out=70 cdc_in=140 cdc_injected=70 probe_bytes_excluded=16",
+    "RUSTUSB_USERSPACE_SERVER_RELEASED: PASS cycle=2 lease=0 pending=0 queues=0",
+    "RUSTUSB_USERSPACE_STOPPED: PASS exit=0 lease=0 pending=0 same_pid=true",
+    "RUSTUSB_USERSPACE_EVENTS_BEGIN",
+    "RUSTUSB_USERSPACE_EVENTS_END",
+    "RUSTUSB_USERSPACE_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_USERSPACE_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_USERSPACE_ISOLATION role=client ip_forward=0",
+    "RUSTUSB_USERSPACE_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_USERSPACE_IDENTITIES: PASS cycle=1 hid=1234:0001 cdc=1234:0002 cdc_interfaces=2",
+    "RUSTUSB_USERSPACE_ATTACHED: PASS cycle=1 sessions=2 hid_driver=usbhid cdc_driver=cdc_acm cdc_interfaces=2",
+    "RUSTUSB_USERSPACE_HID: PASS cycle=1 key_code=2 down=true up=true same_receipt=true",
+    "RUSTUSB_USERSPACE_CDC: PASS cycle=1 injected_in=35 out=35 echoed_in=35 exact_bytes=true tty_echo=false same_receipt=true",
+    "RUSTUSB_USERSPACE_CLIENT_RELEASED: PASS cycle=1 kernel_sessions=0 both_devices_removed=true",
+    "RUSTUSB_USERSPACE_REDISCOVERED: PASS cycle=1 available_profiles=2",
+    "RUSTUSB_USERSPACE_IDENTITIES: PASS cycle=2 hid=1234:0001 cdc=1234:0002 cdc_interfaces=2",
+    "RUSTUSB_USERSPACE_ATTACHED: PASS cycle=2 sessions=2 hid_driver=usbhid cdc_driver=cdc_acm cdc_interfaces=2",
+    "RUSTUSB_USERSPACE_HID: PASS cycle=2 key_code=3 down=true up=true same_receipt=true",
+    "RUSTUSB_USERSPACE_CDC: PASS cycle=2 injected_in=35 out=35 echoed_in=35 exact_bytes=true tty_echo=false same_receipt=true",
+    "RUSTUSB_USERSPACE_CLIENT_RELEASED: PASS cycle=2 kernel_sessions=0 both_devices_removed=true",
+    "RUSTUSB_USERSPACE_REDISCOVERED: PASS cycle=2 available_profiles=2",
+    "RUSTUSB_USERSPACE_RESULT: PASS role=client"
+  ]
+}

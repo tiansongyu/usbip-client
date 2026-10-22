@@ -27,4 +27,4 @@
 
 可选Rust虚拟后端在干净cfeffd3的[独立双QEMU测试](research/userspace-qemu.md)通过：普通UID1000服务，无usbip_host或QEMU USB设备；真实Linux6.8 x86_64 VHCI同时枚举1234:0001键盘/usbhid和1234:0002标准双接口CDC/cdc_acm，两周期真实按下/释放、57600/8控制状态和精确串口注入/回显、busy/UNLINK/畸形包/释放均验证。此两个Full-Speed测试profile不改变上表真实硬件未执行的状态，也不代表任意HID/CDC、物理rusb/nusb、ISO或通用Composite/alternate兼容。
 
-新增可选USBFS/nusb0.2.8 adapter在同一Linux6.8 x86_64 QEMU环境完成[正常/热拔开发场景](research/physical-qemu.md)：QEMU HID0627:0001为High-Speed/EP0=64、FTDI0403:6001为Full-Speed/EP0=8；普通UID1000只经helper获取root0600节点FD，client实际usbhid/ftdi_sio枚举与I/O。正常两轮与热拔时FTDI继续、重插不继承授权均通过；最终clean结果与新四格CI另行登记。它验证真实usbfs调用上的模拟USB设备，不改变上表真实硬件未执行、ISO/任意Composite/alternate未验证的状态。
+新增可选USBFS/nusb0.2.8 adapter在同一Linux6.8 x86_64 QEMU环境完成[正常/热拔场景](research/physical-qemu.md)：QEMU HID0627:0001为High-Speed/EP0=64、FTDI0403:6001为Full-Speed/EP0=8；普通UID1000只经helper获取root0600节点FD，client实际usbhid/ftdi_sio枚举与I/O。干净37bc6b4的正常两轮与热拔时FTDI继续、重插不继承授权均通过，原虚拟HID/CDC回归也通过；同一提交的[四格原生CI](evidence/publication-physical-20261022.json)各89/103/14项与stdout背压全通过。它验证真实usbfs调用上的模拟USB设备，不改变上表真实硬件未执行、ISO/任意Composite/alternate未验证的状态。

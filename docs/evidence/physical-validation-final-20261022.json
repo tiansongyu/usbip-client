@@ -1,0 +1,529 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "tested_commit": "37bc6b48906844fd6fd6cb6ded8680ed7fe2d7b2",
+  "scope": "QEMU models through real guest USBFS plus pure virtual HID/CDC regression; six isolated guests; no host USB",
+  "physical_hardware_validation": false,
+  "complete_phase2_gate": false,
+  "scenarios": [
+    {
+      "case": "physical_normal",
+      "summary": "docs/evidence/qemu-physical-normal-final-20261022/summary.json",
+      "result": "PASS",
+      "git_commit": "37bc6b48906844fd6fd6cb6ded8680ed7fe2d7b2",
+      "working_tree_dirty": false,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "source_fingerprint_sha256": "1edfdd4ebca504f22f433d498bf43fdaa51026e8d2c488a94338bbfe33a95425",
+      "binary_sha256": {
+        "rustusb": "8bd10c5a08f857ea0ab8c7897c93cd9e5feff27f5d7219114871340a40b8ec69",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "protocol_probe_records": 15,
+      "observations": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 5,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 672,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 6,
+              "interrupt_in": 11,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 42
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 10,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 13,
+              "bulk_out": 3,
+              "bytes_in": 431,
+              "bytes_out": 70,
+              "controls": 58,
+              "errors": 16,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 69
+          }
+        ],
+        "schema_version": 1
+      },
+      "serial_output": {
+        "expected_bytes": 70,
+        "received_bytes": 70,
+        "sha256": "a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5",
+        "exact_match": true
+      },
+      "cdc_cumulative_bytes": null
+    },
+    {
+      "case": "physical_hot",
+      "summary": "docs/evidence/qemu-physical-hot-final-20261022/summary.json",
+      "result": "PASS",
+      "git_commit": "37bc6b48906844fd6fd6cb6ded8680ed7fe2d7b2",
+      "working_tree_dirty": false,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "source_fingerprint_sha256": "1edfdd4ebca504f22f433d498bf43fdaa51026e8d2c488a94338bbfe33a95425",
+      "binary_sha256": {
+        "rustusb": "8bd10c5a08f857ea0ab8c7897c93cd9e5feff27f5d7219114871340a40b8ec69",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "protocol_probe_records": 15,
+      "observations": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 5,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 974,
+              "bytes_out": 3,
+              "controls": 49,
+              "errors": 7,
+              "interrupt_in": 12,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "gone",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 56
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 14,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 19,
+              "bulk_out": 5,
+              "bytes_in": 667,
+              "bytes_out": 140,
+              "controls": 86,
+              "errors": 23,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 8,
+              "unlinks": 8
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 103
+          }
+        ],
+        "schema_version": 1
+      },
+      "serial_output": {
+        "expected_bytes": 140,
+        "received_bytes": 140,
+        "sha256": "7d2284a6df1220f6daa02362b9cc884b2aca1a86386c045f8157f27b090c5e2c",
+        "exact_match": true
+      },
+      "cdc_cumulative_bytes": null
+    },
+    {
+      "case": "virtual_regression",
+      "summary": "docs/evidence/qemu-userspace-physical-regression-final-20261022/summary.json",
+      "result": "PASS",
+      "git_commit": "37bc6b48906844fd6fd6cb6ded8680ed7fe2d7b2",
+      "working_tree_dirty": false,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--features",
+        "rustusb-cli/rust-backend"
+      ],
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "source_fingerprint_sha256": "16db71caf344ab2887c722cebec2ef417b8f388ee36162f0d27746630f3264dc",
+      "binary_sha256": {
+        "rustusb": "f8c5d2fe008ee92d9f5842f6a8b0e2d59bc55c63ce4c51c8570a51c0a6f3e5eb",
+        "rustusb-helper": "df767b8092f00a4f0301651193327332ee3bfc799e5d5f168b716315af0e03b6"
+      },
+      "protocol_probe_records": 19,
+      "observations": {
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 39,
+              "hid_taps": 2,
+              "interrupt": 4,
+              "sessions_started": 11,
+              "unlink": 2,
+              "unlink_cancelled": 1
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "fffea8f2a7c85c587c25ea687e295f7f4b4e35c6787ba5eaec9bd71a43309908",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "21f6226c014ad7bd7a1c68f7d20fe787590101e157ba830835e0efc636fcb6b8",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 6,
+              "bulk_out": 3,
+              "cdc_in_bytes": 156,
+              "cdc_injected_bytes": 70,
+              "cdc_out_bytes": 86,
+              "control": 33,
+              "hid_taps": 0,
+              "interrupt": 4,
+              "sessions_started": 3,
+              "unlink": 34,
+              "unlink_cancelled": 34
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "schema_version": 1
+      },
+      "serial_output": null,
+      "cdc_cumulative_bytes": {
+        "out": 86,
+        "in": 156,
+        "injected": 70
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/artifacts.sha256",
+      "sha256": "16c784aa398bafa92ac3ccdda4e6a3760659b3b1093351902bd5623f33ddca86",
+      "bytes": 946
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/build.log",
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "bytes": 62
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/client-qemu.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/client-serial.log",
+      "sha256": "7bf6e68902630f2007123586599016459714fc79402238dcb4ae198850bd01a1",
+      "bytes": 40920
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/runner.log",
+      "sha256": "b33c420beab9187fa09e069bb4a30e47307ef2f1bfd77a4a823fe9657b0767d0",
+      "bytes": 85
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/server-qemu.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/server-serial.log",
+      "sha256": "6669c9f41cf5931b5b6be49a2f6c7ff5c34ec27c6c80b5019d38022713c6a4be",
+      "bytes": 49148
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/source/artifacts.sha256",
+      "sha256": "eacc73b878bb4c92c204904316ba9623388f0a94a9946899d517d85989c3c992",
+      "bytes": 265
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/source/guest-physical-init.sh",
+      "sha256": "540563cc20fee64608786ee26cd3edf871c18b67c659d20d43e5978fcd847e70",
+      "bytes": 27834
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/source/physical-wire-probe.rs",
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+      "bytes": 20786
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/source/run-physical-qemu.py",
+      "sha256": "ec283dc7aff2bbdb183216d84a96833722ce9c22200bde0a0618053ffca2eec6",
+      "bytes": 28146
+    },
+    {
+      "path": "docs/evidence/qemu-physical-normal-final-20261022/summary.json",
+      "sha256": "9c5a8935ff38570b8a304d061a96162606b04f3a045a08a18e7fafc50c254746",
+      "bytes": 49644
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/artifacts.sha256",
+      "sha256": "a253baa2f33f4a1d4827353acfb71b166f37322f8f4d1129bad1789042878d7a",
+      "bytes": 946
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/build.log",
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "bytes": 62
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/client-qemu.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/client-serial.log",
+      "sha256": "8569c280611ce7321bbd9ac9c79e6dbadb78a2a8a99f4343722c475b94c8b9e7",
+      "bytes": 44234
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/runner.log",
+      "sha256": "47a2a9f3d6d12be500afc1985b22f53c9e31280bc982d2d7d01c0d055eebffba",
+      "bytes": 82
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/server-qemu.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/server-serial.log",
+      "sha256": "31d198acc61ae383a508155c0a99edf24e1d025b29bcb4a6ccdce342a7230c42",
+      "bytes": 56797
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/source/artifacts.sha256",
+      "sha256": "eacc73b878bb4c92c204904316ba9623388f0a94a9946899d517d85989c3c992",
+      "bytes": 265
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/source/guest-physical-init.sh",
+      "sha256": "540563cc20fee64608786ee26cd3edf871c18b67c659d20d43e5978fcd847e70",
+      "bytes": 27834
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/source/physical-wire-probe.rs",
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+      "bytes": 20786
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/source/run-physical-qemu.py",
+      "sha256": "ec283dc7aff2bbdb183216d84a96833722ce9c22200bde0a0618053ffca2eec6",
+      "bytes": 28146
+    },
+    {
+      "path": "docs/evidence/qemu-physical-hot-final-20261022/summary.json",
+      "sha256": "a361190d29e22d5274876c640bef87d1a6d05b355141b4a1b345e3a5de3c0192",
+      "bytes": 75215
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/artifacts.sha256",
+      "sha256": "897c173d1eb44e576e5b5937538d9db12905d6b67dcba9a7335f86d5f2547b0a",
+      "bytes": 949
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/build.log",
+      "sha256": "43c41c66eac9f53cf5024d2327c58b5acd0f699b4c13dee9a631ddba2db967f0",
+      "bytes": 148
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/client-qemu.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/client-serial.log",
+      "sha256": "ff1db7b9f1fdcb733cb29c2f65f8f364e301f7142f8d7a84ebcbb2ec60e2d0ac",
+      "bytes": 43285
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/runner.log",
+      "sha256": "d60cc91580a062ba856c2fbe8ddd894ebea674a2342a9b5e31b04f10be4bf2f8",
+      "bytes": 99
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/server-qemu.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/server-serial.log",
+      "sha256": "9d50b9e57e38e46ba811a389637bdb9e357ae67c37814ac2b9011172162db55a",
+      "bytes": 43054
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/source/artifacts.sha256",
+      "sha256": "af326fdf66cf1c40b1769c91b8d45e9398311d683e612c76e640aca4ffb25417",
+      "bytes": 268
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/source/guest-userspace-init.sh",
+      "sha256": "a9cce38d4fef0e7724ae040248085da65d84548e3cf1b7211c74615a7e81368f",
+      "bytes": 16337
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/source/run-userspace-qemu.py",
+      "sha256": "b7a2c3ca75fd7edcc57c8cf56dac997ae29dd2b1e248b8c48dbe552108a51c38",
+      "bytes": 17835
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/source/userspace-wire-probe.rs",
+      "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2",
+      "bytes": 15355
+    },
+    {
+      "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/summary.json",
+      "sha256": "bb159d7d0c9006ad942361e8f94ae415eeb9cc377b7487da766b08ac86fe0499",
+      "bytes": 32033
+    }
+  ]
+}

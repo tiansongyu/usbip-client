@@ -2,7 +2,7 @@
 
 本指南供已获得两端授权的测试环境使用。`physical-server` 通过普通用户进程中的 nusb/usbfs 转发管理员指定设备，客户端仍使用 Linux VHCI。它与 Native `usbip_host`、固定虚拟 HID/CDC profile 是三条不同的设备来源；同一设备不能同时使用 Native 和 USBFS。实施设计与未完成验收见[物理 adapter 设计](research/rust-physical-backend-design.md)和[验收记录](acceptance.md)。
 
-当前实现处于开发验证中。不能因能够读取描述符或通过编译，就声明某类真实设备已支持。ISO 明确不支持；存储、Hub、不明/不完整接口及已被 usbfs/usbip-host 占用的设备会被拒绝。真实 Composite、备用接口和配置切换需逐设备验证。
+当前是实验性开发预览：干净37bc6b4在QEMU HID/FTDI经过真实USBFS的正常/热拔场景通过，真实硬件仍未验收。不能因能够读取描述符或通过编译，就声明某类真实设备已支持。ISO 明确不支持；存储、Hub、不明/不完整接口及已被 usbfs/usbip-host 占用的设备会被拒绝。真实 Composite、备用接口和配置切换需逐设备验证。
 
 ## 构建与授权
 

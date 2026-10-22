@@ -1,6 +1,6 @@
 # 真实 usbfs 用户态 adapter 的隔离 QEMU 验证
 
-2026-10-22，正常两周期和热拔开发验证均已通过；最终干净提交验证仍待执行。本文对应 [物理后端设计](rust-physical-backend-design.md)，与 [纯虚拟 HID/CDC 验证](userspace-qemu.md)分开。设备仍由 QEMU 创建，不能替代真实硬件 G1/G2 验收。
+2026-10-22，在干净提交`37bc6b48906844fd6fd6cb6ded8680ed7fe2d7b2`上，正常两周期、热拔及原纯虚拟场景回归最终验证全部通过。本文对应 [物理后端设计](rust-physical-backend-design.md)，与 [纯虚拟 HID/CDC 验证](userspace-qemu.md)分开。设备仍由 QEMU 创建，不能替代真实硬件 G1/G2 验收。
 
 ## 设备、权限和执行边界
 
@@ -43,6 +43,24 @@ python3 scripts/qemu/run-physical-qemu.py --hot-unplug --evidence /tmp/rustusb-p
 
 QMP命令回复与异步事件分开保存，不能把device_del返回成功当成拔出完成。FTDI输入也只在client完成配置和reader准备后注入：client驱动的FTDI RESET会清RX；服务端原样保留FTDI USB包的两字节状态头，由client驱动解释，不能静默转换为CDC数据。
 
+## 最终干净提交结果
+
+三项按normal、hot、原userspace顺序在`37bc6b4`执行；每项开始前Git均干净，默认locked构建，未使用skip-build，运行期间没有改源码或release二进制。全部结束后才将/tmp证据逐字节归档；每项包括12个文件及两级SHA256清单，保留原始summary中的运行目录。所有runner、guest init及probe源码快照均保留原始字节。
+
+| 最终场景 | 结果与实际内容 | 清理及来源 | 原始证据 |
+| --- | --- | --- | --- |
+| physical normal | PASS，两guest exit0；15个probe结果；两周期KEY_1/KEY_2按下/释放，FTDI RX/TX各70B逐字节准确，busy两次明确status2。0B/1B IN均实际pending后取消，15B IN含2B状态和13B专用内容。 | 全feature构建；HID/FTDI最终reaped42/69，原usbhid/ftdi_sio恢复，pending/queued/inflight/buffer均0。 | [summary](../evidence/qemu-physical-normal-final-20261022/summary.json)、[全部SHA](../evidence/qemu-physical-normal-final-20261022/artifacts.sha256) |
+| physical hot | PASS，两guest exit0；同一正常两周期后，HID真实inflight1期间热拔，记录DEVICE_DELETED；FTDI保持同receipt在拔前/后各完成35B双向内容，累计RX/TX各140B准确；重插HID不继承授权。 | 全feature构建；HID Gone/reaped56，FTDI available/reaped103且恢复ftdi_sio，pending/queued/inflight/buffer均0。 | [summary](../evidence/qemu-physical-hot-final-20261022/summary.json)、[全部SHA](../evidence/qemu-physical-hot-final-20261022/artifacts.sha256) |
+| 原纯虚拟HID/CDC回归 | PASS，两guest exit0；原harness未修改，19个probe结果、真实evdev和ttyACM两周期，CDC控制/57600行配置、Bulk/Interrupt、UNLINK及畸形包存活断言通过。CDC累计OUT86B/IN156B/injected70B，含独立probe双向各16B。 | 采用原runner默认`--features rustusb-cli/rust-backend`；最终两个profile均leasedfalse/pending0且队列0。 | [summary](../evidence/qemu-userspace-physical-regression-final-20261022/summary.json)、[全部SHA](../evidence/qemu-userspace-physical-regression-final-20261022/artifacts.sha256) |
+
+两个physical场景源码指纹相同，为`1edfdd4ebca504f22f433d498bf43fdaa51026e8d2c488a94338bbfe33a95425`；CLI/helper SHA256分别为`8bd10c5a08f857ea0ab8c7897c93cd9e5feff27f5d7219114871340a40b8ec69`、`5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0`。normal/hot的host TX SHA256与开发通过场景完全相同，分别为下节的70B/140B散列。userspace回归采用其既有feature组合，二进制散列按设计不同，具体见该summary；每场内部均验证来源和运行前后指纹。
+
+## 首次干净复跑暴露的Native竞态
+
+更早在干净`f42d0f6`上的normal最终复跑仍准确记录为FAIL：[summary](../evidence/qemu-physical-normal-final-f42d-fail-20261022/summary.json)、[原始client日志](../evidence/qemu-physical-normal-final-f42d-fail-20261022/client-serial.log)、[全部SHA](../evidence/qemu-physical-normal-final-f42d-fail-20261022/artifacts.sha256)。cycle1的实际HID及FTDI内容均已通过，HID detach成功；FTDI官方detach后，内核正在释放时，两次sysfs状态读取发生变化，Native报告`VHCI status changed during device observation; reconciliation required`。诊断随后sessions已为空，server两个本地driver也已恢复。没有把来宾exit0、稍后释放成功或重复detach当作这次运行PASS；hot及userspace当时未启动。
+
+产品修复`9b0da33`只在成功执行一次detach后的有界核验中重新观察“两份均可解析、但不同”的status快照；不重新执行detach。读取缺失、解析错误、generation变化及其他不确定状态仍报错，替代会话仍拒绝操作；成功仍须NULL且旧sysfs generation消失。修复后的完整检查和对应fixture通过后，才在新干净提交从normal重跑上述三项。harness断言没有放宽。
+
 ## 开发运行及保留的失败
 
 四次运行均使用默认locked全feature构建、QEMU6.2.0/KVM、Linux6.8.0-106-generic、普通宿主UID1000及两个隔离来宾。它们是在`2fde196`之后尚未提交的开发源码上执行，`working_tree_dirty=true`；运行期间源码与release二进制保持冻结。每个目录保留build/runner日志、两端完整serial、QEMU stderr、summary及准确三脚本快照，并有逐artifact SHA256索引。来宾poweroff的exit0不代替断言，前两次仍准确记为FAIL。
@@ -62,7 +80,7 @@ normal末尾真实usbfs累计reaped为HID42、FTDI69；两周期释放和最终s
 
 [第四次静态原始结果](../evidence/qemu-physical-static-04-20261022.txt)包括宿主误调用和非法kernel token的exit2拒绝；[首次静态结果](../evidence/qemu-physical-static-20261022.txt)及[当时源码快照](../evidence/qemu-physical-static-source-01-20261022/artifacts.sha256)保留，[第二次](../evidence/qemu-physical-static-02-20261022.txt)增加直接OpenPhysical拒绝检查，[第三次](../evidence/qemu-physical-static-03-20261022.txt)增加配置与后到IN的pipeline检查，第四次要求QEMU退出后继续读chardev至EOF。两次开发失败修复后再次执行Python编译、shell语法、rustfmt及独立rustc `-D warnings`，均通过；准确修订源码在各运行的`source/`保留。
 
-开发PASS尚不作为最终干净提交验收。待产品与harness提交冻结后，还须在干净HEAD默认locked构建重跑normal、hot，并运行原纯虚拟userspace场景作回归。nusb扩展、helperFD授权、shared engine和CLI的产品测试由各自证据记录，不能替代实际USBFS运行；QEMU设备也不能替代真实硬件。
+开发PASS与首次干净FAIL均保留，最终验收使用上节新干净提交的三个独立结果。nusb扩展、helperFD授权、shared engine和CLI的产品测试由各自证据记录，不能替代实际USBFS运行；QEMU设备也不能替代真实硬件。未执行新generation的再次显式授权、真实USB硬件或更多设备类型的物理adapter验证。
 
 - [固定 nusb c80218d Linux实现](https://github.com/kevinmehall/nusb/tree/c80218d342740321190436bc45304ebbbf16bef0/src/platform/linux_usbfs)：open/claim、显式reset、取消/reap、接口恢复和FD能力边界。
 - [QEMU v6.2.0 FTDI模型](https://github.com/qemu/qemu/blob/v6.2.0/hw/usb/dev-serial.c)：FT232BM、描述符、状态头、RX清空及可能阻塞的chardev OUT。
