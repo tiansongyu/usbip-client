@@ -1,0 +1,65 @@
+{
+  "recorded_at_utc": "2026-10-22T10:56:15.741256+00:00",
+  "remote": "git@github.com:tiansongyu/usbip-client.git",
+  "branch": "main",
+  "published_commits": [
+    {
+      "sha": "a4d258cd035a3c12cece09744e57656afdce0f27",
+      "purpose": "native generation reconciliation and read-only runtime diagnosis"
+    },
+    {
+      "sha": "b4cbfc3bd6c63eb22d8296bfa835767586aa345b",
+      "purpose": "Native QEMU interop/reconnect harness and software evidence"
+    }
+  ],
+  "push": {
+    "command": "git push origin main",
+    "exit_code": 0,
+    "force": false,
+    "verified_remote_main": "b4cbfc3bd6c63eb22d8296bfa835767586aa345b",
+    "verified_local_head": "b4cbfc3bd6c63eb22d8296bfa835767586aa345b",
+    "heads_equal": true
+  },
+  "local_checks": {
+    "command": "bash scripts/check.sh",
+    "exit_code": 0,
+    "tests_passed": 59,
+    "evidence": "software-checks-phase1-runtime-2026-10-22.txt"
+  },
+  "qemu": {
+    "result": "PASS",
+    "runs": 7,
+    "guest_exit_codes_all_zero": true,
+    "source_commit": "b4cbfc3bd6c63eb22d8296bfa835767586aa345b",
+    "evidence": "qemu-matrix-20261022.json"
+  },
+  "ci": {
+    "id": 39766360288,
+    "head_sha": "b4cbfc3bd6c63eb22d8296bfa835767586aa345b",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/tiansongyu/usbip-client/actions/runs/39766360288"
+  },
+  "ci_jobs": [
+    {
+      "id": 119782683028,
+      "name": "check (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tiansongyu/usbip-client/actions/runs/39766360288/job/119782683028"
+    },
+    {
+      "id": 119782683326,
+      "name": "check (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/tiansongyu/usbip-client/actions/runs/39766360288/job/119782683326"
+    }
+  ],
+  "publication_scope": "Measured source/harness publication and passing CI. Following evidence/documentation commits are pushed separately and must not change tested production source or scripts.",
+  "limitations": [
+    "QEMU devices only, no physical USB acceptance",
+    "FTDI is not CDC ACM",
+    "No Rust server, TLS, WAN fault or multi-client acceptance"
+  ]
+}

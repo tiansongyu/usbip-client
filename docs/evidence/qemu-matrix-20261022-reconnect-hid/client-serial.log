@@ -1,0 +1,872 @@
+[    0.000000] Linux version 6.8.0-106-generic (buildd@lcy02-amd64-085) (x86_64-linux-gnu-gcc-12 (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #106~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar  6 08:44:59 UTC  (Ubuntu 6.8.0-106.106~22.04.1-generic 6.8.12)
+[    0.000000] Command line: console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=client rustusb.scenario=reconnect rustusb.device=hid
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   Hygon HygonGenuine
+[    0.000000]   Centaur CentaurHauls
+[    0.000000]   zhaoxin   Shanghai  
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000017fdffff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000017fe0000-0x0000000017ffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] SMBIOS 2.8 present.
+[    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[    0.000000] Hypervisor detected: KVM
+[    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+[    0.000000] kvm-clock: using sched offset of 89309430 cycles
+[    0.000002] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+[    0.000004] tsc: Detected 4291.916 MHz processor
+[    0.000418] last_pfn = 0x17fe0 max_arch_pfn = 0x400000000
+[    0.000436] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+[    0.000438] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.002640] found SMP MP-table at [mem 0x000f5ba0-0x000f5baf]
+[    0.002656] Using GB pages for direct mapping
+[    0.002796] RAMDISK: [mem 0x179d0000-0x17fdffff]
+[    0.002800] ACPI: Early table checksum verification disabled
+[    0.002803] ACPI: RSDP 0x00000000000F59E0 000014 (v00 BOCHS )
+[    0.002806] ACPI: RSDT 0x0000000017FE1960 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002811] ACPI: FACP 0x0000000017FE180C 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002815] ACPI: DSDT 0x0000000017FE0040 0017CC (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002817] ACPI: FACS 0x0000000017FE0000 000040
+[    0.002819] ACPI: APIC 0x0000000017FE1880 000080 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002821] ACPI: HPET 0x0000000017FE1900 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002822] ACPI: WAET 0x0000000017FE1938 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002823] ACPI: Reserving FACP table memory at [mem 0x17fe180c-0x17fe187f]
+[    0.002824] ACPI: Reserving DSDT table memory at [mem 0x17fe0040-0x17fe180b]
+[    0.002825] ACPI: Reserving FACS table memory at [mem 0x17fe0000-0x17fe003f]
+[    0.002825] ACPI: Reserving APIC table memory at [mem 0x17fe1880-0x17fe18ff]
+[    0.002825] ACPI: Reserving HPET table memory at [mem 0x17fe1900-0x17fe1937]
+[    0.002826] ACPI: Reserving WAET table memory at [mem 0x17fe1938-0x17fe195f]
+[    0.002959] No NUMA configuration found
+[    0.002960] Faking a node at [mem 0x0000000000000000-0x0000000017fdffff]
+[    0.002964] NODE_DATA(0) allocated [mem 0x179a5000-0x179cffff]
+[    0.003028] Zone ranges:
+[    0.003028]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.003029]   DMA32    [mem 0x0000000001000000-0x0000000017fdffff]
+[    0.003030]   Normal   empty
+[    0.003031]   Device   empty
+[    0.003032] Movable zone start for each node
+[    0.003032] Early memory node ranges
+[    0.003033]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.003034]   node   0: [mem 0x0000000000100000-0x0000000017fdffff]
+[    0.003035] Initmem setup node 0 [mem 0x0000000000001000-0x0000000017fdffff]
+[    0.003140] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.003148] On node 0, zone DMA: 97 pages in unavailable ranges
+[    0.003430] On node 0, zone DMA32: 32 pages in unavailable ranges
+[    0.003544] ACPI: PM-Timer IO Port: 0x608
+[    0.003552] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.003564] IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+[    0.003566] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.003567] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.003568] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.003569] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.003569] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.003571] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.003572] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.003575] TSC deadline timer available
+[    0.003575] smpboot: Allowing 2 CPUs, 0 hotplug CPUs
+[    0.003586] kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+[    0.003595] kvm-guest: KVM setup pv remote TLB flush
+[    0.003597] kvm-guest: setup PV sched yield
+[    0.003602] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.003602] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.003604] [mem 0x18000000-0xfeffbfff] available for PCI devices
+[    0.003605] Booting paravirtualized kernel on KVM
+[    0.003606] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.003610] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+[    0.003742] percpu: Embedded 85 pages/cpu s225280 r8192 d114688 u1048576
+[    0.003768] kvm-guest: PV spinlocks enabled
+[    0.003769] PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.003771] Kernel command line: console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=client rustusb.scenario=reconnect rustusb.device=hid
+[    0.003813] Unknown kernel command line parameters "RUSTUSB_QEMU_GUEST=1", will be passed to user space.
+[    0.003820] random: crng init done
+[    0.003833] Dentry cache hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.003841] Inode-cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.003863] Fallback order for Node 0: 0 
+[    0.003866] Built 1 zonelists, mobility grouping on.  Total pages: 96480
+[    0.003867] Policy zone: DMA32
+[    0.003871] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+[    0.004163] Memory: 326496K/392696K available (22528K kernel code, 4432K rwdata, 13988K rodata, 4912K init, 4808K bss, 65940K reserved, 0K cma-reserved)
+[    0.004860] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.004878] ftrace: allocating 58284 entries in 228 pages
+[    0.014824] ftrace: allocated 228 pages with 4 groups
+[    0.015582] Dynamic Preempt: voluntary
+[    0.015737] rcu: Preemptible hierarchical RCU implementation.
+[    0.015739] rcu: 	RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=2.
+[    0.015740] 	Trampoline variant of Tasks RCU enabled.
+[    0.015741] 	Rude variant of Tasks RCU enabled.
+[    0.015741] 	Tracing variant of Tasks RCU enabled.
+[    0.015742] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.015742] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.015751] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.015752] RCU Tasks Rude: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.015753] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.017391] NR_IRQS: 524544, nr_irqs: 440, preallocated irqs: 16
+[    0.017583] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.020846] Console: colour VGA+ 80x25
+[    0.020869] printk: legacy console [ttyS0] enabled
+[    0.046111] ACPI: Core revision 20230628
+[    0.046317] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.046715] APIC: Switch to symmetric I/O mode setup
+[    0.046957] x2apic enabled
+[    0.047170] APIC: Switched APIC routing to: physical x2apic
+[    0.047365] kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+[    0.047631] kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+[    0.047956] kvm-guest: setup PV IPIs
+[    0.048548] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.048784] tsc: Marking TSC unstable due to TSCs unsynchronized
+[    0.048993] Calibrating delay loop (skipped) preset value.. 8583.83 BogoMIPS (lpj=4291916)
+[    0.049317] RDSEED32 is broken. Disabling the corresponding CPUID bit.
+[    0.049558] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+[    0.050034] Last level iTLB entries: 4KB 512, 2MB 255, 4MB 127
+[    0.050234] Last level dTLB entries: 4KB 512, 2MB 255, 4MB 127, 1GB 0
+[    0.050457] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.050759] Spectre V2 : Mitigation: Retpolines
+[    0.050991] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+[    0.051278] Spectre V2 : Enabling Restricted Speculation for firmware calls
+[    0.051517] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+[    0.051814] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
+[    0.052014] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.052286] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.052510] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.052743] x86/fpu: Supporting XSAVE feature 0x020: 'AVX-512 opmask'
+[    0.052991] x86/fpu: Supporting XSAVE feature 0x040: 'AVX-512 Hi256'
+[    0.053218] x86/fpu: Supporting XSAVE feature 0x080: 'AVX-512 ZMM_Hi256'
+[    0.053454] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.053740] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.053991] x86/fpu: xstate_offset[5]:  832, xstate_sizes[5]:   64
+[    0.054212] x86/fpu: xstate_offset[6]:  896, xstate_sizes[6]:  512
+[    0.054431] x86/fpu: xstate_offset[7]: 1408, xstate_sizes[7]: 1024
+[    0.054653] x86/fpu: xstate_offset[9]: 2432, xstate_sizes[9]:    8
+[    0.054990] x86/fpu: Enabled xstate features 0x2e7, context size is 2440 bytes, using 'compacted' format.
+[    0.075473] Freeing SMP alternatives memory: 48K
+[    0.075674] pid_max: default: 32768 minimum: 301
+[    0.075886] LSM: initializing lsm=lockdown,capability,landlock,yama,apparmor,integrity
+[    0.075999] landlock: Up and running.
+[    0.076132] Yama: becoming mindful.
+[    0.076284] AppArmor: AppArmor initialized
+[    0.076457] Mount-cache hash table entries: 1024 (order: 1, 8192 bytes, linear)
+[    0.076728] Mountpoint-cache hash table entries: 1024 (order: 1, 8192 bytes, linear)
+[    0.077205] smpboot: CPU0: AMD Ryzen 9 9950X 16-Core Processor (family: 0x1a, model: 0x44, stepping: 0x0)
+[    0.077680] Performance Events: Fam17h+ core perfctr, AMD PMU driver.
+[    0.077931] ... version:                0
+[    0.077990] ... bit width:              48
+[    0.077995] ... generic registers:      6
+[    0.078145] ... value mask:             0000ffffffffffff
+[    0.078341] ... max period:             00007fffffffffff
+[    0.078532] ... fixed-purpose events:   0
+[    0.078678] ... event mask:             000000000000003f
+[    0.078933] signal: max sigframe size: 3376
+[    0.079037] rcu: Hierarchical SRCU implementation.
+[    0.079214] rcu: 	Max phase no-delay instances is 400.
+[    0.079781] smp: Bringing up secondary CPUs ...
+[    0.080011] smpboot: x86: Booting SMP configuration:
+[    0.080194] .... node  #0, CPUs:      #1
+[    0.080283] smp: Brought up 1 node, 2 CPUs
+[    0.080303] smpboot: Max logical packages: 1
+[    0.080993] smpboot: Total of 2 processors activated (17167.66 BogoMIPS)
+[    0.081438] devtmpfs: initialized
+[    0.081438] x86/mm: Memory block size: 128MB
+[    0.082026] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.082390] futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+[    0.082686] pinctrl core: initialized pinctrl subsystem
+[    0.082959] PM: RTC time: 10:52:59, date: 2026-10-22
+[    0.083290] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.083673] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.083934] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.083996] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.084292] audit: initializing netlink subsys (disabled)
+[    0.084557] audit: type=2000 audit(1792666379.938:1): state=initialized audit_enabled=0 res=1
+[    0.084647] thermal_sys: Registered thermal governor 'fair_share'
+[    0.084994] thermal_sys: Registered thermal governor 'bang_bang'
+[    0.085231] thermal_sys: Registered thermal governor 'step_wise'
+[    0.085448] thermal_sys: Registered thermal governor 'user_space'
+[    0.085667] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.085898] cpuidle: using governor ladder
+[    0.086145] cpuidle: using governor menu
+[    0.086474] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    0.086474] PCI: Using configuration type 1 for base access
+[    0.086993] PCI: Using configuration type 1 for extended access
+[    0.087283] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.094012] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.094287] HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+[    0.094528] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.094779] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.095262] ACPI: Added _OSI(Module Device)
+[    0.095421] ACPI: Added _OSI(Processor Device)
+[    0.095589] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.096170] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    0.104321] ACPI: _OSC evaluation for CPUs failed, trying _PDC
+[    0.104338] ACPI: Interpreter enabled
+[    0.104338] ACPI: PM: (supports S0 S3 S4 S5)
+[    0.104338] ACPI: Using IOAPIC for interrupt routing
+[    0.104392] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.104725] PCI: Using E820 reservations for host bridge windows
+[    0.104988] ACPI: Enabled 2 GPEs in block 00 to 0F
+[    0.105968] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    0.106996] acpi PNP0A03:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI EDR HPX-Type3]
+[    0.107612] acpiphp: Slot [3] registered
+[    0.107767] acpiphp: Slot [4] registered
+[    0.107918] acpiphp: Slot [5] registered
+[    0.107998] acpiphp: Slot [6] registered
+[    0.108148] acpiphp: Slot [7] registered
+[    0.108298] acpiphp: Slot [8] registered
+[    0.108448] acpiphp: Slot [9] registered
+[    0.108598] acpiphp: Slot [10] registered
+[    0.108754] acpiphp: Slot [11] registered
+[    0.108907] acpiphp: Slot [12] registered
+[    0.108996] acpiphp: Slot [13] registered
+[    0.109148] acpiphp: Slot [14] registered
+[    0.109300] acpiphp: Slot [15] registered
+[    0.109452] acpiphp: Slot [16] registered
+[    0.109606] acpiphp: Slot [17] registered
+[    0.109759] acpiphp: Slot [18] registered
+[    0.109918] acpiphp: Slot [19] registered
+[    0.109996] acpiphp: Slot [20] registered
+[    0.110150] acpiphp: Slot [21] registered
+[    0.110304] acpiphp: Slot [22] registered
+[    0.110456] acpiphp: Slot [23] registered
+[    0.110610] acpiphp: Slot [24] registered
+[    0.110763] acpiphp: Slot [25] registered
+[    0.110919] acpiphp: Slot [26] registered
+[    0.110997] acpiphp: Slot [27] registered
+[    0.111149] acpiphp: Slot [28] registered
+[    0.111303] acpiphp: Slot [29] registered
+[    0.111464] acpiphp: Slot [30] registered
+[    0.111617] acpiphp: Slot [31] registered
+[    0.111778] PCI host bridge to bus 0000:00
+[    0.111932] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    0.111991] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    0.112238] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    0.112582] pci_bus 0000:00: root bus resource [mem 0x18000000-0xfebfffff window]
+[    0.112857] pci_bus 0000:00: root bus resource [mem 0x100000000-0x17fffffff window]
+[    0.112997] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.113287] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.114108] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
+[    0.114716] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
+[    0.115458] pci 0000:00:01.1: BAR 4 [io  0xc040-0xc04f]
+[    0.115696] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
+[    0.115939] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
+[    0.116993] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
+[    0.117242] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
+[    0.117552] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+[    0.117960] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+[    0.117996] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
+[    0.118326] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+[    0.118998] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+[    0.119299] pci 0000:00:02.0: BAR 2 [mem 0xfebb0000-0xfebb0fff]
+[    0.119569] pci 0000:00:02.0: ROM [mem 0xfeba0000-0xfebaffff pref]
+[    0.119828] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    0.120241] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.120976] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
+[    0.120994] pci 0000:00:03.0: BAR 1 [io  0xc000-0xc03f]
+[    0.121195] pci 0000:00:03.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
+[    0.124734] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    0.124990] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    0.126024] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    0.126286] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    0.126520] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
+[    0.126992] iommu: Default domain type: Translated
+[    0.127203] iommu: DMA domain TLB invalidation policy: lazy mode
+[    0.127732] SCSI subsystem initialized
+[    0.127876] ACPI: bus type USB registered
+[    0.127998] usbcore: registered new interface driver usbfs
+[    0.128205] usbcore: registered new interface driver hub
+[    0.128401] usbcore: registered new device driver usb
+[    0.128599] pps_core: LinuxPPS API ver. 1 registered
+[    0.128781] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.128992] PTP clock support registered
+[    0.129145] EDAC MC: Ver: 3.0.0
+[    0.129160] NetLabel: Initializing
+[    0.129250] NetLabel:  domain hash size = 128
+[    0.129414] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.130001] NetLabel:  unlabeled traffic allowed by default
+[    0.130215] mctp: management component transport protocol core
+[    0.130228] NET: Registered PF_MCTP protocol family
+[    0.130414] PCI: Using ACPI for IRQ routing
+[    0.131007] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    0.131215] pci 0000:00:02.0: vgaarb: bridge control possible
+[    0.131423] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    0.131423] vgaarb: loaded
+[    0.132030] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    0.132216] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+[    0.135034] clocksource: Switched to clocksource kvm-clock
+[    0.135604] VFS: Disk quotas dquot_6.6.0
+[    0.135758] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.136119] AppArmor: AppArmor Filesystem Enabled
+[    0.136308] pnp: PnP ACPI init
+[    0.136619] pnp: PnP ACPI: found 6 devices
+[    0.142028] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    0.142390] NET: Registered PF_INET protocol family
+[    0.142595] IP idents hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.149017] tcp_listen_portaddr_hash hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.149340] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.149649] TCP established hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.149936] TCP bind hash table entries: 4096 (order: 5, 131072 bytes, linear)
+[    0.150202] TCP: Hash tables configured (established 4096 bind 4096)
+[    0.150469] MPTCP token hash table entries: 512 (order: 2, 12288 bytes, linear)
+[    0.150771] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.151058] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.151344] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.151569] NET: Registered PF_XDP protocol family
+[    0.151753] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    0.151982] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    0.152206] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    0.152470] pci_bus 0000:00: resource 7 [mem 0x18000000-0xfebfffff window]
+[    0.152719] pci_bus 0000:00: resource 8 [mem 0x100000000-0x17fffffff window]
+[    0.153016] pci 0000:00:01.0: PIIX3: Enabling Passive Release
+[    0.153229] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    0.153469] PCI: CLS 0 bytes, default 64
+[    0.153701] Trying to unpack rootfs image as initramfs...
+[    0.153866] Initialise system trusted keyrings
+[    0.154131] Key type blacklist registered
+[    0.157430] workingset: timestamp_bits=36 max_order=17 bucket_order=0
+[    0.157692] zbud: loaded
+[    0.157906] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.158512] fuse: init (API version 7.39)
+[    0.158805] integrity: Platform Keyring initialized
+[    0.159035] integrity: Machine keyring initialized
+[    0.165702] Key type asymmetric registered
+[    0.165891] Asymmetric key parser 'x509' registered
+[    0.166116] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 243)
+[    0.167441] io scheduler mq-deadline registered
+[    0.167785] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[    0.168145] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+[    0.168557] ACPI: button: Power Button [PWRF]
+[    0.169510] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled
+[    0.191226] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.192397] Linux agpgart interface v0.103
+[    0.193137] loop: module loaded
+[    0.194502] Freeing initrd memory: 6208K
+[    0.194713] scsi host0: ata_piix
+[    0.194948] scsi host1: ata_piix
+[    0.195081] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0xc040 irq 14 lpm-pol 0
+[    0.195361] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0xc048 irq 15 lpm-pol 0
+[    0.195927] ACPI: bus type drm_connector registered
+[    0.196227] tun: Universal TUN/TAP device driver, 1.6
+[    0.196513] PPP generic driver version 2.4.2
+[    0.196739] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    0.197377] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    0.197595] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    0.197886] mousedev: PS/2 mouse device common for all mice
+[    0.198210] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+[    0.198668] rtc_cmos 00:05: RTC can wake from S4
+[    0.199009] rtc_cmos 00:05: registered as rtc0
+[    0.199191] rtc_cmos 00:05: setting system clock to 2026-10-22T10:52:59 UTC (1792666379)
+[    0.199520] rtc_cmos 00:05: alarms up to one day, y3k, 242 bytes nvram, hpet irqs
+[    0.199803] i2c_dev: i2c /dev entries driver
+[    0.199974] device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+[    0.200433] device-mapper: uevent: version 1.0.3
+[    0.200630] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    0.200940] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    0.201242] ledtrig-cpu: registered to indicate activity on CPUs
+[    0.201511] drop_monitor: Initializing network drop monitor service
+[    0.201796] NET: Registered PF_INET6 protocol family
+[    0.202362] Segment Routing with IPv6
+[    0.202521] In-situ OAM (IOAM) with IPv6
+[    0.202676] NET: Registered PF_PACKET protocol family
+[    0.202884] Key type dns_resolver registered
+[    0.203148] IPI shorthand broadcast: enabled
+[    0.203885] sched_clock: Marking stable (174008615, 29402400)->(205511183, -2100168)
+[    0.204244] registered taskstats version 1
+[    0.204485] Loading compiled-in X.509 certificates
+[    0.204881] Loaded X.509 cert 'Build time autogenerated kernel key: 456e54511b8b6ecbbc2d6cfc1b8060287c67b744'
+[    0.205404] Loaded X.509 cert 'Canonical Ltd. Live Patch Signing 2025 Kmod: d541cef61dc7e793b7eb7e899970a2eef0b5dc8c'
+[    0.205974] Loaded X.509 cert 'Canonical Ltd. Live Patch Signing: 14df34d1a87cf37625abec039ef2bf521249b969'
+[    0.206498] Loaded X.509 cert 'Canonical Ltd. Kernel Module Signing: 88f752e560a1e0737e31163a466ad7b70a850c19'
+[    0.206863] blacklist: Loading compiled-in revocation X.509 certificates
+[    0.207114] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing: 61482aa2830d0ab2ad5af10b7250da9033ddcef0'
+[    0.207636] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2017): 242ade75ac4a15e50d50c84b0d45ff3eae707a03'
+[    0.208013] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (ESM 2018): 365188c1d374d6b07c3c8f240f8ef722433d6a8b'
+[    0.208407] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2019): c0746fd6c5da3ae827864651ad66ae47fe24b3e8'
+[    0.208793] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v1): a8d54bbb3825cfb94fa13c9f8a594a195c107b8d'
+[    0.209182] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v2): 4cf046892d6fd3c9a5b03f98d845f90851dc6a8c'
+[    0.209571] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v3): 100437bb6de6e469b581e61cd66bce3ef4ed53af'
+[    0.209959] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (Ubuntu Core 2019): c1d57b8f6b743f23ee41f4f7ee292f06eecadfb9'
+[    0.211645] Key type .fscrypt registered
+[    0.211793] Key type fscrypt-provisioning registered
+[    0.212282] Key type encrypted registered
+[    0.212435] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.212646] ima: No TPM chip found, activating TPM-bypass!
+[    0.212848] Loading compiled-in module X.509 certificates
+[    0.213222] Loaded X.509 cert 'Build time autogenerated kernel key: 456e54511b8b6ecbbc2d6cfc1b8060287c67b744'
+[    0.213581] ima: Allocated hash algorithm: sha256
+[    0.213758] ima: No architecture policies found
+[    0.213928] evm: Initialising EVM extended attributes:
+[    0.214112] evm: security.selinux
+[    0.214233] evm: security.SMACK64
+[    0.214353] evm: security.SMACK64EXEC
+[    0.214492] evm: security.SMACK64TRANSMUTE
+[    0.214679] evm: security.SMACK64MMAP
+[    0.214813] evm: security.apparmor
+[    0.214936] evm: security.ima
+[    0.215044] evm: security.capability
+[    0.215204] evm: HMAC attrs: 0x1
+[    0.215571] PM:   Magic number: 14:78:882
+[    0.217706] RAS: Correctable Errors collector initialized.
+[    0.218020] clk: Disabling unused clocks
+[    0.350576] ata2: found unknown device (class 0)
+[    0.351009] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    0.351686] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    0.367689] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    0.367950] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    0.373840] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    0.374450] Freeing unused decrypted memory: 2028K
+[    0.374800] Freeing unused kernel image (initmem) memory: 4912K
+[    0.374941] Write protecting the kernel read-only data: 36864k
+[    0.375149] Freeing unused kernel image (rodata/data gap) memory: 348K
+[    0.397226] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    0.397381] Run /init as init process
+RUSTUSB_QEMU_BOOT role=client scenario=reconnect device=hid kernel=6.8.0-106-generic
+[    0.400537] e1000: Intel(R) PRO/1000 Network Driver
+[    0.400665] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    0.407183] ACPI: \_SB_.LNKC: Enabled at IRQ 11
+[    0.686811] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:00:00:02
+[    0.686984] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    0.689008] hid: raw HID events driver (C) Jiri Kosina
+[    0.689991] usbcore: registered new interface driver usbhid
+[    0.690122] usbhid: USB HID core driver
+[    0.690763] usbcore: registered new interface driver usbserial_generic
+[    0.690914] usbserial: USB Serial support registered for generic
+[    0.691667] usbcore: registered new interface driver ftdi_sio
+[    0.691805] usbserial: USB Serial support registered for FTDI USB Serial Device
+[    0.693245] vhci_hcd vhci_hcd.0: USB/IP Virtual Host Controller
+[    0.693404] vhci_hcd vhci_hcd.0: new USB bus registered, assigned bus number 1
+[    0.693589] vhci_hcd: created sysfs vhci_hcd.0
+[    0.693720] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.08
+[    0.693918] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.694135] usb usb1: Product: USB/IP Virtual Host Controller
+[    0.694273] usb usb1: Manufacturer: Linux 6.8.0-106-generic vhci_hcd
+[    0.694431] usb usb1: SerialNumber: vhci_hcd.0
+[    0.694606] hub 1-0:1.0: USB hub found
+[    0.694701] hub 1-0:1.0: 8 ports detected
+[    0.694858] vhci_hcd vhci_hcd.0: USB/IP Virtual Host Controller
+[    0.694999] vhci_hcd vhci_hcd.0: new USB bus registered, assigned bus number 2
+[    0.695183] usb usb2: We don't know the algorithms for LPM for this host, disabling LPM.
+[    0.695382] usb usb2: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 6.08
+[    0.695588] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.695780] usb usb2: Product: USB/IP Virtual Host Controller
+[    0.695929] usb usb2: Manufacturer: Linux 6.8.0-106-generic vhci_hcd
+[    0.696083] usb usb2: SerialNumber: vhci_hcd.0
+[    0.696240] hub 2-0:1.0: USB hub found
+[    0.696336] hub 2-0:1.0: 8 ports detected
+[0;39mtrue[0m
+DIAGNOSTIC /tmp/doctor-before.json
+{
+  "schema_version": 1,
+  "native": {
+    "system": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "kernel_release": "6.8.0-106-generic",
+      "kernel": {
+        "status": "available",
+        "detail": "Running Linux kernel release identified",
+        "action": "Use tools and modules packaged for this exact running kernel"
+      }
+    },
+    "usbip_host": {
+      "module": "usbip_host",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "usbip-host driver directory unavailable (NotFound)",
+        "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "vhci_hcd": {
+      "module": "vhci_hcd",
+      "loaded": {
+        "status": "available",
+        "detail": "Loaded-module sysfs directory observed",
+        "action": "Confirm the effective driver interface below; loading alone does not establish readiness"
+      },
+      "sysfs": {
+        "status": "available",
+        "detail": "Validated complete VHCI snapshot: 16 ports, 0 active",
+        "action": "Use an authorized test peer and verify device enumeration and actual I/O after import"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "usbip": {
+      "path": "/usr/bin/usbip",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbip (usbip-utils 2.0)"
+    },
+    "usbipd": {
+      "path": "/usr/bin/usbipd",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbipd (usbip-utils 2.0)"
+    },
+    "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+  },
+  "helper": {
+    "status": "missing",
+    "detail": "The helper socket or its protected directory is missing.",
+    "action": "Ask an administrator to install/configure and start rustusb-helper; use the configured --socket path.",
+    "peer_verified": false,
+    "kernel_available": null,
+    "active_sessions": null,
+    "external_trusted_network_confirmed": null
+  },
+  "required_for_export": [
+    "native.usbip",
+    "native.usbip_host.sysfs",
+    "helper"
+  ],
+  "required_for_import": [
+    "native.usbip",
+    "native.vhci_hcd.sysfs",
+    "helper"
+  ],
+  "built_in_encryption": false,
+  "network_security_verified": false,
+  "hardware_test_performed": false,
+  "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+}
+[0;39mtrue[0m
+DIAGNOSTIC /tmp/doctor-after.json
+{
+  "schema_version": 1,
+  "native": {
+    "system": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "kernel_release": "6.8.0-106-generic",
+      "kernel": {
+        "status": "available",
+        "detail": "Running Linux kernel release identified",
+        "action": "Use tools and modules packaged for this exact running kernel"
+      }
+    },
+    "usbip_host": {
+      "module": "usbip_host",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "usbip-host driver directory unavailable (NotFound)",
+        "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "vhci_hcd": {
+      "module": "vhci_hcd",
+      "loaded": {
+        "status": "available",
+        "detail": "Loaded-module sysfs directory observed",
+        "action": "Confirm the effective driver interface below; loading alone does not establish readiness"
+      },
+      "sysfs": {
+        "status": "available",
+        "detail": "Validated complete VHCI snapshot: 16 ports, 0 active",
+        "action": "Use an authorized test peer and verify device enumeration and actual I/O after import"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "usbip": {
+      "path": "/usr/bin/usbip",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbip (usbip-utils 2.0)"
+    },
+    "usbipd": {
+      "path": "/usr/bin/usbipd",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbipd (usbip-utils 2.0)"
+    },
+    "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+  },
+  "helper": {
+    "status": "available",
+    "detail": "A verified root helper accepted this caller's read-only status query.",
+    "action": "Device/peer authorization and a trusted data network still need separate verification.",
+    "peer_verified": true,
+    "kernel_available": true,
+    "active_sessions": 0,
+    "external_trusted_network_confirmed": true
+  },
+  "required_for_export": [
+    "native.usbip",
+    "native.usbip_host.sysfs",
+    "helper"
+  ],
+  "required_for_import": [
+    "native.usbip",
+    "native.vhci_hcd.sysfs",
+    "helper"
+  ],
+  "built_in_encryption": false,
+  "network_security_verified": false,
+  "hardware_test_performed": false,
+  "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+}
+[0;39mtrue[0m
+DIAGNOSTIC /tmp/doctor-denied.json
+{
+  "schema_version": 1,
+  "native": {
+    "system": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "kernel_release": "6.8.0-106-generic",
+      "kernel": {
+        "status": "available",
+        "detail": "Running Linux kernel release identified",
+        "action": "Use tools and modules packaged for this exact running kernel"
+      }
+    },
+    "usbip_host": {
+      "module": "usbip_host",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "usbip-host driver directory unavailable (NotFound)",
+        "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "vhci_hcd": {
+      "module": "vhci_hcd",
+      "loaded": {
+        "status": "available",
+        "detail": "Loaded-module sysfs directory observed",
+        "action": "Confirm the effective driver interface below; loading alone does not establish readiness"
+      },
+      "sysfs": {
+        "status": "available",
+        "detail": "Validated complete VHCI snapshot: 16 ports, 0 active",
+        "action": "Use an authorized test peer and verify device enumeration and actual I/O after import"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "usbip": {
+      "path": "/usr/bin/usbip",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbip (usbip-utils 2.0)"
+    },
+    "usbipd": {
+      "path": "/usr/bin/usbipd",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbipd (usbip-utils 2.0)"
+    },
+    "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+  },
+  "helper": {
+    "status": "permission_denied",
+    "detail": "A verified root helper denied the caller's UID.",
+    "action": "Have an administrator approve the intended UID in the root-managed policy; do not run the whole CLI as root.",
+    "peer_verified": true,
+    "kernel_available": null,
+    "active_sessions": null,
+    "external_trusted_network_confirmed": null
+  },
+  "required_for_export": [
+    "native.usbip",
+    "native.usbip_host.sysfs",
+    "helper"
+  ],
+  "required_for_import": [
+    "native.usbip",
+    "native.vhci_hcd.sysfs",
+    "helper"
+  ],
+  "built_in_encryption": false,
+  "network_security_verified": false,
+  "hardware_test_performed": false,
+  "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+}
+[0;39mtrue[0m
+[0;39mtrue[0m
+[0;39mtrue[0m
+[0;39mtrue[0m
+RUSTUSB_DOCTOR_GATE: PASS role=client missing_before=true root_peer_verified=true denied_uid=1001 network_verified=false hardware_verified=false
+RUSTUSB_DOCTOR_USBIPD role=client status=available
+RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000
+[    2.702925] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[    3.916800] vhci_hcd vhci_hcd.0: pdev(0) rhport(0) sockfd(3)
+[    3.916963] vhci_hcd vhci_hcd.0: devid(65538) speed(3) speed_str(high-speed)
+[    3.917147] vhci_hcd vhci_hcd.0: Device attached
+[    4.136433] usb 1-1: new high-speed USB device number 2 using vhci_hcd
+[    4.250448] usb 1-1: SetAddress Request (2) to port 0
+[    4.264424] usb 1-1: New USB device found, idVendor=0627, idProduct=0001, bcdDevice= 0.00
+[    4.264625] usb 1-1: New USB device strings: Mfr=1, Product=4, SerialNumber=11
+[    4.264804] usb 1-1: Product: QEMU USB Keyboard
+[    4.264912] usb 1-1: Manufacturer: QEMU
+[    4.265008] usb 1-1: SerialNumber: 68284-0000:00:04.0-1
+[    4.266633] input: QEMU QEMU USB Keyboard as /devices/platform/vhci_hcd.0/usb1/1-1/1-1:1.0/0003:0627:0001.0001/input/input3
+[    4.318519] hid-generic 0003:0627:0001.0001: input,hidraw0: USB HID v1.11 Keyboard [QEMU QEMU USB Keyboard] on usb-vhci_hcd.0-1/input0
+{
+  "local_bus_id": "1-1",
+  "local_device_address": 2,
+  "local_device_generation": {
+    "filesystem_device": 23,
+    "inode": 25430
+  },
+  "port": 0,
+  "product_id": 1,
+  "remote_device_id": 65538,
+  "status": 6,
+  "vendor_id": 1575
+}
+RUSTUSB_WAIT_INPUT cycle=1 local_bus_id=1-1 driver=usbhid
+RUSTUSB_HID_INPUT: PASS cycle=1 KEY_1_down
+usbip: info: Port 0 is now detached!
+[    9.392382] vhci_hcd: connection closed
+
+[    9.392423] vhci_hcd: stop threads
+[    9.392919] vhci_hcd: release socket
+[    9.393097] vhci_hcd: disconnect device
+[    9.393270] usb 1-1: USB disconnect, device number 2
+RUSTUSB_CLIENT_DETACHED cycle=1 kernel_sessions=0 device_removed=true
+RUSTUSB_EXTERNAL_RELEASE: PASS cycle=1 port=0
+[    9.653850] vhci_hcd vhci_hcd.0: pdev(0) rhport(0) sockfd(3)
+[    9.654005] vhci_hcd vhci_hcd.0: devid(65538) speed(3) speed_str(high-speed)
+[    9.654186] vhci_hcd vhci_hcd.0: Device attached
+[    9.872432] usb 1-1: new high-speed USB device number 3 using vhci_hcd
+[    9.986447] usb 1-1: SetAddress Request (3) to port 0
+[   10.000360] usb 1-1: New USB device found, idVendor=0627, idProduct=0001, bcdDevice= 0.00
+[   10.000560] usb 1-1: New USB device strings: Mfr=1, Product=4, SerialNumber=11
+[   10.000729] usb 1-1: Product: QEMU USB Keyboard
+[   10.000838] usb 1-1: Manufacturer: QEMU
+[   10.000932] usb 1-1: SerialNumber: 68284-0000:00:04.0-1
+[   10.002575] input: QEMU QEMU USB Keyboard as /devices/platform/vhci_hcd.0/usb1/1-1/1-1:1.0/0003:0627:0001.0002/input/input4
+[   10.054521] hid-generic 0003:0627:0001.0002: input,hidraw0: USB HID v1.11 Keyboard [QEMU QEMU USB Keyboard] on usb-vhci_hcd.0-1/input0
+{
+  "local_bus_id": "1-1",
+  "local_device_address": 3,
+  "local_device_generation": {
+    "filesystem_device": 23,
+    "inode": 25664
+  },
+  "port": 0,
+  "product_id": 1,
+  "remote_device_id": 65538,
+  "status": 6,
+  "vendor_id": 1575
+}
+RUSTUSB_DIRECT_RECONNECT: PASS port=0 local_bus_id=1-1
+RUSTUSB_WAIT_INPUT cycle=2 local_bus_id=1-1 driver=usbhid
+RUSTUSB_HID_INPUT: PASS cycle=2 KEY_1_down
+usbip: info: Port 0 is now detached![   15.126031] vhci_hcd: connection closed
+
+[   15.126055] vhci_hcd: stop threads
+[   15.126336] vhci_hcd: release socket
+
+[   15.126488] vhci_hcd: disconnect device
+[   15.126625] usb 1-1: USB disconnect, device number 3
+RUSTUSB_CLIENT_DETACHED cycle=2 kernel_sessions=0 device_removed=true
+RUSTUSB_EXTERNAL_RELEASE: PASS cycle=2 port=0
+usbip: error: failed to open /usr/share/hwdata//usb.ids
+Exportable USB devices
+======================
+ - 192.0.2.1
+        1-1: unknown vendor : unknown product (0627:0001)
+           : /sys/devices/pci0000:00/0000:00:04.0/usb1/1-1
+           : (Defined at Interface level) (00/00/00)
+           :  0 - unknown class / unknown subclass / unknown protocol (03/01/01)
+
+        1-1: unknown vendor : unknown product (0627:0001)
+[   15.387406] vhci_hcd vhci_hcd.0: pdev(0) rhport(0) sockfd(3)
+[   15.387552] vhci_hcd vhci_hcd.0: devid(65538) speed(3) speed_str(high-speed)
+[   15.387721] vhci_hcd vhci_hcd.0: Device attached
+[   15.608450] usb 1-1: new high-speed USB device number 4 using vhci_hcd
+[   15.722462] usb 1-1: SetAddress Request (4) to port 0
+[   15.736254] usb 1-1: New USB device found, idVendor=0627, idProduct=0001, bcdDevice= 0.00
+[   15.736453] usb 1-1: New USB device strings: Mfr=1, Product=4, SerialNumber=11
+[   15.736612] usb 1-1: Product: QEMU USB Keyboard
+[   15.736715] usb 1-1: Manufacturer: QEMU
+[   15.736802] usb 1-1: SerialNumber: 68284-0000:00:04.0-1
+[   15.738410] input: QEMU QEMU USB Keyboard as /devices/platform/vhci_hcd.0/usb1/1-1/1-1:1.0/0003:0627:0001.0003/input/input5
+usbip: error: failed to open /usr/share/hwdata//usb.ids
+[   15.790476] hid-generic 0003:0627:0001.0003: input,hidraw0: USB HID v1.11 Keyboard [QEMU QEMU USB Keyboard] on usb-vhci_hcd.0-1/input0
+Imported USB devices
+====================
+Port 00: <Port in Use> at High Speed(480Mbps)
+       unknown vendor : unknown product (0627:0001)
+       1-1 -> usbip://192.0.2.1:3240/1-1
+           -> remote bus/dev 001/002
+       1-1 -> usbip://192.0.2.1:3240/1-1
+  "error": "state: state: port identity changed since import; refusing to detach a possibly unrelated session",
+2026-10-22T10:53:15.116032Z ERROR rustusb: operation failed error=state: state: port identity changed since import; refusing to detach a possibly unrelated session
+RUSTUSB_REUSED_PORT_GATE: PASS port=0 local_bus_id=1-1 ownership=external unchanged=true
+RUSTUSB_LINUX_CLIENT: PASS cycle=3 list=true port=true
+RUSTUSB_WAIT_INPUT cycle=3 local_bus_id=1-1 driver=usbhid
+RUSTUSB_HID_INPUT: PASS cycle=3 KEY_1_down
+usbip: info: Port 0 is now detac[   20.895150] vhci_hcd: connection closed
+hed![   20.895169] vhci_hcd: stop threads
+[   20.895425] vhci_hcd: release socket
+
+
+[   20.895588] vhci_hcd: disconnect device
+[   20.895723] usb 1-1: USB disconnect, device number 4
+RUSTUSB_CLIENT_DETACHED cycle=3 kernel_sessions=0 device_removed=true
+RUSTUSB_QEMU_RESULT: PASS role=client
+[   21.397541] ACPI: PM: Preparing to enter system sleep state S5
+[   21.397705] reboot: Power down

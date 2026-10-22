@@ -1,0 +1,71 @@
+{
+  "started_at_utc": "20261022T105318Z",
+  "kernel": "6.8.0-106-generic",
+  "scope": "two isolated guests; QEMU simulated USB device; Native Linux data path; no physical USB",
+  "scenario": "managed",
+  "device": "ftdi-serial",
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "b4cbfc3bd6c63eb22d8296bfa835767586aa345b",
+  "working_tree_dirty": false,
+  "build_performed": true,
+  "cargo_lock_sha256": "8eda390a92981dcb31bfab196acd440eb7fef4df5b84a5645277d0474bda2309",
+  "source_fingerprint_sha256": "66f3db9acbf7d2fab307805d6988cb402a0119b1eeb9d4e26bbbc801955a8097",
+  "script_sha256": {
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f"
+  },
+  "binary_sha256": {
+    "rustusb": "fc1cc5ebb9ecd8fd8094438137bc3577c59a5876c3faba978abcb8586b9b82a7",
+    "rustusb-helper": "cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad"
+  },
+  "result": "PASS",
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "8ae6a2260bab810d39e77881e0483d2ece92ce4494d03b4f49d07d2de8dff444",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "serial_frame_injections": [
+    1,
+    2
+  ],
+  "serial_output": {
+    "expected_bytes": 70,
+    "received_bytes": 70,
+    "sha256": "a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5",
+    "exact_match": true
+  },
+  "server_checks": [
+    "RUSTUSB_QEMU_BOOT role=server scenario=managed device=ftdi-serial kernel=6.8.0-106-generic",
+    "RUSTUSB_DOCTOR_GATE: PASS role=server missing_before=true root_peer_verified=true denied_uid=1001 network_verified=false hardware_verified=false",
+    "RUSTUSB_DOCTOR_USBIPD role=server status=available",
+    "RUSTUSB_SERVER_READY bus_id=1-1 cli_uid=1000",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=1 local_driver=usb interface_driver=ftdi_sio",
+    "RUSTUSB_SERVER_REEXPORTED cycle=2",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=2 local_driver=usb interface_driver=ftdi_sio",
+    "RUSTUSB_QEMU_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_QEMU_BOOT role=client scenario=managed device=ftdi-serial kernel=6.8.0-106-generic",
+    "RUSTUSB_DOCTOR_GATE: PASS role=client missing_before=true root_peer_verified=true denied_uid=1001 network_verified=false hardware_verified=false",
+    "RUSTUSB_DOCTOR_USBIPD role=client status=available",
+    "RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_WAIT_SERIAL cycle=1 local_bus_id=1-1 driver=ftdi_sio bytes=35",
+    "RUSTUSB_SERIAL_INPUT: PASS cycle=1 driver=ftdi_sio bytes=35 sha256=eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a",
+    "RUSTUSB_CLIENT_DETACHED cycle=1 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_WAIT_SERIAL cycle=2 local_bus_id=1-1 driver=ftdi_sio bytes=35",
+    "RUSTUSB_SERIAL_INPUT: PASS cycle=2 driver=ftdi_sio bytes=35 sha256=cd0f2df238a0b41d3b51c612fa3eaa6273974f11d1a781f77f5d5f0bdec9014a",
+    "RUSTUSB_CLIENT_DETACHED cycle=2 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_QEMU_RESULT: PASS role=client"
+  ],
+  "pass_markers_verified": true,
+  "serial_received_bytes": 70,
+  "serial_received_sha256": "a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5",
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  }
+}

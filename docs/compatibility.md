@@ -1,6 +1,6 @@
 # 兼容性与支持证据
 
-2026-10-22：目标 Linux Ubuntu 22.04/24.04，x86_64/aarch64。Ubuntu22.04/24.04 x86_64的[软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39762479133)两job均通过；内核USB互操作仅在22.04宿主/6.8 guest的QEMU模拟设备上验证。真实硬件、24.04内核互操作和aarch64未验证，不能宣称完整发行版/架构矩阵已通过。Windows、macOS、TUI、GUI 均为后续阶段。
+2026-10-22：目标 Linux Ubuntu 22.04/24.04，x86_64/aarch64。Ubuntu22.04/24.04 x86_64的[软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39766360288)两job均通过；内核USB互操作仅在22.04宿主/6.8 guest的QEMU模拟设备上验证。真实硬件、24.04内核互操作和aarch64未验证，不能宣称完整发行版/架构矩阵已通过。Windows、macOS、TUI、GUI 均为后续阶段。
 
 | 设备类型 | sysfs 可发现 | Linux Native 候选路径 | jiegec 后端审计边界 | RustUSB 真实设备验证 |
 | --- | --- | --- | --- | --- |
@@ -20,3 +20,5 @@
 当前存储导出拒绝属于安全门，不满足未来存储共享功能验收。必须先实现跨挂载命名空间/多LUN/加密映射/打开句柄/系统服务使用检查和明确释放流程，再扩大范围；不能用一个 --force 绕过。
 
 本项目Native模拟HID验证：最终干净提交97c2914在两QEMU guest、Linux6.8/KVM中完成两周期导出、发现、导入、VHCI/usbhid枚举、真实evdev按键、断开、取消共享和本地驱动恢复，见[报告](research/native-qemu.md)和[最终证据](evidence/qemu-native-20261022T101910Z/summary.json)。仅验证QEMU键盘0627:0001，不将其扩大为任意物理HID、其他USB类或安全WAN支持。
+
+本轮扩展在干净b4cbfc3完成[七项Native矩阵](research/native-qemu-matrix.md)：三方向互操作（RustUSB→RustUSB、RustUSB→官方client、官方server→RustUSB）各HID/FTDI两周期，另有HID外部释放后直接重连及同端口新代际拒绝控制，14guest均exit0。模拟FTDI0403:6001使用ftdi_sio，两周期每方向各35字节；它是厂商类Bulk设备，不是CDC ACM，不能推断任意串口、流控、持续吞吐或物理设备支持。doctor的工具/模块/helper真实诊断和未授权UID分类在两端验证；网络安全与硬件标志仍明确false。

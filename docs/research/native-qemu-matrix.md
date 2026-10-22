@@ -61,7 +61,23 @@ python3 scripts/qemu/run-native-qemu.py --scenario reconnect
 
 ## 当前版本结果
 
-本轮最终源码的矩阵仍待冻结提交后执行，不能以旧版或中间产物结果代替。后续在本节逐场景关联 evidence 和命令退出码。
+最终冻结提交为 **`b4cbfc3bd6c63eb22d8296bfa835767586aa345b`**（产品实现提交 `a4d258c`）。以下7项全部执行默认 `cargo build --workspace --release --locked`、exit0，启动时工作树均 clean。先执行 managed HID 验证 doctor，再以最多3组独立 guest 并行执行其余6项；所有 evidence 最初写入隔离 `/tmp` 目录，全部测试终结后才一次复制入仓库。复制前后每个原始文件 SHA256 相等，完整汇总见 [矩阵索引](../evidence/qemu-matrix-20261022.json)。
+
+| 命令参数（入口同上） | 结果及持久 evidence | 实际覆盖 |
+| --- | --- | --- |
+| `--scenario managed --device hid` | [PASS / exit0](../evidence/qemu-matrix-20261022-managed-hid/summary.json) | 2周期 KEY_1、受管 export/attach/detach/unexport、usb/usbhid 恢复 |
+| `--scenario linux-client --device hid` | [PASS / exit0](../evidence/qemu-matrix-20261022-linux-client-hid/summary.json) | 2周期原生 list/attach/port/detach、外部会话拒绝控制、实际输入和释放 |
+| `--scenario linux-server --device hid` | [PASS / exit0](../evidence/qemu-matrix-20261022-linux-server-hid/summary.json) | 2周期原生 bind/unbind、helper 拒绝接管外部导出、实际输入和驱动恢复 |
+| `--scenario managed --device ftdi-serial` | [PASS / exit0](../evidence/qemu-matrix-20261022-managed-ftdi-serial/summary.json) | 2周期双向精确字节、ftdi_sio、受管清理及驱动恢复 |
+| `--scenario linux-client --device ftdi-serial` | [PASS / exit0](../evidence/qemu-matrix-20261022-linux-client-ftdi-serial/summary.json) | 官方客户端、外部会话拒绝控制、2周期双向精确字节及清理 |
+| `--scenario linux-server --device ftdi-serial` | [PASS / exit0](../evidence/qemu-matrix-20261022-linux-server-ftdi-serial/summary.json) | 官方服务端、外部导出拒绝接管、2周期双向精确字节及恢复 |
+| `--scenario reconnect --device hid` | [PASS / exit0](../evidence/qemu-matrix-20261022-reconnect-hid/summary.json) | 3次实际 KEY_1；外部 detach 后 RustUSB 直接认领同端口；再外部重导入同端口/路径/remote ID，新 receipt 为 unmanaged，旧 helper detach 明确拒绝且输入仍在；最终由原管理方释放 |
+
+14个 guest 均正常退出0。三个 FTDI 场景各自两周期、每方向每周期35字节；host 输出各为精确70字节，顺序、长度和无额外输出均核对；这是短功能验证，不能当成长时稳定性或吞吐结果。reconnect 已修复旧版本真实 FAIL，并通过新代际拒绝控制的独立周期；它仍是外部本地释放测试，不是 WAN 故障验收。
+
+独立复核不仅看 PASS 标记，还从7项原始 serial 中解析 **42份 doctor JSON**，再次逐项确认 helper missing/available/permission_denied、OS peer 验证、角色所需 sysfs、server helper 无 VHCI/client 有 VHCI、两个工具的实际明确状态、schema 和未验证 flags。全部 usbipd 版本探测实际为 `available`，未将普通 UID 的 exit0 误写成权限已经获批。
+
+7项源码、脚本、锁文件和产品二进制指纹完全一致，运行中源码没有改变。整体源码/脚本 SHA256 为 `66f3db9acbf7d2fab307805d6988cb402a0119b1eeb9d4e26bbbc801955a8097`；CLI 为 `fc1cc5ebb9ecd8fd8094438137bc3577c59a5876c3faba978abcb8586b9b82a7`，helper 为 `cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad`。同一内核镜像和官方工具哈希也一致；initramfs 分别记录各次实际归档哈希，不宣称含时间戳的归档逐字节可复现。结果归档后的修改仅为文档和 evidence。
 
 ## 仍未覆盖
 

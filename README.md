@@ -4,7 +4,7 @@
 
 当前为 **Phase 1 开发预览**：已完成源码调研并实现 Native 路线；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、内建 TLS、TUI、GUI、存储安全共享仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
-当前证据：41项软件测试及全部Cargo质量检查通过；最终提交的双QEMU模拟键盘完成两轮实际输入和完整释放/重连，见[逐项验收](docs/acceptance.md)与[QEMU报告](docs/research/native-qemu.md)。
+当前证据：59项软件测试及全部Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
 
 ## 构建与检查
 
@@ -82,9 +82,13 @@ QEMU 仿真用于验证本项目导出、发现、导入、Linux 枚举、实际
 
 ```bash
 python3 scripts/qemu/run-native-qemu.py
+# 官方Linux客户端互操作，改用模拟FTDI串口
+python3 scripts/qemu/run-native-qemu.py --scenario linux-client --device ftdi-serial
+# 外部释放后直接重连，以及同端口新连接的所有权保护
+python3 scripts/qemu/run-native-qemu.py --scenario reconnect
 ```
 
-该脚本创建两个一次性x86_64 Linux guest，以私有socketpair网络连接，只导出QEMU模拟键盘。它不会直通宿主USB或在宿主加载USB/IP模块。需要QEMU、BusyBox、cpio、jq、setpriv、当前内核镜像/模块和匹配linux-tools；无法直接读取`/boot`时，仅复制测试内核到临时目录可能需要预先可用的`sudo -n`。完整日志保存在`docs/evidence/`，通过标记不代表真实硬件兼容或内建加密。
+该脚本创建两个一次性x86_64 Linux guest，以私有socketpair网络连接，使用QEMU模拟键盘或FTDI0403:6001串口（不是CDC ACM）。它不会直通宿主USB或在宿主加载USB/IP模块。需要QEMU、BusyBox、cpio、jq、setpriv、当前内核镜像/模块和匹配linux-tools；无法直接读取`/boot`时，仅复制测试内核到临时目录可能需要预先可用的`sudo -n`。完整日志保存在`docs/evidence/`，通过标记不代表真实硬件兼容或内建加密。
 
 - [架构与接口](docs/architecture.md)、[协议](docs/protocol.md)、[源码差距](docs/research/gap-analysis.md)
 - [Linux 官方实现审计](docs/research/linux-usbip-audit.md)、[jiegec Rust 实现审计](docs/research/rust-backend-audit.md)

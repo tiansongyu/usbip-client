@@ -78,3 +78,12 @@
 - 测试夹具锁实施后，无strace、64测试线程的Native28项连续20轮全部通过；`evidence/native-fixture-stability-2026-10-22.txt`记录命令、每轮结果与源码哈希，未把文件描述符继承机制写成已证实事实。最终`bash scripts/check.sh` exit0：**59项测试**（core2/protocol4/scanner8/native28/daemon16/CLI1）、fmt、Clippy -D warnings、release、Rustdoc -D warnings全部通过，完整输出`evidence/software-checks-phase1-runtime-2026-10-22.txt`。
 - 普通UID1000执行release doctor的人类/JSON输出均exit0并持久保存；宿主两原生工具安全版本2.0可用、两模块未加载/sysfs缺失、helper missing，断言schema和未验证安全/硬件标志通过。只执行固定version和只读Status，未改宿主USB、模块或服务。
 - 产品与测试脚本将分开提交后冻结；最终7项QEMU矩阵待在同一干净提交运行，以上59项软件测试不能代替本轮实际内核验收。
+
+## 本轮最终QEMU与发布裁决
+
+- 产品修复/诊断提交`a4d258c`，互操作harness/软件证据提交`b4cbfc3`。此时工作树clean，所有agent停止源码和脚本修改。7项分别写入/tmp独立目录，全部运行结束后才一次性按原字节复制到`evidence/qemu-matrix-20261022-*`，逐文件SHA256核对，避免前项证据污染后项dirty状态。
+- 7项均默认locked release构建，冻结`b4cbfc3bd6c63eb22d8296bfa835767586aa345b`，source/scripts/lock/binaries/kernel/native工具指纹一致；**全部PASS，14guest均exit0**。三方向Native各HID/FTDI两周期，串口每周期每方向35字节，host精确70字节；reconnect三次实际KEY_1，外部释放后直接RustUSB attach成功，同port/local Bus ID/VIDPID新外部代际为unmanaged且旧detach明确拒绝，拒绝后输入仍正常，最终资源释放及server驱动恢复通过。
+- 从原始serial重新解析42份doctor JSON：两端helper启动前missing、启动后root peer verified/available、UID1001 permission_denied，角色sysfs、server helper无VHCI/client有VHCI、schema1和未验证安全/硬件flags全部核对；本发行版usbipd版本探测均实际available，未将root stderr提示或doctor exit0当授权通过。逐项命令和限制见`research/native-qemu-matrix.md`，机器索引`evidence/qemu-matrix-20261022.json`。
+- 根进程独立核对七个summary、运行前clean/locked构建、两端退出码、当前生产源码/脚本与b4cbfc3无差异；旧21e98f9真实重连FAIL及中间harness证据保留。本轮结果不证明CDC ACM、真实设备、netem/WAN、多客户端、TLS或长期性能；完整Phase1物理及Phase2–7仍未标完成。
+- `git push origin main` exit0推送b4cbfc3，`git ls-remote origin refs/heads/main`与本地HEAD一致。GitHub Actions [39766360288](https://github.com/tiansongyu/usbip-client/actions/runs/39766360288) completed/success；Ubuntu24.04 job119782683028、Ubuntu22.04 job119782683326均success，含全部质量检查与只读CLI smoke。本轮出版事实记录`evidence/publication-runtime-2026-10-22.json`。
+- 最终验收文档、全部QEMU原始日志与出版证据作为独立提交普通push；其后核对远端main与HEAD及工作树，产品/scripts保持b4cbfc3被测内容。最后一次自身提交的SHA以Git历史和实际push/ls-remote输出为准，文档不虚构自引用哈希。
