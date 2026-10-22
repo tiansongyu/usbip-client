@@ -88,3 +88,11 @@
 - `git push origin main` exit0推送b4cbfc3，`git ls-remote origin refs/heads/main`与本地HEAD一致。GitHub Actions [39766360288](https://github.com/tiansongyu/usbip-client/actions/runs/39766360288) completed/success；Ubuntu24.04 job119782683028、Ubuntu22.04 job119782683326均success，含全部质量检查与只读CLI smoke。本轮出版事实记录`evidence/publication-runtime-2026-10-22.json`。
 - 最终验收文档、全部QEMU原始日志与出版证据作为独立提交普通push；其后核对远端main与HEAD及工作树，产品/scripts保持b4cbfc3被测内容。最后一次自身提交的SHA以Git历史和实际push/ls-remote输出为准，文档不虚构自引用哈希。
 - 验收/日志提交`3dc7fb8`普通push exit0。归档复核发现全局`*.log`忽略了6份已复制且被索引hash引用的runner.log；补充evidence专用忽略例外并提交这些runner日志，未改任何被测产品或脚本。最终额外核对机器索引的每个artifact均被Git跟踪且SHA256匹配，避免本地存在而远端缺文件。
+
+## 继续Phase1：争用、传输故障与原生架构CI（基线67c83d5）
+
+- 上一轮属于进展：权威源码、四个提交、59项软件检查、七项实际双QEMU、14个guest和远端CI均有证据；最新67c83d5已push，工作树clean。本轮重新读取原始附件、AGENTS、项目Skill、架构及计划，不缩减完整目标。
+- 原需求的多客户端争用和异常TCP断链仍缺系统证据，设计先行：新增隔离三guest争用和双guest传输中止harness，沿用QEMU模拟HID/私有socketpair和UID1000 CLI/root helper。不会操作宿主USB、模块或网络，不把QEMU载波变化当作TCP断链。
+- 复核Linux6.8：普通TCP错误走SHUTDOWN|RESET并回到NULL；ERROR/UNUSABLE另有成因且sysfs隐藏身份。故先验证真实传输故障后的NULL/旧代际消失和直接重连，不为假设的ERROR强行清理放宽所有权。
+- 原生aarch64软件验证是原目标尚缺项。核实仓库public、GitHub官方Ubuntu22.04-arm/24.04-arm运行器可用后，计划扩展到四格OS/架构矩阵，显式断言uname和记录工具链/内核；运行fmt/clippy/test/release/rustdoc及只读smoke。它不代替ARM内核USB互操作/硬件验收。checkout将固定官方Node24版本完整SHA，移除旧Node20运行时弃用警告，保留只读token/persist-credentials=false。
+- 官方GitHub API确认checkout v7.0.1精确commit`3d3c42e5aac5ba805825da76410c181273ba90b1`、action.yml运行时node24；workflow按四格矩阵实现，15分钟job截止。PyYAML解析及四项矩阵唯一性检查通过，本地`bash scripts/check.sh` exit0、59项及全部质量检查通过，输出`evidence/software-checks-native-matrix-2026-10-22.txt`。此时ARM结果仍待真实远端执行，不把矩阵配置写成已通过。

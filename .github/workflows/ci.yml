@@ -12,14 +12,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        include:
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-24.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: aarch64
+          - os: ubuntu-24.04-arm
+            arch: aarch64
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node.js 24
         with:
           persist-credentials: false
       - name: Install the pinned stable toolchain
         run: rustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy
+      - name: Verify native architecture and record the software environment
+        run: |
+          test "$(uname -m)" = "${{ matrix.arch }}"
+          uname -a
+          cat /etc/os-release
+          rustc -vV
+          cargo -V
       - name: Formatting, lint, tests, release and documentation
         run: scripts/check.sh
       - name: Read-only CLI smoke checks

@@ -119,3 +119,11 @@ helper诊断属于共享客户端接口：复用已有root路径/类型/权限�
 保留默认双guest HID两周期，增加独立场景：RustUSB export→官方Linux client、官方bind/usbipd→RustUSB client，以及受管连接被内核外部释放→直接RustUSB重连→外部释放→同port外部重新导入(旧helper必须拒绝控制)。每项要求实际输入/字节传输、驱动及资源释放，未知外部资源仍由官方工具清理。
 
 可选QEMU usb-serial经官方6.2源码核实为FTDI FT232BM(0403:6001，厂商类、Bulk)，使用ftdi_sio并测试双向固定序号字节；它不是CDC ACM证据。只有HID reconnect场景测试代际；串口覆盖两后端端点互操作和两周期释放。三个guest多客户端争用、netem延迟/丢包、完整CDC/Rust服务端仍在原计划中，不能由本轮矩阵替代。测试只用临时VM、私有socketpair/Unix chardev；不触宿主USB、内核模块或公共网络。
+
+## Phase1补充验收：多客户端与传输故障（实施设计）
+
+2026-10-22，基线67c83d5。争用harness以三个独立guest内核验证单设备独占：server经两个独立私有socketpair接口分别连接client A/B；A成功导入并实际输入时，B的导入必须明确失败且无新增端口，A仍能实际输入；A释放后B可成功导入、实际输入、释放，最后server unexport恢复本地驱动。普通UID管理路径和各端授权不能用guest root直接导入代替。新测试使用独立脚本，保持此前七项harness可复现。
+
+故障harness在已完成实际输入的连接上，由guest管理员精确中止唯一ESTABLISHED USB/IP TCP（只限隔离来宾）；核对内核端口变为NULL、旧sysfs代际消失、server AVAILABLE后，由RustUSB直接重连再验证实际输入与释放。杀usbipd进程、carrier down和本地usbip detach各有不同语义，不互相冒充。Linux普通TCP错误通常SHUTDOWN|RESET而非持久ERROR；若观测到UNKNOWN/ERROR，保留原始状态并拒绝猜测清理。此项不证明WAN黑洞检测、心跳或自动恢复存储写入。
+
+软件平台验证扩展为Ubuntu22.04/24.04 × x86_64/aarch64原生CI，运行前以uname验证实际架构并记录系统/工具链；采用[官方标准运行器](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)，结果待实际四job完成。CI不运行物理USB变更；aarch64编译/单元/只读smoke通过也不证明ARM USB/IP内核路径兼容。
