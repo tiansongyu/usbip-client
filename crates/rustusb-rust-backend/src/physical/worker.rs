@@ -208,7 +208,27 @@ async fn acquire(slot: &Arc<Slot>, config: u8, original_alternates: bool) -> Con
             };
         }
     };
+    if numbers.is_empty()
+        && let Err(error) = super::safety::before_claim(slot, config, BTreeSet::new()).await
+    {
+        return Configured {
+            config,
+            interfaces,
+            error: Some(error),
+            fatal: true,
+        };
+    }
     for number in numbers {
+        if let Err(error) =
+            super::safety::before_claim(slot, config, interfaces.keys().copied().collect()).await
+        {
+            return Configured {
+                config,
+                interfaces,
+                error: Some(error),
+                fatal: true,
+            };
+        }
         let interface = match slot
             .usb
             .detach_and_claim_interface_no_reattach(number)
@@ -1015,6 +1035,7 @@ async fn restore(worker: &mut Worker) -> Result<()> {
             .await
             .map_err(|_| Error::State("physical configuration observer failed".into()))??
     };
+    super::safety::before_claim(&worker.slot, actual, BTreeSet::new()).await?;
     if actual != worker.slot.original_configuration {
         if !worker.configuration_changed || actual != worker.config {
             return Err(Error::State(
@@ -1032,6 +1053,19 @@ async fn restore(worker: &mut Worker) -> Result<()> {
     // requests already terminal. A failed operation remains quarantined.
     for original in &worker.slot.source.interfaces {
         if original.alternate_setting != 0 && worker.owned_original.contains(&original.number) {
+            let paths = worker.slot.paths.clone();
+            let receipt = worker.slot.receipt.clone();
+            let config = worker.slot.original_configuration;
+            let number = original.number;
+            let alternate = original.alternate_setting;
+            let restored = tokio::task::spawn_blocking(move || {
+                observe::alternate_matches(&paths, &receipt, config, number, alternate)
+            })
+            .await
+            .map_err(|_| Error::State("physical alternate restoration observer failed".into()))??;
+            if restored {
+                continue;
+            }
             let interface = worker
                 .slot
                 .usb
@@ -1051,43 +1085,21 @@ async fn restore(worker: &mut Worker) -> Result<()> {
         .iter()
         .map(|driver| driver.interface)
         .collect::<Vec<_>>();
-    let current = observe::observe_drivers(
-        &worker.slot,
-        worker.slot.original_configuration,
-        numbers.clone(),
-    )
-    .await?;
     let slot = worker.slot.clone();
     let owned_original = worker.owned_original.clone();
     tokio::task::spawn_blocking(move || {
-        if !observe::generation(&slot.paths, &slot.receipt)? {
-            return Err(Error::State(
-                "physical generation changed before driver restoration".into(),
-            ));
-        }
-        for original in originals {
-            if !owned_original.contains(&original.interface) {
-                continue;
-            }
-            let observed = current
-                .iter()
-                .find(|driver| driver.interface == original.interface)
-                .and_then(|driver| driver.driver.as_ref());
-            if observed == original.driver.as_ref() {
-                continue;
-            }
-            if observed.is_some() || original.driver.is_none() {
-                return Err(Error::State(
-                    "an external driver change prevents safe physical restoration".into(),
-                ));
-            }
-            slot.usb
-                .attach_kernel_driver(original.interface)
-                .map_err(|_| {
+        observe::reconnect_drivers(
+            &slot.paths,
+            &slot.receipt,
+            slot.original_configuration,
+            &originals,
+            &owned_original,
+            |number| {
+                slot.usb.attach_kernel_driver(number).map_err(|_| {
                     Error::State("could not reattach the original physical driver".into())
-                })?;
-        }
-        Ok(())
+                })
+            },
+        )
     })
     .await
     .map_err(|_| Error::State("physical driver restoration task failed".into()))??;

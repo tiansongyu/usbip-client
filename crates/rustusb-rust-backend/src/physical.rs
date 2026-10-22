@@ -1,6 +1,7 @@
 //! Linux usbfs capabilities, supervised until physical requests are reaped.
 
 mod observe;
+mod safety;
 mod worker;
 
 use crate::{

@@ -65,6 +65,8 @@ systemd 安装阶段应对普通服务启用只读文件系统、禁止新增权
 
 USBFS adapter 仅在 IMPORT 时 claim 全部已验证接口；同一端点最多一个真实在途请求，其余有界 FIFO。配置/alternate 操作协调受影响请求，后续端点请求等待状态确认。部分 claim 失败也只清理本会话实际取得的接口。恢复 alternate 时不能 detach 新绑定的驱动；恢复原配置仅允许本会话确曾修改且当前仍为最后确认配置，随后独立核对原配置、alternate、驱动和代际。观察失败或外部改动进入 quarantine，不以历史元数据接管现有所有者。
 
+配置变更后不能沿用旧 active 配置的安全快照。每个 detach/claim 前复用只读 scanner 检查同一设备 ID、配置/代际、完整接口、全部 export blockers 和当前驱动；只有本会话实际持有的 usbfs 接口可继续存在。释放后的恢复动作也受同一检查约束，新存储驱动/块后代或外部占用不因“恢复”而被强制解绑或改配置。CDC 等驱动的 probe 可能同步绑定多个接口，逐接口重观察后允许已实际恢复的原绑定收敛，不能仅忽略 EBUSY。该检查不撤销 SET_CONFIGURATION 已触发的内核 probe，不是 inactive vendor quirk 的预先完整识别，也不提供通用原子排他保证。
+
 设备代际由已打开能力、节点/sysfs receipt 和 USB 地址共同约束。热拔使旧 slot 进入 Gone 并关闭其 TCP，不能因 Bus ID、VID/PID 或候选指纹相同而重新打开节点。重插需管理员重新核验并显式注册新代际 FD；这不提供硬件密码学身份或自动重授权。
 
 导出 USB Mass Storage 前，必须检查所有接口、LUN、分区及其下游块设备：mountinfo、活动文件使用、swap、device-mapper / LUKS、LVM、RAID、holders、loop 关系和系统服务使用。只检查 `/proc/mounts` 的一个设备节点不充分；权限不足或看不见其他挂载命名空间时不能得出空闲结论。不得强制卸载，不执行 `umount -f`、`fuser -k` 或自动关闭加密卷。

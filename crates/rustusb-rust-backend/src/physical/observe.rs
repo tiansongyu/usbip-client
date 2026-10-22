@@ -106,6 +106,82 @@ pub(super) fn drivers(paths: &Paths, config: u8, numbers: &[u8]) -> Result<Vec<P
     Ok(drivers)
 }
 
+fn restoration_scope(paths: &Paths, receipt: &PhysicalDeviceReceipt, config: u8) -> Result<()> {
+    if !generation(paths, receipt)? {
+        return Err(Error::State(
+            "physical generation changed during restoration".into(),
+        ));
+    }
+    if configuration(paths)? != config {
+        return Err(Error::State(
+            "physical configuration changed during restoration".into(),
+        ));
+    }
+    Ok(())
+}
+
+fn restoration_driver(
+    paths: &Paths,
+    receipt: &PhysicalDeviceReceipt,
+    config: u8,
+    number: u8,
+) -> Result<Option<String>> {
+    restoration_scope(paths, receipt, config)?;
+    let driver = drivers(paths, config, &[number])?
+        .pop()
+        .ok_or_else(|| Error::State("physical restoration interface was not observed".into()))?;
+    restoration_scope(paths, receipt, config)?;
+    Ok(driver.driver)
+}
+
+pub(super) fn alternate_matches(
+    paths: &Paths,
+    receipt: &PhysicalDeviceReceipt,
+    config: u8,
+    number: u8,
+    expected: u8,
+) -> Result<bool> {
+    restoration_scope(paths, receipt, config)?;
+    let observed = alternate(paths, config, number)?;
+    restoration_scope(paths, receipt, config)?;
+    Ok(observed == expected)
+}
+
+// CONNECT can synchronously bind sibling interfaces through the driver's probe.
+// Reobserve every owned interface instead of reusing a pre-CONNECT snapshot.
+pub(super) fn reconnect_drivers(
+    paths: &Paths,
+    receipt: &PhysicalDeviceReceipt,
+    config: u8,
+    originals: &[PhysicalDriver],
+    owned: &BTreeSet<u8>,
+    mut connect: impl FnMut(u8) -> Result<()>,
+) -> Result<()> {
+    for original in originals {
+        if !owned.contains(&original.interface) {
+            continue;
+        }
+        let current = restoration_driver(paths, receipt, config, original.interface)?;
+        if current == original.driver {
+            continue;
+        }
+        if current.is_some() || original.driver.is_none() {
+            return Err(Error::State(
+                "an external driver change prevents safe physical restoration".into(),
+            ));
+        }
+        if let Err(error) = connect(original.interface) {
+            // A concurrent or sibling probe may have completed between the
+            // observation and CONNECT. Only actual original bindings in the
+            // same scope can reconcile an error; EBUSY alone proves nothing.
+            if restoration_driver(paths, receipt, config, original.interface)? != original.driver {
+                return Err(error);
+            }
+        }
+    }
+    Ok(())
+}
+
 pub(super) async fn verify(slot: &Arc<Slot>) -> Result<bool> {
     let paths = slot.paths.clone();
     let receipt = slot.receipt.clone();
@@ -526,6 +602,212 @@ pub(super) async fn initialize(source: PhysicalSource) -> Result<Slot> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn restoration_fixture() -> Result<(test_fixture::Fixture, Paths, PhysicalDeviceReceipt)> {
+        let fixture = test_fixture::Fixture::new()?;
+        let paths = Paths {
+            root: fixture.root.clone(),
+            bus_id: "1-1".into(),
+        };
+        fs::create_dir(paths.device())?;
+        fs::write(paths.device().join("busnum"), "1\n")?;
+        fs::write(paths.device().join("devnum"), "2\n")?;
+        fs::write(paths.device().join("bConfigurationValue"), "1\n")?;
+        for number in [0, 1] {
+            fs::create_dir(paths.interface(1, number))?;
+            fs::write(paths.interface(1, number).join("bAlternateSetting"), "0\n")?;
+        }
+        let metadata = fs::metadata(paths.device())?;
+        let receipt = PhysicalDeviceReceipt {
+            sysfs_device: metadata.dev(),
+            sysfs_inode: metadata.ino(),
+            node_device: 0,
+            node_inode: 0,
+            usb_device_number: 2,
+            bus_number: 1,
+        };
+        Ok((fixture, paths, receipt))
+    }
+
+    fn cdc_drivers() -> [PhysicalDriver; 2] {
+        [0, 1].map(|interface| PhysicalDriver {
+            interface,
+            driver: Some("cdc_ether".into()),
+        })
+    }
+
+    fn bind_driver(paths: &Paths, number: u8, name: &str) -> Result<()> {
+        std::os::unix::fs::symlink(
+            format!("/fixture-drivers/{name}"),
+            paths.interface(1, number).join("driver"),
+        )?;
+        Ok(())
+    }
+
+    fn change_restoration_scope(paths: &Paths, configuration_change: bool) -> Result<()> {
+        if configuration_change {
+            fs::write(paths.device().join("bConfigurationValue"), "2\n")?;
+        } else {
+            fs::rename(paths.device(), paths.root.join("old-generation"))?;
+            fs::create_dir(paths.device())?;
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn reconnect_observes_sibling_binding_without_a_second_connect() -> Result<()> {
+        let (_fixture, paths, receipt) = restoration_fixture()?;
+        let originals = cdc_drivers();
+        let mut attempts = Vec::new();
+        reconnect_drivers(
+            &paths,
+            &receipt,
+            1,
+            &originals,
+            &BTreeSet::from([0, 1]),
+            |number| {
+                attempts.push(number);
+                bind_driver(&paths, 0, "cdc_ether")?;
+                bind_driver(&paths, 1, "cdc_ether")
+            },
+        )?;
+        assert_eq!(attempts, [0]);
+        assert_eq!(drivers(&paths, 1, &[0, 1])?, originals);
+        Ok(())
+    }
+
+    #[test]
+    fn reconnect_errors_require_actual_original_binding_to_converge() -> Result<()> {
+        for observed in [None, Some("other_driver"), Some("cdc_ether")] {
+            let (_fixture, paths, receipt) = restoration_fixture()?;
+            let originals = cdc_drivers();
+            let mut attempts = Vec::new();
+            let result = reconnect_drivers(
+                &paths,
+                &receipt,
+                1,
+                &originals[..1],
+                &BTreeSet::from([0]),
+                |number| {
+                    attempts.push(number);
+                    if let Some(name) = observed {
+                        bind_driver(&paths, number, name)?;
+                    }
+                    Err(Error::Io(std::io::Error::from_raw_os_error(16)))
+                },
+            );
+            assert_eq!(result.is_ok(), observed == Some("cdc_ether"), "{result:?}");
+            assert_eq!(attempts, [0]);
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn reconnect_rejects_changed_scope_before_and_after_connect() -> Result<()> {
+        for before_connect in [false, true] {
+            for configuration_change in [false, true] {
+                let (_fixture, paths, receipt) = restoration_fixture()?;
+                let originals = cdc_drivers();
+                if before_connect {
+                    change_restoration_scope(&paths, configuration_change)?;
+                }
+                let mut attempts = Vec::new();
+                let result = reconnect_drivers(
+                    &paths,
+                    &receipt,
+                    1,
+                    &originals[..1],
+                    &BTreeSet::from([0]),
+                    |number| {
+                        attempts.push(number);
+                        bind_driver(&paths, number, "cdc_ether")?;
+                        change_restoration_scope(&paths, configuration_change)?;
+                        Err(Error::Io(std::io::Error::from_raw_os_error(16)))
+                    },
+                );
+                assert!(result.is_err(), "{result:?}");
+                assert_eq!(attempts.len(), usize::from(!before_connect));
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn reconnect_never_changes_foreign_or_unowned_bindings() -> Result<()> {
+        let (_fixture, paths, receipt) = restoration_fixture()?;
+        let originals = cdc_drivers();
+        bind_driver(&paths, 1, "other_driver")?;
+        let mut attempts = Vec::new();
+        reconnect_drivers(
+            &paths,
+            &receipt,
+            1,
+            &originals,
+            &BTreeSet::from([0]),
+            |number| {
+                attempts.push(number);
+                bind_driver(&paths, number, "cdc_ether")
+            },
+        )?;
+        assert_eq!(attempts, [0]);
+        assert_eq!(
+            drivers(&paths, 1, &[1])?[0].driver.as_deref(),
+            Some("other_driver")
+        );
+        attempts.clear();
+        assert!(
+            reconnect_drivers(
+                &paths,
+                &receipt,
+                1,
+                &originals,
+                &BTreeSet::from([1]),
+                |number| {
+                    attempts.push(number);
+                    Ok(())
+                },
+            )
+            .is_err()
+        );
+        assert!(attempts.is_empty());
+
+        let originally_unbound = [PhysicalDriver {
+            interface: 0,
+            driver: None,
+        }];
+        assert!(
+            reconnect_drivers(
+                &paths,
+                &receipt,
+                1,
+                &originally_unbound,
+                &BTreeSet::from([0]),
+                |number| {
+                    attempts.push(number);
+                    Ok(())
+                },
+            )
+            .is_err()
+        );
+        assert!(attempts.is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn alternate_already_restored_by_probe_does_not_need_reclaiming() -> Result<()> {
+        let (_fixture, paths, receipt) = restoration_fixture()?;
+        bind_driver(&paths, 0, "cdc_ether")?;
+        bind_driver(&paths, 1, "cdc_ether")?;
+        fs::write(paths.interface(1, 1).join("bAlternateSetting"), "1\n")?;
+        assert!(alternate_matches(&paths, &receipt, 1, 1, 1)?);
+        assert!(!alternate_matches(&paths, &receipt, 1, 1, 0)?);
+        fs::write(paths.device().join("bConfigurationValue"), "2\n")?;
+        assert!(alternate_matches(&paths, &receipt, 1, 1, 1).is_err());
+        fs::write(paths.device().join("bConfigurationValue"), "1\n")?;
+        change_restoration_scope(&paths, false)?;
+        assert!(alternate_matches(&paths, &receipt, 1, 1, 1).is_err());
+        Ok(())
+    }
 
     #[test]
     fn generation_distinguishes_missing_replaced_and_changed_address() -> Result<()> {

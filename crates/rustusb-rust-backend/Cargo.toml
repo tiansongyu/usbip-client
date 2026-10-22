@@ -7,7 +7,7 @@ license.workspace = true
 
 [features]
 default = []
-physical-nusb = ["dep:nusb", "dep:rustix"]
+physical-nusb = ["dep:nusb", "dep:rustix", "dep:rustusb-linux"]
 
 [dependencies]
 rustusb-core.workspace = true
@@ -20,6 +20,7 @@ rustix = { workspace = true, optional = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 nusb = { workspace = true, optional = true }
+rustusb-linux = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde_json.workspace = true

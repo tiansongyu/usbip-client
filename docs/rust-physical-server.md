@@ -46,6 +46,8 @@ rustusb --socket /run/rustusb/control.sock physical-server \
 
 客户端由普通用户运行现有 `discover`、`attach`、`sessions` 和 `detach`，按 [CLI 帮助与 Native 流程](../README.md#native-共享流程)配置客户端 helper 的远端授权。设备只有在 IMPORT 时才独占 claim 全部接口；忙、清理中、隔离或旧代际不会作为可用设备发布。
 
+切换配置后，服务会在新的接口 claim 前重新检查当前配置，而不沿用旧配置的安全快照。存储驱动、块设备后代、外部占用或不完整观察会阻止继续绑定；恢复时发现这些状态也会保持隔离，不强制切回配置或解绑现有驱动。该检查不能撤销内核已经执行的配置变更。多接口驱动已恢复的原绑定会逐接口重新核对，不能单凭 CONNECT 返回 EBUSY 当作成功。
+
 ## 观察与退出
 
 启用 `--control-stdin` 后，本地 stdin 接受有界 JSONL，stdout 输出机器事件；数据不注入 USB payload：

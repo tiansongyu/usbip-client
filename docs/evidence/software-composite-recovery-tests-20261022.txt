@@ -1,0 +1,51 @@
+$ cargo test -p rustusb-rust-backend --all-features --locked
+   Compiling nusb v0.2.8 (/home/ubuntu/github/usbip-client/vendor/nusb)
+   Compiling rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.27s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_rust_backend-8b369b7487fc5e66)
+
+running 35 tests
+test descriptors::tests::fixed_profiles_have_exact_lengths_and_endpoint_layouts ... ok
+test device::tests::explicit_idle_rate_repeats_current_report_and_cancellation_does_not_consume_input ... ok
+test device::tests::control_lengths_configuration_and_invalid_interface_never_panic ... ok
+test device::tests::cdc_line_coding_control_lines_break_and_notification_are_stateful ... ok
+test device::tests::keyboard_pending_reports_release_control_and_bounded_atomic_queue ... ok
+test device::tests::reconfiguration_retires_pending_and_clears_queues_without_consuming_new_data ... ok
+test device::tests::registration_exclusivity_drop_and_discovery_are_real_state_changes ... ok
+test physical::worker::tests::physical_errno_and_partial_bytes_survive_completion_mapping ... ok
+test physical::tests::reservations_cover_two_buffers_and_remain_bounded_until_retirement ... ok
+test physical::worker::tests::queued_host_state_intents_defer_later_endpoint_routing ... ok
+test physical::observe::tests::alternate_is_decimal_and_driver_observations_are_bounded ... ok
+test physical::observe::tests::generation_distinguishes_missing_replaced_and_changed_address ... ok
+test physical::tests::regular_file_capability_is_rejected_before_any_usb_or_sysfs_access ... ok
+test physical::observe::tests::reconnect_never_changes_foreign_or_unowned_bindings ... ok
+test physical::observe::tests::alternate_already_restored_by_probe_does_not_need_reclaiming ... ok
+test wire::tests::inconsistent_or_overlong_completion_is_rejected_without_silent_truncation ... ok
+test server::tests::asynchronous_control_in_out_preserve_original_errno_and_partial_bytes ... ok
+test wire::tests::rejects_resource_and_phase_fields_before_reading_payload ... ok
+test device::tests::cdc_bulk_short_exact_packet_zero_length_limits_and_hashes ... ok
+test physical::observe::tests::reconnect_observes_sibling_binding_without_a_second_connect ... ok
+test server::tests::idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation ... ok
+test physical::observe::tests::reconnect_errors_require_actual_original_binding_to_converge ... ok
+test server::tests::real_tcp_devlist_busy_import_and_phase_rejection_release_leases ... ok
+test server::tests::listener_policy_and_connection_budget_are_enforced_before_spawn ... ok
+test physical::observe::tests::reconnect_rejects_changed_scope_before_and_after_connect ... ok
+test server::tests::failed_import_write_and_handle_drop_release_ownership ... ok
+test wire::tests::complete_idle_connection_waits_but_partial_frame_has_a_single_owner ... ok
+test server::tests::response_budget_is_retained_until_the_complete_frame_is_written ... ok
+test server::tests::one_byte_control_bounds_and_pending_unlink_have_no_late_submit ... ok
+test server::tests::hung_usb_does_not_block_control_discovery_or_single_thread_timer ... ok
+test server::tests::unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping ... ok
+test server::tests::fragmented_out_while_pending_and_wrapped_sequences_preserve_order ... ok
+test server::tests::duplicate_active_sequence_and_pending_bound_fail_closed ... ok
+test server::tests::active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out ... ok
+test server::tests::shutdown_deadline_reports_quarantine_without_releasing_pending_hardware ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.02s
+
+   Doc-tests rustusb_rust_backend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

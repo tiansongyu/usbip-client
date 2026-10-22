@@ -116,7 +116,9 @@ Linux 物理 adapter 使用固定 nusb 0.2.8 本地许可源码的小扩展，�
 
 打开能力不等于 claim：服务在 IMPORT 时独占当前设备的全部已验证接口。slot 经 `available → claiming → leased → closing`，成功清理才回到 `available`；无法确认进入 `quarantined`，真实消失进入 `gone`。queued UNLINK 不提交硬件；active UNLINK 等真实 terminal 裁决，取消赢才回复 -104 且不再回复原 SUBMIT，完成赢则保留原 errno/partial 并回复 UNLINK0。取消不能撤回已送出的部分 OUT 数据。
 
-EOF、写失败、Drop 和 shutdown 只发起关闭。监督器保留真实请求直到回收，释放实际取得的接口；恢复 alternate 和驱动仅限本会话确证取得的原接口，不接管新外部占用。仅当本会话修改过配置且当前仍匹配最后确认状态时，才可恢复原配置。原配置、alternate、驱动和代际须独立核对；超时或不确定时保持隔离，不能用丢弃 future 冒充取消。热拔会关闭对应 TCP，即使没有活动 URB；旧 slot 不重新打开 Bus ID，重插需要重新核验并获取新代际 FD。
+每个新接口 detach/claim 前，物理可选 feature 复用 `rustusb-linux` scanner 重新检查当前配置的设备身份、完整接口集合、存储驱动/块后代和外部占用；此前已取得的 usbfs 接口仅按本次持有集合放行。扫描前后核对配置和代际，配置 0 不执行接口 claim。释放自有接口后、恢复配置或驱动前也重新检查，不能在新配置已经出现危险驱动时盲目回滚。该检查不能预知所有 inactive vendor quirk 或消除外部管理员的 TOCTOU。
+
+EOF、写失败、Drop 和 shutdown 只发起关闭。监督器保留真实请求直到回收，释放实际取得的接口；恢复 alternate 和驱动仅限本会话确证取得的原接口，不接管新外部占用。每个原接口恢复前重新观察，内核 probe 已同步恢复 sibling 或原 alternate 时不重复 claim/CONNECT；CONNECT 错误也只有实际原驱动已在同代际/原配置恢复才能收敛。仅当本会话修改过配置且当前仍匹配最后确认状态并通过安全检查时，才可恢复原配置。原配置、alternate、驱动和代际须独立核对；超时或不确定时保持隔离，不能用丢弃 future 冒充取消。热拔会关闭对应 TCP，即使没有活动 URB；旧 slot 不重新打开 Bus ID，重插需要重新核验并获取新代际 FD。
 
 FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策略变更或关闭 helper socket 无法撤销已经交付的 FD。它不是逐请求沙箱，也没有实现可撤销的持久租约。部署边界见[安全模型](security.md)，使用方法见[物理服务指南](rust-physical-server.md)。干净37bc6b4的USBFS正常/热拔及原虚拟回归均已通过；软件检查不能代替双端实际 I/O、驱动恢复、热拔及真实硬件验收，最新结果见[工作日志](work-log.md)。
 

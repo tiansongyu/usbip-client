@@ -168,3 +168,6 @@
 - 上一轮为实际进展：USBFS adapter、Native修复、206项软件检查、3项最终QEMU/6guest、四平台CI和全部原始证据已提交推送。最后文档更正7d06ffa与远端一致、工作树clean，CI39788484935四job全部success；完整目标仍active，真实硬件不因QEMU通过改成完成。
 - 本轮重新读取原始附件、AGENTS、项目skill、roadmap和物理设计，并并行审查模型/实现/验收边界。QEMU6.2 usb-net实际ECM配置值为1、RNDIS为2，ECM IF1 alt0无端点、alt1有Bulk；以固定源码和运行观察区分descriptor index与configuration value。
 - 源码审查发现真实Composite恢复缺口：CDC控制接口probe会同步认领数据接口，而当前恢复循环仍用此前的全接口快照，可能对已恢复的第二接口再次CONNECT并因EBUSY误隔离。先写入`research/usbfs-composite-qemu-design.md`的窄修复与确定性回归契约，再实施；目前尚未通过新的QEMU，不提前声明修复或兼容性通过。
+- 设计提交57ca5a8；实现逐自有IF重观察和错误后严格真实收敛，原alternate已被内核恢复时不重复claim。5个确定性fixture覆盖sibling同步绑定、真实匹配/不同driver、代际/配置变化及未owned不操作；定向35项与Clippy通过，旧原始日志保留。
+- 独立审查补出新配置安全缺口：SET_CONFIGURATION后可能出现旧active快照未包含的vendor-class存储驱动或block后代，不能立即detach新接口。增加可选既有scanner依赖，在每个claim及恢复动作前核对当前scope、ID、全IF、blockers和外部所有权；只允许本次实际持有的usbfs sibling。配置0合法且不claim；新危险owner使恢复拒绝而不盲目回滚配置。此检查不撤销已触发kernel probe、不预知所有inactive quirk或消除admin TOCTOU。新增5项安全fixture后后端40项及Clippy通过，Cargo.lock仅增加既有path依赖边，清单仍100包/版本不变。
+- root冻结产品后执行完整`bash scripts/check.sh` exit0：默认89/allfeatures113/vendor14合计216项，0失败/0忽略及fmt、两组Clippy/release/严格Rustdoc全过。独立产品复核无mustfix；6份中间/最终软件日志原字节归档，聚合`evidence/composite-software-validation-20261022.json`记录当前96份软件输入SHA及执行环境。这是dirty开发软件gate，后续仍需提交冻结后的实际ECM QEMU，不把软件检查当设备通过。
