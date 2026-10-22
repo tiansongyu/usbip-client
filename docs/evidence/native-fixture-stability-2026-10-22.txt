@@ -1,0 +1,35 @@
+Native executable fixture stability verification
+Started UTC: 2026-10-22T10:50:26.390726+00:00
+Git baseline: 21e98f9644974c8dd204e6f476b52d14715cb629
+Working tree: modified; source SHA256 values identify the tested fixture revision.
+Command for each round: cargo test -p rustusb-native --lib -- --test-threads=64
+Rounds: 20; no strace; no production retry or changed timeout/assertion.
+Scope: test-only shared mutex serializes temporary executable creation through child cleanup across native and diagnostics fixture tests.
+Earlier captured evidence proves ETXTBSY for the old native timeout fixture. Exact descriptor inheritance mechanism and the earlier diagnostics IoError errno remain unproven.
+This stability check does not replace the final workspace gate or QEMU tests.
+crates/rustusb-native/src/lib.rs SHA256 08bcd536d3b397734dbf6348df3c1d4e20063c1eb041e8e0798d799c637ee0cd
+crates/rustusb-native/src/diagnostics.rs SHA256 04d29734bd2164fc3cf3eef9e7a1e451fd6b935eedd00687d30f490b34c3113d
+Round 01: exit=0; seconds=1.303; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 02: exit=0; seconds=1.285; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s
+Round 03: exit=0; seconds=1.302; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 04: exit=0; seconds=1.299; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 05: exit=0; seconds=1.305; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 06: exit=0; seconds=1.299; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 07: exit=0; seconds=1.292; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 08: exit=0; seconds=1.298; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 09: exit=0; seconds=1.293; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 10: exit=0; seconds=1.303; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 11: exit=0; seconds=1.281; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s
+Round 12: exit=0; seconds=1.291; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 13: exit=0; seconds=1.291; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 14: exit=0; seconds=1.294; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 15: exit=0; seconds=1.305; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 16: exit=0; seconds=1.304; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 17: exit=0; seconds=1.291; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 18: exit=0; seconds=1.290; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Round 19: exit=0; seconds=1.305; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+Round 20: exit=0; seconds=1.292; test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s
+Completed UTC: 2026-10-22T10:50:52.315336+00:00
+Result: PASS (20/20 rounds)
+After these rounds, the test mutex cfg was narrowed from test to all(test, unix), matching all callers and avoiding unused code on other platforms. Linux behavior is unchanged; the final workspace gate validates this final revision.
+Final lib.rs SHA256 after cfg-only narrowing: 87950b4ea0783cd1ec7d3f3eccf43c1a6542da4197e6b66a0b1650dde33295ae

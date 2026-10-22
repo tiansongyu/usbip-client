@@ -1,0 +1,27 @@
+RustUSB local diagnostics (read-only)
+System: linux / x86_64 / kernel 6.8.0-106-generic
+kernel release: Available — Running Linux kernel release identified
+  Action: Use tools and modules packaged for this exact running kernel
+usbip: Available — Trusted fixed version command succeeded
+  Action: Keep the distribution tool package aligned with the running kernel; this probe does not test device operations
+usbipd: Available — Trusted fixed version command succeeded
+  Action: Keep the distribution tool package aligned with the running kernel; this probe does not test device operations
+usbip_host loaded: NotLoaded — No loaded-module sysfs directory observed
+  Action: An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy
+usbip_host sysfs: Missing — usbip-host driver directory unavailable (NotFound)
+  Action: An administrator should verify usbip_host is loaded and sysfs is mounted
+usbip_host availability: Available — Matching running-kernel module index and regular module file observed; loadability was not tested
+  Action: Have the administrator load the matching module after reviewing policy; the current helper does not load modules
+vhci_hcd loaded: NotLoaded — No loaded-module sysfs directory observed
+  Action: An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy
+vhci_hcd sysfs: Missing — No supported VHCI controller/status interface observed
+  Action: An administrator should verify vhci_hcd is loaded; the adapter requires 1..=256 ports
+vhci_hcd availability: Available — Matching running-kernel module index and regular module file observed; loadability was not tested
+  Action: Have the administrator load the matching module after reviewing policy; the current helper does not load modules
+Tool: /usr/bin/usbip / version usbip (usbip-utils 2.0)
+Tool: /usr/bin/usbipd / version usbipd (usbip-utils 2.0)
+Helper: Missing — The helper socket or its protected directory is missing.
+  Action: Ask an administrator to install/configure and start rustusb-helper; use the configured --socket path.
+Export requires: native.usbip, native.usbip_host.sysfs, helper
+Import requires: native.usbip, native.vhci_hcd.sysfs, helper
+Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported.

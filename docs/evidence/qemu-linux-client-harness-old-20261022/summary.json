@@ -1,0 +1,63 @@
+{
+  "started_at_utc": "20261022T103707Z",
+  "kernel": "6.8.0-106-generic",
+  "scope": "two isolated guests; QEMU simulated USB device; Native Linux data path; no physical USB",
+  "scenario": "linux-client",
+  "device": "hid",
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "21e98f9644974c8dd204e6f476b52d14715cb629",
+  "working_tree_dirty": true,
+  "build_performed": false,
+  "cargo_lock_sha256": "d77d54662c86143e16cd65f615ef5a1a318fbc27bac494dbff41d10e7c6fa323",
+  "source_fingerprint_sha256": "459e867f37ac4dd8a347e3013805d339620b311bd3019b3bbf0ad00c14041355",
+  "script_sha256": {
+    "guest-init.sh": "18ff3837072a9ab5ef202affa0b5cad1afac631dbf3c06bd667b0e47f6cdcfee",
+    "run-native-qemu.py": "65f746cd5295ce46a5c25de92e3c1f8c4057a4c182db495fcfe911f6a8611dd7"
+  },
+  "binary_sha256": {
+    "rustusb": "8f0ba70032cbd6f88f4dd9f57e49934c2921fd368a1f571968c6822ae3298931",
+    "rustusb-helper": "f3b89092246d8f8ff1a6f4f707b71ff7a3e6aea5ab7fb57bab066c064c52b892"
+  },
+  "result": "PASS",
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "fd8dad275a1c44f6e4cb005c44a672c0538fe9a2048c3523836f7b8c13ba793a",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "qmp_key_injections": [
+    1,
+    2
+  ],
+  "server_checks": [
+    "RUSTUSB_QEMU_BOOT role=server scenario=linux-client device=hid kernel=6.8.0-106-generic",
+    "RUSTUSB_SERVER_READY bus_id=1-1 cli_uid=1000",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=1 local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_SERVER_REEXPORTED cycle=2",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=2 local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_QEMU_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_QEMU_BOOT role=client scenario=linux-client device=hid kernel=6.8.0-106-generic",
+    "RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_EXTERNAL_SESSION_GATE: PASS cycle=1 ownership=unmanaged unchanged=true",
+    "RUSTUSB_LINUX_CLIENT: PASS cycle=1 list=true port=true",
+    "RUSTUSB_WAIT_INPUT cycle=1 local_bus_id=1-1 driver=usbhid",
+    "RUSTUSB_HID_INPUT: PASS cycle=1 KEY_1_down",
+    "RUSTUSB_CLIENT_DETACHED cycle=1 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_EXTERNAL_SESSION_GATE: PASS cycle=2 ownership=unmanaged unchanged=true",
+    "RUSTUSB_LINUX_CLIENT: PASS cycle=2 list=true port=true",
+    "RUSTUSB_WAIT_INPUT cycle=2 local_bus_id=1-1 driver=usbhid",
+    "RUSTUSB_HID_INPUT: PASS cycle=2 KEY_1_down",
+    "RUSTUSB_CLIENT_DETACHED cycle=2 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_QEMU_RESULT: PASS role=client"
+  ],
+  "pass_markers_verified": true,
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  }
+}

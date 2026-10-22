@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "native": {
+    "system": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "kernel_release": "6.8.0-106-generic",
+      "kernel": {
+        "status": "available",
+        "detail": "Running Linux kernel release identified",
+        "action": "Use tools and modules packaged for this exact running kernel"
+      }
+    },
+    "usbip_host": {
+      "module": "usbip_host",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "usbip-host driver directory unavailable (NotFound)",
+        "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+      },
+      "availability": {
+        "status": "available",
+        "detail": "Matching running-kernel module index and regular module file observed; loadability was not tested",
+        "action": "Have the administrator load the matching module after reviewing policy; the current helper does not load modules"
+      }
+    },
+    "vhci_hcd": {
+      "module": "vhci_hcd",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "No supported VHCI controller/status interface observed",
+        "action": "An administrator should verify vhci_hcd is loaded; the adapter requires 1..=256 ports"
+      },
+      "availability": {
+        "status": "available",
+        "detail": "Matching running-kernel module index and regular module file observed; loadability was not tested",
+        "action": "Have the administrator load the matching module after reviewing policy; the current helper does not load modules"
+      }
+    },
+    "usbip": {
+      "path": "/usr/bin/usbip",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbip (usbip-utils 2.0)"
+    },
+    "usbipd": {
+      "path": "/usr/bin/usbipd",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbipd (usbip-utils 2.0)"
+    },
+    "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+  },
+  "helper": {
+    "status": "missing",
+    "detail": "The helper socket or its protected directory is missing.",
+    "action": "Ask an administrator to install/configure and start rustusb-helper; use the configured --socket path.",
+    "peer_verified": false,
+    "kernel_available": null,
+    "active_sessions": null,
+    "external_trusted_network_confirmed": null
+  },
+  "required_for_export": [
+    "native.usbip",
+    "native.usbip_host.sysfs",
+    "helper"
+  ],
+  "required_for_import": [
+    "native.usbip",
+    "native.vhci_hcd.sysfs",
+    "helper"
+  ],
+  "built_in_encryption": false,
+  "network_security_verified": false,
+  "hardware_test_performed": false,
+  "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+}

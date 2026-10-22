@@ -1,0 +1,42 @@
+
+running 28 tests
+test diagnostics::tests::module_entries_require_exact_safe_paths_and_names ... ok
+test diagnostics::tests::version_does_not_expose_multiline_control_or_arbitrary_output ... ok
+test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+test diagnostics::tests::module_installation_and_loaded_sysfs_are_separate_observations ... ok
+test diagnostics::tests::trust_checks_distinguish_missing_nonexecutable_and_untrusted_paths ... ok
+test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+test diagnostics::tests::effective_driver_checks_require_attributes_and_valid_complete_status ... ok
+test diagnostics::tests::kernel_release_and_file_reads_are_bounded_and_do_not_accept_directories ... ok
+test diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output ... ok
+test diagnostics::tests::kernel_configuration_distinguishes_disabled_builtin_and_unknown ... ok
+test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... FAILED
+test tests::unsafe_record_directory_is_rejected_before_running_attach_tool ... ok
+test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+test tests::unknown_export_state_and_untrusted_endpoint_records_are_rejected ... ok
+test tests::snapshot_rejects_replacement_between_usb_attribute_reads ... ok
+test tests::missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup ... ok
+test tests::same_device_on_reused_port_requires_the_original_generation_receipt ... ok
+test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+test tests::detach_waits_for_old_sysfs_generation_after_port_becomes_null ... ok
+test tests::detach_does_not_wait_for_replacement_generation_at_same_path ... ok
+test diagnostics::tests::version_runner_timeout_and_output_limit_kill_and_reap ... ok
+test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+test tests::export_and_unexport_require_observed_driver_changes ... ok
+test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+
+failures:
+
+failures:
+    tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded
+
+test result: FAILED. 27 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+
+thread 'tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded' (3816259) panicked at crates/rustusb-native/src/lib.rs:1249:9:
+Err(Io(Os { code: 26, kind: ExecutableFileBusy, message: "Text file busy" }))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

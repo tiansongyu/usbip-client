@@ -1,0 +1,116 @@
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+   Compiling rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/main.rs (target/debug/deps/rustusb-f8eb7860bdb8c953)
+
+running 1 test
+test tests::cli_schema_and_input_validation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+
+running 2 tests
+test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+test tests::validate_external_identifiers_and_serde ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-bfcdf0d831ff1d68)
+
+running 16 tests
+test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+test tests::command_output_is_not_exposed ... ok
+test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/main.rs (target/debug/deps/rustusb_helper-3cdc0e382503abab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_linux-4e63b969cba8af37)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery.rs (target/debug/deps/discovery-d3355eefac2ba508)
+
+running 8 tests
+test missing_root_is_reported_instead_of_successful_empty_scan ... ok
+test kernel_export_occupancy_and_attribute_limits_are_explicit ... ok
+test composite_storage_and_inactive_storage_are_blocked ... ok
+test block_descendants_are_denied_without_following_subsystem_symlinks ... ok
+test unknown_hubs_short_reads_and_removed_devices_fail_closed ... ok
+test descendant_budget_exhaustion_refuses_to_claim_storage_safety ... ok
+test metadata_and_fingerprint_survive_bus_and_address_reenumeration ... ok
+test storage_driver_is_blocked_even_for_vendor_class_quirks ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_native-250e96ca480c2cb2)
+
+running 28 tests
+test diagnostics::tests::module_entries_require_exact_safe_paths_and_names ... ok
+test diagnostics::tests::version_does_not_expose_multiline_control_or_arbitrary_output ... ok
+test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+test diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output ... FAILED
+test diagnostics::tests::trust_checks_distinguish_missing_nonexecutable_and_untrusted_paths ... ok
+test diagnostics::tests::kernel_configuration_distinguishes_disabled_builtin_and_unknown ... ok
+test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+test diagnostics::tests::kernel_release_and_file_reads_are_bounded_and_do_not_accept_directories ... ok
+test diagnostics::tests::module_installation_and_loaded_sysfs_are_separate_observations ... ok
+test diagnostics::tests::effective_driver_checks_require_attributes_and_valid_complete_status ... ok
+test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+test tests::unsafe_record_directory_is_rejected_before_running_attach_tool ... ok
+test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+test tests::snapshot_rejects_replacement_between_usb_attribute_reads ... ok
+test tests::unknown_export_state_and_untrusted_endpoint_records_are_rejected ... ok
+test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+test tests::same_device_on_reused_port_requires_the_original_generation_receipt ... ok
+test tests::missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup ... ok
+test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+test tests::detach_does_not_wait_for_replacement_generation_at_same_path ... ok
+test tests::detach_waits_for_old_sysfs_generation_after_port_becomes_null ... ok
+test diagnostics::tests::version_runner_timeout_and_output_limit_kill_and_reap ... ok
+test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+test tests::export_and_unexport_require_observed_driver_changes ... ok
+test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... ok
+test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+
+failures:
+
+---- diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output stdout ----
+
+thread 'diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output' (3798270) panicked at crates/rustusb-native/src/diagnostics.rs:1120:9:
+assertion `left == right` failed
+  left: IoError
+ right: Available
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output
+
+test result: FAILED. 27 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+error: test failed, to rerun pass `-p rustusb-native --lib`

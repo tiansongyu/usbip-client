@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise RustUSB across two disposable Linux guests with one simulated USB keyboard.
+"""Exercise Native USB/IP across two disposable Linux guests and a simulated USB device.
 
 Only guest kernels load modules and bind devices. Host access is read-only except
 temporary artifacts, QEMU processes and saved evidence. No USB host passthrough,
@@ -24,7 +24,8 @@ import time
 
 REPO = Path(__file__).resolve().parents[2]
 MODULES = ["usb-common", "usbcore", "e1000", "xhci-hcd", "xhci-pci-renesas",
-           "xhci-pci", "evdev", "hid", "hid-generic", "usbhid", "usbip-core", "usbip-host", "vhci-hcd"]
+           "xhci-pci", "evdev", "hid", "hid-generic", "usbhid", "usbserial", "ftdi_sio",
+           "usbip-core", "usbip-host", "vhci-hcd"]
 
 
 def run(command, **kwargs):
@@ -140,6 +141,8 @@ def main():
     parser.add_argument("--timeout", default=180, type=int)
     parser.add_argument("--skip-build", action="store_true")
     parser.add_argument("--evidence", type=Path)
+    parser.add_argument("--scenario", choices=["managed", "linux-client", "linux-server", "reconnect"], default="managed")
+    parser.add_argument("--device", choices=["hid", "ftdi-serial"], default="hid")
     args = parser.parse_args()
     if os.geteuid() == 0:
         raise RuntimeError("Run as an ordinary user. Only kernel-image copying may use sudo.")
@@ -147,12 +150,18 @@ def main():
         raise RuntimeError("This runner currently verifies x86_64 host/guest only.")
     if not 30 <= args.timeout <= 1800:
         parser.error("--timeout must be between 30 and 1800 seconds")
+    if args.scenario == "reconnect" and args.device != "hid":
+        parser.error("the reconnect ownership scenario currently requires --device hid")
     if not args.skip_build:
         run(["cargo", "build", "--workspace", "--release", "--locked"], cwd=REPO)
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    evidence = args.evidence or REPO / "docs/evidence" / f"qemu-native-{timestamp}"
+    suffix = "" if args.scenario == "managed" and args.device == "hid" else f"-{args.scenario}-{args.device}"
+    evidence = (args.evidence or REPO / "docs/evidence" / f"qemu-native{suffix}-{timestamp}").resolve()
     evidence.mkdir(parents=True, exist_ok=False)
-    summary = {"started_at_utc": timestamp, "kernel": args.kernel, "scope": "two isolated guests; QEMU simulated USB keyboard; no physical USB",
+    summary = {"started_at_utc": timestamp, "kernel": args.kernel,
+               "scope": "two isolated guests; QEMU simulated USB device; Native Linux data path; no physical USB",
+               "scenario": args.scenario, "device": args.device,
+               "qemu_version": subprocess.check_output(["qemu-system-x86_64", "--version"], text=True).strip(),
                "host_uid": os.geteuid(), "host_architecture": os.uname().machine,
                "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
                "working_tree_dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO)),
@@ -165,6 +174,9 @@ def main():
                                  for name in ["rustusb", "rustusb-helper"]}, "result": "FAIL"}
     processes = []
     handles = []
+    serial_socket = None
+    injected = set()
+    serial_received = bytearray()
     try:
         with tempfile.TemporaryDirectory(prefix="rustusb-native-qemu-") as temporary:
             work = Path(temporary)
@@ -175,6 +187,9 @@ def main():
                 run(["sudo", "-n", "cp", f"/boot/vmlinuz-{args.kernel}", str(image)])
                 run(["sudo", "-n", "chmod", "644", str(image)])
             archive = initramfs(work, args.kernel)
+            summary["kernel_image_sha256"] = sha256(image)
+            summary["initramfs_sha256"] = sha256(archive)
+            summary["native_tool_sha256"] = {name: sha256(real_tool(name, args.kernel)) for name in ["usbip", "usbipd"]}
             left, right = socket.socketpair()
             acceleration = ["-enable-kvm", "-cpu", "host"] if os.access("/dev/kvm", os.R_OK | os.W_OK) else ["-cpu", "max"]
             summary["acceleration"] = "kvm" if "-enable-kvm" in acceleration else "tcg"
@@ -184,20 +199,25 @@ def main():
                 handles.append(stderr)
                 command = ["qemu-system-x86_64", "-m", "384", "-smp", "2", *acceleration,
                            "-kernel", str(image), "-initrd", str(archive),
-                           "-append", f"console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role={role}",
+                           "-append", f"console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role={role} rustusb.scenario={args.scenario} rustusb.device={args.device}",
                            "-display", "none", "-serial", f"file:{evidence / (role + '-serial.log')}",
                            "-monitor", "none", "-no-reboot", "-nic", "none",
                            "-netdev", f"socket,id=private,fd={link.fileno()}",
                            "-device", f"e1000,netdev=private,mac=52:54:00:00:00:{'01' if role == 'server' else '02'}"]
                 if role == "server":
-                    command += ["-device", "qemu-xhci,id=usb", "-device", "usb-kbd,bus=usb.0",
-                                "-qmp", f"unix:{qmp_path},server=on,wait=off"]
+                    command += ["-device", "qemu-xhci,id=usb", "-qmp", f"unix:{qmp_path},server=on,wait=off"]
+                    if args.device == "hid":
+                        command += ["-device", "usb-kbd,bus=usb.0"]
+                    else:
+                        command += ["-chardev", f"socket,id=serial,path={work / 'ftdi.sock'},server=on,wait=off",
+                                    "-device", "usb-serial,bus=usb.0,chardev=serial,always-plugged=on"]
                 processes.append(subprocess.Popen(command, pass_fds=[link.fileno()], stdin=subprocess.DEVNULL,
                                                   stdout=subprocess.DEVNULL, stderr=stderr))
             left.close()
             right.close()
             deadline = time.monotonic() + args.timeout
-            injected = set()
+            cycles = [1, 2, 3] if args.scenario == "reconnect" else [1, 2]
+            expected_serial = b"".join(f"RUSTUSB-TX-{cycle}-0001:fedcba9876543210\n".encode() for cycle in cycles)
             markers_seen = False
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as qmp:
                 qmp.settimeout(5)
@@ -209,16 +229,40 @@ def main():
                 reader = qmp.makefile("rb")
                 json.loads(reader.readline())
                 qmp_command(qmp, reader, "qmp_capabilities")
+                if args.device == "ftdi-serial":
+                    serial_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                    serial_socket.settimeout(5)
+                    serial_socket.connect(str(work / "ftdi.sock"))
+                    serial_socket.setblocking(False)
                 while time.monotonic() < deadline:
                     client = (evidence / "client-serial.log").read_text(errors="replace")
                     server = (evidence / "server-serial.log").read_text(errors="replace")
-                    for cycle in [1, 2]:
-                        if f"RUSTUSB_WAIT_INPUT cycle={cycle}" in client and cycle not in injected:
-                            qmp_command(qmp, reader, "send-key", {"keys": [{"type": "qcode", "data": "1"}], "hold-time": 100})
+                    for cycle in cycles:
+                        marker = "RUSTUSB_WAIT_INPUT" if args.device == "hid" else "RUSTUSB_WAIT_SERIAL"
+                        if f"{marker} cycle={cycle} " in client and cycle not in injected:
+                            if args.device == "hid":
+                                qmp_command(qmp, reader, "send-key", {"keys": [{"type": "qcode", "data": "1"}], "hold-time": 100})
+                            else:
+                                serial_socket.settimeout(2)
+                                serial_socket.sendall(f"RUSTUSB-RX-{cycle}-0001:0123456789abcdef\n".encode())
+                                serial_socket.setblocking(False)
                             injected.add(cycle)
+                    if serial_socket is not None:
+                        while True:
+                            try:
+                                chunk = serial_socket.recv(4096)
+                            except BlockingIOError:
+                                break
+                            if not chunk:
+                                break
+                            serial_received.extend(chunk)
+                            if not expected_serial.startswith(serial_received):
+                                raise RuntimeError("FTDI output differs from the exact sequenced test frames")
                     if "RUSTUSB_QEMU_RESULT: FAIL" in client + server:
                         raise RuntimeError("guest reported a test failure")
-                    if "RUSTUSB_QEMU_RESULT: PASS role=client" in client and "RUSTUSB_QEMU_RESULT: PASS role=server" in server:
+                    if ("RUSTUSB_QEMU_RESULT: PASS role=client" in client
+                            and "RUSTUSB_QEMU_RESULT: PASS role=server" in server
+                            and (serial_socket is None or serial_received == expected_serial)):
                         markers_seen = True
                         break
                     if all(process.poll() is not None for process in processes):
@@ -226,19 +270,40 @@ def main():
                     time.sleep(0.1)
                 if not markers_seen:
                     raise RuntimeError("QEMU native integration deadline exceeded")
-            summary["qmp_key_injections"] = sorted(injected)
-            if sorted(injected) != [1, 2]:
-                raise RuntimeError("Both QMP key injections were not observed")
+            summary["qmp_key_injections" if args.device == "hid" else "serial_frame_injections"] = sorted(injected)
+            if sorted(injected) != cycles:
+                raise RuntimeError("All required synthetic input injections were not observed")
+            if args.device == "ftdi-serial":
+                summary["serial_output"] = {"expected_bytes": len(expected_serial), "received_bytes": len(serial_received),
+                                            "sha256": hashlib.sha256(serial_received).hexdigest(),
+                                            "exact_match": serial_received == expected_serial}
+                if serial_received != expected_serial:
+                    raise RuntimeError("FTDI output was incomplete")
             for role, process in zip(["server", "client"], processes):
                 text = (evidence / f"{role}-serial.log").read_text(errors="replace")
                 summary[role + "_checks"] = [line.strip() for line in text.splitlines() if line.startswith("RUSTUSB_")]
-                required = (["RUSTUSB_SERVER_UNEXPORTED cycle=1 local_driver=usb interface_driver=usbhid",
-                             "RUSTUSB_SERVER_UNEXPORTED cycle=2 local_driver=usb interface_driver=usbhid"] if role == "server" else
-                            ["RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
-                             "RUSTUSB_HID_INPUT: PASS cycle=1 KEY_1_down", "RUSTUSB_HID_INPUT: PASS cycle=2 KEY_1_down",
-                             "RUSTUSB_CLIENT_DETACHED cycle=1 kernel_sessions=0 device_removed=true",
-                             "RUSTUSB_CLIENT_DETACHED cycle=2 kernel_sessions=0 device_removed=true"])
-                if not all(marker in summary[role + "_checks"] for marker in required):
+                if role == "server":
+                    driver = "usbhid" if args.device == "hid" else "ftdi_sio"
+                    unexport_cycles = [3] if args.scenario == "reconnect" else cycles
+                    required = [f"RUSTUSB_SERVER_UNEXPORTED cycle={cycle} local_driver=usb interface_driver={driver}"
+                                for cycle in unexport_cycles]
+                    if args.scenario == "linux-server":
+                        required += ["RUSTUSB_EXTERNAL_EXPORT_GATE: PASS ownership=unmanaged unchanged=true"]
+                else:
+                    required = ["RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000"]
+                    required += [f"RUSTUSB_CLIENT_DETACHED cycle={cycle} kernel_sessions=0 device_removed=true" for cycle in cycles]
+                    if args.device == "hid":
+                        required += [f"RUSTUSB_HID_INPUT: PASS cycle={cycle} KEY_1_down" for cycle in cycles]
+                    else:
+                        required += [f"RUSTUSB_SERIAL_INPUT: PASS cycle={cycle} driver=ftdi_sio " for cycle in cycles]
+                    if args.scenario == "linux-client":
+                        required += [f"RUSTUSB_LINUX_CLIENT: PASS cycle={cycle} list=true port=true" for cycle in cycles]
+                        required += [f"RUSTUSB_EXTERNAL_SESSION_GATE: PASS cycle={cycle} ownership=unmanaged unchanged=true" for cycle in cycles]
+                    if args.scenario == "reconnect":
+                        required += ["RUSTUSB_DIRECT_RECONNECT: PASS ", "RUSTUSB_REUSED_PORT_GATE: PASS "]
+                required += [f"RUSTUSB_DOCTOR_GATE: PASS role={role} missing_before=true root_peer_verified=true denied_uid=1001 network_verified=false hardware_verified=false"]
+                if not all(any(line == marker or (marker.endswith(" ") and line.startswith(marker))
+                               for line in summary[role + "_checks"]) for marker in required):
                     raise RuntimeError(f"Required {role} evidence marker missing")
                 if process.wait(timeout=10) != 0:
                     raise RuntimeError(f"{role} QEMU exited unsuccessfully despite PASS markers")
@@ -250,6 +315,12 @@ def main():
         summary["error"] = str(error)
         raise
     finally:
+        if serial_socket is not None:
+            serial_socket.close()
+        summary["qmp_key_injections" if args.device == "hid" else "serial_frame_injections"] = sorted(injected)
+        if args.device == "ftdi-serial":
+            summary["serial_received_bytes"] = len(serial_received)
+            summary["serial_received_sha256"] = hashlib.sha256(serial_received).hexdigest()
         for process in processes:
             if process.poll() is None:
                 process.terminate()

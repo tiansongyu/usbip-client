@@ -82,7 +82,9 @@ lsusb -t
 
 用户已要求使用 QEMU 仿真。除上游模拟设备研究外，必须建立**本项目双来宾 Native 全链路** G1-Q：两个隔离来宾运行本项目构建产物和原生内核模块，服务端将可控虚拟 USB 设备绑定 usbip_host，客户端经实际 helper 导入到 VHCI。测试完整的 export / discover / attach / 功能 I/O / detach / unexport，同时验证 UID 和设备策略拒绝。来宾 root helper 只在隔离来宾内运行，不在开发宿主绑定任何真实设备。
 
-G1-Q 计划入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-init.sh`：两个来宾使用独立虚拟网卡与 QEMU socket 网络，地址为 192.0.2.1 / 192.0.2.2，无宿主 USB passthrough。服务端仅使用 QEMU 虚拟键盘，通过 QMP 注入按键，客户端 evdev 验证 KEY_1；释放后再连一次确认恢复。测试记录 QEMU 版本、来宾内核 / initramfs 来源、模块、复制的二进制及库、两个来宾独立日志、退出状态和持久证据位置。
+G1-Q 入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-init.sh`：两个来宾使用独立虚拟网卡与 QEMU socket 网络，地址为 192.0.2.1 / 192.0.2.2，无宿主 USB passthrough。默认服务端使用 QEMU 虚拟键盘，通过 QMP 注入按键，客户端 evdev 验证 KEY_1；释放后再连一次确认恢复。`--device ftdi-serial` 使用FT232BM厂商类Bulk串口，核对ftdi_sio与双向完整序号字节；它不提供CDC ACM证据。测试记录 QEMU 版本、来宾内核 / initramfs 来源、模块、复制的二进制及库、两个来宾独立日志、退出状态和持久证据位置。
+
+互操作场景使用 `--scenario managed|linux-client|linux-server`，各支持上述两种设备；`--scenario reconnect` 用HID验证外部释放后直接重连和同端口新代际拒绝控制。两端另有helper启动前/后和未授权UID的真实doctor断言，核对schema1、版本、有效sysfs、root peer和状态分类；doctor退出0不能代替授权判断。完整命令、源码依据、负向所有权断言及实际结果见[矩阵记录](research/native-qemu-matrix.md)。
 
 若仿真使用隔离的明文测试网络，明确它仅是测试环境，不宣称已满足 VPN / TLS 安全远程 gate；不能用设置 `trusted_network` 布尔值代替外部网络控制证据。脚本落地后在工作记录给出实际命令及结果；在此之前标未执行。双来宾仿真通过仍不证明物理设备兼容性或两个真实 Ubuntu 系统的 G1 硬件 gate。
 
@@ -94,7 +96,7 @@ G1-Q 计划入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-i
 | 虚拟 HID / CDC ACM | 参考固定上游 commit 的 QEMU 脚本，记录 QEMU / 来宾内核、设备模型和具体启动参数；验证枚举、事件 / 字节传输 | Phase 2 |
 | 异常与重连 | QEMU / 协议 harness 断开、重新枚举、非法头、截断、错误序号、版本不兼容，验证错误和资源回收 | Phase 2 |
 
-原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。QEMU 测试需要其实际后端代码落地后提供可执行脚本，未建立脚本时记录未执行，不编造仓库中不存在的测试入口。
+原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。当前已提供Native双guest脚本；后续Rust服务端、CDC和网络故障测试须分别建立入口并记录结果，不能复用本轮Native通过标签。
 
 ## 5. 状态机和异常测试
 
