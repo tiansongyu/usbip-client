@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-22",
+  "target": "USB/IP DEVLIST parser",
+  "command": "scripts/fuzz-smoke.sh",
+  "exit_code": 0,
+  "rust": "1.101.0-nightly (1a2c4797e 2026-10-21)",
+  "cargo_fuzz": "0.13.2",
+  "sanitizer": "AddressSanitizer (cargo-fuzz default)",
+  "runs": 3412047,
+  "duration_seconds": 21,
+  "coverage_counters": 284,
+  "features": 709,
+  "seed": 291922576,
+  "rss_mib": 341,
+  "seed_files": 3,
+  "corpus_entries_at_end": 173,
+  "crashes_observed": 0,
+  "limits": {
+    "max_total_time_seconds": 20,
+    "rss_limit_mb": 512,
+    "max_len": 131072
+  },
+  "limitations": "Short development smoke run; no proof of exhaustive safety, kernel URB compatibility, IPC, or real USB throughput. RSS includes sanitizer overhead.",
+  "source_sha256": {
+    "crates/rustusb-protocol/src/lib.rs": "ece59914622e18266f2014783efd4ed5ee3f747214ea3246a4401a8abce9b684",
+    "fuzz/fuzz_targets/devlist.rs": "5d281eae2a864cd1940924d83a306e65986e8a60391f47f49e92c2f4237d8cc2"
+  },
+  "source_hash_note": "Source digests captured after rustfmt; the tested production parser differs only in formatting. A subsequent added unit test does not change parser behavior."
+}

@@ -40,9 +40,11 @@ CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定�
 
 **G1 软件 gate：** fmt / clippy / test / release build 全通过；设备解析、协议字节序 / 截断 / 上限、ID、配置、错误、超时 / 取消、helper 授权和命令参数均有自动测试；非 Linux 编译路径或平台错误明确；不使用 core `unwrap()` / `expect()` 隐藏外部错误。
 
+**G1-Q 仿真 gate（用户要求，独立验收）：** 用两个隔离的 QEMU Ubuntu / Linux 来宾运行本项目实际 RustUSB CLI、root helper、原生工具和内核模块，通过可控虚拟 USB 设备验证发现 → 授权 export → 远端 discover → attach → 客户端 VHCI 枚举与实际 I/O → detach → unexport。记录来宾内核、QEMU、设备模型、网络、安全边界和日志。上游 `jiegec/usbip` 自带 QEMU 测试、只跑本项目 parser、单个来宾和 mock 都不能替代本项目双来宾全链路 gate。仿真通过不改写真实设备支持矩阵。
+
 **G1 硬件 gate（必须）：** 两台测试 Ubuntu 通过受管安全网络，服务器导出至少一种真实、非存储测试 USB 设备，客户端经 RustUSB 管理的 Native 路径由 Linux 内核枚举，原生驱动完成实际功能操作；验证 detach / unexport、重新连接和清理。记录两端内核、工具、设备及网络路径。单主机、容器、mock、编译或 `usbip list` 通过均不能替代这一条件。
 
-**阶段状态规则：** 可交付“Phase 1 代码和自动检查完成、双机硬件验收待执行”，但只有 G1 软件与硬件 gate 均通过才称 Phase 1 完成。目标矩阵中未测的 OS / 架构仍标未验证。
+**阶段状态规则：** 可交付“Phase 1 代码和自动检查完成、QEMU 仿真通过、双机硬件验收待执行”（仅在相应证据存在时），但只有 G1 软件与硬件 gate 均通过才称 Phase 1 完成。目标矩阵中未测的 OS / 架构仍标未验证。
 
 ## 5. Phase 2：可选 Rust USB/IP 后端
 

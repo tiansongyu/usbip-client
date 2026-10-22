@@ -1,0 +1,129 @@
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.33s
+   Compiling rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.63s
+     Running unittests src/main.rs (target/debug/deps/rustusb-336aa9a498ddfdf9)
+
+running 1 test
+test tests::cli_schema_and_input_validation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+
+running 2 tests
+test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+test tests::validate_external_identifiers_and_serde ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-d08418714d9c3de7)
+
+running 8 tests
+test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+test tests::command_output_is_not_exposed ... ok
+test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/main.rs (target/debug/deps/rustusb_helper-4b29d04de85e784f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_linux-4e63b969cba8af37)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery.rs (target/debug/deps/discovery-d3355eefac2ba508)
+
+running 5 tests
+test missing_root_is_reported_instead_of_successful_empty_scan ... ok
+test composite_storage_and_inactive_storage_are_blocked ... ok
+test kernel_export_occupancy_and_attribute_limits_are_explicit ... ok
+test unknown_hubs_short_reads_and_removed_devices_fail_closed ... ok
+test metadata_and_fingerprint_survive_bus_and_address_reenumeration ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_native-d5fa1622ae4187c9)
+
+running 12 tests
+test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+test tests::export_and_unexport_require_observed_driver_changes ... ok
+test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... ok
+test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_protocol-64810c9d09a96150)
+
+running 4 tests
+test tests::parses_network_byte_order_and_interfaces ... ok
+test tests::rejects_malicious_lengths_headers_strings_duplicates_and_truncation ... ok
+test tests::accepts_exact_device_and_interface_limits ... ok
+test tests::actual_tcp_request_and_deadline ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+   Doc-tests rustusb_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_daemon
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_linux
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_native
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_protocol
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+   Compiling rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `release` profile [optimized] target(s) in 2.00s
+ Documenting rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+ Documenting rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+ Documenting rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+ Documenting rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+   Generated /home/ubuntu/github/usbip-client/target/doc/rustusb/index.html and 6 other files

@@ -80,6 +80,12 @@ lsusb -t
 
 ## 4. 协议互操作与 QEMU
 
+用户已要求使用 QEMU 仿真。除上游模拟设备研究外，必须建立**本项目双来宾 Native 全链路** G1-Q：两个隔离来宾运行本项目构建产物和原生内核模块，服务端将可控虚拟 USB 设备绑定 usbip_host，客户端经实际 helper 导入到 VHCI。测试完整的 export / discover / attach / 功能 I/O / detach / unexport，同时验证 UID 和设备策略拒绝。来宾 root helper 只在隔离来宾内运行，不在开发宿主绑定任何真实设备。
+
+G1-Q 计划入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-init.sh`：两个来宾使用独立虚拟网卡与 QEMU socket 网络，地址为 192.0.2.1 / 192.0.2.2，无宿主 USB passthrough。服务端仅使用 QEMU 虚拟键盘，通过 QMP 注入按键，客户端 evdev 验证 KEY_1；释放后再连一次确认恢复。测试记录 QEMU 版本、来宾内核 / initramfs 来源、模块、复制的二进制及库、两个来宾独立日志、退出状态和持久证据位置。
+
+若仿真使用隔离的明文测试网络，明确它仅是测试环境，不宣称已满足 VPN / TLS 安全远程 gate；不能用设置 `trusted_network` 布尔值代替外部网络控制证据。脚本落地后在工作记录给出实际命令及结果；在此之前标未执行。双来宾仿真通过仍不证明物理设备兼容性或两个真实 Ubuntu 系统的 G1 硬件 gate。
+
 | 场景 | 路径与判定 | 阶段 |
 | --- | --- | --- |
 | RustUSB Server → Linux 客户端 | Native 管理导出可先验证；客户端 `usbip list -r <host>`、`usbip attach -r <host> -b <busid>`，用 `usbip port` 与实际功能确认 | Native 在 Phase 1；Rust 服务端在 Phase 2 |

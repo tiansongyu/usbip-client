@@ -1,0 +1,21 @@
+[package]
+name = "rustusb-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+rustusb-protocol = { path = "../crates/rustusb-protocol" }
+
+[[bin]]
+name = "devlist"
+path = "fuzz_targets/devlist.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
