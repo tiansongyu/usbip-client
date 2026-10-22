@@ -1,0 +1,50 @@
+{
+  "started_at_utc": "20261022T101910Z",
+  "kernel": "6.8.0-106-generic",
+  "scope": "two isolated guests; QEMU simulated USB keyboard; no physical USB",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "97c29143e9dcb3491ec8aaf75132045a1bdd40ef",
+  "working_tree_dirty": false,
+  "build_performed": true,
+  "cargo_lock_sha256": "d77d54662c86143e16cd65f615ef5a1a318fbc27bac494dbff41d10e7c6fa323",
+  "source_fingerprint_sha256": "73d3a78fe3793b6fa89eb7a01374d74adbf35a38d1d09b0d7b5e581814ffadfc",
+  "script_sha256": {
+    "guest-init.sh": "8378d6ed339abf5a000591b35515f9aafe98a88aa1d84197350ba3b13f38d680",
+    "run-native-qemu.py": "a3d00ed9738b8f3279fb6591242b24977747d1e5a4b5b1533b08665568cff447"
+  },
+  "binary_sha256": {
+    "rustusb": "8f0ba70032cbd6f88f4dd9f57e49934c2921fd368a1f571968c6822ae3298931",
+    "rustusb-helper": "f3b89092246d8f8ff1a6f4f707b71ff7a3e6aea5ab7fb57bab066c064c52b892"
+  },
+  "result": "PASS",
+  "acceleration": "kvm",
+  "qmp_key_injections": [
+    1,
+    2
+  ],
+  "server_checks": [
+    "RUSTUSB_QEMU_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_SERVER_READY bus_id=1-1 cli_uid=1000",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=1 local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_SERVER_REEXPORTED cycle=2",
+    "RUSTUSB_SERVER_UNEXPORTED cycle=2 local_driver=usb interface_driver=usbhid",
+    "RUSTUSB_QEMU_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_QEMU_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_WAIT_INPUT cycle=1 local_bus_id=1-1 driver=usbhid",
+    "RUSTUSB_HID_INPUT: PASS cycle=1 KEY_1_down",
+    "RUSTUSB_CLIENT_DETACHED cycle=1 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_WAIT_INPUT cycle=2 local_bus_id=1-1 driver=usbhid",
+    "RUSTUSB_HID_INPUT: PASS cycle=2 KEY_1_down",
+    "RUSTUSB_CLIENT_DETACHED cycle=2 kernel_sessions=0 device_removed=true",
+    "RUSTUSB_QEMU_RESULT: PASS role=client"
+  ],
+  "pass_markers_verified": true,
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  }
+}

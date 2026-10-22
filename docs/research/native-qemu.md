@@ -69,3 +69,9 @@ python3 scripts/qemu/run-native-qemu.py --kernel 6.8.0-106-generic
 | [10:07:08](../evidence/qemu-native-20261022T100708Z/summary.json) | **PASS，完整两个周期** | UID1001拒绝、UID1000全链路、两次KEY_1、两次detach移除、两次unexport后usb/usbhid恢复均有原始日志。该次commit基线`ef12209`、工作树dirty；确切binary SHA256见summary |
 
 这些结果证明本项目Native实现已通过有真实Linux内核参与的模拟设备端到端测试。仍需独立的指定物理测试设备、两端管理员授权和不同发行版/架构验证，才能满足物理兼容性和Phase1完整硬件验收。
+
+## 最终冻结提交复测
+
+`python3 scripts/qemu/run-native-qemu.py` 在干净提交 **97c29143e9dcb3491ec8aaf75132045a1bdd40ef** 上默认执行locked release构建，exit0。最终[summary](../evidence/qemu-native-20261022T101910Z/summary.json)和同目录原始两端日志证明：两周期KEY_1、detach后旧设备移除、unexport后usb/usbhid恢复、UID拒绝均通过，两guest正常退出0，全部必需标记核验通过。测试期间Rust源码指纹未改变；后续仅文档/证据更新。
+
+最终CLI SHA256为`8f0ba70032cbd6f88f4dd9f57e49934c2921fd368a1f571968c6822ae3298931`，helper为`f3b89092246d8f8ff1a6f4f707b71ff7a3e6aea5ab7fb57bab066c064c52b892`。源码、锁文件、脚本指纹均在summary内。最终软件检查41项测试与fmt/clippy/release/rustdoc全通过，见[完整输出](../evidence/software-checks-final-2026-10-22.txt)。

@@ -4,6 +4,8 @@
 
 当前为 **Phase 1 开发预览**：已完成源码调研并实现 Native 路线；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、内建 TLS、TUI、GUI、存储安全共享仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
+当前证据：41项软件测试及全部Cargo质量检查通过；最终提交的双QEMU模拟键盘完成两轮实际输入和完整释放/重连，见[逐项验收](docs/acceptance.md)与[QEMU报告](docs/research/native-qemu.md)。
+
 ## 构建与检查
 
 目标系统 Ubuntu 22.04/24.04，x86_64/aarch64；当前验证环境和未测项见 [兼容性](docs/compatibility.md)。需要稳定 Rust ≥1.97（2024 Edition）和匹配运行内核的发行版 `usbip` / `usbipd`。Ubuntu 通常由 `linux-tools-common`、`linux-tools-$(uname -r)` 提供工具；模块由对应内核包提供。

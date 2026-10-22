@@ -46,3 +46,10 @@
 - 新一轮`software-checks-final-2026-10-22.txt`曾验证38项测试及全部Cargo/rustdoc检查通过；随后存储quirk驱动/块设备后代边界检查新增，最终快照需再次核验，历史32项记录仍保存在前次commit。
 - 最终冻结前新增存储安全回归：usb-storage/uas/ums-*驱动、真实目录中的block后代、遍历深度/数量上限；不跟随subsystem等symlink逃逸。scanner共8项测试通过。
 - 最终冻结源码完整` scripts/check.sh ` exit0：**41项测试全部通过**，fmt、clippy -D warnings、release和rustdoc -D warnings均通过；以`evidence/software-checks-final-2026-10-22.txt`为最终软件证据。所有本地Markdown链接检查通过，QEMU脚本语法检查及宿主误执行拒绝测试通过。等待最终提交QEMU复测和push。
+
+## 最终仿真裁决与发布准备
+
+- 修复提交`0c3e85a`，可复现QEMU脚本/原始证据提交`97c2914`。原始console保留CRLF/空格，Git whitespace检查最初将其视为编辑文本报错；为evidence设置`-text -whitespace`保留原始字节，源码检查不放宽。
+- 最终`python3 scripts/qemu/run-native-qemu.py` exit0，证据`evidence/qemu-native-20261022T101910Z/`：开始时工作树clean，默认`cargo build --workspace --release --locked`，commit97c2914，源码/lock/scripts/binary指纹完整；两周期全部断言PASS，两guest均exit0。运行后只修改文档/证据，不再修改产品源码。
+- 最终验收逐条对照原需求在`acceptance.md`。Phase0产物交付、Phase1软件与G1-Q仿真通过；真实物理G1、完整恢复、Rust后端、TLS/TUI/GUI/安装/性能/Windows仍保留未完成，不标完整长期目标完成。
+- 最后将提交最终证据并执行`git push -u origin main`，使用`git ls-remote origin refs/heads/main`与本地HEAD比较验证；远端结果在后续出版记录追加。

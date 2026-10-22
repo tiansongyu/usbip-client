@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | E01 | [Linux 源码审计](research/linux-usbip-audit.md)；主 commit `7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614`，补核 v5.15 / v6.8 | 工具、内核、协议和许可证的固定源码事实；不证明 Ubuntu 维护内核或真实设备兼容 |
 | E02 | [Rust 上游审计](research/rust-backend-audit.md)；commit `61938f8c48ed01c508faaacfa7cb3fc3810b5ae0`；[运行摘要](evidence/rust-upstream-2026-10-22.json) | 上游 30 项测试通过、模拟 HID / CDC QEMU 结果、6 项缺陷复现；不是本项目 Rust 后端通过 |
-| E03 | [软件检查完整输出](evidence/software-checks-2026-10-22.txt) 与 [检查脚本](../scripts/check.sh) | 已记录快照的 fmt、Clippy、32 项测试、release 和 Rustdoc 通过；变更后的最终快照须重跑 |
+| E03 | [最终软件检查完整输出](evidence/software-checks-final-2026-10-22.txt) 与 [检查脚本](../scripts/check.sh) | 最终冻结源码的 fmt、Clippy、41 项测试、release 和 Rustdoc 全部通过；源码修复提交 `0c3e85a`，最终QEMU基线 `97c2914` |
 | E04 | [DEVLIST fuzz 摘要](evidence/fuzz-devlist-2026-10-22.json)、[target](../fuzz/fuzz_targets/devlist.rs)、[脚本](../scripts/fuzz-smoke.sh) | ASan 3,412,047 次 / 21 秒未观察到崩溃；不证明穷尽安全、IPC / 内核 URB 或性能 |
 | E05 | [工作日志](work-log.md)、Git `log / status / remote / ls-remote` | 过程、失败、修复、提交与远端事实；工作日志不能覆盖与实际命令相反的结论 |
 | E06 | [本项目双 QEMU 脚本](../scripts/qemu/run-native-qemu.py)、[来宾脚本](../scripts/qemu/guest-init.sh)、[初次全链路 PASS](evidence/qemu-native-20261022T100708Z/summary.json) 与历史 FAIL 记录 | 中间快照 Native 全链路初测通过，`working_tree_dirty=true` 且记录二进制哈希；后续 Native / helper 修复后的最终快照须复测 |
@@ -51,15 +51,15 @@
 | Phase 1 原要求 | 实现依据 | 当前证据、状态与缺口 |
 | --- | --- | --- |
 | Rust Workspace | 根 Cargo.toml、Cargo.lock、rust-toolchain.toml、`crates/` 六模块 | 软件已验证；2024 Edition + 稳定 Rust 1.97.1；其他工具链不在已测范围 |
-| 本地设备扫描 | `rustusb-linux` 的 SysfsDiscovery / cached descriptors；`tests/discovery.rs` 五项 | 软件已验证；宿主只读扫描记录 6 台，发现不等于设备支持 |
+| 本地设备扫描 | `rustusb-linux` 的 SysfsDiscovery / cached descriptors；`tests/discovery.rs` 八项 | 软件已验证；宿主只读扫描记录 6 台，发现不等于设备支持 |
 | Linux 能力检测 | CLI `doctor`；Native 的真实 sysfs 检查、固定工具校验 | 部分：doctor 的 tool / socket presence 只是存在性，不保证包 / socket / VPN 可用；实际 helper 请求再校验身份 |
-| 设备导出 | helper UID / device allowlist / 重新扫描 → Native export → bind 前后确认 | 软件 / fixture 已验证；本项目 QEMU 待完整 gate；未实测物理设备；存储明确拒绝 |
+| 设备导出 | helper UID / device allowlist / 重新扫描 → Native export → bind 前后确认 | 软件 / fixture 已验证；本项目最终双QEMU gate已通过；未实测物理设备；存储明确拒绝 |
 | 远端设备发现 | protocol `discover` / 有界 DEVLIST，CLI `discover` | 软件已验证：真实 loopback TCP、截止时间、畸形 / 截断 / 精确边界；真实网络路径单独验收 |
-| 远端设备导入 | root peer 策略及 trusted_network → Native attach_session → VHCI 核验 | 软件 / fixture 已验证；仅唯一已枚举匹配端口认领；本项目 QEMU 当前待验收，物理未验证 |
-| 设备断开 | helper 受管端口 → native detach_session 比对原身份 → 确认 NULL | 软件已验证端口复用拒绝 / 幂等 / 真实状态等待；重启未知端口不能由普通 CLI 接管 |
+| 远端设备导入 | root peer 策略及 trusted_network → Native attach_session → VHCI 核验 | 软件 / fixture 已验证；仅唯一已枚举匹配端口认领；本项目最终双QEMU已验证，物理未验证 |
+| 设备断开 | helper 受管端口 → native detach_session 比对原身份 → 确认NULL及旧设备generation已移除 | 软件已验证端口复用拒绝 / 幂等 / 真实状态等待；重启未知端口不能由普通 CLI 接管 |
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出 | 已实现并有 schema 测试 / 只读 smoke；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
-| G1 软件 gate | E03 四项 Cargo 检查及 Rustdoc | 已记录软件快照通过；若之后修改产品代码，必须保存新一轮最终结果 |
+| G1 软件 gate | E03 四项 Cargo 检查及 Rustdoc | 最终冻结源码41项测试及四项Cargo检查通过；后续代码变更仍须重新验证 |
 | G1-Q 用户要求的本项目 QEMU gate | E06 两来宾脚本、实际 product binary 哈希及日志 | **中间快照初测通过，最终修复快照待复测**；两次实际 KEY_1、detach 后 sessions=0 / 设备移除、unexport 恢复 usb / usbhid 及 UID1001 拒绝均有证据；历史失败不抹除 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
@@ -134,8 +134,8 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 ### 最终裁决追加区（必须由实际运行结果填写）
 
-- 本项目 G1-Q 最终命令、summary、两个来宾日志、二进制哈希及结果：**已有中间快照完整 PASS，待执行者补最终修复快照复测证据**。
-- 最终修改后四项 Cargo / Rustdoc 检查输出及对应提交：**待补最终快照**。
+- 本项目 G1-Q 最终命令、summary、两个来宾日志、二进制哈希及结果：`python3 scripts/qemu/run-native-qemu.py` exit0；[最终summary](evidence/qemu-native-20261022T101910Z/summary.json)，同目录server/client原始日志；干净提交97c2914、默认locked构建、两guest退出0、全部标记核验通过。
+- 最终修改后四项 Cargo / Rustdoc 检查输出及对应提交：[最终软件输出](evidence/software-checks-final-2026-10-22.txt)：41项测试、fmt、Clippy、release、Rustdoc均exit0；源码修复0c3e85a，QEMU基线97c2914。
 - 最终 commit 清单、push 退出状态、远端 `refs/heads/main` 与本地 `HEAD` 比较：**待补**。
 - 两台真实 Ubuntu 与真实 USB 设备 G1：**未执行，不能因 QEMU 通过改为已完成**。
 
