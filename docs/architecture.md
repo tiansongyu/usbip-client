@@ -4,7 +4,7 @@
 
 ## 路线
 
-Phase 1 使用 Linux 原生数据通路，Rust 负责发现、校验、权限和操作编排。后续 Rust 后端独立实现设备服务端，复用同一领域模型和应用接口。客户端使用 Linux VHCI，不自行重写内核 USB 请求转发。
+Phase 1 使用 Linux 原生数据通路，Rust 负责发现、校验、权限和操作编排。可选 Rust 后端已独立实现固定虚拟设备服务端，复用同一领域模型和应用接口；物理 rusb/nusb adapter 后续。客户端使用 Linux VHCI，不自行重写内核 USB 请求转发。
 
 ```mermaid
 flowchart LR
@@ -17,7 +17,9 @@ flowchart LR
   Native --> Host[usbip_host]
   Native --> VHCI[vhci_hcd]
   Host <-->|USB/IP TCP 经受管 VPN 或后续 TLS 代理| VHCI
-  Rust[后续 Rust 后端 / rusb nusb 虚拟设备] -.-> VHCI
+  Core --> Rust[可选 Rust 虚拟 HID / CDC 服务]
+  Rust <-->|USB/IP TCP| VHCI
+  Physical[后续 rusb / nusb 物理 adapter] -.-> Rust
 ```
 
 安全管理和 USB 数据通道分离。Phase 1 需要管理员预先建立可信 VPN/隧道与防火墙；没有声称内建加密。不得自动以默认全地址监听启动 usbipd。

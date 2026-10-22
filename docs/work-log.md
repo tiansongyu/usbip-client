@@ -124,3 +124,12 @@
 - 独立review实际复现stdout满pipe会卡worker、阻止CtrlC清理（原FAIL材料完整保留）。修为仅持编码事件的专用std线程、有界2队列/64KiB事件/5秒确认；整个控制future参与CtrlC select，虚拟模式错误不回落同步stdoutJSON。root持真实HID lease、固定4096B pipe不排空：SIGINT exit0/0.001秒且socketEOF；不发信号时--json超时exit1/4.819秒且socketEOF；独立原probe复核新binary也PASS。blocked事件被信号取消后不再等待stopped；显式debug stderr回压仍属既有日志sink缺口，未声称任意sink有界退出。回归脚本进入CI。
 - stdout修复后完整scripts/check.sh exit0：默认75tests、allfeatures76tests，0失败/0忽略，fmt、两组Clippy/release/严格Rustdoc全过；原始输出`evidence/software-checks-virtual-20261022.txt`。Cargo仅增加自有crate，外部依赖版本未变，清单82packages均有license metadata。
 - QEMU开发dev01 FAIL为runner首轮读取尚未创建serial日志；dev02实际两个kernel驱动已枚举，但bNumInterfaces的%2d空格被错误字符串断言拒绝；均保留FAIL/原脚本，不修改产品绕过。harness修复后dev03双guest完整PASS，HID两轮按下/释放、CDC exact35B注入与35B回显/轮、总OUT86/IN156/injected70（含独立probe16B）、末lease/pending/queues0。dev03是dirty开发证据，不作为最终冻结发布验收。
+
+## Rust 虚拟子步骤的最终冻结与出版
+
+- 实现提交`2d6aadf`、QEMU测试/开发原始证据提交`cfeffd3`后，确认工作树clean。最终QEMU默认locked-feature release在`cfeffd3ee1d74359438d6bdb791861356a1f3c7e`运行：整体PASS、两guest均exit0；19条probe记录（15protocol含汇总、两次busy、两次health）、两设备并发、两周期真实HID按下/释放和CDC57600/8/DTR/RTS与精确I/O、末lease/pending/queues0全部通过。运行前后source/scripts/CLI/helper hash一致，root独立重新解析snapshot和CDC总账/摘要通过。
+- 最终证据`evidence/qemu-userspace-final-20261022/`逐字节复制，附SHA清单；CLI SHA29aca2e9472d13394ac8c331545fc1770c565e458e1f988412d03e6655d8ea67，helper SHA cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad。聚合`evidence/virtual-validation-final-20261022.json`索引11份最终产物，记录SHA和长度。四份开发目录的FAIL/PASS/脚本快照和原始bytes保持未改。
+- 同一clean cfeffd3另跑最终server_frame ASan fuzz：3,615,249runs/31秒，cov562/ft718、exit0、无观测崩溃；nightly1.101.0(2026-10-21)/cargo-fuzz0.13.2、生产parser/source/lock指纹和起止clean状态均保存。它不覆盖handler/完整网络调度/物理USB，不是安全或吞吐证明。相同release产物的stdout4096B不drain回归再次PASS，SIGINT0及5秒deadline1均关闭真实lease socket。
+- 普通`git push origin main` exit0已推送两个提交，随后`git ls-remote`准确等于cfeffd3。实际四格[CI39774177011](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011) completed/success：Ubuntu22.04 x86_64 job119808847152、22.04 aarch64 job119808847387、24.04 aarch64 job119808847498、24.04 x86_64 job119808847541。root读取每job原始logs，核对native Rust host、默认75/allfeatures76（合计151）/0失败/0忽略与两项stdout背压回归；全部通过。完整步骤和链接`evidence/publication-virtual-20261022.json`。
+- 最终验收/README/协议/架构/兼容性/计划同步固定虚拟支持范围；真实G1及G2物理、ISO/通用Composite/alternate、G3认证/TLS/完整恢复、TUI/GUI/部署/性能/Windows仍未完成。Native核心和旧九场景脚本相对被测cfeffd3无更改；不会以文档修饰缺失功能。
+- root全Markdown本地链接159处检查通过，所有虚拟原始产物SHA/长度通过；最终文档/evidence单独commit普通push，再核对Git存储字节、远端SHA和clean状态。最后提交自身SHA以实际Git历史/push结果为准，不伪造自引用证据。

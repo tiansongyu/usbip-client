@@ -14,8 +14,10 @@ IMPORT 请求 opcode 0x8003，携 busid[32]；成功应答 opcode 0x0003 加设�
 | Linux usbipd → RustUSB attach | helper 调用原生 usbip attach → VHCI | 必须两端真实设备枚举 |
 | RustUSB export → Linux usbip attach | helper bind → 管理员控制 usbipd | 必须真实设备绑定与断开 |
 | RustUSB → RustUSB | 同一 Native 数据通路 | 必须双端硬件及故障验收 |
-| Rust backend → Linux VHCI | Phase 2，尚未集成 | 上游 QEMU 仅作为上游证据 |
+| Rust backend → Linux VHCI | 可选自有有界引擎，固定虚拟HID/CDC | 干净cfeffd3的本项目双QEMU实际I/O通过，见[报告](research/userspace-qemu.md)；物理/ISO仍未实现 |
 
 无额外 RustUSB 字段混入公开 USB/IP 流。身份认证和加密通过外层安全传输实现，不私改 Linux 线协议。TLS 必须转发 DEVLIST 连接、IMPORT 握手以及握手后完整双向长连接；将管理 API 套 TLS 不能保护 URB 数据。
 
 原生源码依据见 [Linux 审计](research/linux-usbip-audit.md)，Rust 实现差异见 [Rust 后端审计](research/rust-backend-audit.md)。
+
+可选虚拟服务只接受一次IMPORT，随后严格SUBMIT/UNLINK；48B请求先验证方向、devid、endpoint、64KiB长度、flags0x03c5、non-ISO count0/-1与frame0/-1再分配。回复basic devid/direction/ep归零，IN受URB和控制wLength上界、OUT只返回actual_length。SHORT_NOT_OK的短IN保留实际数据并返回-EREMOTEIO；idle IN保持pending，成功UNLINK返回-ECONNRESET且无原RET_SUBMIT。11种畸形连接、1B控制及受限CDC IN、取消条件触发后75ms无旧completion有独立probe证据。详见[实现设计](research/rust-virtual-backend-design.md)；没有ISO描述符、物理错误映射或远端认证的支持声明。

@@ -41,6 +41,10 @@ python3 scripts/qemu/run-userspace-qemu.py \
 | dev03 | PASS，开发工作树 | 两来宾 exit0，两设备同时持有、两轮 evdev down/up、CDC exact I/O及累计 SHA、清理均通过，运行期指纹一致。随后只加强 harness：远端释放 barrier、非默认 baud、UNLINK 条件触发观察、完整非法头主动关闭，以及负长度/endpoint16。 | [summary](../evidence/qemu-userspace-dev-03-20261022/summary.json)、[server](../evidence/qemu-userspace-dev-03-20261022/server-serial.log)、[client](../evidence/qemu-userspace-dev-03-20261022/client-serial.log) |
 | dev04 | PASS，开发工作树 | 新 CLI stdout 背压修复后，强化的15个 wire PASS marker、两轮57600 line coding/DTR/RTS、远端释放 barrier及完整 I/O全部通过；两来宾 exit0，源码/脚本/二进制运行前后指纹相同。 | [summary](../evidence/qemu-userspace-dev-04-20261022/summary.json)、[server](../evidence/qemu-userspace-dev-04-20261022/server-serial.log)、[client](../evidence/qemu-userspace-dev-04-20261022/client-serial.log) |
 
-最终 clean-commit 默认 locked-build 证据尚待产品与 harness 冻结后执行；开发 PASS 不冒充最终验收。当前原始失败都属于 harness，dev03 不要求产品行为修复。独立复核发现的 CLI stdout 背压处理由主任务另行修复并记录，dev04 已包含该修复。
+最终在干净提交 `cfeffd3ee1d74359438d6bdb791861356a1f3c7e` 执行默认 locked-feature release build，**整体 PASS、server/client 均 exit0**。运行前 dirty=false，运行中源码/脚本/CLI/helper 指纹一致，root 独立重新解析事件和累计 SHA/字节总账均匹配。原始[summary](../evidence/qemu-userspace-final-20261022/summary.json)、[server](../evidence/qemu-userspace-final-20261022/server-serial.log)、[client](../evidence/qemu-userspace-final-20261022/client-serial.log)、[runner](../evidence/qemu-userspace-final-20261022/runner.log)和各文件 SHA 保留于最终目录；[聚合索引](../evidence/virtual-validation-final-20261022.json)逐项记录字节长度与哈希。
+
+最终15条 protocol marker（含汇总）、两轮各一条双设备busy与health，共19条probe记录；HID KEY_1/KEY_2 down/up、CDC 非默认57600/8/DTR/RTS、两个并发lease和两轮实际字节/清理全部通过。CLI 为 `29aca2e9472d13394ac8c331545fc1770c565e458e1f988412d03e6655d8ea67`，helper 为 `cb59c5fec9fe53a6a42f8de4c256c58cbe3b4264b43e11b312795e19455a9dad`。
+
+开发失败均属于 harness，dev03 不要求产品行为修复。独立复核发现的 CLI stdout 背压另有保留的原FAIL、修复及实测回归，dev04和最终冻结已包含修复。本证据支持固定虚拟 HID/CDC 的用户态服务→RustUSB Native client/VHCI 路径，不将它改写成真实物理 G1 或完整 G2。
 
 Linux 对 bNumInterfaces 的 `%2d` 格式可在固定 [Linux v6.8 USB sysfs 源码](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/sysfs.c#L44)核对；wire 对照 [Linux USB/IP 公开协议](https://docs.kernel.org/usb/usbip_protocol.html)。仅参考规范和格式事实，没有把 GPL 源码复制进 Rust 实现。

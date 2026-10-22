@@ -18,7 +18,7 @@
 ## 可复用清单和成本
 
 1. 直接复用发行版 `usbip_host`、`vhci_hcd`、`usbip`、`usbipd`，GPL组件保持独立；Rust只用固定argv和公开线协议/sysfs读取。无需复制Linux源文件或翻译成Rust。
-2. Rust上游MIT的USB/IP公开类型、描述符构造和HID/CDC测试思路可参考；若将来实际复制，保留原版权/MIT文本，并逐文件登记。当前无复制或依赖引入。
+2. Rust上游MIT的USB/IP公开类型、描述符构造和HID/CDC测试思路可参考；若将来实际复制，保留原版权/MIT文本，并逐文件登记。Phase0当时无复制或依赖引入；当前已按MIT选择性复用HID描述符并保留版权，见[第三方清单](../third-party.md)与[虚拟设计](rust-virtual-backend-design.md)，仍未直接依赖上游crate。
 3. Phase2首先复用其QEMU模拟设备测试而非直接开启物理host示例。现有库的解析分配、cleanup和I/O语义需要内部修复，外层TLS或trait包装不能解决。建议维护小型修复分支/上游PR，但提交上游消息须另按用户授权处理。
 4. 实验性后端至少须修复审计R01–R12、补错误映射与取消、隔离阻塞I/O、严格描述符/alt语义。工作量显著超出一个adapter，不给未经实现验证的工期保证。
 5. 不采用纯用户态自行实现Linux客户端控制器；第一阶段复用VHCI，Windows驱动另立阶段。

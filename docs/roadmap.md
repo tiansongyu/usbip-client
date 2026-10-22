@@ -50,6 +50,8 @@ CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定�
 
 集成经过审查的 `jiegec/usbip`，保留统一发现 / 导出 / 导入 / 会话接口；选择性 feature 启用，不让 Native 默认路径承担实验依赖。实现虚拟设备、物理设备共享和阻塞 USB I/O 隔离，处理取消、热插拔和 exclusive claim 的释放。
 
+当前子步骤：依据[复用决策](research/rust-virtual-backend-design.md)选择性使用MIT HID描述符、自有有界服务/会话引擎，未直接依赖存在已审计缺陷的上游crate。固定虚拟HID和标准CDC在干净cfeffd3双QEMU的真实VHCI/evdev/ttyACM两周期通过，详见[报告](research/userspace-qemu.md)。共享发现/注册接口已有实际实现；物理rusb/nusb、ISO/通用Composite/alternate、真实设备及完整G2仍未完成。真实G1仍保持未执行，用户选择QEMU没有被改写为物理通过。
+
 **G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
 
 ## 6. Phase 3：安全远程连接和恢复

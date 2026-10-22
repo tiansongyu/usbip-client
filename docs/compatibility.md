@@ -1,6 +1,6 @@
 # 兼容性与支持证据
 
-2026-10-22：目标 Linux Ubuntu22.04/24.04 × x86_64/aarch64。四格[原生软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39768009618)全部通过，各自uname架构断言、59项测试、fmt/Clippy/release/Rustdoc与只读smoke均有[持久证据](evidence/ci-native-matrix-2026-10-22.json)。USB内核互操作仍仅在22.04宿主/6.8 x86_64 guest的QEMU模拟设备上验证；真实硬件、24.04内核USB互操作、aarch64 USB内核路径均未验证，不能宣称完整设备兼容矩阵通过。Windows、macOS、TUI、GUI均为后续阶段。
+2026-10-22：目标 Linux Ubuntu22.04/24.04 × x86_64/aarch64。四格[原生软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39774177011)全部通过，各自native Rust host、默认75项/allfeatures76项测试、fmt/Clippy/release/Rustdoc、只读smoke及两项stdout背压回归均有[持久证据](evidence/publication-virtual-20261022.json)。历史Native59项CI另有[记录](evidence/ci-native-matrix-2026-10-22.json)。USB内核互操作仍仅在22.04宿主/6.8 x86_64 guest的QEMU模拟设备上验证；真实硬件、24.04内核USB互操作、aarch64 USB内核路径均未验证，不能宣称完整设备兼容矩阵通过。Windows、macOS、TUI、GUI均为后续阶段。
 
 | 设备类型 | sysfs 可发现 | Linux Native 候选路径 | jiegec 后端审计边界 | RustUSB 真实设备验证 |
 | --- | --- | --- | --- | --- |
@@ -24,3 +24,5 @@
 本轮扩展在干净b4cbfc3完成[七项Native矩阵](research/native-qemu-matrix.md)：三方向互操作（RustUSB→RustUSB、RustUSB→官方client、官方server→RustUSB）各HID/FTDI两周期，另有HID外部释放后直接重连及同端口新代际拒绝控制，14guest均exit0。模拟FTDI0403:6001使用ftdi_sio，两周期每方向各35字节；它是厂商类Bulk设备，不是CDC ACM，不能推断任意串口、流控、持续吞吐或物理设备支持。doctor的工具/模块/helper真实诊断和未授权UID分类在两端验证；网络安全与硬件标志仍明确false。
 
 补充的[三机争用](research/native-qemu-contention.md)和[主动TCP中止](research/native-qemu-transport-abort.md)在干净b487144/相同Native二进制上通过：一台QEMU键盘被A持有时B被明确拒绝，A继续输入，释放后B接手；两次实际SOCK_DESTROY后内核NULL、旧节点移除、自有记录清理和再次导入均通过，五guest exit0。它不是两个fresh attach的同时竞速，也不证明WAN黑洞检测、自动重连存储或真实设备。
+
+可选Rust虚拟后端在干净cfeffd3的[独立双QEMU测试](research/userspace-qemu.md)通过：普通UID1000服务，无usbip_host或QEMU USB设备；真实Linux6.8 x86_64 VHCI同时枚举1234:0001键盘/usbhid和1234:0002标准双接口CDC/cdc_acm，两周期真实按下/释放、57600/8控制状态和精确串口注入/回显、busy/UNLINK/畸形包/释放均验证。此两个Full-Speed测试profile不改变上表真实硬件未执行的状态，也不代表任意HID/CDC、物理rusb/nusb、ISO或通用Composite/alternate兼容。

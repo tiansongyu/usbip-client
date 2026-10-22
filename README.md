@@ -4,9 +4,9 @@
 
 当前为 **Phase 1 开发预览**：已完成源码调研并实现 Native 路线；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、内建 TLS、TUI、GUI、存储安全共享仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
-可选 Rust 用户态服务端正在实现固定虚拟 HID/CDC ACM 的独立验证；通过 `rust-backend` feature 显式启用，运行与安全边界见[虚拟服务指南](docs/rust-virtual-server.md)。这不代表完整 Phase2 物理后端已验收。
+可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，运行与安全边界见[虚拟服务指南](docs/rust-virtual-server.md)。干净提交cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)通过；默认75项/all-features76项软件测试通过。物理后端、ISO、认证和TLS仍未完成，不代表完整Phase2已验收。
 
-当前证据：59项软件测试及全部Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
+历史Native基线：59项软件测试及当轮Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
 
 另在干净b487144完成[三机争用与交接](docs/research/native-qemu-contention.md)、[主动TCP中止后清理/重连](docs/research/native-qemu-transport-abort.md)，五个guest均正常退出。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI全部通过；这不替代ARM USB内核路径或真实硬件测试。
 
