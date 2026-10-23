@@ -15,8 +15,8 @@ use std::time::{Duration, Instant};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 const VHCI: &str = "/sys/devices/platform/vhci_hcd.0";
-const DEVICES: [(&str, &str, &str, u32, u32); 2] =
-    [("1-1", "0627", "0001", 2, 3), ("1-2", "0403", "6001", 3, 255)];
+const DEVICES: [(&str, &str, &str, u32, &str, u32); 2] =
+    [("1-1", "0627", "0001", 2, "480", 3), ("1-2", "0403", "6001", 3, "12", 2)];
 
 fn require(ok: bool, message: &str) -> Result<()> {
     if ok { Ok(()) } else { Err(message.into()) }
@@ -97,9 +97,23 @@ struct Device {
     devnum: u32,
     vendor: String,
     product: String,
-    config: u32,
+    config: Option<u32>,
     speed: String,
-    interfaces: Vec<(String, u32, u32, u32, u32, u32)>,
+    interfaces: Vec<(String, u32, u32, u32, u32, u32, Option<String>)>,
+}
+
+fn active_configuration(config: &str, count: &str, interfaces: usize) -> Result<Option<u32>> {
+    // Linux v6.8 returns exactly zero bytes for both attributes without actconfig.
+    // Missing attributes, whitespace-only text and inconsistent pairs are errors.
+    if config.is_empty() && count.is_empty() {
+        require(interfaces == 0, "unconfigured device has interfaces")?;
+        return Ok(None);
+    }
+    let config = number(config, 10)?;
+    let count = number(count, 10)?;
+    require((1..=255).contains(&config) && (1..=255).contains(&count)
+        && count as usize == interfaces, "incomplete current configuration/interface set")?;
+    Ok(Some(config))
 }
 
 impl Device {
@@ -118,28 +132,52 @@ impl Device {
                 let p = entry.path();
                 interfaces.push((name, number(&attr(&p, "bInterfaceNumber")?, 16)?,
                     number(&attr(&p, "bAlternateSetting")?, 10)?, number(&attr(&p, "bInterfaceClass")?, 16)?,
-                    number(&attr(&p, "bInterfaceSubClass")?, 16)?, number(&attr(&p, "bInterfaceProtocol")?, 16)?));
+                    number(&attr(&p, "bInterfaceSubClass")?, 16)?, number(&attr(&p, "bInterfaceProtocol")?, 16)?, optional_driver(&p)?));
             }
         }
         interfaces.sort();
-        require(number(&attr(&path, "bNumInterfaces")?, 10)? as usize == interfaces.len(), "incomplete current interface set")?;
+        let config = active_configuration(&read(path.join("bConfigurationValue"))?,
+            &read(path.join("bNumInterfaces"))?, interfaces.len())?;
         Ok(Self { bus: bus.to_owned(), real, device: metadata.dev(), inode: metadata.ino(),
             busnum: number(&attr(&path, "busnum")?, 10)?, devnum: number(&attr(&path, "devnum")?, 10)?,
             vendor: attr(&path, "idVendor")?, product: attr(&path, "idProduct")?,
-            config: number(&attr(&path, "bConfigurationValue")?, 10)?, speed: attr(&path, "speed")?, interfaces })
+            config, speed: attr(&path, "speed")?, interfaces })
+    }
+
+    fn same_generation(&self, other: &Self) -> bool {
+        self.bus == other.bus && self.real == other.real && self.device == other.device
+            && self.inode == other.inode && self.busnum == other.busnum && self.devnum == other.devnum
+            && self.vendor == other.vendor && self.product == other.product && self.speed == other.speed
+    }
+
+    fn configured_profile(&self, interface_driver: Option<&str>) -> bool {
+        let (class, subclass, protocol) = if self.vendor == "0627" && self.product == "0001" {
+            (3, 1, 1)
+        } else if self.vendor == "0403" && self.product == "6001" { (255, 255, 255) } else { return false; };
+        self.config == Some(1) && self.interfaces.len() == 1 && self.interfaces[0] ==
+            (format!("{}:1.0", self.bus), 0, 0, class, subclass, protocol, interface_driver.map(str::to_owned))
     }
 
     fn json(&self) -> String {
-        let interfaces = self.interfaces.iter().map(|(name, number, alt, class, subclass, protocol)|
-            format!("{{\"name\":{},\"number\":{number},\"alternate\":{alt},\"class\":{class},\"subclass\":{subclass},\"protocol\":{protocol}}}", quote(name))).collect::<Vec<_>>().join(",");
+        let interfaces = self.interfaces.iter().map(|(name, number, alt, class, subclass, protocol, driver)|
+            format!("{{\"name\":{},\"number\":{number},\"alternate\":{alt},\"class\":{class},\"subclass\":{subclass},\"protocol\":{protocol},\"driver\":{}}}",
+                quote(name), driver.as_deref().map_or("null".to_owned(), quote))).collect::<Vec<_>>().join(",");
         format!("{{\"bus_id\":{},\"sysfs_path\":{},\"filesystem_device\":{},\"inode\":{},\"bus_number\":{},\"device_address\":{},\"vendor\":{},\"product\":{},\"configuration\":{},\"speed\":{},\"interfaces\":[{interfaces}]}}",
             quote(&self.bus), quote(&self.real.to_string_lossy()), self.device, self.inode, self.busnum, self.devnum,
-            quote(&self.vendor), quote(&self.product), self.config, quote(&self.speed))
+            quote(&self.vendor), quote(&self.product), self.config.map_or("null".to_owned(), |value| value.to_string()), quote(&self.speed))
     }
 }
 
 fn driver(path: &Path) -> Result<String> {
     Ok(fs::read_link(path.join("driver"))?.file_name().ok_or("missing driver name")?.to_string_lossy().into_owned())
+}
+
+fn optional_driver(path: &Path) -> Result<Option<String>> {
+    match fs::read_link(path.join("driver")) {
+        Ok(link) => Ok(Some(link.file_name().ok_or("missing interface driver name")?.to_string_lossy().into_owned())),
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(error.into()),
+    }
 }
 
 struct Attribute { file: File, path: PathBuf, device: u64, inode: u64 }
@@ -190,7 +228,7 @@ fn ports() -> Result<Vec<Port>> {
     Ok(rows)
 }
 
-struct Channel { original: Device, port: u32, stub: UnixStream, vhci: UnixStream, attr: Attribute, attach: Attribute, local: Option<Device> }
+struct Channel { original: Device, kernel_speed: u32, port: u32, stub: UnixStream, vhci: UnixStream, attr: Attribute, attach: Attribute, local: Option<Device> }
 
 fn socket_json(socket: &UnixStream) -> Result<String> {
     require(socket.local_addr()?.is_unnamed() && socket.peer_addr()?.is_unnamed(), "socketpair must be anonymous")?;
@@ -215,10 +253,10 @@ fn prepare() -> Result<Vec<Channel>> {
     require(free.len() == 2, "two empty HS ports required")?;
     emit("initial_status", &format!("\"status\":{}", quote(&read(Path::new(VHCI).join("status"))?)))?;
     let mut channels = Vec::new();
-    for ((bus, vendor, product, address, class), port) in DEVICES.into_iter().zip(free) {
+    for ((bus, vendor, product, address, speed, kernel_speed), port) in DEVICES.into_iter().zip(free) {
         let original = Device::capture(bus, false)?;
-        require(original.busnum == 1 && original.devnum == address && original.vendor == vendor && original.product == product && original.config == 1 && original.speed == "12", "fixed QEMU USB identity/configuration/speed differs")?;
-        require(original.interfaces.len() == 1 && original.interfaces[0].0 == format!("{bus}:1.0") && original.interfaces[0].1 == 0 && original.interfaces[0].2 == 0 && original.interfaces[0].3 == class, "fixed QEMU interface differs")?;
+        require(original.busnum == 1 && original.devnum == address && original.vendor == vendor && original.product == product && original.speed == speed, "fixed QEMU USB identity/speed differs")?;
+        require(original.config.is_none() && original.interfaces.is_empty(), "Native export must be unconfigured with no current interfaces")?;
         require(driver(&original.real)? == "usbip-host" && attr(&original.real, "usbip_status")? == "1", "original export is not available")?;
         let node = format!("/dev/bus/usb/001/{address:03}");
         let metadata = fs::symlink_metadata(&node)?;
@@ -231,7 +269,7 @@ fn prepare() -> Result<Vec<Channel>> {
         require(original == Device::capture(bus, false)?, "original changed while preopening attributes")?;
         emit("prepared", &format!("\"original\":{},\"port\":{port},\"stub\":{},\"vhci\":{},\"node\":{},\"node_rdev\":{},\"node_inode\":{},\"attribute_inode\":{}",
             original.json(), socket_json(&stub)?, socket_json(&vhci)?, quote(&node), metadata.rdev(), metadata.ino(), attr.inode))?;
-        channels.push(Channel { original, port, stub, vhci, attr, attach, local: None });
+        channels.push(Channel { original, kernel_speed, port, stub, vhci, attr, attach, local: None });
     }
     Ok(channels)
 }
@@ -242,7 +280,7 @@ fn connect(channels: &mut [Channel]) -> Result<()> {
         require(ports()?.iter().any(|r| r.port == channel.port && r.hub == "hs" && r.status == 4), "selected port no longer NULL")?;
         channel.attr.write(&format!("{}\n", channel.stub.as_raw_fd()), "stub", &channel.original.bus)?;
         let devid = (channel.original.busnum << 16) | channel.original.devnum;
-        channel.attach.write(&format!("{} {} {devid} 2\n", channel.port, channel.vhci.as_raw_fd()), "vhci", &channel.original.bus)?;
+        channel.attach.write(&format!("{} {} {devid} {}\n", channel.port, channel.vhci.as_raw_fd(), channel.kernel_speed), "vhci", &channel.original.bus)?;
     }
     let deadline = Instant::now() + Duration::from_secs(15);
     loop {
@@ -251,13 +289,13 @@ fn connect(channels: &mut [Channel]) -> Result<()> {
         for channel in channels.iter_mut() {
             let row = rows.iter().find(|r| r.port == channel.port).ok_or("selected port missing")?;
             if row.status != 6 { complete = false; continue; }
-            require(row.hub == "hs" && row.speed == 2 && row.remote == ((channel.original.busnum << 16) | channel.original.devnum), "attached VHCI identity differs")?;
+            require(row.hub == "hs" && row.speed == channel.kernel_speed && row.remote == ((channel.original.busnum << 16) | channel.original.devnum), "attached VHCI identity differs")?;
             let local = match Device::capture(&row.local, true) { Ok(local) => local, Err(_) => { complete = false; continue; } };
-            if local.config != 1 || local.interfaces.len() != 1 { complete = false; continue; }
-            require(local.vendor == channel.original.vendor && local.product == channel.original.product && local.speed == "12", "enumerated local identity differs")?;
-            require(local.interfaces.iter().zip(&channel.original.interfaces).all(|(a, b)| (a.1, a.2, a.3, a.4, a.5) == (b.1, b.2, b.3, b.4, b.5)), "enumerated full interface/alternate differs")?;
+            if local.config != Some(1) || local.interfaces.len() != 1 { complete = false; continue; }
+            require(local.vendor == channel.original.vendor && local.product == channel.original.product && local.speed == channel.original.speed, "enumerated local identity differs")?;
             let expected = if channel.original.bus == "1-1" { "usbhid" } else { "ftdi_sio" };
-            if driver(&Path::new("/sys/bus/usb/devices").join(format!("{}:1.0", local.bus))).ok().as_deref() != Some(expected) { complete = false; continue; }
+            if local.interfaces[0].6.is_none() { complete = false; continue; }
+            require(local.configured_profile(Some(expected)), "enumerated full interface/alternate/driver differs")?;
             channel.local = Some(local);
         }
         if complete { break; }
@@ -266,8 +304,11 @@ fn connect(channels: &mut [Channel]) -> Result<()> {
     }
     for channel in channels {
         let local = channel.local.as_ref().ok_or("missing enumerated receipt")?;
+        let current = Device::capture(&channel.original.bus, false)?;
+        require(channel.original.same_generation(&current) && current.configured_profile(None)
+            && driver(&current.real)? == "usbip-host" && attr(&current.real, "usbip_status")? == "2", "attached original generation or active profile differs")?;
         emit("attached", &format!("\"original\":{},\"local\":{},\"port\":{},\"remote_devid\":{},\"stub\":{},\"vhci\":{}",
-            channel.original.json(), local.json(), channel.port, (channel.original.busnum << 16) | channel.original.devnum, socket_json(&channel.stub)?, socket_json(&channel.vhci)?))?;
+            current.json(), local.json(), channel.port, (channel.original.busnum << 16) | channel.original.devnum, socket_json(&channel.stub)?, socket_json(&channel.vhci)?))?;
     }
     emit("ready", "\"devices\":2,\"transport\":\"anonymous_unix_stream_pair\",\"tls\":false,\"single_guest\":true")
 }
@@ -327,8 +368,13 @@ fn disconnect(channels: &[Channel]) -> Result<()> {
         require(Instant::now() < deadline, "explicit shutdown did not clear both kernel ends")?;
         thread::sleep(Duration::from_millis(50));
     }
+    let mut originals = Vec::new();
     for channel in channels {
-        require(channel.original == Device::capture(&channel.original.bus, false)?, "original changed during disconnect")?;
+        let current = Device::capture(&channel.original.bus, false)?;
+        require(channel.original.same_generation(&current), "original generation changed during disconnect")?;
+        require(current.configured_profile(None) || (channel.local.is_none() && current.config.is_none() && current.interfaces.is_empty()),
+            "original configuration/interface state differs after disconnect")?;
+        originals.push(current.json());
     }
     let mut retained = Vec::new();
     for channel in channels {
@@ -339,7 +385,7 @@ fn disconnect(channels: &[Channel]) -> Result<()> {
             retained.push(format!("{{\"fd\":{},\"inode\":{},\"target\":{}}}", socket.as_raw_fd(), metadata.ino(), quote(&fs::read_link(path)?.to_string_lossy())));
         }
     }
-    emit("disconnected", &format!("\"ports_null\":true,\"old_local_generations_absent\":true,\"stub_available\":true,\"fds_still_open\":true,\"retained_sockets\":[{}],\"status\":{}", retained.join(","), quote(&read(Path::new(VHCI).join("status"))?)))?;
+    emit("disconnected", &format!("\"ports_null\":true,\"old_local_generations_absent\":true,\"stub_available\":true,\"fds_still_open\":true,\"retained_sockets\":[{}],\"originals\":[{}],\"status\":{}", retained.join(","), originals.join(","), quote(&read(Path::new(VHCI).join("status"))?)))?;
     if let Some(error) = first { return Err(error); }
     Ok(())
 }
@@ -358,5 +404,35 @@ fn main() {
     if let Err(error) = result {
         let _ = emit("error", &format!("\"result\":\"FAIL\",\"error\":{}", quote(&error.to_string())));
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Result, active_configuration, require};
+
+    #[test]
+    fn active_configuration_distinguishes_empty_from_invalid() -> Result<()> {
+        for (config, count, interfaces, expected) in [
+            ("", "", 0, Some(None)),
+            ("1\n", " 1\n", 1, Some(Some(1))),
+            ("", "1\n", 1, None),
+            ("1\n", "", 0, None),
+            (" \n", "", 0, None),
+            ("\n", " \n", 0, None),
+            ("", "", 1, None),
+            ("0\n", "1\n", 1, None),
+            ("1\n", "2\n", 1, None),
+            ("+1\n", "1\n", 1, None),
+            ("1 2", "1\n", 1, None),
+            ("1\n", "x", 1, None),
+            ("256\n", "1\n", 1, None),
+        ] {
+            match active_configuration(config, count, interfaces) {
+                Ok(actual) => require(expected == Some(actual), "unexpected accepted configuration fixture")?,
+                Err(_) => require(expected.is_none(), "unexpected rejected configuration fixture")?,
+            }
+        }
+        Ok(())
     }
 }

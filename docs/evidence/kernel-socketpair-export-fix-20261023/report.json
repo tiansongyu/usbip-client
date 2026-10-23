@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Author static syntax, actual jq and synthetic pure host-verifier fixtures ONLY. No Rust compile/probe/Cargo/QEMU executed.",
+  "check_count": 39,
+  "checks": [
+    {
+      "name": "Python AST",
+      "passed": true
+    },
+    {
+      "name": "sh -n",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "git diff --check",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "actual jq exact empty",
+      "passed": true,
+      "returncode": 0,
+      "stdout": "{\"bus_id\":\"1-1\",\"generation\":\"23:100\",\"address\":2,\"sysfs_path\":\"/sys/devices/pci0000:00/example/1-1\",\"bus_number\":1,\"vendor\":\"0627\",\"product\":\"0001\",\"speed\":\"480\",\"configuration\":null,\"device_driver\":\"usbip-host\",\"usbip_status\":1,\"interfaces\":[]}\n",
+      "stderr": ""
+    },
+    {
+      "name": "actual jq configured",
+      "passed": true,
+      "returncode": 0,
+      "stdout": "{\"bus_id\":\"1-1\",\"generation\":\"23:100\",\"address\":2,\"sysfs_path\":\"/sys/devices/pci0000:00/example/1-1\",\"bus_number\":1,\"vendor\":\"0627\",\"product\":\"0001\",\"speed\":\"480\",\"configuration\":1,\"device_driver\":\"usbip-host\",\"usbip_status\":1,\"interfaces\":[{}]}\n",
+      "stderr": ""
+    },
+    {
+      "name": "actual jq empty cfg only",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq empty count only",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq blank cfg",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq blank both",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq empty with IF",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq count mismatch",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): incomplete active configuration/interface set\n"
+    },
+    {
+      "name": "actual jq zero cfg",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): incomplete active configuration/interface set\n"
+    },
+    {
+      "name": "actual jq signed cfg",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq embedded whitespace",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq malformed count",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): invalid active configuration number\n"
+    },
+    {
+      "name": "actual jq out of range",
+      "passed": true,
+      "returncode": 5,
+      "stdout": "",
+      "stderr": "jq: error (at <unknown>): incomplete active configuration/interface set\n"
+    },
+    {
+      "name": "opaque parser 000000",
+      "passed": true
+    },
+    {
+      "name": "opaque parser 000017",
+      "passed": true
+    },
+    {
+      "name": "opaque parser ffffa123abcde000",
+      "passed": true
+    },
+    {
+      "name": "opaque parser 0000000000000000",
+      "passed": true
+    },
+    {
+      "name": "reject socket display z123",
+      "passed": true
+    },
+    {
+      "name": "reject socket display -1",
+      "passed": true
+    },
+    {
+      "name": "reject socket display 0123456789abcdef0",
+      "passed": true
+    },
+    {
+      "name": "synthetic complete phase fixture only",
+      "passed": true,
+      "synthetic_verifier_assertions": 50
+    },
+    {
+      "name": "synthetic reject export falsely configured",
+      "passed": true,
+      "error": "exported stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject unknown config null during attached",
+      "passed": true,
+      "error": "attached stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject new server generation",
+      "passed": true,
+      "error": "attached stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject wrong HID speed",
+      "passed": true,
+      "error": "attached stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject wrong current server driver",
+      "passed": true,
+      "error": "attached stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject missing attached IF",
+      "passed": true,
+      "error": "attached stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject disconnected cfg dropped",
+      "passed": true,
+      "error": "disconnected stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject alternate changed",
+      "passed": true,
+      "error": "before-stop stable hardware generation and exact phase configuration/fullIF"
+    },
+    {
+      "name": "synthetic reject wrong local full profile",
+      "passed": true,
+      "error": "1-1 actual new VHCI generation and correct speed/fullIF identity"
+    },
+    {
+      "name": "synthetic reject wrong kernel speed",
+      "passed": true,
+      "error": "1-1 attached actual kernel port/devid/local"
+    },
+    {
+      "name": "synthetic reject probe server generation changed",
+      "passed": true,
+      "error": "1-1 immutable hardware receipt and exact prepared/attached/disconnected profiles"
+    },
+    {
+      "name": "forbid unsafe/unwrap/expect/panic",
+      "passed": true
+    },
+    {
+      "name": "single File::write no automatic retry",
+      "passed": true
+    },
+    {
+      "name": "exact empty pair source boundary",
+      "passed": true
+    },
+    {
+      "name": "existing timeouts unchanged",
+      "passed": true
+    }
+  ],
+  "files": [
+    {
+      "path": "scripts/qemu/run-kernel-socketpair-qemu.py",
+      "length": 28449,
+      "sha256": "8b99e0cf1f94c686a6ae4d6ba7ef8100eeb46a302c06f6c295be75e9683a50c1",
+      "original_sha256": "1c6da88a4df0a74f0b0fdd3f83b6bcfa13f71edeabdcdd9f1f14aa5e2760bf1c"
+    },
+    {
+      "path": "scripts/qemu/guest-kernel-socketpair-init.sh",
+      "length": 15743,
+      "sha256": "26cea2cc7fd43ee5697c96227f5780eec50377754efb987c6824fd0487545f82",
+      "original_sha256": "cf96abc08e7b02bbec3536a3015d739434f4715ac46058e5df7c41bfba3cc4ac"
+    },
+    {
+      "path": "scripts/qemu/kernel-socketpair-probe.rs",
+      "length": 23899,
+      "sha256": "87c116c0b496a7968d792f24c003f906ef18ccda6905aca0ba1de3ed238e79c4",
+      "original_sha256": "2e6f8d554556aca7f334f94007b7fab02aae6becb43a2c2953a45ccad1ae7cbf"
+    }
+  ],
+  "original_runtime": "f4774a6 first QEMU remains FAIL; no reinterpretation",
+  "limitations": [
+    "Corrected sources still require strict root Rust compilation and a new clean QEMU run.",
+    "Single guest anonymous socketpair mechanism only; no remote/TLS/authentication acceptance."
+  ]
+}

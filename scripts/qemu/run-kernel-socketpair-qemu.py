@@ -150,11 +150,15 @@ def verify(log, summary, received):
           [d["interfaces"][0]["driver"] for d in baseline] == ["usbhid", "ftdi_sio"] and
           all(d["configuration"] == 1 and d["device_driver"] == "usb" and len(d["interfaces"]) == 1 and d["interfaces"][0]["alternate"] == 0 for d in baseline))
     for snapshot in snapshots:
-        check(snapshot["stage"] + " original generations/configuration/fullIF unchanged", len(snapshot["physical"]) == 2 and
-              all((d["bus_id"], d["generation"], d["address"], d["configuration"],
-                   [(i["name"], i["number_hex"], i["alternate"]) for i in d["interfaces"]]) ==
-                  (b["bus_id"], b["generation"], b["address"], b["configuration"],
-                   [(i["name"], i["number_hex"], i["alternate"]) for i in b["interfaces"]])
+        stage = snapshot["stage"]
+        expected_driver = "usb" if stage in ["original", "restored"] else "usbip-host"
+        expected_status = None if stage in ["original", "restored"] else (2 if stage in ["attached", "before-stop"] else 1)
+        check(stage + " stable hardware generation and exact phase configuration/fullIF", len(snapshot["physical"]) == 2 and
+              all(all(d[k] == b[k] for k in ["bus_id", "generation", "address", "sysfs_path", "bus_number", "vendor", "product", "speed"]) and
+                  d["device_driver"] == expected_driver and d["usbip_status"] == expected_status and
+                  (d["configuration"] is None and d["interfaces"] == [] if stage == "exported" else
+                   d["configuration"] == 1 and d["interfaces"] ==
+                   [{**i, "driver": i["driver"] if stage in ["original", "restored"] else None} for i in b["interfaces"]])
                   for d, b in zip(snapshot["physical"], baseline)))
     prepared = {e["original"]["bus_id"]: e for e in by["prepared"]}
     attached = {e["original"]["bus_id"]: e for e in by["attached"]}
@@ -163,31 +167,41 @@ def verify(log, summary, received):
     check("four distinct anonymous AF_UNIX stream endpoints", len({s["fd"] for s in all_sockets}) == len({s["inode"] for s in all_sockets}) == 4 and
           all(s["anonymous"] and s["family"] == "AF_UNIX" and s["type"] == "SOCK_STREAM" and s["target"] == f"socket:[{s['inode']}]" for s in all_sockets))
     check("four actual proc FD links match prepared endpoints", all(f"{s['fd']} {s['target']}" in identity[0]["fds"].splitlines() for s in all_sockets))
-    for bus, vendor, product, address, cls in [("1-1", "0627", "0001", 2, 3), ("1-2", "0403", "6001", 3, 255)]:
+    for bus, vendor, product, address, cls, subclass, protocol, speed, kernel_speed, interface_driver in [
+            ("1-1", "0627", "0001", 2, 3, 1, 1, "480", 3, "usbhid"),
+            ("1-2", "0403", "6001", 3, 255, 255, 255, "12", 2, "ftdi_sio")]:
         p, a = prepared[bus], attached[bus]
         original = p["original"]
         original_shell = next(d for d in baseline if d["bus_id"] == bus)
-        check(bus + " immutable original device/config/fullIF/receipt", original == a["original"] and
-              original["vendor"] == vendor and original["product"] == product and original["bus_number"] == 1 and
-              original["device_address"] == address and original["configuration"] == 1 and original["speed"] == "12" and
-              len(original["interfaces"]) == 1 and original["interfaces"][0]["class"] == cls and
-              original["interfaces"][0]["number"] == original["interfaces"][0]["alternate"] == 0 and
+        hard = ["bus_id", "sysfs_path", "filesystem_device", "inode", "bus_number", "device_address", "vendor", "product", "speed"]
+        expected_interface = {"number": 0, "alternate": 0, "class": cls, "subclass": subclass, "protocol": protocol}
+        after = next(d for d in by["disconnected"][0]["originals"] if d["bus_id"] == bus)
+        check(bus + " immutable hardware receipt and exact prepared/attached/disconnected profiles",
+              all(original[k] == a["original"][k] == after[k] for k in hard) and
+              original["vendor"] == original_shell["vendor"] == vendor and original["product"] == original_shell["product"] == product and
+              original["bus_number"] == original_shell["bus_number"] == 1 and
+              original["device_address"] == original_shell["address"] == address and
+              original["sysfs_path"] == original_shell["sysfs_path"] and original["sysfs_path"].startswith("/sys/devices/pci0000:00/") and
+              original["speed"] == original_shell["speed"] == speed and original["configuration"] is None and original["interfaces"] == [] and
+              all(d["configuration"] == 1 and d["interfaces"] == [{"name": bus + ":1.0", **expected_interface, "driver": None}]
+                  for d in [a["original"], after]) and
+              original_shell["interfaces"] == [{"name": bus + ":1.0", "number_hex": "00", "alternate": 0,
+                  "class_hex": f"{cls:02x}", "subclass_hex": f"{subclass:02x}", "protocol_hex": f"{protocol:02x}", "driver": interface_driver}] and
               original_shell["generation"] == f"{original['filesystem_device']}:{original['inode']}")
-        check(bus + " actual new VHCI generation and full-speed identity", a["local"]["bus_id"] not in prepared and
+        check(bus + " actual new VHCI generation and correct speed/fullIF identity", a["local"]["bus_id"] not in prepared and
               a["local"]["sysfs_path"].startswith("/sys/devices/platform/vhci_hcd.0/") and
               a["local"]["vendor"] == vendor and a["local"]["product"] == product and a["local"]["configuration"] == 1 and
-              a["local"]["speed"] == "12" and a["remote_devid"] == 65536 + address and p["port"] == a["port"] and
-              a["local"]["inode"] != original["inode"] and
-              [{k: v for k, v in i.items() if k != "name"} for i in a["local"]["interfaces"]] ==
-              [{k: v for k, v in i.items() if k != "name"} for i in original["interfaces"]])
+              a["local"]["speed"] == speed and a["remote_devid"] == 65536 + address and p["port"] == a["port"] and
+              a["local"]["inode"] != original["inode"] and a["local"]["interfaces"] ==
+              [{"name": a["local"]["bus_id"] + ":1.0", **expected_interface, "driver": interface_driver}])
         for stage in ["attached", "before-stop"]:
             row = next(r for r in status_rows(snap[stage]["vhci_status"]) if r["port"] == p["port"])
             check(bus + " " + stage + " actual kernel port/devid/local", {k: v for k, v in row.items() if k != "socket_display"} ==
-                  {"hub": "hs", "port": p["port"], "status": 6, "speed": 2, "remote": 65536 + address, "local": a["local"]["bus_id"]})
+                  {"hub": "hs", "port": p["port"], "status": 6, "speed": kernel_speed, "remote": 65536 + address, "local": a["local"]["bus_id"]})
         for side in ["stub", "vhci"]:
             begin = [e for e in by["write_begin"] if e["bus_id"] == bus and e["side"] == side]
             end = [e for e in by["write_complete"] if e["bus_id"] == bus and e["side"] == side]
-            value = f"{p['stub']['fd']}\n" if side == "stub" else f"{p['port']} {p['vhci']['fd']} {65536 + address} 2\n"
+            value = f"{p['stub']['fd']}\n" if side == "stub" else f"{p['port']} {p['vhci']['fd']} {65536 + address} {kernel_speed}\n"
             check(bus + " one complete " + side + " sysfs write", len(begin) == len(end) == 1 and begin[0]["value"] == value and
                   end[0]["bytes"] == len(value) and events.index(begin[0]) < events.index(end[0]) and
                   (side != "stub" or begin[0]["inode"] == p["attribute_inode"]))

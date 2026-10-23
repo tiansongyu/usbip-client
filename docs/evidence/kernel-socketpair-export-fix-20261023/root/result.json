@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-23T10:22:48.764519+00:00",
+  "scope": "Actual root standalone Rust compilation/unit/host-denial, no new full-workspace test or QEMU. The single unit test iterates13 active-configuration inputs.",
+  "commands": [
+    {
+      "argv": [
+        "rustc",
+        "--edition=2024",
+        "--test",
+        "-D",
+        "warnings",
+        "scripts/qemu/kernel-socketpair-probe.rs",
+        "-o",
+        "/tmp/rustusb-kernel-socketpair-fixed-static-root-20261023/probe-tests"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/tmp/rustusb-kernel-socketpair-fixed-static-root-20261023/probe-tests"
+      ],
+      "exit_code": 0,
+      "test_result_records": 1,
+      "tests_passed": 1,
+      "fixture_inputs": 13
+    },
+    {
+      "argv": [
+        "rustc",
+        "--edition=2024",
+        "-O",
+        "-D",
+        "warnings",
+        "scripts/qemu/kernel-socketpair-probe.rs",
+        "-o",
+        "/tmp/rustusb-kernel-socketpair-fixed-static-root-20261023/probe"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/tmp/rustusb-kernel-socketpair-fixed-static-root-20261023/probe"
+      ],
+      "exit_code": 1,
+      "expected_error": "guest root required",
+      "passed": true
+    }
+  ],
+  "files_match_author_freeze": [
+    {
+      "path": "scripts/qemu/run-kernel-socketpair-qemu.py",
+      "length": 28449,
+      "sha256": "8b99e0cf1f94c686a6ae4d6ba7ef8100eeb46a302c06f6c295be75e9683a50c1",
+      "original_sha256": "1c6da88a4df0a74f0b0fdd3f83b6bcfa13f71edeabdcdd9f1f14aa5e2760bf1c"
+    },
+    {
+      "path": "scripts/qemu/guest-kernel-socketpair-init.sh",
+      "length": 15743,
+      "sha256": "26cea2cc7fd43ee5697c96227f5780eec50377754efb987c6824fd0487545f82",
+      "original_sha256": "cf96abc08e7b02bbec3536a3015d739434f4715ac46058e5df7c41bfba3cc4ac"
+    },
+    {
+      "path": "scripts/qemu/kernel-socketpair-probe.rs",
+      "length": 23899,
+      "sha256": "87c116c0b496a7968d792f24c003f906ef18ccda6905aca0ba1de3ed238e79c4",
+      "original_sha256": "2e6f8d554556aca7f334f94007b7fab02aae6becb43a2c2953a45ccad1ae7cbf"
+    }
+  ],
+  "product_source_byte_equal_f4774a6": true,
+  "product_comparison_scope": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates",
+    "vendor",
+    "scripts/check.sh"
+  ],
+  "result": "PASS"
+}

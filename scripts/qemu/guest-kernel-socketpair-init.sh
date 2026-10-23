@@ -17,7 +17,7 @@ cleanup() {
     status=$?
     if [ "$status" != 0 ]; then
         echo "RUSTUSB_PAIR_RESULT: FAIL stage=$STAGE exit=$status"
-        for file in /tmp/helper.log /tmp/probe.jsonl /tmp/probe.stderr /tmp/devices.json /tmp/doctor.json /tmp/probe-refusal.json /tmp/snapshots.jsonl /tmp/sessions.json /tmp/identity.json /tmp/waits.jsonl /tmp/io.json /tmp/export-hid.json /tmp/export-ftdi.json /tmp/unexport-hid.json /tmp/unexport-ftdi.json; do
+        for file in /tmp/helper.log /tmp/probe.jsonl /tmp/probe.stderr /tmp/devices.json /tmp/doctor.json /tmp/probe-refusal.json /tmp/snapshots.jsonl /tmp/sessions.json /tmp/identity.json /tmp/waits.jsonl /tmp/io.json /tmp/export-hid.json /tmp/export-ftdi.json /tmp/unexport-hid.json /tmp/unexport-ftdi.json /tmp/snapshot-progress.txt /tmp/physical.jsonl /tmp/interfaces.jsonl /tmp/pair-1-1-configuration.raw /tmp/pair-1-1-count.raw /tmp/pair-1-2-configuration.raw /tmp/pair-1-2-count.raw /tmp/vhci-status.txt; do
             [ ! -f "$file" ] || { echo "DIAGNOSTIC $file"; cat "$file"; }
         done
         dmesg | tail -80
@@ -58,21 +58,39 @@ snapshot() {
         base=/sys/bus/usb/devices/$bus
         generation=$(stat -L -c '%d:%i' "$base")
         address=$(cat "$base/devnum" | trim)
-        cfg=$(cat "$base/bConfigurationValue" | trim)
+        printf 'stage=%s bus=%s step=read-configuration\n' "$mark" "$bus" > /tmp/snapshot-progress.txt
+        cat "$base/bConfigurationValue" > "/tmp/pair-$bus-configuration.raw"
+        cat "$base/bNumInterfaces" > "/tmp/pair-$bus-count.raw"
+        real=$(readlink -f "$base")
+        busnum=$(cat "$base/busnum" | trim)
+        vendor=$(cat "$base/idVendor" | trim)
+        product=$(cat "$base/idProduct" | trim)
+        speed=$(cat "$base/speed" | trim)
         driver=$(readlink "$base/driver" | sed 's#.*/##')
         usbip_status=null
         [ ! -f "$base/usbip_status" ] || usbip_status=$(cat "$base/usbip_status" | trim)
         : > /tmp/interfaces.jsonl
+        printf 'stage=%s bus=%s step=read-interfaces configuration_bytes=%s count_bytes=%s\n' "$mark" "$bus" "$(wc -c < "/tmp/pair-$bus-configuration.raw")" "$(wc -c < "/tmp/pair-$bus-count.raw")" > /tmp/snapshot-progress.txt
         for interface in /sys/bus/usb/devices/"$bus":*; do
+            # No match is legitimate only with the separately verified empty active configuration.
+            [ -e "$interface" ] || [ -L "$interface" ] || continue
             [ -d "$interface" ]
             ifdriver=$(readlink "$interface/driver" 2>/dev/null | sed 's#.*/##' || true)
             alternate=$(cat "$interface/bAlternateSetting" | trim)
             ifnumber=$(cat "$interface/bInterfaceNumber" | trim)
-            jq -Mcn --arg name "$(basename "$interface")" --arg number "$ifnumber" --argjson alt "$alternate" --arg driver "$ifdriver" \
-                '{name:$name,number_hex:$number,alternate:$alt,driver:(if $driver=="" then null else $driver end)}' >> /tmp/interfaces.jsonl
+            ifclass=$(cat "$interface/bInterfaceClass" | trim)
+            ifsubclass=$(cat "$interface/bInterfaceSubClass" | trim)
+            ifprotocol=$(cat "$interface/bInterfaceProtocol" | trim)
+            jq -Mcn --arg name "$(basename "$interface")" --arg number "$ifnumber" --argjson alt "$alternate" --arg driver "$ifdriver" --arg class "$ifclass" --arg subclass "$ifsubclass" --arg protocol "$ifprotocol" \
+                '{name:$name,number_hex:$number,alternate:$alt,class_hex:$class,subclass_hex:$subclass,protocol_hex:$protocol,driver:(if $driver=="" then null else $driver end)}' >> /tmp/interfaces.jsonl
         done
-        jq -Mcn --arg bus "$bus" --arg generation "$generation" --argjson address "$address" --argjson cfg "$cfg" --arg driver "$driver" --argjson status "$usbip_status" --slurpfile interfaces /tmp/interfaces.jsonl \
-            '{bus_id:$bus,generation:$generation,address:$address,configuration:$cfg,device_driver:$driver,usbip_status:$status,interfaces:$interfaces}' >> /tmp/physical.jsonl
+        printf 'stage=%s bus=%s step=validate-snapshot\n' "$mark" "$bus" > /tmp/snapshot-progress.txt
+        jq -Mcn --arg bus "$bus" --arg generation "$generation" --argjson address "$address" --arg path "$real" --argjson busnum "$busnum" --arg vendor "$vendor" --arg product "$product" --arg speed "$speed" --rawfile cfg "/tmp/pair-$bus-configuration.raw" --rawfile count "/tmp/pair-$bus-count.raw" --arg driver "$driver" --argjson status "$usbip_status" --slurpfile interfaces /tmp/interfaces.jsonl \
+            'def unsigned: if test("^[ \t\r\n]*[0-9]+[ \t\r\n]*$") then tonumber else error("invalid active configuration number") end;
+             (if $cfg=="" and $count=="" and ($interfaces|length)==0 then null
+              else ($cfg|unsigned) as $c | ($count|unsigned) as $n |
+                if $c>=1 and $c<=255 and $n>=1 and $n<=255 and $n==($interfaces|length) then $c else error("incomplete active configuration/interface set") end end) as $configuration |
+             {bus_id:$bus,generation:$generation,address:$address,sysfs_path:$path,bus_number:$busnum,vendor:$vendor,product:$product,speed:$speed,configuration:$configuration,device_driver:$driver,usbip_status:$status,interfaces:$interfaces}' >> /tmp/physical.jsonl
     done
     cat /sys/devices/platform/vhci_hcd.0/status > /tmp/vhci-status.txt
     cat /proc/net/tcp > /tmp/tcp.txt
@@ -86,7 +104,7 @@ snapshot() {
     printf 'RUSTUSB_PAIR_SNAPSHOT '; tail -n 1 /tmp/snapshots.jsonl
 }
 snapshot original
-jq -se 'length==2 and .[0].interfaces==[{name:"1-1:1.0",number_hex:"00",alternate:0,driver:"usbhid"}] and .[1].interfaces==[{name:"1-2:1.0",number_hex:"00",alternate:0,driver:"ftdi_sio"}] and all(.[];.configuration==1 and .device_driver=="usb")' /tmp/physical.jsonl > /dev/null
+jq -se 'length==2 and .[0].interfaces==[{name:"1-1:1.0",number_hex:"00",alternate:0,class_hex:"03",subclass_hex:"01",protocol_hex:"01",driver:"usbhid"}] and .[1].interfaces==[{name:"1-2:1.0",number_hex:"00",alternate:0,class_hex:"ff",subclass_hex:"ff",protocol_hex:"ff",driver:"ftdi_sio"}] and all(.[];.configuration==1 and .device_driver=="usb") and .[0].speed=="480" and .[1].speed=="12"' /tmp/physical.jsonl > /dev/null
 cp /tmp/physical.jsonl /tmp/original-physical.jsonl
 jq -n --arg hid "$HID_ID" --arg ftdi "$FTDI_ID" '{allowed_uids:[1000],export_device_ids:[$hid,$ftdi],peers:[],trusted_network:true}' > /etc/rustusb/policy.json
 chmod 644 /etc/rustusb/policy.json
@@ -113,7 +131,7 @@ STAGE=helper-export
 unpriv --json export "$HID_ID" > /tmp/export-hid.json
 unpriv --json export "$FTDI_ID" > /tmp/export-ftdi.json
 snapshot exported
-jq -se 'length==2 and all(.[];.device_driver=="usbip-host" and .usbip_status==1)' /tmp/physical.jsonl > /dev/null
+jq -se 'length==2 and all(.[];.device_driver=="usbip-host" and .usbip_status==1 and .configuration==null and .interfaces==[])' /tmp/physical.jsonl > /dev/null
 echo 'RUSTUSB_PAIR_EXPORT: PASS uid=1000 devices=2 via=existing_helper'
 STAGE=probe
 mkfifo -m 600 /run/pair-test/control

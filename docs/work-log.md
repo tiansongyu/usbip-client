@@ -385,3 +385,5 @@
 - TLS基础库提交7bad8bf、机制harness f4774a6已正常push。首次clean f4774a6实际QEMU FAIL：两helper export成功，但导出后的snapshot退出，probe/匿名pair/真实I/O尚未执行，guest poweroff0不能覆盖FAIL；源码和ELF guards真、完整原件另存kernel-socketpair-first-failure-f4774a6-20261023。预审漏掉Native去配置移除接口及keyboard实际480Mbps两项假设，先修设计的phase metadata/speed契约，再修harness；不通过改超时或重跑掩盖。精确push软件CI39936932379仍进行，Pages39936932305已success。
 
 - 精确f4774a6的软件CI39936932379四原生平台attempt1全部success，每格304次/35result、两背压及四信号通过；292采证文件/实际执行receipt、六connector日志对官方ZIP及554项独立复核通过。42份发布原件归档，Pages同版119检查/deploy成功；不把软件CI覆盖原QEMU FAIL。窄文档审查纠正初稿把24KiB请求+12B回复误写双向24KiB、设计状态未限定集成及root机制probe未启动措辞；程序和原运行结果不变。README/展示站沿全局readme-site指导同步基础模块与尚未集成的边界。
+
+- 机制harness按已修设计分离硬件generation和生命周期cfg/IF：未配置只接受两属性真实0字节且0IF，正常attached/down后保持cfg1完整IF0/alt0、server IF无driver；分别传HID480/kernel3与FTDI12/kernel2。旧首FAIL/三旧源码和构造fixture单独留存。39项作者静态（含13实际jq及纯合成verifier）通过；root实际rustc严格编译、一个Rust单测遍历13边界及宿主普通UID首guard拒绝通过。产品Cargo/crates/vendor/check逐f4774a6无差异，不重复304软件；四端shutdown、NULL/Gone/AVAILABLE及普通unexport约束和时限保留，准备新clean QEMU。
