@@ -128,6 +128,19 @@ done
 
 物理runner的ttyS0保存kernel console、ttyS1保存程序证据；两通道均检查FAIL/内核完整性错误，终止后再次检查。启动须等待两设备均无blocker，原100次/50ms及最终完整断言保留。完整marker或严格JSON被打断仍FAIL，不通过拼接原始日志改判。
 
+可选Rust服务的Unix信号验收分本地虚拟child和USBFS双QEMU两部分，均须普通Linux用户执行，并使用不存在的证据目录：
+
+```bash
+python3 scripts/test-server-signals.py --evidence /tmp/rustusb-server-signals
+python3 scripts/qemu/run-sigterm-qemu.py --evidence /tmp/rustusb-sigterm-qemu
+```
+
+两入口默认执行locked all-features release构建并保存来源。前者的ready/blocked × SIGINT/SIGTERM四项，先对HID/CDC两个profile真实IMPORT、配置1并各保留一个pending IN；blocked用独立OFD填满4096B stdout、核对真实writer阻塞后不再drain。ready收到stopped才证明backend末状态，blocked的exit0/双socket EOF仅证明有界退出和连接释放，不能外推未观察的stopped或物理恢复。CI的`--skip-build`明确复用之前all-features产物，仍保存实际来源和SHA。
+
+后者需要已有QEMU依赖以及ss和匹配内核UNIX_DIAG，仅在guest加载该诊断模块：先STOP已核root helper，以child FD/inode关联其UDS listener backlog，验证尚无ready/3240监听时的TERM；连接排队不等于helper已接受或授权。CONT helper后再运行主服务，完成HID实际按下/释放及FTDI精确35B双向I/O，确认两个真实lease各有pending/inflight和预算后仅向该已核PID/starttime发送一次TERM。先收齐双方原始wait、sysfs、VHCI和FD事实再判定，旧wait143不能截断观察，guest0不能覆盖FAIL。
+
+clean934358f的四项QEMU及8guest均已通过；原虚拟回归使用`--features rustusb-cli/rust-backend`，TERM/物理正常/热拔使用`--all-features`，不得写为四项相同ELF。旧负向、完整命令、source/binary guard及限制见[报告](research/server-signal-shutdown.md)。重复信号、SIGKILL/abort、内核内部硬阻塞和真实硬件不因本轮通过改为已验收。
+
 原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。上述独立入口与各自报告分别记录已执行范围，不能复用Native通过标签替代其他后端或设备的验证。
 
 ## 5. 状态机和异常测试

@@ -33,3 +33,5 @@
 
 
 最新[checked release修复](research/usbfs-checked-release.md)在同一clean6e809a1的十一项QEMU通过：8个host-state场景64wire检查，ECM19与HID/FTDI正常/热拔各15，共113项/22guest0。真实RELEASEINTERFACE=-22传播、后续接口继续释放、失败后不执行SET_CONFIGURATION及原状态恢复均有证据；两次旧产品FAIL和三轮候选FAIL原样保留。这仍只覆盖固定模型，不改变上表真实设备未执行状态。
+
+可选Rust服务的[Unix合作停止](research/server-signal-shutdown.md)已在clean934358f完成222次软件测试、ready/blocked × SIGINT/SIGTERM四个本地child用例，以及TERM、原虚拟HID/CDC、USBFS HID/FTDI正常与热拔四项QEMU，8guest均exit0。原虚拟回归为`rust-backend`构建，另外三项为all-features，ELF哈希分别记录；这不扩大USB设备或平台兼容声明。四平台CI39899971271已通过，每格222次测试执行、原两背压及新增四信号场景通过。SIGTERM保证限Unix的上述Rust服务；非Unix仅保留Ctrl-C源码路径，Windows USB、SIGKILL/崩溃恢复、持久会话和真实G1/G2仍未完成。

@@ -110,6 +110,10 @@ helper 可在读取请求前拒绝未授权 UID。普通客户端首次写入失
 | 物理调度 | 每端点一个真实在途请求，其余有界 FIFO；配置/alternate 变更先协调受影响请求，后续请求等待新状态 |
 | 关闭 | 停止 accept，终止并回收网络任务，再等待 backend 最多10秒；未确认清理返回隔离错误，不标为可用 |
 
+CLI的`virtual-server`和`physical-server`共用私有`ShutdownSignals`。Unix入口在第一次await、helper通信和listener创建前同步注册SIGINT与SIGTERM；注册失败不启动服务。物理prepare只取得/校验FD和backend，尚无listener或IMPORT/claim，可在信号到达时取消；已接受的helper工作仍可能结束，已运行的spawn_blocking读取也不会被终止，runtime仍可能等待它。短bind步骤直接await取得handle，避免丢弃已开始工作的server。
+
+取得server后，信号、控制EOF和输出错误都汇入同一次`server.shutdown().await`，cleanup错误优先。`EventOutput`先于bind创建；被信号中断的在途stdout不再重写stopped，清理完成后的末输出也可被信号中断。两种监听保留到返回，因此重复信号不通过外层select丢弃cleanup；这是源码所有权约束，未作为重复信号运行验收。非Unix保留Ctrl-C路径；helper daemon、SIGKILL/abort、跨进程监督及持久重启协调不在本次实现范围。设计及运行边界见[信号停止报告](research/server-signal-shutdown.md)。
+
 Linux 物理 adapter 使用固定 nusb 0.2.8 本地许可源码的小扩展，保留原 usbfs 提交、取消和回收实现。扩展暴露真实 Control/端点 status、actual 和 partial 数据，允许合法的原始 IN 长度；不以扩大缓冲后丢弃字节代替正确传输。依赖版本、差异和许可见[第三方记录](third-party.md)。ISO 明确不支持；HID/FTDI 或固定虚拟 profile 的结果不证明任意 Composite、alternate、物理 CDC、摄像头或音频可用。
 
 物理注册只接受 `PhysicalSource` 中已打开的 FD、设备元数据和代际 receipt，CLI 不接受任意 USB 路径。root helper 按调用 UID、`physical_device_ids`、可信网络声明及当前全部接口安全状态授权，打开固定 `/dev/bus/usb/BBB/DDD` 字符节点。该列表与 Native 的 `export_device_ids` 必须不相交，旧策略缺少物理列表时默认空。节点类型、权限、设备号及节点/sysfs 的 dev/inode、USB 地址前后匹配，并使用 NOFOLLOW/CLOEXEC。受保护 UDS 先交付有界 JSON，收到单字节 ACK 后才通过 SCM_RIGHTS 交付一个 FD；接收方复核 root peer、FD 数量、标记、截断和 receipt。

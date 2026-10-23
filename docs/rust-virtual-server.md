@@ -35,8 +35,10 @@ target/release/rustusb virtual-server \
 
 `key` 是 USB HID usage，4–101；30/31 对应数字1/2。一次操作排入完整8字节按下及8字节释放报告。CDC 的 hex 每次编码1–1024字节，由服务器向客户端 ttyACM 发送；客户端 OUT 数据也回显至 IN，队列有上限，满时明确拒绝。未导入设备不能接收本地测试输入，避免跨会话残留。
 
-ready 事件给出实际 `address` 和虚拟设备快照；操作成功返回 `event:ack`、原 id 和 `ok:true`。snapshot 返回 `event:snapshot`、id、`snapshot`；错误仅返回稳定 code，不回显原始输入。shutdown 先 ack、等待全部连接清理、最后输出 stopped 和释放后快照。stdin EOF 或 Ctrl-C 也触发关闭。未启用 stdin 控制时通过 Ctrl-C 停止。
+ready 事件给出实际 `address` 和虚拟设备快照；操作成功返回 `event:ack`、原 id 和 `ok:true`。snapshot 返回 `event:snapshot`、id、`snapshot`；错误仅返回稳定 code，不回显原始输入。shutdown 先 ack、等待全部连接清理、最后输出 stopped 和释放后快照。stdin EOF 或 Ctrl-C 也触发关闭；Unix还支持SIGTERM。未启用stdin控制时，可用Ctrl-C或Unix SIGTERM停止。
 
-stdout 由专用线程输出，有界队列2、单事件64KiB、确认截止5秒。消费者不读取时，超时报错并释放服务；Ctrl-C 可直接进入清理。若信号中断尚未完成的输出，关闭后不再等待同一 stdout，因此可能没有完整 stopped 事件。此保证针对虚拟控制输出；显式 debug tracing 的阻塞 stderr sink 仍是后续日志系统需处理的边界。
+stdout 由专用线程输出，有界队列2、单事件64KiB、确认截止5秒。消费者不读取时，超时报错并释放服务；Ctrl-C或Unix SIGTERM可直接进入清理。若信号中断尚未完成的输出，关闭后不再等待同一 stdout，因此可能没有完整 stopped 事件。此保证针对虚拟控制输出；显式 debug tracing 的阻塞 stderr sink 仍是后续日志系统需处理的边界。
 
 快照中的传输计数、队列长度和 hash 用于测试诊断，不能当作实际硬件兼容性或吞吐基准。只有 QEMU 的实际 evdev/ttyACM 与独立 wire 证据能支持相应的 profile 验收；最终结果在[工作日志](work-log.md)登记。
+
+Unix信号合作停止的本地及QEMU验证见[报告](research/server-signal-shutdown.md)。信号监听早于listener创建，清理完成后的末输出也可被信号打断；SIGKILL/崩溃恢复仍未实现。

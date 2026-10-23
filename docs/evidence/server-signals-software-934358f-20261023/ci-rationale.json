@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "scope": "Prepared patch only; repository workflow unchanged; no CI, Cargo, harness, server or signal run.",
+  "workflow": "/home/ubuntu/github/usbip-client/.github/workflows/ci.yml",
+  "workflow_source_length": 1588,
+  "workflow_source_sha256": "bb240920a92990bb507a25b8c778d1619fa43ba93059428471e5e18046d7b28f",
+  "patch": "/tmp/rustusb-server-signals-ci-20261023.patch",
+  "patch_sha256": "a47f771ba3fd98781feb5317a6c8c1a527a0f196ed14872188eed5b604529eaf",
+  "rationale": [
+    "Appends one separate step after the current unprivileged lifecycle step on the existing four Linux matrix jobs.",
+    "Uses the all-feature release binary already produced by scripts/check.sh; --skip-build adds no Cargo build, dependency or action.",
+    "No --mode or --signal filters means exactly ready/blocked x SIGINT/SIGTERM.",
+    "Captures the actual harness exit status despite the default shell errexit setting, prints summary.json whenever it exists, and exits with the saved status.",
+    "cat failure is ignored solely to preserve the primary harness status; no missing summary is fabricated.",
+    "The default GitHub step success condition remains; this does not run against a missing binary after an earlier build failure."
+  ],
+  "new_run_command": "python3 scripts/test-server-signals.py --skip-build --evidence \"$RUNNER_TEMP/server-signals\""
+}

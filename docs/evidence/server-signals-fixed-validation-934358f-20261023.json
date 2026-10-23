@@ -1,0 +1,588 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Software, local signals and four QEMU runs at same clean934358f; CI is separate/pending; not hardware/full Phase2 or SIGKILL recovery.",
+  "git_commit": "934358fa457b71c5e3436cc544ca4031b656f147",
+  "working_tree_clean_during_all_runs": true,
+  "software": {
+    "test_executions": 222,
+    "result_rows": 31,
+    "full_check_exit": 0,
+    "source138_post_guard": true
+  },
+  "local": {
+    "cases": 4,
+    "ready_and_blocked_SIGINT_SIGTERM": "all PASS",
+    "legacy_backpressure_cases": 2,
+    "stdout_blocked_scope": "Exit+two socket EOF, no backend stopped snapshot claim"
+  },
+  "qemu": {
+    "runs": 4,
+    "guests_exit0": 8,
+    "new_sigterm_checks": 52,
+    "original_virtual_probe_executions": 19,
+    "physical_normal_probe_executions": 15,
+    "physical_hot_probe_executions": 15,
+    "startup_wait_code": 0,
+    "two_lease_wait_code": 0,
+    "physical_TX_bytes": {
+      "sigterm": 35,
+      "normal": 70,
+      "hot": 140
+    },
+    "same_clean_source_with_different_features": true,
+    "allfeatures_binaries": {
+      "rustusb": "adedf4b1c90d5f1a95033d49fd72caa425860d192855d827d5a88eb0e654699e",
+      "rustusb-helper": "837aec7045ab08d935e8d887b686db8e160a5c849fd236c653710c0320dca46b"
+    },
+    "virtual_rustbackend_only_binaries": {
+      "rustusb": "05dcacc24c173c8a2bbc032fe2f6438f2003f172de9e96cc3ae837c6f3a0f393",
+      "rustusb-helper": "390ee333129f852a31869bbfef4394e4b2c85ed2eac05c47d32bc5229d5a2b99"
+    }
+  },
+  "limitations": [
+    "Old failure remains archived separately.",
+    "Repeated TERM during cleanup source ownership reviewed; no controlled delayed-cleanup repeated-signal runtime case.",
+    "No guarantee to terminate a blocked kernel/spawn_blocking initialization immediately.",
+    "The three legacy QEMU summaries have no serialized after-guard fields; sequence root verified all138 frozen Git files after every run and before archiving.",
+    "Host FTDI collector persisted count/digest/exactmatch, not a separate raw TX payload file.",
+    "No host USB/module/ptrace/network changes; disposable synthetic guests do not replace physical G1/G2."
+  ],
+  "indexed_artifact_count": 89,
+  "artifacts": [
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/freeze.json",
+      "bytes": 32293,
+      "sha256": "b8b30c725f1fde630382e47319c469bd80a250c41c05cdab8e36d8880c3f8f1d",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-freeze-934358f-20261023.json"
+    },
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/software.json",
+      "bytes": 555,
+      "sha256": "2c1b51e2f72784e46dc494dbad9e9f114b9e3e8f4124190973cc0ce58cb8321a",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-software-934358f-20261023.json"
+    },
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/build.log",
+      "bytes": 26511,
+      "sha256": "fe0492203182ff1f5def74fcd5a050be1842844ba6fe5532863267844f7e4dc6",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-software-934358f-20261023.log"
+    },
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/legacy-backpressure.json",
+      "bytes": 528,
+      "sha256": "2e6e06ce6b814a780344f1120096a31d6159379c873d0b370d3da08b46250639",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-backpressure-934358f-20261023.log"
+    },
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/ci.patch",
+      "bytes": 702,
+      "sha256": "a47f771ba3fd98781feb5317a6c8c1a527a0f196ed14872188eed5b604529eaf",
+      "provenance": "raw bytes, identical to /tmp/rustusb-server-signals-ci-20261023.patch"
+    },
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/ci-rationale.json",
+      "bytes": 1374,
+      "sha256": "9444204b4e7a8d31665aa1806794aa69f49e433e5f7a1a2d9d03351f7a827a46",
+      "provenance": "raw bytes, identical to /tmp/rustusb-server-signals-ci-rationale-20261023.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/after.json",
+      "bytes": 388,
+      "sha256": "6f69efd602177aaf47307f2632ab9b84c7447859abb9968dd370328809696932",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/after.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/before.json",
+      "bytes": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/before.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/protocol.json",
+      "bytes": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/protocol.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/result.json",
+      "bytes": 10590,
+      "sha256": "3ccd6a14e464b55f118e4b501d7cf563332876e7220f854c7234228f4c29daca",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/result.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/stderr.log"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/stdout-consumed.bin",
+      "bytes": 2693,
+      "sha256": "e9770ad1aede440ec0de126fc70ba5ffeb00d6208109ba787385e681edc2ec06",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/stdout-consumed.bin"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/stdout-events.json",
+      "bytes": 4373,
+      "sha256": "a3df4efb7951ed4ad22b51555ef054bb7ebbbb3a2afaf861b943a03c65143ce8",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/stdout-events.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/synthetic-padding.bin",
+      "bytes": 4096,
+      "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigint/synthetic-padding.bin"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/after.json",
+      "bytes": 387,
+      "sha256": "8e391d69b7fe91f063ad47860631ae5488cebd6d1fc052498235a3b0b323b5eb",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/after.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/before.json",
+      "bytes": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/before.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/protocol.json",
+      "bytes": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/protocol.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/result.json",
+      "bytes": 10590,
+      "sha256": "dc08bab802399d9ba03459e9ef0b935f1ea0dd8a7a0837fbafb7cf7dfa4563fa",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/result.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/stderr.log"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/stdout-consumed.bin",
+      "bytes": 2693,
+      "sha256": "efac330706790dc0bb0d3841a9ef85974779e4affc5dd0f5480b0b40eb611b80",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/stdout-consumed.bin"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/stdout-events.json",
+      "bytes": 4373,
+      "sha256": "91cf1730c9f4d76088772de64579dc05d5041fb9a815e6fbf8682ad44d08c6f1",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/stdout-events.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/synthetic-padding.bin",
+      "bytes": 4096,
+      "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/blocked-sigterm/synthetic-padding.bin"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/build.log"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/after.json",
+      "bytes": 2793,
+      "sha256": "3bd1dde8aead499dcd5c1d0c645bceb404b66f91bb3d5c3c85fbd78d05b6ca2f",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/after.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/before.json",
+      "bytes": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/before.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/protocol.json",
+      "bytes": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/protocol.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/result.json",
+      "bytes": 14379,
+      "sha256": "49c9a3367cb9bb142597b8371ca19b234b179d36f4ab1323ef9e7b80e9e95a6b",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/result.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/stderr.log"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/stdout-consumed.bin",
+      "bytes": 4035,
+      "sha256": "c94a46286e565d407e463c484d320b50e4a60ec07ee227351f3f4113a39c14e1",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/stdout-consumed.bin"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/stdout-events.json",
+      "bytes": 6627,
+      "sha256": "5b1259055c9e50ef7d49d995c71aea2b250e5818c37a3689a927302265ef0cf7",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigint/stdout-events.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/after.json",
+      "bytes": 2793,
+      "sha256": "82f0c168b815b44241f64e7df03f79d913117ff6b9970e5efc64a848fc912e5c",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/after.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/before.json",
+      "bytes": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/before.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/protocol.json",
+      "bytes": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/protocol.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/result.json",
+      "bytes": 14381,
+      "sha256": "9800f174269fe881185c5d31c4a89c0b96e93bfdd44b4664e45e8154c41fd3d3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/result.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/stderr.log"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/stdout-consumed.bin",
+      "bytes": 4035,
+      "sha256": "4c176788b9baa3afc60cb92004dd4c5348d783e38209f32526ab57614020b352",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/stdout-consumed.bin"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/stdout-events.json",
+      "bytes": 6627,
+      "sha256": "4e1e1b6b94eb9821d2085f8375de4989646744ab298e7cf08838be72f7bc5696",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/ready-sigterm/stdout-events.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/source-after.json",
+      "bytes": 32802,
+      "sha256": "99c69699cfe4f0dfd73e30f019232349ceaf44ffd6314d4831b4a3763276ab0c",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/source-after.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/source-before.json",
+      "bytes": 32802,
+      "sha256": "99c69699cfe4f0dfd73e30f019232349ceaf44ffd6314d4831b4a3763276ab0c",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/source-before.json"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/summary.json",
+      "bytes": 133079,
+      "sha256": "657a6cb1e524dac8af216f7bb7419f10aa53c27c40f4c6c699b960ad689ba28d",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/client-evidence.log",
+      "bytes": 4762,
+      "sha256": "511e0810570a8ced905ff43b47cb1fe538bc27bfd556d229dea77f2bb6483b39",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/client-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/client-serial.log",
+      "bytes": 39480,
+      "sha256": "518ebfe137482212f5a91d4e9ff1393d4c483ff44ffc9070857d661257f36530",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/server-evidence.log",
+      "bytes": 20984,
+      "sha256": "7b211f4ac20f29b98b99bb961ff9d98ed9755e5d1bda6e28e99f45c344a48862",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/server-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/server-serial.log",
+      "bytes": 36117,
+      "sha256": "756cbae6f469c7d0e083b1a948fdca73f57280d7aa3ee11ac2579af7432d70a7",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/summary.json",
+      "bytes": 78401,
+      "sha256": "074a1f0889e638107d48dcffd3e09f1b85c31fdd7b2330b0721844d83fff5052",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/runner.log",
+      "bytes": 102,
+      "sha256": "c7c20aaccd056041b1ae9baebea6a7b3493671ea9d93cc4bb0a9d538b76deb21",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/client-evidence.log",
+      "bytes": 4135,
+      "sha256": "1f37f2ac2853f32168bd8a56da13c3d0e464635672da5f25227e95dfaf2b1145",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/client-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/client-serial.log",
+      "bytes": 36810,
+      "sha256": "dccb6b1fe60f5fdf4a647ce4c0c032979cd569c48774788b222b6a7071620e63",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/server-evidence.log",
+      "bytes": 14114,
+      "sha256": "283c58e7bde814dfd7ed4571d3b822810d7aec3ee266932db2767b7b9d477b24",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/server-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/server-serial.log",
+      "bytes": 35029,
+      "sha256": "90d7abda4874421b256653e570355d5fd688e4adc580be0ae033f41fbc1f525e",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/summary.json",
+      "bytes": 52770,
+      "sha256": "1197e70587dbdc1127bdb6970936f3302bfea28b9013cf15625a6be6f970ab5b",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/runner.log",
+      "bytes": 105,
+      "sha256": "76aed90fcf975637c0e7ffed6e1955d8ae1173d313f37a4df7a141a9850f1a76",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sequence.json",
+      "bytes": 1910,
+      "sha256": "2c42fae8a9d69d3c57c0985c40774fa58ec2a51ecf0183d7539d260ed8e76f80",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sequence.json"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/build.log",
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/client-evidence.log",
+      "bytes": 2731,
+      "sha256": "17bde2532f9e8816fc17c11aee5aba048d51f811aa4a8cc3a12b4c44ec184192",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/client-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/client-serial.log",
+      "bytes": 34146,
+      "sha256": "6394a4758e0dbb4f0864129cf9b9e9f3797ab5fc74ea7e38a047d5b89e3f1b33",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/server-evidence.log",
+      "bytes": 18451,
+      "sha256": "67ee1efaa2d5113b82ba864a5029ba519c0f7d6f5a191953cb886a8bbbc8a096",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/server-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/server-serial.log",
+      "bytes": 33787,
+      "sha256": "de08b4136855b7a0227b03f08802a97a215cd989b03733c0ff6ecb48a7e48bf1",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/guest-init.sh"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/guest-physical-init.sh",
+      "bytes": 28271,
+      "sha256": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/guest-physical-init.sh"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/guest-sigterm-init.sh",
+      "bytes": 30969,
+      "sha256": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/guest-sigterm-init.sh"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/physical-wire-probe.rs"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/run-native-qemu.py"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/run-physical-qemu.py"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/run-sigterm-qemu.py",
+      "bytes": 28330,
+      "sha256": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/run-sigterm-qemu.py"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/summary.json",
+      "bytes": 57226,
+      "sha256": "9c8a75c5c10fcb3ca3463cd77aff6f22705e9f3b062682c6eee92b3f150ad9b0",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/runner.log",
+      "bytes": 91,
+      "sha256": "0dbd4e00d4125a94bac6583c8f04f7fdda2a84bd179dcae28e758b2be8036d3c",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/build.log",
+      "bytes": 148,
+      "sha256": "551850c60e2665725e52076ec45e681d040c3c2201dc171a30d303fb003cfa4e",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/client-serial.log",
+      "bytes": 43188,
+      "sha256": "09c0e49d94f8ae5054847cfa25236258bb8b64b39d51074ac3efd9a64ab575a3",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/server-serial.log",
+      "bytes": 42957,
+      "sha256": "5dd58a1b222cd5303615b7e5bfbf8620b647257701174311d6c4a309397222ab",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/summary.json",
+      "bytes": 32033,
+      "sha256": "4e8191e7d4d058fa7fcfb3c604baa8366fa76e6532977cc6d0dc7f7b61adde90",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/runner.log",
+      "bytes": 97,
+      "sha256": "4e926d040e3bdeec61830f8ef7c5cfdbfcecf8d340a138b1e6ab225fbc6528c1",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual-runner.log"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/runner.log",
+      "bytes": 252,
+      "sha256": "be6fc76e85fe7b11bd678ed9c34f988e3740541dbae8e5b14002aa4f710422a1",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-934358f-20261023-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sequence.py",
+      "bytes": 2147,
+      "sha256": "054d437a2f310214a8fb7920183ab1ac1b38bfe035e1c611bbf61d6745c36d66",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-qemu-sequence-934358f-20261023.py"
+    },
+    {
+      "path": "docs/evidence/server-sigterm-old-qemu-independent-review-20261023.json",
+      "bytes": 32466,
+      "sha256": "9a3cab5d054722f8081f27296e8b6216b13d79fe8629b8ef9a6990612bb208eb",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-old-qemu-independent-review-20261023.json"
+    },
+    {
+      "path": "docs/evidence/server-signals-software-934358f-20261023/artifacts.sha256",
+      "bytes": 484,
+      "sha256": "ece9202f7d987624d7fa05dd4d1cba2d936d67e194f0765c0d52c8c80429bd4c",
+      "provenance": "new checksum manifest of original copied files"
+    },
+    {
+      "path": "docs/evidence/local-server-signals-fixed-934358f-20261023/artifacts.sha256",
+      "bytes": 3258,
+      "sha256": "1cd380742d05347f66e986c1216e0945185654f4cda28a7b20e197617fd24188",
+      "provenance": "new checksum manifest of original copied files"
+    },
+    {
+      "path": "docs/evidence/qemu-server-signals-fixed-934358f-20261023/artifacts.sha256",
+      "bytes": 4052,
+      "sha256": "aaa5a07ab4f64230e03c5a026d847bf9a344e169feb311a54108f5c1735c00ca",
+      "provenance": "new checksum manifest of original copied files"
+    },
+    {
+      "path": "docs/evidence/server-sigterm-fixed-local-independent-review-20261023.json",
+      "bytes": 27004,
+      "sha256": "fce5b6ceb337692c67f786017a6a5c2c3f9c2403f79f169ff42c59caefb906bd",
+      "provenance": "raw bytes, identical to /tmp/rustusb-sigterm-fixed-local-independent-review-20261023.json"
+    }
+  ]
+}

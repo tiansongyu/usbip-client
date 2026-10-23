@@ -59,8 +59,10 @@ rustusb --socket /run/rustusb/control.sock physical-server \
 
 只有 `snapshot` 和 `shutdown` 适用于物理服务。虚拟服务的 `hid_key` / `cdc_emit` 会被拒绝。`ready`、`snapshot`、`stopped` 事件包含 `snapshot`，可观察每设备状态、pending/queued/inflight、真实回收计数、配置、速度、EP0 大小、原/当前驱动和全服务缓冲预算；不输出原始数据或序列号。它是最后一次观察的缓存，查询本身不重新读取 sysfs；累计请求终态也包含逻辑拒绝，只有 `usbfs_reaped` 专门统计真实 raw 回收。
 
-网络 EOF 或网络写失败清理对应会话，listener 继续接受连接；本地 stdin EOF、`shutdown` 或 Ctrl-C 结束服务并清理所有会话。取消请求后必须等待真实 terminal，不能将 UNLINK 当成已回滚 OUT 数据。最后一个物理 URB 回收、接口释放和原驱动独立核对完成前，设备保持独占。claim/清理监督截止后报告隔离，不能冒充可用；单次控制传输超时不等于设备必然隔离。应保留诊断，由管理员协调当前内核状态。
+网络 EOF 或网络写失败清理对应会话，listener 继续接受连接；本地stdin EOF、`shutdown`、Ctrl-C或Unix SIGTERM结束服务并清理所有会话。取消请求后必须等待真实 terminal，不能将 UNLINK 当成已回滚 OUT 数据。最后一个物理 URB 回收、接口释放和原驱动独立核对完成前，设备保持独占。claim/清理监督截止后报告隔离，不能冒充可用；单次控制传输超时不等于设备必然隔离。应保留诊断，由管理员协调当前内核状态。
 
-正常结束且清理确认后退出码为0，输出失败或未确认清理返回非零。Ctrl-C 取消已阻塞的 stdout 事件时仍执行清理，但可能没有最终 `stopped` 事件，调用方应同时检查进程退出状态。
+正常结束且清理确认后退出码为0，输出失败或未确认清理返回非零。Ctrl-C或Unix SIGTERM取消已阻塞的stdout事件时仍执行清理，但可能没有最终 `stopped` 事件，调用方应同时检查进程退出状态。
 
 拔出后旧 slot 不会自动授权同端口的新设备。重新连接需要管理员核对新设备，再显式重新启动服务获取新代际的 FD；无序列号设备的候选指纹仍不构成可靠硬件身份认证。
+
+Unix信号监听在helper通信前注册，等待异步helper响应时可取消；这不终止已运行的blocking内核初始化。合作停止须等待原有清理，真实验证见[报告](research/server-signal-shutdown.md)。SIGKILL/崩溃与持久重启恢复仍未实现，不能用进程退出代替设备恢复核验。

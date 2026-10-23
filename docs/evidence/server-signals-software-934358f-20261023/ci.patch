@@ -1,0 +1,14 @@
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -47,3 +47,11 @@
+         run: |
+           printf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin
+           python3 scripts/test-virtual-backpressure.py
++      - name: Unprivileged server signal lifecycle (four cases)
++        run: |
++          status=0
++          python3 scripts/test-server-signals.py --skip-build --evidence "$RUNNER_TEMP/server-signals" || status=$?
++          if test -f "$RUNNER_TEMP/server-signals/summary.json"; then
++            cat "$RUNNER_TEMP/server-signals/summary.json" || true
++          fi
++          exit "$status"

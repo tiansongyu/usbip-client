@@ -1,0 +1,1188 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "reviewer_role": "author of run-sigterm-qemu.py and guest-sigterm-init.sh",
+  "review_kind": "separate raw reparse by harness author; not independent implementation review",
+  "method": "standard-library JSON, raw text, input_event decoding and SHA256; no runner import or runner.verify; read-only git show of frozen script blobs",
+  "scope": "compare old expected negative and fixed clean934358f SIGTERM guest observations only; virtual/normal/hot regressions not reviewed here",
+  "limits": [
+    "helper backlog proves queued connection, not application accept/authorization",
+    "OS exit/FD close alone is not backend cleanup",
+    "old missing stopped leaves final adapter resources/reap unobservable, not proof of a permanent kernel leak",
+    "20.04s old capture is bounded observation, not proof drivers can never restore",
+    "centisecond elapsed fields are observations, not benchmarks",
+    "host FTDI sink bytes are not a separate persisted binary artifact; this review correlates the runtime exact-byte/digest observation with client digest, injection count and adapter OUT35",
+    "SIGKILL, kernel-internal active ioctl, real USB hardware and repeated-signal cleanup remain outside this comparison"
+  ],
+  "check_count": 181,
+  "passed": 181,
+  "checks": [
+    {
+      "name": "old:runtime_result_preserved",
+      "result": "PASS"
+    },
+    {
+      "name": "old:both_guest_exit_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "old:default_locked_build",
+      "result": "PASS"
+    },
+    {
+      "name": "old:source_guard_exact",
+      "result": "PASS"
+    },
+    {
+      "name": "old:binary_guard_exact",
+      "result": "PASS"
+    },
+    {
+      "name": "old:head_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "old:dirty_development_not_reclassified",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:run-sigterm-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:guest-sigterm-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_script_snapshot:guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "old:server:exact_channel_beacon",
+      "result": "PASS"
+    },
+    {
+      "name": "old:server:complete_capture",
+      "result": "PASS"
+    },
+    {
+      "name": "old:server:final_result_after_collection",
+      "result": "PASS"
+    },
+    {
+      "name": "old:server:no_integrity_failure_both_channels",
+      "result": "PASS"
+    },
+    {
+      "name": "old:server:private_network_marker",
+      "result": "PASS"
+    },
+    {
+      "name": "old:client:exact_channel_beacon",
+      "result": "PASS"
+    },
+    {
+      "name": "old:client:complete_capture",
+      "result": "PASS"
+    },
+    {
+      "name": "old:client:final_result_after_collection",
+      "result": "PASS"
+    },
+    {
+      "name": "old:client:no_integrity_failure_both_channels",
+      "result": "PASS"
+    },
+    {
+      "name": "old:client:private_network_marker",
+      "result": "PASS"
+    },
+    {
+      "name": "old:raw_schema",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_actual_wait",
+      "result": "PASS",
+      "observed": 143
+    },
+    {
+      "name": "old:startup_ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_one_term",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_exited_under_three_second_observation",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_helper_stop_cont_and_no_acceptance_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_no_ready_before_term",
+      "result": "PASS"
+    },
+    {
+      "name": "old:one_owned_roothelper_listener",
+      "result": "PASS"
+    },
+    {
+      "name": "old:helper_backlog_contains_exact_client_inode",
+      "result": "PASS",
+      "observed": {
+        "listener_inode": "2049",
+        "client_inode": "225"
+      }
+    },
+    {
+      "name": "old:client_pid_fd_inode_correlated",
+      "result": "PASS"
+    },
+    {
+      "name": "old:proc_unix_established_client",
+      "result": "PASS"
+    },
+    {
+      "name": "old:proc_unix_named_listener",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_no_3240_listener",
+      "result": "PASS"
+    },
+    {
+      "name": "old:startup_original_sysfs_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "old:main_actual_wait",
+      "result": "PASS",
+      "observed": 143
+    },
+    {
+      "name": "old:main_one_term_no_shutdown_or_stdin_eof",
+      "result": "PASS"
+    },
+    {
+      "name": "old:main_process_and_fd_table_gone",
+      "result": "PASS"
+    },
+    {
+      "name": "old:both_helpers_alive",
+      "result": "PASS"
+    },
+    {
+      "name": "old:all_four_independent_observations",
+      "result": "PASS"
+    },
+    {
+      "name": "old:real_two_device_pending_budget",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:original_root0600_cfg1_alt0",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:real_leased_pending_inflight",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:held:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:held:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:held:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:term-pending:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:term-pending:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:term-pending:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:independent_post_term_sysfs",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:actual_controls",
+      "result": "PASS"
+    },
+    {
+      "name": "old:usbhid:actual_data_completion",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:original_root0600_cfg1_alt0",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:real_leased_pending_inflight",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:held:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:held:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:held:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:term-pending:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:term-pending:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:term-pending:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:independent_post_term_sysfs",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:actual_controls",
+      "result": "PASS"
+    },
+    {
+      "name": "old:ftdi_sio:actual_data_completion",
+      "result": "PASS"
+    },
+    {
+      "name": "old:server_restore_result_not_reclassified",
+      "result": "PASS"
+    },
+    {
+      "name": "old:observed_window",
+      "result": "PASS",
+      "observed": 2004
+    },
+    {
+      "name": "old:events_no_error",
+      "result": "PASS"
+    },
+    {
+      "name": "old:one_first_ready",
+      "result": "PASS"
+    },
+    {
+      "name": "old:unique_snapshots",
+      "result": "PASS"
+    },
+    {
+      "name": "old:stopped_count_preserved",
+      "result": "PASS"
+    },
+    {
+      "name": "old:no_fabricated_post_term_backend_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "old:client_spontaneous_disconnect_no_prior_detach",
+      "result": "PASS"
+    },
+    {
+      "name": "old:two_complete_distinct_receipts",
+      "result": "PASS"
+    },
+    {
+      "name": "old:raw_all_vhci_null",
+      "result": "PASS"
+    },
+    {
+      "name": "old:both_receipt_ports_explicitly_null",
+      "result": "PASS"
+    },
+    {
+      "name": "old:actual_key_one_press_release_in_order",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_serial_client_rx35_sha",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_serial_client_tx35_sha",
+      "result": "PASS"
+    },
+    {
+      "name": "old:host_sink_runtime_exact35_observation",
+      "result": "PASS"
+    },
+    {
+      "name": "old:exact_required_injections",
+      "result": "PASS"
+    },
+    {
+      "name": "old:both_devices_busy_real_probe",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:runtime_result_preserved",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:both_guest_exit_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:default_locked_build",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:source_guard_exact",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:binary_guard_exact",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:head_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:clean_exact_commit",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:run-sigterm-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:run-sigterm-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:guest-sigterm-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:guest-sigterm-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_script_snapshot:guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:script_git_blob:guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:server:exact_channel_beacon",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:server:complete_capture",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:server:final_result_after_collection",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:server:no_integrity_failure_both_channels",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:server:private_network_marker",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:client:exact_channel_beacon",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:client:complete_capture",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:client:final_result_after_collection",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:client:no_integrity_failure_both_channels",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:client:private_network_marker",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:raw_schema",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_actual_wait",
+      "result": "PASS",
+      "observed": 0
+    },
+    {
+      "name": "fixed:startup_ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_one_term",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_exited_under_three_second_observation",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_helper_stop_cont_and_no_acceptance_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_no_ready_before_term",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:one_owned_roothelper_listener",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:helper_backlog_contains_exact_client_inode",
+      "result": "PASS",
+      "observed": {
+        "listener_inode": "1950",
+        "client_inode": "1995"
+      }
+    },
+    {
+      "name": "fixed:client_pid_fd_inode_correlated",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:proc_unix_established_client",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:proc_unix_named_listener",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_no_3240_listener",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:startup_original_sysfs_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:main_actual_wait",
+      "result": "PASS",
+      "observed": 0
+    },
+    {
+      "name": "fixed:main_one_term_no_shutdown_or_stdin_eof",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:main_process_and_fd_table_gone",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:both_helpers_alive",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:all_four_independent_observations",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:real_two_device_pending_budget",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:original_root0600_cfg1_alt0",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:real_leased_pending_inflight",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:held:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:held:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:held:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:term-pending:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:term-pending:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:term-pending:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:independent_post_term_sysfs",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:actual_controls",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:usbhid:actual_data_completion",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:original_root0600_cfg1_alt0",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:real_leased_pending_inflight",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:held:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:held:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:held:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:term-pending:same_generation_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:term-pending:ordinary_owned_pid",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:term-pending:actual_authorized_fd",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:independent_post_term_sysfs",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:actual_controls",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:ftdi_sio:actual_data_completion",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:server_restore_result_not_reclassified",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:observed_window",
+      "result": "PASS",
+      "observed": 21
+    },
+    {
+      "name": "fixed:events_no_error",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:one_first_ready",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:unique_snapshots",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:stopped_count_preserved",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:stopped_is_final_event",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:stopped_global_budget_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:1-1:stopped_resources_zero_available",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:1-1:stopped_original_drivers",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:1-1:actual_reap_growth_monotonic_cancel",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:1-2:stopped_resources_zero_available",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:1-2:stopped_original_drivers",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:1-2:actual_reap_growth_monotonic_cancel",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:client_spontaneous_disconnect_no_prior_detach",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:two_complete_distinct_receipts",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:raw_all_vhci_null",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:both_receipt_ports_explicitly_null",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:actual_key_one_press_release_in_order",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_serial_client_rx35_sha",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_serial_client_tx35_sha",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:host_sink_runtime_exact35_observation",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:exact_required_injections",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed:both_devices_busy_real_probe",
+      "result": "PASS"
+    },
+    {
+      "name": "old_fixed_same_seven_exact_test_scripts",
+      "result": "PASS"
+    }
+  ],
+  "runs": {
+    "old": {
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023",
+      "runtime_result": "FAIL",
+      "git_commit": "177c7b4e7841472981abadc4dcf0ecf9f3edecda",
+      "working_tree_dirty": true,
+      "startup_wait_code": 143,
+      "main_wait_code": 143,
+      "main_observation_centiseconds": 2004,
+      "startup_client_inode": "225",
+      "startup_child_pid": 311,
+      "helper_pid": 271,
+      "main_pid": 433,
+      "pre_budget_bytes": 2832,
+      "pre_devices": [
+        {
+          "bus_id": "1-1",
+          "pending_urbs": 1,
+          "queued_urbs": 0,
+          "usbfs_inflight": 1
+        },
+        {
+          "bus_id": "1-2",
+          "pending_urbs": 2,
+          "queued_urbs": 1,
+          "usbfs_inflight": 1
+        }
+      ],
+      "post_sysfs": [
+        {
+          "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+          "bus_id": "1-1",
+          "node": "/dev/bus/usb/001/002",
+          "generation": "23:25310",
+          "node_identity": "5:161:bd:1",
+          "node_owner_mode": "0:600",
+          "devnum": 2,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": null
+            }
+          ]
+        },
+        {
+          "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+          "bus_id": "1-2",
+          "node": "/dev/bus/usb/001/003",
+          "generation": "23:25544",
+          "node_identity": "5:164:bd:2",
+          "node_owner_mode": "0:600",
+          "devnum": 3,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": null
+            }
+          ]
+        }
+      ],
+      "stopped_count": 0,
+      "reap_changes": [],
+      "raw_client_vhci_rows": 16,
+      "key_input_events": 6,
+      "host_sink": {
+        "expected_bytes": 35,
+        "received_bytes": 35,
+        "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef",
+        "exact_match": true
+      },
+      "script_sha256": {
+        "run-sigterm-qemu.py": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16",
+        "guest-sigterm-init.sh": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+        "run-physical-qemu.py": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+        "guest-physical-init.sh": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+        "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "eabb5e9134b733a11dd97fea3520c1c95f1dde7b7e5bb8eeef6fc4ec567f2ba0",
+        "rustusb-helper": "837aec7045ab08d935e8d887b686db8e160a5c849fd236c653710c0320dca46b"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "persisted_runner_check_count": 52,
+      "persisted_runner_failed_check_names": [
+        "server_guest_result",
+        "startup_wait_zero_within_three_seconds",
+        "actual_wait_zero",
+        "cooperative_observation_within_twenty_seconds",
+        "independent_original_sysfs_restored",
+        "one_final_stopped",
+        "stopped_resources_and_drivers",
+        "real_pending_reaped_cancellation_counts_preserved"
+      ]
+    },
+    "fixed": {
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm",
+      "runtime_result": "PASS",
+      "git_commit": "934358fa457b71c5e3436cc544ca4031b656f147",
+      "working_tree_dirty": false,
+      "startup_wait_code": 0,
+      "main_wait_code": 0,
+      "main_observation_centiseconds": 21,
+      "startup_client_inode": "1995",
+      "startup_child_pid": 307,
+      "helper_pid": 271,
+      "main_pid": 430,
+      "pre_budget_bytes": 2832,
+      "pre_devices": [
+        {
+          "bus_id": "1-1",
+          "pending_urbs": 1,
+          "queued_urbs": 0,
+          "usbfs_inflight": 1
+        },
+        {
+          "bus_id": "1-2",
+          "pending_urbs": 2,
+          "queued_urbs": 1,
+          "usbfs_inflight": 1
+        }
+      ],
+      "post_sysfs": [
+        {
+          "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+          "bus_id": "1-1",
+          "node": "/dev/bus/usb/001/002",
+          "generation": "23:25310",
+          "node_identity": "5:161:bd:1",
+          "node_owner_mode": "0:600",
+          "devnum": 2,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "usbhid"
+            }
+          ]
+        },
+        {
+          "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+          "bus_id": "1-2",
+          "node": "/dev/bus/usb/001/003",
+          "generation": "23:25544",
+          "node_identity": "5:164:bd:2",
+          "node_owner_mode": "0:600",
+          "devnum": 3,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "ftdi_sio"
+            }
+          ]
+        }
+      ],
+      "stopped_count": 1,
+      "reap_changes": [
+        {
+          "bus_id": "1-1",
+          "reaped_before": 15,
+          "reaped_after": 16,
+          "cancelled_before": 0,
+          "cancelled_after": 1
+        },
+        {
+          "bus_id": "1-2",
+          "reaped_before": 31,
+          "reaped_after": 32,
+          "cancelled_before": 2,
+          "cancelled_after": 4
+        }
+      ],
+      "raw_client_vhci_rows": 16,
+      "key_input_events": 6,
+      "host_sink": {
+        "expected_bytes": 35,
+        "received_bytes": 35,
+        "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef",
+        "exact_match": true
+      },
+      "script_sha256": {
+        "run-sigterm-qemu.py": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16",
+        "guest-sigterm-init.sh": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+        "run-physical-qemu.py": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+        "guest-physical-init.sh": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+        "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "adedf4b1c90d5f1a95033d49fd72caa425860d192855d827d5a88eb0e654699e",
+        "rustusb-helper": "837aec7045ab08d935e8d887b686db8e160a5c849fd236c653710c0320dca46b"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "persisted_runner_check_count": 52,
+      "persisted_runner_failed_check_names": []
+    }
+  },
+  "input_artifact_count": 30,
+  "input_artifacts": [
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/build.log",
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/client-evidence.log",
+      "bytes": 2731,
+      "sha256": "d011cd9a2bafc860fad78757a1a791837ee2394b7feafc4121e0f98812a6e1b3",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/client-serial.log",
+      "bytes": 34146,
+      "sha256": "36a281ce3c33648c6a543dce736f4152c8174fe0c32e0f5747fddc35dda05403",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/server-evidence.log",
+      "bytes": 17255,
+      "sha256": "b8908ac020e5f06d60e830966a2bf0a637d1cfc4d8ebb15f66d9ecb72e9d5a91",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/server-serial.log",
+      "bytes": 33315,
+      "sha256": "92499155abb5a05732afbabf8ce0f6fc07999f6e7ee68cb724e0fb543d478980",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/guest-physical-init.sh",
+      "bytes": 28271,
+      "sha256": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/guest-sigterm-init.sh",
+      "bytes": 30969,
+      "sha256": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/source/run-sigterm-qemu.py",
+      "bytes": 28330,
+      "sha256": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "old",
+      "path": "/tmp/rustusb-sigterm-old-qemu-dev01-20261023/summary.json",
+      "bytes": 54682,
+      "sha256": "d43b4a214eb9888c1a4c25dc782e343dd28d501ce8335c39e79e602f669d2e05",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/build.log",
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/client-evidence.log",
+      "bytes": 2731,
+      "sha256": "17bde2532f9e8816fc17c11aee5aba048d51f811aa4a8cc3a12b4c44ec184192",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/client-serial.log",
+      "bytes": 34146,
+      "sha256": "6394a4758e0dbb4f0864129cf9b9e9f3797ab5fc74ea7e38a047d5b89e3f1b33",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/server-evidence.log",
+      "bytes": 18451,
+      "sha256": "67ee1efaa2d5113b82ba864a5029ba519c0f7d6f5a191953cb886a8bbbc8a096",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/server-serial.log",
+      "bytes": 33787,
+      "sha256": "de08b4136855b7a0227b03f08802a97a215cd989b03733c0ff6ecb48a7e48bf1",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/guest-physical-init.sh",
+      "bytes": 28271,
+      "sha256": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/guest-sigterm-init.sh",
+      "bytes": 30969,
+      "sha256": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/source/run-sigterm-qemu.py",
+      "bytes": 28330,
+      "sha256": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16",
+      "provenance": "unchanged original runtime artifact"
+    },
+    {
+      "run": "fixed",
+      "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/summary.json",
+      "bytes": 57226,
+      "sha256": "9c8a75c5c10fcb3ca3463cd77aff6f22705e9f3b062682c6eee92b3f150ad9b0",
+      "provenance": "unchanged original runtime artifact"
+    }
+  ],
+  "review_script": {
+    "path": "/tmp/rustusb-sigterm-fixed-qemu-author-raw-review-20261023.py",
+    "sha256": "a100c3410b7eacd9d0777f755e213689bfaad3deb02768dc4fdba19a5e3a87cf"
+  }
+}

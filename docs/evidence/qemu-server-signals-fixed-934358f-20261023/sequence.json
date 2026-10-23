@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "git_commit": "934358fa457b71c5e3436cc544ca4031b656f147",
+  "working_tree_clean": true,
+  "runs": [
+    {
+      "name": "sigterm",
+      "command": [
+        "python3",
+        "scripts/qemu/run-sigterm-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm"
+      ],
+      "started_utc": "2026-10-23T04:22:00.643793+00:00",
+      "exit_code": 0,
+      "result": "PASS",
+      "summary_sha256": "9c8a75c5c10fcb3ca3463cd77aff6f22705e9f3b062682c6eee92b3f150ad9b0"
+    },
+    {
+      "name": "virtual",
+      "command": [
+        "python3",
+        "scripts/qemu/run-userspace-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/virtual"
+      ],
+      "started_utc": "2026-10-23T04:22:12.416761+00:00",
+      "exit_code": 0,
+      "result": "PASS",
+      "summary_sha256": "4e8191e7d4d058fa7fcfb3c604baa8366fa76e6532977cc6d0dc7f7b61adde90"
+    },
+    {
+      "name": "physical-normal",
+      "command": [
+        "python3",
+        "scripts/qemu/run-physical-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-normal"
+      ],
+      "started_utc": "2026-10-23T04:22:24.606103+00:00",
+      "exit_code": 0,
+      "result": "PASS",
+      "summary_sha256": "1197e70587dbdc1127bdb6970936f3302bfea28b9013cf15625a6be6f970ab5b"
+    },
+    {
+      "name": "physical-hot",
+      "command": [
+        "python3",
+        "scripts/qemu/run-physical-qemu.py",
+        "--hot-unplug",
+        "--evidence",
+        "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/physical-hot"
+      ],
+      "started_utc": "2026-10-23T04:22:36.901249+00:00",
+      "exit_code": 0,
+      "result": "PASS",
+      "summary_sha256": "074a1f0889e638107d48dcffd3e09f1b85c31fdd7b2330b0721844d83fff5052"
+    }
+  ],
+  "remaining": [],
+  "source_after_guard_passed": true
+}

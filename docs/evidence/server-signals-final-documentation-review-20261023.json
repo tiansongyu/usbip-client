@@ -1,0 +1,1529 @@
+{
+  "schema_version": 1,
+  "decision": "PASS_NO_MUST_FIX",
+  "scope": "Read-only consistency review of the 11 requested pending documents against exact archived934358f software/local/QEMU/CI evidence; no runtime tests/build/QEMU or repository writes.",
+  "reviewer_role": "QEMU SIGTERM harness author, documentation consistency review only; not independent product or legacy-regression raw implementation validation.",
+  "document_inputs": {
+    "README.md": {
+      "bytes": 10245,
+      "sha256": "df1cfa995e11ab77a29170031845b9c7e316fdd1566f89e5178704d46e61a7c0"
+    },
+    "AGENTS.md": {
+      "bytes": 2906,
+      "sha256": "a63014368bfff77cba9fc3cfccea3ce6e7c14db8ae923bc041bbaca00984cd4c"
+    },
+    "docs/architecture.md": {
+      "bytes": 20499,
+      "sha256": "9bdbd3f71c6edba1beb8da8b678a44be921b26ec6f8b95f597774f01d2094f61"
+    },
+    "docs/testing.md": {
+      "bytes": 25356,
+      "sha256": "733ec1e28f264a3f29df00940825fa6e00194b47aee1a602e5c6a4bcbfa06485"
+    },
+    "docs/compatibility.md": {
+      "bytes": 6988,
+      "sha256": "2a4cd1ddc976b9723a9a98d834a53729b7aaf684c13c2c7d75a5a7b1abcef745"
+    },
+    "docs/acceptance.md": {
+      "bytes": 38715,
+      "sha256": "fc8ce9e9bc80574d5049967235300b02a99bd3e163cb71b13dbb842c6071cd2d"
+    },
+    "docs/roadmap.md": {
+      "bytes": 14413,
+      "sha256": "8849754a3e789c16fa478b83a602c8c244d06a954d64fcbc47befa39ff3a8f10"
+    },
+    "docs/rust-virtual-server.md": {
+      "bytes": 3464,
+      "sha256": "ac704dd9c2e50397059bd77518ee49c9e297ab5129299ab17899d8127f7abc66"
+    },
+    "docs/rust-physical-server.md": {
+      "bytes": 6161,
+      "sha256": "a0a9b82dc23d3d643abcffeff5b8288c52604609549c9e270a0e8b6398aca119"
+    },
+    "docs/research/server-signal-shutdown.md": {
+      "bytes": 8850,
+      "sha256": "461b1263c67188e88c19e4478c3cfd79330571b07f522b34ef7cf3ab316a9c59"
+    },
+    "docs/research/server-signal-shutdown-design.md": {
+      "bytes": 5687,
+      "sha256": "84789e4dbdcd24aafbc1b12a0331455bf5876f09edfc60ef7883542d8c9dedb0"
+    }
+  },
+  "evidence_inputs": {
+    "docs/evidence/server-signals-software-934358f-20261023/software.json": {
+      "bytes": 555,
+      "sha256": "2c1b51e2f72784e46dc494dbad9e9f114b9e3e8f4124190973cc0ce58cb8321a"
+    },
+    "docs/evidence/local-server-signals-fixed-934358f-20261023/summary.json": {
+      "bytes": 133079,
+      "sha256": "657a6cb1e524dac8af216f7bb7419f10aa53c27c40f4c6c699b960ad689ba28d"
+    },
+    "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sequence.json": {
+      "bytes": 1910,
+      "sha256": "2c42fae8a9d69d3c57c0985c40774fa58ec2a51ecf0183d7539d260ed8e76f80"
+    },
+    "docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/summary.json": {
+      "bytes": 57226,
+      "sha256": "9c8a75c5c10fcb3ca3463cd77aff6f22705e9f3b062682c6eee92b3f150ad9b0"
+    },
+    "docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/summary.json": {
+      "bytes": 32033,
+      "sha256": "4e8191e7d4d058fa7fcfb3c604baa8366fa76e6532977cc6d0dc7f7b61adde90"
+    },
+    "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/summary.json": {
+      "bytes": 52770,
+      "sha256": "1197e70587dbdc1127bdb6970936f3302bfea28b9013cf15625a6be6f970ab5b"
+    },
+    "docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/summary.json": {
+      "bytes": 78401,
+      "sha256": "074a1f0889e638107d48dcffd3e09f1b85c31fdd7b2330b0721844d83fff5052"
+    },
+    "docs/evidence/server-signals-fixed-validation-934358f-20261023.json": {
+      "bytes": 32269,
+      "sha256": "afabb6fa77918788471cc9666de3e216f5ad4b7125af79da2a9bb60c99375ae7"
+    },
+    "docs/evidence/publication-server-signals-934358f-20261023.json": {
+      "bytes": 10277,
+      "sha256": "058a6e4f2c139e21badec4f95aaaa4d3584e531fe9188c67b2f79aff6cde4525"
+    },
+    "docs/evidence/server-signals-ci-independent-review-20261023.json": {
+      "bytes": 45975,
+      "sha256": "8e5db6bb14b336a449dc9471c34454c97636fe17e2efc8533a73520ed313ea8c"
+    },
+    "docs/evidence/server-signals-fixed-regressions-independent-review-20261023.json": {
+      "bytes": 49405,
+      "sha256": "a15ff19b866583fd1833f94763ca765324779a2e0cc24d2c3c4833ca6ca2231f"
+    },
+    "docs/evidence/server-sigterm-fixed-local-independent-review-20261023.json": {
+      "bytes": 27004,
+      "sha256": "fce5b6ceb337692c67f786017a6a5c2c3f9c2403f79f169ff42c59caefb906bd"
+    },
+    "docs/evidence/server-sigterm-old-local-independent-review-20261023.json": {
+      "bytes": 46917,
+      "sha256": "9bec97766cbad7827f0a57b98628f55431151a9bc6197655c18a2a7d884f4acd"
+    },
+    "docs/evidence/server-sigterm-old-qemu-independent-review-20261023.json": {
+      "bytes": 32466,
+      "sha256": "9a3cab5d054722f8081f27296e8b6216b13d79fe8629b8ef9a6990612bb208eb"
+    },
+    "docs/evidence/server-sigterm-fixed-qemu-author-raw-review-20261023.json": {
+      "bytes": 33967,
+      "sha256": "8d3e569d683c8dd11b68141cc8572c907193efc0dcd24b280abb4f1a1039cc15"
+    },
+    "docs/evidence/qemu-server-sigterm-old-dev01-20261023/summary.json": {
+      "bytes": 54682,
+      "sha256": "d43b4a214eb9888c1a4c25dc782e343dd28d501ce8335c39e79e602f669d2e05"
+    }
+  },
+  "local_links_checked": 178,
+  "check_count": 347,
+  "checks": [
+    {
+      "name": "local_link:README.md:5:docs/work-log.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:5:docs/roadmap.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:7:docs/rust-virtual-server.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:7:docs/research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:9:docs/rust-physical-server.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:9:docs/research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:9:docs/evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:11:docs/research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:11:docs/evidence/publication-server-signals-934358f-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:13:docs/acceptance.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:13:docs/research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:15:docs/research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:15:docs/research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:19:docs/compatibility.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:48:examples/policy.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:78:docs/security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:89:docs/testing.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:105:docs/architecture.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:105:docs/protocol.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:105:docs/research/gap-analysis.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:106:docs/research/linux-usbip-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:106:docs/research/rust-backend-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:107:docs/third-party.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:107:docs/requirements.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:107:AGENTS.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:41:research/rust-virtual-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:41:research/rust-physical-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:115:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:117:third-party.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:123:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:129:security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:129:rust-physical-server.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/architecture.md:129:work-log.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:26:research/rust-virtual-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:28:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:30:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:32:evidence/server-fuzz-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:32:evidence/server-fuzz-final-20261022.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:97:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:99:research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:99:research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:111:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:125:research/usbfs-host-state-races.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:127:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:142:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/testing.md:218:roadmap.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:3:evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:3:evidence/publication-virtual-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:3:evidence/ci-native-matrix-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:22:research/native-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:22:evidence/qemu-native-20261022T101910Z/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:24:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:26:research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:26:research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:28:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:30:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:30:evidence/publication-physical-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:32:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:35:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:37:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:3:requirements.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:11:research/linux-usbip-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:12:research/rust-backend-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:12:evidence/rust-upstream-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:13:evidence/software-checks-phase1-runtime-2026-10-22.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:13:../scripts/check.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:13:evidence/software-checks-final-2026-10-22.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:14:evidence/fuzz-devlist-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:14:../fuzz/fuzz_targets/devlist.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:14:../scripts/fuzz-smoke.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:15:work-log.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:16:../scripts/qemu/run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:16:../scripts/qemu/guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:16:evidence/qemu-native-20261022T101910Z/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:17:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:17:evidence/qemu-reconnect-old-20261022/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:18:evidence/ci-native-matrix-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:19:research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:19:research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:19:evidence/qemu-native-contention-transport-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:20:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:20:evidence/virtual-validation-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:20:evidence/software-checks-virtual-20261022.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:21:evidence/server-fuzz-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:21:evidence/server-fuzz-final-20261022.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:21:evidence/virtual-backpressure-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:22:evidence/publication-virtual-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:23:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:23:evidence/physical-software-validation-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:23:evidence/physical-validation-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:24:evidence/publication-physical-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:25:research/usbfs-composite-qemu-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:25:evidence/composite-software-validation-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:25:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:26:evidence/publication-composite-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:27:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:27:evidence/composite-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:27:evidence/composite-capture-final-verification-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:28:research/usbfs-host-state-race-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:28:research/usbfs-host-state-races.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:28:evidence/host-state-final-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:29:evidence/host-state-software-validation-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:29:evidence/publication-host-state-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:30:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:30:evidence/checked-release-software-validation-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:30:evidence/checked-release-final-v4-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:31:evidence/publication-checked-release-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:31:evidence/publication-checked-release-harness-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:32:research/native-test-fixture-readiness.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:32:evidence/native-fixture-full-software-validation-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:32:evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:research/server-signal-shutdown-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:evidence/server-sigterm-old-local-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:evidence/server-sigterm-old-qemu-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:evidence/server-signals-software-934358f-20261023/software.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:evidence/local-server-signals-fixed-934358f-20261023/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:33:evidence/server-signals-fixed-validation-934358f-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:42:research/gap-analysis.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:44:protocol.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:45:third-party.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:45:dependency-inventory.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:45:../Cargo.lock",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:46:compatibility.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:47:architecture.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:48:../crates/rustusb-core/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:48:../crates/rustusb-daemon/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:49:security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:50:roadmap.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:50:testing.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:64:../AGENTS.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:64:../.agents/skills/rustusb-development/SKILL.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:155:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:156:evidence/software-checks-phase1-runtime-2026-10-22.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:157:evidence/publication-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:157:evidence/publication-runtime-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:53:research/rust-virtual-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:53:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:53:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:55:research/usbfs-composite-qemu-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:55:evidence/composite-software-validation-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:55:evidence/publication-composite-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:55:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:57:research/usbfs-host-state-race-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:59:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:59:evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:61:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:61:evidence/phase2-scope-review-rev2-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:69:security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-virtual-server.md:3:research/rust-virtual-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-virtual-server.md:12:../README.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-virtual-server.md:42:work-log.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-virtual-server.md:44:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:3:research/rust-physical-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:3:acceptance.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:17:../README.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:47:../README.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:68:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:7:server-signal-shutdown-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:19:../evidence/server-sigterm-old-local-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:20:../evidence/local-server-sigterm-old-blocked-dev02-20261023/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:21:../evidence/server-sigterm-old-qemu-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:21:../evidence/qemu-server-sigterm-old-dev01-20261023/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:25:../evidence/server-sigterm-old-local-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:25:../evidence/server-sigterm-old-qemu-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:29:../evidence/server-signals-software-934358f-20261023/software.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:31:../evidence/local-server-signals-fixed-934358f-20261023/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:31:../evidence/server-sigterm-fixed-local-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:33:../evidence/publication-server-signals-934358f-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:37:../evidence/server-signals-fixed-validation-934358f-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:52:../testing.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:56:../evidence/server-sigterm-fixed-qemu-author-raw-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown.md:58:../evidence/server-signals-fixed-regressions-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown-design.md:34:server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown-design.md:36:../evidence/server-sigterm-old-local-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown-design.md:36:../evidence/server-sigterm-old-qemu-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown-design.md:39:../evidence/server-sigterm-design-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/server-signal-shutdown-design.md:39:../evidence/server-sigterm-lifecycle-independent-design-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "software_exact_freeze222_and138",
+      "result": "PASS"
+    },
+    {
+      "name": "local_four_actual_pass_default_allfeatures_build",
+      "result": "PASS"
+    },
+    {
+      "name": "local_source_binary_guards",
+      "result": "PASS"
+    },
+    {
+      "name": "four_qemu_sequence_same_clean934",
+      "result": "PASS"
+    },
+    {
+      "name": "sigterm:original_summary_matches_sequence_hash",
+      "result": "PASS"
+    },
+    {
+      "name": "sigterm:actual_pass_clean_freeze_two_guest0",
+      "result": "PASS"
+    },
+    {
+      "name": "sigterm:exact_feature_build_attribution",
+      "result": "PASS"
+    },
+    {
+      "name": "sigterm:allfeatures_elf_actual",
+      "result": "PASS"
+    },
+    {
+      "name": "virtual:original_summary_matches_sequence_hash",
+      "result": "PASS"
+    },
+    {
+      "name": "virtual:actual_pass_clean_freeze_two_guest0",
+      "result": "PASS"
+    },
+    {
+      "name": "virtual:exact_feature_build_attribution",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-normal:original_summary_matches_sequence_hash",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-normal:actual_pass_clean_freeze_two_guest0",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-normal:exact_feature_build_attribution",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-normal:allfeatures_elf_actual",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-hot:original_summary_matches_sequence_hash",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-hot:actual_pass_clean_freeze_two_guest0",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-hot:exact_feature_build_attribution",
+      "result": "PASS"
+    },
+    {
+      "name": "physical-hot:allfeatures_elf_actual",
+      "result": "PASS"
+    },
+    {
+      "name": "virtual_elf_distinct_from_allfeatures",
+      "result": "PASS"
+    },
+    {
+      "name": "doc_virtual_rustusb_full_elf_digest",
+      "result": "PASS"
+    },
+    {
+      "name": "doc_virtual_rustusb-helper_full_elf_digest",
+      "result": "PASS"
+    },
+    {
+      "name": "doc_allfeatures_rustusb_full_elf_digest",
+      "result": "PASS"
+    },
+    {
+      "name": "doc_allfeatures_rustusb-helper_full_elf_digest",
+      "result": "PASS"
+    },
+    {
+      "name": "term_actual52checks_pass",
+      "result": "PASS"
+    },
+    {
+      "name": "virtual:documented_probe_execution_count",
+      "result": "PASS",
+      "observed": 19
+    },
+    {
+      "name": "physical-normal:documented_probe_execution_count",
+      "result": "PASS",
+      "observed": 15
+    },
+    {
+      "name": "physical-hot:documented_probe_execution_count",
+      "result": "PASS",
+      "observed": 15
+    },
+    {
+      "name": "fixed_validation_index:declared_count",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/freeze.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/software.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/legacy-backpressure.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/ci.patch",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/ci-rationale.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigint/synthetic-padding.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/blocked-sigterm/synthetic-padding.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigint/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/ready-sigterm/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/source-after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/source-before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-hot/runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/physical-normal/runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sequence.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/guest-sigterm-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/source/run-sigterm-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sigterm/runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/virtual/runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/sequence.py",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-sigterm-old-qemu-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-signals-software-934358f-20261023/artifacts.sha256",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/local-server-signals-fixed-934358f-20261023/artifacts.sha256",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/qemu-server-signals-fixed-934358f-20261023/artifacts.sha256",
+      "result": "PASS"
+    },
+    {
+      "name": "fixed_validation_index:artifact:docs/evidence/server-sigterm-fixed-local-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:declared_count",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/check-script-api.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/check-script-api.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/check-script.source",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/fetch-provenance.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055213.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055213.log.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055460.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055460.log.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055517.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055517.log.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055559.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/job-120239055559.log.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/jobs-final.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/jobs-final.json.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/jobs-prior-progress.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/run-final.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/run-final.json.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/signals-script-api.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/signals-script-api.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/signals-script.source",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/source-fetch-provenance.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/workflow-api.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/workflow-api.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/workflow.source",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/runs-initial.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/server-signals-ci-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_index:artifact:docs/evidence/ci-server-signals-934358f-20261023/artifacts.sha256",
+      "result": "PASS"
+    },
+    {
+      "name": "legacy_guard_serialization_limit_explicit",
+      "result": "PASS"
+    },
+    {
+      "name": "publication_actual_four_completed_success222_2_4",
+      "result": "PASS"
+    },
+    {
+      "name": "CI190_actual_raw_review",
+      "result": "PASS"
+    },
+    {
+      "name": "legacy227_review_complete_and_linked",
+      "result": "PASS"
+    },
+    {
+      "name": "CI_unavailable_raw_not_reconstructed_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "CI_reviewer_authorship_disclosed_in_evidence",
+      "result": "PASS"
+    },
+    {
+      "name": "server-sigterm-fixed-local-independent-review-20261023.json:actual_count",
+      "result": "PASS"
+    },
+    {
+      "name": "server-sigterm-old-local-independent-review-20261023.json:actual_count",
+      "result": "PASS"
+    },
+    {
+      "name": "server-sigterm-old-qemu-independent-review-20261023.json:actual_count",
+      "result": "PASS"
+    },
+    {
+      "name": "server-sigterm-fixed-qemu-author-raw-review-20261023.json:actual_count",
+      "result": "PASS"
+    },
+    {
+      "name": "local_author_review_disclosed",
+      "result": "PASS"
+    },
+    {
+      "name": "term_author_review_disclosed",
+      "result": "PASS"
+    },
+    {
+      "name": "host_sink_not_fabricated_raw_capture",
+      "result": "PASS"
+    },
+    {
+      "name": "old_negative_stays143_no_restoration_no_stopped",
+      "result": "PASS"
+    },
+    {
+      "name": "old_negative_limits_documented",
+      "result": "PASS"
+    },
+    {
+      "name": "product_patch_only_four_CLI_files",
+      "result": "PASS"
+    },
+    {
+      "name": "unfinished_scope_explicit",
+      "result": "PASS"
+    },
+    {
+      "name": "startup_backlog_not_acceptance_claim",
+      "result": "PASS"
+    },
+    {
+      "name": "blocking_prepare_cancel_limit",
+      "result": "PASS"
+    },
+    {
+      "name": "blocked_resources_not_invented",
+      "result": "PASS"
+    },
+    {
+      "name": "README_exact_934_and_CI",
+      "result": "PASS"
+    },
+    {
+      "name": "acceptance_E23_exact_934_and_CI",
+      "result": "PASS"
+    },
+    {
+      "name": "testing_two_entry_default_and_feature_boundary",
+      "result": "PASS"
+    }
+  ],
+  "must_fix": [],
+  "manual_source_and_scope_review": [
+    "Both Rust service entries synchronously register ShutdownSignals before first await/helper I/O/listener. EventOutput precedes bind; prepare cancellation and blocking initialization limits match source.",
+    "After acquiring ServerHandle, cleanup is awaited before operation errors; final output is separately interruptible. Repeated-signal cleanup is only a source-ownership claim, not a runtime claim.",
+    "Same934358f source does not imply one ELF: virtual rust-backend-only and three all-features runs are attributed separately.",
+    "The222 unit executions, four local signal cases and two older backpressure cases remain separate categories;52 TERM host checks are not described as52 wire cases.",
+    "Legacy QEMU summaries do not serialize post-guard fields. Sequence source138 recheck and runner PASS guard ordering are not rewritten into missing original fields.",
+    "Historical derived indexes/reviews with CI-pending text retain their capture-time status; final publication and current document CI claims point to actual four-success39899971271.",
+    "Existing virtual-service introduction is scoped to that fixed-profile service, not a claim that the separate physical-nusb adapter is absent."
+  ],
+  "explicit_pending_exceptions": [],
+  "limits": [
+    "Local link target existence checked; external URLs and Markdown anchors were not network-revalidated.",
+    "No original missing CI per-case captures or FTDI sink payload files were reconstructed.",
+    "No worktree-clean requirement imposed after evidence/document archiving; clean checks use original runtime and sequence records."
+  ]
+}

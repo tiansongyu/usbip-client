@@ -1,0 +1,253 @@
+From 1762d6534cc1ef2bf588d8242dc1947f11b4e15d Mon Sep 17 00:00:00 2001
+From: invoker__qq <478880214@qq.com>
+Date: Fri, 23 Oct 2026 11:57:53 +0800
+Subject: [PATCH] fix: await Rust server cleanup on Unix termination signals
+
+---
+ crates/rustusb-cli/src/main.rs             |  4 +-
+ crates/rustusb-cli/src/physical_server.rs  | 80 ++++++++++++++--------
+ crates/rustusb-cli/src/shutdown_signals.rs | 45 ++++++++++++
+ crates/rustusb-cli/src/virtual_server.rs   | 17 +++--
+ 4 files changed, 109 insertions(+), 37 deletions(-)
+ create mode 100644 crates/rustusb-cli/src/shutdown_signals.rs
+
+diff --git a/crates/rustusb-cli/src/main.rs b/crates/rustusb-cli/src/main.rs
+index ab67afe..0d48059 100644
+--- a/crates/rustusb-cli/src/main.rs
++++ b/crates/rustusb-cli/src/main.rs
+@@ -3,6 +3,8 @@
+ #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+ mod physical_server;
+ #[cfg(feature = "rust-backend")]
++mod shutdown_signals;
++#[cfg(feature = "rust-backend")]
+ mod virtual_server;
+ 
+ use clap::{Parser, Subcommand};
+@@ -406,7 +408,7 @@ async fn main() -> ExitCode {
+     #[cfg(not(feature = "rust-backend"))]
+     let owns_signal_cleanup = false;
+     let result = if owns_signal_cleanup {
+-        // The virtual service must await its connection/lease tree on Ctrl-C.
++        // The server must await its connection/lease tree on shutdown signals.
+         // Racing it with the helper-client cancellation branch would drop that
+         // cleanup future and incorrectly return a helper-operation diagnostic.
+         run(cli).await
+diff --git a/crates/rustusb-cli/src/physical_server.rs b/crates/rustusb-cli/src/physical_server.rs
+index 97b2638..6df42c9 100644
+--- a/crates/rustusb-cli/src/physical_server.rs
++++ b/crates/rustusb-cli/src/physical_server.rs
+@@ -1,6 +1,9 @@
+ //! Ordinary-user physical service: helper-issued descriptors, no arbitrary paths.
+ 
+-use super::virtual_server::{Control, EventOutput, controls, parse};
++use super::{
++    shutdown_signals::ShutdownSignals,
++    virtual_server::{Control, EventOutput, controls, parse},
++};
+ use rustusb_core::{Error, Result};
+ use rustusb_daemon::{Request, open_physical, request};
+ use rustusb_rust_backend::{PhysicalBackend, PhysicalSource, ServerConfig, ServerHandle};
+@@ -33,32 +36,46 @@ pub(super) async fn run(
+         allowed_peers,
+     };
+     config.validate()?;
+-    let status = request(socket, Request::Status).await?;
+-    if !status.ok {
+-        return Err(Error::State(status.error.unwrap_or_else(|| {
+-            "helper rejected physical service caller".into()
+-        })));
+-    }
+-    if status
+-        .data
+-        .get("physical_usb_capability_enabled")
+-        .and_then(|value| value.as_bool())
+-        != Some(true)
+-    {
+-        return Err(Error::Unsupported("install a matching helper built with physical-usb and configure its physical_device_ids allowlist".into()));
+-    }
+-    let mut sources = Vec::with_capacity(device_ids.len());
+-    for device_id in device_ids {
+-        let grant = open_physical(socket, device_id).await?;
+-        sources.push(PhysicalSource {
+-            fd: grant.fd,
+-            device: grant.device,
+-            receipt: grant.receipt,
+-        });
+-    }
+-    let backend = PhysicalBackend::from_sources(sources).await?;
+-    let server = ServerHandle::bind_physical(config, backend.clone()).await?;
++    let mut signals = ShutdownSignals::new()?;
+     let mut output = EventOutput::new()?;
++    let backend = {
++        // Preparation cannot accept IMPORT or claim interfaces. Cancelling it
++        // does not terminate any already-running blocking initialization call.
++        let prepare = async {
++            let status = request(socket, Request::Status).await?;
++            if !status.ok {
++                return Err(Error::State(status.error.unwrap_or_else(|| {
++                    "helper rejected physical service caller".into()
++                })));
++            }
++            if status
++                .data
++                .get("physical_usb_capability_enabled")
++                .and_then(|value| value.as_bool())
++                != Some(true)
++            {
++                return Err(Error::Unsupported("install a matching helper built with physical-usb and configure its physical_device_ids allowlist".into()));
++            }
++            let mut sources = Vec::with_capacity(device_ids.len());
++            for device_id in device_ids {
++                let grant = open_physical(socket, device_id).await?;
++                sources.push(PhysicalSource {
++                    fd: grant.fd,
++                    device: grant.device,
++                    receipt: grant.receipt,
++                });
++            }
++            PhysicalBackend::from_sources(sources).await
++        };
++        tokio::pin!(prepare);
++        tokio::select! {
++            biased;
++            signal = signals.recv() => return signal,
++            backend = &mut prepare => backend?,
++        }
++    };
++    // Do not race bind: its returned handle may already own a listener task.
++    let server = ServerHandle::bind_physical(config, backend.clone()).await?;
+     let operations = async {
+         output.event(json!({"schema_version":1,"event":"ready","address":server.local_addr(),"snapshot":backend.snapshot()?})).await?;
+         if !control_stdin {
+@@ -96,8 +113,9 @@ pub(super) async fn run(
+     let result: Result<()> = {
+         tokio::pin!(operations);
+         tokio::select! {
++            biased;
++            signal = signals.recv() => signal,
+             result = &mut operations => result,
+-            signal = tokio::signal::ctrl_c() => signal.map_err(Error::Io),
+         }
+     };
+     // Even failed/blocked output cannot skip device cancellation and recovery.
+@@ -107,9 +125,11 @@ pub(super) async fn run(
+     if output.in_flight {
+         return Ok(());
+     }
+-    output
+-        .event(json!({"schema_version":1,"event":"stopped","snapshot":backend.snapshot()?}))
+-        .await
++    tokio::select! {
++        biased;
++        signal = signals.recv() => signal,
++        result = output.event(json!({"schema_version":1,"event":"stopped","snapshot":backend.snapshot()?})) => result,
++    }
+ }
+ 
+ #[cfg(test)]
+diff --git a/crates/rustusb-cli/src/shutdown_signals.rs b/crates/rustusb-cli/src/shutdown_signals.rs
+new file mode 100644
+index 0000000..d4cb8dc
+--- /dev/null
++++ b/crates/rustusb-cli/src/shutdown_signals.rs
+@@ -0,0 +1,45 @@
++//! Cooperative server termination, registered before acquiring service resources.
++
++use rustusb_core::{Error, Result};
++#[cfg(unix)]
++use tokio::signal::unix::{Signal, SignalKind, signal};
++
++pub(super) struct ShutdownSignals {
++    #[cfg(unix)]
++    interrupt: Signal,
++    #[cfg(unix)]
++    terminate: Signal,
++}
++
++impl ShutdownSignals {
++    /// Register both Unix signals inside the running Tokio runtime.
++    pub(super) fn new() -> Result<Self> {
++        Ok(Self {
++            #[cfg(unix)]
++            interrupt: signal(SignalKind::interrupt())?,
++            #[cfg(unix)]
++            terminate: signal(SignalKind::terminate())?,
++        })
++    }
++
++    /// Wait for at least one shutdown request; Unix notifications may coalesce.
++    pub(super) async fn recv(&mut self) -> Result<()> {
++        #[cfg(unix)]
++        {
++            let received = tokio::select! {
++                received = self.interrupt.recv() => received,
++                received = self.terminate.recv() => received,
++            };
++            received.ok_or_else(|| {
++                Error::Io(std::io::Error::new(
++                    std::io::ErrorKind::BrokenPipe,
++                    "server shutdown signal stream ended",
++                ))
++            })
++        }
++        #[cfg(not(unix))]
++        {
++            tokio::signal::ctrl_c().await.map_err(Error::Io)
++        }
++    }
++}
+diff --git a/crates/rustusb-cli/src/virtual_server.rs b/crates/rustusb-cli/src/virtual_server.rs
+index fc4df6f..d2e611d 100644
+--- a/crates/rustusb-cli/src/virtual_server.rs
++++ b/crates/rustusb-cli/src/virtual_server.rs
+@@ -1,5 +1,6 @@
+ //! Bounded, local-only JSONL test controls for the opt-in virtual backend.
+ 
++use super::shutdown_signals::ShutdownSignals;
+ use rustusb_core::{Error, Result};
+ use rustusb_rust_backend::{ServerConfig, ServerHandle, VirtualBackend};
+ use serde::Deserialize;
+@@ -173,6 +174,7 @@ pub(super) async fn run(
+     allowed_peers: Vec<IpAddr>,
+     control_stdin: bool,
+ ) -> Result<()> {
++    let mut signals = ShutdownSignals::new()?;
+     let mut output = EventOutput::new()?;
+     let backend = VirtualBackend::new()?;
+     let server = ServerHandle::bind(
+@@ -232,22 +234,25 @@ pub(super) async fn run(
+     let result: Result<()> = {
+         tokio::pin!(operations);
+         tokio::select! {
++            biased;
++            signal = signals.recv() => signal,
+             result = &mut operations => result,
+-            signal = tokio::signal::ctrl_c() => signal.map_err(Error::Io),
+         }
+     };
+     // All early event/control failures still await deterministic lease cleanup.
+     let shutdown = server.shutdown().await;
+-    result?;
+     shutdown?;
++    result?;
+     if output.in_flight {
+-        // Ctrl-C cancelled a blocked output. Connections are already reclaimed;
++        // A signal cancelled a blocked output. Connections are already reclaimed;
+         // do not wait on the same consumer again to emit a final event.
+         return Ok(());
+     }
+-    output
+-        .event(json!({"schema_version":1,"event":"stopped","snapshot":backend.snapshot()?}))
+-        .await
++    tokio::select! {
++        biased;
++        signal = signals.recv() => signal,
++        result = output.event(json!({"schema_version":1,"event":"stopped","snapshot":backend.snapshot()?})) => result,
++    }
+ }
+ 
+ #[cfg(test)]
+-- 
+2.34.1
+
