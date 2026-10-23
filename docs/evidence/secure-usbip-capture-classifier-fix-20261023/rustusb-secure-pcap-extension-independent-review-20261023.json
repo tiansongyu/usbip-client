@@ -1,0 +1,84 @@
+{
+  "kind": "independent_read_only_source_review",
+  "reviewer": "/root/journal_harness_review",
+  "head_at_review": "f9558fcd7c0c29e3df1b13bbd109f7d471806c9f",
+  "sources": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py",
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu/guest-secure-init.sh",
+      "bytes": 35715,
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16"
+    }
+  ],
+  "result": "NO_SOURCE_REVIEW_BLOCKER",
+  "mustfix": [],
+  "checks": [
+    {
+      "name": "exact_source_scope",
+      "result": "PASS",
+      "detail": "Reviewed the current runner-only PCAP parser delta and the unchanged downstream TCP reconstruction/TLS checks; guest hash remains fixed."
+    },
+    {
+      "name": "bounded_hop_by_hop",
+      "result": "PASS",
+      "detail": "At most one Hop-by-Hop header, 8..256 bytes, constrained to the IPv6 payload extent; duplicate/other extension headers and fragments fail closed."
+    },
+    {
+      "name": "bounded_options",
+      "result": "PASS",
+      "detail": "Each option consumes at least one byte; option lengths cannot exceed header bounds. Only Pad1, zero PadN and a single two-byte Router Alert value 0 are accepted. Unknown options and Router Alert on TCP reject."
+    },
+    {
+      "name": "wrapped_tcp_complete_path",
+      "result": "PASS",
+      "detail": "The extracted TCP payload rejoins the same minimum-header, selected-IP-family, port, SYN anchoring, contiguous reassembly, overlap, cleartext signature and complete bounded TLS-record inspection; no extension-triggered TCP skip exists."
+    },
+    {
+      "name": "ipv4_non_tcp",
+      "result": "PASS",
+      "detail": "IPv4 protocol other than TCP now raises instead of silently continuing; IPv4 fragments remain rejected."
+    },
+    {
+      "name": "icmpv6_integrity_and_allowlist",
+      "result": "PASS",
+      "detail": "All accepted ICMPv6 requires minimum length, code 0 and a complete upper-layer pseudoheader checksum. Only the explicitly classified RS, NS, NA and MLDv2 report subset can be skipped from TCP inspection."
+    },
+    {
+      "name": "mldv2_scope_and_shape",
+      "result": "PASS",
+      "detail": "Reports require exactly one Hop-by-Hop Router Alert 0, hop limit 1, link-local source, destination ff02::16, zero reserved field, 1..16 records, record types 1..6, no auxiliary data, <=16 sources per record, multicast group, non-multicast/non-unspecified source addresses and exact final cursor; truncated and trailing data reject."
+    },
+    {
+      "name": "ndp_bounded_subset",
+      "result": "PASS",
+      "detail": "RS/NS/NA require no extensions, hop limit 255 and constrained reserved/target/source/option shapes; options are at most one fixed eight-byte source/target link-layer option. This is a bounded observed subset, not a general RFC conformance implementation."
+    },
+    {
+      "name": "original_failure_preserved",
+      "result": "PASS",
+      "detail": "Source review and author posthoc parser results do not replace the failed original run verdict or constitute a fresh six-mode QEMU result."
+    }
+  ],
+  "check_count": 9,
+  "count_semantics": "Nine manual source-review findings, not runtime tests or QEMU cases.",
+  "author_static_report": {
+    "path": "/tmp/rustusb-secure-pcap-extension-static-20261023.json",
+    "bytes": 25911,
+    "sha256": "50a900e6bc57da1824a659586becdeae55d5c565ef12c6bfc3e82d4be4ffb1eb"
+  },
+  "author_report_scope": "posthoc parser verification on unchanged original FAIL capture plus synthetic fixtures; no Cargo/QEMU/probe/USB, not new guest evidence",
+  "author_report_checks_count": 38,
+  "author_report_validation": "Read only; reviewer did not execute pcap_review, runner.verify, the author fixture program, Cargo, QEMU or USB operations.",
+  "boundaries": [
+    "Original f9558fc overall FAIL remains FAIL; independent lifecycle-only review is separate.",
+    "No claim that all IPv6 protocols are implemented: unknown protocols, fragment chains and unsupported extensions reject intentionally.",
+    "NDP classification is an observed bounded subset, not full RFC 4861 validation.",
+    "Capture checks remain framing/signature checks without TLS key logging or decryption; no broad encrypted-channel or Phase 3 completion claim.",
+    "Actual fresh clean-commit six-mode execution remains root-owned and pending this review."
+  ],
+  "source_hashes_unchanged_during_review": true
+}

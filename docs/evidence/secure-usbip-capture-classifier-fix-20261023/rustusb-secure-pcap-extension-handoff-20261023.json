@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_FROZEN_PARSER_CHECKS_PASS_NOT_NEW_QEMU",
+  "scope": "Only runner PCAP classifier changed; original f9558fc overall FAIL retained; guest/product unchanged",
+  "head": "f9558fcd7c0c29e3df1b13bbd109f7d471806c9f",
+  "files": {
+    "scripts/qemu/run-secure-qemu.py": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+    "scripts/qemu/guest-secure-init.sh": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16"
+  },
+  "changed_files": [
+    "scripts/qemu/run-secure-qemu.py"
+  ],
+  "bounds": {
+    "ipv6_extension_types": [
+      "Hop-by-Hop only"
+    ],
+    "max_extension_headers": 1,
+    "max_extension_bytes": 256,
+    "allowed_hbh_options": [
+      "Pad1",
+      "zero PadN",
+      "single RouterAlert value0"
+    ],
+    "icmpv6": [
+      "RS 133",
+      "NS 135",
+      "NA 136",
+      "MLDv2 Report143"
+    ],
+    "mld_max_records": 16,
+    "mld_max_sources_per_record": 16,
+    "mld_auxiliary_data": "rejected",
+    "ipv4_protocols": [
+      "TCP only"
+    ]
+  },
+  "checks": {
+    "python_ast": "PASS",
+    "git_diff_check": "PASS",
+    "new_synthetic_cases": 38,
+    "existing_parser_artifact_openssl_regression_cases": 14,
+    "actual_posthoc": "Both original PCAPs: 533 packets,26 directional TLS streams,8 HBH MLDv2,3RS+1NS+1NA; original summary and PCAP SHA unchanged"
+  },
+  "artifacts": {
+    "/tmp/rustusb-secure-pcap-ipv6-extension-observation-20261023.json": {
+      "sha256": "5d153aaab56e5691d869345c13a42838b095af2bb77514e2a831de9f926506aa",
+      "bytes": 11905
+    },
+    "/tmp/rustusb-secure-pcap-extension-static-20261023.py": {
+      "sha256": "002ef7c5da8803aa22106d43d1ef0c25c3ef9084946c24074bbeae4fbe9f5f43",
+      "bytes": 7151
+    },
+    "/tmp/rustusb-secure-pcap-extension-static-20261023.json": {
+      "sha256": "50a900e6bc57da1824a659586becdeae55d5c565ef12c6bfc3e82d4be4ffb1eb",
+      "bytes": 25911
+    },
+    "/tmp/rustusb-secure-harness-pcap-regression-20261023.json": {
+      "sha256": "2b4f92469e8c65976633703de973ecaa7474d21a63f8fef6b531c29829cc2aeb",
+      "bytes": 2375
+    },
+    "/tmp/rustusb-secure-harness-pcap-regression-openssl-20261023.log": {
+      "sha256": "61ef177b46c249c771228a9e3b356b7904b28fde9ff07f6ba6503addbe244a39",
+      "bytes": 7996
+    }
+  },
+  "not_run": [
+    "Cargo",
+    "QEMU",
+    "USB/probe execution",
+    "runner.verify",
+    "runner.main"
+  ],
+  "references": [
+    "https://www.rfc-editor.org/rfc/rfc8200.html",
+    "https://www.rfc-editor.org/rfc/rfc3810.html",
+    "https://www.rfc-editor.org/rfc/rfc4861.html"
+  ],
+  "limitations": [
+    "Strict classifier for disposable isolated test-link traffic, not a general IPv6 parser",
+    "Rejects additional control/extension types instead of silently allowing them",
+    "Posthoc parsing does not relabel the original FAIL or establish six-mode QEMU acceptance",
+    "No TLS session keys/decryption; full TCP reconstruction,TLS record framing,selected ServerHello TLS1.3,and specified plaintext signatures only"
+  ]
+}

@@ -413,3 +413,5 @@
 - 第三clean18817cd virtual/IPv4整体FAIL：cycle1真实HID key2 down/up、serial双向各35B和CDC echo、TERM/wait0/NULL/Gone/空journal及目录重用均通过；cycle2 HID失败。216份原件完整保留，operation NotFound与cleanup未确认同时可见，失败journal完整捕获为Intent；两guest0与四guards真不替代FAIL。没有逐syscall定位缺失属性。按已更新设计实施Native初始化Pending/Ready与首次目录代际固定，补真实临时文件夹具，由另一agent只读审；原Native调用方、10秒deadline和实际blockingguard/ownK边界不变。
 
 - Native私有InitialObserver修复已落：首次USED row及目录dev/ino固定，只对never-seen初始化属性缺失等待，已见属性消失/权限/格式/身份变化拒绝，完成后同row和local/profile复核；无publicAPI或helper角色扩张。8项真实tempdir夹具实际执行通过；第五轮完整软件gate exit0，default159/allfeatures233/vendor20共412次、35result零失败忽略，123选定输入前后SHA保持（本次纳入vendor测试lock及toolchain）。作者与独立源码审查原件归档，准备clean修复版QEMU，不把先前396/CI重归属新代码。
+
+- cleanf9558fc修复后virtual/IPv4两个guest真正PASS，两周期I/O、清理与复用均完成，但整体FAIL在pcap分类器未识别IPv6扩展头。238原件保留；独立raw生命周期86组和PCAP33组核实各自范围，125输入逐Gitblob一致，没有把分组数当USBcase或改判整轮。两原PCAP各有8个HBH→MLDv2，独立checksum有效；按官方RFC8200/3810/4861及实际子集修分类器，仍完整检查HBH后TCP、拒绝未知协议/分片/越界。38构造用例和14原静态回归通过、双原PCAP后验通过且哈希不变，待新clean六矩阵。精确f9558fc四平台CI39953971059亦独立169项核每格412/35result与本地信号/背压原范围，668采证筛选对象逐Gitblob核，不冒称其等于123软件或125QEMU选定输入。

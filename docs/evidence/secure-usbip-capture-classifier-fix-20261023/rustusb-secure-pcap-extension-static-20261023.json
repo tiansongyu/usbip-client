@@ -1,0 +1,900 @@
+{
+  "scope": "posthoc parser verification on unchanged original FAIL capture plus synthetic fixtures; no Cargo/QEMU/probe/USB, not new guest evidence",
+  "original_sha256": {
+    "summary.json": "4421b756b689dc195d742e7341d093570ceec2b126168125ec4d71c1c46bd0bb",
+    "server-external.pcap": "cb29055b2a07c5ecba69ec9c7c41ca135c3a4758cb8293cc83dd328bf27140d2",
+    "client-external.pcap": "6e7534e6bafd2235d837e147890cae20935070c3de3a50c7522024f630d0c306"
+  },
+  "checks": [
+    {
+      "name": "HBH padding-wrapped TCP retains segmented retransmitted complete TLS inspection",
+      "accepted": true,
+      "flows": 16,
+      "control_types": {}
+    },
+    {
+      "name": "HBH-wrapped fixture plaintext rejected",
+      "expected_rejection": "clear USB/IP management or fixture data on external link"
+    },
+    {
+      "name": "HBH-wrapped DEVLIST plaintext rejected",
+      "expected_rejection": "clear USB/IP management or fixture data on external link"
+    },
+    {
+      "name": "HBH-wrapped URB plaintext rejected",
+      "expected_rejection": "recognizable clear USB/IP URB header on external link"
+    },
+    {
+      "name": "HBH-wrapped TCP cannot hide wrong selected family",
+      "expected_rejection": "TLS used the wrong IP family"
+    },
+    {
+      "name": "legitimate bounded MLDv2 report counted",
+      "accepted": true,
+      "flows": 16,
+      "control_types": {
+        "143_mldv2_report": 1
+      }
+    },
+    {
+      "name": "NDP 133 parsed and counted",
+      "accepted": true,
+      "flows": 16,
+      "control_types": {
+        "133_router_solicitation": 1
+      }
+    },
+    {
+      "name": "NDP 133 wrong hop limit rejected",
+      "expected_rejection": "unaccounted ICMPv6 control type/extension/hop limit"
+    },
+    {
+      "name": "NDP 135 parsed and counted",
+      "accepted": true,
+      "flows": 16,
+      "control_types": {
+        "135_neighbor_solicitation": 1
+      }
+    },
+    {
+      "name": "NDP 135 wrong hop limit rejected",
+      "expected_rejection": "unaccounted ICMPv6 control type/extension/hop limit"
+    },
+    {
+      "name": "NDP 136 parsed and counted",
+      "accepted": true,
+      "flows": 16,
+      "control_types": {
+        "136_neighbor_advertisement": 1
+      }
+    },
+    {
+      "name": "NDP 136 wrong hop limit rejected",
+      "expected_rejection": "unaccounted ICMPv6 control type/extension/hop limit"
+    },
+    {
+      "name": "MLDv2 checksum corruption rejected",
+      "expected_rejection": "invalid ICMPv6 control checksum"
+    },
+    {
+      "name": "MLDv2 wrong hop limit rejected",
+      "expected_rejection": "invalid MLDv2 link scope/Router Alert"
+    },
+    {
+      "name": "MLDv2 missing Router Alert rejected",
+      "expected_rejection": "invalid MLDv2 link scope/Router Alert"
+    },
+    {
+      "name": "MLDv2 extra trailing payload rejected",
+      "expected_rejection": "unaccounted MLDv2 trailing bytes"
+    },
+    {
+      "name": "MLDv2 source count overrun rejected",
+      "expected_rejection": "unsupported/bounded MLDv2 record shape"
+    },
+    {
+      "name": "MLDv2 too many records rejected",
+      "expected_rejection": "invalid MLDv2 record count/reserved bytes"
+    },
+    {
+      "name": "ICMPv6 echo payload not silently accepted",
+      "expected_rejection": "unaccounted ICMPv6 control type/extension/hop limit"
+    },
+    {
+      "name": "IPv6 UDP rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 fragment rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 routing rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 destination options rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 ESP rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 AH rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 no next header rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "IPv6 unknown rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "HBH truncated header rejected",
+      "expected_rejection": "truncated IPv6 Hop-by-Hop header"
+    },
+    {
+      "name": "HBH length overrun rejected",
+      "expected_rejection": "IPv6 Hop-by-Hop length exceeds bound"
+    },
+    {
+      "name": "HBH header exceeds 256 bytes rejected",
+      "expected_rejection": "IPv6 Hop-by-Hop length exceeds bound"
+    },
+    {
+      "name": "HBH option overrun rejected",
+      "expected_rejection": "IPv6 Hop-by-Hop option overrun"
+    },
+    {
+      "name": "HBH nonzero PadN rejected",
+      "expected_rejection": "nonzero IPv6 PadN bytes"
+    },
+    {
+      "name": "HBH unknown option rejected",
+      "expected_rejection": "unaccounted IPv6 Hop-by-Hop option"
+    },
+    {
+      "name": "HBH second HBH rejected",
+      "expected_rejection": "unaccounted IPv6 protocol or unsupported extension/fragment chain"
+    },
+    {
+      "name": "HBH Router Alert on TCP rejected",
+      "expected_rejection": "unexpected Router Alert on TCP"
+    },
+    {
+      "name": "IPv4 protocol 1 no longer silently skipped",
+      "expected_rejection": "unaccounted external IPv4 protocol"
+    },
+    {
+      "name": "IPv4 protocol 17 no longer silently skipped",
+      "expected_rejection": "unaccounted external IPv4 protocol"
+    },
+    {
+      "name": "IPv4 protocol 253 no longer silently skipped",
+      "expected_rejection": "unaccounted external IPv4 protocol"
+    }
+  ],
+  "actual_posthoc": {
+    "server": {
+      "packets": 533,
+      "flows": [
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            46982,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "4ca475891201cb27858a4000a9187e88aea9798f6d695042d627f89b9b28c5df"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            46982
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "32420a17861d19da8baeabb00c6b3b363dbebabf92857480bbce27459bf6c162"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50116,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "ccb2ea88ca49d402d2e01d8f9b500179166cf157b5d630355571e34a6a99f9f9"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50116
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "1256bc5e62ad7b26fe19b9430bb57f084b25166818698933efcdd924d1a8143d"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50122,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 2939,
+          "tls_records": 25,
+          "encrypted_application_records": 23,
+          "stream_sha256": "6de5e298b47984af3be9c4837d0e6ef6d828ee0c41dfbdab088059eed173c815"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50122
+          ],
+          "stream_bytes": 3378,
+          "tls_records": 22,
+          "encrypted_application_records": 20,
+          "stream_sha256": "529d2a633e00af46a51ba2743d65d3cf6248b732f575782177c99851e3d87a9b"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50124,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "22c06f5bdb834d3bdf117ce5a48fc3b73cdefd60009c081a1e151aaed8234ba5"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50124
+          ],
+          "stream_bytes": 1948,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "2cca30b3705916164e14e229203358d70623a16c4ed524e7e5af12e69c55cf08"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50130,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 5975,
+          "tls_records": 45,
+          "encrypted_application_records": 43,
+          "stream_sha256": "a503d83195d6a9b2852562c15ea461fa22b9734b555ae5c800bb93f3d4c572b4"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50130
+          ],
+          "stream_bytes": 4800,
+          "tls_records": 42,
+          "encrypted_application_records": 40,
+          "stream_sha256": "b0f6319ea6cd974edf3ffcd3e90bd463ff82a635f89cbda73e330dee5244436d"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50144,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "65a84f2cbe05feee57526fe271c9cc462004181e0131932319d212ef8ca289e2"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50144
+          ],
+          "stream_bytes": 1581,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "9b4a9401858f9ba7b9af8cf1827810e9cac80c4149a85175626028adf97c43f4"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50156,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "fcae0654c49a792df3c179130196ce73a5f6b152e2a9da35a0a95352218bb217"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50156
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "f352c0add8fe9182dff9f689e0a49f29aa5037ef0780986934908decfba1834c"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50158,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "f6f23c1bbd9c635d654c1628185ce5f340e4c01bdc1f15cf3de1f8771eaf1d44"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50158
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "eb89289f341d86e49dbd8be904b6568e32bc3baf8f1e4f2ba4796b5118f18182"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50174,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 2939,
+          "tls_records": 25,
+          "encrypted_application_records": 23,
+          "stream_sha256": "dc0bc8fefefe990c98539ecf741289408df4b3dffba3e0ef5fdb1945ee0203b0"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50174
+          ],
+          "stream_bytes": 3378,
+          "tls_records": 22,
+          "encrypted_application_records": 20,
+          "stream_sha256": "ef2584ca646db982fe0e0b0f57d11735a6662f0f817002d82fd60592e969320c"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50182,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "b7cac0445171191fe54da2fbdd6f07b94a2649487bddf11e253e9130219956b1"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50182
+          ],
+          "stream_bytes": 1948,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "e9ddfbff8b9dad33a6c4992a15d969e4c1c268b18bd31df0f60ebc0b75ae3c5e"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50194,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 5931,
+          "tls_records": 43,
+          "encrypted_application_records": 41,
+          "stream_sha256": "4245d00f0ca278a831a0fd53bb578eb53bd6c5ae3d03f3a2b10937547a8e9551"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50194
+          ],
+          "stream_bytes": 4800,
+          "tls_records": 42,
+          "encrypted_application_records": 40,
+          "stream_sha256": "6b7c3149d24f6bbcac66bd29b935fa193af38325f1042c4c9db6a82283923277"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50198,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "f2aaf466c0d1680bb8c7bb124d6db21cfd7130f70eb9d6ebf0d4003880f29267"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50198
+          ],
+          "stream_bytes": 1581,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "19a94d34cbb1a632cf18d849133688bf51741fbb19a778aeeebb051cd483f6d3"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50200,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "b1dc7af0dac976784006e5caccd35ef25090603a1fc4d66ecfc1cfdc4aaee964"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50200
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "ab710ddbf44b0c21c5327aa81b7588d0b050f6fc8c79f1fe992c1c2d2f27ad34"
+        }
+      ],
+      "port_3240_rst_families": [
+        4,
+        6
+      ],
+      "ipv6_hop_by_hop_headers": 8,
+      "icmpv6_control_types": {
+        "143_mldv2_report": 8,
+        "133_router_solicitation": 3,
+        "135_neighbor_solicitation": 1,
+        "136_neighbor_advertisement": 1
+      },
+      "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"
+    },
+    "client": {
+      "packets": 533,
+      "flows": [
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            46982,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "4ca475891201cb27858a4000a9187e88aea9798f6d695042d627f89b9b28c5df"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            46982
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "32420a17861d19da8baeabb00c6b3b363dbebabf92857480bbce27459bf6c162"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50116,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "ccb2ea88ca49d402d2e01d8f9b500179166cf157b5d630355571e34a6a99f9f9"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50116
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "1256bc5e62ad7b26fe19b9430bb57f084b25166818698933efcdd924d1a8143d"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50122,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 2939,
+          "tls_records": 25,
+          "encrypted_application_records": 23,
+          "stream_sha256": "6de5e298b47984af3be9c4837d0e6ef6d828ee0c41dfbdab088059eed173c815"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50122
+          ],
+          "stream_bytes": 3378,
+          "tls_records": 22,
+          "encrypted_application_records": 20,
+          "stream_sha256": "529d2a633e00af46a51ba2743d65d3cf6248b732f575782177c99851e3d87a9b"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50124,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "22c06f5bdb834d3bdf117ce5a48fc3b73cdefd60009c081a1e151aaed8234ba5"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50124
+          ],
+          "stream_bytes": 1948,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "2cca30b3705916164e14e229203358d70623a16c4ed524e7e5af12e69c55cf08"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50130,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 5975,
+          "tls_records": 45,
+          "encrypted_application_records": 43,
+          "stream_sha256": "a503d83195d6a9b2852562c15ea461fa22b9734b555ae5c800bb93f3d4c572b4"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50130
+          ],
+          "stream_bytes": 4800,
+          "tls_records": 42,
+          "encrypted_application_records": 40,
+          "stream_sha256": "b0f6319ea6cd974edf3ffcd3e90bd463ff82a635f89cbda73e330dee5244436d"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50144,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "65a84f2cbe05feee57526fe271c9cc462004181e0131932319d212ef8ca289e2"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50144
+          ],
+          "stream_bytes": 1581,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "9b4a9401858f9ba7b9af8cf1827810e9cac80c4149a85175626028adf97c43f4"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50156,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "fcae0654c49a792df3c179130196ce73a5f6b152e2a9da35a0a95352218bb217"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50156
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "f352c0add8fe9182dff9f689e0a49f29aa5037ef0780986934908decfba1834c"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50158,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "f6f23c1bbd9c635d654c1628185ce5f340e4c01bdc1f15cf3de1f8771eaf1d44"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50158
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "eb89289f341d86e49dbd8be904b6568e32bc3baf8f1e4f2ba4796b5118f18182"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50174,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 2939,
+          "tls_records": 25,
+          "encrypted_application_records": 23,
+          "stream_sha256": "dc0bc8fefefe990c98539ecf741289408df4b3dffba3e0ef5fdb1945ee0203b0"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50174
+          ],
+          "stream_bytes": 3378,
+          "tls_records": 22,
+          "encrypted_application_records": 20,
+          "stream_sha256": "ef2584ca646db982fe0e0b0f57d11735a6662f0f817002d82fd60592e969320c"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50182,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "b7cac0445171191fe54da2fbdd6f07b94a2649487bddf11e253e9130219956b1"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50182
+          ],
+          "stream_bytes": 1948,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "e9ddfbff8b9dad33a6c4992a15d969e4c1c268b18bd31df0f60ebc0b75ae3c5e"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50194,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 5931,
+          "tls_records": 43,
+          "encrypted_application_records": 41,
+          "stream_sha256": "4245d00f0ca278a831a0fd53bb578eb53bd6c5ae3d03f3a2b10937547a8e9551"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50194
+          ],
+          "stream_bytes": 4800,
+          "tls_records": 42,
+          "encrypted_application_records": 40,
+          "stream_sha256": "6b7c3149d24f6bbcac66bd29b935fa193af38325f1042c4c9db6a82283923277"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50198,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "f2aaf466c0d1680bb8c7bb124d6db21cfd7130f70eb9d6ebf0d4003880f29267"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50198
+          ],
+          "stream_bytes": 1581,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "19a94d34cbb1a632cf18d849133688bf51741fbb19a778aeeebb051cd483f6d3"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.2",
+            50200,
+            "192.0.2.1",
+            3241
+          ],
+          "stream_bytes": 1550,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "b1dc7af0dac976784006e5caccd35ef25090603a1fc4d66ecfc1cfdc4aaee964"
+        },
+        {
+          "tuple": [
+            4,
+            "192.0.2.1",
+            3241,
+            "192.0.2.2",
+            50200
+          ],
+          "stream_bytes": 2308,
+          "tls_records": 6,
+          "encrypted_application_records": 4,
+          "stream_sha256": "ab710ddbf44b0c21c5327aa81b7588d0b050f6fc8c79f1fe992c1c2d2f27ad34"
+        }
+      ],
+      "port_3240_rst_families": [
+        4,
+        6
+      ],
+      "ipv6_hop_by_hop_headers": 8,
+      "icmpv6_control_types": {
+        "143_mldv2_report": 8,
+        "133_router_solicitation": 3,
+        "135_neighbor_solicitation": 1,
+        "136_neighbor_advertisement": 1
+      },
+      "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"
+    }
+  },
+  "original_unchanged": true,
+  "original_result": "FAIL (unchanged)",
+  "source_sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+  "references": [
+    "https://www.rfc-editor.org/rfc/rfc8200.html",
+    "https://www.rfc-editor.org/rfc/rfc3810.html",
+    "https://www.rfc-editor.org/rfc/rfc4861.html"
+  ]
+}

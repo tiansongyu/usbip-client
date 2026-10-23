@@ -234,6 +234,93 @@ def artifacts(evidence):
 
 def pcap_review(path, family, device_ids):
     """Parse the entire Ethernet capture and contiguous TCP byte streams, not grep alone."""
+    def ipv6_payload(packet, total):
+        # This isolated test link permits one bounded Hop-by-Hop header only.
+        # Parse its payload protocol; never discard an extension-wrapped TCP flow.
+        protocol, cursor, router_alert = packet[6], 40, False
+        extensions = 0
+        if protocol == 0:
+            if cursor+2 > total: raise RuntimeError("truncated IPv6 Hop-by-Hop header")
+            size = (packet[cursor+1]+1)*8
+            if size > 256 or cursor+size > total: raise RuntimeError("IPv6 Hop-by-Hop length exceeds bound")
+            protocol, end = packet[cursor], cursor+size
+            option = cursor+2
+            while option < end:
+                kind = packet[option]
+                if kind == 0:  # Pad1
+                    option += 1
+                    continue
+                if option+2 > end: raise RuntimeError("short IPv6 Hop-by-Hop option")
+                length = packet[option+1]
+                value = packet[option+2:option+2+length]
+                if option+2+length > end: raise RuntimeError("IPv6 Hop-by-Hop option overrun")
+                if kind == 1:
+                    if any(value): raise RuntimeError("nonzero IPv6 PadN bytes")
+                elif kind == 5:
+                    if router_alert or value != b"\0\0": raise RuntimeError("unsupported/duplicate IPv6 Router Alert")
+                    router_alert = True
+                else: raise RuntimeError("unaccounted IPv6 Hop-by-Hop option")
+                option += 2+length
+            cursor, extensions = end, 1
+        if protocol not in (6, 58):
+            raise RuntimeError("unaccounted IPv6 protocol or unsupported extension/fragment chain")
+        if protocol == 6 and router_alert:
+            raise RuntimeError("unexpected Router Alert on TCP")
+        return protocol, packet[cursor:total], router_alert, extensions
+
+    def ipv6_control(packet, body, router_alert, extensions):
+        # RFC 4861 RS/NS/NA and RFC 3810 MLDv2 only; no generic ICMP skip.
+        if len(body) < 8 or body[1] != 0: raise RuntimeError("short/unsupported ICMPv6 control")
+        pseudo = packet[8:40]+len(body).to_bytes(4, "big")+b"\0\0\0\x3a"+body
+        if len(pseudo) % 2: pseudo += b"\0"
+        checksum = sum(int.from_bytes(pseudo[i:i+2], "big") for i in range(0, len(pseudo), 2))
+        while checksum >> 16: checksum = (checksum & 0xffff)+(checksum >> 16)
+        if checksum != 0xffff: raise RuntimeError("invalid ICMPv6 control checksum")
+        src, dst = ipaddress.ip_address(packet[8:24]), ipaddress.ip_address(packet[24:40])
+        kind = body[0]
+        if kind == 143:
+            if not (extensions == 1 and router_alert and packet[7] == 1 and src.is_link_local and str(dst) == "ff02::16"):
+                raise RuntimeError("invalid MLDv2 link scope/Router Alert")
+            count = int.from_bytes(body[6:8], "big")
+            if body[4:6] != b"\0\0" or not 1 <= count <= 16: raise RuntimeError("invalid MLDv2 record count/reserved bytes")
+            cursor = 8
+            for _ in range(count):
+                if cursor+20 > len(body): raise RuntimeError("truncated MLDv2 record")
+                record, auxiliary, sources = struct.unpack("!BBH", body[cursor:cursor+4])
+                end = cursor+20+16*sources
+                if record not in range(1, 7) or auxiliary != 0 or sources > 16 or end > len(body):
+                    raise RuntimeError("unsupported/bounded MLDv2 record shape")
+                if not ipaddress.ip_address(body[cursor+4:cursor+20]).is_multicast:
+                    raise RuntimeError("MLDv2 group is not multicast")
+                for index in range(cursor+20, end, 16):
+                    address = ipaddress.ip_address(body[index:index+16])
+                    if address.is_multicast or address.is_unspecified: raise RuntimeError("invalid MLDv2 source address")
+                cursor = end
+            if cursor != len(body): raise RuntimeError("unaccounted MLDv2 trailing bytes")
+            return "143_mldv2_report"
+        if kind not in (133, 135, 136) or extensions or router_alert or packet[7] != 255:
+            raise RuntimeError("unaccounted ICMPv6 control type/extension/hop limit")
+        if kind == 133:
+            if body[4:8] != b"\0"*4 or str(dst) != "ff02::2" or not (src.is_link_local or src.is_unspecified):
+                raise RuntimeError("invalid router solicitation scope/reserved bytes")
+            cursor, allowed_option = 8, 1
+        else:
+            if len(body) < 24 or ipaddress.ip_address(body[8:24]).is_multicast:
+                raise RuntimeError("invalid neighbor control target/length")
+            reserved = int.from_bytes(body[4:8], "big")
+            if (kind == 135 and reserved) or (kind == 136 and reserved & 0x1fffffff):
+                raise RuntimeError("nonzero neighbor control reserved bits")
+            cursor, allowed_option = 24, 1 if kind == 135 else 2
+        seen_option = False
+        while cursor < len(body):
+            if cursor+8 > len(body) or body[cursor] != allowed_option or body[cursor+1] != 1 or seen_option:
+                raise RuntimeError("unaccounted/malformed neighbor control option")
+            seen_option = True
+            cursor += 8
+        if src.is_multicast or (src.is_unspecified and (seen_option or kind == 136)):
+            raise RuntimeError("invalid neighbor control source")
+        return {133: "133_router_solicitation", 135: "135_neighbor_solicitation", 136: "136_neighbor_advertisement"}[kind]
+
     def server_selected_tls13(body):
         if not body or body[0] != 2:
             return False
@@ -269,6 +356,7 @@ def pcap_review(path, family, device_ids):
     if (major, minor, network) != (2, 4, 1) or snaplen < 65535: raise RuntimeError("pcap does not retain full Ethernet packets")
     offset, packets = 24, 0
     streams, resets = {}, set()
+    control_types, ipv6_extensions = {}, 0
     while offset < len(data):
         if offset + 16 > len(data): raise RuntimeError("truncated pcap packet header")
         _, _, captured, original = struct.unpack(endian + "IIII", data[offset:offset+16])
@@ -285,7 +373,7 @@ def pcap_review(path, family, device_ids):
             header = (packet[0] & 15) * 4
             total = int.from_bytes(packet[2:4], "big")
             if not 20 <= header <= total <= len(packet): raise RuntimeError("truncated IPv4 packet")
-            if packet[9] != 6: continue
+            if packet[9] != 6: raise RuntimeError("unaccounted external IPv4 protocol")
             if int.from_bytes(packet[6:8], "big") & 0x3fff: raise RuntimeError("fragmented external TCP unsupported")
             version = 4
             src, dst = str(ipaddress.ip_address(packet[12:16])), str(ipaddress.ip_address(packet[16:20]))
@@ -295,12 +383,14 @@ def pcap_review(path, family, device_ids):
                 raise RuntimeError("short/invalid IPv6 header")
             total = 40+int.from_bytes(packet[4:6], "big")
             if total > len(packet): raise RuntimeError("truncated IPv6 packet")
-            if packet[6] != 6:
-                if packet[6] != 58: raise RuntimeError("unexpected external IPv6 extension/protocol")
+            protocol, tcp, router_alert, extensions = ipv6_payload(packet, total)
+            ipv6_extensions += extensions
+            if protocol == 58:
+                control = ipv6_control(packet, tcp, router_alert, extensions)
+                control_types[control] = control_types.get(control, 0)+1
                 continue
             version = 6
             src, dst = str(ipaddress.ip_address(packet[8:24])), str(ipaddress.ip_address(packet[24:40]))
-            tcp = packet[40:total]
         elif kind == 0x0806: continue  # isolated-link ARP
         else: raise RuntimeError(f"unexpected external EtherType {kind:#x}")
         if len(tcp) < 20: raise RuntimeError("short external TCP packet")
@@ -363,6 +453,7 @@ def pcap_review(path, family, device_ids):
                       "encrypted_application_records": application, "stream_sha256": hashlib.sha256(wire).hexdigest()})
     if len(flows) < 16 or len(flows) % 2: raise RuntimeError("insufficient complete bidirectional TLS connections")
     return {"packets": packets, "flows": flows, "port_3240_rst_families": sorted(resets),
+            "ipv6_hop_by_hop_headers": ipv6_extensions, "icmpv6_control_types": control_types,
             "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"}
 
 
