@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Native cfg(test) fixture-only deterministic replacement-generation regression; production unchanged",
+  "original_CI_failure": {
+    "workflow": 39894822120,
+    "job": 120222691647,
+    "platform": "Ubuntu24.04 ARM64",
+    "artifact": {
+      "path": "/tmp/rustusb-ci-final-v4-120222691647-20261023.txt",
+      "bytes": 41460,
+      "sha256": "25368ca1bb262d9b13dd2d841ea568c3268850d7963bc93209fd75018e1d273a"
+    },
+    "preserved_result": "FAIL",
+    "observed_error": "Timeout: fixed usbip exceeded deadline in detach_does_not_wait_for_replacement_generation_at_same_path",
+    "limits": "Original CI proves command timeout, not a specific root scheduling cause. Background40ms replacement was also timing-dependent and is removed rather than attributing the failure solely to that sleep."
+  },
+  "changes": [
+    "Only tests module: common fake-command limit5s for non-timeout state tests; subprocess_timeout test explicitly retains200ms and kill/reap/output-limit assertions.",
+    "Fake detach command writes NULL status then atomically renames old directory and creates replacement before successful process exit; no background argv polling or40ms sleep.",
+    "Original path existence and old-generation absence assertion retained; archived old dir existence and exact once detach call/arguments added.",
+    "Production command15s/settle10s and every production byte unchanged; fixture settle150ms unchanged."
+  ],
+  "production_prefix_equal": true,
+  "production_prefix_sha256": "0b6452bdbc7a36b97152c3ba388d0c69e5f84efca28b1b09bc3af3226e4866b1",
+  "native_lib_current_sha256": "b6465ddde887ce698a9c20232ab03df73df61505a5f4bcf9e25d2273a5735876",
+  "diff_sha256": "d5277f297cbaa65901999bc35e6d793b0d914a91e4b914fad68836a7badaa939",
+  "checks": [
+    {
+      "command": "rustfmt --edition 2024 --check --config skip_children=true crates/rustusb-native/src/lib.rs",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --locked -p rustusb-native --lib",
+      "exit_code": 0,
+      "passed": 31,
+      "failed": 0,
+      "ignored": 0,
+      "log": {
+        "path": "/tmp/rustusb-native-fixture-targeted-tests-20261023.txt",
+        "bytes": 3036,
+        "sha256": "4eb890b4211a8997fdf8e9bb2cd3487e6e99b0dc58dc34fc0a379cd9b9bd0c57"
+      }
+    },
+    {
+      "command": "cargo clippy --locked -p rustusb-native --all-targets -- -D warnings",
+      "exit_code": 0,
+      "log": {
+        "path": "/tmp/rustusb-native-fixture-targeted-clippy-20261023.txt",
+        "bytes": 164,
+        "sha256": "1a4b8af90e735192f48367a4642ddc0153a95861dedcaa9f00a731833535929c"
+      }
+    }
+  ],
+  "limits": [
+    "No QEMU/host USB/module/network actions, no full workspace gate or CI rerun by this agent.",
+    "Local x86_64 targeted tests are not a claimed fresh ARM CI result.",
+    "Parent owns documentation/evidence commits/full quality gates/new CI."
+  ]
+}

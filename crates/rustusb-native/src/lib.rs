@@ -1122,7 +1122,9 @@ mod tests {
                     devices: root.join("devices"),
                     platform: root.join("platform"),
                     records: root.join("records"),
-                    command_timeout: Duration::from_millis(200),
+                    // Most fixtures exercise state/identity rather than process
+                    // scheduling. Timeout-specific tests select their own limit.
+                    command_timeout: Duration::from_secs(5),
                     settle_timeout: Duration::from_millis(150),
                     poll_interval: Duration::from_millis(5),
                     require_root_tool: false,
@@ -1320,7 +1322,10 @@ mod tests {
     #[tokio::test]
     async fn subprocess_timeout_is_killed_and_reaped_and_output_is_bounded() -> Result<()> {
         let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
-        let fixture = Fixture::new("exec /bin/sleep 5")?;
+        let mut fixture = Fixture::new("exec /bin/sleep 5")?;
+        Arc::get_mut(&mut fixture.backend.configuration)
+            .ok_or_else(|| Error::State("fixture configuration unexpectedly shared".into()))?
+            .command_timeout = Duration::from_millis(200);
         let result = fixture.backend.run_tool(&["bind".into()]).await;
         assert!(matches!(result, Err(Error::Timeout(_))), "{result:?}");
         let pid = std::fs::read_to_string(fixture.path("pid"))?;
@@ -1835,28 +1840,28 @@ mod tests {
     #[tokio::test]
     async fn detach_does_not_wait_for_replacement_generation_at_same_path() -> Result<()> {
         let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
-        let body = format!("cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\n");
+        // Complete the fake kernel transition before usbip returns. Wall-clock
+        // sleeps race both command scheduling and the generation observation.
+        let body = format!(
+            "printf 'called\\n' >>\"$BASE/detach-calls\"\ncat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\nmv \"$BASE/devices/9-1\" \"$BASE/released\" || exit 1\nmkdir \"$BASE/devices/9-1\""
+        );
         let fixture = Fixture::new(&body)?;
         std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
         let path = fixture.path("devices/9-1");
-        let removed = fixture.path("released");
-        let argv = fixture.path("argv");
         let original = capture_generation(path.clone())
             .await?
             .ok_or_else(|| Error::State("missing fixture generation".into()))?;
-        let replacement = tokio::spawn(async move {
-            while !fs::try_exists(&argv).await? {
-                sleep(Duration::from_millis(2)).await;
-            }
-            sleep(Duration::from_millis(40)).await;
-            fs::rename(&path, removed).await?;
-            fs::create_dir(&path).await
-        });
         fixture.backend.detach(VhciPort(0)).await?;
-        replacement
-            .await
-            .map_err(|error| Error::State(error.to_string()))??;
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("argv"))?,
+            "detach\n--port\n0\n"
+        );
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("detach-calls"))?,
+            "called\n"
+        );
         assert!(fixture.path("devices/9-1").exists());
+        assert!(fixture.path("released").exists());
         assert!(!same_generation_present(&original).await?);
         Ok(())
     }
