@@ -154,11 +154,18 @@ async fn connection<B: ServingBackend>(
                 .collect();
             let devices: Vec<_> = snapshot.into_iter().map(|entry| entry.metadata).collect();
             let reply = wire::devlist_reply(&devices)?;
-            return tokio::select! {
+            tokio::select! {
                 biased;
-                _ = monitor::server_stopped(&mut server_stop) => Ok(()),
-                result = async { secure::write_catalog_mapping(&mut writer, &mappings).await?; write_frame(&mut writer, &reply).await } => result,
+                _ = monitor::server_stopped(&mut server_stop) => return Ok(()),
+                result = async { secure::write_catalog_mapping(&mut writer, &mappings).await?; write_frame(&mut writer, &reply).await } => result?,
             };
+            return crate::link::complete_management(
+                &mut reader,
+                &mut writer,
+                link_owner,
+                monitor::server_stopped(&mut server_stop),
+            )
+            .await;
         }
         (SecureOperation::Import { device_key }, Management::Import(bus_id)) => {
             (device_key, bus_id)
@@ -170,7 +177,14 @@ async fn connection<B: ServingBackend>(
         }
     };
     if !peer.allows(&key) {
-        return write_frame(&mut writer, &wire::import_reply(4, None)?).await;
+        write_frame(&mut writer, &wire::import_reply(4, None)?).await?;
+        return crate::link::complete_management(
+            &mut reader,
+            &mut writer,
+            link_owner,
+            monitor::server_stopped(&mut server_stop),
+        )
+        .await;
     }
     let mut tracked = match monitor.begin_link(
         key.clone(),
@@ -179,7 +193,16 @@ async fn connection<B: ServingBackend>(
         link_monitor.clone(),
     ) {
         Ok(tracked) => tracked,
-        Err(_) => return write_frame(&mut writer, &wire::import_reply(2, None)?).await,
+        Err(_) => {
+            write_frame(&mut writer, &wire::import_reply(2, None)?).await?;
+            return crate::link::complete_management(
+                &mut reader,
+                &mut writer,
+                link_owner,
+                monitor::server_stopped(&mut server_stop),
+            )
+            .await;
+        }
     };
     let admission = tokio::select! {
         biased;
@@ -194,22 +217,39 @@ async fn connection<B: ServingBackend>(
         } else {
             monitor::category(&error)
         };
+        let mut reply_complete = false;
         if !tracked.signal.borrow().stop {
             let status = if matches!(error, Error::Permission(_)) {
                 4
             } else {
                 2
             };
-            let _ = interruptible_write(
+            reply_complete = interruptible_write(
                 &mut writer,
                 &wire::import_reply(status, None)?,
                 &mut tracked.signal,
             )
-            .await;
+            .await
+            .is_ok();
         }
+        let graceful = if reply_complete {
+            crate::link::complete_management(
+                &mut reader,
+                &mut writer,
+                link_owner,
+                monitor::stopped(&mut tracked.signal),
+            )
+            .await
+        } else {
+            Ok(())
+        };
         drop(reader);
         drop(writer);
-        let _ = crate::link::finish(link_owner).await;
+        let closed = crate::link::finish(link_owner).await;
+        tracing::debug!(
+            network_closed = graceful.is_ok() && closed.is_ok(),
+            "rejected admission owner joined"
+        );
         tracked.finish(ServerCleanup::NotStarted, Some(category), None)?;
         return Err(error);
     }
@@ -256,23 +296,39 @@ async fn connection<B: ServingBackend>(
     let mut lease = match claimed {
         Ok(lease) => Owned(lease),
         Err(error) => {
+            let mut reply_complete = false;
             if !stopping.borrow().stop {
                 let status = if matches!(error, Error::Permission(_) | Error::InvalidInput(_)) {
                     4
                 } else {
                     2
                 };
-                let _ = interruptible_write(
+                reply_complete = interruptible_write(
                     &mut writer,
                     &wire::import_reply(status, None)?,
                     &mut stopping,
                 )
-                .await;
+                .await
+                .is_ok();
             }
+            let graceful = if reply_complete {
+                crate::link::complete_management(
+                    &mut reader,
+                    &mut writer,
+                    link_owner,
+                    monitor::stopped(&mut stopping),
+                )
+                .await
+            } else {
+                Ok(())
+            };
             drop(reader);
             drop(writer);
             let link_result = crate::link::finish(link_owner).await;
-            let error = link_result.err().unwrap_or(error);
+            tracing::debug!(
+                network_closed = graceful.is_ok() && link_result.is_ok(),
+                "failed claim network owner joined"
+            );
             let _ = tracked.phase(ServerSessionPhase::Closing);
             let cleanup = claim_cleanup(&mut completed, &mut tracked).await;
             let operation = if stopping.borrow().stop {

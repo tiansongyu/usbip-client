@@ -5,6 +5,7 @@ use rustusb_core::{
 };
 use rustusb_transport::{LinkMonitor, LinkOwner, TlsServer, VerifiedPeer};
 use std::{
+    future::Future,
     pin::Pin,
     task::{Context, Poll},
 };
@@ -138,4 +139,51 @@ pub(crate) async fn finish(owner: &mut Option<LinkOwner>) -> Result<()> {
         .await
         .map_err(|_| Error::State("data-link driver completion unconfirmed".into()))?;
     end_error(outcome.reason).map_or(Ok(()), Err)
+}
+
+/// Finish only an already complete one-shot v2 response. Retain the actual IO
+/// across FIN, EOF and natural join; stop may cancel pure IO, never the join.
+pub(crate) async fn complete_management<R, W>(
+    reader: &mut R,
+    writer: &mut W,
+    owner: &mut Option<LinkOwner>,
+    stop: impl Future<Output = ()>,
+) -> Result<()>
+where
+    R: AsyncRead + Unpin,
+    W: AsyncWrite + Unpin,
+{
+    if owner.is_none() {
+        return Ok(()); // Frozen raw-v1 lifetime: do not introduce a FIN wait.
+    }
+    let result = {
+        let mut stream = tokio::io::join(reader, writer);
+        tokio::select! {
+            biased;
+            _ = stop => Err(Error::State("framed management stopped".into())),
+            result = rustusb_protocol::secure::finish_framed_management(&mut stream) => result,
+        }
+    };
+    if let Err(error) = result {
+        // Preserve the original operation failure, while awaiting actual driver
+        // stop even if that separate teardown also reports an error.
+        let closed = finish(owner).await;
+        tracing::debug!(
+            network_closed = closed.is_ok(),
+            "failed framed management owner joined"
+        );
+        return Err(error);
+    }
+    let actual = owner
+        .take()
+        .ok_or_else(|| Error::State("framed management owner missing".into()))?;
+    let outcome = actual
+        .join()
+        .await
+        .map_err(|_| Error::State("data-link driver completion unconfirmed".into()))?;
+    match outcome.reason {
+        LinkEnd::PeerEof => Ok(()),
+        reason => Err(end_error(reason)
+            .unwrap_or_else(|| Error::State("framed management did not end cleanly".into()))),
+    }
 }

@@ -123,11 +123,32 @@ pub(super) async fn run(
         link_owner = connection.owner;
         link_monitor = connection.monitor;
         session.link(link_monitor.clone()).map_err(StageError::Recording)?;
-        let (network, remote) = tokio::select! {
+        let mut network = connection.io;
+        let imported = tokio::select! {
             biased;
             _=stopped(&mut job_stop)=>return Ok(()),
             _=stopped(&mut session_stop)=>return Ok(()),
-            result=tokio::time::timeout_at(deadline, rustusb_protocol::secure::import_device(connection.io, &selected))=>result.map_err(|_|Error::Timeout("secure selection/import including DNS/TCP/TLS".into()))??,
+            result=tokio::time::timeout_at(deadline, rustusb_protocol::secure::import_device(&mut network, &selected))=>result.map_err(|_|Error::Timeout("secure selection/import including DNS/TCP/TLS".into())).and_then(|result|result).map(|(_, remote)| remote),
+        };
+        let remote = match imported {
+            Ok(remote) => remote,
+            Err(error) => {
+                // A complete IMPORT refusal is a short management exchange.
+                // Keep I/O alive for bounded FIN/EOF; malformed or incomplete
+                // replies still retain the original operation failure.
+                let closed = link::complete_management(&mut network, &mut link_owner, async {
+                    tokio::select! {
+                        biased;
+                        _=stopped(&mut job_stop)=>Ok(()),
+                        _=stopped(&mut session_stop)=>Ok(()),
+                        _=tokio::time::sleep_until(deadline)=>Err(Error::Timeout("secure rejected import close".into())),
+                    }
+                }).await;
+                return Err(match closed {
+                    Ok(_) => error,
+                    Err(closed) => Error::State(format!("secure IMPORT failed ({error}); framed refusal close failed ({closed})")),
+                }.into());
+            }
         };
         let correlation = session.attempt(BrokerResourceKind::NativeImport).await.map_err(StageError::Recording)?;
         // A managed reservation is already durable even before its RPC. A

@@ -276,6 +276,30 @@ pub async fn discover<S: AsyncRead + AsyncWrite + Unpin>(
     .map_err(|_| Error::Timeout("secure USB/IP discovery".into()))?
 }
 
+/// Complete an already parsed, one-shot framed management exchange.
+///
+/// Only v2 callers use this after the full Catalog or refusal response has been
+/// written/read. Keep the actual stream alive: shutdown must send and flush its
+/// framing FIN, then the peer must return clean EOF without extra application
+/// bytes. One five-second deadline covers both operations. This borrows no task
+/// owner and supplies no device-cleanup proof; the caller must naturally join its
+/// driver after success, or request stop and join on failure/cancellation.
+/// Raw-v1 and successful IMPORT/URB streams must not call this helper.
+pub async fn finish_framed_management(
+    stream: &mut (impl AsyncRead + AsyncWrite + Unpin),
+) -> Result<()> {
+    tokio::time::timeout(MANAGEMENT_DEADLINE, async {
+        stream.shutdown().await?;
+        let mut extra = [0; 1];
+        if stream.read(&mut extra).await? != 0 {
+            return Err(protocol("framed management has trailing application bytes"));
+        }
+        Ok(())
+    })
+    .await
+    .map_err(|_| Error::Timeout("framed management FIN/EOF".into()))?
+}
+
 /// Import a selected stable key on a new authenticated stream, returning that same stream.
 /// Only the fixed IMPORT reply is consumed; any immediately following URB bytes remain.
 /// A changed descriptor/address is rejected and requires explicit rediscovery.
@@ -564,6 +588,52 @@ mod tests {
         let (_peer, mut reader) = duplex(32);
         assert!(matches!(
             read_prelude(&mut reader).await,
+            Err(Error::Timeout(_))
+        ));
+    }
+
+    #[tokio::test]
+    async fn framed_management_fin_follows_complete_response_and_keeps_both_borrows_alive()
+    -> Result<()> {
+        let (mut left, mut right) = duplex(32);
+        let server = async {
+            let mut request = [0; 3];
+            left.read_exact(&mut request).await?;
+            assert_eq!(&request, b"req");
+            left.write_all(b"reply").await?;
+            left.flush().await?;
+            finish_framed_management(&mut left).await
+        };
+        let client = async {
+            right.write_all(b"req").await?;
+            right.flush().await?;
+            let mut reply = [0; 5];
+            right.read_exact(&mut reply).await?;
+            assert_eq!(&reply, b"reply");
+            finish_framed_management(&mut right).await
+        };
+        let (sent, received) = tokio::join!(server, client);
+        sent?;
+        received
+    }
+
+    #[tokio::test]
+    async fn framed_management_rejects_trailing_application_data() -> Result<()> {
+        let (mut peer, mut stream) = duplex(32);
+        peer.write_all(b"unexpected").await?;
+        peer.shutdown().await?;
+        assert!(matches!(
+            finish_framed_management(&mut stream).await,
+            Err(Error::Protocol(_))
+        ));
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn framed_management_peer_without_eof_hits_the_single_production_deadline() {
+        let (_peer, mut stream) = duplex(32);
+        assert!(matches!(
+            finish_framed_management(&mut stream).await,
             Err(Error::Timeout(_))
         ));
     }

@@ -8,6 +8,8 @@ mod client;
 #[cfg(target_os = "linux")]
 mod io;
 mod link;
+#[cfg(all(test, target_os = "linux"))]
+mod management_tests;
 #[cfg(target_os = "linux")]
 mod native;
 #[cfg(feature = "rust-backend")]
@@ -164,17 +166,34 @@ pub(super) async fn discover_until(
         result = tokio::time::timeout_at(deadline, link::connect(config)) => result.map_err(|_| Error::Timeout("secure discovery connection".into()))??,
     };
     let link::Connection {
-        io,
+        mut io,
         mut owner,
         monitor: _,
     } = connection;
-    let result = tokio::select! {
+    let mut result = tokio::select! {
         biased;
         _ = &mut stop => Ok(None),
-        result = tokio::time::timeout_at(deadline, rustusb_protocol::secure::discover(io)) => result
+        result = tokio::time::timeout_at(deadline, rustusb_protocol::secure::discover(&mut io)) => result
             .map_err(|_| Error::Timeout("secure discovery including DNS/TCP/TLS".into())).and_then(|r| r).map(Some),
     };
+    if matches!(result, Ok(Some(_))) {
+        let completed = link::complete_management(&mut io, &mut owner, async {
+            tokio::select! {
+                biased;
+                _ = &mut stop => Ok(()),
+                _ = tokio::time::sleep_until(deadline) => Err(Error::Timeout("secure discovery including framed close".into())),
+            }
+        }).await;
+        match completed {
+            Ok(true) => {}
+            Ok(false) => result = Ok(None),
+            Err(error) => result = Err(error),
+        }
+    }
+    // A parsed v2 response has already joined naturally while io was retained.
+    // Failed/cancelled parsing still force-stops and joins the same outer owner.
     let (closed, _) = link::finish(&mut owner).await;
+    drop(io);
     match (result, closed) {
         (Err(error), _) | (_, Err(error)) => Err(error),
         (Ok(value), Ok(())) => Ok(value),

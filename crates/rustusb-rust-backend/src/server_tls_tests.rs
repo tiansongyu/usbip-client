@@ -712,3 +712,254 @@ async fn production_secure_client_codecs_preserve_the_imported_tls_stream() -> T
 
 #[path = "server_managed_tests.rs"]
 mod managed_tests;
+
+// Candidate append to rustusb-rust-backend/src/server_tls_tests.rs.
+// Actual public engine + loopbackTCP + memory-DER mTLS + production discover
+// codec. No Native helper/USB or trusted-file-loader claim. No sleep/retry.
+fn framed_catalog_credentials() -> TestResult<(TlsServer, TlsClient)> {
+    let mut ca = CertificateParams::new(Vec::<String>::new())?;
+    ca.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
+    ca.key_usages = vec![KeyUsagePurpose::KeyCertSign];
+    let ca_key = KeyPair::generate()?;
+    let root = ca.self_signed(&ca_key)?.der().to_vec();
+    let issuer = Issuer::new(ca, ca_key);
+    let server = Material::new(&issuer, ExtendedKeyUsagePurpose::ServerAuth)?;
+    let client = Material::new(&issuer, ExtendedKeyUsagePurpose::ClientAuth)?;
+    let policy = AccessPolicy::new(vec![PrincipalRule::new(
+        "short-catalog",
+        vec![client.pin()?],
+        vec![hid(), cdc()],
+    )?])?;
+    let probes =
+        rustusb_transport::ProbePolicy::new(Duration::from_secs(1), Duration::from_secs(3))?;
+    Ok((
+        TlsServer::new_with_link(
+            TrustRoots::new(vec![root.clone()])?,
+            server.identity()?,
+            policy,
+            probes,
+        )?,
+        TlsClient::new_with_link(TrustRoots::new(vec![root])?, client.identity()?, probes)?,
+    ))
+}
+
+#[tokio::test]
+async fn framed_mtls_catalog_completes_full_reply_and_both_half_closes_without_claims() -> TestResult
+{
+    tokio::time::timeout(Duration::from_secs(10), async {
+        let (tls, client) = framed_catalog_credentials()?;
+        let backend = VirtualBackend::new()?;
+        let server = ServerHandle::bind_tls(
+            SecureServerConfig {
+                listen: SocketAddr::from((Ipv4Addr::LOCALHOST, 0)),
+            },
+            backend.clone(),
+            tls,
+        )
+        .await?;
+        let mut link = client
+            .connect_link(
+                "server.test",
+                TcpStream::connect(server.local_addr()).await?,
+            )
+            .await?;
+        let query = async {
+            // Borrow IO so the full response and explicit FIN/EOF lifecycle
+            // complete before its Drop requests a cooperative stop.
+            let catalog = secure::discover(&mut link.io).await?;
+            assert_eq!(catalog.len(), 2);
+            assert_eq!(
+                catalog
+                    .iter()
+                    .map(|d| d.device_key.clone())
+                    .collect::<std::collections::BTreeSet<_>>(),
+                [hid(), cdc()].into_iter().collect()
+            );
+            link.io.shutdown().await?;
+            let mut extra = [0; 1];
+            assert_eq!(
+                link.io.read(&mut extra).await?,
+                0,
+                "short Catalog must end cleanly without extra application bytes"
+            );
+            Ok::<(), Box<dyn std::error::Error + Send + Sync>>(())
+        }
+        .await;
+        if query.is_err() {
+            link.owner.request_stop();
+        }
+        let completed = link.owner.join().await;
+        drop(link.io);
+        let shutdown = server.shutdown().await;
+        // Retain separate actual outcomes before propagating an earlier failure.
+        query?;
+        assert_eq!(
+            completed?.reason,
+            rustusb_core::link_health::LinkEnd::PeerEof
+        );
+        shutdown?;
+        assert!(
+            backend
+                .snapshot()?
+                .devices
+                .iter()
+                .all(|d| d.counters.sessions_started == 0 && !d.leased && d.pending_urbs == 0)
+        );
+        Ok(())
+    })
+    .await?
+}
+
+async fn framed_catalog(
+    client: &TlsClient,
+    address: SocketAddr,
+) -> TestResult<Vec<secure::CatalogDevice>> {
+    let mut link = client
+        .connect_link("server.test", TcpStream::connect(address).await?)
+        .await?;
+    let query = async {
+        let catalog = secure::discover(&mut link.io).await?;
+        secure::finish_framed_management(&mut link.io).await?;
+        Ok::<_, Box<dyn std::error::Error + Send + Sync>>(catalog)
+    }
+    .await;
+    if query.is_err() {
+        link.owner.request_stop();
+    }
+    let completed = link.owner.join().await;
+    drop(link.io);
+    let catalog = query?;
+    assert_eq!(
+        completed?.reason,
+        rustusb_core::link_health::LinkEnd::PeerEof
+    );
+    Ok(catalog)
+}
+
+async fn framed_refusal(
+    client: &TlsClient,
+    address: SocketAddr,
+    key: DeviceKey,
+    status: u32,
+) -> TestResult {
+    let mut link = client
+        .connect_link("server.test", TcpStream::connect(address).await?)
+        .await?;
+    let query = async {
+        secure::write_prelude(&mut link.io, &SecureOperation::Import { device_key: key }).await?;
+        link.io.write_all(&import_frame("1-1")).await?;
+        link.io.flush().await?;
+        let mut reply = [0; 8];
+        link.io.read_exact(&mut reply).await?;
+        assert_eq!(&reply[..4], &[1, 0x11, 0, 3]);
+        assert_eq!(word(&reply, 4), status);
+        secure::finish_framed_management(&mut link.io).await?;
+        Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+    }
+    .await;
+    if query.is_err() {
+        link.owner.request_stop();
+    }
+    let completed = link.owner.join().await;
+    drop(link.io);
+    query?;
+    assert_eq!(
+        completed?.reason,
+        rustusb_core::link_health::LinkEnd::PeerEof
+    );
+    Ok(())
+}
+
+#[tokio::test]
+async fn managed_framed_catalog_and_acl_refusal_keep_fin_eof_without_device_admission() -> TestResult
+{
+    tokio::time::timeout(Duration::from_secs(10), async {
+        let (tls, client) = framed_catalog_credentials()?;
+        let backend = VirtualBackend::new()?;
+        let monitor = crate::ServerMonitor::new();
+        let server = ServerHandle::bind_managed_tls(
+            SecureServerConfig {
+                listen: SocketAddr::from((Ipv4Addr::LOCALHOST, 0)),
+            },
+            backend.clone(),
+            tls,
+            monitor.clone(),
+        )
+        .await?;
+        let operation = async {
+            assert_eq!(framed_catalog(&client, server.local_addr()).await?.len(), 2);
+            let forbidden = DeviceKey::native(&format!("usb-{}", "a".repeat(64)))?;
+            framed_refusal(&client, server.local_addr(), forbidden, 4).await?;
+            assert!(monitor.snapshot()?.sessions.is_empty());
+            assert!(
+                backend
+                    .snapshot()?
+                    .devices
+                    .iter()
+                    .all(|d| d.counters.sessions_started == 0)
+            );
+            Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+        }
+        .await;
+        let stopped = server.shutdown().await;
+        operation?;
+        stopped?;
+        Ok(())
+    })
+    .await?
+}
+
+#[tokio::test]
+async fn framed_busy_reply_is_complete_and_clean_while_original_import_stays_owned() -> TestResult {
+    tokio::time::timeout(Duration::from_secs(10), async {
+        let (tls, client) = framed_catalog_credentials()?;
+        let backend = VirtualBackend::new()?;
+        let server = ServerHandle::bind_tls(
+            SecureServerConfig {
+                listen: SocketAddr::from((Ipv4Addr::LOCALHOST, 0)),
+            },
+            backend.clone(),
+            tls,
+        )
+        .await?;
+        let address = server.local_addr();
+        let selected = framed_catalog(&client, address)
+            .await?
+            .into_iter()
+            .find(|d| d.device_key == hid())
+            .ok_or("HID absent")?;
+        let mut owner = client
+            .connect_link("server.test", TcpStream::connect(address).await?)
+            .await?;
+        let operation = async {
+            secure::import_device(&mut owner.io, &selected).await?;
+            framed_refusal(&client, address, hid(), 2).await?;
+            let snapshot = backend.snapshot()?;
+            let original = snapshot
+                .devices
+                .iter()
+                .find(|d| d.bus_id.as_str() == "1-1")
+                .ok_or("HID snapshot absent")?;
+            assert!(original.leased);
+            assert_eq!(original.counters.sessions_started, 1);
+            Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+        }
+        .await;
+        let stopped = server.shutdown().await;
+        owner.owner.request_stop();
+        let joined = owner.owner.join().await;
+        drop(owner.io);
+        operation?;
+        stopped?;
+        joined?;
+        assert!(
+            backend
+                .snapshot()?
+                .devices
+                .iter()
+                .all(|d| !d.leased && d.pending_urbs == 0)
+        );
+        Ok(())
+    })
+    .await?
+}

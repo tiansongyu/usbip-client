@@ -528,7 +528,7 @@ where
     let (mut reader, mut writer) = tokio::io::split(stream);
     let mut claimed = None;
     let mut claim_completion = None;
-    let handshake_result = {
+    let mut handshake_result = {
         let greeting = handshake(
             &mut reader,
             &mut writer,
@@ -549,6 +549,23 @@ where
             greeting.await
         }
     };
+    if handshake_result.is_ok() && claimed.is_none() && link_monitor.is_some() {
+        // Catalog and fully flushed 2/4 refusals are one-shot v2 exchanges.
+        // Preserve both network halves until FIN/EOF and the actual owner join;
+        // dropping a still-open SendStream here can reset unread response DATA.
+        if let Err(error) =
+            crate::link::complete_management(&mut reader, &mut writer, &mut link_owner, async {
+                if let Some(stop) = &mut network_stop {
+                    crate::monitor::server_stopped(stop).await;
+                } else {
+                    std::future::pending::<()>().await;
+                }
+            })
+            .await
+        {
+            handshake_result = Err(error);
+        }
+    }
     let Some(mut lease) = claimed else {
         drop(reader);
         drop(writer);
@@ -570,10 +587,7 @@ where
                 }
             }
         }
-        return match closed {
-            Err(error) => Err(error),
-            Ok(()) => handshake_result,
-        };
+        return handshake_result.and(closed);
     };
     let result = match handshake_result {
         Ok(()) => tokio::select! {

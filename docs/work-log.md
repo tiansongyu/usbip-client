@@ -503,3 +503,6 @@
 - 新public Rust engine+真实TCP/memoryDER mTLS+production discover单项回归首次实际0pass/1fail，ConnectionAborted；原FAIL日志在`/tmp/rustusb-data-link-short-reply-regression-20261024`。据此先补设计约束，再修v2短management双方FIN/EOF+自然join，保留原失败与raw-v1/成功IMPORT路径。
 
 - 首Native-v4 clean e152实际失败、独立原件/guest诊断、单项mTLS回归原FAIL与初始静态交接共324份/约3.67MB归档`docs/evidence/data-link-first-failure-e1529ea-20261024`，逐original/bytes/SHA/staged blob核。没有解密RST；44forward/0arm、无IMPORT是准确失败边界。N负责protocol有界借用FIN/EOF与Rust backend，I负责service保留IO/naturaljoin与actual服务mTLS fixture；仅service测试复用既有rcgen，生产依赖不变。新三backendharness源静态198/构造32已freeze，仍未作为运行通过。
+
+- v2短management修复完成：共用借用IO的5秒FIN/EOF辅助；Native/Rust managed与foreground的Catalog/已flush2/4拒绝/准备失败短回复保留IO至自然driver join，取消/错误仍stop+join；成功IMPORT与raw-v1绕过新收尾。真实Native handler、client拒绝无helper、等待peer FIN时停止及publicRust engine回归均PASS；首次单项FAIL原件保持。仅service dev-dep复用既有rcgen，lock只增该dev边，158包版本未变。
+- 修后首完整`bash -x scripts/check.sh`PASS，260默认+346all-features+20vendor共626次执行、39result，0失败忽略，165输入前后不变。原run为dirty3ca，随后逐input映射新commit不伪装clean。actual10步xtrace、toolchain与最终CLIbb6fb276…/helperb4af4b5f…另收；Native-only check/tree PASS且无Rust engine/nusb/rusb，同CLI本地四signal/两背压PASS。下一步固定clean源重跑六新组及旧九组，不以旧608/e29兼容PASS冒充此修复版本。

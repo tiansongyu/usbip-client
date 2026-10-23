@@ -167,13 +167,51 @@ pub(super) async fn ended(
     }
 }
 pub(super) async fn finish(owner: &mut Option<LinkOwner>) -> (Result<()>, Option<LinkHealth>) {
+    join(owner, true).await
+}
+
+// Call only after the complete management response was written or parsed.
+// The stream stays alive until the exact driver joins. Only pure FIN/EOF I/O
+// is interruptible; dropping an owner.join() waiter would detach that driver.
+pub(super) async fn complete_management(
+    io: &mut (impl AsyncRead + AsyncWrite + Unpin),
+    owner: &mut Option<LinkOwner>,
+    interrupted: impl std::future::Future<Output = Result<()>>,
+) -> Result<bool> {
+    if owner.is_none() {
+        return Ok(true);
+    }
+    let result = tokio::select! {
+        biased;
+        result = interrupted => result.map(|()| false),
+        result = rustusb_protocol::secure::finish_framed_management(io) => result.map(|()| true),
+    };
+    let (closed, _) = join(owner, !matches!(result, Ok(true))).await;
+    match (result, closed) {
+        (Err(error), _) | (_, Err(error)) => Err(error),
+        (Ok(completed), Ok(())) => Ok(completed),
+    }
+}
+
+async fn join(
+    owner: &mut Option<LinkOwner>,
+    request_stop: bool,
+) -> (Result<()>, Option<LinkHealth>) {
     let Some(owner) = owner.take() else {
         return (Ok(()), None);
     };
-    owner.request_stop();
+    if request_stop {
+        owner.request_stop();
+    }
     match owner.join().await {
         Ok(outcome) => (
-            error(outcome.reason).map_or(Ok(()), Err),
+            if !request_stop && outcome.reason != LinkEnd::PeerEof {
+                Err(error(outcome.reason).unwrap_or_else(|| {
+                    Error::State("framed management did not finish normally".into())
+                }))
+            } else {
+                error(outcome.reason).map_or(Ok(()), Err)
+            },
             Some(outcome.final_health),
         ),
         Err(_) => (

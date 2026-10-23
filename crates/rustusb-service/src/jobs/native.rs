@@ -645,7 +645,9 @@ async fn connection(
         Err(error) => JobOutcome::before_start(error),
     };
     let (closed, _) = link::finish(&mut owner).await;
-    if let Err(error) = closed {
+    if let Err(error) = closed
+        && outcome.operation.is_ok()
+    {
         outcome.operation = Err(error);
     }
     outcome
@@ -670,6 +672,14 @@ async fn connection_inner(
         result = management(&mut stream, &exports, &peer) => result?,
     };
     let Some(reservation) = reservation else {
+        link::complete_management(&mut stream, link_owner, async {
+            tokio::select! {
+                biased;
+                _ = stopped(&mut job_stop) => Ok(()),
+                error = link::ended(&mut link_ended, link_monitor.as_ref()) => Err(error),
+            }
+        })
+        .await?;
         return Ok(success());
     };
     let export = &reservation.0;
@@ -728,6 +738,22 @@ async fn connection_inner(
                     if let Some(stream) = network.as_mut()
                         && let Err(reply) = write_frame(stream, &server::import_reply(status, None)?).await {
                         return Err(Error::State(format!("Native stub prepare failed ({error}); IMPORT failure response failed ({reply})")).into());
+                    }
+                    if let Some(stream) = network.as_mut() {
+                        let mut local = local_stop.clone();
+                        let mut exported = export_stop.clone();
+                        let closed = link::complete_management(stream, link_owner, async {
+                            tokio::select! {
+                                biased;
+                                _ = stopped(&mut job_stop) => Ok(()),
+                                _ = stopped(&mut local) => Ok(()),
+                                _ = stopped(&mut exported) => Ok(()),
+                                failure = link::ended(&mut link_ended, link_monitor.as_ref()) => Err(failure),
+                            }
+                        }).await;
+                        if let Err(closed) = closed {
+                            return Err(Error::State(format!("Native stub prepare failed ({error}); framed IMPORT failure response close failed ({closed})")).into());
+                        }
                     }
                 }
                 return Err(error.into());
@@ -857,6 +883,62 @@ async fn connection_inner(
 mod tests {
     use super::*;
     use tokio::io::AsyncReadExt;
+
+    #[tokio::test]
+    async fn actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner()
+    -> super::super::management_tests::TestResult {
+        use super::super::management_tests::{credentials, device, foreground_context, loaded};
+        tokio::time::timeout(Duration::from_secs(15), async {
+            for framed in [false, true] {
+                let (tls, client) = credentials(framed)?;
+                let listener = TcpListener::bind("127.0.0.1:0").await?;
+                let config = loaded(client, listener.local_addr()?)?;
+                let directory = tempfile::tempdir()?;
+                let helper = directory.path().join("missing-helper.sock");
+                let observed_helper = helper.clone();
+                let serving = tokio::spawn(async move {
+                    for _ in 0..3 {
+                        let (network, _) = listener.accept().await?;
+                        let (context, _stop, _frontend) = foreground_context(helper.clone());
+                        let stop = context.stop.clone();
+                        connection(network, tls.clone(), Vec::new(), context, stop)
+                            .await
+                            .into_result()?;
+                    }
+                    Ok::<_, Error>(())
+                });
+                for _ in 0..2 {
+                    assert!(
+                        super::super::discover(&config, Duration::from_secs(5))
+                            .await?
+                            .is_empty()
+                    );
+                }
+                let mut connection = link::connect(&config).await?;
+                let selected = secure::CatalogDevice {
+                    device_key: config.device.clone(),
+                    device: device()?,
+                };
+                assert!(matches!(
+                    secure::import_device(&mut connection.io, &selected).await,
+                    Err(Error::Protocol(_))
+                ));
+                assert!(
+                    link::complete_management(
+                        &mut connection.io,
+                        &mut connection.owner,
+                        std::future::pending()
+                    )
+                    .await?
+                );
+                serving.await??;
+                assert!(!observed_helper.exists());
+            }
+            Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+        })
+        .await??;
+        Ok(())
+    }
 
     #[tokio::test]
     async fn data_link_failure_releases_real_streams_and_lock_before_retained_ack() -> Result<()> {
