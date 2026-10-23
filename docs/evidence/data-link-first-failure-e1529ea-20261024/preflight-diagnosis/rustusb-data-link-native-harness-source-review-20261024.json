@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "result": "SOURCE_REVIEW_NO_REMAINING_MUSTFIX_IDENTIFIED",
+  "head": "556e1aacce58502d8bed059a9523d3c58bf61648",
+  "scope": "Cross-review actual candidate Native first-slice runner/guest/verifier and reused unchanged common helper functions. Reviewer authored two audit.py corrections; this is not wholly independent harness authorship. No Cargo/QEMU/guest/probe execution.",
+  "files": [
+    {
+      "path": "scripts/qemu_data_link_health/run.py",
+      "bytes": 30604,
+      "sha256": "31800b81c119a4fd88d533ffe63285c2f9f86583bd895e1fe90df95798494b16"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/guest-init.sh",
+      "bytes": 9638,
+      "sha256": "312254b2328ee8645545ecf75ec883d1ecfcbb9e7f3b40e63f899d3eb437d6c5"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify.py",
+      "bytes": 24887,
+      "sha256": "e37f1cb422a998d6a135cbc796de1a4d3419a30112bbfa778b118358e12c58f1"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/audit.py",
+      "bytes": 23920,
+      "sha256": "f81cec49bd15bca29aa2c4a4a999e7c0bd10c446399624cf9eab8d8a79f4eb5a"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/valve.py",
+      "bytes": 13728,
+      "sha256": "af59f3e5f4b5e0d2dbbcbb41aacc1386baf5c7dd30f31afc6c26768c792dab84"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/packets.py",
+      "bytes": 9718,
+      "sha256": "10c4e80aa7a93cb5663090918e73cea1f549fcd69f0e23008a95587fcd386fd5"
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 21660,
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a"
+    },
+    {
+      "path": "scripts/qemu/guest-secure-init.sh",
+      "bytes": 35715,
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16"
+    },
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 47091,
+      "sha256": "bebd225b012afc3114ee865921ec0d6f46ce1e40d041273a8521ef7e57263352"
+    },
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38"
+    }
+  ],
+  "checks": [
+    {
+      "item": "actual_health_binding",
+      "result": "PASS_SOURCE",
+      "facts": "Distinct raw base64 blocks, exactlength, immutableduplicatecontent; session/instance/devicekey/role and liveopenv2reply evidence; actualconnectionid/realTCPtuple twoends reverse; copied prearmrawbytes hashed into Binding and matched again by packet audit."
+    },
+    {
+      "item": "directional_faults",
+      "result": "PASS_SOURCE",
+      "facts": "Three distincttarget flows c2s/s2c/both, selectedEthernet frames dropped while socketpairFDs retained; freshHIDSession after each closed prior job; serialsamecapability remains and realI/O continues; Catalog separateflow succeeds duringfault."
+    },
+    {
+      "item": "timeout_vs_cleanup",
+      "result": "PASS_SOURCE",
+      "facts": "At leastoneactualprobe_timeout with local3000..5000ms enqueue-to-ended, pendingseq unmatched; oppositeend mayEOF/error; both target sessions mustDisconnected/verified with exactkind/correlation/key/resource/UIDRootterminal. No timeout-as-cleanup substitution."
+    },
+    {
+      "item": "native_kernel_phase",
+      "result": "PASS_SOURCE",
+      "facts": "InitialexportNone0IF via inheritedphasehelper; heldcfg1/fullIFdriverNone/USED; faulttargetAVAILABLE and serialUSED, samehardgeneration. ClientexacttargetportNULL/oldnodegone and oldserialreceipt/localgenerationretained."
+    },
+    {
+      "item": "real_io_and_reuse",
+      "result": "PASS_SOURCE",
+      "facts": "Seven35B FTDI RX/TX rounds with orderedactualhost245Bsink and exacthostinjection/guestRX; oddfourHID qcode1/3/5/7 EVKEY2/4/6/8 press+release; fouruniqueHIDcapabilities/localgenerations; serialcapability identical acrossallfaults."
+    },
+    {
+      "item": "last_session_probe_barrier",
+      "result": "PASS_SOURCE",
+      "facts": "Authoradded final4thHID bothend matchingreply barriers so finalhistorydoesnotdependonI/O lastingmorethan1s. Nopreviousprobe projectedontoa newconnection."
+    },
+    {
+      "item": "final_cleanup_order",
+      "result": "PASS_SOURCE",
+      "facts": "ClientTERMwait0/NULL/oldbothnodesgone; serverTERMwait0/fulloriginalhostbaseline; exact7server/5clientretainedsessions/rootterminals. Onlyafteractualproofs does teardown set guesteth0down; it cannot manufacturetimeout ordevicecleanup success."
+    },
+    {
+      "item": "security",
+      "result": "PASS_SOURCE",
+      "facts": "DedicatedUID2000/caps0actualagent and UID0helper artifacts; actualpublicconfigJSON/schema2/pinnedkeys/rootpool/manifests/DER/permission metadata verified, no privatekeybytescopied. UID1002/profiledenials requireunchangedrootresources and emptyjobs/sessions/requests."
+    },
+    {
+      "item": "execution_provenance",
+      "result": "PASS_SOURCE",
+      "facts": "Cleanheadrequired, complete sourcecopied, lockedallfeaturesbuildbydefault, rolepayloadELFhashmatch and actual/proc/exe guesthashes, postsource/binary/head/clean guards. skipbuildexplicitdevelopmentfieldnotinferredfeatureproof."
+    },
+    {
+      "item": "failure_collection",
+      "result": "PASS_SOURCE",
+      "facts": "FirstguestFAIL remainsFAIL; boundedABORT+25s trapcollection beforeterminatingQEMU; unknownABORTnot accepted as success. Bothkernelchannels monitoredandrecheckedafterexit; finaltwoQEMUwait0required."
+    }
+  ],
+  "limits": [
+    "Native-only first actual workload; noUSBFS/virtual newv2run orNative pendingURBcount proof.",
+    "/proc ownerstat/socket/TCP originals are collected but currentverifier doesnotindependently correlate everyrecord PID/starttime/FDsocketinode toflow. ActualtypedTLSfactory+health/session+twoPCAPbinding is distinct evidence.",
+    "Onlylogicalapplicationpipe buffers/forwardqueues are empty atarm; OSsocketreceivequeue bytes are notclaimedempty. Faultboundaryisactualcomplete-frameclassification logtime.",
+    "3sdeadline+2sschedulingobservation is a testassertion; runtimefailure mustremainFAIL andcannotbeauto widened.",
+    "No PCAP decryption/pongcontent/negotiatedencryptedALPN proof.",
+    "This reports staticcandidate only; authors55static/fixtureobservations are not USBcases orliveexecution."
+  ]
+}

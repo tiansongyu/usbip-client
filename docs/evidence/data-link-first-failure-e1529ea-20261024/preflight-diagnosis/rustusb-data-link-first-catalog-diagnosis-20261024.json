@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "result": "ORIGINAL_FAIL_CONFIRMED_PRODUCT_LIFECYCLE_CANDIDATE",
+  "run_result": "FAIL",
+  "head": "e1529eafd56b7e3c4f2b0a450c25afd8e427efd1",
+  "run_start_clean": true,
+  "guards": {
+    "source_guard": true,
+    "binary_guard": true,
+    "head_guard": true,
+    "clean_guard": true
+  },
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "actual_binary_sha256": {
+    "rustusb": "76546440e5f72ea4f1132d68de9a9b474a028052bbb453cdd85936e5dd7ea622",
+    "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+  },
+  "primary_observed_failure": {
+    "role": "client",
+    "stage": "client-prepare",
+    "operation": "agent discover hid",
+    "actual_response": {
+      "journal_healthy": true,
+      "response": {
+        "code": "io",
+        "result": "error"
+      },
+      "schema_version": 1
+    },
+    "client_jobs": 0,
+    "client_sessions": 0,
+    "server_sessions": [
+      {
+        "role": "export",
+        "state": "Available"
+      },
+      {
+        "role": "export",
+        "state": "Available"
+      }
+    ],
+    "server_export_count": 2,
+    "server_stub_count": 0
+  },
+  "network_journal_observations": {
+    "events": {
+      "start": 1,
+      "packet": 44,
+      "forward": 44,
+      "failure": 1,
+      "close": 1
+    },
+    "arm_count": 0,
+    "drop_count": 0,
+    "queued_packets": 44,
+    "forward_records": 44,
+    "scope": "Journal counts only, not whole packet auditor PASS or decrypted h2 evidence."
+  },
+  "source_chain": [
+    {
+      "path": "service/jobs/native.rs management/connection_inner/connection",
+      "fact": "Catalog mapping+DEVLIST write_frame flush -> Ok(None) -> byvalue IO destructor -> outer finish alwaysrequeststop."
+    },
+    {
+      "path": "service/jobs/mod.rs discover_until",
+      "fact": "production secure::discover(io) consumes IO byvalue; query result is combined with forced driver finish and an Err join can override a complete query."
+    },
+    {
+      "path": "protocol/secure.rs discover",
+      "fact": "Reads complete bounded mapping+DEVLIST and returns; no h2FIN/EOF lifecycle at this generic rawcodec layer."
+    },
+    {
+      "path": "transport/link.rs LinkIo::drop /driver",
+      "fact": "IO Drop requestsstop; driver fatal/stop discards application-buffered receive data. send_data/writeflush alone never signifies END_STREAM."
+    }
+  ],
+  "diagnosis_boundary": [
+    "Source establishes an abrupt short-management lifecycle after responseflush, consistent with raw Io; it does not independently prove which specific syscall/streamreset occurred.",
+    "Raw RPC category does not distinguish discoveryread failure from successfulquery followedbydriverjoin Io; neither detailed stage was logged.",
+    "No directionalblackhole/probe timeout/pending USB I/O/reconnection evidence reached; no arm/drop occurred.",
+    "ServerFAIL afterclientFAIL/controlABORT is downstream collection, not a separate demonstrated USBfailure.",
+    "Doubleguest0 reflects PID1 collection/poweroff, not runPASS."
+  ],
+  "recommended_fix": "v2-only explicit applicationFIN+actualflush+bounded peerEOF whileIO remainsowned, thennaturaldriverjoin; onerror/stop forceStop+join. ClientborrowmutableIOthroughquery. Applysame shortCatalog and2/4negative replies without altering successfulIMPORT/rawv1. No sleep/retry.",
+  "regression_candidate": {
+    "path": "/tmp/rustusb-framed-catalog-regression-20261024.patch",
+    "bytes": 3897,
+    "sha256": "910dba4a652c359850c0d060311a733729bf3ca4ba3b7f7e32f8f51bec4319aa"
+  },
+  "sources": [
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "head": "e1529eafd56b7e3c4f2b0a450c25afd8e427efd1",
+      "bytes": 48811,
+      "sha256": "e1d6a67940f43fb19506bba77ce2a1c7745c7149624b9330f90711326a4b645a",
+      "copy_equals_git_blob": true
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "head": "e1529eafd56b7e3c4f2b0a450c25afd8e427efd1",
+      "bytes": 7054,
+      "sha256": "e46fe22aaeea8e0348f50539a40491de1936034a7a86448d9551c853426fb867",
+      "copy_equals_git_blob": true
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/link.rs",
+      "head": "e1529eafd56b7e3c4f2b0a450c25afd8e427efd1",
+      "bytes": 6147,
+      "sha256": "1d0962a2e8557dba86c0d2ae397b3e2def10440e9fc31248af72326c09b18809",
+      "copy_equals_git_blob": true
+    },
+    {
+      "path": "crates/rustusb-protocol/src/secure.rs",
+      "head": "e1529eafd56b7e3c4f2b0a450c25afd8e427efd1",
+      "bytes": 21700,
+      "sha256": "e87361de1bccd1a91b0927a31cb71556e25a05fdb2608d87e8a5ff9eb88d706c",
+      "copy_equals_git_blob": true
+    },
+    {
+      "path": "crates/rustusb-transport/src/link.rs",
+      "head": "e1529eafd56b7e3c4f2b0a450c25afd8e427efd1",
+      "bytes": 38014,
+      "sha256": "4d348d03393566846d4da4937d0190f4a288fc0a0d6ace8405191e90d8dcf84d",
+      "copy_equals_git_blob": true
+    }
+  ],
+  "selected_originals_before_after_identical": true,
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/summary.json",
+      "bytes": 102195,
+      "sha256": "86afba2cdd4569cd063483aca0361220e9ab74647a91cdaa752723a0082a59a3"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/server-evidence.log",
+      "bytes": 112547,
+      "sha256": "5820d6f62d16b4ed294ddbd26a05e0efe8a9e85758eb619ad4f8e635d1bb7b25"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/client-evidence.log",
+      "bytes": 76739,
+      "sha256": "9676603b7675e03dc1eac5c74617b1222e1edef2d8f76f442054188ebac9bc22"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/host-control.jsonl",
+      "bytes": 333,
+      "sha256": "307b4b2d0a0d55dbd3ad1b34535bb4b60bc70c6e3acff4c1a366597dfcd3c6a7"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/valve.jsonl",
+      "bytes": 23213,
+      "sha256": "884076e5b013c52028c50c208b13493ca19be91d18a7e67038ca2cbef32abeed"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/client-external.pcap",
+      "bytes": 8365,
+      "sha256": "5beb26993efdcb99ae808704065089603e7ab9a138d36458cfab1b196c4a3c16"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/server-external.pcap",
+      "bytes": 8365,
+      "sha256": "84b8f3c0d2a5e9ef9b444aec31e23dcca1c8977922e13e9356258818b7ccce22"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/client-artifacts/catalog-initial.json",
+      "bytes": 86,
+      "sha256": "061894c17798be4afccda81e4fa51329de5d808342630bd376025a1e43492be5"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/client-artifacts/failure-agent-state.json",
+      "bytes": 427,
+      "sha256": "40fdb1cb2d5cf31b913d4d17979ef654baa70842a3d4df2c831570925a641f38"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/server-artifacts/failure-agent-state.json",
+      "bytes": 5151,
+      "sha256": "bbe6e740b695473c2e60f0817c3b25d938a03bc187c3532df7f577810ddb1616"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/client-artifacts/failure-native-channels.json",
+      "bytes": 46,
+      "sha256": "c377183f477887b4ce595aefd9e9a17e932fe48e137616103ea4f688b10b5908"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/server-artifacts/failure-native-channels.json",
+      "bytes": 3279,
+      "sha256": "07bfee684e6411cc8ab49cc5b554f202613c4e6a5d0a976e03cd9f273c354cb3"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/client-artifacts/agent-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024/server-artifacts/agent-1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "not_run": [
+    "Cargo",
+    "CLI",
+    "test",
+    "QEMU",
+    "USB"
+  ]
+}

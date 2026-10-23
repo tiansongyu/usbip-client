@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_FROZEN_UNEXECUTED",
+  "scope": "Root-authorized two narrow audit.py corrections; not independent review of my own delta. H owns actual fixtures and all other harness files.",
+  "file": {
+    "path": "scripts/qemu_data_link_health/audit.py",
+    "bytes": 23920,
+    "sha256": "f81cec49bd15bca29aa2c4a4a999e7c0bd10c446399624cf9eab8d8a79f4eb5a"
+  },
+  "prior_source_sha256": "db3d4b5e244e85544bb44101329891ccd5b1fac47404982c5a595eff5e7f26d0",
+  "implemented": [
+    "actual bounded ClientHello and RFC7301 ALPN extension parsing, exactv2only, duplicates rejected",
+    "plaintext handshake fragmentation acrossTLSrecords and at most2ClientHellos with64KiBpermessage bound; no encryptedALPN claim",
+    "actualclient SYN\u2192serverreverseTuple RSTACK/seq0/ack+1 modulo32 pairing forboth3240families",
+    "bounded output fields offered_alpn/client_hellos/plaintext_3240_refusals"
+  ],
+  "validation": [
+    "python3 ast.parse actual source PASS",
+    "git diff --check -- owned audit.py PASS"
+  ],
+  "not_run": [
+    "Cargo",
+    "QEMU",
+    "TLS/USB/probe subprocess",
+    "author synthetic fixtures"
+  ],
+  "references": [
+    "RFC8446 section4.1.2 ClientHello length-delimited structure",
+    "RFC7301 section3.1 ALPN extension vector",
+    "Linux privateguest TCP closedport response SYN\u2192RST+ACK; exactpacket proof is checked not inferred from arbitraryRST presence"
+  ],
+  "history": "Original110synthetic observations/oldparser source remain historical; H will test new validClientHello/matchedRST fixtures under a distinct prefix. Oldraw evidence unchanged."
+}

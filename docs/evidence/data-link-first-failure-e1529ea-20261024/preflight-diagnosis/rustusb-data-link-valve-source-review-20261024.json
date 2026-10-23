@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "status": "STATIC_REVIEW_WITH_EVIDENCE_CLARIFICATIONS",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "files": [
+    {
+      "path": "scripts/qemu_data_link_health/packets.py",
+      "bytes": 9718,
+      "sha256": "10c4e80aa7a93cb5663090918e73cea1f549fcd69f0e23008a95587fcd386fd5"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/valve.py",
+      "bytes": 13728,
+      "sha256": "af59f3e5f4b5e0d2dbbcbb41aacc1386baf5c7dd30f31afc6c26768c792dab84"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/audit.py",
+      "bytes": 18560,
+      "sha256": "db3d4b5e244e85544bb44101329891ccd5b1fac47404982c5a595eff5e7f26d0"
+    }
+  ],
+  "scope": "Three low-level candidate Python modules only; run.py/guest integration still in progress and excluded. No execution, import, mutation, Cargo or QEMU by reviewer.",
+  "source_findings": [
+    {
+      "item": "packet_bounds",
+      "result": "PASS_SOURCE",
+      "detail": "QEMU Ethernet prefix and frame bound, finite64 forwarding frames/role,64MiB/100000 logbound,32-step fairness, unknown protocol/fragment rejection."
+    },
+    {
+      "item": "drop_rule",
+      "result": "PASS_SOURCE",
+      "detail": "Same observed real client-to-server3241 Flow and reverse, exactIP/ports/family, only chosen origins dropped; unrelated flow forwarded; no injected TCPbytes, FIN, RST or socketclose while armed."
+    },
+    {
+      "item": "identity_barrier",
+      "result": "PASS_SOURCE",
+      "detail": "Arm requires source SYN/payload bothways, no tuple reuse, application frame buffers/forwarding queues empty, realAF_UNIX socket dev/ino/mode/fd equal at arm/disarm."
+    },
+    {
+      "item": "pcap_reconciliation",
+      "result": "PASS_SOURCE",
+      "detail": "Every sourcePCAP frame matches origin log SHA/fullfacts and exact forward/drop decision; each destinationPCAP exact forwarded frame sequence; final queues empty/two guestEOF/close mandatory."
+    },
+    {
+      "item": "health_binding",
+      "result": "PASS_SOURCE",
+      "detail": "Arm binds rawhealthSHA, instance/session/connection/realTCP tuple/importvsincoming/livev2/open and actual lastreply/RTT; terminal artifact hash only, lifecycle/deadline not fabricated by packet audit."
+    },
+    {
+      "item": "not_host_mutation",
+      "result": "PASS_SOURCE",
+      "detail": "Only caller-provided twoAF_UNIX streams, selectors and evidencefiles; no hostUSB/modules/routes/iptables/realinterface mutation."
+    }
+  ],
+  "clarifications_sent": [
+    {
+      "priority": "must_match_claim",
+      "path": "audit.py::tls_facts",
+      "detail": "Client ALPN currently byte-substring across entire TCPwire, not parsed ClientHello ALPN extension. Either add bounded exact extension parser or restrict wording to recognisable signature; do not call negotiatedALPN (encrypted).",
+      "sent_to": [
+        "Root",
+        "journal_harness_review"
+      ]
+    },
+    {
+      "priority": "stronger_negative_proof",
+      "path": "audit.py::audit reset_families",
+      "detail": "Requires sourceport3240 RST in bothfamilies but does not pair prior client SYN tuple and ACK. Add exact SYN/refusal pairing if claiming actual connection refusal.",
+      "sent_to": [
+        "Root",
+        "journal_harness_review"
+      ]
+    },
+    {
+      "priority": "scope",
+      "path": "valve.py::quiescent",
+      "detail": "Covers parser buffers and userspace outputqueues, not bytes already queued in OS socketreceive buffers. Rule activation is the complete-frame classification log boundary; do not claim OSprearm bytes empty.",
+      "sent_to": [
+        "Root"
+      ]
+    }
+  ],
+  "not_claimed": [
+    "No liveTLS/decryptedpong/USB/rootproof evidence from this source review.",
+    "No independent rerun of authors110 synthetic fixture observations.",
+    "Packet-audit PASS cannot be promoted to heartbeat or cleanup PASS."
+  ]
+}

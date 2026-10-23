@@ -498,3 +498,8 @@
 - Native新v2定向blackhole harness七源冻结，H静态68项/55jq、AF_UNIX合成114观察与3边界/8phase正负fixtures通过，N源码交叉审查无具体阻断；这些不是QEMU。每方向fresh HID attempt、serial原连接持续I/O，双端health/tuple精确绑定，最后actualSIGTERM/Rootproof/完整baseline先于网络teardown。Native pending和独立procFD关联未由此证明。即将提交后以独立clean Native worktree首跑；primary另行实现virtual/USBFS四组，避免源guard并行竞态。
 
 - 旧九组clean e29全部运行原件、独立raw审查与matrix runner共2628份/约29.99MB归档`docs/evidence/data-link-compat-e29cc11-20261024`，逐original/bytes/SHA/staged blob核对；诊断数3879+244与USB case严格分开。新Native7源已提交`e1529ea`并从独立clean worktree实际首Native-v4启动，证据目录`/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024`；本句不宣告新case通过。primary另两份Rust backend guest扩展由I拥有、run分派由H拥有，均不影响冻结Native首跑。
+
+- 新clean e1529ea Native-v4首实际FAIL：client-prepare中初始agent discover返回typed Io，尚无IMPORT/arm/drop，server只有2Available exports；valve44packet全部forward，两guest虽0退出但FAIL marker保留，四guard真。H121原件谓词/94base64与N copiedsource诊断分别锁原件，未推断已捕获RST。
+- 新public Rust engine+真实TCP/memoryDER mTLS+production discover单项回归首次实际0pass/1fail，ConnectionAborted；原FAIL日志在`/tmp/rustusb-data-link-short-reply-regression-20261024`。据此先补设计约束，再修v2短management双方FIN/EOF+自然join，保留原失败与raw-v1/成功IMPORT路径。
+
+- 首Native-v4 clean e152实际失败、独立原件/guest诊断、单项mTLS回归原FAIL与初始静态交接共324份/约3.67MB归档`docs/evidence/data-link-first-failure-e1529ea-20261024`，逐original/bytes/SHA/staged blob核。没有解密RST；44forward/0arm、无IMPORT是准确失败边界。N负责protocol有界借用FIN/EOF与Rust backend，I负责service保留IO/naturaljoin与actual服务mTLS fixture；仅service测试复用既有rcgen，生产依赖不变。新三backendharness源静态198/构造32已freeze，仍未作为运行通过。

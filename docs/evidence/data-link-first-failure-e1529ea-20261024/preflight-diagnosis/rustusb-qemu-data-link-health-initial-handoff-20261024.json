@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T19:31:21.500598+00:00",
+  "phase": "implementation_scope_before_new_code",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "owned_directory": "scripts/qemu_data_link_health/",
+  "planned_files": [
+    "packets.py",
+    "valve.py",
+    "audit.py",
+    "run.py",
+    "README.md"
+  ],
+  "scope": [
+    "Bounded Ethernet decoder + length-prefixed QEMU socket valve",
+    "Exact validated TCP five-tuple and connection epoch directional drop, sockets retained",
+    "Independent PCAP-versus-valve ingress/forward/drop audit; no existing runner verdict reused",
+    "Runnable preflight/source-plan skeleton; real guest/CLI execution withheld until actual frozen API integration",
+    "Old QEMU harness and frozen flush files are read only"
+  ],
+  "configuration_contract": {
+    "schema_version": 2,
+    "data_link": {
+      "protocol": "framed_v2",
+      "interval_millis": 1000,
+      "response_timeout_millis": 3000
+    },
+    "service_disk_schema": 2,
+    "read_only_rpc": "session_health",
+    "cli": "agent health"
+  },
+  "fixed_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/qemu/qemu/v6.2.0/net/socket.c",
+      "path": "/tmp/rustusb-heartbeat-qemu-source-research-20261024/net__socket.c",
+      "bytes": 23038,
+      "sha256": "5a32cd1d64bb614bbb7249e68c76e3a6c14d022d501e7e37e794b7f2576a8b7d"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/qemu/qemu/v6.2.0/net/net.c",
+      "path": "/tmp/rustusb-heartbeat-qemu-source-research-20261024/net__net.c",
+      "bytes": 46423,
+      "sha256": "a89d9c09dfcb3ecf42eab220257803d15230f4822e990b23c249ea246926b3be"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/qemu/qemu/v6.2.0/include/net/net.h",
+      "path": "/tmp/rustusb-heartbeat-qemu-source-research-20261024/include__net__net.h",
+      "bytes": 9666,
+      "sha256": "e7089bdc8f6ccb953a1d620d2492ba413198e76020e250817de85665318b73b7"
+    }
+  ],
+  "historical_actual_qemu_version": {
+    "path": "/tmp/rustusb-shared-owner-qemu-fixed-20261024/secure-native-ipv4/tool-versions.log",
+    "sha256": "d3607e8fa51a31ee7111163b10a3939e311bd8420619e2ca97fe28fbcaba4c41",
+    "value": "QEMU 6.2.0 Debian 1:6.2+dfsg-2ubuntu6.31",
+    "scope": "Previous actual run only; future run must record its own executable/version"
+  },
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 7548,
+      "sha256": "e0cd7adb52dddad300b032c5802ee25cfbde5153094892a62730284cdebbe6fc",
+      "provisional": false
+    },
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "bytes": 4344,
+      "sha256": "79fd06707d087134d97bc5e31554190cc6e5b0e623f8d396d06cd0e15f56e32f",
+      "provisional": false
+    },
+    {
+      "path": "docs/research/data-link-health-design.md",
+      "bytes": 12146,
+      "sha256": "e8fc6ad0b30bd43d47a3a61d305cf32fc9d29b6136ea687f6cb99ee5c7edc739",
+      "provisional": true
+    },
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+      "provisional": false
+    },
+    {
+      "path": "scripts/qemu/guest-secure-init.sh",
+      "bytes": 35715,
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+      "provisional": false
+    },
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 45120,
+      "sha256": "3f9d1ab41078f0de9b00442fd117f3398382badc08a7d0b369cd1dbd2d1983d6",
+      "provisional": false
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 21660,
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a",
+      "provisional": false
+    },
+    {
+      "path": "crates/rustusb-core/src/link_health.rs",
+      "bytes": 9849,
+      "sha256": "5f8f53d3760abc3096a6559a996f3331b30b636c53051332434e0282dca7400b",
+      "provisional": true
+    },
+    {
+      "path": "crates/rustusb-service/src/health.rs",
+      "bytes": 5463,
+      "sha256": "4ab084176b5066002b035cca9d1d6d6d76773a32fc1411de0ed54c6b8ccc9b57",
+      "provisional": true
+    },
+    {
+      "path": "crates/rustusb-cli/src/agent.rs",
+      "bytes": 5212,
+      "sha256": "99207ef70d818d686fea3a66de2da8164e3933433828da1d66db433cb59bbbfd",
+      "provisional": true
+    }
+  ],
+  "validation_scope": "No Cargo/QEMU/USB/commit. Python parser/loopback socket fixture execution is allowed software validation only; report separately, never as QEMU or USB case.",
+  "git_status_before": " M Cargo.toml\n M crates/rustusb-cli/src/agent.rs\n M crates/rustusb-core/src/lib.rs\n M crates/rustusb-rust-backend/src/lib.rs\n M crates/rustusb-rust-backend/src/managed.rs\n M crates/rustusb-rust-backend/src/monitor.rs\n M crates/rustusb-rust-backend/src/server.rs\n M crates/rustusb-service/src/context.rs\n M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/lib.rs\n M crates/rustusb-service/src/rpc.rs\n M crates/rustusb-service/src/run_context.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/store.rs\n M crates/rustusb-transport/Cargo.toml\n M crates/rustusb-transport/src/lib.rs\n M docs/work-log.md\n?? crates/rustusb-core/src/link_health.rs\n?? crates/rustusb-rust-backend/src/link.rs\n?? crates/rustusb-service/src/health.rs\n?? crates/rustusb-service/src/jobs/link.rs\n?? crates/rustusb-transport/src/flush.rs\n?? crates/rustusb-transport/src/flush/\n?? crates/rustusb-transport/src/link.rs\n?? crates/rustusb-transport/src/quiet.rs\n?? docs/research/data-link-health-design.md\n"
+}

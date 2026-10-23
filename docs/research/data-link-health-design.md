@@ -93,3 +93,9 @@ LinkHealth 只保留有限固定类型字段：模式、connection identity、ph
 主要依据：当前项目固定源码及031 Gitblob；Tokio/rustls已有固定缓存；[h2 0.4.20固定源](https://github.com/hyperium/h2/tree/b0e890842ac16d3c76836fd4fcc06421acb15fa7)、其share/ping_pong/framed_write/data实现及 Cargo发行校验；原 [应用服务设计](application-service-design.md)、[共享owner设计](shared-owner-design.md)。N transport、I service/owner-wakeup、H QEMU只读研究原件与精确 SHA 将随交付归档，不把本设计当运行证据。沿用仓库目录与用户指示，不为套用设计技能额外创建逐组件skills/ADR或擅自标approved。
 
 既有九组回归的agent verifier须严格验证新的私有disk2与一一对应link_history；旧IPC1和原设备/权限/清理断言保持。raw-v1的每个已观测样本必须是明确UnavailableRawV1、RTT/identity/stats均null，不因新API猜测心跳。此为格式升级验收，不修改旧记录或将旧运行冒充disk2。
+
+## 首次真实Catalog失败后的短management关闭约束
+
+clean e1529ea的首Native-v4实际FAIL在Catalog，44个Ethernet包全部forward、无arm/drop，无IMPORT；本地public Rust TLS engine+production discover的独立真实mTLS回归也实际FAIL（ConnectionAborted）。原件未解密h2，不能声称已捕获RST或区分query/后续join具体阶段。源码确认短回复flush后按值drop LinkIo并request_stop不具备正常管理交换的完整EOS寿命。
+
+修复选择：只对v2的一次性Catalog及已完整flush的IMPORT拒绝回复执行有界双方半关闭。借用并保留IO；服务端完整回复后shutdown/真实FIN fence，客户端完整解析后同样shutdown，然后有限读取EOF（额外应用字节拒绝），自然join原owner；失败/取消保留outer owner并显式stop/join。公共protocol辅助函数仅处理借用IO的FIN+EOF，使用原5秒management截止，不持有或替代driver/device所有权。客户端Catalog不再按值提前丢IO；拒绝IMPORT同样保留IO收尾；成功IMPORT沿原同流URB路径，不发送FIN。Native Catalog/2/4/准备失败短回复与Rust managed/foreground同类路径须覆盖。原业务失败及实际资源cleanup/recording独立保留。raw-v1保持原路径；不以sleep/retry或放宽guest断言绕过。

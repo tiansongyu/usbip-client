@@ -1,0 +1,14 @@
+from pathlib import Path
+import hashlib,json
+out=Path('/home/ubuntu/github/usbip-client/docs/evidence/data-link-first-failure-e1529ea-20261024');out.mkdir(exist_ok=False);records=[]
+def copy(source,dest):
+ source=Path(source);assert source.is_file() and not source.is_symlink(),source;raw=source.read_bytes();p=out/dest;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw);assert p.read_bytes()==raw;records.append(dict(path=dest,original=str(source),bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest()))
+for label,directory in [('native-run','/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024'),('software-regression','/tmp/rustusb-data-link-short-reply-regression-20261024')]:
+ root=Path(directory)
+ for p in sorted(root.rglob('*')):
+  if p.is_file():copy(p,label+'/'+str(p.relative_to(root)))
+files=['rustusb-data-link-native-ipv4-e1529ea-20261024.runner.log','rustusb-data-link-native-ipv4-e1529ea-20261024.runner.json','rustusb-data-link-native-handoff-20261024.json','rustusb-data-link-native-harness-source-review-20261024.json','rustusb-data-link-native-first-guest-diagnosis-20261024.json','rustusb-data-link-native-first-guest-diagnosis-20261024.py','rustusb-data-link-first-catalog-diagnosis-20261024.json','rustusb-framed-catalog-regression-20261024.patch','rustusb-framed-catalog-regression-20261024.json','rustusb-data-link-static-freeze-20261024.json','rustusb-qemu-data-link-health-initial-handoff-20261024.json','rustusb-data-link-valve-source-review-20261024.json','rustusb-data-link-audit-author-handoff-20261024.json']
+for name in files:copy(Path('/tmp')/name,'preflight-diagnosis/'+name)
+copy(__file__,'archive.py')
+scope=dict(result='FAIL',commit='e1529eafd56b7e3c4f2b0a450c25afd8e427efd1',clean=True,source_guard=True,binary_guard=True,head_guard=True,clean_guard=True,guest_exits={'server':0,'client':0},first_actual_stage='client-prepare initial Catalog typed Io; server stopped waiting for first c2s phase after peer abort',ethernet_packets=44,forwarded=44,armed_rules=0,dropped_packets=0,imports_started=0,claims=['This is a preserved failure, not heartbeat, I/O, cleanup or QEMU acceptance.','Guest exit zero does not override actual FAIL markers.','No decrypted RST was captured; raw records do not distinguish query read from later join failure.','Public Rust-engine real-TCP/memory-DER mTLS software regression separately failed 0 pass / 1 fail (ConnectionAborted).','Earlier static/constructed checks remain static; they did not validate management exchange lifetime.'])
+raw=(json.dumps(scope,indent=2)+'\n').encode();(out/'scope.json').write_bytes(raw);records.append(dict(path='scope.json',original='generated archive scope',bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest()));(out/'manifest.json').write_text(json.dumps(dict(schema_version=1,files=records),indent=2)+'\n');print('files',len(records)+1,'bytes',sum(x['bytes'] for x in records))

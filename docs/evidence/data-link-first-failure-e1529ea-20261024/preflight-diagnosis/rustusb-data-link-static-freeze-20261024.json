@@ -1,0 +1,599 @@
+{
+  "scope": "Author static syntax/schema construction only. No generated init execution, product program, Cargo/QEMU/USB.",
+  "checks": [
+    {
+      "name": "AST verify.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AST valve.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AST packets.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AST run.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "AST audit.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "generated init dash syntax",
+      "passed": true,
+      "detail": {
+        "args": [
+          "dash",
+          "-n",
+          "/tmp/rustusb-data-link-generated-static-freeze-20261024.sh"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "generated init ShellCheck",
+      "passed": true,
+      "detail": {
+        "args": [
+          "shellcheck",
+          "-s",
+          "sh",
+          "/tmp/rustusb-data-link-generated-static-freeze-20261024.sh"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "actual runner CLI help",
+      "passed": true,
+      "detail": {
+        "args": [
+          "python3",
+          "-B",
+          "scripts/qemu_data_link_health/run.py",
+          "--help"
+        ],
+        "exit": 0,
+        "stdout": "usage: run.py [-h] [--backend {native}] --family {ipv4,ipv6} [--kernel KERNEL]\n              [--timeout TIMEOUT] [--skip-build] [--plan] [--output OUTPUT]\n              [--evidence EVIDENCE]\n\nActual same-data TLS heartbeat blackhole QEMU (Native first slice)\n\noptions:\n  -h, --help            show this help message and exit\n  --backend {native}\n  --family {ipv4,ipv6}\n  --kernel KERNEL\n  --timeout TIMEOUT\n  --skip-build          development only; final evidence uses locked all-\n                        features build\n  --plan\n  --output OUTPUT\n  --evidence EVIDENCE\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "auditor CLI help",
+      "passed": true,
+      "detail": {
+        "args": [
+          "python3",
+          "-B",
+          "scripts/qemu_data_link_health/audit.py",
+          "--help"
+        ],
+        "exit": 0,
+        "stdout": "usage: audit.py [-h] --evidence EVIDENCE --output OUTPUT\n\nIndependently reconcile raw two-sided PCAP bytes with the valve journal. A\npacket audit result is not a USB, heartbeat deadline, Catalog, or cleanup\nverdict. It establishes the exact flow/drop boundary and encrypted wire facts.\nNo existing QEMU verifier/pcap_review is called. No private keys are read.\n\noptions:\n  -h, --help           show this help message and exit\n  --evidence EVIDENCE\n  --output OUTPUT\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 1",
+      "passed": true,
+      "detail": {
+        "expression": "{name:$name,number:$number,alt:$alt,class:$class,subclass:$subclass,protocol:$protocol,driver:$driver}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 2",
+      "passed": true,
+      "detail": {
+        "expression": "{bus:$bus,generation:$generation,devnum:$devnum,path:$path,busnum:$busnum,vendor:$vendor,product:$product,speed:$speed,release:$release,configuration:$cfg,num_interfaces:$count,configuration_bytes:$configuration_bytes,count_bytes:$count_bytes,interfaces:($interfaces|sort_by(.name)),device_driver:$device_driver,usbip_status:$usbip_status}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 3",
+      "passed": true,
+      "detail": {
+        "expression": "sort_by(.bus)",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 4",
+      "passed": true,
+      "detail": {
+        "expression": "\n        def hardware: del(.configuration,.num_interfaces,.configuration_bytes,.count_bytes,.interfaces,.device_driver,.usbip_status);\n        length==2 and (map(hardware))==($before[0]|map(hardware)) and\n        all(.[]; .device_driver==\"usbip-host\") and\n        (if $phase==\"exported\" then\n            all(.[]; .configuration==\"\" and .num_interfaces==\"\" and .configuration_bytes==0 and .count_bytes==0 and .interfaces==[] and .usbip_status==1)\n         else\n            all(.[]; (.configuration|tonumber)==1 and (.num_interfaces|tonumber)==1 and (.interfaces|length)==1) and\n            (map(.interfaces|map(.driver=\"\")))==($before[0]|map(.interfaces|map(.driver=\"\"))) and\n            all(.[]; all(.interfaces[]; .driver==\"\")) and\n            all(.[]; .usbip_status==(if $phase==\"held\" then 2 else 1 end))\n         end)",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 5",
+      "passed": true,
+      "detail": {
+        "expression": "{path:$path,kind:$kind,canonical:$canonical,uid:$uid,gid:$gid,mode:$mode,links:$links,bytes:$bytes,device:$device,inode:$inode,captured_file:(if $copy==\"\" then null else $copy end)}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 6",
+      "passed": true,
+      "detail": {
+        "expression": "sort_by(.path)",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 7",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy==true and .response.result==\"profiles\"",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 8",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy==true and .response.result==\"started\" and .response.replayed==false and .response.job.operator_uid==1000",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 9",
+      "passed": true,
+      "detail": {
+        "expression": ".journal_healthy and .response.result==\"sessions\" and .response.next_after==null",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 10",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==2 and (.records|type)==\"array\" and (.exports|type)==\"array\" and (.terminals|type)==\"array\"",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 11",
+      "passed": true,
+      "detail": {
+        "expression": ".records==[] and .exports==[]",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 12",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy and .response=={result:\"jobs\",jobs:[],next_after:null}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 13",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy and .response=={result:\"sessions\",sessions:[],next_after:null}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 14",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy and .response=={result:\"error\",code:\"permission\"}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 15",
+      "passed": true,
+      "detail": {
+        "expression": ".jobs==[] and .sessions==[] and .requests==[] and ([.audit[]|select(.action==\"denied\" and .failure==\"permission\")]|length)==2",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 16",
+      "passed": true,
+      "detail": {
+        "expression": "{schema_version:1,broker_uid:2000,helper_socket:\"/run/rustusb/control.sock\",control_directory:\"/run/agent\",data_directory:\"/var/lib/rustusb/agent\",profiles:$profiles[0],operators:[{uid:1000,profiles:[$profiles[0][].id],actions:[\"read\",\"start\",\"stop\",\"discover\",\"audit\"]}]}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 17",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==2 and .exports==[] and (.records|length)==2 and all(.records[]; .owner.uid==2000 and .correlation!=null and .state.phase==\"observed\" and .state.receipt.session.status==6)",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 18",
+      "passed": true,
+      "detail": {
+        "expression": ".records[]|select(.target.device_key==$key)|.state.receipt.session.local_bus_id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 19",
+      "passed": true,
+      "detail": {
+        "expression": ".records[]|select(.target.device_key==$key)|.state.receipt.session.local_bus_id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 20",
+      "passed": true,
+      "detail": {
+        "expression": "{hid:$hid,serial:$serial,hid_generation:$hid_generation,serial_generation:$serial_generation}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 21",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy and .response.result==\"started\" and .response.replayed==false and .response.job.operator_uid==1000",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 22",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy and .response.result==\"session_health\" and .response.next_after==null",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 23",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|any(.session_id==$id and .availability==\"live\" and .link.protocol==\"framed_v2\" and .link.phase==\"open\" and .link.end==null and .link.last_reply_sequence!=null and .link.last_round_trip_micros!=null)",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 24",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|any(.id==$id and .terminal and .cleanup==\"verified\")",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 25",
+      "passed": true,
+      "detail": {
+        "expression": "length==2 and all(.[]; .export_blockers==[])",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 26",
+      "passed": true,
+      "detail": {
+        "expression": "length==2 and all(.[]; .export_blockers==[])",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 27",
+      "passed": true,
+      "detail": {
+        "expression": ".[]|select(.vendor_id==1575 and .product_id==1)|.id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 28",
+      "passed": true,
+      "detail": {
+        "expression": ".[]|select(.vendor_id==1027 and .product_id==24577)|.id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 29",
+      "passed": true,
+      "detail": {
+        "expression": ".[]|select(.id==$id)|.bus_id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 30",
+      "passed": true,
+      "detail": {
+        "expression": ".[]|select(.id==$id)|.bus_id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 31",
+      "passed": true,
+      "detail": {
+        "expression": "length==2 and all(.[]; (.configuration|tonumber)==1 and (.interfaces|length)==1) and ([.[].interfaces[].driver]|sort)==[\"ftdi_sio\",\"usbhid\"]",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 32",
+      "passed": true,
+      "detail": {
+        "expression": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_native_device_ids:[$hid,$serial]}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 33",
+      "passed": true,
+      "detail": {
+        "expression": "{schema_version:2,data_link:{protocol:\"framed_v2\",interval_millis:1000,response_timeout_millis:3000},broker_uid:2000,listen:$listen,devices:$keys[0],principals:[{id:\"qemu-client\",pins:[$pin],devices:$keys[0]}],ca_certificates:[\"/etc/rustusb/ca.der\"],certificate_chain:[\"/etc/rustusb/server.der\"],private_key:\"/etc/rustusb/server-key.der\"}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 34",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|map(select(.role==\"export\" and .state==\"Available\" and .evidence==\"export_ready\" and .terminal==false))|length==2",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 35",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|map(select(.role==\"incoming\" and .state==\"Connected\" and .terminal==false))|length==2",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 36",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions[]|select(.role==\"incoming\" and .device_key==$key and .terminal==false)|.id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 37",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|map(select(.role==\"incoming\" and .state==\"Connected\" and .terminal==false))|length==2",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 38",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions[]|select(.role==\"incoming\" and .device_key==$key and .terminal==false)|.id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 39",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==2 and .records==[] and .exports==[]",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 40",
+      "passed": true,
+      "detail": {
+        "expression": "length==2 and all(.[]; startswith(\"native:\"))",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 41",
+      "passed": true,
+      "detail": {
+        "expression": ".[0]",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 42",
+      "passed": true,
+      "detail": {
+        "expression": ".[1]",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 43",
+      "passed": true,
+      "detail": {
+        "expression": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_imports:[{server_id:\"qemu-server\",device_keys:$keys[0]}]}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 44",
+      "passed": true,
+      "detail": {
+        "expression": "{schema_version:2,data_link:{protocol:\"framed_v2\",interval_millis:1000,response_timeout_millis:3000},broker_uid:2000,server_id:\"qemu-server\",endpoint:{host:$host,port:3241},server_name:\"rustusb-qemu.test\",device:$key,ca_certificates:[\"/etc/rustusb/ca.der\"],certificate_chain:[\"/etc/rustusb/client.der\"],private_key:\"/etc/rustusb/client-key.der\"}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 45",
+      "passed": true,
+      "detail": {
+        "expression": ".response.result==\"catalog\" and (.response.devices|length)==2",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 46",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|map(select(.state==\"Connected\" and .terminal==false))|length==1",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 47",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|map(select(.state==\"Connected\" and .evidence==\"local_enumeration\" and .terminal==false))|length==1",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 48",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions[]|select(.terminal==false)|.id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 49",
+      "passed": true,
+      "detail": {
+        "expression": ".schema_version==1 and .journal_healthy and .response.result==\"catalog\"",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 50",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions[]|select(.id==$id)|.job_id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 51",
+      "passed": true,
+      "detail": {
+        "expression": ".journal_healthy and .response.result==\"jobs\" and any(.response.jobs[]; .id==$id and .state==\"finished\")",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 52",
+      "passed": true,
+      "detail": {
+        "expression": "any(.response.jobs[]; .id==$id and .state==\"finished\")",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 53",
+      "passed": true,
+      "detail": {
+        "expression": "{old_local_bus_id:$old,old_local_exists:false,sibling_local_bus_id:$sibling,sibling_generation:$sibling_generation}",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 54",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions|map(select(.state==\"Connected\" and .terminal==false))|length==1",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq compile 55",
+      "passed": true,
+      "detail": {
+        "expression": ".response.sessions[]|select(.terminal==false)|.id",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "one actual server schema2 generator",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "server schema2 actual jq generation",
+      "passed": true,
+      "detail": {
+        "exit": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "one actual client schema2 generator",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "client schema2 actual jq generation",
+      "passed": true,
+      "detail": {
+        "exit": 0,
+        "stderr": ""
+      }
+    }
+  ],
+  "declared_jq_expressions": 55,
+  "all_pass": true,
+  "generated_init": {
+    "path": "/tmp/rustusb-data-link-generated-static-freeze-20261024.sh",
+    "bytes": 38566,
+    "sha256": "7a227241c90cef36f4aa2703d38dbe1679cefab0896f5159f861363b7a6a92fd"
+  },
+  "sources": [
+    {
+      "path": "scripts/qemu_data_link_health/README.md",
+      "bytes": 5405,
+      "sha256": "450c9a45644124bb7d7ac2a07221debac3e320402bd93c92a611a03abd09707a"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/audit.py",
+      "bytes": 23920,
+      "sha256": "f81cec49bd15bca29aa2c4a4a999e7c0bd10c446399624cf9eab8d8a79f4eb5a"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/guest-init.sh",
+      "bytes": 9638,
+      "sha256": "312254b2328ee8645545ecf75ec883d1ecfcbb9e7f3b40e63f899d3eb437d6c5"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/packets.py",
+      "bytes": 9718,
+      "sha256": "10c4e80aa7a93cb5663090918e73cea1f549fcd69f0e23008a95587fcd386fd5"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/run.py",
+      "bytes": 30604,
+      "sha256": "31800b81c119a4fd88d533ffe63285c2f9f86583bd895e1fe90df95798494b16"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/valve.py",
+      "bytes": 13728,
+      "sha256": "af59f3e5f4b5e0d2dbbcbb41aacc1386baf5c7dd30f31afc6c26768c792dab84"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify.py",
+      "bytes": 24888,
+      "sha256": "f28cb71d611306e4c3c783bec36b74ae44d3164adee6f74a637f7bc77831316b"
+    }
+  ]
+}
