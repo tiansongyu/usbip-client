@@ -207,3 +207,10 @@
 
 - 开发161份归档和全部三次FAIL保留；第二独立复核直接读raw、532项全部通过。最终审查发现首次ARM在TCP连接/DEVLIST/IMPORT之前已计时，单独改为25秒启动idle上限；所有ARMED之后RPC3秒、门8秒、wire2秒与USB断言不变。开发6PASS仍绑定旧SHA，新增启动修订的clean最终六场景待运行，不改写历史结果。
 - root再次执行完整`bash scripts/check.sh`，exit0，89+113+14共216次测试执行、0失败/忽略，以及默认/全功能Clippy、release和严格rustdoc全部通过。新Python AST与目标BusyBox shell语法通过；原96份软件输入SHA逐项未变，原始输出与新harness四SHA见`evidence/host-state-software-validation-20261023.json`。
+
+## Host-state最终冻结与六场景验证
+
+- 开发测试工具、全部九轮原bytes及216次完整软件gate提交c921a278bc65341182c0badbb3898600faeb4408，root逐项核Git存储161份索引产物一致、工作树clean，普通push到指定SSH origin并以ls-remote确认同SHA。未修改生产crates/vendor/Cargo和旧harness。
+- root单进程在上述clean head串行默认locked all-features构建执行configuration/alternate/clear各UNLINK与EOF六场景；全部完成前没有仓库写入或并行构建，6次exit0/12guest exit0/48独立wire检查，source/binary前后guard与guest四ELF匹配。25秒初始ARM修订包含在该最终源码，后续RPC3秒/门8秒/errno和资源断言保持。
+- 配置/alternate真实ioctl0，CLEAR真实-32；取消期间B的-104形成worker witness，后到C不得越门，新空map或失败保留原map行为准确；CLEAR的C真正inflight1/384B后再取消。EOF先实际pending2再closing/queued0，保留512B及原FD/slot、DEVLIST隐藏/第二IMPORT busy，terminal后才恢复。每轮同generation/cfg1/alt0,1/双cdc_ether和末pending/queued/inflight/预算0、available/cleanup_verified独立匹配，server/tracer exit0。
+- root最终六summary/Git源码及96软件输入复核通过，CLI/helper仍与前次最终ECM完全相同。最终85份产物已按长度/SHA逐项归档，root核73份原/tmp逐bytes和12份manifest相同；第二独立raw复核不调用runner.verify，572/572通过，准确区分run期间clean与归档后docs dirty。四平台CI39886203010和四job均实际completed/success，每格216次执行0失败/忽略及两个背压通过，原log与API响应按原bytes保留，见`evidence/publication-host-state-20261023.json`。此次syscall-entry证据不外推kernel内部active/成功clear、真实硬件或完整Phase2。

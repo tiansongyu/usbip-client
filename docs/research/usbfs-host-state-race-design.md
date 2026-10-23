@@ -1,6 +1,6 @@
 # USBFS host-state 取消与断线测试设计
 
-2026-10-23（Asia/Shanghai），基线 `fbc856c`。状态：已实现独立guest harness，六场景dirty开发通过；最终clean提交复跑仍待执行。承接 [Composite 最终报告](composite-qemu.md) 明确保留的 active 操作窗口缺口；不修改 G1/G2 真实硬件结论。
+2026-10-23（Asia/Shanghai），基线 `fbc856c`。状态：独立guest harness已实现，六场景在同一clean `c921a27`最终通过；开发六PASS和三FAIL保留。承接 [Composite 最终报告](composite-qemu.md) 明确保留的 active 操作窗口缺口；不修改 G1/G2 真实硬件结论。
 
 ## 需要证明的契约
 
@@ -66,4 +66,4 @@ A/B选择：SET_CONFIGURATION A=1/B=2（A重新配置后IF1回alt0），SET_INTE
 
 ## 最终冻结前的启动期限复核
 
-初始READY写入FIFO时，TCP客户端可能尚未连接，随后还需DEVLIST与IMPORT；此前初次ARM和后续RPC共用3秒，短于客户端15秒初始连接预算，可能造成慢启动假FAIL。仅初次`read_rpc ARM`使用独立25秒idle上限，作为该启动阶段的独立总截止，后续RPC仍3秒、单门8秒、wire单帧2秒；不重发已接受的USB请求，不放宽任何取消/恢复断言。六次dirty开发PASS保留原始四源码SHA，当前启动修订需下一轮clean六场景单独验证。
+初始READY写入FIFO时，TCP客户端可能尚未连接，随后还需DEVLIST与IMPORT；此前初次ARM和后续RPC共用3秒，短于客户端15秒初始连接预算，可能造成慢启动假FAIL。仅初次`read_rpc ARM`使用独立25秒idle上限，作为该启动阶段的独立总截止，后续RPC仍3秒、单门8秒、wire单帧2秒；不重发已接受的USB请求，不放宽任何取消/恢复断言。六次dirty开发PASS保留原始四源码SHA，该启动修订随后在同一clean `c921a27`的六场景全部通过，见[报告](usbfs-host-state-races.md)。

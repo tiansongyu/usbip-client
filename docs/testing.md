@@ -122,7 +122,7 @@ for operation in configuration alternate clear; do
 done
 ```
 
-每轮两个一次性来宾，实际普通UID1000 physical server及独立wire probe通过匹配门nonce协调；tracer仅在server来宾运行。首次ARM启动idle25秒、后续RPC3秒、持门8秒，未使用`--skip-build`才可作最终证据。该门位于真实ioctl执行前，不能称kernel内部挂起；CLEAR模型返回的-32必须保留。范围、三个开发FAIL和最终裁决见[专项报告](research/usbfs-host-state-races.md)。
+每轮两个一次性来宾，实际普通UID1000 physical server及独立wire probe通过匹配门nonce协调；tracer仅在server来宾运行。首次ARM启动idle25秒、后续RPC3秒、持门8秒，未使用`--skip-build`才可作最终证据。该门位于真实ioctl执行前，不能称kernel内部挂起；CLEAR模型返回的-32必须保留。同一干净c921a27六场景最终PASS，48项协议检查和12guest正常退出；范围、三个开发FAIL和最终裁决见[专项报告](research/usbfs-host-state-races.md)。
 
 原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。上述独立入口与各自报告分别记录已执行范围，不能复用Native通过标签替代其他后端或设备的验证。
 

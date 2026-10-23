@@ -1,6 +1,6 @@
 # USBFS host-state syscall-entry 门控验证
 
-2026-10-23，状态：六个开发场景全部PASS，共48条独立wire probe检查、12个guest exit0；均为dirty `345163bef598ffe45b62f0b4175a4a7a56c36a98`开发证据，最终clean提交的六场景验证仍待执行。三次先前FAIL完整保留。设计见[host-state设计](usbfs-host-state-race-design.md)，已有实际CDC ECM双向数据与原驱动恢复见[Composite最终报告](composite-qemu.md)。本轮没有修改生产Rust、vendor、Cargo或旧QEMU脚本。
+2026-10-23，状态：最终六场景在同一干净提交`c921a278bc65341182c0badbb3898600faeb4408`全部PASS，共48条独立wire probe检查、12个guest exit0。此前dirty `345163bef598ffe45b62f0b4175a4a7a56c36a98`的六次开发PASS及三次FAIL完整保留。设计见[host-state设计](usbfs-host-state-race-design.md)，已有实际CDC ECM双向数据与原驱动恢复见[Composite最终报告](composite-qemu.md)。本轮没有修改生产Rust、vendor、Cargo或旧QEMU脚本。
 
 ## 实际观察的窗口
 
@@ -64,9 +64,9 @@ root的[开发汇总复核](../evidence/host-state-development-root-verification
 - C初次静态编译因缺`sys/ioctl.h`失败，后续-Werror编译通过；它是额外编译诊断，不是第十次QEMU运行。两份`-fanalyzer -fsyntax-only`输出仅按语法检查记录，另份真实`-fanalyzer -c`对象编译才作为完整analyzer执行证据。准确范围见[来源说明](../evidence/qemu-host-state-static-20261023/static-provenance.json)。
 - standalone probe静态命令当时没有另存stdout/stderr文件，因此不补造raw日志。七份ELF/object仅保留[实际hash及来源限制](../evidence/qemu-host-state-static-20261023/excluded-build-artifacts.json)，不将构建物放入仓库；早期C编译没有保存的源码快照/hash明确标为缺失。每轮实际构建命令、源SHA和构建日志仍在各run summary中。
 
-九个目录分别保存原始build/serial/stderr/summary、外部runner日志、四份准确前置源码及source.json，并附source与目录SHA清单；原字节、CRLF和ANSI保持不动。聚合索引覆盖161份产物：126份run产物、34份静态/派生清单产物、1份追加sequence。原始与派生的provenance逐项区分，`.gitattributes`按raw evidence保留字节。
+九个目录分别保存原始build/serial/stderr/summary、外部runner日志、四份准确前置源码及source.json，并附source与目录SHA清单；原字节、CRLF和ANSI保持不动。聚合索引覆盖161份产物：126份run产物、34份静态/派生清单产物、1份追加sequence。原始与派生的provenance逐项区分，`.gitattributes`按raw evidence保留字节；[第二归档核对](../evidence/host-state-archive-independent-review-20261023.json)独立核161份长度/SHA、210条manifest记录和140份原/tmp逐bytes相同。
 
-最终clean提交后的六场景仍待执行，不能以本轮dirty PASS替代。真实硬件G1/G2、内核内部挂起、超时后内核任务终止、成功CLEAR_HALT恢复、任意混合Composite、原无driver的非零alt恢复、ISO实际传输与长期性能均未由本轮证明。
+上述九轮仅是开发历史；最终clean六场景另见下节。真实硬件G1/G2、内核内部挂起、超时后内核任务终止、成功CLEAR_HALT恢复、任意混合Composite、原无driver的非零alt恢复、ISO实际传输与长期性能均未由本轮证明。
 
 ## 固定技术依据
 
@@ -74,4 +74,22 @@ root的[开发汇总复核](../evidence/host-state-development-root-verification
 - [QEMU v6.2.0 USB-net](https://github.com/qemu/qemu/blob/v6.2.0/hw/usb/dev-network.c)：ECM配置/alternate/端点和CLEAR_FEATURE真实失败；没有为模型补假成功。
 - 固定vendor nusb0.2.8的`maybe_future.rs`、Linux USBFS `device.rs`和已锁定Tokio1.54.1本地源码：blocking task在网络future取消后仍可能执行。本轮以实际入口/出口和资源持有证据约束，不依赖推测任务已撤回。
 
-最终冻结前另做窄启动修订：首次ARM等待覆盖连接、DEVLIST、IMPORT，独立idle上限25秒；ARMED之后RPC仍3秒、门8秒及wire2秒不变。它未包含在上述六次dirty PASS中，聚合索引分别记录开发冻结SHA和修订后的SHA，需clean六场景验证后再作最终结论。
+最终冻结前另做窄启动修订：首次ARM等待覆盖连接、DEVLIST、IMPORT，独立idle上限25秒；ARMED之后RPC仍3秒、门8秒及wire2秒不变。它未包含在上述六次dirty PASS中，开发索引分别记录历史冻结SHA和修订后的SHA；修订后的clean六场景已经全部通过。
+
+## 最终冻结六场景
+
+先提交并普通push `c921a27`，确认工作树干净；root单进程按configuration/unlink、configuration/eof、alternate/unlink、alternate/eof、clear/unlink、clear/eof依次执行。每次均默认`cargo build --workspace --release --locked --all-features`，没有skip-build；全部六轮终态前没有仓库写入或并行构建。准确命令、退出码与clean检查见[原始顺序记录](../evidence/host-state-final-sequence-20261023.json)，全部产物长度/SHA、源码及构建来源见[最终索引](../evidence/host-state-final-20261023.json)。
+
+| 操作 | UNLINK | EOF | ioctl真实结果 |
+| --- | --- | --- | --- |
+| configuration | [PASS，9项](../evidence/qemu-host-state-configuration-unlink-final-20261023/summary.json) | [PASS，7项](../evidence/qemu-host-state-configuration-eof-final-20261023/summary.json) | 0 |
+| alternate | [PASS，9项](../evidence/qemu-host-state-alternate-unlink-final-20261023/summary.json) | [PASS，7项](../evidence/qemu-host-state-alternate-eof-final-20261023/summary.json) | 0 |
+| clear | [PASS，9项](../evidence/qemu-host-state-clear-unlink-final-20261023/summary.json) | [PASS，7项](../evidence/qemu-host-state-clear-eof-final-20261023/summary.json) | -32，模型真实错误 |
+
+六轮开始commit均为上述完整SHA且dirty=false，source/binary前后guard通过，guest实际四ELF与构建相等；CLI/helper SHA与开发及前次ECM最终产物一致。三类各两个模式总48项、12guest exit0。UNLINK场景B取消回复形成真实worker witness，A/C放门前无terminal；EOF场景实际接受pending2后进入closing/queued0、仍持512B和原FD/slot，直到真实ioctl terminal后才恢复。CLEAR/UNLINK的C实际inflight1/384B后才取消。每轮同generation的原cfg1/alt0,1/双cdc_ether及全部资源0独立核对，server/tracer均正常退出。
+
+[root最终核对](../evidence/host-state-final-root-verification-20261023.json)另比对完整Git源码、六summary和96份软件输入；[独立raw复核](../evidence/host-state-final-independent-review-20261023.json)不调用runner.verify，572/572项通过，分别核真实trace、wire marker、snapshot与sysfs。完整[软件检查](../evidence/host-state-software-validation-20261023.json)默认89、全功能113、vendor14共216次执行及全部Cargo质量gate通过。最终归档另核85份长度/SHA、73份原bytes及12份manifest，见[归档核对](../evidence/host-state-final-archive-verification-20261023.json)。
+
+已push的冻结源码`c921a27`对应[四平台CI记录](../evidence/publication-host-state-20261023.json)及[实际run39886203010](https://github.com/tiansongyu/usbip-client/actions/runs/39886203010)均completed/success；Ubuntu22.04/24.04 × x86_64/aarch64每格实际216次测试、0失败/忽略和两项4096B stdout背压通过。四份原job log和两个原API响应按原bytes保留于[CI归档清单](../evidence/ci-host-state-c921a27-20261023/artifacts.sha256)。这只验证原生软件平台，不替代aarch64或Ubuntu24.04 USB内核路径。
+
+该最终裁决仅关闭本设计的syscall-entry生命周期测试；内核USB handler内部挂起、成功CLEAR_HALT恢复、原无driver且非零alt恢复、ISO、真实G1/G2和长期性能仍未完成。

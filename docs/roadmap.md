@@ -54,7 +54,7 @@ CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定�
 
 最新[Composite配置/恢复子步骤](research/usbfs-composite-qemu-design.md)已实现逐IF重观察及新配置claim/恢复前scanner复核，本机[216次软件测试执行及完整质量gate](evidence/composite-software-validation-20261022.json)和[四平台CI](evidence/publication-composite-20261022.json)通过；ECM模型及原HID/FTDI正常、热拔在同一干净22d172d默认locked构建的[最终三项回归](research/composite-qemu.md)全部通过，6guest正常退出。7次开发FAIL和dirty PASS保留，不外推真实设备支持；kernel内部不可取消ioctl阻塞窗口、无原驱动且非零alternate恢复仍需专门验证。
 
-新增[host-state确定性测试](research/usbfs-host-state-race-design.md)使用仅来宾ptrace门，实际生产worker和nusb抵达syscall-entry后处理UNLINK/EOF；三动作各两模式的dirty开发六场景、48项协议检查通过，最终clean复跑待执行。它覆盖真实blocking线程入口后的生命周期，不证明kernel USB handler内部阻塞或真实硬件故障；所有开发FAIL保留。
+新增[host-state确定性测试](research/usbfs-host-state-race-design.md)使用仅来宾ptrace门，实际生产worker和nusb抵达syscall-entry后处理UNLINK/EOF；三动作各两模式在同一clean `c921a27`最终六场景通过，48项协议检查、12guest正常退出；开发六PASS与三FAIL另存。它覆盖真实blocking线程入口后的生命周期，不证明kernel USB handler内部阻塞或真实硬件故障；所有开发FAIL保留。
 
 **G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
 
