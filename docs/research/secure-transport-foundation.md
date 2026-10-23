@@ -34,4 +34,34 @@ clean f4774a6默认locked release构建，一台可销毁guest，宿主普通UID
 
 固定v6.8的generic disconnect调用usb_set_configuration(-1)，移除interface并清空actconfig；bConfigurationValue与bNumInterfaces在未配置时均返回0字节。原shell的未匹配IF glob触发`[ -d ]`与set-e退出，符合日志中导出成功但snapshot未输出的边界；没有shell逐命令trace，不能冒称记录过实际失败指令。完整固定source引用、Git blob/SHA及原件不变检查在上述补充审查中；原源码预审未发现这两项假设，原首失败不会改判。
 
-后续必须从新clean提交验证真实匿名AF_UNIX stream端点、实际sysfs一次write、内核新代际/原身份、HID及35字节双向FTDI、四次显式SHUT_RDWR、NULL/旧代际消失/stub AVAILABLE和普通helper恢复原driver。即使这些通过，也只证明同一guest的kernelstub到VHCI机制；没有远端网络、mTLS或完整USB/IP安全连接。
+## 修订后的实际内核机制结果
+
+修复提交 **clean `24a424b117ecdca32a93fcbfa8a09d867110e2a8`** 首次运行**PASS，50项host断言、一个guest退出0**。原f4774a6仍为FAIL。相同机型、默认locked release及原时限，109个选定Rust/Cargo/QEMU输入、HEAD/clean及ELF前后guard通过。该50是证据断言数，不是50个设备或USB case。
+
+| 阶段 | 原设备真实观察 | 本地VHCI |
+| --- | --- | --- |
+| 导出前 | 配置1，IF0/alt0，usbhid/ftdi_sio | 全部NULL |
+| helper导出后 / pair prepared | 原硬件代际保持，配置null、接口空，usbip-host AVAILABLE | 全部NULL |
+| attached / 实际I/O | 配置1、完整IF/class/subclass/protocol，原IF driver:null，stub USED | HID480Mbps/kernel3、FTDI12Mbps/kernel2；新3-1/3-2，usbhid/ftdi_sio |
+| 显式shutdown后 | 同原硬件代际、配置1及完整IF0/alt0，stub AVAILABLE | 全部NULL，两个旧本地代际已消失 |
+| UID1000 helper unexport后 | 原device与接口driver、配置、完整原快照恢复 | 全部NULL |
+
+两匿名UnixStream::pair共四端点，probe实际/proc FD为5/6/9/10，inode376/377/381/382；各自一次完整stub/VHCI sysfs write，FD由root probe真实持有，未写stub -1。实际KEY1 down/up与FTDI各方向35字节通过；host原始发送/接收bin及guest evdev/RX/TX hex保存。一个按键周期、每方向35字节，不能称多轮稳定性或性能验收。
+
+四次SHUT_RDWR成功后，在四个用户态端点仍持有时确认NULL、旧local不存在及stub AVAILABLE，再真实wait0和普通helper unexport。未建立TCP连接或listener，guest只有lo且QEMU没有NIC；sessions正确将两条内核导入显示为unmanaged，没有伪造官方usbip端点记录。这是正常显式停止机制，不证明只Drop/进程崩溃、热拔旧attr代际或产品自动回收。
+
+[最终原件](../evidence/kernel-socketpair-final-24a424b-20261023/manifest.json)保存完整日志、生成init、源码与构建/执行哈希链；未保存临时ELF本体。default CLI/helper SHA分别538b2ef1…8554d / cf7273af…e7827，与首失败同feature产物相同；probe为797bb889…f746d。它们不是此前all-features USBFS QEMU的ELF；本轮新TLS库未被CLI/helper链接，不能据workspace build含该库宣称USB链已加密。
+
+另一agent不调用runner verifier的独立raw复核40个分组谓词通过：109选定源逐Gitblob/当前字节、六冻结harness文件、13原件、现存产品ELF/内核/11模块，以及真实FD、sysfs写、数据和完整基线。已删除的probe ELF/initramfs只核构建→安装→实际执行digest链，没有重建来替代旧运行。console中的两次speed not set及三次endpoint0 stall/-104原样保留；本结果不表示内核日志零warning或无USB错误，不外推长期稳定性。
+
+复现需Native QEMU先决条件及干净源码，使用新的证据目录：
+
+```bash
+python3 scripts/qemu/run-kernel-socketpair-qemu.py \
+  --kernel 6.8.0-106-generic --timeout 180 \
+  --evidence /tmp/rustusb-kernel-pair-new-run
+```
+
+首失败后的[修复准备](../evidence/kernel-socketpair-export-fix-20261023/manifest.json)含39项静态/jq/纯合成verifier检查、一个实际Rust单测遍历13配置边界、严格编译和普通宿主UID首guard拒绝；20项独立delta源审查无mustfix。这些不增加QEMU或304软件数量。产品Cargo/crates/vendor/check与f4774a6逐字节相同，未为仅测试harness的修复重跑全软件。后续仍须实现真实两端broker/FD所有权和加密USB/IP管理帧及全URB外链验收，完整G3尚未通过。
+
+24a424b的[较新发布状态](../evidence/publication-kernel-socketpair-24a424b-20261023.json)另核software39938851575四原生job及Pages39938851717均completed/success；未重新解析这次各Rust测试计数，不将旧计数冒称新日志复核。README和展示站只新增基础库进度及未接USB链的说明，原268/七QEMU/14guest仍明确属于2ab9976的生命周期验证。六线上HTTPS资源逐24a424b字节一致；CUA实际读到304新段落，1280和375宽度均无横向溢出，console无warn/error。响应式override清除后实际默认618宽；本次未重新测试键盘/复制/无脚本行为或截图，CSS/JS/资产未改。全局readme-site四文件仍等于原已提交快照，Codex发现symlink有效。

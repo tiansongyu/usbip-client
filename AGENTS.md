@@ -12,6 +12,8 @@ SIGKILL与首次重启的独立负向见 `docs/research/physical-crash-recovery.
 
 ## 每次交付
 
+Phase3前置基础见`docs/research/secure-transport-foundation.md`：mTLS/证书principal与device ACL库18项、全软件304次及精确f4774a6四平台CI通过，尚未接USB/IP engine/CLI。匿名kernelstub↔VHCI机制在clean24a424b单guest通过50host断言、实际HID/FTDI及显式shutdown/原driver恢复；首f4774a6的Native导出配置假设FAIL保留。Native去配置/重配的cfg与IF是phase状态，不能当硬件代际恒等字段；HID480/kernel3与FTDI12/kernel2按实际记录。两项基础不等于安全远端连接，G1/G2/G3继续未完成。
+
 独立恢复句柄机制在clean da764d0双QEMU通过237项检查（原journal184+新增53）、两guest0和恢复后第三轮真实HID/FTDI I/O，见`docs/research/usbfs-guardian-mechanism.md`。guest-only probe证明独立B与dupA/C的占用差异和CONNECT恢复，未修改产品或实现自动恢复；首43d6d43的jq测试脚本FAIL保留。机制PASS不等于跨配置、FD撤销或硬件验收。
 
 显式opt-in原driver恢复已实现于e34e309，clean2ab9976两个产品正向和五个原QEMU回归通过，14guest0、软件90/158/20共268次及本地四信号/两背压通过，CI39921583807四原生平台每格268次/信号/背压通过，见`docs/research/physical-driver-autorestore.md`。默认空许可、旧record manual、私有disk1/2与IPC1分开；仅sameboot/原owner ended/完整同cfg+IF+alt/独立B CONNECT，实际blocking任务持变更锁到核验退休，停止须join真实任务。旧producer迁移、许可撤销、外部C占用已在clean4565f7a三QEMU首次PASS/6guest0（318/293/313 host检查），见`docs/research/physical-driver-autorestore-negatives.md`。L始终manual并人工尾部；P/C在明确重启后产品恢复，C释放后同实例不重试。CI39928383971四原生平台每格268次/两背压/四信号通过，精确归属4565f7a。产品111输入/ELF保持；通用恢复/FD撤销、ISO/跨cfg/alt及完整Phase2仍未完成，下一优先软件切片为Phase3实际USB数据通道安全设计。

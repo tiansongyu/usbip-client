@@ -16,7 +16,7 @@
 
 现Rust engine的handshake/URB actor已使用generic AsyncRead/AsyncWrite；TcpStream依赖集中在listener/connection。现write_frame只有write_all，TLS接入必须补flush。[tokio-rustls0.26.6文档](https://docs.rs/tokio-rustls/0.26.6/tokio_rustls/)明确其写入有内部缓冲。相关源码为`crates/rustusb-rust-backend/src/server.rs`，当前Native attach则先plain DEVLIST再运行官方attach工具并核原工具record，不能把localhost伪造成真正remote身份。
 
-固定Linux v6.8 `e8f897f4afef0031fe618a8e94127a0934896aba`的VHCI入口只要求SOCK_STREAM，RX/TX/关闭走socket ops；服务端stub初核亦如此。匿名AF_UNIX pair是优先机制候选，尚无运行证明。socketpair的SO_PEERCRED反映创建时身份，不是之后SCM_RIGHTS接收者；认证必须依赖真正的控制UDS及角色。
+固定Linux v6.8 `e8f897f4afef0031fe618a8e94127a0934896aba`的VHCI入口只要求SOCK_STREAM，RX/TX/关闭走socket ops；服务端stub初核亦如此。匿名AF_UNIX pair已在clean24a424b完成[单guest HID/FTDI真实I/O机制验证](secure-transport-foundation.md)，不是远端安全通道验收。socketpair的SO_PEERCRED反映创建时身份，不是之后SCM_RIGHTS接收者；认证必须依赖真正的控制UDS及角色。
 
 Native server的`usbip_sockfd`候选应先open原kernfs属性节点、捕获夹读的sysfs/attr身份，再写root自己持有的socket FD。open不是永久active或kobject生存保证；删除后write应失败而不解析新同名BusID，仍须完整后核。现Native helper的旧exports map只存Device，不能冒充strong sysfs inode receipt。新secure-export需要独立强receipt和生命周期契约。
 

@@ -12,7 +12,7 @@
 
 在仓库根目录、已安装兼容稳定 Rust 且依赖可获取的环境执行：
 
-`scripts/check.sh`还运行固定vendor/nusb的14项纯内存library测试，构建产物放在根target子目录；它们覆盖raw Control错误/partial/长度边界，不枚举或打开USB设备，并在四个平台CI中执行。
+`scripts/check.sh`还运行固定vendor/nusb的20项纯内存library测试，构建产物放在根target子目录；它们覆盖raw Control错误/partial/长度边界及checked release/CONNECT所有权，不枚举或打开USB设备，并在四个平台CI中执行。
 
 ```bash
 rustc --version
@@ -32,6 +32,8 @@ cargo build --workspace --release
 新服务parser fuzz可先执行`python3 scripts/seed-server-fuzz.py`，再运行`cargo +nightly fuzz run server_frame -- -max_len=65584 -max_total_time=30 -timeout=5`；[最终冻结记录](evidence/server-fuzz-final-20261022.json)包含nightly、cargo-fuzz、精确source/lock哈希与exit0，[原始输出](evidence/server-fuzz-final-20261022.txt)保留3,615,249次/31秒无观测崩溃。该目标不含设备handler或完整网络调度，不以短时fuzz表示全部安全或USB性能。
 
 每条命令分别保存退出码。`Cargo.lock` 必须纳入仓库，CI 可追加 `--locked` 固定解析。若尚无 workspace 或某阶段代码未落地，相应检查记录未执行 / 失败并说明原因，不创建空测试掩盖缺口。交叉 `cargo check --target` 只能验证该 target 的编译，不能证明 aarch64 实机运行或 USB 功能。
+
+TLS基础库的真实双向TLS/ACL测试由workspace测试执行，尚未接USB设备。匿名内核通道另用`python3 scripts/qemu/run-kernel-socketpair-qemu.py --evidence /tmp/rustusb-kernel-pair-new-run`：普通宿主UID、一台无NIC的guest、固定HID/FTDI、现helper导出/unexport和独立root probe，实际I/O后显式关闭四端再核内核释放。clean24a424b通过50项/guest0，首f4774a6脚本FAIL保留，见[报告](research/secure-transport-foundation.md)；它不测试远程TLS、产品attach接口、崩溃/热拔或硬件。
 
 | 自动测试层 | 必须覆盖 | 成功证明范围 |
 | --- | --- | --- |

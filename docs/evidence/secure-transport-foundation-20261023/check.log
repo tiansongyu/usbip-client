@@ -1,0 +1,579 @@
+    Checking zeroize v1.9.1
+    Checking untrusted v0.9.0
+    Checking deranged v0.5.9
+    Checking num-conv v0.2.2
+    Checking subtle v2.6.1
+    Checking powerfmt v0.2.1
+    Checking time-core v0.1.9
+    Checking getrandom v0.2.17
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking rustls-pki-types v1.15.1
+    Checking ring v0.17.14
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking time v0.3.55
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Checking rustls-webpki v0.103.16
+    Checking yasna v0.6.0
+    Checking rustls v0.23.46
+    Checking rcgen v0.14.10
+    Checking tokio-rustls v0.26.6
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.74s
+   Compiling rustls v0.23.46
+   Compiling tokio-rustls v0.26.6
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.06s
+     Running unittests src/main.rs (target/debug/deps/rustusb-c9f0b69953cf198a)
+
+running 1 test
+test tests::cli_schema_and_input_validation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+
+running 2 tests
+test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+test tests::validate_external_identifiers_and_serde ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-a1ad21cb8fc01d12)
+
+running 20 tests
+test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+test linux::tests::early_uid_refusal_survives_a_failed_status_request_write ... ok
+test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+test tests::command_output_is_not_exposed ... ok
+test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+test linux::tests::failed_request_write_cannot_be_replaced_by_invalid_or_success_response ... ok
+test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+test tests::physical_policy_is_separate_bounded_and_backward_compatible ... ok
+test tests::recovery_policy_requires_explicit_unique_bounded_physical_subset ... ok
+test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/main.rs (target/debug/deps/rustusb_helper-1034bed691850930)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_linux-4e63b969cba8af37)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery.rs (target/debug/deps/discovery-d3355eefac2ba508)
+
+running 8 tests
+test missing_root_is_reported_instead_of_successful_empty_scan ... ok
+test block_descendants_are_denied_without_following_subsystem_symlinks ... ok
+test storage_driver_is_blocked_even_for_vendor_class_quirks ... ok
+test kernel_export_occupancy_and_attribute_limits_are_explicit ... ok
+test descendant_budget_exhaustion_refuses_to_claim_storage_safety ... ok
+test composite_storage_and_inactive_storage_are_blocked ... ok
+test unknown_hubs_short_reads_and_removed_devices_fail_closed ... ok
+test metadata_and_fingerprint_survive_bus_and_address_reenumeration ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_native-250e96ca480c2cb2)
+
+running 31 tests
+test diagnostics::tests::module_entries_require_exact_safe_paths_and_names ... ok
+test diagnostics::tests::version_does_not_expose_multiline_control_or_arbitrary_output ... ok
+test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+test diagnostics::tests::trust_checks_distinguish_missing_nonexecutable_and_untrusted_paths ... ok
+test diagnostics::tests::module_installation_and_loaded_sysfs_are_separate_observations ... ok
+test diagnostics::tests::effective_driver_checks_require_attributes_and_valid_complete_status ... ok
+test diagnostics::tests::kernel_release_and_file_reads_are_bounded_and_do_not_accept_directories ... ok
+test diagnostics::tests::kernel_configuration_distinguishes_disabled_builtin_and_unknown ... ok
+test diagnostics::tests::version_runner_timeout_and_output_limit_kill_and_reap ... ok
+test diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output ... ok
+test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+test tests::detach_rejects_post_command_replacement_and_unknown_generation ... ok
+test tests::detach_reobserves_changed_status_without_repeating_the_command ... ok
+test tests::detach_does_not_wait_for_replacement_generation_at_same_path ... ok
+test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+test tests::detach_waits_for_old_sysfs_generation_after_port_becomes_null ... ok
+test tests::same_device_on_reused_port_requires_the_original_generation_receipt ... ok
+test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+test tests::unknown_export_state_and_untrusted_endpoint_records_are_rejected ... ok
+test tests::public_snapshot_still_rejects_status_changed_during_observation ... ok
+test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+test tests::missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup ... ok
+test tests::snapshot_rejects_replacement_between_usb_attribute_reads ... ok
+test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... ok
+test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+test tests::unsafe_record_directory_is_rejected_before_running_attach_tool ... ok
+test tests::export_and_unexport_require_observed_driver_changes ... ok
+
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_protocol-64810c9d09a96150)
+
+running 4 tests
+test tests::parses_network_byte_order_and_interfaces ... ok
+test tests::rejects_malicious_lengths_headers_strings_duplicates_and_truncation ... ok
+test tests::accepts_exact_device_and_interface_limits ... ok
+test tests::actual_tcp_request_and_deadline ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_rust_backend-3a793c3144415dd2)
+
+running 24 tests
+test descriptors::tests::fixed_profiles_have_exact_lengths_and_endpoint_layouts ... ok
+test device::tests::control_lengths_configuration_and_invalid_interface_never_panic ... ok
+test device::tests::explicit_idle_rate_repeats_current_report_and_cancellation_does_not_consume_input ... ok
+test device::tests::cdc_line_coding_control_lines_break_and_notification_are_stateful ... ok
+test device::tests::keyboard_pending_reports_release_control_and_bounded_atomic_queue ... ok
+test device::tests::reconfiguration_retires_pending_and_clears_queues_without_consuming_new_data ... ok
+test device::tests::registration_exclusivity_drop_and_discovery_are_real_state_changes ... ok
+test wire::tests::inconsistent_or_overlong_completion_is_rejected_without_silent_truncation ... ok
+test wire::tests::rejects_resource_and_phase_fields_before_reading_payload ... ok
+test device::tests::cdc_bulk_short_exact_packet_zero_length_limits_and_hashes ... ok
+test server::tests::idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation ... ok
+test server::tests::real_tcp_devlist_busy_import_and_phase_rejection_release_leases ... ok
+test server::tests::listener_policy_and_connection_budget_are_enforced_before_spawn ... ok
+test server::tests::failed_import_write_and_handle_drop_release_ownership ... ok
+test server::tests::asynchronous_control_in_out_preserve_original_errno_and_partial_bytes ... ok
+test wire::tests::complete_idle_connection_waits_but_partial_frame_has_a_single_owner ... ok
+test server::tests::response_budget_is_retained_until_the_complete_frame_is_written ... ok
+test server::tests::hung_usb_does_not_block_control_discovery_or_single_thread_timer ... ok
+test server::tests::one_byte_control_bounds_and_pending_unlink_have_no_late_submit ... ok
+test server::tests::unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping ... ok
+test server::tests::fragmented_out_while_pending_and_wrapped_sequences_preserve_order ... ok
+test server::tests::duplicate_active_sequence_and_pending_bound_fail_closed ... ok
+test server::tests::active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out ... ok
+test server::tests::shutdown_deadline_reports_quarantine_without_releasing_pending_hardware ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.02s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_transport-4494eb6795b08322)
+
+running 18 tests
+test tls::tests::stable_device_keys_and_certificate_hex_are_strict ... ok
+test tls::tests::credential_input_bounds_malformed_der_and_mismatched_key_fail_closed ... ok
+test tls::tests::principal_policy_rejects_ambiguous_empty_and_excessive_fields ... ok
+test tls::tests::invalid_server_name_is_rejected_before_handshake ... ok
+test tls::tests::cancelled_handshake_releases_its_already_acquired_permit ... ok
+test tls::tests::unknown_server_ca_is_rejected ... ok
+test tls::tests::absent_client_certificate_cannot_produce_authenticated_stream ... ok
+test tls::tests::debug_and_configuration_errors_do_not_expose_credentials_or_io ... ok
+test tls::tests::pinned_client_from_unknown_ca_is_still_rejected ... ok
+test tls::tests::real_mutual_tls_maps_leaf_and_transfers_flushed_data_both_ways ... ok
+test tls::tests::expired_server_and_wrong_server_usage_fail_pki ... ok
+test tls::tests::missing_and_wrong_alpn_fail_closed ... ok
+test tls::tests::resumption_is_disabled_on_repeated_real_handshakes ... ok
+test tls::tests::expired_pinned_client_and_wrong_client_usage_fail_pki ... ok
+test tls::tests::valid_but_unmapped_or_removed_pin_is_not_authorized ... ok
+test tls::tests::authenticated_streams_hold_all_sixteen_permits_across_server_clones ... ok
+test tls::tests::wrong_server_name_fails_standard_verification ... ok
+test tls::tests::handshake_timeout_closes_transport_and_returns_permit ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests rustusb_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_daemon
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_linux
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_native
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_protocol
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_rust_backend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_transport
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.15
+   Compiling untrusted v0.9.0
+   Compiling zeroize v1.9.1
+   Compiling rustls v0.23.46
+   Compiling subtle v2.6.1
+   Compiling getrandom v0.2.17
+   Compiling rustls-pki-types v1.15.1
+   Compiling cc v1.10.0
+   Compiling ring v0.17.14
+   Compiling rustls-webpki v0.103.16
+   Compiling tokio-rustls v0.26.6
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Finished `release` profile [optimized] target(s) in 5.97s
+ Documenting rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+ Documenting rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+ Documenting rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+ Documenting rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+ Documenting rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.75s
+   Generated /home/ubuntu/github/usbip-client/target/doc/rustusb/index.html and 8 other files
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.67s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/main.rs (target/debug/deps/rustusb-b11ea72cd69bbe0a)
+
+running 4 tests
+test virtual_server::tests::controls_reject_unbounded_or_sensitive_input_without_echo ... ok
+test physical_server::tests::invalid_selection_and_network_policy_fail_before_helper_io ... ok
+test physical_server::tests::finish_attempts_every_received_lease_and_preserves_first_error ... ok
+test tests::cli_schema_and_input_validation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+
+running 2 tests
+test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+test tests::validate_external_identifiers_and_serde ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-21a5289c7b0b5e2c)
+
+running 64 tests
+test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+test journal::tests::existing_directory_without_journal_is_never_initialized ... ok
+test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+test linux::tests::legacy_empty_pending_keeps_exact_protocol_shape ... ok
+test linux::tests::early_uid_refusal_survives_a_failed_status_request_write ... ok
+test linux::tests::early_uid_refusal_of_physical_capability_requires_no_acknowledgement ... ok
+test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+test linux::tests::cancelling_recovery_wait_does_not_unlock_actual_blocking_work ... ok
+test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+test linux::tests::pending_pages_preserve_complete_baselines_without_exceeding_ipc_bound ... ok
+test physical_lifecycle::tests::original_complete_baseline_rejects_each_independent_difference ... ok
+test physical::tests::regular_files_cannot_be_usb_capabilities ... ok
+test journal::tests::protected_traversal_rejects_symlink_writable_wrong_owner_and_escape ... ok
+test physical_lifecycle::tests::peer_identity_requires_uid_pid_start_and_boot_not_a_bearer_lease ... ok
+test linux::tests::management_reconciliation_never_uses_the_ordinary_uid_allowlist ... ok
+test physical_recovery::tests::already_restored_and_original_none_do_not_connect ... ok
+test physical_lifecycle::tests::stat_command_with_spaces_and_closing_parentheses_keeps_field_offsets ... ok
+test physical_recovery::tests::exact_scope_allows_only_missing_original_drivers ... ok
+test physical_recovery::tests::legacy_manual_authorization_fails_before_any_os_device_observation ... ok
+test physical_recovery::tests::losing_an_earlier_driver_before_final_check_does_not_converge ... ok
+test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+test physical_recovery::tests::real_connect_errno_is_retained_until_actual_original_binding ... ok
+test linux::tests::failed_request_write_cannot_be_replaced_by_invalid_or_success_response ... ok
+test physical_recovery::tests::sibling_probe_reobserves_full_state_and_skips_second_connect ... ok
+test tests::command_output_is_not_exposed ... ok
+test physical_recovery::tests::successful_ioctl_with_wrong_driver_or_scope_is_not_restoration ... ok
+test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+test tests::physical_lifecycle_wire_requires_version_and_rejects_extra_privilege_fields ... ok
+test linux::tests::physical_capability_denial_precedes_scanning_or_opening_usb ... ok
+test tests::recovery_policy_requires_explicit_unique_bounded_physical_subset ... ok
+test tests::physical_policy_is_separate_bounded_and_backward_compatible ... ok
+test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+test physical::tests::descriptor_handoff_preserves_data_and_cloexec_without_root_or_usb ... ok
+test physical::tests::ancillary_marker_missing_or_duplicate_rights_are_rejected ... ok
+test physical_lifecycle::tests::same_path_replacement_is_gone_not_the_old_generation ... ok
+test physical::tests::wrong_marker_and_truncated_rights_are_rejected ... ok
+test physical_lifecycle::tests::automatic_owner_observation_rejects_old_boot_and_unknown_process_state ... ok
+test journal::tests::lifetime_lock_excludes_other_openers ... ok
+test journal::tests::invalid_owner_receipt_interface_and_uuid_are_rejected ... ok
+test journal::tests::missing_original_driver_is_not_an_explicit_unbound_baseline ... ok
+test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+test journal::tests::strict_nested_fields_reject_duplicate_and_unknown_permissions_without_fallback ... ok
+test journal::tests::recovery_permission_is_required_in_v2_and_forbidden_in_v1 ... ok
+test journal::tests::lost_lifetime_lock_cannot_create_a_second_lock_domain ... ok
+test journal::tests::duplicate_lease_or_device_does_not_change_durable_table ... ok
+test journal::tests::pre_rename_failure_keeps_old_disk_and_poison_refuses_all_access ... ok
+test journal::tests::strict_schema_rejects_corruption_unknown_fields_versions_and_duplicates ... ok
+test journal::tests::uncertain_post_rename_failure_never_installs_new_cache_or_reopens_grants ... ok
+test journal::tests::table_capacity_is_enforced_without_poisoning_valid_cache ... ok
+test journal::tests::durable_reserve_reload_and_idempotent_retirement ... ok
+test journal::tests::legacy_records_stay_manual_until_a_distinct_opt_in_grant_upgrades_storage ... ok
+test journal::tests::symlinks_hardlinks_and_permissive_files_are_rejected ... ok
+test journal::tests::secure_stale_temporary_is_removed_only_under_owned_lock ... ok
+test journal::tests::uncertain_upgrade_never_installs_cache_and_reopen_keeps_actual_permissions ... ok
+test journal::tests::byte_record_and_interface_limits_fail_closed ... ok
+test journal::tests::schema_two_never_downgrades_after_authorized_record_or_empty_table_retirement ... ok
+test journal::tests::active_file_loss_truncation_and_same_length_rewrite_quarantine_store ... ok
+
+test result: ok. 64 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running unittests src/main.rs (target/debug/deps/rustusb_helper-f385be82fb1ca7a1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_linux-4a7d98a6d07ab896)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery.rs (target/debug/deps/discovery-e3ffa439901b1e1e)
+
+running 8 tests
+test missing_root_is_reported_instead_of_successful_empty_scan ... ok
+test block_descendants_are_denied_without_following_subsystem_symlinks ... ok
+test kernel_export_occupancy_and_attribute_limits_are_explicit ... ok
+test storage_driver_is_blocked_even_for_vendor_class_quirks ... ok
+test unknown_hubs_short_reads_and_removed_devices_fail_closed ... ok
+test descendant_budget_exhaustion_refuses_to_claim_storage_safety ... ok
+test composite_storage_and_inactive_storage_are_blocked ... ok
+test metadata_and_fingerprint_survive_bus_and_address_reenumeration ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_native-6e88bbfe6c3e17a2)
+
+running 31 tests
+test diagnostics::tests::module_entries_require_exact_safe_paths_and_names ... ok
+test diagnostics::tests::version_does_not_expose_multiline_control_or_arbitrary_output ... ok
+test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+test diagnostics::tests::trust_checks_distinguish_missing_nonexecutable_and_untrusted_paths ... ok
+test diagnostics::tests::module_installation_and_loaded_sysfs_are_separate_observations ... ok
+test diagnostics::tests::effective_driver_checks_require_attributes_and_valid_complete_status ... ok
+test diagnostics::tests::kernel_release_and_file_reads_are_bounded_and_do_not_accept_directories ... ok
+test diagnostics::tests::kernel_configuration_distinguishes_disabled_builtin_and_unknown ... ok
+test diagnostics::tests::version_runner_timeout_and_output_limit_kill_and_reap ... ok
+test diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output ... ok
+test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+test tests::detach_rejects_post_command_replacement_and_unknown_generation ... ok
+test tests::detach_reobserves_changed_status_without_repeating_the_command ... ok
+test tests::detach_does_not_wait_for_replacement_generation_at_same_path ... ok
+test tests::snapshot_rejects_replacement_between_usb_attribute_reads ... ok
+test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+test tests::public_snapshot_still_rejects_status_changed_during_observation ... ok
+test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+test tests::same_device_on_reused_port_requires_the_original_generation_receipt ... ok
+test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+test tests::missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup ... ok
+test tests::unsafe_record_directory_is_rejected_before_running_attach_tool ... ok
+test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... ok
+test tests::export_and_unexport_require_observed_driver_changes ... ok
+test tests::unknown_export_state_and_untrusted_endpoint_records_are_rejected ... ok
+test tests::detach_waits_for_old_sysfs_generation_after_port_becomes_null ... ok
+
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_protocol-64810c9d09a96150)
+
+running 4 tests
+test tests::parses_network_byte_order_and_interfaces ... ok
+test tests::rejects_malicious_lengths_headers_strings_duplicates_and_truncation ... ok
+test tests::accepts_exact_device_and_interface_limits ... ok
+test tests::actual_tcp_request_and_deadline ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_rust_backend-6ce3257820c975db)
+
+running 45 tests
+test descriptors::tests::fixed_profiles_have_exact_lengths_and_endpoint_layouts ... ok
+test device::tests::control_lengths_configuration_and_invalid_interface_never_panic ... ok
+test device::tests::keyboard_pending_reports_release_control_and_bounded_atomic_queue ... ok
+test device::tests::explicit_idle_rate_repeats_current_report_and_cancellation_does_not_consume_input ... ok
+test device::tests::reconfiguration_retires_pending_and_clears_queues_without_consuming_new_data ... ok
+test device::tests::cdc_line_coding_control_lines_break_and_notification_are_stateful ... ok
+test device::tests::registration_exclusivity_drop_and_discovery_are_real_state_changes ... ok
+test physical::tests::close_rejects_another_registry_owner_without_disabling_it ... ok
+test physical::tests::reservations_cover_two_buffers_and_remain_bounded_until_retirement ... ok
+test physical::tests::close_joins_read_only_monitor_then_waits_for_supervisor_return ... ok
+test physical::worker::tests::physical_errno_and_partial_bytes_survive_completion_mapping ... ok
+test physical::tests::dropping_supervisor_tracking_does_not_abort_owned_work ... ok
+test physical::tests::failed_supervisor_join_does_not_report_closed ... ok
+test physical::worker::tests::queued_host_state_intents_defer_later_endpoint_routing ... ok
+test physical::observe::tests::reconnect_never_changes_foreign_or_unowned_bindings ... ok
+test physical::worker::tests::checked_release_loop_awaits_all_in_order_and_preserves_first_errno ... ok
+test physical::tests::regular_file_capability_is_rejected_before_any_usb_or_sysfs_access ... ok
+test physical::observe::tests::alternate_is_decimal_and_driver_observations_are_bounded ... ok
+test physical::observe::tests::reconnect_observes_sibling_binding_without_a_second_connect ... ok
+test physical::observe::tests::generation_distinguishes_missing_replaced_and_changed_address ... ok
+test wire::tests::rejects_resource_and_phase_fields_before_reading_payload ... ok
+test wire::tests::inconsistent_or_overlong_completion_is_rejected_without_silent_truncation ... ok
+test physical::observe::tests::alternate_already_restored_by_probe_does_not_need_reclaiming ... ok
+test device::tests::cdc_bulk_short_exact_packet_zero_length_limits_and_hashes ... ok
+test server::tests::failed_import_write_and_handle_drop_release_ownership ... ok
+test server::tests::idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation ... ok
+test physical::observe::tests::reconnect_errors_require_actual_original_binding_to_converge ... ok
+test server::tests::real_tcp_devlist_busy_import_and_phase_rejection_release_leases ... ok
+test physical::safety::tests::configuration_zero_does_not_require_interfaces_or_claim_any ... ok
+test server::tests::listener_policy_and_connection_budget_are_enforced_before_spawn ... ok
+test physical::observe::tests::reconnect_rejects_changed_scope_before_and_after_connect ... ok
+test physical::safety::tests::inactive_storage_and_incomplete_descriptors_remain_blocked ... ok
+test physical::safety::tests::current_configuration_allows_only_our_claimed_siblings ... ok
+test physical::safety::tests::changed_generation_identity_configuration_or_interface_set_denies_claim ... ok
+test server::tests::asynchronous_control_in_out_preserve_original_errno_and_partial_bytes ... ok
+test physical::safety::tests::newly_bound_storage_quirks_and_block_children_refuse_claim ... ok
+test wire::tests::complete_idle_connection_waits_but_partial_frame_has_a_single_owner ... ok
+test server::tests::response_budget_is_retained_until_the_complete_frame_is_written ... ok
+test server::tests::one_byte_control_bounds_and_pending_unlink_have_no_late_submit ... ok
+test server::tests::hung_usb_does_not_block_control_discovery_or_single_thread_timer ... ok
+test server::tests::unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping ... ok
+test server::tests::fragmented_out_while_pending_and_wrapped_sequences_preserve_order ... ok
+test server::tests::duplicate_active_sequence_and_pending_bound_fail_closed ... ok
+test server::tests::active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out ... ok
+test server::tests::shutdown_deadline_reports_quarantine_without_releasing_pending_hardware ... ok
+
+test result: ok. 45 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.02s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_transport-4494eb6795b08322)
+
+running 18 tests
+test tls::tests::stable_device_keys_and_certificate_hex_are_strict ... ok
+test tls::tests::principal_policy_rejects_ambiguous_empty_and_excessive_fields ... ok
+test tls::tests::invalid_server_name_is_rejected_before_handshake ... ok
+test tls::tests::credential_input_bounds_malformed_der_and_mismatched_key_fail_closed ... ok
+test tls::tests::cancelled_handshake_releases_its_already_acquired_permit ... ok
+test tls::tests::absent_client_certificate_cannot_produce_authenticated_stream ... ok
+test tls::tests::unknown_server_ca_is_rejected ... ok
+test tls::tests::real_mutual_tls_maps_leaf_and_transfers_flushed_data_both_ways ... ok
+test tls::tests::debug_and_configuration_errors_do_not_expose_credentials_or_io ... ok
+test tls::tests::pinned_client_from_unknown_ca_is_still_rejected ... ok
+test tls::tests::missing_and_wrong_alpn_fail_closed ... ok
+test tls::tests::expired_server_and_wrong_server_usage_fail_pki ... ok
+test tls::tests::expired_pinned_client_and_wrong_client_usage_fail_pki ... ok
+test tls::tests::valid_but_unmapped_or_removed_pin_is_not_authorized ... ok
+test tls::tests::resumption_is_disabled_on_repeated_real_handshakes ... ok
+test tls::tests::wrong_server_name_fails_standard_verification ... ok
+test tls::tests::authenticated_streams_hold_all_sixteen_permits_across_server_clones ... ok
+test tls::tests::handshake_timeout_closes_transport_and_returns_permit ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests rustusb_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_daemon
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_linux
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_native
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_protocol
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_rust_backend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_transport
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `release` profile [optimized] target(s) in 0.03s
+ Documenting rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+ Documenting rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+ Documenting rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+ Documenting rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.89s
+   Generated /home/ubuntu/github/usbip-client/target/doc/rustusb/index.html and 8 other files
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/nusb-tests/debug/deps/nusb-9d1bd7f5da8e65bb)
+
+running 20 tests
+test descriptors::test_concatenated::test_empty ... ok
+test descriptors::test_concatenated::test_one_config ... ok
+test descriptors::test_concatenated::test_invalid_total_len ... ok
+test descriptors::test_concatenated::test_short ... ok
+test descriptors::test_concatenated::test_two_configs ... ok
+test descriptors::test_empty_config ... ok
+test descriptors::test_dell_webcam ... ok
+test descriptors::test_malformed ... ok
+test descriptors::test_linux_root_hub ... ok
+test device::assert_send_sync ... ok
+test hotplug::assert_send_sync ... ok
+test platform::linux_usbfs::connect_tests::borrowed_connect_preserves_errno_without_consuming_the_descriptor ... ok
+test platform::linux_usbfs::device::interface_release_tests::checked_connect_error_keeps_errno_and_does_not_repeat_either_call ... ok
+test platform::linux_usbfs::device::interface_release_tests::checked_release_errors_survive_without_drop_retry_or_connect ... ok
+test platform::linux_usbfs::device::interface_release_tests::checked_success_runs_release_and_selected_reattach_exactly_once ... ok
+test platform::linux_usbfs::device::interface_release_tests::legacy_drop_remains_best_effort_on_release_and_connect_failure ... ok
+test platform::linux_usbfs::device::interface_release_tests::shared_arc_is_busy_without_release_until_the_last_owner_drops ... ok
+test platform::linux_usbfs::device::raw_completion_tests::control_in_preserves_errno_and_partial_bytes_without_setup ... ok
+test platform::linux_usbfs::device::raw_completion_tests::control_out_keeps_actual_bytes_on_error_without_echoing_payload ... ok
+test platform::linux_usbfs::device::raw_completion_tests::invalid_kernel_length_is_rejected_before_accessing_control_buffer ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

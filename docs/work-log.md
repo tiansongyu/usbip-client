@@ -387,3 +387,11 @@
 - 精确f4774a6的软件CI39936932379四原生平台attempt1全部success，每格304次/35result、两背压及四信号通过；292采证文件/实际执行receipt、六connector日志对官方ZIP及554项独立复核通过。42份发布原件归档，Pages同版119检查/deploy成功；不把软件CI覆盖原QEMU FAIL。窄文档审查纠正初稿把24KiB请求+12B回复误写双向24KiB、设计状态未限定集成及root机制probe未启动措辞；程序和原运行结果不变。README/展示站沿全局readme-site指导同步基础模块与尚未集成的边界。
 
 - 机制harness按已修设计分离硬件generation和生命周期cfg/IF：未配置只接受两属性真实0字节且0IF，正常attached/down后保持cfg1完整IF0/alt0、server IF无driver；分别传HID480/kernel3与FTDI12/kernel2。旧首FAIL/三旧源码和构造fixture单独留存。39项作者静态（含13实际jq及纯合成verifier）通过；root实际rustc严格编译、一个Rust单测遍历13边界及宿主普通UID首guard拒绝通过。产品Cargo/crates/vendor/check逐f4774a6无差异，不重复304软件；四端shutdown、NULL/Gone/AVAILABLE及普通unexport约束和时限保留，准备新clean QEMU。
+
+- 修复24a424b从clean首次实际单guest QEMU PASS/50 host断言、guest0；109选定Rust/Cargo/QEMU输入、HEAD/clean及ELF前后guard真，default CLI538b2ef1…/helpercf7273af…与首FAIL相同feature产物，probe797bb889…。两匿名pair/四真实FD、一次HID KEY1 down/up和FTDI双向各35B，四次SHUT_RDWR后在FD仍持有时核NULL/旧local消失/stub AVAILABLE，再普通helper unexport完整原driver恢复。实际原件已归档kernel-socketpair-final-24a424b-20261023，独立raw复核进行；24a424b已正常push。无NIC/无TCP/无TLS，不能把机制当全数据安全连接，完整目标仍active。
+
+- 最终独立raw复核40个分组谓词通过，未调用runner verifier；核109源、六冻结文件、13原件、现存ELF/内核/11模块和真实端点/数据/完整基线。probe ELF/initramfs已删除仅核digest链；原console speed not set及endpoint0 stall/-104保留，不宣称零内核warning或所有USB请求无错误。24a424b新software39938851575四原生job及Pages39938851717亦success，未重解析该新CI计数；f4774a6详细304计数原件仍独立。网站六线上资源逐24a字节一致，CUA新段落/1280与375无横向溢出及console无warn/error（这是浏览器console），全局readme-site四文件/发现symlink保持；不重做未改JS的交互验收。
+
+- 最后十份维护文档244个本地目标/锚和站点122检查、JS语法、diff检查通过；保留较早243项QA而不混计。八个新索引共135份归档原件，逐bytes/SHA/原临时文件及staged Gitblob核对；109选定QEMU输入逐clean24a424b Gitblob仍一致。最终只交付文档/证据，不重归属软件或QEMU版本，完整原目标继续active；下一项为受限broker/helper FD所有权和实际USB/IP安全集成。
+
+- 最终staged核验在提交前发现新归档中的.log被仓库忽略规则排除，前面目录add没有收入这些原件；校验中止，未产生最终交付commit。随后仅按八个显式索引补入缺失日志并重新核135原件的staged bytes/SHA，软件/QEMU/CI及原始文件不变；这是归档打包修正，不是运行重测。
