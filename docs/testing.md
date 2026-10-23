@@ -235,3 +235,10 @@ Ubuntu 22.04 / 24.04 × x86_64 / aarch64 的组合各有状态；HWE、OEM 或�
 `python3 scripts/qemu/run-guardian-qemu.py --evidence /tmp/rustusb-guardian-observation` 在相同两guest中增加仅guest root可用的C probe。它验证独立open B、pidfd_getfd的A副本、kcmp身份、wait137后副本延长占用、另一OFD C占用时拒绝抢占、B恢复原驱动、关闭后只读协调及第三轮真实I/O。原journal两脚本不改，生成guest的6个唯一锚和完整来源单独保存；需要C编译器、Linux UAPI headers及guest pidfd_getfd/KCMP支持。
 
 clean da764d0的237项检查/两guest0通过；首43d6d43因jq变量名错误在KILL前失败，原件保留。详见[报告与限制](research/usbfs-guardian-mechanism.md)。这是恢复句柄机制实验，不是产品自动恢复、任意外部进程/FD撤销、多配置或真实硬件验收。
+
+
+## 明确授权的产品原驱动恢复
+
+`run-autorestore-qemu.py --scenario owner-death|helper-restart --evidence <新目录>` 要求干净提交，默认locked all-features构建；使用两个隔离guest及合成HID/FTDI。先真实I/O，再一次KILL/wait137，由产品helper自主CONNECT恢复并退休；成功先通过纯磁盘/sysfs观察，之后才读pending API并完成新grant第三轮真实I/O。helper-restart还在原owner活着时重启helper、保持原记录/占用并继续真实I/O。不运行测试恢复probe、管理员bind或reconcile，不调用旧184的相反裁决。
+
+clean2ab9976两个正向161/205 host检查和原默认off journal184、正常/热拔、ECM、SIGTERM五回归均通过，共14guest0；本地四信号和两背压也通过。全部实际来源与未完成负向见[报告](research/physical-driver-autorestore.md)。恢复窗口从wait137后控制握手完成才计时，不是kill起20秒SLA；活owner不执行恢复的证据为日志/源码约束、状态和继续I/O，没有逐syscall跟踪。旧schema真实producer迁移、撤销、独立C占用的产品组合仍需独立运行。

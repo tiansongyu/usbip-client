@@ -34,8 +34,9 @@
 | E24 | [SIGKILL/首次重启设计](research/physical-crash-recovery-design.md)、[实际报告](research/physical-crash-recovery.md)、[原始证据](evidence/physical-crash-negative-1342a6a-20261023.json) | clean1342a6a唯一QEMU：恢复FAIL/收集完整，runner1/两guest0；55host检查51PASS/4恢复FAIL。旧进程wait137且20.06秒后两driver null；新进程无IMPORT、ready/stopped原driver皆null且cleanup_verified=true，wait0不证明旧基线恢复。产品未改、无自动恢复实现 |
 | E25 | [持久授权报告](research/physical-journal-recovery.md)、[软件与源码审查](evidence/physical-journal-implementation-20261023/manifest.json)、[首轮FAIL](evidence/physical-journal-first-failure-e0ac478-20261023/manifest.json)、[最终运行](evidence/physical-journal-final-933e720-20261023/manifest.json) | 产品b75f14b；clean933e720新journal184host检查、原正常/热拔15+15probe、ECM19probe、TERM52host检查全部通过，十guest0、本地四信号和两背压通过。软件default89/allfeatures142/vendor19共250次及完整gate通过；[CI39908004666](evidence/publication-journal-933e720-20261023.json)四原生平台每格250次/两背压/四信号通过。验证未决基线跨helper重启/拒绝重授、正常退休、root只读协调及管理员恢复后第三轮实际I/O；不证明自动恢复/FD撤销/断电或硬件G1/G2 |
 | E26 | [独立恢复句柄报告](research/usbfs-guardian-mechanism.md)、[最终原件](evidence/physical-guardian-final-da764d0-20261023/manifest.json)、[首轮FAIL](evidence/physical-guardian-first-failure-43d6d43-20261023/manifest.json) | 产品未改；clean da764d0双guest机制实验237host检查（原184+新增53）通过，真实wait137、dupA延长占用、独立B/C不抢占、B的CONNECT恢复完整原基线、probe wait0、原只读退休与第三轮真实I/O通过。C是同probe另一OFD；不是产品自动恢复/跨配置/任意FD撤销或硬件验收；首43d6d43测试脚本jq错误保留 |
+| E27 | [原driver自动恢复报告](research/physical-driver-autorestore.md)、[软件](evidence/physical-autorestore-software-20261023/manifest.json)、[最终原件](evidence/physical-autorestore-final-2ab9976-20261023/manifest.json) | 产品e34e309，clean2ab9976两个产品正向161/205 host检查及五个原QEMU回归全PASS，14guest0；软件90/158/20共268次、本地四信号/两背压通过；[四平台CI39921583807](evidence/publication-autorestore-2ab9976-20261023.json)每格268次/信号/背压通过。同boot owner结束后自主恢复原driver、持久退休与第三轮真实I/O；helper重启活owner仍工作。默认off旧184保持；未完成撤销/旧producer迁移/外部占用负向、跨配置/FD撤销/硬件 |
 
-当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订的软件/CI见E22；信号修复后的934358f软件、本地与QEMU见E23，CI39899971271已实际四平台通过；SIGKILL旧负向见E24，持久授权的933e720仿真、250次软件测试及四平台CI39908004666见E25，独立恢复句柄实验见E26。历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
+当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订的软件/CI见E22；信号修复后的934358f软件、本地与QEMU见E23，CI39899971271已实际四平台通过；SIGKILL旧负向见E24，持久授权的933e720仿真、250次软件测试及四平台CI39908004666见E25，独立恢复句柄实验见E26，受限产品自动恢复与2ab9976的268次软件/七项QEMU见E27。历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
 ## 2. Phase 0 九项产物
 
@@ -121,7 +122,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 原要求测试类别 | 当前证据 | 状态和缺失 |
 | --- | --- | --- |
-| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E22：默认89/allfeatures114、vendor19，共222项；历史E13/E14为89/103/14、E03为59、E10为75/76项 | 本机软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
+| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E27：默认90/allfeatures158、vendor20，共268次执行；E22为89/114/19；历史E13/E14为89/103/14、E03为59、E10为75/76项 | 本机软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
 | 三方向互操作 | E07：managed / linux-client / linux-server各HID和FTDI | Native三方向实际功能及清理通过；E10另验证自有虚拟Rust Server→RustUSB Native client/VHCI；独立官方CLI专场、物理及完整G2仍待验收 |
 | QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游HID/CDC有E02；本项目Native有E07；虚拟与USBFS有E10/E13 | 七项Native矩阵通过；FTDI不是CDC，E13新增USBFS HID/FTDI正常与热拔，并复跑本项目标准双接口CDC虚拟服务；完整网络/热插拔异常矩阵后续 |
 | 真实 U 盘 / 串口 / HID / JTAG / 摄像头 | compatibility 与 testing 定义逐设备测试 | 全部未执行；存储拒绝；UVC / Audio / Composite / alt / ISO 各需独立证据 |
@@ -133,11 +134,11 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 必需命令 / 约束 | 证据及判定 |
 | --- | --- |
-| `cargo fmt --all -- --check` | scripts/check.sh 首项，E22完整脚本通过；成功无输出正常。后续源码修改需重跑 |
-| `cargo clippy --workspace --all-targets -- -D warnings` | E22默认与all-features两组通过；自有工作区 forbid unsafe / deny unwrap_used / expect_used / panic；vendor原有unsafe另见许可/来源记录。它不证明协议与硬件语义正确 |
-| `cargo test --workspace` | E22默认89/allfeatures114项，另有vendor19纯测试，0失败/0忽略；历史数量保留于E03/E10/E13/E14，各test名称和范围可核对；无硬件通过结论 |
-| `cargo build --workspace --release` | E22默认与all-features release成功；编译产物不是双机 USB 验收 |
-| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E22两组通过；不代表所有架构能力均实装 |
+| `cargo fmt --all -- --check` | scripts/check.sh 首项，E27完整脚本通过；成功无输出正常。后续源码修改需重跑 |
+| `cargo clippy --workspace --all-targets -- -D warnings` | E27默认与all-features两组通过；自有工作区 forbid unsafe / deny unwrap_used / expect_used / panic；vendor原有unsafe另见许可/来源记录。它不证明协议与硬件语义正确 |
+| `cargo test --workspace` | E27默认90/allfeatures158次，另有vendor20次纯测试，0失败/0忽略；历史数量保留于E03/E10/E13/E14，各test名称和范围可核对；无硬件通过结论 |
+| `cargo build --workspace --release` | E27默认与all-features release成功；编译产物不是双机 USB 验收 |
+| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E27两组通过；不代表所有架构能力均实装 |
 | 工具链 / 依赖 / 许可 | 锁定稳定 1.97.1 和 2024；Cargo.lock / inventory / third-party；最终变更后更新清单；未声称完成发布合规认证 |
 | 平台 / 资源 / 清理 | 有界输入、明确平台错误、阻塞隔离、固定进程、真实 sysfs 与保守未知资源处理 | 目标所有 OS / 架构及长期异常路径仍需独立 gate，不用 lint 或绿色 CI 覆盖 |
 
@@ -197,7 +198,7 @@ E23保留两项旧虚拟child TERM实际-15，以及旧USBFS QEMU startup/main�
 
 产品d39517b仅修改4个CLI文件。clean934358f实际完整软件gate222项/31条result、138份冻结输入未变，本地四项信号与原两背压回归通过；TERM及原虚拟、物理正常/热拔四QEMU均PASS，8guest0。原虚拟的feature/ELF与另外三项不同，证据分别归属。CI39899971271四原生平台均通过，每格222次测试执行、原两背压及新增四信号场景通过；三项回归227项独立原始复核通过；原始证据及限制见E23报告。
 
-listener前异步prepare可取消不代表已经运行的blocking内核读取被终止；重复信号不丢cleanup目前仅有源码审查。SIGKILL/abort、跨进程监督、持久重启协调、Windows USB、真实硬件及完整Phase2/Phase3继续未完成。
+listener前异步prepare可取消不代表已经运行的blocking内核读取被终止；重复信号不丢cleanup目前仅有源码审查。该E23时点不覆盖SIGKILL/abort、跨进程监督或持久重启协调；后续受限持久授权与原driver恢复分别见E25/E27。通用恢复、Windows USB、真实硬件及完整Phase2/Phase3继续未完成。
 
 
 ## 16. 持久物理授权与管理员协调子步骤

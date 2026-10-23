@@ -95,7 +95,7 @@ sudo rustusb --json physical-reconcile <lease-id>
 
 ## 可选的原驱动自动恢复
 
-此功能为实验性实现候选，本轮运行验收尚未完成；以[实施设计](research/physical-driver-autorestore-design.md)和后续证据为准。默认关闭。管理员可在策略中添加 `physical_connect_restore_device_ids`，内容必须是 `physical_device_ids` 的无重复子集。例如上面示例设备可额外设置：
+此功能为实验性能力，已在clean2ab9976完成两个产品QEMU正向和原有回归；范围及未完成负向见[运行报告](research/physical-driver-autorestore.md)与[实施设计](research/physical-driver-autorestore-design.md)。默认关闭。管理员可在策略中添加 `physical_connect_restore_device_ids`，内容必须是 `physical_device_ids` 的无重复子集。例如上面示例设备可额外设置：
 
 ```json
 "physical_connect_restore_device_ids": ["usb-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]

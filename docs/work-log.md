@@ -343,3 +343,10 @@
 - 完整`bash scripts/check.sh`实际exit0：default90/all-features158/vendor20，共268次测试执行，31result、0失败/忽略；fmt、两组Clippy/release和严格rustdoc均通过，111个产品/vendor/check输入前后SHA相同。独立实现审查未发现mustfix；软件证据已归档，下一步从干净提交执行两个产品自动恢复QEMU正向及旧默认off回归，不能提前归属产品运行通过。
 
 - 产品提交e34e309。新增两个产品QEMU正向模式，仅复用旧journal传输/采证，使用独立正向verifier；旧184断言未改。作者67项静态（含54种jq实际编译）和明确标识的构造parser fixture通过，独立21项源码核验无mustfix；静态阶段修复新jq保留字`$end`并补完整receipt.bus_number检查，尚无QEMU失败/通过。成功先以纯磁盘/sysfs观察，再读pending API与新grant；20秒是wait137后控制握手完成起的观察窗，不是从SIGKILL起的SLA。
+
+- 从clean2ab9976串行冻结152输入执行七项QEMU全PASS/14guest0：两个产品正向161/205 host、旧默认off184、原正常/热拔15+15 probe、ECM19 probe、TERM52 host；本地四信号与两背压也PASS。九run各source/head/clean guard真，同all-features CLI375301a7…/helper1428d92b…。两正向各真实wait137、两lease attempt→retired、纯sysfs+disk先于API、新grant第三轮I/O，每方向105B。helper重启活owner窗约5.47秒后继续真实I/O；这不是逐syscall跟踪。141份运行原件已归档，独立raw审查进行中。
+- e34e309/2ab9976已正常push到指定SSH origin；CI39921583807四平台运行中，Pages39921583884已check/deploy成功。此时不把尚未完成的CI或未运行的撤销/旧producer/外部C负向标通过。英文README、展示页及技术文档随限定证据更新；原历史失败保持。
+
+- 精确2ab9976的CI39921583807四原生job全部completed/success，每格268次/31result、0失败忽略、两背压和四信号通过；独立CI审查194项核精确checkout/平台/183个该采证冻结输入/实际执行ELF。40份CI原件已按字节归档。旧五QEMU及本地回归另一agent独立raw审查1116项通过；初稿误要求文档交付时仍全树clean，保留原审查稿并改为核运行HEAD/152冻结输入，未重跑或改判运行。
+
+- 两新产品正向另一agent独立raw复核559/559证据断言通过，未调用runner verifier，核实际来源、完整基线/许可、wait137、日志/纯观察先于API和六轮原I/O。复核器初稿以字符串排序代替Path组件排序误判fingerprint，保留初稿/修正稿；实际QEMU和产品不改判。归档无ELF本体，审查核build→guest→after记录哈希链；无逐CONNECT syscall/errno跟踪。新报告、E27及README/网站均保留这些边界。

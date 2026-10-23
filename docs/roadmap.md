@@ -58,11 +58,11 @@ CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定�
 
 最新[checked release子步骤](research/usbfs-checked-release.md)已修复真实释放errno被portable best-effort契约掩盖的问题；本机及[37c2d61四平台软件](evidence/publication-native-fixture-20261023.json)每格222项通过，同一clean6e809a1的11项QEMU最终PASS，113case/22guest0，旧产品和三轮候选FAIL均保留。不是完整G2完成。
 
-Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景与四项QEMU，见[报告](research/server-signal-shutdown.md)，原旧负向保留。退出异常的首项[QEMU负向](research/physical-crash-recovery.md)已在clean1342a6a完成：SIGKILL后driver未恢复，首次无IMPORT重启采用空驱动新基线，恢复FAIL保持。[持久授权子步骤](research/physical-journal-recovery.md)已在clean933e720完成正常退休、跨helper重启保留原基线/拒绝新授权、管理员恢复后第三轮实际I/O，五QEMU/十guest与本地信号/背压通过、软件250项及[四平台CI39908004666](evidence/publication-journal-933e720-20261023.json)每格250次/信号/背压通过。下一步按[draft](research/physical-crash-recovery-design.md)设计可信变更范围与跨进程监督，再实施受限自动恢复；不能只保存FD副本或凭PID死亡宣称恢复。范围[复核修正版](evidence/phase2-scope-review-rev2-20261023.json)明确现有ECM cycle2已有官方直接usbip互操作证据，撤回重复测试建议；ISO、无原驱动非零alternate、真正kernel内部挂起、成功clear/真实partial及硬件仍单列未完成。
+Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景与四项QEMU，见[报告](research/server-signal-shutdown.md)，原旧负向保留。退出异常的首项[QEMU负向](research/physical-crash-recovery.md)已在clean1342a6a完成：SIGKILL后driver未恢复，首次无IMPORT重启采用空驱动新基线，恢复FAIL保持。[持久授权子步骤](research/physical-journal-recovery.md)已在clean933e720完成正常退休、跨helper重启保留原基线/拒绝新授权、管理员恢复后第三轮实际I/O，五QEMU/十guest与本地信号/背压通过、软件250项及[四平台CI39908004666](evidence/publication-journal-933e720-20261023.json)每格250次/信号/背压通过。后续[明确授权原driver恢复](research/physical-driver-autorestore.md)已在clean2ab9976完成两个产品正向及五个原QEMU回归、268次软件与本地信号/背压。下一步为旧schema真实producer迁移、许可撤销、独立C外部占用的产品负向；跨配置仍draft，不能只保存FD副本或凭PID死亡宣称恢复。范围[复核修正版](evidence/phase2-scope-review-rev2-20261023.json)明确现有ECM cycle2已有官方直接usbip互操作证据，撤回重复测试建议；ISO、无原驱动非零alternate、真正kernel内部挂起、成功clear/真实partial及硬件仍单列未完成。
 
 **G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
 
-自动恢复的前置[独立句柄机制实验](research/usbfs-guardian-mechanism.md)已在clean da764d0通过：237检查、两guest0、实际旧副本/另一OFD占用拒绝、B恢复原driver及第三轮I/O；产品未改，初次jq脚本FAIL保留。下一切片优先明确opt-in的同配置/alternate基线恢复与旧schema1迁移，跨配置再补可信变更事务；不把本实验当成G2完成。
+自动恢复的前置[独立句柄机制实验](research/usbfs-guardian-mechanism.md)已在clean da764d0通过：237检查、两guest0、实际旧副本/另一OFD占用拒绝、B恢复原driver及第三轮I/O；产品未改，初次jq脚本FAIL保留。其后E27已完成opt-in同配置/alternate产品正向；下一切片补旧schema真实producer迁移、许可撤销及外部占用负向，跨配置再补可信变更事务。不把机制或受限正向当成G2完成。
 
 ## 6. Phase 3：安全远程连接和恢复
 

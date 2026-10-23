@@ -1,0 +1,161 @@
+{
+  "head": "2ab997673a5894099f8df770707a060da3735154",
+  "runs": [
+    {
+      "name": "owner-death",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-autorestore-qemu.py",
+        "--scenario",
+        "owner-death",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/owner-death"
+      ],
+      "started_at": "2026-10-23T07:59:17.058184+00:00",
+      "finished_at": "2026-10-23T07:59:35.622751+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-autorestore-qemu.py",
+        "--scenario",
+        "helper-restart",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/helper-restart"
+      ],
+      "started_at": "2026-10-23T07:59:35.636888+00:00",
+      "finished_at": "2026-10-23T08:00:00.126937+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "journal-default",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-journal-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/journal-default"
+      ],
+      "started_at": "2026-10-23T08:00:00.140602+00:00",
+      "finished_at": "2026-10-23T08:00:36.278214+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "physical-normal",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-physical-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/physical-normal"
+      ],
+      "started_at": "2026-10-23T08:00:36.290821+00:00",
+      "finished_at": "2026-10-23T08:00:48.653464+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "physical-hot-unplug",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-physical-qemu.py",
+        "--hot-unplug",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/physical-hot-unplug"
+      ],
+      "started_at": "2026-10-23T08:00:48.668090+00:00",
+      "finished_at": "2026-10-23T08:01:03.220385+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "physical-composite",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-composite-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/physical-composite"
+      ],
+      "started_at": "2026-10-23T08:01:03.234989+00:00",
+      "finished_at": "2026-10-23T08:01:15.243847+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "physical-sigterm",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/qemu/run-sigterm-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/physical-sigterm"
+      ],
+      "started_at": "2026-10-23T08:01:15.258650+00:00",
+      "finished_at": "2026-10-23T08:01:27.160165+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "local-signals",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/test-server-signals.py",
+        "--evidence",
+        "/tmp/rustusb-autorestore-2ab9976-20261023/local-signals"
+      ],
+      "started_at": "2026-10-23T08:01:27.173270+00:00",
+      "finished_at": "2026-10-23T08:01:27.330758+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    },
+    {
+      "name": "local-backpressure",
+      "head": "2ab997673a5894099f8df770707a060da3735154",
+      "command": [
+        "python3",
+        "scripts/test-virtual-backpressure.py"
+      ],
+      "started_at": "2026-10-23T08:01:27.343192+00:00",
+      "finished_at": "2026-10-23T08:01:32.591392+00:00",
+      "exit_code": 0,
+      "source_guard": true,
+      "head_guard": true,
+      "worktree_clean": true,
+      "result": "PASS"
+    }
+  ]
+}

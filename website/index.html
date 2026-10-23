@@ -114,7 +114,7 @@ target/release/rustusb \
 <span class="comment"># Administrator-only record inspection</span>
 sudo /usr/local/bin/rustusb \
   --json physical-pending</code></pre>
-          <p class="command-note">Requires an installed all-features helper and explicit device policy. Crash protection does not automatically restore drivers.</p>
+          <p class="command-note">Requires an installed all-features helper and explicit device policy. Original-driver recovery requires a separate opt-in policy and unchanged configuration.</p>
         </div>
       </div>
     </section>
@@ -135,14 +135,14 @@ sudo /usr/local/bin/rustusb \
       <div class="status-layout">
         <div class="verified">
           <h3>Latest lifecycle validation</h3>
-          <dl><div><dt>250</dt><dd>software test executions</dd></div><div><dt>5</dt><dd>QEMU suites · 10 guests</dd></div><div><dt>4</dt><dd>native Ubuntu CI platforms</dd></div></dl>
-          <p>Includes original-state persistence, restart refusal and actual HID / FTDI transfers after administrator reconciliation.</p>
-          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/physical-journal-recovery.md">Read the evidence for 933e720 <span aria-hidden="true">↗</span></a>
+          <dl><div><dt>268</dt><dd>software test executions</dd></div><div><dt>7</dt><dd>QEMU suites · 14 guests</dd></div><div><dt>4</dt><dd>native Ubuntu CI platforms</dd></div></dl>
+          <p>Includes opt-in original-driver recovery after service death and helper restart, plus the default manual lifecycle. Both paths complete real HID / FTDI transfers after recovery.</p>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/physical-driver-autorestore.md">Read the evidence for 2ab9976 <span aria-hidden="true">↗</span></a>
         </div>
         <div class="boundaries">
           <h3>Know the current boundaries</h3>
           <p>This is a development preview. Real-device acceptance is pending, and discovering a device does not establish compatibility.</p>
-          <ul><li>No built-in authentication or TLS tunnel yet. Use an administrator-managed secure network.</li><li>No automatic driver restoration after SIGKILL.</li><li>Storage sharing, ISO, TUI, GUI and Windows USB support remain planned or unvalidated.</li></ul>
+          <ul><li>No built-in authentication or TLS tunnel yet. Use an administrator-managed secure network.</li><li>Opt-in crash recovery is limited to the saved device state; broader recovery remains unvalidated.</li><li>Storage sharing, ISO, TUI, GUI and Windows USB support remain planned or unvalidated.</li></ul>
           <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/roadmap.md">Development roadmap <span aria-hidden="true">↗</span></a>
         </div>
       </div>
