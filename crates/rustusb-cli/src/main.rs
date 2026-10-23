@@ -3,6 +3,8 @@
 #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
 mod physical_server;
 #[cfg(feature = "rust-backend")]
+mod shutdown_signals;
+#[cfg(feature = "rust-backend")]
 mod virtual_server;
 
 use clap::{Parser, Subcommand};
@@ -406,7 +408,7 @@ async fn main() -> ExitCode {
     #[cfg(not(feature = "rust-backend"))]
     let owns_signal_cleanup = false;
     let result = if owns_signal_cleanup {
-        // The virtual service must await its connection/lease tree on Ctrl-C.
+        // The server must await its connection/lease tree on shutdown signals.
         // Racing it with the helper-client cancellation branch would drop that
         // cleanup future and incorrectly return a helper-operation diagnostic.
         run(cli).await

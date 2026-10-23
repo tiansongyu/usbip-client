@@ -1,5 +1,6 @@
 //! Bounded, local-only JSONL test controls for the opt-in virtual backend.
 
+use super::shutdown_signals::ShutdownSignals;
 use rustusb_core::{Error, Result};
 use rustusb_rust_backend::{ServerConfig, ServerHandle, VirtualBackend};
 use serde::Deserialize;
@@ -173,6 +174,7 @@ pub(super) async fn run(
     allowed_peers: Vec<IpAddr>,
     control_stdin: bool,
 ) -> Result<()> {
+    let mut signals = ShutdownSignals::new()?;
     let mut output = EventOutput::new()?;
     let backend = VirtualBackend::new()?;
     let server = ServerHandle::bind(
@@ -232,22 +234,25 @@ pub(super) async fn run(
     let result: Result<()> = {
         tokio::pin!(operations);
         tokio::select! {
+            biased;
+            signal = signals.recv() => signal,
             result = &mut operations => result,
-            signal = tokio::signal::ctrl_c() => signal.map_err(Error::Io),
         }
     };
     // All early event/control failures still await deterministic lease cleanup.
     let shutdown = server.shutdown().await;
-    result?;
     shutdown?;
+    result?;
     if output.in_flight {
-        // Ctrl-C cancelled a blocked output. Connections are already reclaimed;
+        // A signal cancelled a blocked output. Connections are already reclaimed;
         // do not wait on the same consumer again to emit a final event.
         return Ok(());
     }
-    output
-        .event(json!({"schema_version":1,"event":"stopped","snapshot":backend.snapshot()?}))
-        .await
+    tokio::select! {
+        biased;
+        signal = signals.recv() => signal,
+        result = output.event(json!({"schema_version":1,"event":"stopped","snapshot":backend.snapshot()?})) => result,
+    }
 }
 
 #[cfg(test)]
