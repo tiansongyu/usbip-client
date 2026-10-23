@@ -1,0 +1,64 @@
+{
+  "result": "PASS_STATIC_ONLY_NOT_COMPILED",
+  "checks": [
+    "Python AST",
+    "Generated guest shell syntax",
+    "Fragment shell syntax",
+    "Six unique checked anchors including failure evidence",
+    "Child wait appears once in generated composition",
+    "No persistent shell control FD",
+    "Old guest SHA drift rejected"
+  ],
+  "files": {
+    "scripts/qemu/run-guardian-qemu.py": {
+      "sha256": "34871f0670685555f27e38cfe24f092f5ccfcac27a2b2b08e03d8360c268058e",
+      "bytes": 15052
+    },
+    "scripts/qemu/guest-guardian-fragments.sh": {
+      "sha256": "108c830470d211bbef207b63d22f202515746c4cc1222ec6e3ffd9811323c3b9",
+      "bytes": 10943
+    },
+    "scripts/qemu/usbfs-guardian-probe.c": {
+      "sha256": "2b18e7bbb718ded37819db9570e45547c4298b1906289028017c95a491da1018",
+      "bytes": 15159
+    }
+  },
+  "generated_init_sha256": "b050eb23c217d710989bd668df8b39f0f9fb58a1a9db370a880ea50b61a201a1",
+  "base_sha256": {
+    "run-journal-qemu.py": "1cefbc14bc45c9e9b5c9f6f0d9784be834fe3ee5856f8bc2937b7baabbbc01aa",
+    "guest-journal-init.sh": "2236c3080d17e447c4d9cdec495609ab6c7d3976d6c92306e3b1286e9d94d8d4"
+  },
+  "ledger": [
+    {
+      "before": "/tmp/client-outcomes.jsonl; do\n",
+      "after": "/tmp/client-outcomes.jsonl /tmp/guardian-probe.log /tmp/guardian-probe.jsonl /tmp/guardian-record.json /tmp/guardian-reply.json /tmp/guardian-pending.json /tmp/guardian-kill-wait.json /tmp/guardian-final-wait.json /tmp/guardian-full-interfaces.json /tmp/guardian-fds.json; do\n",
+      "matches": 1
+    },
+    {
+      "before": "    STAGE=kill-service\n    start_ready killed\n",
+      "after": "    STAGE=kill-service\n    . /usr/lib/guest-guardian-fragments.sh\n    guardian_start\n    start_ready killed\n",
+      "matches": 1
+    },
+    {
+      "before": "    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n",
+      "after": "    guardian_arm\n    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n",
+      "matches": 1
+    },
+    {
+      "before": "    send_control 192.0.2.2 cycle-2-killed\n",
+      "after": "    send_control 192.0.2.2 cycle-2-killed\n    guardian_after_kill\n",
+      "matches": 1
+    },
+    {
+      "before": "    if wait \"$KILL_PID\"; then code=0; else code=$?; fi\n",
+      "after": "    code=$GUARDIAN_KILL_WAIT # Actual child wait already recorded exactly once.\n",
+      "matches": 1
+    },
+    {
+      "before": "    printf '%s' \"$HID_BUS:1.0\" > /sys/bus/usb/drivers/usbhid/bind\n    printf '%s' \"$FTDI_BUS:1.0\" > /sys/bus/usb/drivers/ftdi_sio/bind\n",
+      "after": "    guardian_restore\n",
+      "matches": 1
+    }
+  ],
+  "no_c_compile_or_qemu": true
+}

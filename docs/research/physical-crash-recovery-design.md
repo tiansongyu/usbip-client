@@ -63,3 +63,24 @@
 软件测试覆盖持久重载/原子失败、重复/并发/损坏/权限/锁、owner 与完整基线拒绝；新增独立 QEMU 场景验证正常再次启动、SIGKILL 后跨 helper 重启持续拒绝、管理员恢复前拒绝与恢复后再授权。旧负向证据和断言保持不变；initramfs 的进程重启不代表断电或 OS 重启耐久验证。完整多配置/alternate 能力保留，不通过限制设备功能消除恢复问题。
 
 验收收尾补全：新的 journal 场景在管理员恢复并退休旧记录后，再执行第三轮真实 HID/FTDI I/O、确认活动请求、正常关闭及记录退休；只有中间 normal reopen 保留无 IMPORT 对照。这样证明协调后可重新传输，而不以 ready 代替实际复用。首轮失败与其未执行的后续步骤仍原样保留。
+
+## 2026-10-23：独立恢复句柄的机制实验
+
+产品基线 `60be074`，软件仍为已验收的持久记录实现。本切片先验证恢复所需的内核机制，**不实现或宣称产品自动崩溃恢复**。现有 journal 负向、管理恢复路径和产品代码保持不变；新测试只在一次性 guest 中增加 root 测试 probe。它不是可安装的管理员恢复工具，不接收网络命令，也不用于宿主设备。
+
+固定 Linux v6.8 的七份源码身份、只读集成审查及其范围澄清、实验计划见[设计证据](../evidence/physical-guardian-design-20261023/manifest.json)。内核源码保留在研究缓存，仓库只记录引用和校验信息；未复制 GPL 实现进产品。109 个跟踪的产品输入与 `933e720` 逐字节一致。
+
+实验复用双 guest journal 场景的真实三轮 HID/FTDI I/O、原基线、授权记录、真实 wait137、重启拒绝及只读 reconcile 断言。独立 B 指再次 open 同一受验证字符节点，A 指服务取得的 USBFS open file description；`pidfd_getfd` 得到的 A 副本作为反例。打开 `/proc/PID/fd/N` 不视为 dup。实际 `kcmp(KCMP_FILE)` 必须证明 A 副本与 A 相同、B 与 A 不同；权限/内核支持失败就是实验失败，不能跳过后标通过。
+
+1. 在 killed epoch 的 IMPORT 前打开 B，保留完整 node/sysfs receipt 与原配置、alternate、driver。B 不执行 detach、reset 或 SET_CONFIGURATION。
+2. 已有真实 I/O、pending/inflight 和严格服务身份后取得 A 的副本。只对该普通服务发送一次 SIGKILL 并记录实际 wait137。在 A 副本仍存在时，B 的 plain CLAIMINTERFACE 和 CONNECT 应以 EBUSY 拒绝；同时保留 sysfs 中实际 usbfs 占用。该反例明确 PID 死亡不能替代最后 FD 关闭。
+3. 明确关闭测试 probe 唯一持有的 A 副本后，用同一个 B 做 plain CLAIMINTERFACE / RELEASEINTERFACE，核验实际成功与独立完整 sysfs。成功只说明本次接口可以取得，不证明系统中不存在任意设备 FD、EP0 请求或未覆盖的内核操作。
+4. 用另一独立 C 显式占用接口，检查 B 的 CLAIM 与 CONNECT 再次 EBUSY，且 C 的占用不被移除。关闭 C 后才继续。恢复路径禁止使用 DISCONNECT、DISCONNECT_CLAIM 或 sysfs unbind 绕过占用。
+5. 回到原 journal 的未恢复/null-driver 观察与跨 helper 重启拒绝。原 guest 管理员两次 sysfs bind 改为由长期保留的 B 执行 CONNECT；记录逐次真实 return/errno，随后仍要求同代际完整原配置/alternate/driver 恢复。CONNECT 让内核选择匹配驱动，并不能指定原 driver；本实验固定加载的模块与事后完整核验不构成任意生产设备的驱动选择保证。
+6. 关闭 probe 的 B，记录其实际退出状态，再由 root 只读 reconcile 退休记录，完成原第三轮真实 I/O 和正常结束。probe 不直接修改 journal，不将新 epoch 的资源归零当作旧 epoch 的末状态。
+
+为避免复制既有大段 guest 测试，新 runner 可在 initramfs 组装时对旧 guest 的少量唯一锚生成变体；每个锚严格要求恰好一次，保存生成的 init 原字节/哈希，并将旧脚本、新 runner、probe 与生成过程全部计入来源校验。旧脚本本身不改。所有断言须在实际 QEMU 后裁决；当前没有此实验的运行结果。
+
+后续产品方案仍需区分两类授权契约。若管理员明确允许“租约结束后恢复整台设备的原基线”，同配置、同完整接口和同 alternate 下的 CONNECT-only 恢复范围可以由可信基线界定，不必把每次 claim 都改成持久事务；它仍不能区分服务解绑与管理员故意解绑的相同终态，必须明确恢复期间的管理员协调规则、当前策略与旧记录迁移，不能让原只读 schema 1 静默获得主动恢复权限。若只允许撤销服务实际做过的变更，则还需要执行前持久许可和完成确认；单靠日志也不能证明外部管理员没有产生相同变化。两条路线仍为设计建议，尚未实现。
+
+跨配置/alternate 恢复还需可信变更意图、完成确认、未决操作和 helper 重启后的授权；不能由原基线猜出最后配置或实际修改范围，也不能将 CONNECT 的条件拒绝当成整设备能力撤销。保留现有多配置功能；跨配置恢复、helper 崩溃、外部新驱动、热拔替换和内核内部未完成操作另行验收。

@@ -319,3 +319,10 @@
 - Pages workflow仅上传website，PR只检查、main才部署，write权限限部署job，action使用官方核定commit。GitHub连接器无Pages配置能力，使用gh官方REST创建workflow发布源（实际成功，HTTPS已启用）；未改域名/其他项目设置。增加维护说明后本地111项链接/资产/SVG、JS语法及diff检查通过。28份审查、CLI帮助、技能原件/演练、图示渲染和Pages设置回执已归档readme-site-20261023。此时尚未推送网站或验证线上部署。
 - 最后staged检查发现新Native指南多一个末尾空行；前一shell未以检查失败短路而已生成本地commit，尚未push。清理空行后重新核验整个staged差异，再amend本轮未发布提交；产品和所有原始证据不变。
 - 网站/英文README提交f87b3ad已正常push；Pages39912070096的check/deploy均success，111本地检查在CI重现，部署URL实际返回。公开HTML/CSS/JS/3 SVG六项HTTPS200/MIME/bytes逐Gitblob完全一致；CUA在线点击物理tab/Home回Native及复制反馈通过，图片加载、1280px无横向溢出、console无warning/error。软件CI39912070077四原生job全部success，此文档版未重新解析各测试计数，不重归属933e720 USB数据。全局4技能文件与已提交快照一致且发现symlink有效；14份线上/Actions原件与限定的浏览器观察存入publication证据。
+
+## 继续：独立 USBFS 恢复句柄实验
+
+- 从 clean 60be074 继续原完整目标，重新核对需求、项目约定、核心 skill、架构与异常恢复设计。README、展示站和全局技能交付已完成；当前回到 Phase 2 的崩溃恢复缺口。三个并行只读审查分别核固定 Linux v6.8、现有 journal/worker 接口和最小 QEMU 实验，未启动并行构建或设备操作。
+- 先追加机制实验设计：保留产品及原 journal harness，新 guest probe 分别持有独立 B 和 pidfd_getfd 的 A 副本，以 kcmp、真实 wait137、plain claim/release/CONNECT 与外部 C 占用作正反对照。实际恢复后仍需完整原基线、只读退休及第三轮真实 I/O。此时尚未实现或运行该实验，不把研究结论当作产品自动恢复。
+- 固定 Linux v6.8 审查核七份源码 Git blob/SHA，确认 CONNECT 不指定原 driver、非零 alternate 在 unbind 时可能回0、接口可 claim 不等于设备级 EP0 已全部结束。集成审查最初把所有恢复都要求逐操作持久事务，讨论后收窄：明确基线恢复授权可支持同配置/alternate的CONNECT-only路径；跨配置仍需变更日志，旧只读记录不能静默升级。初版与澄清均保留，不把建议标成实现。
+- 三个新测试文件组合复用旧 journal：六个唯一替换锚包含失败采证，保留原184检查和20秒观察。独立预审发现数字全空白可能误当0，编译前修正并以13个合法/非法输入实际验证；root严格C编译、生成init与片段sh-n、旧SHA漂移拒绝和宿主普通UID运行拒绝均通过。probe只在guest root及固定启动标记下打开两指定字符节点，FIFO只由root probe持有，不向普通CLI继承。静态证据已归档；当前尚无QEMU运行结论。

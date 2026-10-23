@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-23T06:51:32.942644+00:00",
+  "result": "SOURCE_REVIEW_COMPLETE_MECHANISM_EXPERIMENT_RECOMMENDED",
+  "repository_head": "60be074086a164fdd852119a80c26b6949e7646e",
+  "repository_status_at_report": [
+    " M docs/research/physical-crash-recovery-design.md",
+    " M docs/work-log.md"
+  ],
+  "initial_worktree_clean": true,
+  "reviewer_repository_writes": false,
+  "linux": {
+    "tag": "v6.8",
+    "tag_object": "90d1f30371ae3337beb01666b226320728d35c70",
+    "commit": "e8f897f4afef0031fe618a8e94127a0934896aba",
+    "signature_verified": false,
+    "sources": [
+      {
+        "path": "drivers/usb/core/devio.c",
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/drivers__usb__core__devio.c",
+        "bytes": 73143,
+        "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+        "git_blob": "3beb6a862e8084d97c619aacd32a624f1f6db3ce",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c",
+        "git_blob_verified": true
+      },
+      {
+        "path": "drivers/usb/core/driver.c",
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/drivers__usb__core__driver.c",
+        "bytes": 59236,
+        "sha256": "2f81e953001354db884b6ce1624839d64399acef0150a14cf357ae77cb2aca37",
+        "git_blob": "e01b1913d02bf68aa3dd3ad4e3a30adb11585c5f",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/driver.c",
+        "git_blob_verified": true
+      },
+      {
+        "path": "fs/file_table.c",
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/fs__file_table.c",
+        "bytes": 12571,
+        "sha256": "b27545c59c85415f64f4712b226f99ab4947aa5ece376c45095028d67404f9e0",
+        "git_blob": "b991f90571b4d3089a0c00884fea3e38f317b1da",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file_table.c",
+        "git_blob_verified": true
+      },
+      {
+        "path": "fs/file.c",
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/fs__file.c",
+        "bytes": 36885,
+        "sha256": "c129e331b9042443bcd516d8fda58f58c755da41b70b94097d5ad7a9412acf43",
+        "git_blob": "3b683b9101d841b65f568e946915acc565e8b90a",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file.c",
+        "git_blob_verified": true
+      },
+      {
+        "path": "kernel/exit.c",
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/kernel__exit.c",
+        "bytes": 48977,
+        "sha256": "c7a2878deada686a04be224f8b5185ad022a995a297229ff8b43e8c3b53f2af9",
+        "git_blob": "dfb963d2f862ada6a2f06259c6df4923272cb218",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/kernel/exit.c",
+        "git_blob_verified": true
+      },
+      {
+        "path": "drivers/usb/core/message.c",
+        "local": "/tmp/rustusb-guardian-linux-sources-20261023/drivers__usb__core__message.c",
+        "git_blob": "077dfe48d01c1cb2ab807197450daae79d56c59a",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/message.c",
+        "bytes": 75012,
+        "sha256": "d481c175d4ad5607c328664f9be6059368b0eced3660d4bc223f98540c5a2eba",
+        "lines": 2460,
+        "git_blob_verified": true
+      },
+      {
+        "path": "drivers/usb/core/usb.c",
+        "local": "/tmp/rustusb-guardian-linux-sources-20261023/drivers__usb__core__usb.c",
+        "git_blob": "dc8d9228a5e759775cc16b0a1bbacf514235b396",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/usb.c",
+        "bytes": 33057,
+        "sha256": "34b2f91cfe767e25a7d549555b72f0f8a84e3f59ef803cc86d2daf2cc8663e14",
+        "lines": 1153,
+        "git_blob_verified": true
+      }
+    ]
+  },
+  "current_nusb": {
+    "version": "0.2.8",
+    "upstream_commit": "c80218d342740321190436bc45304ebbbf16bef0",
+    "archive_sha256": "03fba503685f5c3e9f6a11ff9711c16086ab6beacaa6ad3df9e217a91a8d4c82",
+    "patch_sha256": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623",
+    "new_unsafe_required_for_existing_B_operations": false
+  },
+  "local_code_sources": [
+    {
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "bytes": 14006,
+      "sha256": "3e53315a738289671ee2d78d676ccb245cb15e68a155477b402ee7318670e930"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "bytes": 12458,
+      "sha256": "ad2c67a46c4e013165ec5f365ae85ca5de1edf070d5543c98d21a7f3912d2f0b"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "bytes": 60427,
+      "sha256": "97ecd3229eeed5e8191a5f57a756e2326d6aa6100c76ea1e82b005a81bfd6f1a"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/journal.rs",
+      "bytes": 39018,
+      "sha256": "52d4e5fa87863326bc32d6d7eba8b14d4ed27e8199dbf60b4f4a6989b2f21730"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+      "bytes": 55625,
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "bytes": 31142,
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/safety.rs",
+      "bytes": 11175,
+      "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2"
+    },
+    {
+      "path": "vendor/nusb/src/device.rs",
+      "bytes": 40877,
+      "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289"
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "bytes": 46376,
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "bytes": 7670,
+      "sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011"
+    },
+    {
+      "path": "vendor/nusb/RUSTUSB-PROVENANCE.json",
+      "bytes": 18409,
+      "sha256": "ce9db7b1a06ca38da3dd39d6e105a38e6dba5158f598dd091ac09e72198a9593"
+    }
+  ],
+  "facts": [
+    {
+      "id": "independent_open",
+      "path": "devio.c",
+      "lines": "1032-1087",
+      "conclusion": "Each independent open has separate usb_dev_state; B is independent recovery authority, not A completion/release authority.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "last_release",
+      "path": "devio.c",
+      "lines": "1089-1123;660-700",
+      "conclusion": "A release holds USB device lock, releases A claims and kills all A async URBs; it does not reconnect remembered drivers.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "safe_claim",
+      "path": "devio.c + driver.c",
+      "lines": "779-850;538-596",
+      "conclusion": "Plain claim rejects any existing driver with EBUSY; it cannot steal A/C but is a mutation.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "safe_CONNECT_not_driver_selection",
+      "path": "devio.c",
+      "lines": "2316-2370",
+      "conclusion": "CONNECT probes only an unbound interface; existing driver is EBUSY. No original-driver selector exists.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "parent_lock",
+      "path": "devio.c + driver.c",
+      "lines": "2596-2615;2034-2039",
+      "conclusion": "Ioctl device lock and USB bus parent-lock policy protect the actual ownership check/action, not permanent userspace exclusion.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "configuration",
+      "path": "devio.c + message.c",
+      "lines": "1543-1589;2186-2214",
+      "conclusion": "All currently bound interfaces, including B, block SETCONFIG; successful configuration installs/probes interfaces and may claim siblings/change alt.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "alternate_release",
+      "path": "devio.c + driver.c",
+      "lines": "1526-1541;431-517",
+      "conclusion": "SETINTERFACE auto-claims; usbfs release/unbind normally returns alt0, so None+nonzero-alt is not solved by temporary claim/set/release.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "async_control_scope",
+      "path": "devio.c",
+      "lines": "1615-1687;457-470;2040-2127",
+      "conclusion": "EP0 may use ifnum=-1; per-interface cleanup and B reaping cannot certify/consume old A device-level work.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "DROP_limit",
+      "path": "devio.c",
+      "lines": "779-795;878-934;1499-1523;2316-2328;2460-2493;2534-2550",
+      "conclusion": "DROP is partial attenuation: mask excludes future claims but not already-owned, vendor/device control or general SETCONFIG; it blocks CONNECT and can break re-import lifecycle.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    },
+    {
+      "id": "exit_order",
+      "path": "kernel/exit.c + fs/file_table.c",
+      "lines": "866-891;425-447",
+      "conclusion": "Known controlled file-table references can be sequenced with wait/last keeper close; delayed fput and untracked references remain explicit boundaries, not reasons to abandon the controlled experiment.",
+      "kind": "fixed-source fact / explicitly bounded inference"
+    }
+  ],
+  "recommendation": {
+    "next_step": "Guest-only independent B / retained dup-A control / external independent C mechanism experiment. No production code change in this review.",
+    "minimal_positive": "After controlled old-A retirement, same original configuration and alt0, CONNECT only formerly owned now-unbound original-driver interfaces through B; independently verify full original state before any management retirement.",
+    "forbidden_recovery_shortcuts": [
+      "DISCONNECT or DISCONNECT_CLAIM to force external ownership away",
+      "B REAP of old A pointer-based completions",
+      "SETCONFIG while any interface is still bound",
+      "Assume DROP is a Control/configuration allowlist or revocation boundary",
+      "Assume CONNECT can select only the saved original driver"
+    ],
+    "normal_multiconfiguration_preserved": true,
+    "future_persistence_needed": [
+      "Confirmed owned-interface scope",
+      "Write-ahead configuration/alternate/claim intent",
+      "Terminal operation acknowledgment and last explainable configuration",
+      "Quarantine of unknown operations or active owner; no blind rollback"
+    ]
+  },
+  "driver_selection_alternative": {
+    "CONNECT": "FD-anchored to original usb_device, but general auto-probe can choose a newly registered matching driver/quirk before final validation detects mismatch.",
+    "specific_sysfs_bind": "Potentially more precise target driver, but interface-name path is not FD-anchored and pre/post generation checks cannot eliminate a replacement race.",
+    "bind_store_exact_source_audited": false,
+    "reason": "GitHub connector fixed bus.c request and primary web request both returned429; no local fixed-source cache found. No repeated retries or production selection.",
+    "chosen_for_this_round": false
+  },
+  "experiments_not_executed": [
+    "A real HID/35B duplex I/O, independent B busy and no-owner release behavior",
+    "Retained A duplicate R keeps B busy after worker wait137; closeR then B recovery",
+    "Post-recovery actual new service I/O and normal cleanup",
+    "External C ownership remains busy and C I/O unaffected",
+    "Later separate config/alternate/DROP matrices without dropping existing normal functionality"
+  ],
+  "boundaries": [
+    "No Cargo/QEMU/USB/ptrace/module/network experiment ran",
+    "No host USB recovery attempted",
+    "No automatic restoration product or FD revocation implemented/claimed",
+    "Controlled worker/reference trust boundary is explicit; arbitrary forwarded duplicate retirement not proved",
+    "CONNECT post-validation does not undo an unexpected probe mutation",
+    "Current journal v1 baseline alone is not a dynamic operation authorization log",
+    "Kernel source version is not identical to Ubuntu6.8.0-106-generic build",
+    "No GPL source copied into MIT product code"
+  ],
+  "markdown": {
+    "path": "/tmp/rustusb-guardian-linux-review-20261023.md",
+    "bytes": 12479,
+    "sha256": "825ab204c612efcec24823efa4036464bb2bd34bb11192e19283ad726a617d7b"
+  }
+}

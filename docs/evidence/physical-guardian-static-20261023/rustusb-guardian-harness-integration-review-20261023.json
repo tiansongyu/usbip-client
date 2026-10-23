@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "reviewer": "independent agent /root/journal_integration_review",
+  "created_at_utc": "2026-10-23T07:02:55.615356+00:00",
+  "result": "PASS_READ_ONLY_SOURCE_REVIEW",
+  "head": "60be074086a164fdd852119a80c26b6949e7646e",
+  "working_tree_status": [
+    " M docs/research/physical-crash-recovery-design.md",
+    " M docs/work-log.md",
+    "?? docs/evidence/physical-guardian-design-20261023/",
+    "?? scripts/qemu/guest-guardian-fragments.sh",
+    "?? scripts/qemu/run-guardian-qemu.py",
+    "?? scripts/qemu/usbfs-guardian-probe.c"
+  ],
+  "scope": "Disposable QEMU guest-root independent USBFS open-file-description mechanism harness. No production automatic recovery implementation is reviewed or implied.",
+  "files": {
+    "scripts/qemu/run-guardian-qemu.py": {
+      "sha256": "34871f0670685555f27e38cfe24f092f5ccfcac27a2b2b08e03d8360c268058e",
+      "bytes": 15052,
+      "lines": 224
+    },
+    "scripts/qemu/guest-guardian-fragments.sh": {
+      "sha256": "108c830470d211bbef207b63d22f202515746c4cc1222ec6e3ffd9811323c3b9",
+      "bytes": 10943,
+      "lines": 176
+    },
+    "scripts/qemu/usbfs-guardian-probe.c": {
+      "sha256": "2b18e7bbb718ded37819db9570e45547c4298b1906289028017c95a491da1018",
+      "bytes": 15159,
+      "lines": 276
+    },
+    "scripts/qemu/run-journal-qemu.py": {
+      "sha256": "1cefbc14bc45c9e9b5c9f6f0d9784be834fe3ee5856f8bc2937b7baabbbc01aa",
+      "bytes": 33373,
+      "lines": 440
+    },
+    "scripts/qemu/guest-journal-init.sh": {
+      "sha256": "2236c3080d17e447c4d9cdec495609ab6c7d3976d6c92306e3b1286e9d94d8d4",
+      "bytes": 32620,
+      "lines": 511
+    }
+  },
+  "method": [
+    "Read complete new C probe, guest fragments, and Python wrapper as text; inspect original journal init and verifier integration paths.",
+    "Trace exact command and observation sequence, lifecycle ownership, same-generation receipt checks, retained duplicate and independent B/C descriptions, failure collection, fixed source hashes and source/binary guards.",
+    "No import or execution of runner, generate_init or verify; no syntax-check, compiler, Cargo, QEMU, hardware access, installation or repository mutation by this reviewer."
+  ],
+  "mustfix": [],
+  "resolved_before_final_review": [
+    {
+      "issue": "All-whitespace numeric input could otherwise be mistaken for zero.",
+      "resolution": "C number() now requires a decimal/hex digit and end != text.",
+      "source": "scripts/qemu/usbfs-guardian-probe.c:50"
+    },
+    {
+      "issue": "Failure must retain immediate guardian primary observations instead of only final summary.",
+      "resolution": "Exact replacement extends original EXIT failure diagnostic file list with guardian probe log, raw records, replies, pending, waits, full interfaces and FD observations. Original first-failure marker and host capture remain.",
+      "source": "scripts/qemu/run-guardian-qemu.py:39"
+    },
+    {
+      "issue": "Successful CLAIM/RELEASE must have actual rc zero; CONNECT permits nonnegative driver attach result.",
+      "resolution": "Guest checks and host verifier both distinguish rc==0 for claim/release from rc>=0 for connect, and require errno==0.",
+      "source": "scripts/qemu/guest-guardian-fragments.sh:38; scripts/qemu/run-guardian-qemu.py:123"
+    }
+  ],
+  "findings": [
+    {
+      "topic": "Composition and original assertions",
+      "result": "PASS_SOURCE",
+      "facts": "Six exact single-occurrence anchors compose against the fixed original guest SHA. They extend failure diagnostics, insert B startup/arm/post-kill work, replace only the already-consumed killed-child wait, and replace the two administrator sysfs binds with B CONNECT restoration. Original 20-second post-kill null observation, same-generation metadata, immutable pending records, helper restart and root/ordinary refusal checks, reconciliation, third actual I/O and final normal close remain; unchanged base verifier runs first and its 184 checks are retained.",
+      "sources": [
+        "scripts/qemu/run-guardian-qemu.py:20",
+        "scripts/qemu/run-guardian-qemu.py:34",
+        "scripts/qemu/run-guardian-qemu.py:67",
+        "scripts/qemu/guest-journal-init.sh:330",
+        "scripts/qemu/guest-journal-init.sh:390"
+      ]
+    },
+    {
+      "topic": "Independent OFDs and owner identity",
+      "result": "PASS_SOURCE",
+      "facts": "B/C each use real open with NOFOLLOW and CLOEXEC and fixed root0600 receipt verification. D is actual pidfd_getfd duplicate of live A; owner PID/starttime/exe/all UIDs/capabilities are checked before and after. kcmp actual results require A=D and B distinct from A/D, then B distinct from C. C is a distinct OFD in the same probe, explicitly disclosed as not a separate process.",
+      "sources": [
+        "scripts/qemu/usbfs-guardian-probe.c:84",
+        "scripts/qemu/usbfs-guardian-probe.c:144",
+        "scripts/qemu/usbfs-guardian-probe.c:198",
+        "scripts/qemu/run-guardian-qemu.py:119",
+        "scripts/qemu/run-guardian-qemu.py:149"
+      ]
+    },
+    {
+      "topic": "Unique wait and retained duplicate refusal",
+      "result": "PASS_SOURCE",
+      "facts": "SIGKILL remains the single original UID1000 send. guardian_after_kill consumes the child wait once and records actual 137 before D release; original later wait becomes a read of that recorded value. A absence does not authorize cleanup: D retains usbfs ownership and B CLAIM/CONNECT must both EBUSY. After explicit D close/F_GETFD EBADF, B remains open and may claim its own interfaces.",
+      "sources": [
+        "scripts/qemu/guest-guardian-fragments.sh:116",
+        "scripts/qemu/run-guardian-qemu.py:48",
+        "scripts/qemu/run-guardian-qemu.py:115",
+        "scripts/qemu/usbfs-guardian-probe.c:160"
+      ]
+    },
+    {
+      "topic": "Nonstealing ownership and same-generation state",
+      "result": "PASS_SOURCE",
+      "facts": "Probe only plain CLAIMINTERFACE/RELEASEINTERFACE and USBDEVFS_IOCTL CONNECT; no detach, disconnect-claim, config/alt change, reset or sysfs bind write. Claim flags change only on actual success; RELEASE requires own claim, CONNECT refuses own B claim. Full interface set is independently enumerated, fixed config1/alt0 plus node and sysfs generation remain checked. External C holds claims while B CLAIM/CONNECT are required EBUSY, then C alone releases/closes.",
+      "sources": [
+        "scripts/qemu/usbfs-guardian-probe.c:107",
+        "scripts/qemu/usbfs-guardian-probe.c:237",
+        "scripts/qemu/guest-guardian-fragments.sh:49",
+        "scripts/qemu/guest-guardian-fragments.sh:143",
+        "scripts/qemu/run-guardian-qemu.py:101"
+      ]
+    },
+    {
+      "topic": "Lease baseline and retirement order",
+      "result": "PASS_SOURCE",
+      "facts": "Every guardian observation compares current API pending and on-disk record arrays with the original killed-pending journal records (or empty before import), including original owner/baseline. B restoration must equal complete original driver/config/interface/alt state. Probe explicitly closes both B, verifies EBADF, exits0 and is waited before original root read-only reconcile, record retirement and third actual I/O.",
+      "sources": [
+        "scripts/qemu/run-guardian-qemu.py:95",
+        "scripts/qemu/run-guardian-qemu.py:110",
+        "scripts/qemu/guest-guardian-fragments.sh:156",
+        "scripts/qemu/run-guardian-qemu.py:146"
+      ]
+    },
+    {
+      "topic": "Control inheritance and bounds",
+      "result": "PASS_SOURCE",
+      "facts": "Only root probe opens control FIFO read/write as fd0; init retains no control FIFO FD for later ordinary CLI inheritance. Probe child closes inherited service3 and control9 before exec. FIFO is in root0700 directory with0600 mode. Writes use timeout3, replies have5-second budget, process waits are bounded, probe line is256 bytes with <=8 tokens, all23 expected commands and24 complete two-device snapshots are checked; outer original QEMU deadline remains.",
+      "sources": [
+        "scripts/qemu/guest-guardian-fragments.sh:21",
+        "scripts/qemu/guest-guardian-fragments.sh:84",
+        "scripts/qemu/usbfs-guardian-probe.c:190",
+        "scripts/qemu/run-guardian-qemu.py:135"
+      ]
+    },
+    {
+      "topic": "Actual errno and frozen evidence",
+      "result": "PASS_SOURCE",
+      "facts": "Each ioctl clears errno immediately before syscall and captures rc/errno immediately afterward; prints primary ioctl event before snapshot. kcmp, close/F_GETFD and real waits are logged rather than inferred. Fixed original hashes, all three own-source copies/fingerprints, generated init and exact replacement ledger, actual probe/copied ELF SHA, compiler command/version/UAPI hashes, original binary/commit/source guards are preserved. Source equality alone is not runtime success.",
+      "sources": [
+        "scripts/qemu/usbfs-guardian-probe.c:249",
+        "scripts/qemu/run-guardian-qemu.py:162",
+        "scripts/qemu/run-guardian-qemu.py:171",
+        "scripts/qemu/run-guardian-qemu.py:178",
+        "scripts/qemu/run-journal-qemu.py:421"
+      ]
+    }
+  ],
+  "nonblocking_boundaries": [
+    "This review establishes source-level coherence only. Parent must compile and execute the actual isolated QEMU test and preserve any first failure; no PASS runtime conclusion is made here.",
+    "Fixture is fixed HID+FTDI, configuration1, one interface each, alt0. It does not verify ECM/nonzero-alt release behavior, cross-configuration recovery, hotplug/generation replacement, arbitrary external driver competition, or physical hardware G1/G2.",
+    "External C is another open file description inside the same trusted guest-root probe, not another process. The test demonstrates per-OFD USBFS ownership and refusal, not global revocation or arbitrary leaked duplicate detection.",
+    "Guardian B survives the product helper restart in a separate experiment process; this is not a production guardian lifecycle or guardian process restart test.",
+    "Kernel pidfd_getfd/kcmp availability and permission are prerequisites; their actual runtime errors are fatal evidence, not permission bypass or successful recovery.",
+    "CONNECT asks the kernel to bind a matching driver. Success must still be checked against exact original baseline; the fixture does not establish driver-selection exclusivity under arbitrary administrative changes.",
+    "Old schema1 remains read-only/manual authorization. Successful guest-root experiment must not be described as production automatic recovery, schema2 activation, FD revocation, killed-backend terminal resource proof, or completed hardware validation."
+  ],
+  "recommended_next_validation": [
+    "Parent-owned strict C build and static generated-init checks.",
+    "Parent-owned fresh QEMU run: all original184 checks plus added guardian checks, both guests exit0, third real HID key/FTDI exact bytes, complete baseline and journal retirement, actual wait137 and probe wait0, source/ELF/commit guard intact.",
+    "Independent final raw-log review against frozen sources after run; preserve failure attempts and first-failure artifacts rather than replacing them."
+  ],
+  "reviewer_executed_build": false,
+  "reviewer_executed_cargo": false,
+  "reviewer_executed_qemu": false,
+  "reviewer_executed_runner_or_verifier": false,
+  "reviewer_modified_repository": false,
+  "parent_reported_validation": {
+    "source": "/root collaboration message, not executed by this reviewer",
+    "reported_result": "PASS",
+    "checks": [
+      "strict cc build of actual probe and number-only wrapper",
+      "13 valid/invalid number cases",
+      "ordinary host UID1000 guard rejection",
+      "both shell syntax checks",
+      "six composition anchors and source-drift rejection"
+    ],
+    "source_sha_matches_review": true,
+    "qemu_run_completed_at_review": false
+  }
+}

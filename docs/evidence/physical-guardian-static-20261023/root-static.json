@@ -1,0 +1,215 @@
+{
+  "result": "PASS",
+  "source_sha256": {
+    "run-guardian-qemu.py": "34871f0670685555f27e38cfe24f092f5ccfcac27a2b2b08e03d8360c268058e",
+    "guest-guardian-fragments.sh": "108c830470d211bbef207b63d22f202515746c4cc1222ec6e3ffd9811323c3b9",
+    "usbfs-guardian-probe.c": "2b18e7bbb718ded37819db9570e45547c4298b1906289028017c95a491da1018"
+  },
+  "commands": [
+    {
+      "name": "probe-build",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/usbfs-guardian-probe.c",
+        "-o",
+        "/tmp/rustusb-guardian-root-static-20261023/usbfs-guardian-probe"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "number-only-build",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "/tmp/rustusb-guardian-root-static-20261023/number-only.c",
+        "-o",
+        "/tmp/rustusb-guardian-root-static-20261023/number-only"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "generated-shell-syntax",
+      "command": [
+        "sh",
+        "-n",
+        "/tmp/rustusb-guardian-root-static-20261023/generated-init.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "fragments-shell-syntax",
+      "command": [
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-guardian-fragments.sh"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "number_parser_cases": [
+    {
+      "value": "0",
+      "base": 10,
+      "expected": 0,
+      "exit_code": 0,
+      "stdout": "0\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": " \t0\n",
+      "base": 10,
+      "expected": 0,
+      "exit_code": 0,
+      "stdout": "0\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "1",
+      "base": 10,
+      "expected": 1,
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": " ff\n",
+      "base": 16,
+      "expected": 255,
+      "exit_code": 0,
+      "stdout": "255\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "18446744073709551615",
+      "base": 10,
+      "expected": 18446744073709551615,
+      "exit_code": 0,
+      "stdout": "18446744073709551615\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"unsigned-number\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": " \t\n",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"unsigned-number\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "-0",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"unsigned-number\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "+0",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"unsigned-number\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "18446744073709551616",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"number-overflow\",\"errno\":34}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "x",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"unsigned-number\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "0x",
+      "base": 16,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"number-trailing-data\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "value": "0junk",
+      "base": 10,
+      "expected": null,
+      "exit_code": 1,
+      "stdout": "RUSTUSB_GUARDIAN_PROBE {\"event\":\"fatal\",\"seq\":0,\"reason\":\"number-trailing-data\",\"errno\":22}\n",
+      "stderr": "",
+      "passed": true
+    }
+  ],
+  "generated_init_sha256": "b050eb23c217d710989bd668df8b39f0f9fb58a1a9db370a880ea50b61a201a1",
+  "composition": [
+    {
+      "before": "/tmp/client-outcomes.jsonl; do\n",
+      "after": "/tmp/client-outcomes.jsonl /tmp/guardian-probe.log /tmp/guardian-probe.jsonl /tmp/guardian-record.json /tmp/guardian-reply.json /tmp/guardian-pending.json /tmp/guardian-kill-wait.json /tmp/guardian-final-wait.json /tmp/guardian-full-interfaces.json /tmp/guardian-fds.json; do\n",
+      "matches": 1
+    },
+    {
+      "before": "    STAGE=kill-service\n    start_ready killed\n",
+      "after": "    STAGE=kill-service\n    . /usr/lib/guest-guardian-fragments.sh\n    guardian_start\n    start_ready killed\n",
+      "matches": 1
+    },
+    {
+      "before": "    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n",
+      "after": "    guardian_arm\n    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n",
+      "matches": 1
+    },
+    {
+      "before": "    send_control 192.0.2.2 cycle-2-killed\n",
+      "after": "    send_control 192.0.2.2 cycle-2-killed\n    guardian_after_kill\n",
+      "matches": 1
+    },
+    {
+      "before": "    if wait \"$KILL_PID\"; then code=0; else code=$?; fi\n",
+      "after": "    code=$GUARDIAN_KILL_WAIT # Actual child wait already recorded exactly once.\n",
+      "matches": 1
+    },
+    {
+      "before": "    printf '%s' \"$HID_BUS:1.0\" > /sys/bus/usb/drivers/usbhid/bind\n    printf '%s' \"$FTDI_BUS:1.0\" > /sys/bus/usb/drivers/ftdi_sio/bind\n",
+      "after": "    guardian_restore\n",
+      "matches": 1
+    }
+  ],
+  "host_probe_refused_before_usb": true,
+  "source_guard": true,
+  "scope": "C compilation, numeric parser only, host UID refusal, guest composition and shell syntax; no QEMU/USB test"
+}
