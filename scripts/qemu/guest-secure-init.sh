@@ -27,27 +27,60 @@ stty -F /dev/ttyS2 raw -echo 115200 clocal -hupcl
 exec > /dev/ttyS1 2>&1
 exec 5<> /dev/ttyS2
 dump_artifacts() {
+    artifact_failed=0
+    dump_root=/run/rustusb-artifact-dump
+    if ! mkdir -p "$dump_root" || ! chmod 700 "$dump_root"; then
+        echo 'SECURE_ARTIFACT_ERROR dump-directory unavailable=true'
+        return 1
+    fi
     for file in /tmp/*; do
         [ -f "$file" ] || continue
         name=$(basename "$file")
-        size=$(wc -c < "$file")
-        if [ "$size" -gt 1048576 ]; then echo "SECURE_ARTIFACT_OVERSIZE $name $size"; continue; fi
-        echo "SECURE_ARTIFACT_BEGIN $name $size"
-        base64 "$file"
-        echo "SECURE_ARTIFACT_END $name"
+        if cp "$file" "$dump_root/raw"; then :; else
+            copy_status=$?
+            echo "SECURE_ARTIFACT_ERROR $name copy_exit=$copy_status"
+            artifact_failed=1
+            continue
+        fi
+        size=$(wc -c < "$dump_root/raw")
+        if [ "$size" -gt 1048576 ]; then echo "SECURE_ARTIFACT_OVERSIZE $name $size"; artifact_failed=1; continue; fi
+        # Complete encoding outside the enumerated directory before opening a
+        # block, so one failure cannot corrupt extraction of later artifacts.
+        if /usr/bin/base64 "$dump_root/raw" > "$dump_root/encoded"; then
+            echo "SECURE_ARTIFACT_BEGIN $name $size"
+            cat "$dump_root/encoded"
+            echo "SECURE_ARTIFACT_END $name"
+        else
+            encoder_status=$?
+            echo "SECURE_ARTIFACT_ERROR $name encoder_exit=$encoder_status"
+            artifact_failed=1
+        fi
     done
+    return "$artifact_failed"
 }
 cleanup() {
     status=$?
     trap - EXIT
+    # A diagnostic failure must not replace the original failure, skip later
+    # files or exit PID1 before poweroff. Keep each encoder failure explicit.
+    set +e
     if [ "$status" != 0 ]; then
         echo "RUSTUSB_SECURE_RESULT: FAIL role=$ROLE stage=$STAGE exit=$status"
         dmesg > /tmp/failure-dmesg.log
         cat /proc/net/tcp /proc/net/tcp6 > /tmp/failure-tcp.log
     fi
     dump_artifacts
+    artifact_status=$?
+    if [ "$artifact_status" != 0 ]; then
+        echo "RUSTUSB_SECURE_RESULT: FAIL role=$ROLE stage=artifact-dump original_exit=$status artifact_exit=$artifact_status"
+    fi
     sync
     poweroff -f
+    poweroff_status=$?
+    echo "SECURE_POWEROFF_RETURNED role=$ROLE original_exit=$status artifact_exit=$artifact_status poweroff_exit=$poweroff_status"
+    # The bounded host runner will terminate this failed guest. Never exit PID1
+    # and manufacture a kernel panic merely because the final syscall returned.
+    while :; do sleep 1; done
 }
 trap cleanup EXIT
 echo "SECURE_BOOT role=$ROLE backend=$BACKEND family=$FAMILY kernel=$(uname -r)"

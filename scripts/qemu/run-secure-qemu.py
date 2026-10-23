@@ -28,6 +28,12 @@ import time
 
 REPO = Path(__file__).resolve().parents[2]
 OWN = ["run-secure-qemu.py", "guest-secure-init.sh"]
+REQUIRED_APPLETS = {
+    "sh", "mount", "mkdir", "stty", "cat", "basename", "wc", "dmesg",
+    "sync", "poweroff", "grep", "seq", "sleep", "date", "insmod", "awk",
+    "sha256sum", "chmod", "cp", "readlink", "sed", "stat", "timeout", "tee",
+    "rm", "chown", "mkfifo", "cmp", "find", "head", "dd", "od", "tr", "uname",
+}
 
 
 def module(name, filename):
@@ -98,6 +104,53 @@ def credentials(work, evidence):
     return directory
 
 
+def validate_payload(root):
+    """Check the actual copied applet binary, links and every guest executable dependency."""
+    busybox = root / "bin/busybox"
+    available = set(subprocess.check_output([str(busybox), "--list"], text=True).splitlines())
+    missing = sorted(REQUIRED_APPLETS - available)
+    if missing:
+        raise RuntimeError(f"copied BusyBox lacks required guest applets: {missing}")
+    for name in sorted(REQUIRED_APPLETS):
+        path = root / "bin" / name
+        if not path.is_symlink() or path.resolve() != busybox.resolve():
+            raise RuntimeError(f"required guest applet link is missing or differs: {name}")
+    dependencies = {}
+    programs = [busybox, *sorted((root / "usr/bin").iterdir())]
+    for program in programs:
+        if not program.is_file() or program.read_bytes()[:4] != b"\x7fELF":
+            raise RuntimeError(f"guest program is not an actual ELF: {program.relative_to(root)}")
+        result = subprocess.run(["ldd", str(program)], capture_output=True, text=True)
+        output = result.stdout + result.stderr
+        if "not found" in output:
+            raise RuntimeError(f"guest ELF has an unresolved host dependency: {program.name}")
+        libraries = {}
+        for name in sorted(set(re.findall(r"/[^\s()]+", output))):
+            library = Path(name)
+            if not library.is_file():
+                continue
+            copied = root / str(library).lstrip("/")
+            if not copied.is_file() or digest(copied) != digest(library):
+                raise RuntimeError(f"guest dependency absent or changed: {program.name}: {library.name}")
+            libraries[str(library)] = digest(copied)
+        if result.returncode and not any(marker in output for marker in ["not a dynamic executable", "statically linked"]):
+            raise RuntimeError(f"cannot inspect guest ELF dependencies: {program.name}")
+        dependencies[str(program.relative_to(root))] = {"sha256": digest(program), "libraries": libraries}
+    required_programs = {"rustusb", "rustusb-helper", "jq", "setpriv", "nc-openbsd", "ip", "base64", "usbip", "usbipd"}
+    if not required_programs <= {program.name for program in programs}:
+        raise RuntimeError("required standalone guest program missing")
+    # Execute only the trusted coreutils encoder, using a fixed public fixture.
+    # No guest init, USB utility, product executable or probe is executed here.
+    fixture = b"RustUSB diagnostic encoder preflight\n\x00\xff"
+    encoded = subprocess.check_output([str(root / "usr/bin/base64")], input=fixture)
+    if base64.b64decode(encoded, validate=False) != fixture:
+        raise RuntimeError("copied diagnostic encoder failed exact-byte round trip")
+    return {"scope": "actual copied ELF/applet/dependency checks and encoder fixture only; no guest/USB execution",
+            "busybox_applets": sorted(available), "required_applets": sorted(REQUIRED_APPLETS),
+            "standalone_programs": sorted(required_programs), "executables": dependencies,
+            "encoder_fixture_sha256": hashlib.sha256(fixture).hexdigest()}
+
+
 def payload(work, kernel, certificates, role):
     if role not in ("server", "client"):
         raise RuntimeError("unknown payload role")
@@ -105,7 +158,8 @@ def payload(work, kernel, certificates, role):
     root = work / "root"
     shutil.copyfile(REPO / "scripts/qemu/guest-secure-init.sh", root / "init")
     (root / "init").chmod(0o755)
-    for name, path in [("nc-openbsd", Path("/bin/nc.openbsd")), ("ip", Path(shutil.which("ip") or "/usr/sbin/ip"))]:
+    for name, path in [("nc-openbsd", Path("/bin/nc.openbsd")), ("ip", Path(shutil.which("ip") or "/usr/sbin/ip")),
+                       ("base64", Path(shutil.which("base64") or "/usr/bin/base64"))]:
         native.copy_binary(path, f"/usr/bin/{name}", root)
     # CDC ACM is the only module absent from the shared Native payload builder.
     tree = Path("/lib/modules") / kernel
@@ -130,6 +184,8 @@ def payload(work, kernel, certificates, role):
     if (config / f"{other}-key.der").exists():
         raise RuntimeError("opposite role private key entered payload")
     (root / "etc/passwd").write_text("root:x:0:0:root:/:/bin/sh\nlegacy:x:1000:1000:legacy:/:/sbin/nologin\nbroker:x:2000:2000:broker:/:/sbin/nologin\n")
+    preflight = validate_payload(root)
+    (work / "payload-dependencies.json").write_text(json.dumps(preflight, indent=2) + "\n")
     names = b".\0" + b"\0".join(str(path.relative_to(root)).encode() for path in root.rglob("*")) + b"\0"
     archive = work / "secure-initramfs.cpio.gz"
     packed = subprocess.run(["cpio", "--null", "-o", "--format=newc", "--owner=0:0"], input=names, cwd=root, capture_output=True, check=True)
@@ -318,6 +374,8 @@ def verify(evidence, args):
         if f"RUSTUSB_SECURE_RESULT: PASS role={role}" not in log or "RUSTUSB_SECURE_RESULT: FAIL" in log:
             raise RuntimeError(f"missing terminal guest success: {role}")
         if "SECURE_ARTIFACT_OVERSIZE" in log: raise RuntimeError("guest artifact was not fully retained")
+        if "SECURE_ARTIFACT_ERROR" in log or "SECURE_POWEROFF_RETURNED" in log:
+            raise RuntimeError("guest collection or poweroff failed")
         if f"SECURE_CREDENTIAL_ISOLATION role={role} own_key=true opposite_key=false ca_key=false" not in log:
             raise RuntimeError("guest role-specific credential isolation assertion absent")
         if "SECURE_RNG_RTC_READY crng=true " not in log:
@@ -448,6 +506,7 @@ def main():
                 role_work = work / f"{role}-payload"
                 role_work.mkdir()
                 archives[role], summary["payload_sha256"][role] = payload(role_work, args.kernel, certs, role)
+                shutil.copyfile(role_work / "payload-dependencies.json", evidence / f"{role}-payload-dependencies.json")
                 summary["initramfs_sha256"][role] = digest(archives[role])
                 summary["credential_payloads"][role] = sorted(path.name for path in (role_work / "root/etc/rustusb").iterdir())
                 for name, sha in summary["binary_sha256"].items():

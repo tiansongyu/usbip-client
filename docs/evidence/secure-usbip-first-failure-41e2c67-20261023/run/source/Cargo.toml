@@ -1,0 +1,43 @@
+[workspace]
+members = ["crates/*"]
+exclude = ["vendor/nusb"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97"
+license = "MIT"
+repository = "https://github.com/tiansongyu/usbip-client"
+
+[workspace.dependencies]
+rustusb-core = { path = "crates/rustusb-core" }
+rustusb-protocol = { path = "crates/rustusb-protocol" }
+rustusb-linux = { path = "crates/rustusb-linux" }
+rustusb-native = { path = "crates/rustusb-native" }
+rustusb-daemon = { path = "crates/rustusb-daemon" }
+rustusb-rust-backend = { path = "crates/rustusb-rust-backend" }
+rustusb-transport = { path = "crates/rustusb-transport" }
+nusb = { path = "vendor/nusb", version = "=0.2.8", features = ["tokio"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-util", "time", "process", "sync", "signal", "fs"] }
+clap = { version = "4", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+sha2 = "0.10"
+tempfile = "3"
+rustls = { version = "=0.23.46", default-features = false, features = ["std", "ring"] }
+tokio-rustls = { version = "=0.26.6", default-features = false, features = ["ring"] }
+rcgen = { version = "=0.14.10", default-features = false, features = ["ring"] }
+rustix = { version = "1", features = ["process", "fs"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"

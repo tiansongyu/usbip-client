@@ -405,3 +405,5 @@
 - Native服务端真实export/stub及CLI已落地，管理codec提取到protocol::server共享，protocol/backend定向67项通过；删除该轮发现的一个unused import后，共享四crate严格Clippy通过。完整软件门禁首轮停在default Clippy四个等价条件风格错误，保留原日志并按相同授权语义修正，未把此前215项重归属新服务端。QEMU harness已隔离每端私钥、记录各自ramfs/payload及要求实际CRNG/RTC，静态夹具不计设备运行；Native harness扩展与独立源码审查继续。
 
 - 完整门禁第二轮发现root新增Native管理CLI误调用不存在的helper函数，改用原invoke后第三轮scripts/check.sh exit0：default151/allfeatures225/vendor20共396次、35result、0失败忽略，121选定软件输入前后SHA保持；全部fmt/Clippy/release/严格rustdoc通过。另Native-only secure-transport CLI六项通过，feature tree无Rust engine。helper与共享协议/客户端两个独立源码审查无mustfix，新增英文secure-guide先标实际QEMU待验收，未改硬件或整体Phase完成状态。
+
+- 设计db2d4c8、产品80a21f1及六模式harness41e2c67已正常push。首clean41e2c67 virtual/IPv4实际QEMU FAIL：HID已枚举，第二个serial attach进程提前结束，原因待完整诊断；trap缺少base64导致原始guest文件导出中断并退出PID1，产生真实kernel panic，不能称采集完整或设备运行通过。source/head/clean/binary guard与FAIL分别记账，142份已有原件归档保留；先修采证依赖再定位，不以guest退出或重跑覆盖首FAIL。精确41e2c67软件CI39950528568与Pages39950528577已触发，尚不标运行中job通过。
