@@ -49,6 +49,13 @@ pub enum Request {
         /// Exclusive opaque cursor; omitted for the first page.
         after: Option<SessionId>,
     },
+    /// Read live or explicitly historical health of actual data connections.
+    SessionHealth {
+        /// Exact profile, authorized independently using the Read action.
+        profile: String,
+        /// Exclusive session cursor; at most sixteen observations are returned.
+        after: Option<SessionId>,
+    },
     /// Read lifecycle observations from the bounded retained event window.
     Events {
         /// Fixed profile ID.
@@ -128,6 +135,13 @@ pub enum Response {
         /// At most sixteen entries and at most the protocol byte budget.
         sessions: Vec<Session>,
         /// Last returned ID when additional records remain.
+        next_after: Option<SessionId>,
+    },
+    /// Nonowning data-link observations, separate from USB cleanup proof.
+    SessionHealth {
+        /// At most sixteen observations within the existing response byte budget.
+        sessions: Vec<crate::health::SessionHealth>,
+        /// Last session returned when additional records remain.
         next_after: Option<SessionId>,
     },
     /// Bounded observations with explicit history expiry.

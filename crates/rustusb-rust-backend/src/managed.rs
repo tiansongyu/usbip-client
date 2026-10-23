@@ -99,12 +99,40 @@ pub(crate) async fn accepted<B: ServingBackend>(
     monitor: MonitorWriter,
 ) -> Result<()> {
     let mut server_stop = monitor.stopping();
-    let stream = tokio::select! {
+    let accepted = tokio::select! {
         biased;
         _ = monitor::server_stopped(&mut server_stop) => return Ok(()),
-        result = tls.accept(socket) => result.map_err(|_| Error::Permission("managed mutual TLS authentication failed".into()))?,
+        result = crate::link::accept(&tls, socket) => result?,
     };
-    let peer = stream.peer().clone();
+    let mut owner = accepted.owner;
+    let result = connection(
+        accepted.io,
+        accepted.peer,
+        backend,
+        monitor,
+        accepted.monitor,
+        &mut owner,
+    )
+    .await;
+    let closed = crate::link::finish(&mut owner).await;
+    match closed {
+        Err(error) => Err(error),
+        Ok(()) => result,
+    }
+}
+
+async fn connection<B: ServingBackend>(
+    stream: crate::link::Io,
+    peer: rustusb_transport::VerifiedPeer,
+    backend: B,
+    monitor: MonitorWriter,
+    link_monitor: Option<rustusb_transport::LinkMonitor>,
+    link_owner: &mut Option<rustusb_transport::LinkOwner>,
+) -> Result<()> {
+    let mut server_stop = monitor.stopping();
+    let mut link_ended = link_monitor
+        .as_ref()
+        .map(rustusb_transport::LinkMonitor::ended);
     let access = ConnectionAccess::Authenticated(peer.clone());
     let counters = Counters::new();
     let stream = Counted::new(stream, counters.clone());
@@ -144,12 +172,21 @@ pub(crate) async fn accepted<B: ServingBackend>(
     if !peer.allows(&key) {
         return write_frame(&mut writer, &wire::import_reply(4, None)?).await;
     }
-    let mut tracked =
-        match monitor.begin(key.clone(), peer.principal().to_owned(), counters.clone()) {
-            Ok(tracked) => tracked,
-            Err(_) => return write_frame(&mut writer, &wire::import_reply(2, None)?).await,
-        };
-    if let Err(error) = tracked.admission().await {
+    let mut tracked = match monitor.begin_link(
+        key.clone(),
+        peer.principal().to_owned(),
+        counters.clone(),
+        link_monitor.clone(),
+    ) {
+        Ok(tracked) => tracked,
+        Err(_) => return write_frame(&mut writer, &wire::import_reply(2, None)?).await,
+    };
+    let admission = tokio::select! {
+        biased;
+        error = crate::link::ended(&mut link_ended, link_monitor.as_ref()) => Err(error),
+        result = tracked.admission() => result,
+    };
+    if let Err(error) = admission {
         let category = if tracked.signal.borrow().stop {
             ServerSessionError::Cancelled
         } else if matches!(error, Error::Permission(_)) {
@@ -170,18 +207,35 @@ pub(crate) async fn accepted<B: ServingBackend>(
             )
             .await;
         }
+        drop(reader);
+        drop(writer);
+        let _ = crate::link::finish(link_owner).await;
         tracked.finish(ServerCleanup::NotStarted, Some(category), None)?;
         return Err(error);
     }
     // Recheck the sticky stop immediately before any backend mutation. The
     // atomic ACL/key/bus-id check remains inside backend.claim_managed.
     if tracked.signal.borrow().stop {
+        drop(reader);
+        drop(writer);
+        let closed = crate::link::finish(link_owner).await;
         tracked.finish(
             ServerCleanup::NotStarted,
             Some(ServerSessionError::Cancelled),
             None,
         )?;
-        return Ok(());
+        return closed;
+    }
+    if let Err(error) = crate::link::check(link_monitor.as_ref()) {
+        drop(reader);
+        drop(writer);
+        let _ = crate::link::finish(link_owner).await;
+        tracked.finish(
+            ServerCleanup::NotStarted,
+            Some(monitor::category(&error)),
+            None,
+        )?;
+        return Err(error);
     }
     tracked.phase(ServerSessionPhase::Claiming)?;
     let (terminal, mut completed) = watch::channel(None);
@@ -192,6 +246,7 @@ pub(crate) async fn accepted<B: ServingBackend>(
         tokio::select! {
             biased;
             _ = monitor::stopped(&mut stopping) => Err(Error::State("managed claim stopped; awaiting its supervisor".into())),
+            error = crate::link::ended(&mut link_ended, link_monitor.as_ref()) => Err(error),
             result = &mut claim => result,
             _ = tokio::time::sleep(wire::FRAME_DEADLINE) => Err(Error::Timeout("managed device claim; actual worker remains supervised".into())),
         }
@@ -216,6 +271,8 @@ pub(crate) async fn accepted<B: ServingBackend>(
             }
             drop(reader);
             drop(writer);
+            let link_result = crate::link::finish(link_owner).await;
+            let error = link_result.err().unwrap_or(error);
             let _ = tracked.phase(ServerSessionPhase::Closing);
             let cleanup = claim_cleanup(&mut completed, &mut tracked).await;
             let operation = if stopping.borrow().stop {
@@ -235,18 +292,28 @@ pub(crate) async fn accepted<B: ServingBackend>(
     let operation = async {
         tracked.phase(ServerSessionPhase::Started)?;
         let reply = wire::import_reply(0, Some(&lease.device()))?;
-        interruptible_write(&mut writer, &reply, &mut stopping).await?;
+        tokio::select! {
+            biased;
+            error = crate::link::ended(&mut link_ended, link_monitor.as_ref()) => return Err(error),
+            result = interruptible_write(&mut writer, &reply, &mut stopping) => result?,
+        };
         tracked.phase(ServerSessionPhase::Connected)?;
         counters.enable();
         tokio::select! {
             biased;
             _ = monitor::stopped(&mut stopping) => Ok(()),
+            error = crate::link::ended(&mut link_ended, link_monitor.as_ref()) => Err(error),
             result = imported_connection(&mut *lease, reader, &mut writer) => result,
         }
     }
     .await;
     // The nested actor owned reader; returning/dropping it ends partial frames.
     drop(writer);
+    let link_result = crate::link::finish(link_owner).await;
+    let operation = match link_result {
+        Err(error) => Err(error),
+        Ok(()) => operation,
+    };
     let _ = tracked.phase(ServerSessionPhase::Closing);
     let cleanup = close(&mut *lease, &mut tracked).await;
     let operation_error = operation.as_ref().err().map(monitor::category).or_else(|| {

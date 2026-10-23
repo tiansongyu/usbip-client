@@ -8,6 +8,7 @@
 mod counted;
 mod descriptors;
 mod device;
+mod link;
 mod managed;
 mod monitor;
 #[cfg(all(feature = "physical-nusb", target_os = "linux"))]

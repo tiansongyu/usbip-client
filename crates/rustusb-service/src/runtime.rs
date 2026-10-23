@@ -30,12 +30,69 @@ struct Control {
     stop: watch::Sender<bool>,
     stoppable: bool,
 }
+struct HealthEntry {
+    profile: String,
+    view: crate::health::SessionHealth,
+    reporter: Option<crate::health::HealthReporter>,
+}
 #[derive(Default)]
 pub(crate) struct Controls {
     jobs: BTreeMap<JobId, Control>,
     sessions: BTreeMap<SessionId, Control>,
+    health: BTreeMap<SessionId, HealthEntry>,
+    journal_unhealthy: bool,
 }
 impl Controls {
+    pub fn health(
+        &self,
+        config: &LoadedConfig,
+        uid: u32,
+        profile: &str,
+        after: Option<&SessionId>,
+    ) -> Result<ResponseEnvelope> {
+        config.manifest.authorize(uid, profile, Action::Read)?;
+        let all: Vec<_> = self
+            .health
+            .iter()
+            .filter(|(id, entry)| entry.profile == profile && after.is_none_or(|after| *id > after))
+            .collect();
+        let total = all.len();
+        let mut sessions = Vec::new();
+        let mut bytes = 0usize;
+        for (_, entry) in all.into_iter().take(16) {
+            let mut view = entry.view.clone();
+            if let Some(reporter) = &entry.reporter {
+                view.link = reporter.snapshot()?;
+                view.availability = if view.role == SessionRole::Export {
+                    crate::health::HealthAvailability::NotDataSession
+                } else if view.link.is_some() {
+                    crate::health::HealthAvailability::Live
+                } else {
+                    crate::health::HealthAvailability::NotObserved
+                };
+            }
+            let size = serde_json::to_vec(&view)
+                .map_err(|_| Error::State("agent health encoding".into()))?
+                .len();
+            if bytes + size > 60000 {
+                break;
+            }
+            bytes += size;
+            sessions.push(view);
+        }
+        let next_after = (sessions.len() < total)
+            .then(|| sessions.last().map(|s| s.session_id.clone()))
+            .flatten();
+        Ok(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: !self.journal_unhealthy,
+            response: Response::SessionHealth {
+                sessions,
+                next_after,
+            },
+        })
+    }
+
     pub fn request(&self, config: &LoadedConfig, uid: u32, request: &Request) -> Result<bool> {
         let control = match request {
             Request::StopJob { job_id } => self.jobs.get(job_id),
@@ -140,13 +197,77 @@ impl Runtime {
             next.audit(uid, None, None, None, AuditAction::Recovery, None)?;
             value.persist(next).await?;
         }
+        value.refresh_health()?;
         Ok(value)
+    }
+
+    fn refresh_health(&self) -> Result<()> {
+        use crate::health::{HealthAvailability, SessionHealth};
+        let mut controls = self.controls.lock().map_err(|_| lock_error())?;
+        controls
+            .health
+            .retain(|id, _| self.state.sessions.iter().any(|s| &s.id == id));
+        controls.journal_unhealthy = !self.healthy;
+        for session in &self.state.sessions {
+            let reporter = if !session.terminal && controls.sessions.contains_key(&session.id) {
+                controls
+                    .health
+                    .get(&session.id)
+                    .and_then(|e| e.reporter.clone())
+            } else {
+                None
+            };
+            let link = self
+                .state
+                .link_history
+                .iter()
+                .find(|e| e.session_id == session.id)
+                .and_then(|e| e.link);
+            let availability = if session.role == SessionRole::Export {
+                HealthAvailability::NotDataSession
+            } else if session.instance_id != self.instance {
+                HealthAvailability::PreviousEpoch
+            } else {
+                HealthAvailability::OwnerEnded
+            };
+            controls.health.insert(
+                session.id.clone(),
+                HealthEntry {
+                    profile: session.profile.clone(),
+                    reporter,
+                    view: SessionHealth {
+                        session_id: session.id.clone(),
+                        instance_id: session.instance_id.clone(),
+                        role: session.role,
+                        availability,
+                        link,
+                    },
+                },
+            );
+        }
+        Ok(())
+    }
+    fn checkpoint_links(&self, next: &mut State) -> Result<()> {
+        let controls = self.controls.lock().map_err(|_| lock_error())?;
+        for entry in &mut next.link_history {
+            if let Some(reporter) = controls
+                .health
+                .get(&entry.session_id)
+                .and_then(|e| e.reporter.as_ref())
+            {
+                let after = reporter.snapshot()?;
+                crate::health::check_progress(entry.link, after)?;
+                entry.link = after;
+            }
+        }
+        Ok(())
     }
 
     async fn persist(&mut self, mut next: State) -> Result<()> {
         if !self.healthy {
             return Err(Error::State("agent journal unhealthy".into()));
         }
+        self.checkpoint_links(&mut next)?;
         next.preflight(false)?;
         let stored = next.clone();
         let store = self.store.clone();
@@ -162,10 +283,13 @@ impl Runtime {
         match result {
             Ok(()) => {
                 self.state = next;
-                Ok(())
+                self.refresh_health()
             }
             Err(error) => {
                 self.healthy = false;
+                if let Ok(mut controls) = self.controls.lock() {
+                    controls.journal_unhealthy = true;
+                }
                 Err(error)
             }
         }
@@ -393,6 +517,15 @@ impl Runtime {
                     sessions,
                     next_after,
                 })
+            }
+            Request::SessionHealth { profile, after } => {
+                let envelope = self.controls.lock().map_err(|_| lock_error())?.health(
+                    &self.config,
+                    uid,
+                    &profile,
+                    after.as_ref(),
+                )?;
+                Ok(envelope.response)
             }
             Request::Events { profile, after } => self.events(uid, profile, after, false),
             Request::Audit { profile, after } => self.events(uid, profile, after, true),
@@ -699,6 +832,11 @@ impl Runtime {
             attempts: vec![],
         };
         let mut next = self.state.clone();
+        next.link_history.push(crate::health::LinkHistory {
+            session_id: id.clone(),
+            instance_id: self.instance.clone(),
+            link: None,
+        });
         next.sessions.push(session);
         if let Some(job) = next.jobs.iter_mut().find(|j| j.id == job_id) {
             job.state = JobState::Running;
@@ -734,7 +872,18 @@ impl Runtime {
                     stoppable,
                 },
             );
+        let health = crate::health::HealthReporter::default();
+        if let Some(entry) = self
+            .controls
+            .lock()
+            .map_err(|_| lock_error())?
+            .health
+            .get_mut(&id)
+        {
+            entry.reporter = Some(health.clone());
+        }
         Ok(SessionContext {
+            health,
             id,
             stop: receiver,
             facts: self.fact_sender.clone(),

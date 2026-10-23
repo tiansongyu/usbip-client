@@ -9,6 +9,8 @@ const MAX_AUDIT: usize = 1024;
 const MAX_TERMINAL: usize = 128;
 const MAX_REQUESTS: usize = 256;
 const MAX_SESSIONS: usize = 512;
+// Includes IDs and the largest fixed health DTO, never USB or TLS payloads.
+const MAX_LINK_BYTES: usize = 2048;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -28,20 +30,70 @@ pub(crate) struct State {
     pub sessions: Vec<Session>,
     pub audit: Vec<AuditEvent>,
     pub requests: Vec<RequestRecord>,
+    pub link_history: Vec<crate::health::LinkHistory>,
 }
 impl Default for State {
     fn default() -> Self {
         Self {
-            schema_version: 1,
+            schema_version: 2,
             sequence: 0,
             jobs: vec![],
             sessions: vec![],
             audit: vec![],
             requests: vec![],
+            link_history: vec![],
         }
     }
 }
 impl State {
+    pub(crate) fn decode(bytes: &[u8]) -> Result<Self> {
+        #[derive(Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Legacy {
+            schema_version: u32,
+            sequence: u64,
+            jobs: Vec<Job>,
+            sessions: Vec<Session>,
+            audit: Vec<AuditEvent>,
+            requests: Vec<RequestRecord>,
+        }
+        // Strict alternatives each validate their entire shape. No optional field
+        // can silently turn an old record into an observed v2 data link.
+        if let Ok(value) = serde_json::from_slice::<Self>(bytes) {
+            value.validate()?;
+            return Ok(value);
+        }
+        let old: Legacy = serde_json::from_slice(bytes).map_err(|_| {
+            Error::InvalidInput("corrupt agent state; administrator coordination required".into())
+        })?;
+        if old.schema_version != 1 {
+            return Err(Error::InvalidInput("agent state version".into()));
+        }
+        let mut state = Self {
+            schema_version: 2,
+            sequence: old.sequence,
+            jobs: old.jobs,
+            sessions: old.sessions,
+            audit: old.audit,
+            requests: old.requests,
+            link_history: vec![],
+        };
+        state.initialize_legacy_links();
+        state.validate()?;
+        Ok(state)
+    }
+    pub(crate) fn initialize_legacy_links(&mut self) {
+        self.link_history = self
+            .sessions
+            .iter()
+            .map(|s| crate::health::LinkHistory {
+                session_id: s.id.clone(),
+                instance_id: s.instance_id.clone(),
+                link: (s.role != SessionRole::Export)
+                    .then(rustusb_core::link_health::LinkHealth::raw_v1),
+            })
+            .collect();
+    }
     pub fn preflight(&mut self, admission: bool) -> Result<()> {
         self.prune();
         self.validate()?;
@@ -51,7 +103,17 @@ impl State {
         // final counters and the full audit ring. These fields have fixed enums,
         // UUIDs and bounded labels; cleanup never competes for admission space.
         let limit = if admission { MAX_BYTES / 2 } else { MAX_BYTES };
-        if bytes.len() > limit {
+        let future_health = if admission {
+            self.link_history.iter().try_fold(0usize, |total, entry| {
+                let size = serde_json::to_vec(entry)
+                    .map_err(|_| Error::State("agent link encoding".into()))?
+                    .len();
+                Ok::<_, Error>(total + MAX_LINK_BYTES.saturating_sub(size))
+            })?
+        } else {
+            0
+        };
+        if bytes.len().saturating_add(future_health) > limit {
             return Err(Error::State(
                 "agent journal admission capacity exhausted".into(),
             ));
@@ -128,12 +190,17 @@ impl State {
                 break;
             }
         }
+        self.link_history.retain(|entry| {
+            self.sessions
+                .iter()
+                .any(|session| session.id == entry.session_id)
+        });
         while self.requests.len() > MAX_REQUESTS {
             self.requests.remove(0);
         }
     }
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 1
+        if self.schema_version != 2
             || self.audit.len() > MAX_AUDIT
             || self.requests.len() > MAX_REQUESTS
             || self.sessions.len() > MAX_SESSIONS
@@ -183,6 +250,34 @@ impl State {
                     )
             {
                 return Err(Error::InvalidInput("agent release without evidence".into()));
+            }
+        }
+        if self.link_history.len() != self.sessions.len() {
+            return Err(Error::InvalidInput("agent link history cardinality".into()));
+        }
+        let mut link_ids = std::collections::BTreeSet::new();
+        for entry in &self.link_history {
+            if serde_json::to_vec(entry)
+                .map_err(|_| Error::State("agent link encoding".into()))?
+                .len()
+                > MAX_LINK_BYTES
+            {
+                return Err(Error::InvalidInput("agent link history size".into()));
+            }
+            let session = self
+                .sessions
+                .iter()
+                .find(|s| s.id == entry.session_id && s.instance_id == entry.instance_id)
+                .ok_or_else(|| Error::InvalidInput("agent link history identity".into()))?;
+            if !link_ids.insert(&entry.session_id)
+                || session.role == SessionRole::Export && entry.link.is_some()
+            {
+                return Err(Error::InvalidInput(
+                    "agent link history role or duplicate".into(),
+                ));
+            }
+            if let Some(health) = entry.link {
+                health.validate()?;
             }
         }
         let mut sequence = 0;
@@ -249,21 +344,22 @@ mod platform {
             let state = if identity.is_none() {
                 State::default()
             } else {
-                serde_json::from_slice(&bytes).map_err(|_| {
-                    Error::InvalidInput(
-                        "corrupt agent state; administrator coordination required".into(),
-                    )
-                })?
+                State::decode(&bytes)?
             };
             state.validate()?;
-            Ok(Self {
+            let migrate = identity.is_some() && serde_json::from_slice::<State>(&bytes).is_err();
+            let mut store = Self {
                 directory,
                 _lock: lock,
                 identity,
                 bytes,
                 state,
                 poisoned: false,
-            })
+            };
+            if migrate {
+                store.commit(store.state.clone())?;
+            }
+            Ok(store)
         }
         fn read(directory: &Directory, identity: Option<(u64, u64)>) -> Result<Vec<u8>> {
             if directory.identity("state.json")? != identity {
@@ -432,6 +528,27 @@ mod platform {
             std::fs::remove_file(path.join("state.json"))?;
             std::fs::hard_link(path.join("owner.lock"), path.join("state.json"))?;
             assert!(Store::fixture(&path, root.path()).is_err());
+            Ok(())
+        }
+        #[test]
+        fn strict_legacy_file_is_atomically_upgraded_and_never_downgraded() -> Result<()> {
+            let (root, path) = fixture()?;
+            let legacy=br#"{"schema_version":1,"sequence":0,"jobs":[],"sessions":[],"audit":[],"requests":[]}"#;
+            std::fs::write(path.join("state.json"), legacy)?;
+            std::fs::set_permissions(
+                path.join("state.json"),
+                std::fs::Permissions::from_mode(0o600),
+            )?;
+            let store = Store::fixture(&path, root.path())?;
+            assert_eq!(store.state.schema_version, 2);
+            let bytes = std::fs::read(path.join("state.json"))?;
+            let current: State = serde_json::from_slice(&bytes)
+                .map_err(|_| Error::State("fixture upgraded file".into()))?;
+            assert_eq!(current.schema_version, 2);
+            assert!(!path.join("state.next").exists());
+            drop(store);
+            assert_eq!(Store::fixture(&path, root.path())?.state.schema_version, 2);
+            assert_eq!(std::fs::read(path.join("state.json"))?, bytes);
             Ok(())
         }
         #[test]

@@ -107,6 +107,8 @@ impl JobContext {
 /// A nonowning session reporter and stop receiver. The runner retains all handles.
 #[derive(Clone)]
 pub struct SessionContext {
+    /// Nonowning live data-link observations; never a durable ACK.
+    pub health: crate::health::HealthReporter,
     /// Durable session identity.
     pub id: SessionId,
     /// Cooperative per-session stop, distinct from proof of completion.

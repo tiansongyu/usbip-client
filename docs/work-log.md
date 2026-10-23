@@ -471,3 +471,22 @@
 - 2614份新增原件逐original/bytes/SHA/staged blob核后，与17份文档/技能/页面变更提交`a496384`并正常push。精确a496软件CI40002318487四原生job（120581305449/120581305804/120581305930/120581306010）全部completed/success；Pages40002318530 check/deploy全部success。此为最终交付状态，不把新的状态检查重计为USBcase，详细530/旧信号背压与真实anon/pipe原件仍归2638。
 - 线上HTML/CSS/JS/三SVG六资源HTTPS200并逐a496 Gitblob字节一致，CUA刷新实际530/9/18、新报告链接、图加载和console0；tab8重新标deliverable，非pixel截图。17份发布回执原件已另归档`shared-owner-publication-a496384-20261024`。晚到的2638独立CI复核117/117首遍PASS，两parser/report原件加入原CI manifest：逐实际旧4signal的3143源entries/Gitblob与before/after aggregate核、各child ELF/UID/starttime/满管道/ready末snapshot，32个runner/tmp原件仅索引无文件不补造，旧两背压无逐child ELF guard只作前序workflow来源关联。原b45失败缺wchan继续保持缺失。
 - 最后仅提交独立CI/发布记录与本日志，再普通push核远端HEAD和clean状态；软件152与site字节不变，QEMU锁b45/CI详细530锁2638/最终内容状态锁a496，各版本不重归属。原完整目标保持active；本轮属于可验证进展，真实硬件、accepted initializer/kernel硬阻塞、任意准备WAL停顿、完整Phase3及后续阶段仍未完成。
+
+### 2026-10-24：实际数据连接的心跳与RTT（设计/实施中）
+
+- 上一goal turn为实际进展：共享owner、530软件、旧九QEMU与发布，最后031f63d已push且本轮起点clean。重新完整读原附件/AGENTS/项目skill/架构与相关owner契约；原Phase0–7目标保留。继续明确未实现的4.4同USB数据链心跳/RTT/失联检测，不以独立Catalog pong或TCP keepalive冒充。
+- 使用writing-technical-design的固定源码/具体接口研究方法，沿用docs/research且遵用户指示不自动创建组件skills/无关ADR。三agent只读并行审transport/h2、服务/owner/persistence和QEMU精确单流valve；root独占Cargo/QEMU。先写research/data-link-health-design.md，状态proposed，后续再改代码；目前无新运行验收PASS。
+- cargo info h2@0.4.20完成（MIT、MSRV1.63、官方tag b0e890842ac16d3c76836fd4fcc06421acb15fa7），只下载registry缓存，Git仍clean后才写设计。采用成熟h2流控/PING候选，发现send_data入队不能当原IMPORT flush、零DATA的FIN另需fence、h2 WARN可回显未知ACK payload、业务WAL暂停会阻塞普通relay。设计记录真实TLS写/flush tracker、quiet API/poll/drop、独立driver与ended唤醒门槛；Ping opaque固定payload只能本地seq归属，不宣称wire nonce/USB健康。
+
+- 实施前补冻结 API 的 Result、实际TcpStream tuple、strict schema2(5/15秒默认，1..60/至少2倍且<=300秒)、RX独立pump与真实TLS flush/FIN fence。Root实现可信配置/TLS v2包装/flush跟踪，N实现core DTO/h2 driver/quiet，I实现health/store/资源owner接线，H实现独立QEMU定向blackhole阀门。首次 transport flush 开发子集已启动，证据锁输入与原日志于`/tmp/rustusb-data-link-dev-gate-20261024`，不是完整验收，也不宣称通过。
+
+- 首次flush开发子集在编译阶段FAIL（0测试执行）：driver select持有`&FlushMonitor`，该类型内有Send但非Sync的changed future，使tokio::spawn future非Send。保留原Cargo日志与前后输入；改为owner内显式可变借用，不提升为不实Sync保证，修后另名重跑。
+
+- 修改非Send借用后7项flush子集PASS，输入前后不变；随后transport完整46项PASS（含3项真实TCP+mTLS、strict配置、满窗口PING与quiet baseline/负向），0失败忽略。firsttransport Clippy因显式可变借用触发两lint FAIL，改typed helper保持Send-only独占借用后secondtransport Clippy PASS，均保留原log。上述仍为开发子集，不含service/backend集成或QEMU。
+- `scripts/dependency-inventory.py`按locked all-features重新导出158项；新增九个crate归档SHA逐lock checksum为真并登记实际许可文件。准备脚本首次因host Python无tomllib在任何比较前退出，后用受限lock字段解析重做且原准备问题留记录；不是产品测试失败。
+
+- 元数据故障窄修与nullable必需字段加入后，core10+transport53共63项开发检查PASS，含真实GOAWAY(11)的129x1B/101空帧洪水、合法1024个及时消费1B、trailer拒绝；第三core/transport Clippy PASS。所有真实计数溢出/poison分类明确，未虚报terminal/cleanup。
+- 客户端已取得helper句柄后的Resource/Prepared/Connected/sample ACK改为保留同一已poll future；断链/停止先join网络与实际helper close，再等原ACK。Native incoming同样处理；Rust非managed v2 greeting取消保留该attempt唯一claim completion，不用global settle或假durable admission。新增strict disk2、容量/ACL/分页、WAL停顿读与实际duplex生命周期回归，旧Session/Metrics/IPC1保持。
+- 完整`bash scripts/check.sh`首次运行PASS：251默认+337all-features+20vendor共608次执行、39条结果，0失败/忽略。164项Rust/TOML/lock/check输入前后不变；实际run是dirty candidate031，随后逐source输入映射提交，不冒充clean运行。N独立重建357个qualified测试名（不是608个独立case）并核全输入。默认/all-features fmt、Clippy、tests、release、rustdoc及vendor均执行；工具链/最终ELF另收。
+- 同一all-features CLI 76546440…/helper b4af4b5f…的本地四signal与两背压均PASS；Native-only secure-transport check/tree已独立记录，service/transport/h2存在且无Rust engine/nusb/rusb。新增英文操作指南`docs/data-link-health.md`，仍明确QEMU/硬件/完整Phase3未验收。旧九组agent verifier增强为strict disk2与raw-v1无伪RTT，不改IPC1/原设备断言。
+- 传输/core/配置/研究与依赖单元已提交`85f2bb1`；接下来提交服务owner接线，再从干净提交运行旧九组兼容回归。新的heartbeat定向阀门实际harness仍在收尾，其软件夹具不是QEMU通过证据。

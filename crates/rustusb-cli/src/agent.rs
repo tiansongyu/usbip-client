@@ -44,6 +44,12 @@ pub(super) enum Command {
         #[arg(long)]
         after: Option<SessionId>,
     },
+    /// Read actual same-data-link health; raw v1 reports unavailable.
+    Health {
+        profile: String,
+        #[arg(long)]
+        after: Option<SessionId>,
+    },
     /// Read retained lifecycle events; the response reports expired history.
     Events {
         profile: String,
@@ -94,6 +100,7 @@ pub(super) async fn run(path: PathBuf, command: Command) -> Result<()> {
         Command::StopSession { session_id } => Request::StopSession { session_id },
         Command::Jobs { profile, after } => Request::Jobs { profile, after },
         Command::Sessions { profile, after } => Request::Sessions { profile, after },
+        Command::Health { profile, after } => Request::SessionHealth { profile, after },
         Command::Events { profile, after } => Request::Events { profile, after },
         Command::Audit { profile, after } => Request::Audit { profile, after },
         Command::Discover { profile } => Request::Discover { profile },

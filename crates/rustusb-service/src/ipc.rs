@@ -170,6 +170,21 @@ async fn request(
     if envelope.schema_version != 1 {
         return Err(Error::InvalidInput("agent protocol version".into()));
     }
+    // Health reads are independent of a stalled WAL actor. Authorization and
+    // the finite registry are still the same fixed-profile OS-UID boundary.
+    if let Request::SessionHealth { profile, after } = &envelope.request {
+        let response = controls
+            .lock()
+            .map_err(|_| Error::State("agent controls lock poisoned".into()))?
+            .health(&config, uid, profile, after.as_ref());
+        if let Ok(response) = response {
+            let bytes = serde_json::to_vec(&response)
+                .map_err(|_| Error::State("agent health encoding".into()))?;
+            return write_frame(&mut stream, &bytes).await;
+        }
+        // Denied/invalid reads use the existing actor error and audit path.
+        // Only authorized successful observations bypass a stalled journal.
+    }
     // A valid stop reaches its independent watch even if a durable transaction
     // is slow. The response still waits for persistence; it never reports release.
     if matches!(

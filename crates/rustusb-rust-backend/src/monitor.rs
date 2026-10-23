@@ -86,6 +86,9 @@ impl Counters {
 struct Entry {
     snapshot: ServerSessionSnapshot,
     metrics: Arc<Counters>,
+    link: Option<rustusb_transport::LinkMonitor>,
+    final_link: Option<rustusb_core::link_health::LinkHealth>,
+    link_failed: bool,
     signal: watch::Sender<Signal>,
     events: Vec<ServerSessionEvent>,
 }
@@ -281,6 +284,34 @@ pub struct ServerControl {
     shared: Weak<Shared>,
 }
 impl ServerControl {
+    /// Read link facts without retaining an observer, connection permit or USB lease.
+    /// A missing/acknowledged session has no live observation.
+    pub fn link_health(
+        &self,
+        id: ServerSessionId,
+    ) -> Result<Option<rustusb_core::link_health::LinkHealth>> {
+        let Some(shared) = self.shared.upgrade() else {
+            return Ok(None);
+        };
+        let state = shared.lock()?;
+        let Some(entry) = state.entries.get(&id) else {
+            return Ok(None);
+        };
+        if entry.link_failed {
+            return Err(Error::State("server link observation unavailable".into()));
+        }
+        if entry.snapshot.cleanup.is_some() {
+            return Ok(entry.final_link);
+        }
+        match &entry.link {
+            Some(link) => link
+                .snapshot()
+                .map(Some)
+                .map_err(|_| Error::State("server link observation unavailable".into())),
+            None => Ok(Some(rustusb_core::link_health::LinkHealth::raw_v1())),
+        }
+    }
+
     /// Set a sticky stop flag without waiting for the manager, network or cleanup.
     pub fn request_disconnect(&self, id: ServerSessionId) -> Result<bool> {
         let shared = self
@@ -350,11 +381,21 @@ impl MonitorWriter {
     pub(crate) fn stop_all(&self) {
         self.shared.stop_all();
     }
+    #[cfg(test)]
     pub(crate) fn begin(
         &self,
         device_key: DeviceKey,
         principal: String,
         metrics: Arc<Counters>,
+    ) -> Result<Tracked> {
+        self.begin_link(device_key, principal, metrics, None)
+    }
+    pub(crate) fn begin_link(
+        &self,
+        device_key: DeviceKey,
+        principal: String,
+        metrics: Arc<Counters>,
+        link: Option<rustusb_transport::LinkMonitor>,
     ) -> Result<Tracked> {
         let mut state = self.shared.lock()?;
         if !state.accepting
@@ -406,6 +447,9 @@ impl MonitorWriter {
             Entry {
                 snapshot,
                 metrics,
+                link,
+                final_link: None,
+                link_failed: false,
                 signal,
                 events: vec![event],
             },
@@ -492,6 +536,19 @@ impl Tracked {
         }
         entry.snapshot.phase = phase;
         entry.snapshot.revision = revision;
+        if cleanup.is_some() {
+            // Link observation failure cannot withhold the actual lease's
+            // cleanup fact. Keep it an explicit read error, never a raw-v1 or
+            // successful final sample, while publishing the terminal event.
+            match &entry.link {
+                Some(link) => match link.snapshot() {
+                    Ok(sample) => entry.final_link = Some(sample),
+                    Err(_) => entry.link_failed = true,
+                },
+                None => entry.final_link = Some(rustusb_core::link_health::LinkHealth::raw_v1()),
+            }
+            entry.link = None;
+        }
         entry.snapshot.metrics = entry.metrics.snapshot();
         entry.snapshot.operation_error = operation_error;
         entry.snapshot.cleanup_error = cleanup_error;

@@ -19,7 +19,7 @@ use std::{
 use tokio::{
     io::{AsyncRead, AsyncWrite, AsyncWriteExt},
     net::{TcpListener, TcpStream},
-    sync::{Semaphore, mpsc, oneshot},
+    sync::{Semaphore, mpsc, oneshot, watch},
     task::{JoinHandle, JoinSet},
 };
 
@@ -140,6 +140,7 @@ pub struct ServerHandle {
     stop: Option<oneshot::Sender<()>>,
     task: Option<JoinHandle<Result<()>>>,
     monitor: Option<crate::monitor::MonitorWriter>,
+    cooperative: bool,
 }
 
 impl ServerHandle {
@@ -244,6 +245,8 @@ impl ServerHandle {
             }
             _ => None,
         };
+        let cooperative = monitor.is_some()
+            || matches!(&mode, ListenerMode::Tls(tls) if tls.protocol() == rustusb_core::link_health::LinkProtocol::FramedV2);
         let (stop, receiver) = oneshot::channel();
         let task = tokio::spawn(listen(listener, mode, backend, receiver));
         Ok(Self {
@@ -251,6 +254,7 @@ impl ServerHandle {
             stop: Some(stop),
             task: Some(task),
             monitor,
+            cooperative,
         })
     }
 
@@ -285,6 +289,8 @@ impl Drop for ServerHandle {
                 // The owned listener remains alive to join actual cleanup. Drop
                 // requests shutdown; it cannot manufacture a cleanup receipt.
                 drop(task);
+            } else if self.cooperative {
+                drop(task);
             } else {
                 task.abort();
             }
@@ -300,6 +306,8 @@ async fn listen<B: ServingBackend>(
 ) -> Result<()> {
     let limit = std::sync::Arc::new(Semaphore::new(MAX_CONNECTIONS));
     let mut connections = JoinSet::new();
+    let (network_stop, network_stopping) = watch::channel(false);
+    let cooperative_v2 = matches!(&mode, ListenerMode::Tls(tls) if tls.protocol() == rustusb_core::link_health::LinkProtocol::FramedV2);
     let monitor = match &mode {
         ListenerMode::ManagedTls(_, monitor) => Some(monitor.clone()),
         _ => None,
@@ -327,11 +335,12 @@ async fn listen<B: ServingBackend>(
                 let Ok(permit) = limit.clone().try_acquire_owned() else { continue };
                 let backend = backend.clone();
                 let mode = mode.clone();
+                let network_stopping = network_stopping.clone();
                 connections.spawn(async move {
                     // This outer permit includes the session's supervised cleanup.
                     // The TLS stream separately retains its own permit until Drop.
                     let _permit = permit;
-                    let result = accepted_connection(stream, backend, mode).await;
+                    let result = accepted_connection(stream, backend, mode, network_stopping).await;
                     tracing::debug!(success = result.is_ok(), "USB/IP connection finished");
                 });
             }
@@ -343,9 +352,10 @@ async fn listen<B: ServingBackend>(
         }
     };
     drop(listener);
+    network_stop.send_replace(true);
     if let Some(monitor) = &monitor {
         monitor.stop_all();
-    } else {
+    } else if !cooperative_v2 {
         connections.abort_all();
     }
     while connections.join_next().await.is_some() {}
@@ -379,6 +389,10 @@ async fn handshake<B: ServingBackend>(
     backend: &B,
     access: &ConnectionAccess,
     claimed: &mut Option<CloseOnDrop<B::Lease>>,
+    link_monitor: Option<&rustusb_transport::LinkMonitor>,
+    claim_completion: &mut Option<
+        watch::Receiver<Option<rustusb_core::server_session::ServerCleanup>>,
+    >,
 ) -> Result<()> {
     let prelude = match access {
         ConnectionAccess::Legacy => None,
@@ -418,14 +432,27 @@ async fn handshake<B: ServingBackend>(
                     ));
                 }
             };
-            let lease = match tokio::time::timeout(
-                wire::FRAME_DEADLINE,
-                backend.claim(&bus_id, expected.as_ref(), access),
-            )
-            .await
-            .map_err(|_| {
-                Error::Timeout("USB/IP device claim; unfinished cleanup remains quarantined".into())
-            })? {
+            crate::link::check(link_monitor)?;
+            let claim = async {
+                if link_monitor.is_some() {
+                    // A unique worker receipt is also needed for foreground
+                    // v2 cancellation; this is not durable service admission.
+                    let (terminal, completed) = watch::channel(None);
+                    *claim_completion = Some(completed);
+                    backend
+                        .claim_managed(&bus_id, expected.as_ref(), access, terminal)
+                        .await
+                } else {
+                    backend.claim(&bus_id, expected.as_ref(), access).await
+                }
+            };
+            let lease = match tokio::time::timeout(wire::FRAME_DEADLINE, claim)
+                .await
+                .map_err(|_| {
+                    Error::Timeout(
+                        "USB/IP device claim; unfinished cleanup remains quarantined".into(),
+                    )
+                })? {
                 Ok(lease) => lease,
                 Err(Error::State(_)) => {
                     write_frame(writer, &wire::import_reply(2, None)?).await?;
@@ -450,6 +477,7 @@ async fn accepted_connection<B: ServingBackend>(
     stream: TcpStream,
     backend: B,
     mode: ListenerMode,
+    network_stop: watch::Receiver<bool>,
 ) -> Result<()> {
     stream.set_nodelay(true)?;
     match mode {
@@ -458,18 +486,17 @@ async fn accepted_connection<B: ServingBackend>(
             crate::managed::accepted(stream, backend, tls, monitor).await
         }
         ListenerMode::Tls(tls) => {
-            let stream = tls.accept(stream).await.map_err(|error| match error {
-                rustusb_transport::Error::Timeout => Error::Timeout("mutual TLS handshake".into()),
-                rustusb_transport::Error::ConnectionLimit => {
-                    Error::State("TLS connection budget exhausted".into())
-                }
-                _ => Error::Permission(
-                    "mutual TLS authentication or application protocol rejected".into(),
-                ),
-            })?;
-            // Only the verified stream can introduce an authenticated context.
-            let access = ConnectionAccess::Authenticated(stream.peer().clone());
-            connection(stream, backend, access).await
+            let accepted = crate::link::accept(&tls, stream).await?;
+            let access = ConnectionAccess::Authenticated(accepted.peer);
+            connection_link(
+                accepted.io,
+                backend,
+                access,
+                accepted.owner,
+                accepted.monitor,
+                Some(network_stop),
+            )
+            .await
         }
     }
 }
@@ -479,16 +506,85 @@ where
     B: ServingBackend,
     S: AsyncRead + AsyncWrite + Unpin + Send,
 {
+    connection_link(stream, backend, access, None, None, None).await
+}
+
+async fn connection_link<B, S>(
+    stream: S,
+    backend: B,
+    access: ConnectionAccess,
+    mut link_owner: Option<rustusb_transport::LinkOwner>,
+    link_monitor: Option<rustusb_transport::LinkMonitor>,
+    mut network_stop: Option<watch::Receiver<bool>>,
+) -> Result<()>
+where
+    B: ServingBackend,
+    S: AsyncRead + AsyncWrite + Unpin + Send,
+{
+    let mut link_ended = link_monitor
+        .as_ref()
+        .map(rustusb_transport::LinkMonitor::ended);
     // Both halves retain the entire authenticated stream, including its permit.
     let (mut reader, mut writer) = tokio::io::split(stream);
     let mut claimed = None;
-    let handshake_result =
-        handshake(&mut reader, &mut writer, &backend, &access, &mut claimed).await;
+    let mut claim_completion = None;
+    let handshake_result = {
+        let greeting = handshake(
+            &mut reader,
+            &mut writer,
+            &backend,
+            &access,
+            &mut claimed,
+            link_monitor.as_ref(),
+            &mut claim_completion,
+        );
+        if link_monitor.is_some() {
+            tokio::select! {
+                biased;
+                _=async { if let Some(stop)=&mut network_stop {crate::monitor::server_stopped(stop).await;} else {std::future::pending::<()>().await;} }=>Err(Error::State("framed USB/IP connection stopped".into())),
+                error=crate::link::ended(&mut link_ended,link_monitor.as_ref())=>Err(error),
+                result=greeting=>result,
+            }
+        } else {
+            greeting.await
+        }
+    };
     let Some(mut lease) = claimed else {
-        return handshake_result;
+        drop(reader);
+        drop(writer);
+        let closed = crate::link::finish(&mut link_owner).await;
+        if let Some(mut completion) = claim_completion {
+            loop {
+                if let Some(cleanup) = *completion.borrow_and_update() {
+                    if cleanup == rustusb_core::server_session::ServerCleanup::Unconfirmed {
+                        return Err(Error::State(
+                            "framed USB/IP claim cleanup remains unconfirmed".into(),
+                        ));
+                    }
+                    break;
+                }
+                if completion.changed().await.is_err() {
+                    return Err(Error::State(
+                        "framed USB/IP claim supervisor ended without cleanup proof".into(),
+                    ));
+                }
+            }
+        }
+        return match closed {
+            Err(error) => Err(error),
+            Ok(()) => handshake_result,
+        };
     };
     let result = match handshake_result {
-        Ok(()) => imported_connection(&mut *lease, reader, &mut writer).await,
+        Ok(()) => tokio::select! {
+            biased;
+            _ = async {
+                if let Some(stop) = &mut network_stop { crate::monitor::server_stopped(stop).await; }
+                else { std::future::pending::<()>().await; }
+            } => Ok(()),
+            error = crate::link::ended(&mut link_ended, link_monitor.as_ref()) => Err(error),
+            result = imported_connection(&mut *lease, reader, &mut writer) => result,
+        },
         Err(error) => {
             drop(reader);
             Err(error)
@@ -497,6 +593,7 @@ where
     // Network teardown precedes the supervised hardware wait, including an
     // IMPORT reply that failed to write/flush after the lease was acquired.
     drop(writer);
+    let link_result = crate::link::finish(&mut link_owner).await;
     lease.begin_close();
     tokio::time::timeout(CLEANUP_DEADLINE, poll_fn(|cx| lease.poll_cleanup(cx)))
         .await
@@ -505,7 +602,10 @@ where
                 "USB/IP session cleanup is incomplete; device remains quarantined".into(),
             )
         })??;
-    result
+    match link_result {
+        Err(error) => Err(error),
+        Ok(()) => result,
+    }
 }
 
 pub(crate) async fn imported_connection<L: SessionLease, R: AsyncRead + Unpin>(

@@ -129,6 +129,7 @@ async fn incoming(monitor: ServerMonitor, id: ServerSessionId, context: RunConte
             return Err(error);
         }
     };
+    session.server_link(monitor.control(), id)?;
     let mut job_stop = context.stop.clone();
     let mut session_stop = session.stop.clone();
     let mut first_error = None;
@@ -1285,6 +1286,7 @@ mod tests {
         let (facts, mut receiver) = mpsc::channel(2);
         let (_stop, stop) = watch::channel(false);
         let session: RunSession = SessionContext {
+            health: crate::health::HealthReporter::default(),
             id: SessionId::new("00000000-0000-0000-0000-000000000001")?,
             stop,
             facts,

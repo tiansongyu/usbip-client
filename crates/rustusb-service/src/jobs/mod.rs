@@ -7,6 +7,7 @@
 mod client;
 #[cfg(target_os = "linux")]
 mod io;
+mod link;
 #[cfg(target_os = "linux")]
 mod native;
 #[cfg(feature = "rust-backend")]
@@ -142,23 +143,40 @@ pub async fn discover(
     config: &LoadedClientConfig,
     timeout: Duration,
 ) -> Result<Vec<CatalogDevice>> {
-    tokio::time::timeout(timeout, async {
-        rustusb_protocol::secure::discover(connect(config).await?).await
-    })
-    .await
-    .map_err(|_| Error::Timeout("secure discovery including DNS/TCP/TLS".into()))?
+    discover_until(
+        config,
+        tokio::time::Instant::now() + timeout,
+        std::future::pending(),
+    )
+    .await?
+    .ok_or_else(|| Error::State("discovery stopped without a stop source".into()))
 }
 
-async fn connect(
+pub(super) async fn discover_until(
     config: &LoadedClientConfig,
-) -> Result<rustusb_transport::ClientStream<tokio::net::TcpStream>> {
-    let socket =
-        tokio::net::TcpStream::connect((config.endpoint.host.as_str(), config.endpoint.port.get()))
-            .await?;
-    socket.set_nodelay(true)?;
-    config
-        .tls
-        .connect(&config.server_name, socket)
-        .await
-        .map_err(|_| Error::Permission("secure server authentication failed".into()))
+    deadline: tokio::time::Instant,
+    stop: impl std::future::Future<Output = ()>,
+) -> Result<Option<Vec<CatalogDevice>>> {
+    tokio::pin!(stop);
+    let connection = tokio::select! {
+        biased;
+        _ = &mut stop => return Ok(None),
+        result = tokio::time::timeout_at(deadline, link::connect(config)) => result.map_err(|_| Error::Timeout("secure discovery connection".into()))??,
+    };
+    let link::Connection {
+        io,
+        mut owner,
+        monitor: _,
+    } = connection;
+    let result = tokio::select! {
+        biased;
+        _ = &mut stop => Ok(None),
+        result = tokio::time::timeout_at(deadline, rustusb_protocol::secure::discover(io)) => result
+            .map_err(|_| Error::Timeout("secure discovery including DNS/TCP/TLS".into())).and_then(|r| r).map(Some),
+    };
+    let (closed, _) = link::finish(&mut owner).await;
+    match (result, closed) {
+        (Err(error), _) | (_, Err(error)) => Err(error),
+        (Ok(value), Ok(())) => Ok(value),
+    }
 }

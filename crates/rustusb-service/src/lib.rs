@@ -8,6 +8,7 @@ pub mod context;
 pub mod foreground;
 #[cfg(target_os = "linux")]
 mod fs;
+pub mod health;
 #[cfg(target_os = "linux")]
 pub mod ipc;
 pub mod jobs;

@@ -196,6 +196,30 @@ def verify(evidence, args):
                 if attempt["proof"] is not None: require(attempt["proof"] == terminal["proof"], f"root proof echo {session['id']}")
                 count += 1
         return count
+    def private_link_history(state, label):
+        require(set(state) == {"schema_version", "sequence", "jobs", "sessions", "audit", "requests", "link_history"}
+                and state["schema_version"] == 2, f"{label} strict private disk2 shape")
+        sessions = {item["id"]: item for item in state["sessions"]}
+        history = {item["session_id"]: item for item in state["link_history"]}
+        require(len(sessions) == len(state["sessions"]) == len(history) == len(state["link_history"])
+                and set(sessions) == set(history), f"{label} exact one-to-one retained link identities")
+        raw_v1 = {"protocol": "raw_v1", "identity": None, "sample_sequence": 0,
+                  "elapsed_millis": 0, "phase": "ended", "probe": "unavailable_raw_v1",
+                  "last_probe_sequence": None, "last_probe_enqueued_millis": None,
+                  "last_reply_sequence": None, "last_reply_millis": None,
+                  "last_round_trip_micros": None, "stats": None, "end": None}
+        for session_id, item in history.items():
+            session = sessions[session_id]
+            require(set(item) == {"session_id", "instance_id", "link"}
+                    and item["instance_id"] == session["instance_id"], f"{label} link epoch {session_id}")
+            if session["role"] == "export":
+                require(item["link"] is None, f"{label} export is not a data link {session_id}")
+            else:
+                require(item["link"] is None or item["link"] == raw_v1,
+                        f"{label} raw v1 never fabricates RTT or probe {session_id}")
+                if session["state"] == "Connected":
+                    require(item["link"] == raw_v1, f"{label} observed raw data mode {session_id}")
+
     for role in ["server", "client"]:
         log = (evidence / f"{role}-evidence.log").read_text()
         kernel_log=(evidence / f"{role}-serial.log").read_text(errors="replace")
@@ -208,6 +232,7 @@ def verify(evidence, args):
         helper_identity=raw(role,"identity-helper.txt").decode()
         require(re.search(r"^Uid:\s+0\s+0\s+0\s+0$",helper_identity,re.M) is not None,f"{role} actual privileged helper OS identity")
         after = data(role,"agent-after-denied.json")
+        private_link_history(after, f"{role} denied")
         require(raw(role,"agent-before-denied.status").strip()==b"absent" and data(role,"jobs-before-denied.json")["response"]=={"result":"jobs","jobs":[],"next_after":None} and data(role,"sessions-before-denied.json")["response"]=={"result":"sessions","sessions":[],"next_after":None},f"{role} actual new-store absence and public empty resources")
         require(all(after[k] == [] for k in ["jobs","sessions","requests"]) and raw(role,"root-before-denied.json") == raw(role,"root-after-denied.json"), f"{role} denied resource invariance")
         for reason in ["uid", "profile"]:
@@ -222,6 +247,9 @@ def verify(evidence, args):
         profiles=["server"] if role=="server" else ["hid","serial"]
         starts=[data(role,f"start-{profile}-{epoch}.json") for epoch in [1,2] for profile in profiles]
         held=[data(role,f"agent-held-{1 if epoch==1 else 3}.json") for epoch in [1,2] for _ in profiles]
+        private_link_history(final, f"{role} final")
+        for number, snapshot in enumerate(held):
+            private_link_history(snapshot, f"{role} held{number}")
         expected_count=history_identity(final,starts,held,role)
         require(expected_count==(8 if role=="server" else 4),f"{role} exact two-epoch history from original start/held identities")
         require(all(s["terminal"] and s["cleanup"] == "verified" and s["state"] == "Disconnected" for s in final["sessions"]),f"{role} actual final session cleanup")

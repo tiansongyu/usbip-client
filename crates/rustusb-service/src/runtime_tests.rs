@@ -174,6 +174,7 @@ async fn canonical_retention_matches_memory_store_and_reopened_disk() -> Result<
         next.sessions.push(session(value, &owner, true)?);
         next.requests.push(request(value, &owner)?);
     }
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     assert_eq!(fixture.runtime.state.sessions.len(), 128);
     assert_eq!(fixture.runtime.state.requests.len(), 256);
@@ -188,6 +189,7 @@ async fn canonical_retention_matches_memory_store_and_reopened_disk() -> Result<
         AuditAction::Observe,
         None,
     )?;
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     fixture.assert_committed()?;
     let expected = serde_json::to_value(&fixture.runtime.state)
@@ -219,6 +221,7 @@ async fn finished_job_with_retained_child_is_not_pruned_into_an_orphan() -> Resu
     // device terminal is still retained. Age of job and child are independent.
     let child = session(9_000, &oldest, true)?;
     next.sessions.push(child.clone());
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     assert_eq!(fixture.runtime.state.jobs.len(), 128);
     assert!(
@@ -275,8 +278,10 @@ async fn admission_capacity_refusal_keeps_journal_healthy_and_allows_finish() ->
             "fixture must hit byte admission limit before record count"
         );
     }
+    next.initialize_legacy_links();
     assert!(next.clone().preflight(true).is_err());
     next.preflight(false)?;
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     let target = fixture
         .runtime
@@ -337,6 +342,7 @@ async fn explicit_retry_never_starts_unknown_or_expired_requests() -> Result<()>
     for value in 0..257 {
         next.requests.push(request(value, &owner)?);
     }
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     let expired = request(0, &owner)?.id;
     let retained = request(256, &owner)?.id;
@@ -418,6 +424,7 @@ async fn unauthorized_stop_does_not_signal_and_is_durably_audited() -> Result<()
     let mut next = State::default();
     next.jobs.push(owner.clone());
     next.sessions.push(child.clone());
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     let (job_stop, observed_job) = watch::channel(false);
     let (session_stop, observed_session) = watch::channel(false);
@@ -488,6 +495,7 @@ async fn verified_finish_from_error_audits_recovering_before_disconnected() -> R
     let mut next = State::default();
     next.jobs.push(owner);
     next.sessions.push(child.clone());
+    next.initialize_legacy_links();
     fixture.runtime.persist(next).await?;
     fixture
         .runtime
@@ -562,5 +570,229 @@ async fn verified_finish_from_error_audits_recovering_before_disconnected() -> R
         .await?;
     assert_eq!(fixture.runtime.state.audit.len(), 3);
     fixture.assert_committed()?;
+    Ok(())
+}
+
+#[test]
+fn legacy_state_migrates_strictly_without_changing_public_session_or_metrics() -> Result<()> {
+    let instance = InstanceId::new(uuid(1))?;
+    let owner = job(1, &instance, JobState::Finished)?;
+    let child = session(1, &owner, true)?;
+    let old_session =
+        serde_json::to_value(&child).map_err(|_| Error::State("fixture JSON".into()))?;
+    let legacy = serde_json::json!({"schema_version":1,"sequence":0,"jobs":[owner],"sessions":[child],"audit":[],"requests":[]});
+    let encode = |value: &serde_json::Value| {
+        serde_json::to_vec(value).map_err(|_| Error::State("fixture JSON".into()))
+    };
+    let migrated = State::decode(&encode(&legacy)?)?;
+    assert_eq!(migrated.schema_version, 2);
+    assert_eq!(
+        serde_json::to_value(&migrated.sessions[0])
+            .map_err(|_| Error::State("fixture JSON".into()))?,
+        old_session
+    );
+    assert_eq!(
+        serde_json::to_value(Metrics::default())
+            .map_err(|_| Error::State("fixture JSON".into()))?,
+        serde_json::json!({"app_rx_bytes":0,"app_tx_bytes":0,"elapsed_millis":0,"saturated":false})
+    );
+    assert_eq!(
+        migrated.link_history[0].link,
+        Some(rustusb_core::link_health::LinkHealth::raw_v1())
+    );
+    let current =
+        serde_json::to_value(&migrated).map_err(|_| Error::State("fixture JSON".into()))?;
+    for corrupt in [
+        {
+            let mut value = current.clone();
+            value
+                .as_object_mut()
+                .ok_or_else(|| Error::State("fixture object".into()))?
+                .remove("link_history");
+            value
+        },
+        {
+            let mut value = current.clone();
+            value["link_history"][0]
+                .as_object_mut()
+                .ok_or_else(|| Error::State("fixture object".into()))?
+                .remove("link");
+            value
+        },
+        {
+            let mut value = current.clone();
+            value["link_history"][0]["unknown"] = true.into();
+            value
+        },
+        {
+            let mut value = current.clone();
+            value["link_history"][0]["instance_id"] = uuid(999).into();
+            value
+        },
+        {
+            let mut value = current.clone();
+            value["schema_version"] = 3.into();
+            value
+        },
+        {
+            let mut value = legacy.clone();
+            value["link_history"] = serde_json::json!([]);
+            value
+        },
+    ] {
+        assert!(State::decode(&encode(&corrupt)?).is_err());
+    }
+    State::decode(&encode(&current)?)?.validate()?;
+    Ok(())
+}
+
+#[tokio::test]
+async fn link_reads_remain_authorized_and_bounded_while_the_real_store_is_blocked() -> Result<()> {
+    let mut fixture = Fixture::new()?;
+    let owner = job(1, &fixture.runtime.instance, JobState::Running)?;
+    let mut next = State::default();
+    next.jobs.push(owner.clone());
+    for value in 0..20 {
+        next.sessions.push(session(value, &owner, false)?);
+    }
+    next.initialize_legacy_links();
+    fixture.runtime.persist(next).await?;
+    let config = fixture.runtime.config.clone();
+    let controls = fixture.runtime.controls.clone();
+    let reporter = crate::health::HealthReporter::default();
+    reporter.direct(None)?;
+    {
+        let mut controls = controls.lock().map_err(|_| lock_error())?;
+        let entry = controls
+            .health
+            .values_mut()
+            .next()
+            .ok_or_else(|| Error::State("fixture health".into()))?;
+        entry.reporter = Some(reporter);
+    }
+    let store = fixture.runtime.store.clone();
+    let (locked, lock_received) = oneshot::channel();
+    let (release, released) = std::sync::mpsc::channel();
+    let blocker = tokio::task::spawn_blocking(move || {
+        let _guard = store.lock().map_err(|_| lock_error())?;
+        locked
+            .send(())
+            .map_err(|_| Error::State("fixture lock observer".into()))?;
+        released
+            .recv_timeout(Duration::from_secs(2))
+            .map_err(|_| Error::Timeout("fixture lock release".into()))?;
+        Ok::<_, Error>(())
+    });
+    lock_received
+        .await
+        .map_err(|_| Error::State("fixture lock not acquired".into()))?;
+    let next = fixture.runtime.state.clone();
+    let pending = fixture.runtime.persist(next);
+    tokio::pin!(pending);
+    assert!(
+        tokio::time::timeout(Duration::from_millis(20), &mut pending)
+            .await
+            .is_err()
+    );
+    {
+        let controls = controls.lock().map_err(|_| lock_error())?;
+        assert!(matches!(
+            controls.health(&config, other_uid() ^ 1, PROFILE, None),
+            Err(Error::Permission(_))
+        ));
+        let page = controls.health(&config, operator_uid(), PROFILE, None)?;
+        assert!(page.journal_healthy);
+        let Response::SessionHealth {
+            sessions,
+            next_after,
+        } = page.response
+        else {
+            return Err(Error::State("fixture health response".into()));
+        };
+        assert_eq!(sessions.len(), 16);
+        assert_eq!(
+            sessions[0].availability,
+            crate::health::HealthAvailability::Live
+        );
+        assert_eq!(
+            sessions[0].link,
+            Some(rustusb_core::link_health::LinkHealth::raw_v1())
+        );
+        let second = controls.health(&config, operator_uid(), PROFILE, next_after.as_ref())?;
+        assert!(
+            matches!(second.response,Response::SessionHealth{sessions,next_after:None} if sessions.len()==4)
+        );
+    }
+    release
+        .send(())
+        .map_err(|_| Error::State("fixture lock owner lost".into()))?;
+    pending.await?;
+    blocker
+        .await
+        .map_err(|_| Error::State("fixture blocker task".into()))??;
+    Ok(())
+}
+
+#[test]
+fn health_growth_is_reserved_inside_the_existing_admission_budget() -> Result<()> {
+    let instance = InstanceId::new(uuid(1))?;
+    let owner = job(1, &instance, JobState::Running)?;
+    let mut state = State::default();
+    state.jobs.push(owner.clone());
+    for value in 0..512 {
+        state.sessions.push(session(value, &owner, false)?);
+        state.initialize_legacy_links();
+        if state.clone().preflight(true).is_err() {
+            let size = serde_json::to_vec(&state)
+                .map_err(|_| Error::State("fixture JSON".into()))?
+                .len();
+            assert!(
+                size < crate::store::MAX_BYTES / 2,
+                "future samples must be reserved before serialized size alone exhausts admission"
+            );
+            state.preflight(false)?;
+            return Ok(());
+        }
+    }
+    Err(Error::State(
+        "health reservation never bounded admission".into(),
+    ))
+}
+
+#[tokio::test]
+async fn previous_epoch_health_is_historical_and_export_is_not_a_data_link() -> Result<()> {
+    let mut fixture = Fixture::new()?;
+    let previous = InstanceId::new(uuid(999))?;
+    let owner = job(1, &previous, JobState::Finished)?;
+    let mut next = State::default();
+    next.jobs.push(owner.clone());
+    next.sessions.push(session(1, &owner, true)?);
+    let mut export = session(2, &owner, true)?;
+    export.role = SessionRole::Export;
+    next.sessions.push(export);
+    next.initialize_legacy_links();
+    fixture.runtime.persist(next).await?;
+    let response = fixture
+        .runtime
+        .controls
+        .lock()
+        .map_err(|_| lock_error())?
+        .health(&fixture.runtime.config, operator_uid(), PROFILE, None)?;
+    let Response::SessionHealth { sessions, .. } = response.response else {
+        return Err(Error::State("fixture health response".into()));
+    };
+    assert_eq!(
+        sessions[0].availability,
+        crate::health::HealthAvailability::PreviousEpoch
+    );
+    assert_eq!(
+        sessions[0].link,
+        Some(rustusb_core::link_health::LinkHealth::raw_v1())
+    );
+    assert_eq!(
+        sessions[1].availability,
+        crate::health::HealthAvailability::NotDataSession
+    );
+    assert_eq!(sessions[1].link, None);
     Ok(())
 }

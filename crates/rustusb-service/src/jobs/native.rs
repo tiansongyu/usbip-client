@@ -1,6 +1,9 @@
 //! Native TLS owners use only helper-held kernel endpoints; no plain listener.
 
-use super::io::{self, Counters};
+use super::{
+    io::{self, Counters},
+    link,
+};
 use crate::{
     context::stopped,
     foreground::{Control, ControlError, Event, JobOutcome, NativeDeviceSnapshot, Snapshot},
@@ -14,7 +17,7 @@ use rustusb_protocol::{
     secure::{self, DeviceMapping, SecureOperation},
     server::{self, Management},
 };
-use rustusb_transport::{AuthenticatedStream, TlsServer, VerifiedPeer, config::LoadedServerConfig};
+use rustusb_transport::{TlsServer, VerifiedPeer, config::LoadedServerConfig};
 use std::{
     collections::HashSet,
     future::Future,
@@ -69,6 +72,8 @@ struct RelayStops {
     export: watch::Receiver<bool>,
     stub: watch::Receiver<bool>,
     source: watch::Receiver<bool>,
+    link: Option<rustusb_transport::LinkMonitor>,
+    link_ended: Option<watch::Receiver<bool>>,
 }
 impl RelayStops {
     async fn wait<T>(
@@ -82,6 +87,7 @@ impl RelayStops {
             _ = stopped(&mut self.export) => Ok(None),
             _ = stopped(&mut self.stub) => Ok(None),
             _ = stopped(&mut self.source) => Err(Error::State("Native export invalidated during relay".into()).into()),
+            error = link::ended(&mut self.link_ended, self.link.as_ref()) => Err(StageError::Operation(error)),
             result = future => Ok(Some(result)),
         }
     }
@@ -550,7 +556,7 @@ async fn write_frame(writer: &mut (impl AsyncWrite + Unpin), bytes: &[u8]) -> Re
 }
 
 async fn management(
-    stream: &mut AuthenticatedStream<TcpStream>,
+    stream: &mut link::Io,
     exports: &[Arc<Export>],
     peer: &VerifiedPeer,
 ) -> Result<Option<Reservation>> {
@@ -613,29 +619,54 @@ async fn connection(
     context: RunContext,
     job_stop: watch::Receiver<bool>,
 ) -> JobOutcome {
-    match connection_inner(network, tls, exports, context, job_stop).await {
+    let mut stop = job_stop.clone();
+    let accepted = tokio::select! {
+        biased;
+        _ = stopped(&mut stop) => return success(),
+        result = link::accept(&tls, network) => result,
+    };
+    let (connection, peer) = match accepted {
+        Ok(value) => value,
+        Err(error) => return JobOutcome::before_start(error),
+    };
+    let mut owner = connection.owner;
+    let mut outcome = match connection_inner(
+        connection.io,
+        peer,
+        connection.monitor,
+        &mut owner,
+        exports,
+        context,
+        job_stop,
+    )
+    .await
+    {
         Ok(outcome) => outcome,
         Err(error) => JobOutcome::before_start(error),
+    };
+    let (closed, _) = link::finish(&mut owner).await;
+    if let Err(error) = closed {
+        outcome.operation = Err(error);
     }
+    outcome
 }
 
 async fn connection_inner(
-    network: TcpStream,
-    tls: TlsServer,
+    mut stream: link::Io,
+    peer: VerifiedPeer,
+    link_monitor: Option<rustusb_transport::LinkMonitor>,
+    link_owner: &mut Option<rustusb_transport::LinkOwner>,
     exports: Vec<Arc<Export>>,
     context: RunContext,
     mut job_stop: watch::Receiver<bool>,
 ) -> Result<JobOutcome> {
-    network.set_nodelay(true)?;
-    let mut stream = tokio::select! {
-        biased;
-        _ = stopped(&mut job_stop) => return Ok(success()),
-        result = tls.accept(network) => result.map_err(|_| Error::Permission("Native mutual TLS authentication failed".into()))?,
-    };
-    let peer = stream.peer().clone();
+    let mut link_ended = link_monitor
+        .as_ref()
+        .map(rustusb_transport::LinkMonitor::ended);
     let reservation = tokio::select! {
         biased;
         _ = stopped(&mut job_stop) => return Ok(success()),
+        error = link::ended(&mut link_ended, link_monitor.as_ref()) => return Err(error),
         result = management(&mut stream, &exports, &peer) => result?,
     };
     let Some(reservation) = reservation else {
@@ -658,6 +689,7 @@ async fn connection_inner(
         Ok(session) => session,
         Err(error) => return Ok(stage_outcome(Err(StageError::Recording(error)))),
     };
+    session.link(link_monitor.clone())?;
     let local_stop = session.stop.clone();
     let export_stop = export.stop.subscribe();
     let counters = Counters::new();
@@ -666,15 +698,18 @@ async fn connection_inner(
     let mut using = None;
     let mut postponed_recording = None;
     let mut network = Some(stream);
+    let mut copying = None;
     let operation = async {
         session.observe(SessionState::Connecting, Evidence::Intent, None).await.map_err(StageError::Recording)?;
         let correlation = session.attempt(BrokerResourceKind::NativeStub).await.map_err(StageError::Recording)?;
         attempted = correlation.is_some();
         if stop_requested(&job_stop) || stop_requested(&local_stop) || stop_requested(&export_stop) { return Ok(()); }
+        link::check(link_monitor.as_ref())?;
         using = Some(export.use_lock.lock().await);
         // Admission may have waited for disk without holding the resource lock.
         // Recheck the original export after acquiring it; never substitute one.
         if stop_requested(&job_stop) || stop_requested(&local_stop) || stop_requested(&export_stop) { return Ok(()); }
+        link::check(link_monitor.as_ref())?;
         let owner_guard = export.handle.lock().await;
         let owner = owner_guard.as_ref().ok_or_else(|| Error::State("Native export closed before stub".into()))?;
         attempted = true;
@@ -702,6 +737,7 @@ async fn connection_inner(
         let mut stops = RelayStops {
             job: job_stop.clone(), local: local_stop.clone(), export: export_stop.clone(),
             stub: stub.invalidated(), source: export.invalidated.clone(),
+            link: link_monitor.clone(), link_ended: link_monitor.as_ref().map(rustusb_transport::LinkMonitor::ended),
         };
         let reporter = session.clone();
         let channel_id = stub.channel_id().to_owned();
@@ -709,6 +745,7 @@ async fn connection_inner(
         let reporter = session.clone();
         if !record_or_stop(Box::pin(async move { reporter.observe(SessionState::Connecting, Evidence::Prepared, None).await }), &mut postponed_recording, &mut stops).await? { return Ok(()); }
         if stop_requested(&job_stop) || stop_requested(&local_stop) || stop_requested(&export_stop) { return Ok(()); }
+        link::check(link_monitor.as_ref())?;
         let relay = stub.take_relay()?;
         // commit is received before a stop is processed; the helper actor
         // retains any real blocking operation even if its caller disappears.
@@ -720,20 +757,32 @@ async fn connection_inner(
         let sampled = counters.snapshot();
         if !record_or_stop(Box::pin(async move { reporter.observe(SessionState::Connected, Evidence::ImportReplyFlushed, Some(sampled)).await }), &mut postponed_recording, &mut stops).await? { return Ok(()); }
         let stream = network.take().ok_or_else(|| Error::State("Native network owner absent".into()))?;
-        let copying = io::relay(stream, relay, counters.clone());
-        tokio::pin!(copying);
+        let relay_monitor = link_monitor.clone();
+        let relay_counters = counters.clone();
+        copying = Some(tokio::spawn(async move {
+            let mut ended = relay_monitor.as_ref().map(rustusb_transport::LinkMonitor::ended);
+            tokio::select! {
+                biased;
+                error = link::ended(&mut ended, relay_monitor.as_ref()) => Err(error),
+                result = io::relay(stream, relay, relay_counters) => result,
+            }
+        }));
         let mut sample = tokio::time::interval(Duration::from_secs(1));
         sample.tick().await;
         loop {
+            let task = copying.as_mut().ok_or_else(|| Error::State("Native relay task absent".into()))?;
             let event = stops.wait(async {
                 tokio::select! {
-                    result = &mut copying => Some(result),
+                    result = &mut *task => Some(result),
                     _ = sample.tick() => None,
                 }
             }).await?;
             match event {
                 None => return Ok(()),
-                Some(Some(result)) => return result.map_err(StageError::Operation),
+                Some(Some(result)) => {
+                    copying.take();
+                    return result.map_err(|_| Error::State("Native relay task failed".into()))?.map_err(StageError::Operation);
+                },
                 Some(None) => {
                     let reporter = session.clone();
                     let sampled = counters.snapshot();
@@ -743,7 +792,17 @@ async fn connection_inner(
         }
     }.await;
     drop(network);
+    if let Some(task) = copying {
+        if !task.is_finished() {
+            task.abort();
+        }
+        let _ = task.await;
+    }
+    let (link_result, _) = link::finish(link_owner).await;
     let mut outcome = stage_outcome(operation);
+    if let Err(error) = link_result {
+        outcome.operation = Err(error);
+    }
     let cleanup = cleanup_then_unlock(
         async {
             match stub {
@@ -800,6 +859,90 @@ mod tests {
     use tokio::io::AsyncReadExt;
 
     #[tokio::test]
+    async fn data_link_failure_releases_real_streams_and_lock_before_retained_ack() -> Result<()> {
+        // This drives the production stop/record/cleanup helpers with actual
+        // in-memory stream owners. It does not claim a kernel USB close.
+        let (watch_owner, receiver) = watch::channel(false);
+        let (link_end, ended) = watch::channel(false);
+        let (network, mut remote) = tokio::io::duplex(1);
+        let (relay, mut kernel) = tokio::io::duplex(1);
+        let lock = Arc::new(Mutex::new(()));
+        let owner_lock = lock.clone();
+        let (started, recording_started) = tokio::sync::oneshot::channel();
+        let (ack, acknowledged) = tokio::sync::oneshot::channel::<Result<()>>();
+        let (cleaned, cleanup_seen) = tokio::sync::oneshot::channel();
+        let task = tokio::spawn(async move {
+            let using = owner_lock.lock().await;
+            let mut stops = RelayStops {
+                job: receiver.clone(),
+                local: receiver.clone(),
+                export: receiver.clone(),
+                stub: receiver.clone(),
+                source: receiver,
+                link: None,
+                link_ended: Some(ended),
+            };
+            let mut pending = None;
+            let result = record_or_stop(
+                Box::pin(async move {
+                    started
+                        .send(())
+                        .map_err(|_| Error::State("fixture record observer".into()))?;
+                    acknowledged
+                        .await
+                        .map_err(|_| Error::State("fixture record abandoned".into()))?
+                }),
+                &mut pending,
+                &mut stops,
+            )
+            .await;
+            assert!(matches!(result, Err(StageError::Operation(_))));
+            let failed = AtomicBool::new(false);
+            cleanup_then_unlock(
+                async move {
+                    drop(network);
+                    drop(relay);
+                    Ok(())
+                },
+                Some(using),
+                &failed,
+            )
+            .await?;
+            cleaned
+                .send(())
+                .map_err(|_| Error::State("fixture cleanup observer".into()))?;
+            pending
+                .ok_or_else(|| Error::State("fixture ACK dropped".into()))?
+                .await
+        });
+        tokio::time::timeout(Duration::from_secs(2), async {
+            recording_started
+                .await
+                .map_err(|_| Error::State("fixture ACK never started".into()))?;
+            link_end.send_replace(true);
+            cleanup_seen
+                .await
+                .map_err(|_| Error::State("link failure did not enter cleanup".into()))?;
+            assert!(!*watch_owner.borrow());
+            assert!(lock.try_lock().is_ok());
+            assert!(!task.is_finished());
+            let mut byte = [0];
+            assert_eq!(remote.read(&mut byte).await?, 0);
+            assert_eq!(kernel.read(&mut byte).await?, 0);
+            ack.send(Err(Error::State("original delayed WAL rejection".into())))
+                .map_err(|_| Error::State("original ACK was cancelled".into()))?;
+            assert!(matches!(
+                task.await
+                    .map_err(|_| Error::State("fixture owner task".into()))?,
+                Err(Error::State(_))
+            ));
+            Ok::<_, Error>(())
+        })
+        .await
+        .map_err(|_| Error::Timeout("link-ended WAL fixture".into()))?
+    }
+
+    #[tokio::test]
     async fn stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock() -> Result<()> {
         // Software ownership fixture only: the cleanup future below models a
         // helper result. It makes no kernel, driver or real-helper claim.
@@ -820,6 +963,8 @@ mod tests {
                 export: receiver.clone(),
                 stub: receiver.clone(),
                 source: receiver,
+                link: None,
+                link_ended: None,
             };
             let mut postponed = None;
             let complete = record_or_stop(
@@ -1028,6 +1173,8 @@ mod tests {
             export: export_stop,
             stub,
             source: export,
+            link: None,
+            link_ended: None,
         };
         let result = match stops.wait(forwarding).await {
             Ok(Some(result)) => result,

@@ -128,6 +128,21 @@ impl From<SessionContext> for RunSession {
     }
 }
 impl RunSession {
+    pub fn link(&self, monitor: Option<rustusb_transport::LinkMonitor>) -> Result<()> {
+        self.managed
+            .as_ref()
+            .map_or(Ok(()), |session| session.health.direct(monitor))
+    }
+    #[cfg(feature = "rust-backend")]
+    pub fn server_link(
+        &self,
+        control: rustusb_rust_backend::ServerControl,
+        id: rustusb_core::server_session::ServerSessionId,
+    ) -> Result<()> {
+        self.managed
+            .as_ref()
+            .map_or(Ok(()), |session| session.health.server(control, id))
+    }
     /// None means the explicit foreground/untracked path, never a failed WAL.
     pub async fn attempt(&self, kind: BrokerResourceKind) -> Result<Option<BrokerCorrelation>> {
         match &self.managed {
@@ -160,7 +175,18 @@ impl RunSession {
         metrics: Metrics,
     ) -> Result<()> {
         match &self.managed {
-            Some(session) => session.finish(error, cleanup, metrics).await,
+            Some(session) => {
+                // Freeze only after the caller's real cleanup. Keep recording errors explicit.
+                let frozen = session.health.freeze();
+                let finished = session.finish(error, cleanup, metrics).await;
+                match (frozen, finished) {
+                    (Err(first), Err(second)) => Err(Error::State(format!(
+                        "link checkpoint: {first}; terminal recording: {second}"
+                    ))),
+                    (Err(error), _) | (_, Err(error)) => Err(error),
+                    (Ok(()), Ok(())) => Ok(()),
+                }
+            }
             None => Ok(()),
         }
     }
