@@ -134,7 +134,7 @@ FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策�
 
 [独立句柄机制实验](research/usbfs-guardian-mechanism.md)在clean da764d0验证了独立B、A副本延长占用、另一OFD C的非抢占拒绝和B恢复后真实复用；实现位于guest-only测试工具，未改变上述产品架构或schema1权限契约。
 
-[原驱动恢复实施设计](research/physical-driver-autorestore-design.md)新增精确设备许可和磁盘schema2的不可变恢复范围，旧record保持manual；生命周期IPC仍为1。单后台任务在原owner确已结束后独立open B，实际blocking闭包拥有helper全局变更锁，依次完整观察/CONNECT/关闭B/严格核验/持久退休。后台不跨USB调用持有journal mutex，pending仍可读；合作退出停止新工作并join已开始工作。默认关闭、每helper实例每lease最多一次尝试，任何不确定保留记录。clean2ab9976已通过两个产品自动恢复QEMU正向及五个原回归，见[报告](research/physical-driver-autorestore.md)；不能外推未完成的撤销/旧producer迁移/外部占用负向或真实硬件。
+[原驱动恢复实施设计](research/physical-driver-autorestore-design.md)新增精确设备许可和磁盘schema2的不可变恢复范围，旧record保持manual；生命周期IPC仍为1。单后台任务在原owner确已结束后独立open B，实际blocking闭包拥有helper全局变更锁，依次完整观察/CONNECT/关闭B/严格核验/持久退休。后台不跨USB调用持有journal mutex，pending仍可读；合作退出停止新工作并join已开始工作。默认关闭、每helper实例每lease最多一次尝试，任何不确定保留记录。clean2ab9976已通过两个产品自动恢复QEMU正向及五个原回归，见[报告](research/physical-driver-autorestore.md)；后续[clean4565f7a边界验收](research/physical-driver-autorestore-negatives.md)完成固定模型的撤销/旧producer迁移/外部占用三组合；仍不外推真实硬件、跨配置/alternate、非claim FD或完整恢复矩阵。
 
 ## 技术依据
 

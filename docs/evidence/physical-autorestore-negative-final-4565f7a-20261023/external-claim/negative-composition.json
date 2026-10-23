@@ -1,0 +1,124 @@
+{
+  "scenario": "external-claim",
+  "scope": "Three independent simulated-USB negative contracts: real legacy helper records must remain manual, current recovery permission must still allow persisted opt-in, and external C claims must not be taken. Legacy tail uses explicit administrator restoration/read-only reconcile; other tails require a new helper before product recovery and third real I/O. No hardware or FD revocation claim.",
+  "base_hashes": {
+    "run-journal-qemu.py": "1cefbc14bc45c9e9b5c9f6f0d9784be834fe3ee5856f8bc2937b7baabbbc01aa",
+    "guest-journal-init.sh": "2236c3080d17e447c4d9cdec495609ab6c7d3976d6c92306e3b1286e9d94d8d4",
+    "run-autorestore-qemu.py": "c7148dc070d71a570183a5a99060a70a38ba2449c0942710f8565a4d1a869ef1",
+    "guest-autorestore-fragments.sh": "c6c1f0f52dda2033dc20b047fe6357ac0281707a83ec32b51aeb646aef8df830"
+  },
+  "composition": {
+    "positive": [
+      {
+        "before": "ROLE=unknown\n",
+        "after": "AUTORESTORE_SCENARIO=owner-death\nROLE=unknown\n",
+        "matches": 1
+      },
+      {
+        "before": "/tmp/client-outcomes.jsonl; do\n",
+        "after": "/tmp/client-outcomes.jsonl /tmp/helper-before-restart.log /tmp/autorestore-metadata.json /tmp/autorestore-helper-logs.jsonl /tmp/autorestore-readonly.jsonl /tmp/autorestore-primary.json /tmp/autorestore-recovery-window.json /tmp/autorestore-live-window.json /tmp/autorestore-live-disk.json /tmp/autorestore-killed-disk.json /tmp/autorestore-interfaces.json /tmp/autorestore-disk.json; do\n",
+        "matches": 1
+      },
+      {
+        "before": "    /usr/bin/rustusb-helper > /tmp/helper.log 2>&1 &\n",
+        "after": "    (exec 3<&- 9<&-; exec /usr/bin/rustusb-helper > /tmp/helper.log 2>&1) &\n",
+        "matches": 1
+      },
+      {
+        "before": "    for attempt in $(seq 1 150); do\n        sysfs_observation\n",
+        "after": "    . /usr/lib/guest-autorestore-fragments.sh\n    for attempt in $(seq 1 150); do\n        sysfs_observation\n",
+        "matches": 1
+      },
+      {
+        "before": "physical_device_ids:[$hid,$ftdi],peers:[],trusted_network:true}",
+        "after": "physical_device_ids:[$hid,$ftdi],physical_connect_restore_device_ids:[$hid,$ftdi],peers:[],trusted_network:true}",
+        "matches": 1
+      },
+      {
+        "before": "    : > /tmp/admin-responses.jsonl\n    record initial\n",
+        "after": "    : > /tmp/admin-responses.jsonl\n    autorestore_begin\n    record initial\n",
+        "matches": 1
+      },
+      {
+        "before": "    STAGE=kill-service\n    start_ready killed\n    send_control 192.0.2.2 cycle-2-ready\n    receive_control cycle-2-io\n    actual_pending\n    cp /tmp/pending.json /tmp/killed-pending.json\n    server_identity\n    helper_alive\n    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n    /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /bin/busybox kill -KILL \"$KILL_PID\"\n    echo \"RUSTUSB_JOURNAL_SIGNAL: PASS signal=9 count=1 sender_uid=1000 pid=$KILL_PID starttime=$KILL_START\"\n    send_control 192.0.2.2 cycle-2-killed\n    until_tick=$(( $(ticks) + 2000 ))\n    while [ \"$(ticks)\" -lt \"$until_tick\" ]; do\n        sysfs_observation\n        if exited \"$KILL_PID\" && jq -e --slurpfile original /tmp/original-sysfs.json '.==$original[0]' /tmp/sysfs.json > /dev/null; then break; fi\n        sleep 0.05\n    done\n    exited \"$KILL_PID\"\n    if wait \"$KILL_PID\"; then code=0; else code=$?; fi\n    jq -Mcn --arg epoch \"$EPOCH\" --argjson code \"$code\" --argjson pid \"$KILL_PID\" --argjson start \"$KILL_START\" '{label:$epoch,event:\"server_wait\",wait_code:$code,signal:9,signal_count:1,sender_uid:1000,pid:$pid,starttime:$start,final_backend_snapshot:null,final_backend_snapshot_observable:false}' >> /tmp/waits.jsonl\n    printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl\n    [ \"$code\" = 137 ]\n    [ ! -e \"/proc/$KILL_PID\" ]\n    dump_epoch\n    record killed-post\n    records_count 2\n    jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null\n    # Both peers save their primary observations before this barrier. The\n    # client waits here instead of sending into our full 20-second observation.\n    send_control 192.0.2.2 cycle-2-server-observed\n    receive_control cycle-2-observed\n    STAGE=persistent-restart-refusal\n    refused_server denied-before-helper-restart\n    OLD_HELPER_PID=$HELPER_PID; OLD_HELPER_START=$HELPER_START\n    helper_alive\n    kill -TERM \"$HELPER_PID\"\n    until_tick=$(( $(ticks) + 1000 ))\n    while [ \"$(ticks)\" -lt \"$until_tick\" ]; do exited \"$HELPER_PID\" && break; sleep 0.05; done\n    exited \"$HELPER_PID\"\n    if wait \"$HELPER_PID\"; then helper_code=0; else helper_code=$?; fi\n    [ \"$helper_code\" = 0 ] && [ ! -S /run/rustusb/control.sock ]\n    cp /tmp/helper.log /tmp/helper-before-restart.log\n    start_helper\n    [ \"$HELPER_PID\" != \"$OLD_HELPER_PID\" ]\n    jq -Mcn --argjson old \"$OLD_HELPER_PID\" --argjson oldstart \"$OLD_HELPER_START\" --argjson new \"$HELPER_PID\" --argjson newstart \"$HELPER_START\" --argjson code \"$helper_code\" '{event:\"helper_restart\",old_pid:$old,old_starttime:$oldstart,new_pid:$new,new_starttime:$newstart,old_wait_code:$code,state_directory_unchanged:true}' >> /tmp/waits.jsonl\n    printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl\n    record helper-reloaded\n    records_count 2\n    jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null\n    refused_server denied-after-helper-restart\n    STAGE=unrestored-admin-refusal\n    for lease in $(jq -r '.records[].lease_id' /tmp/killed-pending.json); do\n        for uid in 1000 1001; do\n            if /usr/bin/setpriv --reuid=\"$uid\" --regid=\"$uid\" --clear-groups /usr/bin/rustusb --json physical-pending > /tmp/api.json 2> /tmp/api-error.log; then api_code=0; else api_code=$?; fi\n            if [ \"$uid\" = 1000 ]; then expected_error='physical pending records require root'; else expected_error='caller UID is not approved by the administrator'; fi\n            admin_refusal \"$api_code\" \"$expected_error\"\n            jq -Mcn --arg phase pending-denied --argjson uid \"$uid\" --argjson code \"$api_code\" --rawfile out /tmp/api.json --rawfile err /tmp/api-error.log '{phase:$phase,uid:$uid,exit_code:$code,stdout:$out,stderr:$err}' >> /tmp/admin-responses.jsonl\n            if /usr/bin/setpriv --reuid=\"$uid\" --regid=\"$uid\" --clear-groups /usr/bin/rustusb --json physical-reconcile \"$lease\" > /tmp/api.json 2> /tmp/api-error.log; then api_code=0; else api_code=$?; fi\n            if [ \"$uid\" = 1000 ]; then expected_error='physical reconciliation requires root'; else expected_error='caller UID is not approved by the administrator'; fi\n            admin_refusal \"$api_code\" \"$expected_error\"\n            jq -Mcn --arg phase reconcile-denied --argjson uid \"$uid\" --argjson code \"$api_code\" --arg lease \"$lease\" --rawfile out /tmp/api.json --rawfile err /tmp/api-error.log '{phase:$phase,uid:$uid,exit_code:$code,lease_id:$lease,stdout:$out,stderr:$err}' >> /tmp/admin-responses.jsonl\n        done\n        if /usr/bin/rustusb --json physical-reconcile \"$lease\" > /tmp/api.json 2> /tmp/api-error.log; then api_code=0; else api_code=$?; fi\n        admin_refusal \"$api_code\" 'physical original configuration, full interface/alternate/driver set, or generation is not restored; unresolved grant retained'\n        jq -Mcn --arg phase unrestored-refused --argjson code \"$api_code\" --arg lease \"$lease\" --rawfile out /tmp/api.json --rawfile err /tmp/api-error.log '{phase:$phase,uid:0,exit_code:$code,lease_id:$lease,stdout:$out,stderr:$err}' >> /tmp/admin-responses.jsonl\n    done\n    record unrestored-refused\n    jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null\n    STAGE=explicit-guest-admin-driver-restoration\n    sysfs_observation\n    jq -e --slurpfile original /tmp/original-sysfs.json 'length==2 and all(.[];.interfaces==[{number:0,alternate:0,driver:null}]) and map(del(.interfaces))==($original[0]|map(del(.interfaces)))' /tmp/sysfs.json > /dev/null\n    printf '%s' \"$HID_BUS:1.0\" > /sys/bus/usb/drivers/usbhid/bind\n    printf '%s' \"$FTDI_BUS:1.0\" > /sys/bus/usb/drivers/ftdi_sio/bind\n    for attempt in $(seq 1 100); do\n        sysfs_observation\n        jq -e --slurpfile original /tmp/original-sysfs.json '.==$original[0]' /tmp/sysfs.json > /dev/null && break\n        sleep 0.05\n    done\n    jq -e --slurpfile original /tmp/original-sysfs.json '.==$original[0]' /tmp/sysfs.json > /dev/null\n    record guest-admin-restored\n    records_count 2\n    for lease in $(jq -r '.records[].lease_id' /tmp/killed-pending.json); do\n        /usr/bin/rustusb --json physical-reconcile \"$lease\" > /tmp/api.json 2> /tmp/api-error.log\n        jq -e '.status==\"retired\" and .observation==\"restored\"' /tmp/api.json > /dev/null\n        jq -Mcn --arg phase restored-retired --arg lease \"$lease\" --rawfile out /tmp/api.json --rawfile err /tmp/api-error.log '{phase:$phase,uid:0,exit_code:0,lease_id:$lease,stdout:$out,stderr:$err}' >> /tmp/admin-responses.jsonl\n    done\n    record admin-retired\n    records_count 0\n    STAGE=authorized-after-reconcile\n",
+        "after": "    autorestore_killed_epoch\n    STAGE=authorized-after-automatic-recovery\n",
+        "matches": 1
+      },
+      {
+        "before": "    start_ready reconciled\n",
+        "after": "    start_ready recovered\n",
+        "matches": 1
+      },
+      {
+        "before": "    record reconciled-closed\n",
+        "after": "    record recovered-closed\n",
+        "matches": 1
+      },
+      {
+        "before": "    helper_alive\n    echo 'RUSTUSB_JOURNAL_OBSERVATIONS_BEGIN'",
+        "after": "    helper_alive\n    autorestore_helper_log final\n    echo 'RUSTUSB_JOURNAL_OBSERVATIONS_BEGIN'",
+        "matches": 1
+      },
+      {
+        "before": "        timeout 8 dd bs=1 count=35 <&4 > /tmp/rx.bin 2> /tmp/dd.log & SERIAL_READER=$!\n",
+        "after": "        if [ \"$AUTORESTORE_SCENARIO\" = helper-restart ] && [ \"$cycle\" = 2 ]; then\n            send_control 192.0.2.1 cycle-2-attached\n            receive_control cycle-2-io-allowed\n        fi\n        timeout 8 dd bs=1 count=35 <&4 > /tmp/rx.bin 2> /tmp/dd.log & SERIAL_READER=$!\n",
+        "matches": 1
+      }
+    ],
+    "negative": [
+      {
+        "before": "AUTORESTORE_SCENARIO=owner-death\n",
+        "after": "AUTORESTORE_SCENARIO=owner-death\nNEGATIVE_SCENARIO=external-claim\n",
+        "matches": 1
+      },
+      {
+        "before": "    . /usr/lib/guest-autorestore-fragments.sh\n",
+        "after": "    . /usr/lib/guest-autorestore-fragments.sh\n    . /usr/lib/guest-autorestore-negative-fragments.sh\n",
+        "matches": 1
+      },
+      {
+        "before": "    autorestore_begin\n",
+        "after": "    negative_begin\n",
+        "matches": 1
+      },
+      {
+        "before": "    autorestore_killed_epoch\n",
+        "after": "    negative_killed_epoch\n",
+        "matches": 1
+      },
+      {
+        "before": "/tmp/autorestore-disk.json; do\n",
+        "after": "/tmp/autorestore-disk.json /tmp/negative-metadata.json /tmp/negative-helper-starts.jsonl /tmp/negative-helper-logs.jsonl /tmp/negative-readonly.jsonl /tmp/negative-windows.jsonl /tmp/negative-policies.jsonl /tmp/negative-killed-disk.json /tmp/negative-operations.json /tmp/negative-c.log /tmp/negative-c-events.jsonl /tmp/negative-c-identity.json /tmp/negative-helper-1.log /tmp/negative-helper-2.log /tmp/negative-helper-3.log; do\n",
+        "matches": 1
+      }
+    ]
+  },
+  "generated_init_sha256": "45540dca7faa3d7a20a0ef773eac94f44dca02efc2bcf8554a626ab221646a78",
+  "binaries": {
+    "helpers": [
+      {
+        "path": "/usr/bin/rustusb-helper",
+        "sha256": "1428d92b1fc5ff867604b5ce950e35a914e3b70d2659ce80d9432a61fbc6a828"
+      }
+    ],
+    "external_claim_probe": {
+      "sha256": "24234a98ea415de490e6342d60f55c129d4e938c7791e2ad7ff414b9dad9ad28",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/usbfs-external-claim-probe.c",
+        "-o",
+        "/tmp/rustusb-journal-qemu-3gs874_x/usbfs-external-claim-probe"
+      ],
+      "cc_version": "cc (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "uapi_sha256": "0951526a52edc949b7fba71bdec97e5a51939a7d0ae8a4513a52211daf7ef936"
+    },
+    "legacy_commit": null
+  },
+  "legacy_manifest_sha256": null
+}

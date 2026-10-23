@@ -105,13 +105,15 @@ The latest [validation report](docs/research/physical-driver-autorestore.md) rec
 - **Seven QEMU scenarios, fourteen successful guest exits**, covering opt-in recovery after service death and helper restart, the default manual lifecycle, HID/FTDI normal operation and hot unplug, ECM restoration, and SIGTERM cleanup.
 - **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 268 test executions, signal and output-backpressure checks.
 
+Three additional [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) passed on `4565f7a`, including real legacy-helper upgrade, revoked recovery policy and an external interface owner.
+
 The report links the tested revision and raw evidence. [Native interoperability](docs/research/native-qemu-matrix.md) and [virtual device tests](docs/research/userspace-qemu.md) have their own recorded baselines. These results establish the stated simulated-device behavior; real-device compatibility and two-machine hardware acceptance remain unverified.
 
 ## Current boundaries
 
 - **Network protection is external.** There is no built-in TLS or remote identity authentication. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
-- **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios; policy-revocation, legacy-producer migration and external-claim combinations still need runtime validation. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
+- **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
 - **More product work remains.** TUI, GUI, packaged installers, Windows USB support and the full hardware/security acceptance gates are on the [roadmap](docs/roadmap.md).
 

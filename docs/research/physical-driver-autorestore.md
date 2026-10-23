@@ -70,7 +70,7 @@ python3 scripts/qemu/run-autorestore-qemu.py --scenario helper-restart --evidenc
 
 ## 未完成范围
 
-- 新记录许可被撤销后的QEMU负向、真正旧schema1 producer迁移负向、helper停机期间独立C先claim再启动的产品负向仍待运行。默认off已由原journal回归验证，纯逻辑拒绝与机制实验不能替代这些新组合。
+- 该2ab9976矩阵未覆盖新许可撤销、旧schema1真实producer迁移及独立C先claim组合；后续clean4565f7a已完成这[三项实际边界验收](physical-driver-autorestore-negatives.md)，结果单独归属新版本。默认off仍由本报告原journal回归验证。
 - 跨配置/alternate、不同boot或热插拔代际不会自动恢复；需保留记录并人工协调。无原driver的非零alternate、任意FD/EP0活动、内核内部active硬阻塞、断电耐久和全部恢复异常矩阵仍未完成。
 - 两端真实设备、Ubuntu24.04内核USB和aarch64内核USB路径仍未验证。软件CI平台与USB运行平台分开记账。
 - TLS/认证、完整TUI/GUI、性能矩阵、存储/ISO及Windows USB仍按原路线分阶段推进。

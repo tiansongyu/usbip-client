@@ -1,0 +1,32 @@
+[package]
+name = "rustusb-daemon"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[features]
+default = []
+physical-usb = ["rustix/net"]
+
+[dependencies]
+rustusb-core.workspace = true
+rustusb-linux.workspace = true
+rustusb-native.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+rustix.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "rustusb-helper"
+path = "src/main.rs"

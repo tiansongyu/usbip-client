@@ -95,7 +95,7 @@ sudo rustusb --json physical-reconcile <lease-id>
 
 ## 可选的原驱动自动恢复
 
-此功能为实验性能力，已在clean2ab9976完成两个产品QEMU正向和原有回归；范围及未完成负向见[运行报告](research/physical-driver-autorestore.md)与[实施设计](research/physical-driver-autorestore-design.md)。默认关闭。管理员可在策略中添加 `physical_connect_restore_device_ids`，内容必须是 `physical_device_ids` 的无重复子集。例如上面示例设备可额外设置：
+此功能为实验性能力，已在clean2ab9976完成两个产品QEMU正向和原有回归；基础矩阵见[运行报告](research/physical-driver-autorestore.md)，旧producer/撤销/外部占用的后续实测见[边界验收](research/physical-driver-autorestore-negatives.md)，契约见[实施设计](research/physical-driver-autorestore-design.md)。默认关闭。管理员可在策略中添加 `physical_connect_restore_device_ids`，内容必须是 `physical_device_ids` 的无重复子集。例如上面示例设备可额外设置：
 
 ```json
 "physical_connect_restore_device_ids": ["usb-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
@@ -108,3 +108,6 @@ helper 周期性检查持久许可与当前启动时加载的 UID、设备和可
 每条未决记录在每个helper实例中最多实际尝试一次；失败保留记录并在helper stderr记录 `physical_auto_restore` 的 `failed` 原因。`attempt` 只表示开始核验恢复，`retired` 才表示最终核验及持久退休成功。不同boot、热拔/重插、配置或alternate改变、外部占用与不确定状态仍需管理员协调。获授权服务和外部root仍受信任，该功能不撤销其他FD或证明设备全部请求已停止。
 
 策略仍需重启helper才生效。改变设备用途或撤销恢复许可前，应停止helper并等待它的实际在途恢复操作结束，再改策略并重启；只编辑文件不会即时撤销许可，已经交付的服务FD也不因此失效。helper合作停止会等待实际blocking工作，内核硬阻塞时无法保证严格有界退出。
+
+
+旧helper933e720不接受新增策略字段。实际升级验收先保留原账本、停止旧helper，再使用新版helper与新策略；旧schema1记录不会因许可开启而自动恢复或退休，仍按上节由管理员恢复并只读协调。只有后续新grant可获持久恢复许可。撤销本节许可的实测按停止helper→改名单→启动加载执行；外部C释放后同实例也不会自动重试，均见上述边界报告。

@@ -1,0 +1,1430 @@
+use super::{MAX_CONNECTIONS, MAX_FRAME_BYTES, Policy, Request, Response};
+use rustusb_core::{Device, DeviceDiscovery, Error, ExportBackend, Result, VhciPort};
+use rustusb_linux::SysfsDiscovery;
+use rustusb_native::{NativeBackend, NativeSession};
+use serde::Serialize;
+use std::{
+    collections::{HashMap, HashSet},
+    fs::{self, File},
+    io::Read,
+    os::unix::fs::{FileTypeExt, MetadataExt, PermissionsExt},
+    path::{Component, Path, PathBuf},
+    sync::Arc,
+    time::Duration,
+};
+use tokio::{
+    io::{AsyncBufReadExt, AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt, BufReader},
+    net::{UnixListener, UnixStream},
+    sync::{Mutex, Semaphore},
+    task::JoinSet,
+    time::timeout,
+};
+
+const READ_TIMEOUT: Duration = Duration::from_secs(5);
+const WRITE_TIMEOUT: Duration = Duration::from_secs(5);
+const QUEUE_TIMEOUT: Duration = Duration::from_secs(30);
+const RESPONSE_TIMEOUT: Duration = Duration::from_secs(120);
+const CLEANUP_TIMEOUT: Duration = Duration::from_secs(10);
+
+#[derive(Default)]
+struct ManagedState {
+    exports: HashMap<String, Device>,
+    ports: HashMap<VhciPort, NativeSession>,
+    released_ports: HashSet<VhciPort>,
+}
+
+impl ManagedState {
+    fn authorize_current_binding(&self, device: &Device) -> Result<()> {
+        match self.exports.get(&device.id) {
+            Some(owned) if same_device_generation(owned, device) => Ok(()),
+            Some(_) => Err(Error::State("exported device generation changed; administrator reconciliation required".into())),
+            None if device.exported => Err(Error::Permission("existing export is not owned by this helper instance; administrator reconciliation required".into())),
+            None => Ok(()),
+        }
+    }
+
+    fn record_new_export(&mut self, before: &Device, after: Device) -> Result<()> {
+        if before.exported || !after.exported || !same_device_generation(before, &after) {
+            return Err(Error::State(
+                "new export ownership cannot be proven; administrator reconciliation required"
+                    .into(),
+            ));
+        }
+        self.exports.insert(after.id.clone(), after);
+        Ok(())
+    }
+
+    fn released_port_candidates(&self, current: &[NativeSession]) -> Result<Vec<NativeSession>> {
+        let mut candidates = Vec::new();
+        for owned in self.ports.values() {
+            let observed = current.iter().find(|session| session.port == owned.port)
+                .ok_or_else(|| Error::State("a managed port is absent from the kernel snapshot; reconciliation required".into()))?;
+            if observed.status == 4 {
+                candidates.push(owned.clone());
+            } else if !same_session(owned, observed) {
+                return Err(Error::State("a managed port has changed or has unknown identity; reconcile it before importing another device".into()));
+            }
+        }
+        Ok(candidates)
+    }
+}
+
+struct App {
+    policy: Policy,
+    backend: NativeBackend,
+    // Serializes all mutations from this helper. It does not lock out an
+    // administrator running usbip independently; identity checks still matter.
+    state: Mutex<ManagedState>,
+    #[cfg(feature = "physical-usb")]
+    journal: Option<Arc<std::sync::Mutex<super::journal::Store>>>,
+    #[cfg(feature = "physical-usb")]
+    handoffs: Arc<std::sync::Mutex<HashSet<String>>>,
+}
+
+#[cfg(feature = "physical-usb")]
+struct Handoff {
+    // Fields drop in declaration order: release our FD before permitting finish.
+    grant: super::PhysicalGrant,
+    _tracking: HandoffTracking,
+}
+#[cfg(feature = "physical-usb")]
+struct HandoffTracking {
+    lease_id: String,
+    active: Arc<std::sync::Mutex<HashSet<String>>>,
+}
+#[cfg(feature = "physical-usb")]
+impl Drop for HandoffTracking {
+    fn drop(&mut self) {
+        if let Ok(mut active) = self.active.lock() {
+            active.remove(&self.lease_id);
+        }
+    }
+}
+
+impl App {
+    #[cfg(feature = "physical-usb")]
+    async fn journal<T: Send + 'static>(
+        &self,
+        action: impl FnOnce(&mut super::journal::Store) -> Result<T> + Send + 'static,
+    ) -> Result<T> {
+        let journal = self
+            .journal
+            .clone()
+            .ok_or_else(|| Error::State("physical persistent journal is not enabled".into()))?;
+        tokio::task::spawn_blocking(move || {
+            let mut store = journal.lock().map_err(|_| {
+                Error::State("physical journal lock poisoned; authorization stopped".into())
+            })?;
+            action(&mut store)
+        })
+        .await
+        .map_err(|_| Error::State("physical journal task failed".into()))?
+    }
+
+    #[cfg(feature = "physical-usb")]
+    async fn open_physical(&self, uid: u32, pid: Option<i32>, id: String) -> Result<Handoff> {
+        self.policy.authorize_uid(uid)?;
+        self.policy.authorize_physical(&id)?;
+        let _state = timeout(QUEUE_TIMEOUT, self.state.lock())
+            .await
+            .map_err(|_| Error::Timeout("physical capability authorization queue".into()))?;
+        let pending_id = id.clone();
+        if self
+            .journal(move |store| store.has_device(&pending_id))
+            .await?
+        {
+            return Err(Error::State("unresolved physical grant blocks new authorization; inspect physical-pending and reconcile the original baseline".into()));
+        }
+        let before = current_device(&id).await?;
+        super::physical::ensure_eligible(&before)?;
+        let (mut grant, record) = tokio::task::spawn_blocking(move || {
+            let grant = super::physical::open_current(before)?;
+            let baseline = super::physical_lifecycle::capture(&grant.device, &grant.receipt)?;
+            let owner = super::physical_lifecycle::owner(uid, pid)?;
+            let lease_id =
+                super::physical_lifecycle::uuid(Path::new("/proc/sys/kernel/random/uuid"))?;
+            Ok::<_, Error>((
+                grant,
+                super::journal::Record {
+                    lease_id,
+                    owner,
+                    baseline,
+                },
+            ))
+        })
+        .await
+        .map_err(|_| Error::State("physical capability observation task failed".into()))??;
+        grant.lease_id = record.lease_id.clone();
+        self.journal(move |store| store.reserve(record)).await?;
+        // Any uncertainty from this point leaves the durable record unresolved.
+        self.handoffs
+            .lock()
+            .map_err(|_| Error::State("physical handoff lock poisoned".into()))?
+            .insert(grant.lease_id.clone());
+        let tracking = HandoffTracking {
+            lease_id: grant.lease_id.clone(),
+            active: self.handoffs.clone(),
+        };
+        Ok(Handoff {
+            grant,
+            _tracking: tracking,
+        })
+    }
+
+    #[cfg(feature = "physical-usb")]
+    async fn finish_physical(
+        &self,
+        uid: u32,
+        pid: Option<i32>,
+        lease_id: String,
+        admin_gone: Option<bool>,
+    ) -> Result<serde_json::Value> {
+        super::journal::validate_lease_id(&lease_id)?;
+        if admin_gone.is_some() && uid != 0 {
+            return Err(Error::Permission(
+                "physical reconciliation requires root".into(),
+            ));
+        }
+        if admin_gone.is_none() {
+            self.policy.authorize_uid(uid)?;
+        }
+        let _state = timeout(QUEUE_TIMEOUT, self.state.lock())
+            .await
+            .map_err(|_| Error::Timeout("physical finish queue".into()))?;
+        let lookup = lease_id.clone();
+        let Some(record) = self.journal(move |store| store.get(&lookup)).await? else {
+            return Ok(serde_json::json!({"status":"not_pending","lease_id":lease_id}));
+        };
+        let owner_record = record.clone();
+        tokio::task::spawn_blocking(move || {
+            if admin_gone.is_some() {
+                super::physical_lifecycle::require_ended_owner(&owner_record)
+            } else {
+                super::physical_lifecycle::require_owner(
+                    &owner_record,
+                    &super::physical_lifecycle::owner(uid, pid)?,
+                )
+            }
+        })
+        .await
+        .map_err(|_| Error::State("physical owner observation task failed".into()))??;
+        timeout(READ_TIMEOUT, async {
+            loop {
+                let active = self
+                    .handoffs
+                    .lock()
+                    .map_err(|_| Error::State("physical handoff lock poisoned".into()))?
+                    .contains(&lease_id);
+                if !active {
+                    return Ok::<_, Error>(());
+                }
+                tokio::time::sleep(Duration::from_millis(10)).await;
+            }
+        })
+        .await
+        .map_err(|_| {
+            Error::Timeout("physical descriptor handoff still active; record retained".into())
+        })??;
+        let observation = tokio::task::spawn_blocking(move || {
+            super::physical_lifecycle::verify(&record, admin_gone.unwrap_or(true))
+        })
+        .await
+        .map_err(|_| Error::State("physical restoration observation task failed".into()))??;
+        let retiring = lease_id.clone();
+        self.journal(move |store| store.retire(&retiring)).await?;
+        Ok(serde_json::json!({"status":"retired","lease_id":lease_id,"observation":observation}))
+    }
+
+    #[cfg(feature = "physical-usb")]
+    async fn physical_pending(&self, uid: u32, after: Option<String>) -> Result<serde_json::Value> {
+        if uid != 0 {
+            return Err(Error::Permission(
+                "physical pending records require root".into(),
+            ));
+        }
+        if let Some(after) = &after {
+            super::journal::validate_lease_id(after)?;
+        }
+        let records = if self.journal.is_some() {
+            self.journal(|store| store.records()).await?
+        } else {
+            Vec::new()
+        };
+        pending_page(records, after)
+    }
+
+    async fn handle(&self, uid: u32, req: Request) -> Result<serde_json::Value> {
+        self.policy.authorize_uid(uid)?;
+        if let Request::Status = req {
+            let kernel = match self.backend.sessions().await {
+                Ok(sessions) => serde_json::json!({ "available": true, "sessions": sessions }),
+                Err(error) => {
+                    serde_json::json!({ "available": false, "reason": Response::failure(error).error })
+                }
+            };
+            return Ok(serde_json::json!({
+                "schema_version": super::STATUS_SCHEMA_VERSION,
+                "helper": "running",
+                "backend": "linux-native",
+                "physical_usb_capability_enabled": cfg!(feature = "physical-usb"),
+                "physical_journal_schema_version": if cfg!(feature = "physical-usb") { Some(1_u32) } else { None },
+                "physical_device_allowlist_count": self.policy.physical_device_ids.len(),
+                "native_data_encryption": false,
+                "external_trusted_network_confirmed": self.policy.trusted_network,
+                "kernel": kernel,
+                "port_ownership": "only ports created by this helper instance; unknown ports after restart require administrator reconciliation",
+                "export_ownership": "only bindings successfully created and verified by this helper instance; unknown exports after restart require administrator reconciliation",
+                "policy_reload": "restart required"
+            }));
+        }
+        let mut state = timeout(QUEUE_TIMEOUT, self.state.lock())
+            .await
+            .map_err(|_| {
+                Error::Timeout("helper operation queue; no new mutation started".into())
+            })?;
+        let export = matches!(&req, Request::Export { .. });
+        match req {
+            #[cfg(feature = "physical-usb")]
+            Request::FinishPhysical { .. }
+            | Request::PhysicalPending { .. }
+            | Request::ReconcilePhysical { .. }
+            | Request::OpenPhysical { .. } => Err(Error::InvalidInput(
+                "physical capability requires descriptor handoff".into(),
+            )),
+            Request::Export { device_id } | Request::Unexport { device_id } => {
+                self.policy.authorize_device(&device_id)?;
+                let before = current_device(&device_id).await?;
+                state.authorize_current_binding(&before)?;
+                if before.occupied != Some(false) && before.exported {
+                    return Err(Error::UnsafeDevice("exported device is occupied or its occupancy is unknown; release the client first".into()));
+                }
+                // Both paths are idempotent without changing existing kernel
+                // resources. An already-exported device passed ownership above.
+                if before.exported == export {
+                    if !export {
+                        state.exports.remove(&device_id);
+                    }
+                    return Ok(
+                        serde_json::json!({ "device_id": device_id, "bus_id": before.bus_id, "exported": before.exported }),
+                    );
+                }
+                if export {
+                    // An earlier owned export may already have been released
+                    // externally. A failed fresh attempt must not retain that
+                    // stale ownership record and adopt a later binding.
+                    state.exports.remove(&device_id);
+                }
+                if export && !before.export_blockers.is_empty() {
+                    return Err(Error::UnsafeDevice("current device is not eligible for safe export; inspect devices and the safety policy".into()));
+                }
+                // A second fresh scan rejects obvious removal/replacement. This
+                // is not an atomic storage-exclusion mechanism; storage remains
+                // blocked by discovery for Phase 1.
+                let immediate = current_device(&device_id).await?;
+                state.authorize_current_binding(&immediate)?;
+                if !same_device_generation(&before, &immediate) {
+                    return Err(Error::State(
+                        "device changed during authorization; rescan and retry explicitly".into(),
+                    ));
+                }
+                if export && !immediate.export_blockers.is_empty() {
+                    return Err(Error::UnsafeDevice(
+                        "device safety changed before export".into(),
+                    ));
+                }
+                if immediate.exported && immediate.occupied != Some(false) {
+                    return Err(Error::UnsafeDevice(
+                        "device became occupied or its occupancy is unknown before the operation"
+                            .into(),
+                    ));
+                }
+                let operation = if export {
+                    self.backend.export(immediate.bus_id.clone()).await
+                } else {
+                    self.backend.unexport(immediate.bus_id.clone()).await
+                };
+                // Reconcile even when the native command failed. Never report
+                // a successful rollback or retry an uncertain operation.
+                let after = current_device(&device_id).await;
+                if let Err(error) = operation {
+                    // Even a matching new binding after failure is insufficient
+                    // proof of its origin when external root tools may run. Do
+                    // not claim or undo it on a before/after difference alone.
+                    if export && after.as_ref().is_ok_and(|device| device.exported) {
+                        tracing::warn!(
+                            "export failed with a binding now present; ownership was not claimed; administrator reconciliation required"
+                        );
+                    }
+                    return Err(error);
+                }
+                let after = after?;
+                if !same_device_generation(&immediate, &after) || after.exported != export {
+                    return Err(Error::State("native operation postcondition is uncertain; inspect kernel state before another change".into()));
+                }
+                if export {
+                    state.record_new_export(&immediate, after.clone())?;
+                } else {
+                    state.exports.remove(&device_id);
+                }
+                Ok(
+                    serde_json::json!({ "device_id": device_id, "bus_id": after.bus_id, "exported": after.exported }),
+                )
+            }
+            Request::Attach { peer, bus_id } => {
+                self.policy.authorize_peer(&peer)?;
+                // The old local generation must be gone before a new attach
+                // can reuse its port. Reconcile before the tool creates any
+                // kernel connection, not after discovering a map collision.
+                timeout(CLEANUP_TIMEOUT, self.reconcile_released_ports(&mut state))
+                    .await
+                    .map_err(|_| Error::Timeout("prior managed session cleanup is incomplete; no new import was started; inspect kernel state".into()))??;
+                // The backend must verify a unique before/after port, remote
+                // device ID, current USB identity and native endpoint record.
+                let session = self.backend.attach_session(peer, bus_id).await?;
+                let port = session.port;
+                if state.ports.contains_key(&port) {
+                    // An external administrator can still change kernel state
+                    // between snapshots. Only this operation's freshly verified
+                    // receipt may authorize compensation; never use the old map.
+                    let cleanup = self.backend.detach_session(&session).await;
+                    return Err(Error::State(match cleanup {
+                        Ok(()) => "new import conflicted with a managed record; the newly verified connection was released; prior ownership requires reconciliation".into(),
+                        Err(error) => format!("new import conflicted with a managed record; cleanup of the newly verified connection could not be confirmed: {error}; administrator reconciliation required"),
+                    }));
+                }
+                state.released_ports.remove(&port);
+                let data = serde_json::to_value(&session).map_err(json_error)?;
+                state.ports.insert(port, session);
+                Ok(data)
+            }
+            Request::Detach { port } => {
+                if !state.ports.contains_key(&port) && !state.released_ports.contains(&port) {
+                    return Err(Error::Permission("port is not owned by this helper instance; unknown or restart-surviving ports require administrator reconciliation".into()));
+                }
+                let current = self.backend.sessions().await?;
+                let at_port = current.iter().find(|session| session.port == port);
+                let Some(owned) = state.ports.get(&port) else {
+                    if state.released_ports.contains(&port) && at_port.is_none() {
+                        return Ok(serde_json::json!({ "port": port, "detached": true }));
+                    }
+                    return Err(Error::Permission("port is not owned by this helper instance; unknown or restart-surviving ports require administrator reconciliation".into()));
+                };
+                if let Some(actual) = at_port
+                    && !same_session(owned, actual)
+                {
+                    return Err(Error::State("port identity changed since import; refusing to detach a possibly unrelated session".into()));
+                }
+                // NULL can precede USB device removal. Always let Native check
+                // the previously claimed USB generation before reporting done.
+                self.backend.detach_session(owned).await?;
+                state.ports.remove(&port);
+                state.released_ports.insert(port);
+                Ok(serde_json::json!({ "port": port, "detached": true }))
+            }
+            Request::Sessions => {
+                let current = self.backend.sessions().await?;
+                let sessions = current
+                    .into_iter()
+                    .map(|session| {
+                        let managed = state
+                            .ports
+                            .get(&session.port)
+                            .is_some_and(|owned| same_session(owned, &session));
+                        serde_json::json!({ "session": session, "managed": managed })
+                    })
+                    .collect::<Vec<_>>();
+                Ok(serde_json::json!(sessions))
+            }
+            Request::Status => Err(Error::State("status dispatch invariant".into())),
+        }
+    }
+
+    async fn reconcile_released_ports(&self, state: &mut ManagedState) -> Result<()> {
+        let current = self.backend.port_states().await?;
+        let candidates = state.released_port_candidates(&current)?;
+        for owned in candidates {
+            loop {
+                if self.backend.session_cleanup_complete(&owned).await? {
+                    state.ports.remove(&owned.port);
+                    state.released_ports.insert(owned.port);
+                    tracing::info!(
+                        port = owned.port.0,
+                        "previous managed kernel session release verified before import"
+                    );
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(100)).await;
+            }
+        }
+        Ok(())
+    }
+}
+
+#[cfg(feature = "physical-usb")]
+fn pending_page(
+    mut records: Vec<super::journal::Record>,
+    after: Option<String>,
+) -> Result<serde_json::Value> {
+    records.sort_by(|a, b| a.lease_id.cmp(&b.lease_id));
+    let mut page = Vec::new();
+    let mut bytes = 1024;
+    let mut more = false;
+    for record in records
+        .into_iter()
+        .filter(|record| after.as_ref().is_none_or(|after| &record.lease_id > after))
+    {
+        let size = serde_json::to_vec(&record).map_err(json_error)?.len() + 1;
+        if bytes + size >= MAX_FRAME_BYTES {
+            more = true;
+            break;
+        }
+        bytes += size;
+        page.push(record);
+    }
+    if more && page.is_empty() {
+        return Err(Error::State(
+            "physical journal record exceeds IPC page size".into(),
+        ));
+    }
+    let next_after = if more {
+        page.last().map(|record| record.lease_id.clone())
+    } else {
+        None
+    };
+    Ok(serde_json::json!({"schema_version":1,"records":page,"next_after":next_after}))
+}
+
+fn same_device_generation(before: &Device, after: &Device) -> bool {
+    before.id == after.id
+        && before.bus_id == after.bus_id
+        && before.device_address == after.device_address
+        && before.topology == after.topology
+        && before.vendor_id == after.vendor_id
+        && before.product_id == after.product_id
+}
+
+fn same_session(before: &NativeSession, after: &NativeSession) -> bool {
+    // Reused port and USB addresses are insufficient. ERROR snapshots lacking
+    // the receipt remain unknown and cannot transfer ownership or authorize I/O.
+    before.port == after.port
+        && before.local_bus_id.is_some()
+        && before.local_bus_id == after.local_bus_id
+        && before.remote_device_id.is_some()
+        && before.remote_device_id == after.remote_device_id
+        && before.vendor_id == after.vendor_id
+        && before.product_id == after.product_id
+        && before.local_device_address.is_some()
+        && before.local_device_address == after.local_device_address
+        && before.local_device_generation.is_some()
+        && before.local_device_generation == after.local_device_generation
+}
+
+async fn current_device(id: &str) -> Result<Device> {
+    let id = id.to_owned();
+    tokio::task::spawn_blocking(move || {
+        let devices = SysfsDiscovery::default().scan()?;
+        let mut matching = devices.into_iter().filter(|device| device.id == id);
+        let device = matching.next().ok_or_else(|| {
+            Error::State("approved device is absent; rediscover its current identity".into())
+        })?;
+        if matching.next().is_some() {
+            return Err(Error::UnsafeDevice(
+                "device fingerprint is ambiguous".into(),
+            ));
+        }
+        Ok(device)
+    })
+    .await
+    .map_err(|_| Error::State("device scan task failed".into()))?
+}
+
+fn json_error(_: serde_json::Error) -> Error {
+    Error::Protocol("invalid local JSON message".into())
+}
+
+fn validate_metadata(metadata: &fs::Metadata, expected_uid: u32) -> Result<()> {
+    if metadata.uid() != expected_uid || metadata.mode() & 0o022 != 0 {
+        return Err(Error::Permission(
+            "policy and socket directories must be root-owned and not group/other writable".into(),
+        ));
+    }
+    Ok(())
+}
+
+pub(super) fn protected_directory(path: &Path, expected_uid: u32) -> Result<()> {
+    if !path.is_absolute() {
+        return Err(Error::InvalidInput("helper paths must be absolute".into()));
+    }
+    let mut cursor = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::RootDir | Component::Normal(_) => cursor.push(component),
+            _ => {
+                return Err(Error::InvalidInput(
+                    "helper paths cannot contain parent/current directory components".into(),
+                ));
+            }
+        }
+        let metadata = fs::symlink_metadata(&cursor)?;
+        if !metadata.is_dir() || metadata.file_type().is_symlink() {
+            return Err(Error::Permission(
+                "helper paths cannot traverse symlinks or non-directories".into(),
+            ));
+        }
+        validate_metadata(&metadata, expected_uid)?;
+    }
+    Ok(())
+}
+
+fn read_policy(config: &Path) -> Result<Policy> {
+    let parent = config
+        .parent()
+        .ok_or_else(|| Error::InvalidInput("policy parent directory required".into()))?;
+    protected_directory(parent, 0)?;
+    let descriptor = rustix::fs::open(
+        config,
+        rustix::fs::OFlags::RDONLY
+            | rustix::fs::OFlags::NOFOLLOW
+            | rustix::fs::OFlags::CLOEXEC
+            | rustix::fs::OFlags::NONBLOCK,
+        rustix::fs::Mode::empty(),
+    )
+    .map_err(std::io::Error::from)?;
+    let file = File::from(descriptor);
+    let metadata = file.metadata()?;
+    validate_metadata(&metadata, 0)?;
+    if !metadata.is_file() || metadata.len() > MAX_FRAME_BYTES as u64 {
+        return Err(Error::Permission(
+            "policy must be a regular file no larger than 64 KiB".into(),
+        ));
+    }
+    let mut bytes = Vec::new();
+    file.take((MAX_FRAME_BYTES + 1) as u64)
+        .read_to_end(&mut bytes)?;
+    if bytes.len() > MAX_FRAME_BYTES {
+        return Err(Error::InvalidInput("policy size limit exceeded".into()));
+    }
+    let policy: Policy = serde_json::from_slice(&bytes).map_err(json_error)?;
+    policy.validate()?;
+    Ok(policy)
+}
+
+async fn read_frame<R: AsyncRead + Unpin>(reader: &mut R, deadline: Duration) -> Result<Vec<u8>> {
+    let limited = reader.take((MAX_FRAME_BYTES + 1) as u64);
+    let mut buffered = BufReader::new(limited);
+    let mut frame = Vec::new();
+    timeout(deadline, buffered.read_until(b'\n', &mut frame))
+        .await
+        .map_err(|_| Error::Timeout("local IPC frame".into()))??;
+    if frame.len() > MAX_FRAME_BYTES || frame.last() != Some(&b'\n') {
+        return Err(Error::Protocol(
+            "IPC requires one newline-terminated JSON frame no larger than 64 KiB".into(),
+        ));
+    }
+    Ok(frame)
+}
+
+async fn write_frame<W: AsyncWrite + Unpin, T: Serialize>(writer: &mut W, value: &T) -> Result<()> {
+    let mut frame = serde_json::to_vec(value).map_err(json_error)?;
+    frame.push(b'\n');
+    if frame.len() > MAX_FRAME_BYTES {
+        return Err(Error::Protocol(
+            "local response exceeds IPC size limit".into(),
+        ));
+    }
+    timeout(WRITE_TIMEOUT, writer.write_all(&frame))
+        .await
+        .map_err(|_| Error::Timeout("local IPC write".into()))??;
+    Ok(())
+}
+
+async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
+    let credentials = stream.peer_cred()?;
+    let uid = credentials.uid();
+    let mut operation = "unauthorized_or_invalid";
+    #[cfg(feature = "physical-usb")]
+    let mut physical_grant = None;
+    let response = match if uid == 0 {
+        Ok(())
+    } else {
+        app.policy.authorize_uid(uid)
+    } {
+        Err(error) => Response::failure(error),
+        Ok(()) => match read_frame(&mut stream, READ_TIMEOUT).await {
+            Ok(frame) => match serde_json::from_slice::<Request>(&frame).map_err(json_error) {
+                Ok(req) => {
+                    operation = match &req {
+                        #[cfg(feature = "physical-usb")]
+                        Request::OpenPhysical { .. } => "open_physical",
+                        #[cfg(feature = "physical-usb")]
+                        Request::FinishPhysical { .. } => "finish_physical",
+                        #[cfg(feature = "physical-usb")]
+                        Request::PhysicalPending { .. } => "physical_pending",
+                        #[cfg(feature = "physical-usb")]
+                        Request::ReconcilePhysical { .. } => "reconcile_physical",
+                        Request::Export { .. } => "export",
+                        Request::Unexport { .. } => "unexport",
+                        Request::Attach { .. } => "attach",
+                        Request::Detach { .. } => "detach",
+                        Request::Sessions => "sessions",
+                        Request::Status => "status",
+                    };
+                    #[cfg(feature = "physical-usb")]
+                    {
+                        let result = match req {
+                            Request::OpenPhysical {
+                                device_id,
+                                journal_schema_version,
+                            } => {
+                                if journal_schema_version != 1 {
+                                    Err(Error::Protocol("physical journal schema 1 required; upgrade the physical client and helper together".into()))
+                                } else {
+                                    match app.open_physical(uid, credentials.pid(), device_id).await
+                                    {
+                                        Ok(handoff) => {
+                                            let description = super::physical::GrantDescription {
+                                                lease_id: handoff.grant.lease_id.clone(),
+                                                device: handoff.grant.device.clone(),
+                                                receipt: handoff.grant.receipt.clone(),
+                                            };
+                                            let data = serde_json::to_value(description)
+                                                .map_err(json_error);
+                                            physical_grant = Some(handoff);
+                                            data
+                                        }
+                                        Err(error) => Err(error),
+                                    }
+                                }
+                            }
+                            Request::FinishPhysical { lease_id } => {
+                                app.finish_physical(uid, credentials.pid(), lease_id, None)
+                                    .await
+                            }
+                            Request::PhysicalPending { after } => {
+                                app.physical_pending(uid, after).await
+                            }
+                            Request::ReconcilePhysical {
+                                lease_id,
+                                acknowledge_gone,
+                            } => {
+                                app.finish_physical(
+                                    uid,
+                                    credentials.pid(),
+                                    lease_id,
+                                    Some(acknowledge_gone),
+                                )
+                                .await
+                            }
+                            request => app.handle(uid, request).await,
+                        };
+                        match result {
+                            Ok(data) => Response::success(data),
+                            Err(error) => Response::failure(error),
+                        }
+                    }
+                    #[cfg(not(feature = "physical-usb"))]
+                    match app.handle(uid, req).await {
+                        Ok(data) => Response::success(data),
+                        Err(error) => Response::failure(error),
+                    }
+                }
+                Err(error) => Response::failure(error),
+            },
+            Err(error) => Response::failure(error),
+        },
+    };
+    tracing::info!(
+        caller_uid = uid,
+        operation,
+        success = response.ok,
+        "local helper operation finished"
+    );
+    if let Err(error) = write_frame(&mut stream, &response).await {
+        if matches!(error, Error::Protocol(_)) {
+            write_frame(&mut stream, &Response::failure(error)).await?;
+            // The grant description was not delivered. Never send its FD after
+            // the fallback failure, even if a caller sends an acknowledgement.
+            return Ok(());
+        } else {
+            return Err(error);
+        }
+    }
+    #[cfg(feature = "physical-usb")]
+    if let Some(grant) = physical_grant {
+        // JSON readers may buffer beyond a newline. Send ancillary data only
+        // after a separate acknowledgement, so no ordinary read can eat it.
+        let mut acknowledgement = [0; 1];
+        timeout(READ_TIMEOUT, stream.read_exact(&mut acknowledgement))
+            .await
+            .map_err(|_| Error::Timeout("physical descriptor handoff acknowledgement".into()))??;
+        if acknowledgement != [super::physical::FD_MARKER] {
+            return Err(Error::Protocol(
+                "invalid physical descriptor acknowledgement".into(),
+            ));
+        }
+        super::physical::send_fd(&stream, &grant.grant.fd).await?;
+    }
+    Ok(())
+}
+
+async fn connect_trusted(socket: &Path) -> Result<UnixStream> {
+    let parent = socket
+        .parent()
+        .ok_or_else(|| Error::InvalidInput("socket parent directory required".into()))?;
+    protected_directory(parent, 0)?;
+    let metadata = fs::symlink_metadata(socket)?;
+    if metadata.uid() != 0 || !metadata.file_type().is_socket() {
+        return Err(Error::Permission(
+            "helper socket must be root-owned and not a symlink".into(),
+        ));
+    }
+    let stream = timeout(READ_TIMEOUT, UnixStream::connect(socket))
+        .await
+        .map_err(|_| Error::Timeout("connecting to local helper".into()))??;
+    if stream.peer_cred()?.uid() != 0 {
+        return Err(Error::Permission("helper peer is not root".into()));
+    }
+    Ok(stream)
+}
+
+pub(super) async fn request(socket: &Path, req: Request) -> Result<Response> {
+    let mut stream = connect_trusted(socket).await?;
+    exchange(&mut stream, &req).await
+}
+
+// A helper can reject SO_PEERCRED and close before the caller writes anything.
+// Preserve that already-buffered refusal instead of replacing it with EPIPE.
+// This is used only on the same socket after connect_trusted; never retry work.
+async fn exchange(stream: &mut UnixStream, req: &Request) -> Result<Response> {
+    if let Err(write_error) = write_frame(stream, req).await {
+        if matches!(write_error, Error::Io(_) | Error::Timeout(_))
+            && let Ok(frame) = read_frame(stream, READ_TIMEOUT).await
+            && let Ok(response) = serde_json::from_slice::<Response>(&frame)
+            && !response.ok
+            && response.data.is_null()
+            && response
+                .error
+                .as_deref()
+                .is_some_and(|message| !message.trim().is_empty())
+        {
+            return Ok(response);
+        }
+        return Err(write_error);
+    }
+    let frame = read_frame(stream, RESPONSE_TIMEOUT).await?;
+    serde_json::from_slice(&frame).map_err(json_error)
+}
+
+#[cfg(feature = "physical-usb")]
+pub(super) async fn open_physical(
+    socket: &Path,
+    device_id: String,
+) -> Result<super::PhysicalGrant> {
+    super::validate_device_id(&device_id)?;
+    let mut stream = connect_trusted(socket).await?;
+    let response = exchange(
+        &mut stream,
+        &Request::OpenPhysical {
+            device_id,
+            journal_schema_version: 1,
+        },
+    )
+    .await?;
+    if !response.ok {
+        return Err(Error::State(
+            response
+                .error
+                .unwrap_or_else(|| "physical capability was denied".into()),
+        ));
+    }
+    let description: super::physical::GrantDescription =
+        serde_json::from_value(response.data).map_err(json_error)?;
+    timeout(
+        WRITE_TIMEOUT,
+        stream.write_all(&[super::physical::FD_MARKER]),
+    )
+    .await
+    .map_err(|_| Error::Timeout("physical capability acknowledgement".into()))??;
+    let fd = super::physical::receive_fd(&stream).await?;
+    super::physical::validate_received(fd, description)
+}
+
+pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -> Result<()> {
+    if !rustix::process::geteuid().is_root() {
+        return Err(Error::Permission(
+            "only the restricted helper, installed by an administrator, may run as root".into(),
+        ));
+    }
+    let policy = read_policy(config)?;
+    #[cfg(feature = "physical-usb")]
+    let journal = {
+        // Even an empty policy must reload existing unresolved state. First-time
+        // Native-only installations need not create a physical journal.
+        let exists = match fs::symlink_metadata(physical_state) {
+            Ok(_) => true,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
+            Err(error) => return Err(error.into()),
+        };
+        if !policy.physical_device_ids.is_empty() || exists {
+            let path = physical_state.to_owned();
+            Some(Arc::new(std::sync::Mutex::new(
+                tokio::task::spawn_blocking(move || super::journal::Store::open(&path))
+                    .await
+                    .map_err(|_| {
+                        Error::State("physical journal initialization task failed".into())
+                    })??,
+            )))
+        } else {
+            None
+        }
+    };
+    #[cfg(not(feature = "physical-usb"))]
+    let _ = physical_state;
+    let parent = socket
+        .parent()
+        .ok_or_else(|| Error::InvalidInput("socket parent directory required".into()))?;
+    if !parent.exists() {
+        let ancestor = parent
+            .parent()
+            .ok_or_else(|| Error::InvalidInput("socket directory parent required".into()))?;
+        protected_directory(ancestor, 0)?;
+        fs::create_dir(parent)?;
+        fs::set_permissions(parent, fs::Permissions::from_mode(0o755))?;
+    }
+    protected_directory(parent, 0)?;
+    if fs::symlink_metadata(socket).is_ok() {
+        return Err(Error::State("socket path already exists; verify the previous helper stopped and reconcile its state before removing it".into()));
+    }
+    let listener = UnixListener::bind(socket)?;
+    fs::set_permissions(socket, fs::Permissions::from_mode(0o666))?;
+    let bound_metadata = fs::symlink_metadata(socket)?;
+    let app = Arc::new(App {
+        policy,
+        backend: NativeBackend::default(),
+        state: Mutex::new(ManagedState::default()),
+        #[cfg(feature = "physical-usb")]
+        journal,
+        #[cfg(feature = "physical-usb")]
+        handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),
+    });
+    let limit = Arc::new(Semaphore::new(MAX_CONNECTIONS));
+    let mut jobs = JoinSet::new();
+    let mut termination =
+        tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())?;
+    tracing::info!(
+        "root helper listening; unknown kernel ports are not owned; no built-in data encryption"
+    );
+    loop {
+        tokio::select! {
+            accepted = listener.accept() => {
+                let (stream, _) = accepted?;
+                match limit.clone().try_acquire_owned() {
+                    Ok(permit) => {
+                        let app = app.clone();
+                        jobs.spawn(async move {
+                            let _permit = permit;
+                            if serve_connection(stream, app).await.is_err() {
+                                tracing::warn!("local helper connection failed or caller disconnected; inspect kernel state after any mutation");
+                            }
+                        });
+                    }
+                    Err(_) => { tracing::warn!("local helper concurrent connection limit reached"); }
+                }
+            }
+            _ = termination.recv() => break,
+            interrupt = tokio::signal::ctrl_c() => { interrupt?; break; }
+            Some(result) = jobs.join_next(), if !jobs.is_empty() => {
+                if result.is_err() { tracing::error!("helper request task failed; administrator reconciliation may be needed"); }
+            }
+        }
+    }
+    drop(listener);
+    // Stop accepting work, but allow bounded in-flight native operations to
+    // finish. Existing native kernel sessions intentionally survive shutdown.
+    while let Some(result) = jobs.join_next().await {
+        if result.is_err() {
+            tracing::error!("helper request failed during shutdown");
+        }
+    }
+    let current = fs::symlink_metadata(socket)?;
+    if current.dev() == bound_metadata.dev() && current.ino() == bound_metadata.ino() {
+        fs::remove_file(socket)?;
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn session(port: u8, inode: u64) -> Result<NativeSession> {
+        Ok(NativeSession {
+            port: VhciPort(port),
+            status: 6,
+            local_bus_id: Some(rustusb_core::BusId::new("9-1")?),
+            remote_device_id: Some(0x10002),
+            vendor_id: Some(0x1234),
+            product_id: Some(0xabcd),
+            local_device_address: Some(2),
+            local_device_generation: Some(rustusb_native::LocalDeviceGeneration {
+                filesystem_device: 1,
+                inode,
+            }),
+        })
+    }
+
+    #[test]
+    fn attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports() -> Result<()> {
+        let owned = session(0, 11)?;
+        let mut state = ManagedState::default();
+        state.ports.insert(owned.port, owned.clone());
+        let mut free = session(1, 12)?;
+        free.status = 4;
+        // A healthy first connection must not prevent importing a second device.
+        assert!(
+            state
+                .released_port_candidates(&[owned.clone(), free])
+                .is_ok_and(|candidates| candidates.is_empty())
+        );
+        let mut released = owned.clone();
+        released.status = 4;
+        released.local_bus_id = None;
+        released.local_device_generation = None;
+        let candidates = state.released_port_candidates(&[released])?;
+        assert_eq!(candidates, vec![owned.clone()]);
+        // NULL alone is not proof of cleanup: retain ownership until the
+        // backend separately confirms disappearance of the old generation.
+        assert_eq!(state.ports.get(&owned.port), Some(&owned));
+        assert!(state.released_ports.is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn replacement_and_unknown_port_identities_block_attach_before_mutation() -> Result<()> {
+        let owned = session(0, 11)?;
+        let mut state = ManagedState::default();
+        state.ports.insert(owned.port, owned.clone());
+        let replacement = session(0, 12)?;
+        assert!(!same_session(&owned, &replacement));
+        assert!(state.released_port_candidates(&[replacement]).is_err());
+        for missing_address in [false, true] {
+            let mut incomplete = owned.clone();
+            if missing_address {
+                incomplete.local_device_address = None;
+            } else {
+                incomplete.local_device_generation = None;
+            }
+            assert!(!same_session(&incomplete, &incomplete));
+            assert!(state.released_port_candidates(&[incomplete]).is_err());
+        }
+        let mut unknown = owned.clone();
+        unknown.status = 7;
+        unknown.local_bus_id = None;
+        unknown.remote_device_id = None;
+        unknown.local_device_address = None;
+        unknown.local_device_generation = None;
+        assert!(state.released_port_candidates(&[unknown]).is_err());
+        assert!(state.released_port_candidates(&[]).is_err());
+        assert_eq!(state.ports.get(&owned.port), Some(&owned));
+        Ok(())
+    }
+
+    fn device(exported: bool, address: u32) -> Result<Device> {
+        Ok(Device {
+            id: format!("usb-{}", "a".repeat(64)),
+            bus_id: rustusb_core::BusId::new("1-1")?,
+            vendor_id: 0x1234,
+            product_id: 0x5678,
+            manufacturer: None,
+            product: None,
+            serial: None,
+            device_address: address,
+            usb_version: "2.00".into(),
+            speed: "12".into(),
+            class: 0,
+            subclass: 0,
+            protocol: 0,
+            topology: "devices/controller/ports/1".into(),
+            driver: None,
+            interfaces: vec![],
+            exported,
+            occupied: Some(false),
+            export_blockers: vec![],
+        })
+    }
+
+    #[test]
+    fn unknown_export_cannot_be_adopted_or_released_after_restart() -> Result<()> {
+        let bound = device(true, 2)?;
+        let state = ManagedState::default();
+        assert!(matches!(
+            state.authorize_current_binding(&bound),
+            Err(Error::Permission(_))
+        ));
+        let mut owned = ManagedState::default();
+        owned.record_new_export(&device(false, 2)?, bound.clone())?;
+        owned.authorize_current_binding(&bound)?;
+        let restarted = ManagedState::default();
+        assert!(restarted.authorize_current_binding(&bound).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn owned_export_requires_same_generation_and_verified_new_binding() -> Result<()> {
+        let mut state = ManagedState::default();
+        let unbound = device(false, 2)?;
+        let bound = device(true, 2)?;
+        assert!(state.record_new_export(&unbound, unbound.clone()).is_err());
+        assert!(state.record_new_export(&bound, bound.clone()).is_err());
+        assert!(state.record_new_export(&unbound, device(true, 3)?).is_err());
+        assert!(state.exports.is_empty());
+        state.record_new_export(&unbound, bound.clone())?;
+        assert!(state.authorize_current_binding(&device(true, 3)?).is_err());
+        state.authorize_current_binding(&bound)?;
+        state.exports.remove(&bound.id);
+        state.authorize_current_binding(&unbound)?;
+        assert!(state.authorize_current_binding(&bound).is_err());
+        Ok(())
+    }
+
+    fn app(allowed_uids: Vec<u32>) -> Arc<App> {
+        Arc::new(App {
+            policy: Policy {
+                allowed_uids,
+                physical_device_ids: vec![],
+                export_device_ids: vec![],
+                peers: vec![],
+                trusted_network: false,
+            },
+            backend: NativeBackend::default(),
+            state: Mutex::new(ManagedState::default()),
+            #[cfg(feature = "physical-usb")]
+            journal: None,
+            #[cfg(feature = "physical-usb")]
+            handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),
+        })
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[tokio::test]
+    async fn management_reconciliation_never_uses_the_ordinary_uid_allowlist() -> Result<()> {
+        let service = app(vec![1000]);
+        assert!(matches!(
+            service.physical_pending(1000, None).await,
+            Err(Error::Permission(_))
+        ));
+        assert!(matches!(
+            service
+                .finish_physical(
+                    1000,
+                    Some(1),
+                    "00000000-0000-0000-0000-000000000001".into(),
+                    Some(false)
+                )
+                .await,
+            Err(Error::Permission(_))
+        ));
+        assert_eq!(
+            service.physical_pending(0, None).await?["records"],
+            serde_json::json!([])
+        );
+        Ok(())
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[test]
+    fn pending_pages_preserve_complete_baselines_without_exceeding_ipc_bound() -> Result<()> {
+        use super::super::journal::{Baseline, OriginalInterface, Owner, Record};
+        let bus_id = rustusb_core::BusId::new("1-1")?;
+        let records: Vec<_> = (0..6)
+            .map(|number| Record {
+                lease_id: format!("00000000-0000-0000-0000-{number:012x}"),
+                owner: Owner {
+                    uid: 1000,
+                    pid: 2,
+                    start_time: 3,
+                    boot_id: "00000000-0000-0000-0000-000000000001".into(),
+                },
+                baseline: Baseline {
+                    device_id: format!("usb-{number:064x}"),
+                    bus_id: bus_id.clone(),
+                    receipt: rustusb_core::PhysicalDeviceReceipt {
+                        sysfs_device: 1,
+                        sysfs_inode: 2,
+                        node_device: 3,
+                        node_inode: 4,
+                        bus_number: 1,
+                        usb_device_number: 2,
+                    },
+                    configuration: 1,
+                    interfaces: (0..=255)
+                        .map(|number| OriginalInterface {
+                            number,
+                            alternate: 1,
+                            driver: Some("a".repeat(64)),
+                        })
+                        .collect(),
+                },
+            })
+            .collect();
+        let mut after = None;
+        let mut observed = Vec::new();
+        loop {
+            let page = pending_page(records.clone(), after)?;
+            let response = Response::success(page.clone());
+            assert!(serde_json::to_vec(&response).map_err(json_error)?.len() + 1 < MAX_FRAME_BYTES);
+            let entries: Vec<Record> =
+                serde_json::from_value(page["records"].clone()).map_err(json_error)?;
+            assert!(!entries.is_empty());
+            assert!(
+                entries
+                    .iter()
+                    .all(|record| record.baseline.interfaces.len() == 256)
+            );
+            observed.extend(entries.into_iter().map(|record| record.lease_id));
+            after = page["next_after"].as_str().map(str::to_owned);
+            if after.is_none() {
+                break;
+            }
+        }
+        assert_eq!(
+            observed,
+            records
+                .into_iter()
+                .map(|record| record.lease_id)
+                .collect::<Vec<_>>()
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn real_unix_peer_credentials_allow_status_and_deny_unknown_uid() -> Result<()> {
+        for allowed in [true, false] {
+            let (mut client, server) = UnixStream::pair()?;
+            let uid = server.peer_cred()?.uid();
+            let service = app(if allowed { vec![uid] } else { vec![] });
+            let task = tokio::spawn(serve_connection(server, service));
+            if allowed {
+                write_frame(&mut client, &Request::Status).await?;
+            }
+            let frame = read_frame(&mut client, READ_TIMEOUT).await?;
+            let response: Response = serde_json::from_slice(&frame).map_err(json_error)?;
+            assert_eq!(response.ok, allowed);
+            task.await
+                .map_err(|_| Error::State("test server task failed".into()))??;
+        }
+        Ok(())
+    }
+
+    async fn early_uid_refusal(req: Request) -> Result<()> {
+        let (mut client, server) = UnixStream::pair()?;
+        // Finish the actual SO_PEERCRED rejection before sending the request,
+        // deterministically reproducing the QEMU EPIPE ordering.
+        serve_connection(server, app(vec![])).await?;
+        let response = exchange(&mut client, &req).await?;
+        assert!(!response.ok && response.data.is_null());
+        assert!(
+            response
+                .error
+                .is_some_and(|message| message.starts_with("permission denied:"))
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn early_uid_refusal_survives_a_failed_status_request_write() -> Result<()> {
+        early_uid_refusal(Request::Status).await
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[tokio::test]
+    async fn early_uid_refusal_of_physical_capability_requires_no_acknowledgement() -> Result<()> {
+        early_uid_refusal(Request::OpenPhysical {
+            journal_schema_version: 1,
+            device_id: format!("usb-{}", "a".repeat(64)),
+        })
+        .await
+    }
+
+    #[tokio::test]
+    async fn failed_request_write_cannot_be_replaced_by_invalid_or_success_response() -> Result<()>
+    {
+        for frame in [
+            "{\"ok\":true,\"data\":null,\"error\":null}\n",
+            "{\"ok\":false,\"data\":null,\"error\":null}\n",
+            "{\"ok\":false,\"data\":true,\"error\":\"denied\"}\n",
+            "{\"ok\":false,\"data\":null,\"error\":\" \"}\n",
+            "{\"ok\":false,\"data\":null,\"error\":\"denied\",\"extra\":true}\n",
+            "malformed\n",
+            "{\"ok\":false}",
+            "",
+        ] {
+            let (mut client, mut server) = UnixStream::pair()?;
+            server.write_all(frame.as_bytes()).await?;
+            drop(server);
+            let error = exchange(&mut client, &Request::Status)
+                .await
+                .err()
+                .ok_or_else(|| Error::State("invalid refusal replaced the failed write".into()))?;
+            assert!(
+                matches!(error, Error::Io(ref error) if error.kind() == std::io::ErrorKind::BrokenPipe)
+            );
+        }
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn bounded_frames_reject_overflow_missing_newline_and_timeout() -> Result<()> {
+        for bytes in [
+            vec![b'x'; MAX_FRAME_BYTES + 1],
+            b"{\"op\":\"status\"}".to_vec(),
+        ] {
+            let (mut sender, mut receiver) = tokio::io::duplex(MAX_FRAME_BYTES + 2);
+            sender.write_all(&bytes).await?;
+            sender.shutdown().await?;
+            assert!(read_frame(&mut receiver, READ_TIMEOUT).await.is_err());
+        }
+        let (_sender, mut receiver) = tokio::io::duplex(64);
+        assert!(matches!(
+            read_frame(&mut receiver, Duration::from_millis(20)).await,
+            Err(Error::Timeout(_))
+        ));
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io() -> Result<()>
+    {
+        let (mut client, server) = UnixStream::pair()?;
+        let uid = server.peer_cred()?.uid();
+        let service = app(vec![uid]);
+        let task = tokio::spawn(serve_connection(server, service.clone()));
+        client
+            .write_all(b"{\"op\":\"status\",\"command\":\"id\"}\n")
+            .await?;
+        let response: Response =
+            serde_json::from_slice(&read_frame(&mut client, READ_TIMEOUT).await?)
+                .map_err(json_error)?;
+        assert!(!response.ok);
+        task.await
+            .map_err(|_| Error::State("test server task failed".into()))??;
+        assert!(matches!(
+            service
+                .handle(
+                    uid,
+                    Request::Export {
+                        device_id: format!("usb-{}", "a".repeat(64))
+                    }
+                )
+                .await,
+            Err(Error::Permission(_))
+        ));
+        assert!(matches!(
+            service
+                .handle(uid, Request::Detach { port: VhciPort(1) })
+                .await,
+            Err(Error::Permission(_))
+        ));
+        let peer = rustusb_core::Peer {
+            host: rustusb_core::Host::new("192.0.2.1")?,
+            port: std::num::NonZeroU16::new(3240)
+                .ok_or_else(|| Error::State("test port".into()))?,
+        };
+        assert!(matches!(
+            service
+                .handle(
+                    uid,
+                    Request::Attach {
+                        peer,
+                        bus_id: rustusb_core::BusId::new("1-1")?
+                    }
+                )
+                .await,
+            Err(Error::Permission(_))
+        ));
+        Ok(())
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[tokio::test]
+    async fn physical_capability_denial_precedes_scanning_or_opening_usb() -> Result<()> {
+        for (allow_uid, allow_device, trusted_network) in [
+            (false, true, true),
+            (true, false, true),
+            (true, true, false),
+        ] {
+            let (mut client, server) = UnixStream::pair()?;
+            let uid = server.peer_cred()?.uid();
+            let id = format!("usb-{}", "b".repeat(64));
+            let service = Arc::new(App {
+                policy: Policy {
+                    allowed_uids: if allow_uid { vec![uid] } else { vec![] },
+                    physical_device_ids: if allow_device {
+                        vec![id.clone()]
+                    } else {
+                        vec![]
+                    },
+                    export_device_ids: vec![],
+                    peers: vec![],
+                    trusted_network,
+                },
+                backend: NativeBackend::default(),
+                state: Mutex::new(ManagedState::default()),
+                journal: None,
+                handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),
+            });
+            let task = tokio::spawn(serve_connection(server, service));
+            write_frame(
+                &mut client,
+                &Request::OpenPhysical {
+                    device_id: id,
+                    journal_schema_version: 1,
+                },
+            )
+            .await?;
+            let response: Response =
+                serde_json::from_slice(&read_frame(&mut client, READ_TIMEOUT).await?)
+                    .map_err(json_error)?;
+            assert!(!response.ok);
+            assert!(
+                response
+                    .error
+                    .is_some_and(|message| message.starts_with("permission denied:"))
+            );
+            task.await
+                .map_err(|_| Error::State("capability denial test server failed".into()))??;
+            match super::super::physical::receive_fd(&client).await {
+                Err(Error::Protocol(_)) => {}
+                // An unknown UID is rejected before reading its frame. Closing
+                // a Unix stream with unread bytes can report ECONNRESET.
+                Err(Error::Io(error)) if error.kind() == std::io::ErrorKind::ConnectionReset => {}
+                _ => {
+                    return Err(Error::State(
+                        "denied capability connection did not close without an FD".into(),
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn policy_metadata_rejects_writable_or_wrong_owner() -> Result<()> {
+        let directory = tempfile::tempdir()?;
+        let file_path = directory.path().join("policy.json");
+        fs::write(&file_path, b"{}")?;
+        fs::set_permissions(&file_path, fs::Permissions::from_mode(0o644))?;
+        let metadata = fs::metadata(&file_path)?;
+        validate_metadata(&metadata, metadata.uid())?;
+        assert!(validate_metadata(&metadata, metadata.uid().wrapping_add(1)).is_err());
+        fs::set_permissions(&file_path, fs::Permissions::from_mode(0o666))?;
+        assert!(validate_metadata(&fs::metadata(&file_path)?, metadata.uid()).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn root_socket_validation_rejects_user_writable_directory() {
+        assert!(protected_directory(Path::new("/tmp"), 0).is_err());
+        assert!(protected_directory(Path::new("relative"), 0).is_err());
+    }
+}

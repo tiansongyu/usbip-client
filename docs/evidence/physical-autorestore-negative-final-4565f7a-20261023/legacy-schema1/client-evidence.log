@@ -1,0 +1,47 @@
+RUSTUSB_JOURNAL_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0
+RUSTUSB_JOURNAL_BOOT role=client kernel=6.8.0-106-generic
+RUSTUSB_JOURNAL_ISOLATION: PASS role=client carrier=1 ip_forward=0
+RUSTUSB_JOURNAL_HELPER: PASS role=client allowed_uid=1000 denied_uid=1001
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_JOURNAL_WAIT_INPUT key=1
+RUSTUSB_JOURNAL_WAIT_SERIAL cycle=1 bytes=35
+cat: read error: No such device
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_JOURNAL_WAIT_INPUT key=2
+RUSTUSB_JOURNAL_WAIT_SERIAL cycle=2 bytes=35
+cat: read error: No such device
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_JOURNAL_WAIT_INPUT key=3
+RUSTUSB_JOURNAL_WAIT_SERIAL cycle=3 bytes=35
+cat: read error: No such device
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}
+RUSTUSB_JOURNAL_CLIENT_BEGIN
+{"cycle":1,"spontaneous_disconnect":true,"receipts":[{"local_bus_id":"1-1","local_device_address":2,"local_device_generation":{"filesystem_device":23,"inode":25433},"port":0,"product_id":1,"remote_device_id":65538,"status":6,"vendor_id":1575},{"local_bus_id":"1-2","local_device_address":3,"local_device_generation":{"filesystem_device":23,"inode":25667},"port":1,"product_id":24577,"remote_device_id":65539,"status":6,"vendor_id":1027}],"sessions":[],"vhci_status":"STATUS /sys/devices/platform/vhci_hcd.0/status\nhub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n","input_event_hex":"a120db6a00000000e3e0020000000000040004001e000700a120db6a00000000e3e00200000000000100020001000000a120db6a00000000e3e00200000000000000000000000000a120db6a00000000a465040000000000040004001e000700a120db6a00000000a4650400000000000100020000000000a120db6a00000000a4650400000000000000000000000000","rx_hex":"525553545553422d52582d312d303030313a303132333435363738396162636465660a","tx_hex":"525553545553422d54582d312d303030313a666564636261393837363534333231300a","detach_before_observation":false}
+{"cycle":2,"spontaneous_disconnect":true,"receipts":[{"local_bus_id":"1-1","local_device_address":4,"local_device_generation":{"filesystem_device":23,"inode":25851},"port":0,"product_id":1,"remote_device_id":65538,"status":6,"vendor_id":1575},{"local_bus_id":"1-2","local_device_address":5,"local_device_generation":{"filesystem_device":23,"inode":26085},"port":1,"product_id":24577,"remote_device_id":65539,"status":6,"vendor_id":1027}],"sessions":[],"vhci_status":"STATUS /sys/devices/platform/vhci_hcd.0/status\nhub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n","input_event_hex":"a320db6a000000009c02070000000000040004001f000700a320db6a000000009c020700000000000100030001000000a320db6a000000009c020700000000000000000000000000a320db6a000000002788080000000000040004001f000700a320db6a0000000027880800000000000100030000000000a320db6a0000000027880800000000000000000000000000","rx_hex":"525553545553422d52582d322d303030313a303132333435363738396162636465660a","tx_hex":"525553545553422d54582d322d303030313a666564636261393837363534333231300a","detach_before_observation":false}
+{"cycle":3,"spontaneous_disconnect":true,"receipts":[{"local_bus_id":"1-1","local_device_address":6,"local_device_generation":{"filesystem_device":23,"inode":26269},"port":0,"product_id":1,"remote_device_id":65538,"status":6,"vendor_id":1575},{"local_bus_id":"1-2","local_device_address":7,"local_device_generation":{"filesystem_device":23,"inode":26503},"port":1,"product_id":24577,"remote_device_id":65539,"status":6,"vendor_id":1027}],"sessions":[],"vhci_status":"STATUS /sys/devices/platform/vhci_hcd.0/status\nhub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n","input_event_hex":"bf20db6a000000001ceb0d00000000000400040020000700bf20db6a000000001ceb0d00000000000100040001000000bf20db6a000000001ceb0d00000000000000000000000000c020db6a00000000e32e0000000000000400040020000700c020db6a00000000e32e0000000000000100040000000000c020db6a00000000e32e0000000000000000000000000000","rx_hex":"525553545553422d52582d332d303030313a303132333435363738396162636465660a","tx_hex":"525553545553422d54582d332d303030313a666564636261393837363534333231300a","detach_before_observation":false}
+RUSTUSB_JOURNAL_CLIENT_END
+RUSTUSB_JOURNAL_COLLECTION_COMPLETE role=client
+RUSTUSB_JOURNAL_RESULT: PASS role=client

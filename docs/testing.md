@@ -241,4 +241,11 @@ clean da764d0的237项检查/两guest0通过；首43d6d43因jq变量名错误在
 
 `run-autorestore-qemu.py --scenario owner-death|helper-restart --evidence <新目录>` 要求干净提交，默认locked all-features构建；使用两个隔离guest及合成HID/FTDI。先真实I/O，再一次KILL/wait137，由产品helper自主CONNECT恢复并退休；成功先通过纯磁盘/sysfs观察，之后才读pending API并完成新grant第三轮真实I/O。helper-restart还在原owner活着时重启helper、保持原记录/占用并继续真实I/O。不运行测试恢复probe、管理员bind或reconcile，不调用旧184的相反裁决。
 
-clean2ab9976两个正向161/205 host检查和原默认off journal184、正常/热拔、ECM、SIGTERM五回归均通过，共14guest0；本地四信号和两背压也通过。全部实际来源与未完成负向见[报告](research/physical-driver-autorestore.md)。恢复窗口从wait137后控制握手完成才计时，不是kill起20秒SLA；活owner不执行恢复的证据为日志/源码约束、状态和继续I/O，没有逐syscall跟踪。旧schema真实producer迁移、撤销、独立C占用的产品组合仍需独立运行。
+clean2ab9976两个正向161/205 host检查和原默认off journal184、正常/热拔、ECM、SIGTERM五回归均通过，共14guest0；本地四信号和两背压也通过。全部实际来源与未完成负向见[报告](research/physical-driver-autorestore.md)。恢复窗口从wait137后控制握手完成才计时，不是kill起20秒SLA；活owner不执行恢复的证据为日志/源码约束、状态和继续I/O，没有逐syscall跟踪。该2ab9976矩阵未覆盖旧schema真实producer迁移、撤销、独立C占用三组合；后续独立运行见下一节。
+
+
+## 原驱动恢复的旧记录、撤销与外部占用边界
+
+新增 `run-autorestore-negative-qemu.py --scenario legacy-schema1|policy-revoked|external-claim --evidence <新目录>`。L还必须提供固定933e720实际构建的 `--legacy-helper` 与 `--legacy-manifest`，runner逐109个Git输入、ELF及干净隔离构建来源核验；不得用手改记录或新版default-off模拟旧producer。当前runner默认locked all-features构建，要求干净提交。
+
+clean4565f7a首次三项全部PASS/6guest0，318/293/313项host检查。L尾部人工恢复和只读reconcile单列；P/C尾部只有明确新helper实例才能自主恢复、退休并第三轮真实I/O。C程序仅该场景打包，只plain CLAIM/RELEASE/close；20秒持有/拒绝后关闭C、同helper至少5秒不重试。纯primary早于pending API/新grant，启动doctor/Status仍先调用。具体命令、原件、软件/静态检查范围及其余未完成场景见[报告](research/physical-driver-autorestore-negatives.md)。

@@ -1,0 +1,836 @@
+--- a/src/device.rs
++++ b/src/device.rs
+@@ -110,6 +110,23 @@
+             .map_ok(Interface::wrap)
+     }
+ 
++    /// Atomically detach and claim a Linux interface without automatic reattachment.
++    ///
++    /// The caller must explicitly release every interface, restore the original
++    /// configuration, and then reattach and verify the original drivers. This is
++    /// useful for whole-device ownership of composite devices. It never steals
++    /// an interface already owned by another usbfs descriptor.
++    #[cfg(target_os = "linux")]
++    pub fn detach_and_claim_interface_no_reattach(
++        &self,
++        interface: u8,
++    ) -> impl MaybeFuture<Output = Result<Interface, Error>> {
++        self.backend
++            .clone()
++            .detach_and_claim_interface_no_reattach(interface)
++            .map_ok(Interface::wrap)
++    }
++
+     /// Detach kernel drivers for the specified interface.
+     ///
+     /// ### Platform-specific details
+@@ -146,6 +163,34 @@
+     /// Get the device's connection speed.
+     pub fn speed(&self) -> Option<Speed> {
+         self.backend.speed()
++    }
++
++    /// Submit a Linux device-wide control request with raw completion status.
++    /// The owner must retain every claimed interface until this handle completes.
++    #[cfg(target_os = "linux")]
++    pub fn control_in_raw(
++        &self,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> crate::RawControlTransfer {
++        self.backend.control_in_raw(data, timeout, short_not_ok)
++    }
++
++    /// Submit a Linux device-wide OUT request, retaining its actual byte count.
++    #[cfg(target_os = "linux")]
++    pub fn control_out_raw(
++        &self,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> Result<crate::RawControlTransfer, Error> {
++        if data.data.len() > usize::from(u16::MAX) {
++            return Err(Error::new(
++                ErrorKind::Unsupported,
++                "control OUT data exceeds u16",
++            ));
++        }
++        Ok(self.backend.control_out_raw(data, timeout))
+     }
+ 
+     /// Get information about the active configuration.
+@@ -500,6 +545,34 @@
+     }
+ 
+     /// Get the interface number.
++    /// Linux control completion preserving errors and partial bytes; retains the claim until completion.
++    #[cfg(target_os = "linux")]
++    pub fn control_in_raw(
++        &self,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> crate::RawControlTransfer {
++        self.backend.control_in_raw(data, timeout, short_not_ok)
++    }
++
++    /// Linux control OUT completion preserving actual bytes, including errors.
++    #[cfg(target_os = "linux")]
++    pub fn control_out_raw(
++        &self,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> Result<crate::RawControlTransfer, Error> {
++        if data.data.len() > usize::from(u16::MAX) {
++            return Err(Error::new(
++                ErrorKind::Unsupported,
++                "control OUT data exceeds u16",
++            ));
++        }
++        Ok(self.backend.control_out_raw(data, timeout))
++    }
++
++    /// Get the number of this claimed interface.
+     pub fn interface_number(&self) -> u8 {
+         self.backend.interface_number
+     }
+@@ -575,6 +648,27 @@
+     /// `Interface`, but allows it to be called asynchronously.
+     pub fn release(self) -> impl MaybeFuture<Output = Result<(), Error>> {
+         self.backend.release()
++    }
++
++    /// Release a Linux interface and report the actual kernel result.
++    ///
++    /// Unlike [`release`][Self::release], errors from RELEASEINTERFACE,
++    /// including disconnection, are returned. If this handle was created with
++    /// automatic kernel-driver reattachment, its subsequent CONNECT error is
++    /// also returned. No reattachment is attempted after a failed release.
++    ///
++    /// Returns [`ErrorKind::Busy`] without releasing while other interface,
++    /// endpoint, or transfer references exist. Once the last owner attempts
++    /// release, its destructor does not retry the release or reattachment,
++    /// even when the attempt fails. Dropping an already-started asynchronous
++    /// operation does not cancel its blocking kernel call.
++    ///
++    /// Success reports these kernel calls only. The caller must independently
++    /// verify configuration, alternate settings, generation, and driver state
++    /// before reporting device restoration.
++    #[cfg(target_os = "linux")]
++    pub fn release_checked(self) -> impl MaybeFuture<Output = Result<(), Error>> {
++        self.backend.release_checked()
+     }
+ }
+ 
+@@ -789,6 +883,7 @@
+     /// `TransferError::InvalidArgument`. Up to `requested_len /
+     /// max_packet_size` packets will be received, ending early when any packet
+     /// is shorter than `max_packet_size`.
++    /// Submit using the unmodified portable length constraints.
+     pub fn submit(&mut self, buf: Buffer) {
+         if Dir::DIR == Direction::In {
+             let req_len = buf.requested_len();
+@@ -926,3 +1021,68 @@
+     require_send_sync::<Endpoint<Interrupt, In>>();
+     require_send_sync::<Endpoint<Interrupt, Out>>();
+ }
++
++#[cfg(target_os = "linux")]
++impl<EpType: BulkOrInterrupt, Dir: EndpointDirection> Endpoint<EpType, Dir> {
++    /// Submit a Linux URB with the exact requested IN length, including zero.
++    ///
++    /// Unlike the portable method, this allows lengths smaller than or not
++    /// divisible by MPS. The kernel receives the original length: no extra USB
++    /// bytes are read, cached, or discarded. Each buffer is limited to 64KiB.
++    /// SHORT_NOT_OK is valid only for IN, ZERO_PACKET only for bulk OUT.
++    /// DMA ownership flags from a remote host must never be passed here.
++    #[cfg(target_os = "linux")]
++    pub fn submit_raw(
++        &mut self,
++        buf: Buffer,
++        short_not_ok: bool,
++        zero_packet: bool,
++    ) -> Result<(), Error> {
++        if buf.requested_len() > 65_536
++            || buf.len() > 65_536
++            || (short_not_ok && Dir::DIR != Direction::In)
++            || (zero_packet
++                && (Dir::DIR != Direction::Out
++                    || EpType::TYPE != crate::descriptors::TransferType::Bulk))
++        {
++            return Err(Error::new(
++                ErrorKind::Unsupported,
++                "unsupported raw transfer options",
++            ));
++        }
++        let flags = u32::from(short_not_ok) | (u32::from(zero_packet) << 6);
++        self.backend.submit_raw(buf, flags);
++        Ok(())
++    }
++
++    /// Linux kernel status and partial bytes, also on failure/cancellation.
++    #[cfg(target_os = "linux")]
++    pub fn next_complete_raw(
++        &mut self,
++    ) -> impl Future<Output = Result<crate::RawCompletion, Error>> + '_ {
++        poll_fn(|cx| self.poll_complete_raw(cx))
++    }
++
++    /// Poll one Linux raw completion without borrowing a temporary future.
++    ///
++    /// No queued transfer is an error rather than a panic. Completion retains
++    /// the original errno and partial bytes, including after cancellation.
++    #[cfg(target_os = "linux")]
++    pub fn poll_complete_raw(
++        &mut self,
++        cx: &mut Context<'_>,
++    ) -> Poll<Result<crate::RawCompletion, Error>> {
++        if self.pending() == 0 {
++            return Poll::Ready(Err(Error::new(ErrorKind::Other, "no raw transfer pending")));
++        }
++        self.backend.poll_next_complete_raw(cx).map(Ok)
++    }
++
++    /// Request cancellation only when exactly one Linux URB is pending.
++    /// Returns whether DISCARDURB accepted this request, not whether cancellation
++    /// won. Continue polling the endpoint to obtain the actual terminal result.
++    #[cfg(target_os = "linux")]
++    pub fn cancel_one_raw(&mut self) -> bool {
++        self.backend.cancel_one_raw()
++    }
++}
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -234,6 +234,8 @@
+ 
+ mod device;
+ pub use device::{Device, Endpoint, Interface};
++#[cfg(target_os = "linux")]
++pub use platform::{RawCompletion, RawControlTransfer};
+ 
+ pub mod transfer;
+ 
+--- a/src/platform/linux_usbfs/device.rs
++++ b/src/platform/linux_usbfs/device.rs
+@@ -424,7 +424,7 @@
+         Ok(Arc::new(LinuxInterface {
+             device: self,
+             interface_number,
+-            reattach,
++            release: InterfaceRelease::new(reattach),
+             state: Mutex::new(Default::default()),
+         }))
+     }
+@@ -446,6 +446,16 @@
+         Blocking::new(move || {
+             let result = usbfs::detach_and_claim_interface(&self.fd, interface_number);
+             self.handle_claim_interface_result(interface_number, result, true)
++        })
++    }
++
++    pub(crate) fn detach_and_claim_interface_no_reattach(
++        self: Arc<Self>,
++        interface_number: u8,
++    ) -> impl MaybeFuture<Output = Result<Arc<LinuxInterface>, Error>> {
++        Blocking::new(move || {
++            let result = usbfs::detach_and_claim_interface(&self.fd, interface_number);
++            self.handle_claim_interface_result(interface_number, result, false)
+         })
+     }
+ 
+@@ -527,13 +537,15 @@
+         r
+     }
+ 
+-    pub(crate) fn cancel(&self, transfer: &mut Pending<TransferData>) {
++    pub(crate) fn cancel(&self, transfer: &mut Pending<TransferData>) -> bool {
+         let urb = transfer.urb_ptr();
+         unsafe {
+             if let Err(e) = usbfs::discard_urb(&self.fd, urb) {
+                 debug!("Failed to cancel URB {urb:?}: {e}");
++                false
+             } else {
+                 debug!("Requested cancellation of URB {urb:?}");
++                true
+             }
+         }
+     }
+@@ -627,8 +639,82 @@
+ pub(crate) struct LinuxInterface {
+     pub(crate) interface_number: u8,
+     pub(crate) device: Arc<LinuxDevice>,
++    release: InterfaceRelease,
++    state: Mutex<InterfaceState>,
++}
++
++/// One-shot cleanup shared by checked release and best-effort destruction.
++/// The callbacks keep lifecycle tests independent of USB descriptors and FDs.
++struct InterfaceRelease {
++    pending: bool,
+     reattach: bool,
+-    state: Mutex<InterfaceState>,
++}
++
++#[derive(Debug)]
++struct InterfaceReleaseError {
++    reattach: bool,
++    errno: Errno,
++}
++
++impl InterfaceReleaseError {
++    fn into_error(self) -> Error {
++        let kind = match self.errno {
++            Errno::NODEV => ErrorKind::Disconnected,
++            Errno::BUSY => ErrorKind::Busy,
++            Errno::PERM | Errno::ACCESS => ErrorKind::PermissionDenied,
++            _ => ErrorKind::Other,
++        };
++        Error::new_os(
++            kind,
++            if self.reattach {
++                "failed to reattach kernel driver after interface release"
++            } else {
++                "failed to release interface"
++            },
++            self.errno,
++        )
++    }
++}
++
++impl InterfaceRelease {
++    fn new(reattach: bool) -> Self {
++        Self {
++            pending: true,
++            reattach,
++        }
++    }
++
++    fn run(
++        &mut self,
++        release: impl FnOnce() -> Result<(), Errno>,
++        reattach: impl FnOnce() -> Result<(), Errno>,
++    ) -> Result<(), InterfaceReleaseError> {
++        if !std::mem::replace(&mut self.pending, false) {
++            return Ok(());
++        }
++        release().map_err(|errno| InterfaceReleaseError {
++            reattach: false,
++            errno,
++        })?;
++        if self.reattach {
++            reattach().map_err(|errno| InterfaceReleaseError {
++                reattach: true,
++                errno,
++            })?;
++        }
++        Ok(())
++    }
++}
++
++#[cfg(target_os = "linux")]
++fn consume_unique_interface<T>(
++    interface: Arc<T>,
++    release: impl FnOnce(T) -> Result<(), Error>,
++) -> Result<(), Error> {
++    match Arc::into_inner(interface) {
++        Some(interface) => release(interface),
++        None => Err(Error::new(ErrorKind::Busy, "interface is still in use")),
++    }
+ }
+ 
+ #[derive(Default)]
+@@ -721,7 +807,8 @@
+     pub fn release(self: Arc<Self>) -> impl MaybeFuture<Output = Result<(), Error>> {
+         Blocking::new(move || {
+             if let Some(this) = Arc::into_inner(self) {
+-                // USBDEVFS_RELEASEINTERFACE only fails on invalid argument, so no need to get a result out of drop.
++                // Preserve the portable best-effort contract. Call
++                // release_checked when the actual Linux result is required.
+                 drop(this);
+                 Ok(())
+             } else {
+@@ -729,23 +816,179 @@
+             }
+         })
+     }
++
++    #[cfg(target_os = "linux")]
++    pub fn release_checked(self: Arc<Self>) -> impl MaybeFuture<Output = Result<(), Error>> {
++        Blocking::new(move || {
++            consume_unique_interface(self, |mut this| {
++                this.release_inner()
++                    .map_err(InterfaceReleaseError::into_error)
++            })
++        })
++    }
++
++    fn release_inner(&mut self) -> Result<(), InterfaceReleaseError> {
++        let device = &self.device;
++        let number = self.interface_number;
++        self.release.run(
++            || {
++                let result = usbfs::release_interface(&device.fd, number);
++                debug!(
++                    "Released interface {number} on device {}: {result:?}",
++                    device.events_id
++                );
++                result
++            },
++            || {
++                let result = usbfs::attach_kernel_driver(&device.fd, number);
++                debug!(
++                    "Reattached kernel drivers for interface {number} on device {}: {result:?}",
++                    device.events_id
++                );
++                result
++            },
++        )
++    }
++}
++
++#[cfg(all(test, target_os = "linux"))]
++mod interface_release_tests {
++    use super::*;
++
++    struct Fixture {
++        release: InterfaceRelease,
++        calls: Arc<Mutex<Vec<&'static str>>>,
++        release_result: Result<(), Errno>,
++        reattach_result: Result<(), Errno>,
++    }
++
++    impl Fixture {
++        fn new(
++            reattach: bool,
++            release_result: Result<(), Errno>,
++            reattach_result: Result<(), Errno>,
++        ) -> (Self, Arc<Mutex<Vec<&'static str>>>) {
++            let calls = Arc::new(Mutex::new(Vec::new()));
++            (
++                Self {
++                    release: InterfaceRelease::new(reattach),
++                    calls: calls.clone(),
++                    release_result,
++                    reattach_result,
++                },
++                calls,
++            )
++        }
++
++        fn run(&mut self) -> Result<(), Error> {
++            let calls = &self.calls;
++            self.release
++                .run(
++                    || {
++                        calls.lock().map_err(|_| Errno::IO)?.push("release");
++                        self.release_result
++                    },
++                    || {
++                        calls.lock().map_err(|_| Errno::IO)?.push("connect");
++                        self.reattach_result
++                    },
++                )
++                .map_err(InterfaceReleaseError::into_error)
++        }
++    }
++
++    impl Drop for Fixture {
++        fn drop(&mut self) {
++            let _ = self.run();
++        }
++    }
++
++    #[test]
++    fn checked_release_errors_survive_without_drop_retry_or_connect() {
++        for error in [Errno::INVAL, Errno::NODEV, Errno::IO, Errno::INTR] {
++            let (fixture, calls) = Fixture::new(true, Err(error), Ok(()));
++            let result = consume_unique_interface(Arc::new(fixture), |mut fixture| fixture.run());
++            assert_eq!(
++                result.as_ref().err().and_then(Error::os_error),
++                Some(error.raw_os_error() as u32)
++            );
++            assert!(calls.lock().is_ok_and(|calls| *calls == ["release"]));
++        }
++    }
++
++    #[test]
++    fn checked_success_runs_release_and_selected_reattach_exactly_once() {
++        for reattach in [false, true] {
++            let (fixture, calls) = Fixture::new(reattach, Ok(()), Ok(()));
++            let result = consume_unique_interface(Arc::new(fixture), |mut fixture| fixture.run());
++            assert!(result.is_ok());
++            assert!(calls.lock().is_ok_and(|calls| {
++                *calls
++                    == if reattach {
++                        vec!["release", "connect"]
++                    } else {
++                        vec!["release"]
++                    }
++            }));
++        }
++    }
++
++    #[test]
++    fn checked_connect_error_keeps_errno_and_does_not_repeat_either_call() {
++        let (fixture, calls) = Fixture::new(true, Ok(()), Err(Errno::BUSY));
++        let result = consume_unique_interface(Arc::new(fixture), |mut fixture| fixture.run());
++        assert_eq!(
++            result.as_ref().err().map(Error::kind),
++            Some(ErrorKind::Busy)
++        );
++        assert_eq!(
++            result.as_ref().err().and_then(Error::os_error),
++            Some(Errno::BUSY.raw_os_error() as u32)
++        );
++        assert!(result.as_ref().err().is_some_and(|error| error
++            .to_string()
++            .contains("reattach kernel driver after interface release")));
++        assert!(calls
++            .lock()
++            .is_ok_and(|calls| *calls == ["release", "connect"]));
++    }
++
++    #[test]
++    fn shared_arc_is_busy_without_release_until_the_last_owner_drops() {
++        let (fixture, calls) = Fixture::new(false, Ok(()), Ok(()));
++        let interface = Arc::new(fixture);
++        let endpoint_reference = interface.clone();
++        let result = consume_unique_interface(interface, |mut fixture| fixture.run());
++        assert_eq!(
++            result.as_ref().err().map(Error::kind),
++            Some(ErrorKind::Busy)
++        );
++        assert!(calls.lock().is_ok_and(|calls| calls.is_empty()));
++        drop(endpoint_reference);
++        assert!(calls.lock().is_ok_and(|calls| *calls == ["release"]));
++    }
++
++    #[test]
++    fn legacy_drop_remains_best_effort_on_release_and_connect_failure() {
++        for (release, connect, expected) in [
++            (Err(Errno::NODEV), Ok(()), vec!["release"]),
++            (Ok(()), Err(Errno::BUSY), vec!["release", "connect"]),
++        ] {
++            let (fixture, calls) = Fixture::new(true, release, connect);
++            // This is the existing portable release's last-owner Drop path.
++            let result = consume_unique_interface(Arc::new(fixture), |fixture| {
++                drop(fixture);
++                Ok(())
++            });
++            assert!(result.is_ok());
++            assert!(calls.lock().is_ok_and(|calls| *calls == expected));
++        }
++    }
+ }
+ 
+ impl Drop for LinuxInterface {
+     fn drop(&mut self) {
+-        let res = usbfs::release_interface(&self.device.fd, self.interface_number);
+-        debug!(
+-            "Released interface {} on device {}: {res:?}",
+-            self.interface_number, self.device.events_id
+-        );
+-
+-        if res.is_ok() && self.reattach {
+-            let res = usbfs::attach_kernel_driver(&self.device.fd, self.interface_number);
+-            debug!(
+-                "Reattached kernel drivers for interface {} on device {}: {res:?}",
+-                self.interface_number, self.device.events_id
+-            );
+-        }
++        let _ = self.release_inner();
+     }
+ }
+ 
+@@ -795,6 +1038,7 @@
+ 
+     pub(crate) fn submit(&mut self, data: Buffer) {
+         let mut transfer = self.get_transfer();
++        transfer.urb_mut().flags = 0;
+         transfer.set_buffer(data);
+         self.pending
+             .push_back(self.inner.interface.device.submit(transfer));
+@@ -876,3 +1120,249 @@
+         state.endpoints.clear(self.address);
+     }
+ }
++
++/// Linux-only raw completion; status is zero or the original negative errno.
++#[derive(Debug)]
++pub struct RawCompletion {
++    /// Kernel status, normalized to negative errno for submit errors.
++    pub status: i32,
++    /// Actual bytes transferred, including on failure.
++    pub actual_len: usize,
++    /// IN bytes only; OUT is empty.
++    pub data: Vec<u8>,
++}
++
++/// An owned physical control request; cancellation must still be reaped.
++pub struct RawControlTransfer {
++    transfer: TransferFuture<RawControlContext, TransferData>,
++    direction: Direction,
++}
++
++enum RawControlContext {
++    Device(Arc<LinuxDevice>),
++    Interface(Arc<LinuxInterface>),
++}
++
++impl RawControlContext {
++    fn device(&self) -> &Arc<LinuxDevice> {
++        match self {
++            Self::Device(device) => device,
++            Self::Interface(interface) => &interface.device,
++        }
++    }
++}
++
++impl RawControlTransfer {
++    /// Request cancellation and report whether DISCARDURB accepted it.
++    /// Continue awaiting this same handle: acceptance does not mean that
++    /// cancellation won or that kernel-owned memory has already been reclaimed.
++    pub fn cancel(&mut self) -> bool {
++        self.transfer
++            .cancel_with(|context, pending| context.device().cancel(pending))
++            .unwrap_or(false)
++    }
++}
++
++impl Drop for RawControlTransfer {
++    fn drop(&mut self) {
++        self.cancel();
++    }
++}
++
++impl std::future::Future for RawControlTransfer {
++    type Output = RawCompletion;
++    fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
++        let direction = self.direction;
++        std::pin::Pin::new(&mut self.transfer)
++            .poll(cx)
++            .map(|mut transfer| raw_control_completion(&mut transfer, direction))
++    }
++}
++
++impl LinuxInterface {
++    pub(crate) fn control_in_raw(
++        self: &Arc<Self>,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> RawControlTransfer {
++        let mut data = TransferData::new_control_in(data);
++        data.urb_mut().flags = u32::from(short_not_ok);
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Interface(self.clone()),
++                data,
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::In,
++        }
++    }
++    pub(crate) fn control_out_raw(
++        self: &Arc<Self>,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> RawControlTransfer {
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Interface(self.clone()),
++                TransferData::new_control_out(data),
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::Out,
++        }
++    }
++}
++
++impl LinuxDevice {
++    pub(crate) fn control_in_raw(
++        self: &Arc<Self>,
++        data: ControlIn,
++        timeout: Duration,
++        short_not_ok: bool,
++    ) -> RawControlTransfer {
++        let mut data = TransferData::new_control_in(data);
++        data.urb_mut().flags = u32::from(short_not_ok);
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Device(self.clone()),
++                data,
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::In,
++        }
++    }
++    pub(crate) fn control_out_raw(
++        self: &Arc<Self>,
++        data: ControlOut,
++        timeout: Duration,
++    ) -> RawControlTransfer {
++        RawControlTransfer {
++            transfer: TransferFuture::new(
++                RawControlContext::Device(self.clone()),
++                TransferData::new_control_out(data),
++                |context, transfer| context.device().submit_timeout(transfer, timeout),
++            ),
++            direction: Direction::Out,
++        }
++    }
++}
++
++impl LinuxEndpoint {
++    pub(crate) fn cancel_one_raw(&mut self) -> bool {
++        if self.pending.len() != 1 {
++            return false;
++        }
++        let Some(transfer) = self.pending.front_mut() else {
++            return false;
++        };
++        if transfer.is_complete() {
++            return false;
++        }
++        self.inner.interface.device.cancel(transfer)
++    }
++    pub(crate) fn submit_raw(&mut self, data: Buffer, flags: u32) {
++        let mut transfer = self.get_transfer();
++        transfer.set_buffer(data);
++        transfer.urb_mut().flags = flags;
++        self.pending
++            .push_back(self.inner.interface.device.submit(transfer));
++    }
++    pub(crate) fn poll_next_complete_raw(&mut self, cx: &mut Context<'_>) -> Poll<RawCompletion> {
++        self.inner.notify.subscribe(cx);
++        if let Some(mut transfer) = take_completed_from_queue(&mut self.pending) {
++            if transfer.urb().actual_length < 0
++                || transfer.urb().actual_length > transfer.urb().buffer_length
++            {
++                transfer.urb_mut().actual_length = 0;
++                transfer.urb_mut().status = -75;
++            }
++            let raw_status = transfer.urb().status;
++            let completion = transfer.take_completion();
++            let is_in = self.inner.address & 0x80 != 0;
++            self.idle_transfer = Some(transfer);
++            Poll::Ready(RawCompletion {
++                status: if raw_status > 0 {
++                    -raw_status
++                } else {
++                    raw_status
++                },
++                actual_len: completion.actual_len,
++                data: if is_in {
++                    completion.buffer.into_vec()
++                } else {
++                    Vec::new()
++                },
++            })
++        } else {
++            Poll::Pending
++        }
++    }
++}
++
++fn raw_control_completion(transfer: &mut TransferData, direction: Direction) -> RawCompletion {
++    let limit = transfer.urb().buffer_length.saturating_sub(8);
++    if transfer.urb().actual_length < 0 || transfer.urb().actual_length > limit {
++        transfer.urb_mut().actual_length = 0;
++        transfer.urb_mut().status = -75;
++    }
++    let status = transfer.urb().status;
++    RawCompletion {
++        status: if status > 0 { -status } else { status },
++        actual_len: transfer.urb().actual_length as usize,
++        data: if direction == Direction::In {
++            transfer.control_in_data().to_vec()
++        } else {
++            Vec::new()
++        },
++    }
++}
++
++#[cfg(test)]
++mod raw_completion_tests {
++    use super::*;
++
++    fn control(direction: Direction, actual: i32, status: i32) -> TransferData {
++        let mut transfer = TransferData::new(direction as u8, TransferType::Control);
++        let mut buffer = Buffer::new(12);
++        buffer.extend_from_slice(&[0; 8]);
++        buffer.extend_from_slice(&[11, 22, 33, 44]);
++        transfer.set_buffer(buffer);
++        transfer.urb_mut().actual_length = actual;
++        transfer.urb_mut().status = status;
++        transfer
++    }
++
++    #[test]
++    fn control_in_preserves_errno_and_partial_bytes_without_setup() {
++        let mut transfer = control(Direction::In, 3, -71);
++        let completed = raw_control_completion(&mut transfer, Direction::In);
++        assert_eq!(completed.status, -71);
++        assert_eq!(completed.actual_len, 3);
++        assert_eq!(completed.data, [11, 22, 33]);
++    }
++
++    #[test]
++    fn control_out_keeps_actual_bytes_on_error_without_echoing_payload() {
++        let mut transfer = control(Direction::Out, 2, -32);
++        let completed = raw_control_completion(&mut transfer, Direction::Out);
++        assert_eq!(completed.status, -32);
++        assert_eq!(completed.actual_len, 2);
++        assert!(completed.data.is_empty());
++        let mut failed_submit = control(Direction::Out, 0, 13);
++        assert_eq!(
++            raw_control_completion(&mut failed_submit, Direction::Out).status,
++            -13
++        );
++    }
++
++    #[test]
++    fn invalid_kernel_length_is_rejected_before_accessing_control_buffer() {
++        for actual in [-1, 5] {
++            let mut transfer = control(Direction::In, actual, 0);
++            let completed = raw_control_completion(&mut transfer, Direction::In);
++            assert_eq!(completed.status, -75);
++            assert_eq!(completed.actual_len, 0);
++            assert!(completed.data.is_empty());
++        }
++    }
++}
+--- a/src/platform/linux_usbfs/mod.rs
++++ b/src/platform/linux_usbfs/mod.rs
+@@ -24,6 +24,7 @@
+ pub(crate) use device::LinuxDevice as Device;
+ pub(crate) use device::LinuxEndpoint as Endpoint;
+ pub(crate) use device::LinuxInterface as Interface;
++pub use device::{RawCompletion, RawControlTransfer};
+ 
+ use crate::transfer::TransferError;
+ use crate::ErrorKind;
+--- a/src/transfer/internal.rs
++++ b/src/transfer/internal.rs
+@@ -304,6 +304,21 @@
+     }
+ }
+ 
++impl<C, T> TransferFuture<C, T> {
++    pub(crate) fn cancel_with<R>(
++        &mut self,
++        cancel: impl FnOnce(&C, &mut Pending<T>) -> R,
++    ) -> Option<R> {
++        if let Some(transfer) = self.transfer.as_mut() {
++            if transfer.is_complete() {
++                return None;
++            }
++            return Some(cancel(&self.inner.context, transfer));
++        }
++        None
++    }
++}
++
+ impl<C, T> Future for TransferFuture<C, T> {
+     type Output = Idle<T>;
+ 

@@ -14,7 +14,7 @@
 
 新增 [SIGKILL/首次重启负向验收](docs/research/physical-crash-recovery.md)在 clean `1342a6a` 完整收集证据，恢复结果为 FAIL：进程退出和客户端断连后，服务端原驱动未恢复；重启会以空驱动建立新基线。新进程的 `cleanup_verified` 不能证明旧会话恢复。该历史失败保持；后续受限自动恢复见下面的新报告。新增[持久授权基线与管理员协调](docs/research/physical-journal-recovery.md)已在 clean `933e720` 验证：未决记录跨 helper 重启保留并拒绝新授权，正常结束可退休，管理员恢复后第三轮真实 HID/FTDI I/O 通过。本轮完整软件250次测试、五项QEMU/十guest、本地四信号和两背压全部通过；四平台[CI39908004666](docs/evidence/publication-journal-933e720-20261023.json)每格250次测试及信号/背压通过。保护与显式协调不等于自动恢复。
 
-新增[明确授权原驱动自动恢复](docs/research/physical-driver-autorestore.md)：产品e34e309，clean2ab9976两个产品正向与五个原QEMU回归通过，14guest0；软件268次及本地信号/背压通过。默认关闭、旧记录manual、仅同配置/alternate原driver CONNECT；撤销/旧producer迁移/外部占用组合和真实硬件仍待验收。
+新增[明确授权原驱动自动恢复](docs/research/physical-driver-autorestore.md)：产品e34e309，clean2ab9976两个产品正向与五个原QEMU回归通过，14guest0；软件268次及本地信号/背压通过。默认关闭、旧记录manual、仅同配置/alternate原driver CONNECT；随后clean4565f7a的[撤销/旧producer迁移/外部占用三项QEMU边界](docs/research/physical-driver-autorestore-negatives.md)首次PASS/6guest0；真实硬件仍待验收。
 
 历史Native基线：59项软件测试及当轮Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
 

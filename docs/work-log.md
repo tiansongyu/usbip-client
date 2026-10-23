@@ -363,3 +363,10 @@
 - 当前产品完整scripts/check.sh再次实际exit0，111输入前后SHA保持，default90/allfeatures158/vendor20共268次、31result、0失败/忽略，fmt/Clippy/release/严格rustdoc通过；与此前产品输入相同。旧producer与准备/预审原件分开归档，尚未把新增C源码或构造校验当成QEMU运行。
 
 - 新三个negative测试文件已作者冻结：C只CLAIM/RELEASE/close，严格编译（含runner的pedantic选项）及普通宿主UID首guard拒绝通过，没有宿主USB操作。三模式生成脚本/sh-n、80种jq实际编译、ANSI日志解析和旧producer来源核对共87静态项通过；明确标识的verifier构造fixtures为180/170/187项及wait0负例拒绝，均非guest运行。预审在运行前修复C日志创建竞态，补ready→pending原记录/owner不变及实际C执行SHA/FIFO事实；旧positive/journal文件仍逐字节等于2ab9976。pure primary只早于pending API/新grant，启动doctor/Status仍先调用。
+
+- clean4565f7a从155当前输入+109旧源/ELF冻结后串行三QEMU首次全部PASS，6guest0、318/293/313 host检查；每run source/head/clean/legacy guard全真，同现有CLI375301a7…/helper1428d92b…。L旧真实producer的disk1保持manual，人工bind+只读协调后第三I/O；P/C只有明确重启helper后产品恢复/退休，C release后同实例5秒不重试。每场景双向105B/三轮HID，合计九轮。186份运行原件已归档，两个独立raw复核进行中，未把静态fixture计为USB case。
+- 准备67f5b9d与harness4565f7a已正常push；software CI39928383971运行中，Pages39928383815已触发，尚不标未完成job通过。产品代码/111软件输入与e34e309/2ab9976保持，完整目标仍active；新增报告记录负向与各自合法尾部，下一优先级拟为真实USB数据通道安全设计，未标Phase2完成。
+
+- 两名agent独立raw复核L615/615、P/C516/516通过，均未调用runner verifier；核当前155/旧109源、实际旧ELF、三helper epoch、immutable记录/窗口、C四真实ioctl及close/wait、全部三周期原I/O。P/C审查器初稿硬编码Cargo flag顺序误判两项，初稿保留并按实际顺序修；原QEMU未重跑/改判。报告明确人工bind与产品CONNECT没有syscall tracing，纯primary仅早于pending API/新grant。
+
+- 精确4565f7a的software39928383971与Pages39928383815实际attempt1 completed/success，四原生格各268次、31result/0失败忽略、两背压/四信号通过；187个该CI采证输入逐Gitblob及真实执行身份/前后guard通过。219项独立CI审查及48份原件/原manifest已归档；初稿artifact误含.nojekyll的审查器单项误判按实际tar排除隐藏规则修正，初稿保留，未重跑CI。Pages按该版本115检查，本地新README为119检查；不混用计数或把CI软件当USB内核验收。
