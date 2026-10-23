@@ -1,8 +1,53 @@
 """Raw prepare-gate facts; failures are retained, never converted to expected PASS."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import struct
+
+
+def usbfs_fd_mapping(fds, records, hosts, nodes):
+    """Match real received character FDs through node/rdev and original receipt.
+
+    PhysicalDeviceReceipt.node_device is Linux st_rdev, not filesystem st_dev.
+    All four independently captured views are required; a count is insufficient.
+    """
+    facts = []
+    def add(ok, label): facts.append((bool(ok), label))
+    usb_fds = [fd for fd in fds if fd["target"].startswith("/dev/bus/usb/")]
+    add(len(usb_fds) == len(records) == len(hosts) == len(nodes) == 2, "exact two FD/receipt/host/node observations")
+    add(len({row["bus"] for row in hosts}) == len({row["bus"] for row in nodes}) == 2, "distinct actual hardware buses")
+    matched_fds = []
+    for record in records:
+        baseline = record["baseline"]
+        receipt = baseline["receipt"]
+        bus = baseline["bus_id"]
+        host_rows = [row for row in hosts if row["bus"] == bus]
+        node_rows = [row for row in nodes if row["bus"] == bus]
+        add(len(host_rows) == len(node_rows) == 1, "one original host/node for " + bus)
+        if len(host_rows) != 1 or len(node_rows) != 1: continue
+        host, node = host_rows[0], node_rows[0]
+        address = (receipt["bus_number"], receipt["usb_device_number"])
+        expected_path = "/dev/bus/usb/%03d/%03d" % address
+        candidates = [fd for fd in usb_fds if fd["target"] == expected_path]
+        add(len(candidates) == 1 and node["node"] == expected_path, "one actual received node path " + bus)
+        if len(candidates) != 1: continue
+        fd = candidates[0]
+        matched_fds.append(fd["fd"])
+        add(node["character_device"] is True and node["uid"] == 0 and node["mode"] == "600" and node["links"] == 1, "protected actual character node " + bus)
+        add(int(fd["device"]) == int(node["filesystem_device"]) and int(fd["inode"]) == int(node["inode"]) == receipt["node_inode"], "FD actual filesystem identity matches original node inode " + bus)
+        fd_rdev = tuple(int(value, 16) for value in fd["rdev"].split(":"))
+        node_rdev = tuple(int(value, 16) for value in node["rdev"].split(":"))
+        sysfs_rdev = tuple(int(value) for value in node["sysfs_dev"].split(":"))
+        add(len(fd_rdev) == len(node_rdev) == len(sysfs_rdev) == 2 and fd_rdev == node_rdev == sysfs_rdev, "FD/node/sysfs actual major and minor " + bus)
+        add(os.makedev(*fd_rdev) == receipt["node_device"], "original receipt node_device is actual st_rdev " + bus)
+        add(address == (int(host["busnum"]), int(host["devnum"])) and address[0] == int(bus.split("-", 1)[0]), "original bus and USB address " + bus)
+        expected_generation = (receipt["sysfs_device"], receipt["sysfs_inode"])
+        add(tuple(map(int, node["generation"].split(":"))) == tuple(map(int, host["generation"].split(":"))) == expected_generation, "original full sysfs directory generation " + bus)
+        interfaces = [{"number": int(row["number"], 16), "alternate": int(row["alt"]), "driver": row["driver"]} for row in host["interfaces"]]
+        add(baseline["configuration"] == int(host["configuration"]) and baseline["interfaces"] == interfaces, "original configuration and complete interface/driver baseline " + bus)
+    add(len(matched_fds) == len(set(matched_fds)) == 2, "bijection of the two actual accepted character capabilities")
+    return facts
 
 
 def verify(evidence, args, summary):
@@ -37,6 +82,13 @@ def verify(evidence, args, summary):
     check(all(before[key] == after[key] == candidate[key] == ended[key] for key in identity), "same actual TID/FD/syscall and file identity before and after held observation and exit")
     check(before["held"] is True and after["held"] is True and candidate["monotonic_ns"] <= before["monotonic_ns"] < after["monotonic_ns"] < ended["monotonic_ns"], "tracer confirms held on both sides of cleanup evidence before explicit release")
     events = rows("gate-events.jsonl")
+    armed = server("gate-armed.json")
+    ready = server("gate-ready.json")
+    arm_events = [event for event in events if event["event"] == "armed"]
+    check(arm_events == [armed] and armed["nonce"] == "prepare-stop-v1" and armed["operation"] == candidate["operation"], "actual unique tracer armed receipt is saved before start")
+    check(armed["tracee_pid"] == ready["tracee_pid"] == candidate["tracee_pid"] and armed["tracee_starttime"] == ready["tracee_starttime"] == candidate["tracee_starttime"] and ready["monotonic_ns"] < armed["monotonic_ns"] < candidate["monotonic_ns"], "same actual owner armed before the selected syscall entry")
+    server_log = (evidence / "server-evidence.log").read_text()
+    check(server_log.count("PREPARE_GATE_ARMED\n") == 1 and server_log.index("PREPARE_GATE_ARMED\n") < server_log.index("PREPARE_GATE_HELD\n"), "guest observes armed before entering the selected hold")
     releases = [e for e in events if e["event"] == "released"]
     check(len(releases) == 1 and after["monotonic_ns"] <= releases[0]["monotonic_ns"] < ended["monotonic_ns"], "exactly one selected release, after held-after receipt")
     check(ended["is_error"] is False and ended["return_value"] == (1 if args.case == "usbfs-initializer" else 0), "same resumed syscall returns actual success without fabricated result")
@@ -73,7 +125,13 @@ def verify(evidence, args, summary):
         check(held_host == baseline, "USBFS prepare/initializer does not claim or change either original interface")
     held_fds = server("fds-held.json")
     usb_fds = [f for f in held_fds if f["target"].startswith("/dev/bus/usb/")]
-    if args.backend == "usbfs": check(len(usb_fds) == 2 and len({f["rdev"] for f in usb_fds}) == 2, "two actual agent USBFS character capabilities after SCM_RIGHTS delivery")
+    if args.backend == "usbfs":
+        check(len(usb_fds) == 2 and len({f["rdev"] for f in usb_fds}) == 2, "two actual agent USBFS character capabilities after SCM_RIGHTS delivery")
+        for ok, label in usbfs_fd_mapping(held_fds, accepted, baseline, server("usb-nodes-before.json")):
+            check(ok, "USBFS accepted FD mapping: " + label)
+        for session in sessions:
+            attempt = session["attempts"][0]
+            check(any(record["lease_id"] == attempt["resource_id"] and session["device_key"] == "physical:" + record["baseline"]["device_id"] for record in accepted), "USBFS original device key matches the exact accepted resource " + session["id"])
     else: check(sum(f["target"].startswith("socket:[") for f in held_fds) >= 2, "actual agent socket FD table retained; exact Native ownership is bound by root receipts")
     observations = rows("held-observations.jsonl")
     check(bool(observations), "nonempty actual held-window observations")
@@ -86,11 +144,19 @@ def verify(evidence, args, summary):
         actual_closed = not any(f["target"].startswith("/dev/bus/usb/") for f in fds)
         actual_proof = all(proof_for(root, session) for session in sessions)
         check(observation["baseline_equal"] == (host == baseline) and observation["target_fd_closed"] == actual_closed and observation["exact_root_terminal"] == actual_proof and observation["gate_released"] is False, f"held observation {number} recomputed from raw root/sysfs/FD files")
+        if args.case == "usbfs-initializer":
+            check(root["records"] == accepted and host == baseline, f"initializer observation {number} retains both exact grants and original profile")
+            for ok, label in usbfs_fd_mapping(fds, accepted, baseline, server("usb-nodes-before.json")):
+                check(ok, f"initializer observation {number}: " + label)
         if host == baseline and actual_closed and actual_proof: cleanup_observed.append(number)
     outcome = server("held-outcome.json")
     if args.case == "usbfs-initializer":
         check(not cleanup_observed and all(not row["target_fd_closed"] and not row["exact_root_terminal"] for row in observations), "accepted initializer and both grants retained until actual blocked worker returns")
         check(candidate["request"] != 74 and candidate["operation"] == "initializer", "fixed GET_CONFIGURATION ioctl-entry gate, not interface claim or kernel-active observation")
+        hid = next(row for row in baseline if row["vendor"] == "0627")
+        hid_path = "/dev/bus/usb/%03d/%03d" % (int(hid["busnum"]), int(hid["devnum"]))
+        hid_fd = next(row for row in usb_fds if row["target"] == hid_path)
+        check(candidate["fd"] == int(hid_fd["fd"]) and candidate["node_device"] == int(hid_fd["device"]) and candidate["node_inode"] == int(hid_fd["inode"]) and candidate["node_rdev"] == os.makedev(*(int(value, 16) for value in hid_fd["rdev"].split(":"))), "actual held initializer FD is the exact received HID capability")
         check(not any(e["event"] == "syscall_entry" and e.get("kind") in {"claim", "configuration", "alternate", "release", "driver"} and e["monotonic_ns"] < ended["monotonic_ns"] for e in events), "target initialization performs no observed host-state mutations before gate exit")
     else:
         check(bool(cleanup_observed), "both actual resources released and exact root proofs recorded before stalled Resource ACK is released")

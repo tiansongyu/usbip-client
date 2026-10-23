@@ -154,6 +154,19 @@ if [ "$ROLE" = server ]; then
     host_baseline /tmp/host-before.json
     for bus in "$HID_BUS" "$SERIAL_BUS"; do node=$(printf '/dev/bus/usb/%03d/%03d' "$(cat "/sys/bus/usb/devices/$bus/busnum")" "$(cat "/sys/bus/usb/devices/$bus/devnum")"); chmod 600 "$node"; done
     HID_NODE=$(printf '/dev/bus/usb/%03d/%03d' "$(cat "/sys/bus/usb/devices/$HID_BUS/busnum")" "$(cat "/sys/bus/usb/devices/$HID_BUS/devnum")")
+    : > /tmp/usb-nodes-before.jsonl
+    for bus in "$HID_BUS" "$SERIAL_BUS"; do
+        base="/sys/bus/usb/devices/$bus"
+        node=$(printf '/dev/bus/usb/%03d/%03d' "$(cat "$base/busnum")" "$(cat "$base/devnum")")
+        [ -c "$node" ] && [ ! -L "$node" ]
+        jq -nc --arg bus "$bus" --arg node "$node" \
+          --arg filesystem_device "$(stat -c '%d' "$node")" --arg inode "$(stat -c '%i' "$node")" \
+          --arg rdev "$(stat -c '%t:%T' "$node")" --arg sysfs_dev "$(cat "$base/dev")" \
+          --arg generation "$(stat -Lc '%d:%i' "$base")" --arg mode "$(stat -c '%a' "$node")" \
+          --argjson uid "$(stat -c '%u' "$node")" --argjson links "$(stat -c '%h' "$node")" \
+          '{bus:$bus,node:$node,filesystem_device:$filesystem_device,inode:$inode,rdev:$rdev,sysfs_dev:$sysfs_dev,generation:$generation,mode:$mode,uid:$uid,links:$links,character_device:true}' >> /tmp/usb-nodes-before.jsonl
+    done
+    jq -s 'sort_by(.bus)' /tmp/usb-nodes-before.jsonl > /tmp/usb-nodes-before.json
     jq -n --arg hid "$HID_ID" --arg serial "$SERIAL_ID" --arg backend "$BACKEND" '{allowed_uids:[1000],export_device_ids:[],physical_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_native_device_ids:(if $backend=="native" then [$hid,$serial] else [] end),secure_physical_device_ids:(if $backend=="usbfs" then [$hid,$serial] else [] end),physical_connect_restore_device_ids:[]}' > /etc/rustusb/policy.json
     start_helper
     jq -nc --arg hid "$HID_KEY" --arg serial "$SERIAL_KEY" '[$hid,$serial]' > /tmp/keys.json
@@ -167,7 +180,17 @@ if [ "$ROLE" = server ]; then
     echo PREPARE_SERVER_READY
     host_expect START_TARGET
     STAGE=target-prepare
-    if [ "$CASE" = usbfs-initializer ]; then atomic_control arm initializer; else atomic_control arm resource; fi
+    if [ "$CASE" = usbfs-initializer ]; then ARMED_OPERATION=initializer; else ARMED_OPERATION=resource; fi
+    atomic_control arm "$ARMED_OPERATION"
+    # Observe a complete actual tracer event before creating the only initializer.
+    # A partial trailing write is never accepted as an armed acknowledgement.
+    for arm_poll in $(seq 1 100); do
+        awk '/"event":"armed"/ && /}$/ {print}' "$GATE/events.jsonl" > /tmp/gate-armed.json
+        if jq -es --arg operation "$ARMED_OPERATION" --slurpfile ready "$GATE/ready.json" 'length==1 and (.[0]|.event=="armed" and .nonce=="prepare-stop-v1" and .operation==$operation and .tracee_pid==$ready[0].tracee_pid and .tracee_starttime==$ready[0].tracee_starttime)' /tmp/gate-armed.json > /dev/null; then break; fi
+        kill -0 "$TRACER_PID"; sleep 0.01
+    done
+    jq -es --arg operation "$ARMED_OPERATION" --slurpfile ready "$GATE/ready.json" 'length==1 and (.[0]|.event=="armed" and .nonce=="prepare-stop-v1" and .operation==$operation and .tracee_pid==$ready[0].tracee_pid and .tracee_starttime==$ready[0].tracee_starttime)' /tmp/gate-armed.json > /dev/null
+    echo PREPARE_GATE_ARMED
     agent start pool > /tmp/start-pool-1.json 2> /tmp/start-pool-1.log & START_PID=$!
     select_candidate
     host_expect STOP_TARGET

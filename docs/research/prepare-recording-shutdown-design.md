@@ -33,6 +33,20 @@ Continue using the same shared foreground/managed pipelines. Foreground delivery
 
 The finite pool is at most sixteen exports. Retained metadata and close tasks remain bounded by actual prepared resources and the first interrupted preparation stage. No per-probe WAL work or unbounded background queue is added.
 
+### Per-export cancellation remains local
+
+The first implementation passed its 655-execution software gate, but subsequent source review found two missing cases. Those observed results remain attached to their original candidate and do not prove these cases.
+
+An identity mismatch already received from the helper must remain an operation failure even if stop interrupts Resource recording. Fix that failure before the wait, request the single actual close, retain the original Resource future, and preserve the operation in the parent outcome and the export's eventual Finish. Stop must not erase known invalid identity metadata.
+
+Native exports are individually stoppable through the public service API, including during preparation. Distinguish whole-job stop, local export cancellation, and invalidation/real failure. A local stop closes that export only; it must not make the preparation collection stop every sibling. Skip later Available observations for an already cancelled export, preserve its original pending record before its terminal, and continue preparing/serving the remaining pool. The listener remains alive with an empty catalog if all exports are individually cancelled; only job stop or a real job failure terminates it. Check local stop directly in catalog/import availability, without waiting for the close watcher to be scheduled.
+
+A helper-induced invalidation following an intentional close is not a new unrelated source failure. Track the watcher's actual cause and actual close result rather than interpreting every closed invalidation watch as a reason to stop siblings. Each resource still has exactly one close authority and exactly one metadata finalization.
+
+Cancellation before a helper request must not dispatch new helper work merely to obtain a proof. An already reserved but unsent managed attempt keeps the existing conservative Unconfirmed boundary; do not forge NotStarted/Verified or a root terminal for it. Such a local metadata-only cancellation must not be used as authority to close an unrelated safe export. Keep its unresolved result explicit and separate from a real resource-close failure or a journal failure, which remain job-failure conditions.
+
+Add deterministic regressions with independent job and local stop senders: two real owned endpoints, target Resource and Available confirmations held, target actual close observed, sibling still owned, then the original ACK released successfully and the sibling able to continue. A late recording rejection is a different global failure case. Include known identity failure interrupted by stop, pre-helper local cancellation, and the reserved/no-handle boundary without changing its proof rules.
+
 ## Sticky service shutdown
 
 The IPC serve loop has an independent OS-stop receiver. On stop or accept failure it must atomically latch shutdown in `Controls` and send cooperative stop to every current control before waiting for journal progress. The supervisor still receives its existing shutdown signal and is awaited through all real workers and recording tasks.
