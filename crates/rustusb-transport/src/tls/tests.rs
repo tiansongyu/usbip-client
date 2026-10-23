@@ -1,5 +1,5 @@
 use super::*;
-use crate::{DeviceKey, PrincipalRule, VirtualProfile};
+use crate::{ALPN, DeviceKey, PrincipalRule, VirtualProfile};
 use rcgen::{
     BasicConstraints, CertificateParams, ExtendedKeyUsagePurpose, IsCa, Issuer, KeyPair,
     KeyUsagePurpose, date_time_ymd,
@@ -9,6 +9,8 @@ use std::{
     task::Poll,
 };
 use tokio::io::{AsyncReadExt, AsyncWriteExt, DuplexStream, duplex};
+
+mod link;
 
 type TestResult<T = ()> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 

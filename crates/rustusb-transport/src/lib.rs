@@ -11,16 +11,27 @@
 
 mod acl;
 pub mod config;
+mod flush;
+mod link;
+mod quiet;
 mod tls;
 
 pub use acl::{
     AccessPolicy, CertificatePin, DeviceKey, PrincipalRule, VerifiedPeer, VirtualProfile,
 };
 pub use config::{LoadedClientConfig, LoadedServerConfig, load_client, load_server};
-pub use tls::{AuthenticatedStream, ClientStream, DerIdentity, TlsClient, TlsServer, TrustRoots};
+pub use link::{Link, LinkIo, LinkMonitor, LinkOutcome, LinkOwner, ProbePolicy};
+pub use tls::{
+    AuthenticatedLinkIo, AuthenticatedStream, ClientLink, ClientLinkIo, ClientStream, DerIdentity,
+    ServerLink, TlsClient, TlsServer, TrustRoots,
+};
 
-/// The only application protocol negotiated by these TLS endpoints.
-pub const ALPN: &[u8] = b"rustusb-usbip/1";
+/// Legacy raw USB/IP protocol; retained as the default for existing constructors.
+pub const ALPN: &[u8] = ALPN_V1;
+/// Raw USB/IP protocol without same-connection heartbeat measurements.
+pub const ALPN_V1: &[u8] = b"rustusb-usbip/1";
+/// Single-stream framed USB/IP with independent same-TLS-connection probes.
+pub const ALPN_V2: &[u8] = b"rustusb-usbip/2";
 /// Maximum simultaneous handshaking or authenticated streams per server instance.
 pub const MAX_CONNECTIONS: usize = 16;
 /// Deadline for completing either side of a TLS handshake.
@@ -64,6 +75,12 @@ pub enum Error {
     /// The authenticated connection did not negotiate the required TLS/ALPN protocol.
     #[error("TLS application protocol mismatch")]
     ProtocolMismatch,
+    /// A framed connection could not complete its bounded setup.
+    #[error("framed data-link setup timed out")]
+    LinkSetupTimeout,
+    /// An owned driver failed or its metadata could not be read consistently.
+    #[error("framed data-link driver failed")]
+    LinkDriverFailed,
 }
 
 /// Result for credential loading, policy validation, and TLS connection setup.

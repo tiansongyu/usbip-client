@@ -2,6 +2,7 @@
 
 pub mod application;
 mod device_key;
+pub mod link_health;
 pub mod server_session;
 pub use device_key::{DeviceBackend, DeviceKey, VirtualProfile};
 

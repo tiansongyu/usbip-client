@@ -1,11 +1,12 @@
 use crate::{
-    ALPN, AccessPolicy, CertificatePin, Error, HANDSHAKE_TIMEOUT, MAX_CONNECTIONS, Result,
-    TLS_BUFFER_LIMIT, VerifiedPeer, acl::MAX_CERT_BYTES,
+    ALPN_V1, ALPN_V2, AccessPolicy, CertificatePin, Error, HANDSHAKE_TIMEOUT, Link, LinkIo,
+    MAX_CONNECTIONS, ProbePolicy, Result, TLS_BUFFER_LIMIT, VerifiedPeer, acl::MAX_CERT_BYTES,
 };
 use rustls::{
     ClientConfig, RootCertStore, ServerConfig,
     pki_types::{CertificateDer, PrivateKeyDer, ServerName},
 };
+use rustusb_core::link_health::{LinkProtocol, TcpTuple};
 use std::{
     collections::BTreeSet,
     fmt, io,
@@ -16,6 +17,7 @@ use std::{
 };
 use tokio::{
     io::{AsyncRead, AsyncWrite, ReadBuf},
+    net::TcpStream,
     sync::{OwnedSemaphorePermit, Semaphore},
 };
 use tokio_rustls::{TlsAcceptor, TlsConnector};
@@ -117,12 +119,33 @@ pub struct TlsServer {
     acceptor: TlsAcceptor,
     policy: Arc<AccessPolicy>,
     limit: Arc<Semaphore>,
+    link_policy: Option<ProbePolicy>,
 }
 
 impl TlsServer {
     /// Configure TLS 1.3, mandatory client certificates, fixed ALPN, and no tickets/0-RTT.
     /// Only PKI-verified leaf certificates present in `policy` can produce a stream.
     pub fn new(roots: TrustRoots, identity: DerIdentity, policy: AccessPolicy) -> Result<Self> {
+        Self::configured(roots, identity, policy, None)
+    }
+
+    /// Require framed ALPN v2 and independently drive probes on each data connection.
+    /// No v1 downgrade is advertised or accepted.
+    pub fn new_with_link(
+        roots: TrustRoots,
+        identity: DerIdentity,
+        policy: AccessPolicy,
+        probes: ProbePolicy,
+    ) -> Result<Self> {
+        Self::configured(roots, identity, policy, Some(probes))
+    }
+
+    fn configured(
+        roots: TrustRoots,
+        identity: DerIdentity,
+        policy: AccessPolicy,
+        link_policy: Option<ProbePolicy>,
+    ) -> Result<Self> {
         let provider = Arc::new(rustls::crypto::ring::default_provider());
         let verifier = rustls::server::WebPkiClientVerifier::builder_with_provider(
             Arc::new(roots.0),
@@ -136,7 +159,7 @@ impl TlsServer {
             .with_client_cert_verifier(verifier)
             .with_single_cert(identity.chain, identity.key)
             .map_err(|_| Error::InvalidCredentials)?;
-        config.alpn_protocols = vec![ALPN.to_vec()];
+        config.alpn_protocols = vec![alpn(link_policy).to_vec()];
         config.session_storage = Arc::new(rustls::server::NoServerSessionStorage {});
         config.send_tls13_tickets = 0;
         config.max_early_data_size = 0;
@@ -147,6 +170,7 @@ impl TlsServer {
             acceptor: TlsAcceptor::from(Arc::new(config)),
             policy: Arc::new(policy),
             limit: Arc::new(Semaphore::new(MAX_CONNECTIONS)),
+            link_policy,
         })
     }
 
@@ -158,7 +182,39 @@ impl TlsServer {
     where
         S: AsyncRead + AsyncWrite + Unpin,
     {
+        if self.link_policy.is_some() {
+            return Err(Error::ProtocolMismatch);
+        }
         self.accept_with_deadline(stream, HANDSHAKE_TIMEOUT).await
+    }
+
+    /// Protocol fixed by this configuration, never inferred from application traffic.
+    pub fn protocol(&self) -> LinkProtocol {
+        if self.link_policy.is_some() {
+            LinkProtocol::FramedV2
+        } else {
+            LinkProtocol::RawV1
+        }
+    }
+
+    /// Authenticate a real TCP connection and create its owned single-stream driver.
+    /// The authenticated stream retains its permit until that driver has been joined.
+    pub async fn accept_link(&self, stream: TcpStream) -> Result<ServerLink> {
+        let policy = self.link_policy.ok_or(Error::ProtocolMismatch)?;
+        let tuple = tcp_tuple(&stream)?;
+        let authenticated = self.accept_with_deadline(stream, HANDSHAKE_TIMEOUT).await?;
+        let peer = authenticated.peer().clone();
+        let Link { io, owner, monitor } = tokio::time::timeout(
+            HANDSHAKE_TIMEOUT,
+            crate::link::server(authenticated, tuple, policy),
+        )
+        .await
+        .map_err(|_| Error::LinkSetupTimeout)??;
+        Ok(Link {
+            io: AuthenticatedLinkIo { inner: io, peer },
+            owner,
+            monitor,
+        })
     }
 
     async fn accept_with_deadline<S>(
@@ -182,7 +238,11 @@ impl TlsServer {
             .map_err(|_| Error::Timeout)?
             .map_err(|_| Error::HandshakeFailed)?;
         let connection = inner.get_ref().1;
-        check_protocol(connection.protocol_version(), connection.alpn_protocol())?;
+        check_protocol(
+            connection.protocol_version(),
+            connection.alpn_protocol(),
+            alpn(self.link_policy),
+        )?;
         let cert = connection
             .peer_certificates()
             .and_then(|chain| chain.first())
@@ -210,12 +270,30 @@ impl fmt::Debug for TlsServer {
 #[derive(Clone)]
 pub struct TlsClient {
     connector: TlsConnector,
+    link_policy: Option<ProbePolicy>,
 }
 
 impl TlsClient {
     /// Configure standard chain/time/usage/server-name verification and mandatory local identity.
     /// This never installs an insecure verifier or adopts system trust roots.
     pub fn new(roots: TrustRoots, identity: DerIdentity) -> Result<Self> {
+        Self::configured(roots, identity, None)
+    }
+
+    /// Require framed ALPN v2 without offering a raw-v1 downgrade.
+    pub fn new_with_link(
+        roots: TrustRoots,
+        identity: DerIdentity,
+        probes: ProbePolicy,
+    ) -> Result<Self> {
+        Self::configured(roots, identity, Some(probes))
+    }
+
+    fn configured(
+        roots: TrustRoots,
+        identity: DerIdentity,
+        link_policy: Option<ProbePolicy>,
+    ) -> Result<Self> {
         let mut config =
             ClientConfig::builder_with_provider(Arc::new(rustls::crypto::ring::default_provider()))
                 .with_protocol_versions(&[&rustls::version::TLS13])
@@ -223,13 +301,14 @@ impl TlsClient {
                 .with_root_certificates(roots.0)
                 .with_client_auth_cert(identity.chain, identity.key)
                 .map_err(|_| Error::InvalidCredentials)?;
-        config.alpn_protocols = vec![ALPN.to_vec()];
+        config.alpn_protocols = vec![alpn(link_policy).to_vec()];
         config.resumption = rustls::client::Resumption::disabled();
         config.enable_early_data = false;
         config.cert_compressors.clear();
         config.cert_decompressors.clear();
         Ok(Self {
             connector: TlsConnector::from(Arc::new(config)),
+            link_policy,
         })
     }
 
@@ -237,6 +316,51 @@ impl TlsClient {
     /// Success authenticates the server, not the server application's acceptance of
     /// this client's principal or device request; await the actual management response.
     pub async fn connect<S>(&self, server_name: &str, stream: S) -> Result<ClientStream<S>>
+    where
+        S: AsyncRead + AsyncWrite + Unpin,
+    {
+        if self.link_policy.is_some() {
+            return Err(Error::ProtocolMismatch);
+        }
+        self.connect_authenticated(server_name, stream).await
+    }
+
+    /// Protocol fixed by this configuration, without fallback or traffic sniffing.
+    pub fn protocol(&self) -> LinkProtocol {
+        if self.link_policy.is_some() {
+            LinkProtocol::FramedV2
+        } else {
+            LinkProtocol::RawV1
+        }
+    }
+
+    /// Authenticate a real TCP endpoint and retain an owned same-connection driver.
+    pub async fn connect_link(&self, server_name: &str, stream: TcpStream) -> Result<ClientLink> {
+        let policy = self.link_policy.ok_or(Error::ProtocolMismatch)?;
+        let tuple = tcp_tuple(&stream)?;
+        let authenticated = self.connect_authenticated(server_name, stream).await?;
+        let server_pin = authenticated.server_certificate_pin();
+        let Link { io, owner, monitor } = tokio::time::timeout(
+            HANDSHAKE_TIMEOUT,
+            crate::link::client(authenticated, tuple, policy),
+        )
+        .await
+        .map_err(|_| Error::LinkSetupTimeout)??;
+        Ok(Link {
+            io: ClientLinkIo {
+                inner: io,
+                server_pin,
+            },
+            owner,
+            monitor,
+        })
+    }
+
+    async fn connect_authenticated<S>(
+        &self,
+        server_name: &str,
+        stream: S,
+    ) -> Result<ClientStream<S>>
     where
         S: AsyncRead + AsyncWrite + Unpin,
     {
@@ -253,7 +377,11 @@ impl TlsClient {
             .map_err(|_| Error::Timeout)?
             .map_err(|_| Error::HandshakeFailed)?;
         let connection = inner.get_ref().1;
-        check_protocol(connection.protocol_version(), connection.alpn_protocol())?;
+        check_protocol(
+            connection.protocol_version(),
+            connection.alpn_protocol(),
+            alpn(self.link_policy),
+        )?;
         let cert = connection
             .peer_certificates()
             .and_then(|chain| chain.first())
@@ -269,8 +397,23 @@ impl fmt::Debug for TlsClient {
     }
 }
 
-fn check_protocol(version: Option<rustls::ProtocolVersion>, alpn: Option<&[u8]>) -> Result<()> {
-    if version != Some(rustls::ProtocolVersion::TLSv1_3) || alpn != Some(ALPN) {
+fn alpn(policy: Option<ProbePolicy>) -> &'static [u8] {
+    if policy.is_some() { ALPN_V2 } else { ALPN_V1 }
+}
+
+fn tcp_tuple(stream: &TcpStream) -> Result<TcpTuple> {
+    Ok(TcpTuple {
+        local: stream.local_addr().map_err(|_| Error::HandshakeFailed)?,
+        peer: stream.peer_addr().map_err(|_| Error::HandshakeFailed)?,
+    })
+}
+
+fn check_protocol(
+    version: Option<rustls::ProtocolVersion>,
+    negotiated: Option<&[u8]>,
+    required: &[u8],
+) -> Result<()> {
+    if version != Some(rustls::ProtocolVersion::TLSv1_3) || negotiated != Some(required) {
         return Err(Error::ProtocolMismatch);
     }
     Ok(())
@@ -350,6 +493,67 @@ macro_rules! stream_io {
 }
 stream_io!(AuthenticatedStream);
 stream_io!(ClientStream);
+
+/// Client application I/O retaining its authenticated server pin.
+/// The separately owned driver must be stopped and joined by the caller.
+pub struct ClientLinkIo {
+    inner: LinkIo,
+    server_pin: CertificatePin,
+}
+impl ClientLinkIo {
+    /// Verified leaf digest for audit correlation, never device authorization.
+    pub fn server_certificate_pin(&self) -> CertificatePin {
+        self.server_pin
+    }
+}
+
+/// Server application I/O with a PKI-authenticated, policy-mapped principal.
+pub struct AuthenticatedLinkIo {
+    inner: LinkIo,
+    peer: VerifiedPeer,
+}
+impl AuthenticatedLinkIo {
+    /// Authenticated device predicate, checked before any device claim.
+    pub fn peer(&self) -> &VerifiedPeer {
+        &self.peer
+    }
+}
+
+/// An authenticated client data link and its distinct owned driver and monitor.
+pub type ClientLink = Link<ClientLinkIo>;
+/// An authenticated server data link and its distinct owned driver and monitor.
+pub type ServerLink = Link<AuthenticatedLinkIo>;
+
+macro_rules! link_io {
+    ($name:ident) => {
+        impl AsyncRead for $name {
+            fn poll_read(
+                self: Pin<&mut Self>,
+                cx: &mut Context<'_>,
+                buf: &mut ReadBuf<'_>,
+            ) -> Poll<io::Result<()>> {
+                Pin::new(&mut self.get_mut().inner).poll_read(cx, buf)
+            }
+        }
+        impl AsyncWrite for $name {
+            fn poll_write(
+                self: Pin<&mut Self>,
+                cx: &mut Context<'_>,
+                buf: &[u8],
+            ) -> Poll<io::Result<usize>> {
+                Pin::new(&mut self.get_mut().inner).poll_write(cx, buf)
+            }
+            fn poll_flush(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+                Pin::new(&mut self.get_mut().inner).poll_flush(cx)
+            }
+            fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+                Pin::new(&mut self.get_mut().inner).poll_shutdown(cx)
+            }
+        }
+    };
+}
+link_io!(ClientLinkIo);
+link_io!(AuthenticatedLinkIo);
 
 #[cfg(test)]
 mod tests;

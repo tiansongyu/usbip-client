@@ -117,6 +117,87 @@ fn valid_fixture_loads_typed_immutable_server_and_client() -> TestResult {
 }
 
 #[test]
+fn explicit_v2_trusted_fixture_selects_framing_and_preserves_v1() -> TestResult {
+    let fixture = Fixture::new()?;
+    let probes =
+        json!({"protocol":"framed_v2","interval_millis":1000,"response_timeout_millis":3000});
+    let mut server = fixture.server();
+    server["schema_version"] = json!(2);
+    server["data_link"] = probes.clone();
+    assert_eq!(
+        load_server_inner(&fixture.config(&server)?, &fixture.context)?
+            .tls
+            .protocol(),
+        rustusb_core::link_health::LinkProtocol::FramedV2
+    );
+    let mut client = fixture.client();
+    client["schema_version"] = json!(2);
+    client["data_link"] = probes;
+    assert_eq!(
+        load_client_inner(&fixture.config(&client)?, &fixture.context)?
+            .tls
+            .protocol(),
+        rustusb_core::link_health::LinkProtocol::FramedV2
+    );
+    assert_eq!(
+        load_client_inner(&fixture.config(&fixture.client())?, &fixture.context)?
+            .tls
+            .protocol(),
+        rustusb_core::link_health::LinkProtocol::RawV1
+    );
+    Ok(())
+}
+
+#[test]
+fn v2_policy_and_version_shapes_reject_ambiguity_before_credentials() -> TestResult {
+    let fixture = Fixture::new()?;
+    let valid =
+        json!({"protocol":"framed_v2","interval_millis":1000,"response_timeout_millis":3000});
+    for policy in [
+        json!(null),
+        json!({"protocol":"raw_v1","interval_millis":1000,"response_timeout_millis":3000}),
+        json!({"protocol":"framed_v2","interval_millis":999,"response_timeout_millis":3000}),
+        json!({"protocol":"framed_v2","interval_millis":1000,"response_timeout_millis":1999}),
+        json!({"protocol":"framed_v2","interval_millis":1000,"response_timeout_millis":300001}),
+        json!({"protocol":"framed_v2","interval_millis":1000,"response_timeout_millis":3000,"fallback":true}),
+    ] {
+        for is_server in [false, true] {
+            let mut config = if is_server {
+                fixture.server()
+            } else {
+                fixture.client()
+            };
+            config["schema_version"] = json!(2);
+            config["data_link"] = policy.clone();
+            config["private_key"] = json!(fixture.path("missing.key"));
+            let path = fixture.config(&config)?;
+            let failed = if is_server {
+                load_server_inner(&path, &fixture.context).err()
+            } else {
+                load_client_inner(&path, &fixture.context).err()
+            };
+            assert!(matches!(failed, Some(Error::InvalidInput(_))));
+        }
+    }
+    // A v1 document cannot smuggle v2 policy, and v2 requires its policy.
+    let mut legacy = fixture.client();
+    legacy["data_link"] = valid.clone();
+    assert!(client_document(&serde_json::to_vec(&legacy)?).is_err());
+    let mut missing = fixture.server();
+    missing["schema_version"] = json!(2);
+    assert!(server_document(&serde_json::to_vec(&missing)?).is_err());
+    let mut config = fixture.client();
+    config["schema_version"] = json!(2);
+    config["data_link"] = valid;
+    let raw = serde_json::to_string(&config)?.replace(
+        "\"interval_millis\":1000",
+        "\"interval_millis\":1000,\"interval_millis\":1000",
+    );
+    assert!(client_document(raw.as_bytes()).is_err());
+    Ok(())
+}
+
+#[test]
 fn schema_unknown_duplicate_and_broker_mismatch_fail_before_credentials() -> TestResult {
     let fixture = Fixture::new()?;
     for (field, value) in [

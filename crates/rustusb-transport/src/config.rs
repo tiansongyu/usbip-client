@@ -58,7 +58,7 @@ impl fmt::Debug for LoadedClientConfig {
     }
 }
 
-/// Load schema-1 server JSON and bounded DER files for the actual nonroot UID.
+/// Load strict schema-1 (raw) or schema-2 (framed) server JSON and bounded DER files for the actual nonroot UID.
 ///
 /// Config/CA/chain files and every parent directory must be root-owned and not
 /// group/other writable. Keys require root or broker ownership and mode 0600.
@@ -77,7 +77,7 @@ pub fn load_server(path: &Path) -> Result<LoadedServerConfig> {
     }
 }
 
-/// Load schema-1 client JSON and bounded DER files for the actual nonroot UID.
+/// Load strict schema-1 (raw) or schema-2 (framed) client JSON and bounded DER files for the actual nonroot UID.
 ///
 /// This enforces the same trusted-file rules as [`load_server`]. It neither
 /// connects to the endpoint nor grants the caller a privileged helper role.
@@ -116,7 +116,9 @@ pub fn read_root_document(path: &Path) -> Result<Vec<u8>> {
 #[cfg(target_os = "linux")]
 mod platform {
     use super::*;
-    use crate::{AccessPolicy, CertificatePin, DerIdentity, Error, PrincipalRule, TrustRoots};
+    use crate::{
+        AccessPolicy, CertificatePin, DerIdentity, Error, PrincipalRule, ProbePolicy, TrustRoots,
+    };
     use serde::Deserialize;
     use std::{
         collections::BTreeSet,
@@ -157,6 +159,123 @@ mod platform {
         ca_certificates: Vec<PathBuf>,
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
+    }
+
+    // Decode the version first without converting through Value: each complete
+    // document is then decoded by its own strict shape, including duplicate fields.
+    #[derive(Deserialize)]
+    struct FileVersion {
+        schema_version: u32,
+    }
+
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct DataLinkFile {
+        protocol: String,
+        interval_millis: u64,
+        response_timeout_millis: u64,
+    }
+
+    impl DataLinkFile {
+        fn policy(self) -> Result<ProbePolicy> {
+            if self.protocol != "framed_v2" {
+                return Err(Error::InvalidInput("data-link protocol"));
+            }
+            ProbePolicy::new(
+                std::time::Duration::from_millis(self.interval_millis),
+                std::time::Duration::from_millis(self.response_timeout_millis),
+            )
+        }
+    }
+
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct ServerFileV2 {
+        schema_version: u32,
+        broker_uid: u32,
+        listen: SocketAddr,
+        devices: Vec<DeviceKey>,
+        principals: Vec<PrincipalFile>,
+        ca_certificates: Vec<PathBuf>,
+        certificate_chain: Vec<PathBuf>,
+        private_key: PathBuf,
+        data_link: DataLinkFile,
+    }
+
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct ClientFileV2 {
+        schema_version: u32,
+        broker_uid: u32,
+        server_id: String,
+        endpoint: Peer,
+        server_name: String,
+        device: DeviceKey,
+        ca_certificates: Vec<PathBuf>,
+        certificate_chain: Vec<PathBuf>,
+        private_key: PathBuf,
+        data_link: DataLinkFile,
+    }
+
+    fn version(bytes: &[u8]) -> Result<u32> {
+        serde_json::from_slice::<FileVersion>(bytes)
+            .map(|v| v.schema_version)
+            .map_err(|_| Error::InvalidInput("configuration schema version"))
+    }
+
+    fn server_document(bytes: &[u8]) -> Result<(ServerFile, Option<ProbePolicy>)> {
+        match version(bytes).map_err(|_| Error::InvalidInput("server configuration schema"))? {
+            1 => serde_json::from_slice(bytes)
+                .map(|file| (file, None))
+                .map_err(|_| Error::InvalidInput("server configuration schema")),
+            2 => {
+                let file: ServerFileV2 = serde_json::from_slice(bytes)
+                    .map_err(|_| Error::InvalidInput("server configuration schema"))?;
+                let policy = file.data_link.policy()?;
+                Ok((
+                    ServerFile {
+                        schema_version: file.schema_version,
+                        broker_uid: file.broker_uid,
+                        listen: file.listen,
+                        devices: file.devices,
+                        principals: file.principals,
+                        ca_certificates: file.ca_certificates,
+                        certificate_chain: file.certificate_chain,
+                        private_key: file.private_key,
+                    },
+                    Some(policy),
+                ))
+            }
+            _ => Err(Error::InvalidInput("configuration schema version")),
+        }
+    }
+
+    fn client_document(bytes: &[u8]) -> Result<(ClientFile, Option<ProbePolicy>)> {
+        match version(bytes).map_err(|_| Error::InvalidInput("client configuration schema"))? {
+            1 => serde_json::from_slice(bytes)
+                .map(|file| (file, None))
+                .map_err(|_| Error::InvalidInput("client configuration schema")),
+            2 => {
+                let file: ClientFileV2 = serde_json::from_slice(bytes)
+                    .map_err(|_| Error::InvalidInput("client configuration schema"))?;
+                let policy = file.data_link.policy()?;
+                Ok((
+                    ClientFile {
+                        schema_version: file.schema_version,
+                        broker_uid: file.broker_uid,
+                        server_id: file.server_id,
+                        endpoint: file.endpoint,
+                        server_name: file.server_name,
+                        device: file.device,
+                        ca_certificates: file.ca_certificates,
+                        certificate_chain: file.certificate_chain,
+                        private_key: file.private_key,
+                    },
+                    Some(policy),
+                ))
+            }
+            _ => Err(Error::InvalidInput("configuration schema version")),
+        }
     }
 
     #[derive(Deserialize)]
@@ -402,9 +521,8 @@ mod platform {
             "server configuration",
             context,
         )?;
-        let file: ServerFile = serde_json::from_slice(&bytes)
-            .map_err(|_| Error::InvalidInput("server configuration schema"))?;
-        if file.schema_version != 1 {
+        let (file, link_policy) = server_document(&bytes)?;
+        if file.schema_version != if link_policy.is_some() { 2 } else { 1 } {
             return Err(Error::InvalidInput("configuration schema version"));
         }
         context.broker(file.broker_uid)?;
@@ -446,7 +564,10 @@ mod platform {
             broker_uid: file.broker_uid,
             listen: file.listen,
             devices: file.devices,
-            tls: TlsServer::new(roots, identity, policy)?,
+            tls: match link_policy {
+                Some(probes) => TlsServer::new_with_link(roots, identity, policy, probes)?,
+                None => TlsServer::new(roots, identity, policy)?,
+            },
         })
     }
 
@@ -458,9 +579,8 @@ mod platform {
             "client configuration",
             context,
         )?;
-        let file: ClientFile = serde_json::from_slice(&bytes)
-            .map_err(|_| Error::InvalidInput("client configuration schema"))?;
-        if file.schema_version != 1 {
+        let (file, link_policy) = client_document(&bytes)?;
+        if file.schema_version != if link_policy.is_some() { 2 } else { 1 } {
             return Err(Error::InvalidInput("configuration schema version"));
         }
         context.broker(file.broker_uid)?;
@@ -492,7 +612,10 @@ mod platform {
             endpoint: file.endpoint,
             server_name: file.server_name,
             device: file.device,
-            tls: TlsClient::new(roots, identity)?,
+            tls: match link_policy {
+                Some(probes) => TlsClient::new_with_link(roots, identity, probes)?,
+                None => TlsClient::new(roots, identity)?,
+            },
         })
     }
 
