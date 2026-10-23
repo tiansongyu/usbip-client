@@ -259,3 +259,5 @@
 
 - 新QEMU两文件68项静态/synthetic与另一agent源码审查通过，先修main-ready同步barrier再冻结；未改旧harness/产品。root在177c7b4 dirty测试工具状态前置捕获7脚本+106产品Gitblob，默认locked allfeatures实跑old-dev01：startup真实helper backlog（排除Tokio selfpipe）下TERM wait143、原sysfs未变；主服务真实KEY1和35B双向、两lease各pending/inflight后TERM也wait143。完整20.04秒后同代际cfg1/alt0/root0600仍保留，但两driver实际null、无stopped；client0.19秒自主NULL/旧receipt消失后才清缓存。host整体52断言8FAIL保持，两个guest0不覆盖FAIL，source/binary afterguards与实际TXsink35B相符。
 - 旧local负向31份索引原bytes经125项独立parser/归档复核通过（复核者为harness作者，非独立harness实现审查）；QEMU32份源码/raw/static/候选review索引亦已逐bytes归档。无stopped不支持末资源/reap结论，20秒观察不支持永久泄漏；产品候选仍未应用。
+
+- 旧负向与3个新harness独立提交e4d54f8，63份indexed staged Gitblob逐长度/SHA一致。独立worktree候选1762d65经16项另一agent产品源码审查后cherry-pick为d39517b；仅4个CLI文件，私有共享Unix信号入口、prepare取消、cleanup所有权与错误优先级，未改engine/USBFS/native/vendor或依赖。四平台CI拟增加独立4-case ready/blocked×SIGINT/SIGTERM，复用已有allfeatures release且保存实际退出状态/summary；当前主树尚未运行修复后验收。
