@@ -1,0 +1,128 @@
+{
+  "scope": "Minimal fixture barrier and first-failure evidence repair, static/extracted checks only. No Cargo build/QEMU/USB operations.",
+  "root_run_preserved": "/tmp/rustusb-journal-e0ac478-20261023; original run FAIL unchanged",
+  "cause": "Client observes spontaneous disconnect promptly and exhausts immediate connect-refusal retries (~10 s) while server is still collecting its 20 s post-KILL observation.",
+  "change": "After persisting its post-KILL primary state, server sends server-observed; client waits after saving its own primary observation and before detach, then replies observed. Existing deadlines and success verifier unchanged. Host persists first failure marker rows immediately and retains them with later terminal errors.",
+  "checks": [
+    {
+      "name": "host_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "physical_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "native_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "sh_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "bash_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "send_control_deadlines_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "20_second_kill_observation_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "server_save_before_barrier_before_restart",
+      "result": "PASS"
+    },
+    {
+      "name": "client_observation_before_barrier_before_detach",
+      "result": "PASS"
+    },
+    {
+      "name": "only_cycle2_has_new_barrier",
+      "result": "PASS"
+    },
+    {
+      "name": "host_deadline_unchanged_time.monotonic() - failure_started >= 30",
+      "result": "PASS"
+    },
+    {
+      "name": "host_deadline_unchanged_deadline = time.monotonic() + args.timeout",
+      "result": "PASS"
+    },
+    {
+      "name": "host_deadline_unchanged_process.wait(timeout=10)",
+      "result": "PASS"
+    },
+    {
+      "name": "host_deadline_unchanged_default=300",
+      "result": "PASS"
+    },
+    {
+      "name": "success_verifier_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_admin_refusal_unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "first_failure_preserves_role_channel_line",
+      "result": "PASS"
+    },
+    {
+      "name": "first_failure_persisted_immediately",
+      "result": "PASS"
+    },
+    {
+      "name": "later_failure_does_not_replace_first",
+      "result": "PASS"
+    },
+    {
+      "name": "later_terminal_error_can_coexist",
+      "result": "PASS"
+    },
+    {
+      "name": "old_fast_client_schedule_times_out_before_server_listens",
+      "result": "PASS"
+    },
+    {
+      "name": "new_barrier_schedule_0.2_0.2",
+      "result": "PASS"
+    },
+    {
+      "name": "new_barrier_schedule_0.2_30",
+      "result": "PASS"
+    },
+    {
+      "name": "new_barrier_schedule_19.5_0.2",
+      "result": "PASS"
+    },
+    {
+      "name": "new_barrier_schedule_20.9_0.2",
+      "result": "PASS"
+    }
+  ],
+  "passed": 25,
+  "total": 25,
+  "files": [
+    {
+      "path": "scripts/qemu/run-journal-qemu.py",
+      "bytes": 33267,
+      "sha256": "50367bdbff479aacd7e94faa4db058b69b6ac61d6575edbf275c52d6fec04363",
+      "mode": "0o755"
+    },
+    {
+      "path": "scripts/qemu/guest-journal-init.sh",
+      "bytes": 32096,
+      "sha256": "652b1e8bd58c873a8b80a0ade7f5bd16592c1bac89b8c0eb83731961c2d778a2",
+      "mode": "0o755"
+    }
+  ],
+  "limits": [
+    "Logical schedule model is derived validation, not a QEMU result.",
+    "The old full run remains FAIL; no driver autorecovery claim."
+  ]
+}

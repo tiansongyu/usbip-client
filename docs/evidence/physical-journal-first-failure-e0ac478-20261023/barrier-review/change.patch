@@ -1,0 +1,187 @@
+--- a/scripts/qemu/guest-journal-init.sh
++++ b/scripts/qemu/guest-journal-init.sh
+@@ -227,6 +227,7 @@
+         [ "$dir_mode:$file_mode" = 0:700:0:600 ]
+         jq -Mcn --arg tag "$1" --arg dm "$dir_mode" --arg fm "$file_mode" --arg sha "$journal_sha" --slurpfile sysfs /tmp/sysfs.json --slurpfile pending /tmp/pending.json --slurpfile disk /var/lib/rustusb/physical/journal.json \
+             '{label:$tag,sysfs:$sysfs[0],pending:$pending[0],journal:$disk[0],journal_directory_owner_mode:$dm,journal_file_owner_mode:$fm,journal_sha256:$sha}' >> /tmp/journal-observations.jsonl
++        printf 'RUSTUSB_JOURNAL_RECORD '; tail -n 1 /tmp/journal-observations.jsonl
+         echo "RUSTUSB_JOURNAL_PENDING_BEGIN label=$1"; cat /tmp/pending.json; echo "RUSTUSB_JOURNAL_PENDING_END label=$1"
+         echo "RUSTUSB_JOURNAL_DISK_BEGIN label=$1"; cat /var/lib/rustusb/physical/journal.json; echo "RUSTUSB_JOURNAL_DISK_END label=$1"
+     }
+@@ -238,6 +239,7 @@
+         exited "$SERVER_PID"
+         if wait "$SERVER_PID"; then code=0; else code=$?; fi
+         jq -Mcn --arg epoch "$EPOCH" --argjson code "$code" '{label:$epoch,event:"server_wait",wait_code:$code,signal:null}' >> /tmp/waits.jsonl
++        printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
+         [ "$code" = 0 ]
+         jq -se '([.[]|select(.event=="stopped")]|length)==1 and .[-1].event=="stopped" and .[-1].snapshot.buffer_bytes_reserved==0 and (. [-1].snapshot.devices|length)==2 and all(.[-1].snapshot.devices[];.state=="available" and (.leased|not) and .cleanup_verified and .pending_urbs==0 and .queued_urbs==0 and .usbfs_inflight==0 and .current_drivers==.original_drivers)' "$EVENTS" > /dev/null
+         dump_epoch
+@@ -278,6 +280,7 @@
+         exited "$SERVER_PID"
+         if wait "$SERVER_PID"; then code=0; else code=$?; fi
+         jq -Mcn --arg epoch "$EPOCH" --argjson code "$code" '{label:$epoch,event:"server_wait",wait_code:$code,signal:null}' >> /tmp/waits.jsonl
++        printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
+         [ "$code" != 0 ]
+         [ ! -s "$EVENTS" ] || jq -se 'all(.[];.event!="ready")' "$EVENTS" > /dev/null
+         [ -s "/tmp/$EPOCH.log" ]
+@@ -334,12 +337,16 @@
+     exited "$KILL_PID"
+     if wait "$KILL_PID"; then code=0; else code=$?; fi
+     jq -Mcn --arg epoch "$EPOCH" --argjson code "$code" --argjson pid "$KILL_PID" --argjson start "$KILL_START" '{label:$epoch,event:"server_wait",wait_code:$code,signal:9,signal_count:1,sender_uid:1000,pid:$pid,starttime:$start,final_backend_snapshot:null,final_backend_snapshot_observable:false}' >> /tmp/waits.jsonl
++    printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
+     [ "$code" = 137 ]
+     [ ! -e "/proc/$KILL_PID" ]
+     dump_epoch
+     record killed-post
+     records_count 2
+     jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null
++    # Both peers save their primary observations before this barrier. The
++    # client waits here instead of sending into our full 20-second observation.
++    send_control 192.0.2.2 cycle-2-server-observed
+     receive_control cycle-2-observed
+     STAGE=persistent-restart-refusal
+     refused_server denied-before-helper-restart
+@@ -355,6 +362,7 @@
+     start_helper
+     [ "$HELPER_PID" != "$OLD_HELPER_PID" ]
+     jq -Mcn --argjson old "$OLD_HELPER_PID" --argjson oldstart "$OLD_HELPER_START" --argjson new "$HELPER_PID" --argjson newstart "$HELPER_START" --argjson code "$helper_code" '{event:"helper_restart",old_pid:$old,old_starttime:$oldstart,new_pid:$new,new_starttime:$newstart,old_wait_code:$code,state_directory_unchanged:true}' >> /tmp/waits.jsonl
++    printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
+     record helper-reloaded
+     records_count 2
+     jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null
+@@ -399,10 +407,15 @@
+     records_count 0
+     STAGE=authorized-after-reconcile
+     start_ready reconciled
++    send_control 192.0.2.2 cycle-3-ready
++    receive_control cycle-3-io
++    actual_pending
+     normal_stop
+     record reconciled-closed
+     records_count 0
+     jq -e --slurpfile original /tmp/original-sysfs.json '.==$original[0]' /tmp/sysfs.json > /dev/null
++    send_control 192.0.2.2 cycle-3-stopped
++    receive_control cycle-3-observed
+     helper_alive
+     echo 'RUSTUSB_JOURNAL_OBSERVATIONS_BEGIN'; cat /tmp/observations.jsonl; echo 'RUSTUSB_JOURNAL_OBSERVATIONS_END'
+     echo 'RUSTUSB_JOURNAL_RECORDS_BEGIN'; cat /tmp/journal-observations.jsonl; echo 'RUSTUSB_JOURNAL_RECORDS_END'
+@@ -416,7 +429,7 @@
+     start_helper
+     jq -e '.helper.kernel_available==true and .native.vhci_hcd.sysfs.status=="available"' /tmp/doctor.json > /dev/null
+     : > /tmp/client-outcomes.jsonl
+-    for cycle in 1 2; do
++    for cycle in 1 2 3; do
+         receive_control "cycle-$cycle-ready"
+         STAGE="client-cycle-$cycle-attach"
+         for attempt in $(seq 1 150); do
+@@ -470,7 +483,7 @@
+         unpriv --json sessions > /tmp/sessions.json
+         jq -e --slurpfile hid /tmp/attach-hid.json --slurpfile ftdi /tmp/attach-ftdi.json 'length==2 and all(.[];.managed and .session.status==6) and any(.[];.session==$hid[0]) and any(.[];.session==$ftdi[0])' /tmp/sessions.json > /dev/null
+         send_control 192.0.2.1 "cycle-$cycle-io"
+-        if [ "$cycle" = 1 ]; then receive_control cycle-1-stopped; else receive_control cycle-2-killed; fi
++        if [ "$cycle" = 2 ]; then receive_control cycle-2-killed; else receive_control "cycle-$cycle-stopped"; fi
+         STAGE="client-cycle-$cycle-disconnect"
+         until_tick=$(( $(ticks) + 2000 ))
+         DISCONNECTED=false
+@@ -483,6 +496,7 @@
+         input_hex=$(od -An -tx1 -v /tmp/input.bin|tr -d ' \n'); rx_hex=$(od -An -tx1 -v /tmp/rx.bin|tr -d ' \n'); tx_hex=$(od -An -tx1 -v /tmp/tx.bin|tr -d ' \n')
+         jq -Mcn --argjson cycle "$cycle" --argjson disconnected "$DISCONNECTED" --slurpfile hid /tmp/attach-hid.json --slurpfile ftdi /tmp/attach-ftdi.json --slurpfile sessions /tmp/after.json --rawfile vhci /tmp/vhci.txt --arg input "$input_hex" --arg rx "$rx_hex" --arg tx "$tx_hex" '{cycle:$cycle,spontaneous_disconnect:$disconnected,receipts:[$hid[0],$ftdi[0]],sessions:$sessions[0],vhci_status:$vhci,input_event_hex:$input,rx_hex:$rx,tx_hex:$tx,detach_before_observation:false}' >> /tmp/client-outcomes.jsonl
+         [ "$DISCONNECTED" = true ]
++        if [ "$cycle" = 2 ]; then receive_control cycle-2-server-observed; fi
+         kill "$INPUT_READER" 2>/dev/null || true; wait "$INPUT_READER" 2>/dev/null || true
+         exec 4<&-
+         unpriv --json detach "$(jq -r '.port' /tmp/attach-hid.json)"
+--- a/scripts/qemu/run-journal-qemu.py
++++ b/scripts/qemu/run-journal-qemu.py
+@@ -40,7 +40,7 @@
+     return f"RUSTUSB-TX-{cycle}-0001:fedcba9876543210\n".encode()
+ 
+ 
+-TX = tx(1) + tx(2)
++TX = tx(1) + tx(2) + tx(3)
+ MODULE_CONFIG = {"usb-common": "USB_COMMON", "usbcore": "USB", "e1000": "E1000",
+                  "evdev": "INPUT_EVDEV", "hid": "HID", "hid-generic": "HID_GENERIC",
+                  "usbhid": "USB_HID", "usbserial": "USB_SERIAL", "ftdi_sio": "USB_SERIAL_FTDI_SIO",
+@@ -126,7 +126,7 @@
+     actual_observations = {row["label"]: row for row in observations}
+     clients = json_block(program["client"], "CLIENT")
+     by_label = {row["label"]: row for row in records}
+-    expected_labels = {"initial", "normal-ready", "normal-pending", "normal-closed", "reopened-ready", "reopened-closed", "killed-ready", "killed-pending", "killed-post", "denied-before-helper-restart-refused", "helper-reloaded", "denied-after-helper-restart-refused", "unrestored-refused", "guest-admin-restored", "admin-retired", "reconciled-ready", "reconciled-closed"}
++    expected_labels = {"initial", "normal-ready", "normal-pending", "normal-closed", "reopened-ready", "reopened-closed", "killed-ready", "killed-pending", "killed-post", "denied-before-helper-restart-refused", "helper-reloaded", "denied-after-helper-restart-refused", "unrestored-refused", "guest-admin-restored", "admin-retired", "reconciled-ready", "reconciled-pending", "reconciled-closed"}
+     check("all_journal_observations_exact_once", len(by_label) == len(records) == len(expected_labels) and set(by_label) == expected_labels)
+     original = by_label["initial"]["sysfs"]
+     original_by_id = {device["device_id"]: device for device in original}
+@@ -185,7 +185,7 @@
+         value = events[epoch]
+         stopped = [row for row in value if row.get("event") == "stopped"]
+         check(epoch + "_actual_shutdown_wait0", wait_by_label[epoch]["wait_code"] == 0 and sum(row.get("event") == "ready" for row in value) == 1 and len(stopped) == 1 and value[-1].get("event") == "stopped" and zero_resources(stopped[0]["snapshot"]))
+-        if epoch != "normal":
++        if epoch == "reopened":
+             check(epoch + "_no_import", all(all(value == 0 for value in device["counters"].values()) and device["usbfs_reaped"] == 0 for device in stopped[0]["snapshot"]["devices"]))
+     killed = wait_by_label["killed"]
+     check("one_owned_kill_actual137_no_fake_final_snapshot", killed["wait_code"] == 137 and killed["signal"] == 9 and killed["signal_count"] == 1 and killed["sender_uid"] == 1000
+@@ -199,7 +199,7 @@
+         check(epoch + "_explicit_pending_refusal", "unresolved physical grant blocks new authorization; inspect physical-pending and reconcile the original baseline" in error)
+     helper = [row for row in waits if row["event"] == "helper_restart"]
+     check("real_helper_restart_same_persistent_directory", len(helper) == 1 and helper[0]["old_wait_code"] == 0 and helper[0]["old_pid"] != helper[0]["new_pid"] and helper[0]["old_starttime"] > 0 and helper[0]["new_starttime"] > 0 and helper[0]["state_directory_unchanged"] is True)
+-    for epoch in ["normal", "killed"]:
++    for epoch in ["normal", "killed", "reconciled"]:
+         observed = actual_observations[epoch + "-pending"]
+         snap = observed["snapshot"]
+         identity = observed["identity"]
+@@ -230,7 +230,7 @@
+                   and isinstance(response, dict) and response.get("ok") is False
+                   and isinstance(response.get("error"), str) and expected_error is not None
+                   and expected_error in response["error"])
+-    check("client_two_actual_io_and_disconnect_records", [row["cycle"] for row in clients] == [1, 2])
++    check("client_three_actual_io_and_disconnect_records", [row["cycle"] for row in clients] == [1, 2, 3])
+     for row in clients:
+         cycle = row["cycle"]
+         check(f"cycle{cycle}_serial_exact", row["rx_hex"] == rx(cycle).hex() and row["tx_hex"] == tx(cycle).hex())
+@@ -244,7 +244,7 @@
+         check(f"cycle{cycle}_independent_vhci_null", bool(rows) and len({value[1] for value in rows}) == len(rows) and all(len(value) == 7 and int(value[2]) == 4 and value[6] == "0-0" for value in rows)
+               and all(str(receipt["port"]).zfill(4) in {value[1].zfill(4) for value in rows} for receipt in receipts))
+     busy = [json.loads(line) for line in program["client"].splitlines() if line.startswith('{"event":"physical_probe_case"')]
+-    check("two_cycles_both_devices_busy", busy == [{"event": "physical_probe_case", "case": "both_real_devices_exclusive_busy", "result": "PASS"}] * 2)
++    check("three_cycles_both_devices_busy", busy == [{"event": "physical_probe_case", "case": "both_real_devices_exclusive_busy", "result": "PASS"}] * 3)
+     check("authorization_gates", "RUSTUSB_JOURNAL_FD_GATE: PASS direct_uid1000=denied direct_uid1001=denied helper_uid1001=denied nodes=root0600" in program["server"].splitlines()
+           and "RUSTUSB_JOURNAL_SERVER_READY: PASS uid=1000 app_root=false capabilities=0 usbip_host=false vhci_hcd=false" in program["server"].splitlines())
+     check("ordinary_cannot_read_journal", "RUSTUSB_JOURNAL_DISK_GATE: PASS ordinary_uid1000=denied directory=root0700 file=root0600" in program["server"].splitlines())
+@@ -268,8 +268,8 @@
+     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO))
+     evidence = args.evidence.resolve()
+     evidence.mkdir(parents=True, exist_ok=False)
+-    summary = {"schema_version": 1, "result": "FAIL", "evidence_collection_complete": False, "started_at_utc": started,
+-               "scope": "persistent grants: normal real I/O finish, crash real I/O refusal across helper restart, explicit guest administrator restoration/reconciliation; not automatic recovery or hardware",
++    summary = {"schema_version": 1, "result": "FAIL", "evidence_collection_complete": False, "observed_failure_markers": [], "started_at_utc": started,
++               "scope": "persistent grants: normal real I/O finish, crash real I/O refusal across helper restart, explicit guest administrator restoration/reconciliation followed by actual USB reuse; not automatic recovery or hardware",
+                "kernel": args.kernel, "git_commit": head, "working_tree_dirty": dirty,
+                "host_uid": os.geteuid(), "host_architecture": os.uname().machine,
+                "build_performed": True, "build_command": ["cargo", "build", "--workspace", "--release", "--locked", "--all-features"],
+@@ -342,7 +342,16 @@
+                              for role in ROLES for log in [program[role], kernel[role]])
+                 if failed and failure_started is None:
+                     failure_started = time.monotonic()
+-                for cycle in [1, 2]:
++                    # Preserve the first guest/kernel reason even if bounded
++                    # failure collection later ends with a process-wait error.
++                    summary["observed_failure_markers"] = [
++                        {"role": role, "channel": channel, "line": line}
++                        for role in ROLES for channel, log in [("program", program[role]), ("kernel", kernel[role])]
++                        for line in log.splitlines()
++                        if "RUSTUSB_JOURNAL_RESULT: FAIL" in line or any(message in line for message in physical.INTEGRITY_FAILURES)
++                    ]
++                    (evidence / "first-observed-failure.json").write_text(json.dumps(summary["observed_failure_markers"], indent=2) + "\n")
++                for cycle in [1, 2, 3]:
+                     if f"RUSTUSB_JOURNAL_WAIT_INPUT key={cycle}" in program["client"] and f"key-{cycle}" not in injections:
+                         qmp.call("send-key", {"keys": [{"type": "qcode", "data": str(cycle)}], "hold-time": 100})
+                         injections.add(f"key-{cycle}")
+@@ -380,7 +389,7 @@
+                 if not chunk:
+                     break
+                 received.extend(chunk)
+-            if failure_started is not None or any(check["result"] != "PASS" for check in summary["verification"]["checks"]) or received != TX or injections != {"key-1", "serial-1", "key-2", "serial-2"} or any(process.returncode != 0 for process in processes.values()):
++            if failure_started is not None or any(check["result"] != "PASS" for check in summary["verification"]["checks"]) or received != TX or injections != {"key-1", "serial-1", "key-2", "serial-2", "key-3", "serial-3"} or any(process.returncode != 0 for process in processes.values()):
+                 raise RuntimeError("journal lifecycle contract failed; original records and per-epoch observations retained")
+             summary["result"] = "PASS"
+     except Exception as error:

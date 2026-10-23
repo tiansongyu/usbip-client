@@ -294,3 +294,8 @@
 - 首次定向编译暴露root新增schema的三个测试构造遗漏和目录组件双引用类型，原日志保留；修复后首次Store测试因tempfile目录继承组可写umask被正确拒绝，改为fixture明确0700，不放宽生产权限。随后daemon48、后端45及CLI定向测试通过。root补运行期同inode字节损坏/删除/截断拒绝、缺lock禁止另建锁域、缺driver字段不能冒充显式null，以及分页/协议/OS owner测试。
 - 完整 `bash scripts/check.sh` 在工作树候选上实际exit0：default89/allfeatures142/vendor19共250次，31result、0失败/忽略，fmt/两组Clippy/release/严格rustdoc通过；98项软件输入前后SHA不变。待提交后从clean运行新QEMU与原正常/热拔/ECM/TERM回归；尚不宣称这些运行已通过。
 - 新harness独立预审发现管理拒绝只查非零可能掩盖错误原因；改为按phase/UID核单个JSON ok=false及精确error。首次提取检查44/46揭示jq -e对空/多JSON流的宽松性，修为jq -se且length==1后46/46通过，原报告保留。两脚本各自755、原crash与TERM脚本未改。
+- 产品与软件/审查证据提交 b75f14b，新两脚本独立提交 e0ac478；98项软件和21份index原件逐staged blob核验。clean e0ac478 首次新QEMU实际FAIL/exit1，source/binary/head guards通过，运行时clean。两轮真实HID/FTDI和正常退休/再ready已走到，KILL137后客户端自主NULL；客户端发送cycle-2-observed时server仍处原20秒观察，100次快速连接拒绝+0.1s间隔先耗尽，后续restart/admin尚未执行。完整raw保留，不能将两guest退出0当作验收通过；summary.error是之后wait10秒超时，原clientFAIL才是已知同步失败。
+- 仅修新guest双方primary保存后的握手顺序：server观察保存后先通知client，client保存自主清理事实后等待，再显式detach并回告。20秒观察、重试数量、整体截止和所有USB/记录断言不变；host另保留首次失败marker避免后续收尾错误掩盖。原crash/TERM和产品不改，下一次从新clean提交重跑。
+- 首次失败的独立raw复核进一步限定证据：正常/重开及两轮I/O、pending/disk原件存在；wait137由冻结guest严格断言后到达killed-post间接证明，但单独wait行及当前sysfs观察尚在guest临时文件，未到最终dump，不能冒充已持久读取。新harness补每次record/每个实际wait立即写独立串口行，避免后续协调失败丢掉已完成观察；这不回填旧run缺失数据。
+
+- 修订时同时补齐管理员协调后的第三轮真实 HID/FTDI I/O 与正常退休，保持中间无IMPORT重开的对照。设计先追加此验收目的；最终是否通过仍等实际运行，不以ready替代恢复后传输。

@@ -227,6 +227,7 @@ if [ "$ROLE" = server ]; then
         [ "$dir_mode:$file_mode" = 0:700:0:600 ]
         jq -Mcn --arg tag "$1" --arg dm "$dir_mode" --arg fm "$file_mode" --arg sha "$journal_sha" --slurpfile sysfs /tmp/sysfs.json --slurpfile pending /tmp/pending.json --slurpfile disk /var/lib/rustusb/physical/journal.json \
             '{label:$tag,sysfs:$sysfs[0],pending:$pending[0],journal:$disk[0],journal_directory_owner_mode:$dm,journal_file_owner_mode:$fm,journal_sha256:$sha}' >> /tmp/journal-observations.jsonl
+        printf 'RUSTUSB_JOURNAL_RECORD '; tail -n 1 /tmp/journal-observations.jsonl
         echo "RUSTUSB_JOURNAL_PENDING_BEGIN label=$1"; cat /tmp/pending.json; echo "RUSTUSB_JOURNAL_PENDING_END label=$1"
         echo "RUSTUSB_JOURNAL_DISK_BEGIN label=$1"; cat /var/lib/rustusb/physical/journal.json; echo "RUSTUSB_JOURNAL_DISK_END label=$1"
     }
@@ -238,6 +239,7 @@ if [ "$ROLE" = server ]; then
         exited "$SERVER_PID"
         if wait "$SERVER_PID"; then code=0; else code=$?; fi
         jq -Mcn --arg epoch "$EPOCH" --argjson code "$code" '{label:$epoch,event:"server_wait",wait_code:$code,signal:null}' >> /tmp/waits.jsonl
+        printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
         [ "$code" = 0 ]
         jq -se '([.[]|select(.event=="stopped")]|length)==1 and .[-1].event=="stopped" and .[-1].snapshot.buffer_bytes_reserved==0 and (. [-1].snapshot.devices|length)==2 and all(.[-1].snapshot.devices[];.state=="available" and (.leased|not) and .cleanup_verified and .pending_urbs==0 and .queued_urbs==0 and .usbfs_inflight==0 and .current_drivers==.original_drivers)' "$EVENTS" > /dev/null
         dump_epoch
@@ -278,6 +280,7 @@ if [ "$ROLE" = server ]; then
         exited "$SERVER_PID"
         if wait "$SERVER_PID"; then code=0; else code=$?; fi
         jq -Mcn --arg epoch "$EPOCH" --argjson code "$code" '{label:$epoch,event:"server_wait",wait_code:$code,signal:null}' >> /tmp/waits.jsonl
+        printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
         [ "$code" != 0 ]
         [ ! -s "$EVENTS" ] || jq -se 'all(.[];.event!="ready")' "$EVENTS" > /dev/null
         [ -s "/tmp/$EPOCH.log" ]
@@ -334,12 +337,16 @@ if [ "$ROLE" = server ]; then
     exited "$KILL_PID"
     if wait "$KILL_PID"; then code=0; else code=$?; fi
     jq -Mcn --arg epoch "$EPOCH" --argjson code "$code" --argjson pid "$KILL_PID" --argjson start "$KILL_START" '{label:$epoch,event:"server_wait",wait_code:$code,signal:9,signal_count:1,sender_uid:1000,pid:$pid,starttime:$start,final_backend_snapshot:null,final_backend_snapshot_observable:false}' >> /tmp/waits.jsonl
+    printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
     [ "$code" = 137 ]
     [ ! -e "/proc/$KILL_PID" ]
     dump_epoch
     record killed-post
     records_count 2
     jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null
+    # Both peers save their primary observations before this barrier. The
+    # client waits here instead of sending into our full 20-second observation.
+    send_control 192.0.2.2 cycle-2-server-observed
     receive_control cycle-2-observed
     STAGE=persistent-restart-refusal
     refused_server denied-before-helper-restart
@@ -355,6 +362,7 @@ if [ "$ROLE" = server ]; then
     start_helper
     [ "$HELPER_PID" != "$OLD_HELPER_PID" ]
     jq -Mcn --argjson old "$OLD_HELPER_PID" --argjson oldstart "$OLD_HELPER_START" --argjson new "$HELPER_PID" --argjson newstart "$HELPER_START" --argjson code "$helper_code" '{event:"helper_restart",old_pid:$old,old_starttime:$oldstart,new_pid:$new,new_starttime:$newstart,old_wait_code:$code,state_directory_unchanged:true}' >> /tmp/waits.jsonl
+    printf 'RUSTUSB_JOURNAL_WAIT '; tail -n 1 /tmp/waits.jsonl
     record helper-reloaded
     records_count 2
     jq -e --slurpfile before /tmp/killed-pending.json '.records==$before[0].records' /tmp/pending.json > /dev/null
@@ -399,10 +407,15 @@ if [ "$ROLE" = server ]; then
     records_count 0
     STAGE=authorized-after-reconcile
     start_ready reconciled
+    send_control 192.0.2.2 cycle-3-ready
+    receive_control cycle-3-io
+    actual_pending
     normal_stop
     record reconciled-closed
     records_count 0
     jq -e --slurpfile original /tmp/original-sysfs.json '.==$original[0]' /tmp/sysfs.json > /dev/null
+    send_control 192.0.2.2 cycle-3-stopped
+    receive_control cycle-3-observed
     helper_alive
     echo 'RUSTUSB_JOURNAL_OBSERVATIONS_BEGIN'; cat /tmp/observations.jsonl; echo 'RUSTUSB_JOURNAL_OBSERVATIONS_END'
     echo 'RUSTUSB_JOURNAL_RECORDS_BEGIN'; cat /tmp/journal-observations.jsonl; echo 'RUSTUSB_JOURNAL_RECORDS_END'
@@ -416,7 +429,7 @@ else
     start_helper
     jq -e '.helper.kernel_available==true and .native.vhci_hcd.sysfs.status=="available"' /tmp/doctor.json > /dev/null
     : > /tmp/client-outcomes.jsonl
-    for cycle in 1 2; do
+    for cycle in 1 2 3; do
         receive_control "cycle-$cycle-ready"
         STAGE="client-cycle-$cycle-attach"
         for attempt in $(seq 1 150); do
@@ -470,7 +483,7 @@ else
         unpriv --json sessions > /tmp/sessions.json
         jq -e --slurpfile hid /tmp/attach-hid.json --slurpfile ftdi /tmp/attach-ftdi.json 'length==2 and all(.[];.managed and .session.status==6) and any(.[];.session==$hid[0]) and any(.[];.session==$ftdi[0])' /tmp/sessions.json > /dev/null
         send_control 192.0.2.1 "cycle-$cycle-io"
-        if [ "$cycle" = 1 ]; then receive_control cycle-1-stopped; else receive_control cycle-2-killed; fi
+        if [ "$cycle" = 2 ]; then receive_control cycle-2-killed; else receive_control "cycle-$cycle-stopped"; fi
         STAGE="client-cycle-$cycle-disconnect"
         until_tick=$(( $(ticks) + 2000 ))
         DISCONNECTED=false
@@ -483,6 +496,7 @@ else
         input_hex=$(od -An -tx1 -v /tmp/input.bin|tr -d ' \n'); rx_hex=$(od -An -tx1 -v /tmp/rx.bin|tr -d ' \n'); tx_hex=$(od -An -tx1 -v /tmp/tx.bin|tr -d ' \n')
         jq -Mcn --argjson cycle "$cycle" --argjson disconnected "$DISCONNECTED" --slurpfile hid /tmp/attach-hid.json --slurpfile ftdi /tmp/attach-ftdi.json --slurpfile sessions /tmp/after.json --rawfile vhci /tmp/vhci.txt --arg input "$input_hex" --arg rx "$rx_hex" --arg tx "$tx_hex" '{cycle:$cycle,spontaneous_disconnect:$disconnected,receipts:[$hid[0],$ftdi[0]],sessions:$sessions[0],vhci_status:$vhci,input_event_hex:$input,rx_hex:$rx,tx_hex:$tx,detach_before_observation:false}' >> /tmp/client-outcomes.jsonl
         [ "$DISCONNECTED" = true ]
+        if [ "$cycle" = 2 ]; then receive_control cycle-2-server-observed; fi
         kill "$INPUT_READER" 2>/dev/null || true; wait "$INPUT_READER" 2>/dev/null || true
         exec 4<&-
         unpriv --json detach "$(jq -r '.port' /tmp/attach-hid.json)"
