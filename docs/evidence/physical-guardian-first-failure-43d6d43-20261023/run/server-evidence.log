@@ -1,0 +1,558 @@
+RUSTUSB_JOURNAL_EVIDENCE_CHANNEL: PASS role=server device=ttyS1 kernel_console=ttyS0
+RUSTUSB_JOURNAL_BOOT role=server kernel=6.8.0-106-generic
+RUSTUSB_JOURNAL_ISOLATION: PASS role=server carrier=1 ip_forward=0
+2026-10-23T07:05:07.089247Z  INFO rustusb: local device discovery completed device_count=2
+RUSTUSB_JOURNAL_HELPER: PASS role=server allowed_uid=1000 denied_uid=1001
+RUSTUSB_PHYSICAL_HELPER_CONNECTION_CLOSED method=reset_after_frame
+RUSTUSB_JOURNAL_FD_GATE: PASS direct_uid1000=denied direct_uid1001=denied helper_uid1001=denied nodes=root0600
+RUSTUSB_JOURNAL_RECORD {"label":"initial","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[],"schema_version":1},"journal":{"schema_version":1,"records":[]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"0a3aa191c47a618a315ce575a71dcbc7850a837eb5712b0308c89efda5314e53"}
+RUSTUSB_JOURNAL_PENDING_BEGIN label=initial
+{
+  "next_after": null,
+  "records": [],
+  "schema_version": 1
+}
+RUSTUSB_JOURNAL_PENDING_END label=initial
+RUSTUSB_JOURNAL_DISK_BEGIN label=initial
+{"schema_version":1,"records":[]}
+RUSTUSB_JOURNAL_DISK_END label=initial
+RUSTUSB_JOURNAL_DISK_GATE: PASS ordinary_uid1000=denied directory=root0700 file=root0600
+RUSTUSB_JOURNAL_RECORD {"label":"normal-ready","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[{"baseline":{"bus_id":"1-1","configuration":1,"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","interfaces":[{"alternate":0,"driver":"usbhid","number":0}],"receipt":{"bus_number":1,"node_device":48385,"node_inode":161,"sysfs_device":23,"sysfs_inode":25310,"usb_device_number":2}},"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}},{"baseline":{"bus_id":"1-2","configuration":1,"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","interfaces":[{"alternate":0,"driver":"ftdi_sio","number":0}],"receipt":{"bus_number":1,"node_device":48386,"node_inode":164,"sysfs_device":23,"sysfs_inode":25544,"usb_device_number":3}},"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}}],"schema_version":1},"journal":{"schema_version":1,"records":[{"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"e1e8638cf99d28672e38c984ae752f206f8400226fd9ea4b0cbd32b48407a839"}
+RUSTUSB_JOURNAL_PENDING_BEGIN label=normal-ready
+{
+  "next_after": null,
+  "records": [
+    {
+      "baseline": {
+        "bus_id": "1-1",
+        "configuration": 1,
+        "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "interfaces": [
+          {
+            "alternate": 0,
+            "driver": "usbhid",
+            "number": 0
+          }
+        ],
+        "receipt": {
+          "bus_number": 1,
+          "node_device": 48385,
+          "node_inode": 161,
+          "sysfs_device": 23,
+          "sysfs_inode": 25310,
+          "usb_device_number": 2
+        }
+      },
+      "lease_id": "14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4",
+      "owner": {
+        "boot_id": "e79b353f-ffee-45b2-87a4-f13dae5214e8",
+        "pid": 362,
+        "start_time": 301,
+        "uid": 1000
+      }
+    },
+    {
+      "baseline": {
+        "bus_id": "1-2",
+        "configuration": 1,
+        "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+        "interfaces": [
+          {
+            "alternate": 0,
+            "driver": "ftdi_sio",
+            "number": 0
+          }
+        ],
+        "receipt": {
+          "bus_number": 1,
+          "node_device": 48386,
+          "node_inode": 164,
+          "sysfs_device": 23,
+          "sysfs_inode": 25544,
+          "usb_device_number": 3
+        }
+      },
+      "lease_id": "c0325196-29b0-4753-aa48-6ed63f3ad444",
+      "owner": {
+        "boot_id": "e79b353f-ffee-45b2-87a4-f13dae5214e8",
+        "pid": 362,
+        "start_time": 301,
+        "uid": 1000
+      }
+    }
+  ],
+  "schema_version": 1
+}
+RUSTUSB_JOURNAL_PENDING_END label=normal-ready
+RUSTUSB_JOURNAL_DISK_BEGIN label=normal-ready
+{"schema_version":1,"records":[{"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]}
+RUSTUSB_JOURNAL_DISK_END label=normal-ready
+RUSTUSB_JOURNAL_SERVER_READY: PASS uid=1000 app_root=false capabilities=0 usbip_host=false vhci_hcd=false
+RUSTUSB_JOURNAL_RECORD {"label":"normal-pending","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbfs"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbfs"}]}],"pending":{"next_after":null,"records":[{"baseline":{"bus_id":"1-1","configuration":1,"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","interfaces":[{"alternate":0,"driver":"usbhid","number":0}],"receipt":{"bus_number":1,"node_device":48385,"node_inode":161,"sysfs_device":23,"sysfs_inode":25310,"usb_device_number":2}},"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}},{"baseline":{"bus_id":"1-2","configuration":1,"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","interfaces":[{"alternate":0,"driver":"ftdi_sio","number":0}],"receipt":{"bus_number":1,"node_device":48386,"node_inode":164,"sysfs_device":23,"sysfs_inode":25544,"usb_device_number":3}},"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}}],"schema_version":1},"journal":{"schema_version":1,"records":[{"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"e1e8638cf99d28672e38c984ae752f206f8400226fd9ea4b0cbd32b48407a839"}
+RUSTUSB_JOURNAL_PENDING_BEGIN label=normal-pending
+{
+  "next_after": null,
+  "records": [
+    {
+      "baseline": {
+        "bus_id": "1-1",
+        "configuration": 1,
+        "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "interfaces": [
+          {
+            "alternate": 0,
+            "driver": "usbhid",
+            "number": 0
+          }
+        ],
+        "receipt": {
+          "bus_number": 1,
+          "node_device": 48385,
+          "node_inode": 161,
+          "sysfs_device": 23,
+          "sysfs_inode": 25310,
+          "usb_device_number": 2
+        }
+      },
+      "lease_id": "14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4",
+      "owner": {
+        "boot_id": "e79b353f-ffee-45b2-87a4-f13dae5214e8",
+        "pid": 362,
+        "start_time": 301,
+        "uid": 1000
+      }
+    },
+    {
+      "baseline": {
+        "bus_id": "1-2",
+        "configuration": 1,
+        "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+        "interfaces": [
+          {
+            "alternate": 0,
+            "driver": "ftdi_sio",
+            "number": 0
+          }
+        ],
+        "receipt": {
+          "bus_number": 1,
+          "node_device": 48386,
+          "node_inode": 164,
+          "sysfs_device": 23,
+          "sysfs_inode": 25544,
+          "usb_device_number": 3
+        }
+      },
+      "lease_id": "c0325196-29b0-4753-aa48-6ed63f3ad444",
+      "owner": {
+        "boot_id": "e79b353f-ffee-45b2-87a4-f13dae5214e8",
+        "pid": 362,
+        "start_time": 301,
+        "uid": 1000
+      }
+    }
+  ],
+  "schema_version": 1
+}
+RUSTUSB_JOURNAL_PENDING_END label=normal-pending
+RUSTUSB_JOURNAL_DISK_BEGIN label=normal-pending
+{"schema_version":1,"records":[{"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]}
+RUSTUSB_JOURNAL_DISK_END label=normal-pending
+RUSTUSB_JOURNAL_WAIT {"label":"normal","event":"server_wait","wait_code":0,"signal":null}
+RUSTUSB_JOURNAL_EVENTS_BEGIN epoch=normal
+{"address":"192.0.2.1:3240","event":"ready","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+{"event":"snapshot","id":"ready","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+{"event":"snapshot","id":"pending-1","schema_version":1,"snapshot":{"buffer_bytes_reserved":2832,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":318,"bytes_out":1,"controls":14,"errors":0,"interrupt_in":2,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbfs","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":1,"queued_urbs":0,"speed":3,"state":"leased","usbfs_inflight":1,"usbfs_reaped":15},{"bus_id":"1-2","cancelled":2,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":3,"bulk_out":1,"bytes_in":199,"bytes_out":35,"controls":28,"errors":5,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":2,"unlinks":2},"current_drivers":[{"driver":"usbfs","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":true,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":2,"queued_urbs":1,"speed":2,"state":"leased","usbfs_inflight":1,"usbfs_reaped":31}],"schema_version":1}}
+{"event":"ack","id":"stop","ok":true,"schema_version":1}
+{"event":"stopped","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":1,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":318,"bytes_out":1,"controls":14,"errors":1,"interrupt_in":3,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":16},{"bus_id":"1-2","cancelled":4,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":5,"bulk_out":1,"bytes_in":199,"bytes_out":35,"controls":28,"errors":7,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":2,"unlinks":2},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":32}],"schema_version":1}}
+RUSTUSB_JOURNAL_EVENTS_END epoch=normal
+RUSTUSB_JOURNAL_STDERR_BEGIN epoch=normal
+RUSTUSB_JOURNAL_STDERR_END epoch=normal
+RUSTUSB_JOURNAL_RECORD {"label":"normal-closed","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[],"schema_version":1},"journal":{"schema_version":1,"records":[]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"0a3aa191c47a618a315ce575a71dcbc7850a837eb5712b0308c89efda5314e53"}
+RUSTUSB_JOURNAL_PENDING_BEGIN label=normal-closed
+{
+  "next_after": null,
+  "records": [],
+  "schema_version": 1
+}
+RUSTUSB_JOURNAL_PENDING_END label=normal-closed
+RUSTUSB_JOURNAL_DISK_BEGIN label=normal-closed
+{"schema_version":1,"records":[]}
+RUSTUSB_JOURNAL_DISK_END label=normal-closed
+RUSTUSB_JOURNAL_RECORD {"label":"reopened-ready","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[{"baseline":{"bus_id":"1-1","configuration":1,"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","interfaces":[{"alternate":0,"driver":"usbhid","number":0}],"receipt":{"bus_number":1,"node_device":48385,"node_inode":161,"sysfs_device":23,"sysfs_inode":25310,"usb_device_number":2}},"lease_id":"b6daaa9c-61f0-4d83-9038-da57c5dae64f","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":807,"start_time":521,"uid":1000}},{"baseline":{"bus_id":"1-2","configuration":1,"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","interfaces":[{"alternate":0,"driver":"ftdi_sio","number":0}],"receipt":{"bus_number":1,"node_device":48386,"node_inode":164,"sysfs_device":23,"sysfs_inode":25544,"usb_device_number":3}},"lease_id":"e9e1d8db-f83a-46ce-94ab-c5b7cadba5cc","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":807,"start_time":521,"uid":1000}}],"schema_version":1},"journal":{"schema_version":1,"records":[{"lease_id":"b6daaa9c-61f0-4d83-9038-da57c5dae64f","owner":{"uid":1000,"pid":807,"start_time":521,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"e9e1d8db-f83a-46ce-94ab-c5b7cadba5cc","owner":{"uid":1000,"pid":807,"start_time":521,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"e7078f4c59df17f19049928856367d1bb590c5c55824c8809627d91c97b5fafc"}
+RUSTUSB_JOURNAL_PENDING_BEGIN label=reopened-ready
+{
+  "next_after": null,
+  "records": [
+    {
+      "baseline": {
+        "bus_id": "1-1",
+        "configuration": 1,
+        "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "interfaces": [
+          {
+            "alternate": 0,
+            "driver": "usbhid",
+            "number": 0
+          }
+        ],
+        "receipt": {
+          "bus_number": 1,
+          "node_device": 48385,
+          "node_inode": 161,
+          "sysfs_device": 23,
+          "sysfs_inode": 25310,
+          "usb_device_number": 2
+        }
+      },
+      "lease_id": "b6daaa9c-61f0-4d83-9038-da57c5dae64f",
+      "owner": {
+        "boot_id": "e79b353f-ffee-45b2-87a4-f13dae5214e8",
+        "pid": 807,
+        "start_time": 521,
+        "uid": 1000
+      }
+    },
+    {
+      "baseline": {
+        "bus_id": "1-2",
+        "configuration": 1,
+        "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+        "interfaces": [
+          {
+            "alternate": 0,
+            "driver": "ftdi_sio",
+            "number": 0
+          }
+        ],
+        "receipt": {
+          "bus_number": 1,
+          "node_device": 48386,
+          "node_inode": 164,
+          "sysfs_device": 23,
+          "sysfs_inode": 25544,
+          "usb_device_number": 3
+        }
+      },
+      "lease_id": "e9e1d8db-f83a-46ce-94ab-c5b7cadba5cc",
+      "owner": {
+        "boot_id": "e79b353f-ffee-45b2-87a4-f13dae5214e8",
+        "pid": 807,
+        "start_time": 521,
+        "uid": 1000
+      }
+    }
+  ],
+  "schema_version": 1
+}
+RUSTUSB_JOURNAL_PENDING_END label=reopened-ready
+RUSTUSB_JOURNAL_DISK_BEGIN label=reopened-ready
+{"schema_version":1,"records":[{"lease_id":"b6daaa9c-61f0-4d83-9038-da57c5dae64f","owner":{"uid":1000,"pid":807,"start_time":521,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"e9e1d8db-f83a-46ce-94ab-c5b7cadba5cc","owner":{"uid":1000,"pid":807,"start_time":521,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]}
+RUSTUSB_JOURNAL_DISK_END label=reopened-ready
+RUSTUSB_JOURNAL_WAIT {"label":"reopened","event":"server_wait","wait_code":0,"signal":null}
+RUSTUSB_JOURNAL_EVENTS_BEGIN epoch=reopened
+{"address":"192.0.2.1:3240","event":"ready","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+{"event":"snapshot","id":"ready","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+{"event":"ack","id":"stop","ok":true,"schema_version":1}
+{"event":"stopped","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+RUSTUSB_JOURNAL_EVENTS_END epoch=reopened
+RUSTUSB_JOURNAL_STDERR_BEGIN epoch=reopened
+RUSTUSB_JOURNAL_STDERR_END epoch=reopened
+RUSTUSB_JOURNAL_RECORD {"label":"reopened-closed","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[],"schema_version":1},"journal":{"schema_version":1,"records":[]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"0a3aa191c47a618a315ce575a71dcbc7850a837eb5712b0308c89efda5314e53"}
+RUSTUSB_JOURNAL_PENDING_BEGIN label=reopened-closed
+{
+  "next_after": null,
+  "records": [],
+  "schema_version": 1
+}
+RUSTUSB_JOURNAL_PENDING_END label=reopened-closed
+RUSTUSB_JOURNAL_DISK_BEGIN label=reopened-closed
+{"schema_version":1,"records":[]}
+RUSTUSB_JOURNAL_DISK_END label=reopened-closed
+RUSTUSB_GUARDIAN_PROBE {"event":"state","seq":0,"device":0,"pid":1069,"starttime":550,"b_fd":3,"d_fd":-1,"c_fd":-1,"b_claimed":0,"c_claimed":0,"node_dev":5,"node_inode":161,"node_rdev":48385,"sysfs_dev":23,"sysfs_inode":25310,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}
+RUSTUSB_GUARDIAN_PROBE {"event":"state","seq":0,"device":1,"pid":1069,"starttime":550,"b_fd":4,"d_fd":-1,"c_fd":-1,"b_claimed":0,"c_claimed":0,"node_dev":5,"node_inode":164,"node_rdev":48386,"sysfs_dev":23,"sysfs_inode":25544,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}
+RUSTUSB_GUARDIAN_PROBE {"event":"ready","seq":0,"pid":1069,"starttime":550,"uid":0}
+jq: error: syntax error, unexpected label, expecting IDENT or __loc__ (Unix shell quoting issues?) at <top-level>, line 1:
+{label:$label,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}        
+jq: 1 compile error
+RUSTUSB_JOURNAL_RESULT: FAIL role=server stage=kill-service exit=1
+DIAGNOSTIC /tmp/helper.log
+[2m2026-10-23T07:05:07.186191Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m root helper listening; unknown kernel ports are not owned; no built-in data encryption
+[2m2026-10-23T07:05:07.237833Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"unsupported"
+[2m2026-10-23T07:05:07.237854Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"status" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:07.246888Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"permission_denied"
+[2m2026-10-23T07:05:07.246900Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1001 [3moperation[0m[2m=[0m"unauthorized_or_invalid" [3msuccess[0m[2m=[0mfalse
+[2m2026-10-23T07:05:07.255900Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"permission_denied"
+[2m2026-10-23T07:05:07.255910Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1001 [3moperation[0m[2m=[0m"unauthorized_or_invalid" [3msuccess[0m[2m=[0mfalse
+[2m2026-10-23T07:05:07.291418Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:07.327164Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"unsupported"
+[2m2026-10-23T07:05:07.327178Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"status" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:07.328222Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"open_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:07.329199Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"open_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:07.464117Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.290252Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.391913Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"finish_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.392613Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"finish_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.447914Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.529426Z[0m [33m WARN[0m [2mrustusb_daemon[0m[2m:[0m local helper operation rejected or failed [3merror_category[0m[2m=[0m"unsupported"
+[2m2026-10-23T07:05:09.529443Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"status" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.530530Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"open_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.531515Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"open_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.670794Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.716137Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"finish_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.717748Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m1000 [3moperation[0m[2m=[0m"finish_physical" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.774477Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+[2m2026-10-23T07:05:09.898030Z[0m [32m INFO[0m [2mrustusb_daemon::linux[0m[2m:[0m local helper operation finished [3mcaller_uid[0m[2m=[0m0 [3moperation[0m[2m=[0m"physical_pending" [3msuccess[0m[2m=[0mtrue
+DIAGNOSTIC /tmp/observations.jsonl
+{"label":"normal-ready","epoch":"normal","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1},"identity":{"pid":362,"starttime":301,"exe":"/usr/bin/rustusb","uids":[1000,1000,1000,1000],"cap_effective":0,"cap_permitted":0,"cap_ambient":0,"fds":[{"node":"/dev/bus/usb/001/002","fd":10,"identity":"5:161:bd:1"},{"node":"/dev/bus/usb/001/003","fd":11,"identity":"5:164:bd:2"}]}}
+{"label":"normal-pending","epoch":"normal","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbfs"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbfs"}]}],"snapshot":{"buffer_bytes_reserved":2832,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":318,"bytes_out":1,"controls":14,"errors":0,"interrupt_in":2,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbfs","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":1,"queued_urbs":0,"speed":3,"state":"leased","usbfs_inflight":1,"usbfs_reaped":15},{"bus_id":"1-2","cancelled":2,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":3,"bulk_out":1,"bytes_in":199,"bytes_out":35,"controls":28,"errors":5,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":2,"unlinks":2},"current_drivers":[{"driver":"usbfs","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":true,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":2,"queued_urbs":1,"speed":2,"state":"leased","usbfs_inflight":1,"usbfs_reaped":31}],"schema_version":1},"identity":{"pid":362,"starttime":301,"exe":"/usr/bin/rustusb","uids":[1000,1000,1000,1000],"cap_effective":0,"cap_permitted":0,"cap_ambient":0,"fds":[{"node":"/dev/bus/usb/001/002","fd":10,"identity":"5:161:bd:1"},{"node":"/dev/bus/usb/001/003","fd":11,"identity":"5:164:bd:2"}]}}
+{"label":"reopened-ready","epoch":"reopened","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"usbhid","interface":0}],"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"usbhid","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":3,"state":"available","usbfs_inflight":0,"usbfs_reaped":0},{"bus_id":"1-2","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"ftdi_sio","interface":0}],"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","ep0_max_packet_size":8,"leased":false,"original_drivers":[{"driver":"ftdi_sio","interface":0}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1},"identity":{"pid":807,"starttime":521,"exe":"/usr/bin/rustusb","uids":[1000,1000,1000,1000],"cap_effective":0,"cap_permitted":0,"cap_ambient":0,"fds":[{"node":"/dev/bus/usb/001/002","fd":10,"identity":"5:161:bd:1"},{"node":"/dev/bus/usb/001/003","fd":11,"identity":"5:164:bd:2"}]}}
+DIAGNOSTIC /tmp/devices.json
+[
+  {
+    "id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+    "bus_id": "1-1",
+    "vendor_id": 1575,
+    "product_id": 1,
+    "manufacturer": "QEMU",
+    "product": "QEMU USB Keyboard",
+    "serial": "68284-0000:00:04.0-1",
+    "device_address": 2,
+    "usb_version": "2.00",
+    "speed": "480",
+    "class": 0,
+    "subclass": 0,
+    "protocol": 0,
+    "topology": "devices/pci0000:00/0000:00:04.0/ports/1",
+    "driver": "usb",
+    "interfaces": [
+      {
+        "number": 0,
+        "alternate_setting": 0,
+        "class": 3,
+        "subclass": 1,
+        "protocol": 1,
+        "driver": "usbhid",
+        "endpoints": [
+          {
+            "address": 129,
+            "attributes": 3,
+            "max_packet_size": 8,
+            "interval": 7
+          }
+        ]
+      }
+    ],
+    "exported": false,
+    "occupied": null,
+    "export_blockers": []
+  },
+  {
+    "id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+    "bus_id": "1-2",
+    "vendor_id": 1027,
+    "product_id": 24577,
+    "manufacturer": "QEMU",
+    "product": "QEMU USB SERIAL",
+    "serial": "1-0000:00:04.0-2",
+    "device_address": 3,
+    "usb_version": "2.00",
+    "speed": "12",
+    "class": 0,
+    "subclass": 0,
+    "protocol": 0,
+    "topology": "devices/pci0000:00/0000:00:04.0/ports/2",
+    "driver": "usb",
+    "interfaces": [
+      {
+        "number": 0,
+        "alternate_setting": 0,
+        "class": 255,
+        "subclass": 255,
+        "protocol": 255,
+        "driver": "ftdi_sio",
+        "endpoints": [
+          {
+            "address": 2,
+            "attributes": 2,
+            "max_packet_size": 64,
+            "interval": 0
+          },
+          {
+            "address": 129,
+            "attributes": 2,
+            "max_packet_size": 64,
+            "interval": 0
+          }
+        ]
+      }
+    ],
+    "exported": false,
+    "occupied": null,
+    "export_blockers": []
+  }
+]
+DIAGNOSTIC /tmp/doctor.json
+{
+  "schema_version": 1,
+  "native": {
+    "system": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "kernel_release": "6.8.0-106-generic",
+      "kernel": {
+        "status": "available",
+        "detail": "Running Linux kernel release identified",
+        "action": "Use tools and modules packaged for this exact running kernel"
+      }
+    },
+    "usbip_host": {
+      "module": "usbip_host",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "usbip-host driver directory unavailable (NotFound)",
+        "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "vhci_hcd": {
+      "module": "vhci_hcd",
+      "loaded": {
+        "status": "not_loaded",
+        "detail": "No loaded-module sysfs directory observed",
+        "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+      },
+      "sysfs": {
+        "status": "missing",
+        "detail": "No supported VHCI controller/status interface observed",
+        "action": "An administrator should verify vhci_hcd is loaded; the adapter requires 1..=256 ports"
+      },
+      "availability": {
+        "status": "unknown",
+        "detail": "Matching module index/file or kernel configuration was absent, unreadable, or invalid",
+        "action": "Inspect the running kernel's modules.dep, modules.builtin, and configuration; absence of evidence does not prove the driver is disabled"
+      }
+    },
+    "usbip": {
+      "path": "/usr/bin/usbip",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbip (usbip-utils 2.0)"
+    },
+    "usbipd": {
+      "path": "/usr/bin/usbipd",
+      "check": {
+        "status": "available",
+        "detail": "Trusted fixed version command succeeded",
+        "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+      },
+      "version": "usbipd (usbip-utils 2.0)"
+    },
+    "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+  },
+  "helper": {
+    "status": "available",
+    "detail": "A verified root helper accepted this caller's read-only status query.",
+    "action": "Device/peer authorization and a trusted data network still need separate verification.",
+    "peer_verified": true,
+    "kernel_available": false,
+    "active_sessions": null,
+    "external_trusted_network_confirmed": true
+  },
+  "required_for_export": [
+    "native.usbip",
+    "native.usbip_host.sysfs",
+    "helper"
+  ],
+  "required_for_import": [
+    "native.usbip",
+    "native.vhci_hcd.sysfs",
+    "helper"
+  ],
+  "built_in_encryption": false,
+  "network_security_verified": false,
+  "hardware_test_performed": false,
+  "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+}
+DIAGNOSTIC /tmp/denied.log
+{
+  "error": "state: permission denied: caller UID is not approved by the administrator",
+  "ok": false
+}
+2026-10-23T07:05:07.246942Z ERROR rustusb: operation failed error=state: permission denied: caller UID is not approved by the administrator
+DIAGNOSTIC /tmp/denied-open.json
+{"ok":false,"data":null,"error":"permission denied: caller UID is not approved by the administrator"}
+DIAGNOSTIC /tmp/journal-observations.jsonl
+{"label":"initial","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[],"schema_version":1},"journal":{"schema_version":1,"records":[]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"0a3aa191c47a618a315ce575a71dcbc7850a837eb5712b0308c89efda5314e53"}
+{"label":"normal-ready","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[{"baseline":{"bus_id":"1-1","configuration":1,"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","interfaces":[{"alternate":0,"driver":"usbhid","number":0}],"receipt":{"bus_number":1,"node_device":48385,"node_inode":161,"sysfs_device":23,"sysfs_inode":25310,"usb_device_number":2}},"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}},{"baseline":{"bus_id":"1-2","configuration":1,"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","interfaces":[{"alternate":0,"driver":"ftdi_sio","number":0}],"receipt":{"bus_number":1,"node_device":48386,"node_inode":164,"sysfs_device":23,"sysfs_inode":25544,"usb_device_number":3}},"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}}],"schema_version":1},"journal":{"schema_version":1,"records":[{"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"e1e8638cf99d28672e38c984ae752f206f8400226fd9ea4b0cbd32b48407a839"}
+{"label":"normal-pending","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbfs"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbfs"}]}],"pending":{"next_after":null,"records":[{"baseline":{"bus_id":"1-1","configuration":1,"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","interfaces":[{"alternate":0,"driver":"usbhid","number":0}],"receipt":{"bus_number":1,"node_device":48385,"node_inode":161,"sysfs_device":23,"sysfs_inode":25310,"usb_device_number":2}},"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}},{"baseline":{"bus_id":"1-2","configuration":1,"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","interfaces":[{"alternate":0,"driver":"ftdi_sio","number":0}],"receipt":{"bus_number":1,"node_device":48386,"node_inode":164,"sysfs_device":23,"sysfs_inode":25544,"usb_device_number":3}},"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":362,"start_time":301,"uid":1000}}],"schema_version":1},"journal":{"schema_version":1,"records":[{"lease_id":"14a42d2d-4b2b-4e7b-8cd3-bbcfcaac79b4","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"c0325196-29b0-4753-aa48-6ed63f3ad444","owner":{"uid":1000,"pid":362,"start_time":301,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"e1e8638cf99d28672e38c984ae752f206f8400226fd9ea4b0cbd32b48407a839"}
+{"label":"normal-closed","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[],"schema_version":1},"journal":{"schema_version":1,"records":[]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"0a3aa191c47a618a315ce575a71dcbc7850a837eb5712b0308c89efda5314e53"}
+{"label":"reopened-ready","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[{"baseline":{"bus_id":"1-1","configuration":1,"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","interfaces":[{"alternate":0,"driver":"usbhid","number":0}],"receipt":{"bus_number":1,"node_device":48385,"node_inode":161,"sysfs_device":23,"sysfs_inode":25310,"usb_device_number":2}},"lease_id":"b6daaa9c-61f0-4d83-9038-da57c5dae64f","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":807,"start_time":521,"uid":1000}},{"baseline":{"bus_id":"1-2","configuration":1,"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","interfaces":[{"alternate":0,"driver":"ftdi_sio","number":0}],"receipt":{"bus_number":1,"node_device":48386,"node_inode":164,"sysfs_device":23,"sysfs_inode":25544,"usb_device_number":3}},"lease_id":"e9e1d8db-f83a-46ce-94ab-c5b7cadba5cc","owner":{"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8","pid":807,"start_time":521,"uid":1000}}],"schema_version":1},"journal":{"schema_version":1,"records":[{"lease_id":"b6daaa9c-61f0-4d83-9038-da57c5dae64f","owner":{"uid":1000,"pid":807,"start_time":521,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","receipt":{"sysfs_device":23,"sysfs_inode":25310,"node_device":48385,"node_inode":161,"usb_device_number":2,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}},{"lease_id":"e9e1d8db-f83a-46ce-94ab-c5b7cadba5cc","owner":{"uid":1000,"pid":807,"start_time":521,"boot_id":"e79b353f-ffee-45b2-87a4-f13dae5214e8"},"baseline":{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","receipt":{"sysfs_device":23,"sysfs_inode":25544,"node_device":48386,"node_inode":164,"usb_device_number":3,"bus_number":1},"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}}]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"e7078f4c59df17f19049928856367d1bb590c5c55824c8809627d91c97b5fafc"}
+{"label":"reopened-closed","sysfs":[{"device_id":"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6","bus_id":"1-1","node":"/dev/bus/usb/001/002","generation":"23:25310","node_identity":"5:161:bd:1","node_owner_mode":"0:600","devnum":2,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]},{"device_id":"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de","bus_id":"1-2","node":"/dev/bus/usb/001/003","generation":"23:25544","node_identity":"5:164:bd:2","node_owner_mode":"0:600","devnum":3,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}],"pending":{"next_after":null,"records":[],"schema_version":1},"journal":{"schema_version":1,"records":[]},"journal_directory_owner_mode":"0:700","journal_file_owner_mode":"0:600","journal_sha256":"0a3aa191c47a618a315ce575a71dcbc7850a837eb5712b0308c89efda5314e53"}
+DIAGNOSTIC /tmp/waits.jsonl
+{"label":"normal","event":"server_wait","wait_code":0,"signal":null}
+{"label":"reopened","event":"server_wait","wait_code":0,"signal":null}
+DIAGNOSTIC /tmp/admin-responses.jsonl
+DIAGNOSTIC /tmp/guardian-probe.log
+RUSTUSB_GUARDIAN_PROBE {"event":"state","seq":0,"device":0,"pid":1069,"starttime":550,"b_fd":3,"d_fd":-1,"c_fd":-1,"b_claimed":0,"c_claimed":0,"node_dev":5,"node_inode":161,"node_rdev":48385,"sysfs_dev":23,"sysfs_inode":25310,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}
+RUSTUSB_GUARDIAN_PROBE {"event":"state","seq":0,"device":1,"pid":1069,"starttime":550,"b_fd":4,"d_fd":-1,"c_fd":-1,"b_claimed":0,"c_claimed":0,"node_dev":5,"node_inode":164,"node_rdev":48386,"sysfs_dev":23,"sysfs_inode":25544,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}
+RUSTUSB_GUARDIAN_PROBE {"event":"ready","seq":0,"pid":1069,"starttime":550,"uid":0}
+DIAGNOSTIC /tmp/guardian-probe.jsonl
+{"event":"state","seq":0,"device":0,"pid":1069,"starttime":550,"b_fd":3,"d_fd":-1,"c_fd":-1,"b_claimed":0,"c_claimed":0,"node_dev":5,"node_inode":161,"node_rdev":48385,"sysfs_dev":23,"sysfs_inode":25310,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"usbhid"}]}
+{"event":"state","seq":0,"device":1,"pid":1069,"starttime":550,"b_fd":4,"d_fd":-1,"c_fd":-1,"b_claimed":0,"c_claimed":0,"node_dev":5,"node_inode":164,"node_rdev":48386,"sysfs_dev":23,"sysfs_inode":25544,"configuration":1,"interfaces":[{"number":0,"alternate":0,"driver":"ftdi_sio"}]}
+{"event":"ready","seq":0,"pid":1069,"starttime":550,"uid":0}
+DIAGNOSTIC /tmp/guardian-record.json
+DIAGNOSTIC /tmp/guardian-pending.json
+{
+  "next_after": null,
+  "records": [],
+  "schema_version": 1
+}
+DIAGNOSTIC /tmp/guardian-full-interfaces.json
+[
+  {
+    "bus_id": "1-1",
+    "interfaces": [
+      {
+        "number": 0,
+        "alternate": 0,
+        "driver": "usbhid"
+      }
+    ]
+  },
+  {
+    "bus_id": "1-2",
+    "interfaces": [
+      {
+        "number": 0,
+        "alternate": 0,
+        "driver": "ftdi_sio"
+      }
+    ]
+  }
+]
+DIAGNOSTIC /tmp/guardian-fds.json
+[
+  {
+    "fd": 3,
+    "node": "/dev/bus/usb/001/002",
+    "identity": "5:161:bd:1"
+  },
+  {
+    "fd": 4,
+    "node": "/dev/bus/usb/001/003",
+    "identity": "5:164:bd:2"
+  }
+]

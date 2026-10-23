@@ -1,0 +1,1257 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-23T07:09:25.747830+00:00",
+  "review_result": "PASS_INDEPENDENT_FAILURE_DIAGNOSIS",
+  "run_result": "FAIL",
+  "evidence_collection_complete": false,
+  "run_directory": "/tmp/rustusb-guardian-43d6d43-20261023/run",
+  "run_head": "43d6d4385f2dc097edb447bdf5c57f4ce4426df8",
+  "method": "Independent original-byte parsing and fixed Git-source composition review; no runner.verify imported or called.",
+  "first_failure": {
+    "role": "server",
+    "channel": "program",
+    "line_1based": 278,
+    "raw": "RUSTUSB_JOURNAL_RESULT: FAIL role=server stage=kill-service exit=1",
+    "cause": "guest-guardian-fragments.sh guardian_record uses jq reserved variable $label; jq compilation fails after probe ready and before the first guardian record/start_ready killed.",
+    "raw_context": [
+      "jq: error: syntax error, unexpected label, expecting IDENT or __loc__ (Unix shell quoting issues?) at <top-level>, line 1:",
+      "{label:$label,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}        ",
+      "jq: 1 compile error",
+      "RUSTUSB_JOURNAL_RESULT: FAIL role=server stage=kill-service exit=1"
+    ],
+    "classification": "Harness observation expression failure, not a product USB/guardian kernel-mechanism failure.",
+    "secondary": "Client waits for cycle2-ready; host cleanup later times out after10s and terminates client QEMU. Recorded QEMU exit0 values do not make incomplete collection a PASS."
+  },
+  "completed_scope": [
+    "Normal first real IMPORT/active USBFS path with HID interrupt and FTDI output counters",
+    "Normal stopped with resource0/original drivers and empty persistent records",
+    "No-IMPORT reopened ready/normal stop with zero counters and records retired",
+    "Root probe independently opens fixed B descriptors and reports original config1/alt0/usbhid/ftdi_sio ready",
+    "Exact35B original host FTDI TXsink"
+  ],
+  "capture_limits": [
+    "First client input/RX/outcome hex was not dumped before forced collection ended; first-key/35B RX assertions are supported by frozen control flow and server counters, not a preserved client payload capture.",
+    "No actual kcmp/OFD A-D/B comparison occurred; B ready is not a completed OFD proof.",
+    "No SIGKILL/wait137 or D close occurred.",
+    "No retained-dup refusal, externalC claim, B claim/release/CONNECT, reconciliation or third actual I/O occurred.",
+    "Original184 journal verification was preserved in source but did not run to completion for this failed experiment.",
+    "No product automatic recovery, arbitrary FD revocation or new hardware acceptance conclusion."
+  ],
+  "checks_count": 213,
+  "checks": [
+    {
+      "id": "actual_FAIL_exit1_preserved",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "recorded_clean_frozen_HEAD",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:.github/workflows/ci.yml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:.github/workflows/pages.yml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:Cargo.lock",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-cli/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-cli/src/main.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-cli/src/physical_server.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-cli/src/shutdown_signals.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-cli/src/virtual_server.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-core/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-core/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/diagnostics.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/journal.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/linux.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/main.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/physical.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-linux/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-linux/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-linux/tests/discovery.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-native/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-native/src/diagnostics.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-native/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-protocol/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-protocol/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/descriptors.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/device.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/physical.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/physical/observe.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/physical/safety.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/physical/worker.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/server.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/session.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:crates/rustusb-rust-backend/src/wire.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/audit-linux-upstream.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/audit-rust-upstream.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/check-site.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/check.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/dependency-inventory.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/fuzz-smoke.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/.gitignore",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/composite-wire-probe.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-composite-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-contention-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-crash-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-fault-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-guardian-fragments.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-host-state-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-journal-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-physical-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-sigterm-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/guest-userspace-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/host-state-wire-probe.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/physical-wire-probe.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-composite-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-contention-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-crash-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-fault-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-guardian-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-host-state-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-journal-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-native-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-physical-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-sigterm-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/run-userspace-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/usbfs-guardian-probe.c",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/usbfs-syscall-gate.c",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/qemu/userspace-wire-probe.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/seed-server-fuzz.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/test-server-signals.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:scripts/test-virtual-backpressure.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/.cargo/config.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/.cargo_vcs_info.json",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/.github/workflows/release.yml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/.github/workflows/rust.yml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/.gitignore",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/Cargo.lock",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/Cargo.toml",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/Cargo.toml.orig",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/LICENSE-APACHE",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/LICENSE-MIT",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/README.md",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/RUSTUSB-PROVENANCE.json",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/RUSTUSB.md",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/RUSTUSB.patch",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/bulk.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/bulk_io.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/bulk_io_smol.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/bulk_io_tokio.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/buses.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/control.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/descriptors.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/detach.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/detach_claim.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/hotplug.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/list.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/examples/string_descriptors.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/bitset.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/descriptors.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/device.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/enumeration.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/error.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/hotplug.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/io/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/io/read.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/io/write.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/lib.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/maybe_future.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/device.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/events.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/webusb/device.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/webusb/enumeration.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/webusb/hotplug.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/webusb/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/device.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/platform/windows_winusb/util.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/transfer/buffer.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/transfer/control.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/transfer/internal.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "frozen_Git_blob:vendor/nusb/src/transfer/mod.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:run-journal-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:guest-journal-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:run-physical-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:guest-physical-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:physical-wire-probe.rs",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:run-native-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:guest-init.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:run-guardian-qemu.py",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:guest-guardian-fragments.sh",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "copied_source:usbfs-guardian-probe.c",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "source_fingerprint_independently_reconstructed",
+      "result": "PASS",
+      "detail": "52288c5e7a4ac1331722cd07e29751d1dae382d2f6aa1a89c2e4e2172dc07904"
+    },
+    {
+      "id": "source_binary_guards_recorded",
+      "result": "PASS",
+      "detail": {
+        "ELF_scope": "Preserved build/payload/after hash metadata, not absent executable rehash."
+      }
+    },
+    {
+      "id": "generated_init_unique_anchor:0",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "generated_init_unique_anchor:1",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "generated_init_unique_anchor:2",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "generated_init_unique_anchor:3",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "generated_init_unique_anchor:4",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "generated_init_unique_anchor:5",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "generated_init_exact_composition",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "compiled_probe_payload_hash_recorded",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:PENDING:label=initial",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:PENDING:label=normal-ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:PENDING:label=normal-pending",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:PENDING:label=normal-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:PENDING:label=reopened-ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:PENDING:label=reopened-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:DISK:label=initial",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:DISK:label=normal-ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:DISK:label=normal-pending",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:DISK:label=normal-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:DISK:label=reopened-ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:DISK:label=reopened-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_API_disk_equal:initial",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_API_disk_equal:normal-ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_API_disk_equal:normal-pending",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_API_disk_equal:normal-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_API_disk_equal:reopened-ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_API_disk_equal:reopened-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "records_retired:initial",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "records_retired:normal-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "records_retired:reopened-closed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:EVENTS:epoch=normal",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "normal_actual_terminal_stopped",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "normal_resources0_original_drivers",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "normal_actual_active_USBFS",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "normal_actual_IO_counters",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "one_original_block:EVENTS:epoch=reopened",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "reopened_actual_terminal_stopped",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "reopened_resources0_original_drivers",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "reopened_without_IMPORT",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "B_ready_only_before_failure",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "B_receipt_original_config_alt_driver",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "actual_primary_jq_reserved_label_error",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "fault_matches_frozen_guardian_record_source",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "no_KILL_or_OFD_ioctls_executed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "no_killed_server_epoch_ready",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "only_first_cycle_injected",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "exact_first_actual_TXsink35",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "first_failure_metadata_matches_raw",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "secondary_client_wait_timeout_not_primary",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "base184_not_falsely_executed",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "id": "all_raw_sources_unchanged",
+      "result": "PASS",
+      "detail": null
+    }
+  ],
+  "frozen_source_count": 149,
+  "source_manifest": {
+    "path": "freeze.json",
+    "bytes": 23453,
+    "sha256": "a3f9f7c9a7b753975cd9ead870f6deb3bb7835cc7c30a07d884df94b2c5aac18"
+  },
+  "artifacts": [
+    {
+      "path": "freeze.json",
+      "bytes": 23453,
+      "sha256": "a3f9f7c9a7b753975cd9ead870f6deb3bb7835cc7c30a07d884df94b2c5aac18"
+    },
+    {
+      "path": "sequence.json",
+      "bytes": 415,
+      "sha256": "45349ba740cb1782c1f6e867da9ae357211681e411ad0aaf0274ccf43690814e"
+    },
+    {
+      "path": "runner.log",
+      "bytes": 116,
+      "sha256": "4e650dc251f47d45d1e81efa0e1fdbdc33fc952fab7669fd0bf5331ab960f49a"
+    },
+    {
+      "path": "run/build.log",
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08"
+    },
+    {
+      "path": "run/client-evidence.log",
+      "bytes": 556,
+      "sha256": "f45c2650ae11de5204e4658989130e5ef4028bc1cf07f9ec9a63a0bc33f28b9b"
+    },
+    {
+      "path": "run/client-qemu.stderr",
+      "bytes": 72,
+      "sha256": "d29112dd899327f73f76c86b53a7cfac6cfb16030ee9659a4c61e34adbfac108"
+    },
+    {
+      "path": "run/client-serial.log",
+      "bytes": 34041,
+      "sha256": "82ff7ff0b5ee6ba167e88521dc1109875cecacbe30a20dc8ebca73f385a627d6"
+    },
+    {
+      "path": "run/first-observed-failure.json",
+      "bytes": 141,
+      "sha256": "6578052248ed190803d3fc3482253ee30828b8e9c790cb6739a9771ef62ec52c"
+    },
+    {
+      "path": "run/ftdi-host-tx.bin",
+      "bytes": 35,
+      "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef"
+    },
+    {
+      "path": "run/guardian-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run/guardian-composition.json",
+      "bytes": 2996,
+      "sha256": "412a0efa8343f5abf14fa3ddd5033880b968a74ad071a0e1e3c5996b6c55aa7e"
+    },
+    {
+      "path": "run/server-evidence.log",
+      "bytes": 62859,
+      "sha256": "782223cf4fd63843a46a10b3429fd8179503417779c5aa6fa62c10b832ab3e91"
+    },
+    {
+      "path": "run/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run/server-serial.log",
+      "bytes": 33784,
+      "sha256": "0c9a2ccb70244002a810d5ecc8e82888349a1f9920a77ad226f74ef22aa95a3b"
+    },
+    {
+      "path": "run/source/generated-guardian-init.sh",
+      "bytes": 32879,
+      "sha256": "b050eb23c217d710989bd668df8b39f0f9fb58a1a9db370a880ea50b61a201a1"
+    },
+    {
+      "path": "run/source/guest-guardian-fragments.sh",
+      "bytes": 10943,
+      "sha256": "108c830470d211bbef207b63d22f202515746c4cc1222ec6e3ffd9811323c3b9"
+    },
+    {
+      "path": "run/source/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+    },
+    {
+      "path": "run/source/guest-journal-init.sh",
+      "bytes": 32620,
+      "sha256": "2236c3080d17e447c4d9cdec495609ab6c7d3976d6c92306e3b1286e9d94d8d4"
+    },
+    {
+      "path": "run/source/guest-physical-init.sh",
+      "bytes": 28271,
+      "sha256": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375"
+    },
+    {
+      "path": "run/source/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+    },
+    {
+      "path": "run/source/run-guardian-qemu.py",
+      "bytes": 15052,
+      "sha256": "34871f0670685555f27e38cfe24f092f5ccfcac27a2b2b08e03d8360c268058e"
+    },
+    {
+      "path": "run/source/run-journal-qemu.py",
+      "bytes": 33373,
+      "sha256": "1cefbc14bc45c9e9b5c9f6f0d9784be834fe3ee5856f8bc2937b7baabbbc01aa"
+    },
+    {
+      "path": "run/source/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f"
+    },
+    {
+      "path": "run/source/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9"
+    },
+    {
+      "path": "run/source/usbfs-guardian-probe.c",
+      "bytes": 15159,
+      "sha256": "2b18e7bbb718ded37819db9570e45547c4298b1906289028017c95a491da1018"
+    },
+    {
+      "path": "run/summary.json",
+      "bytes": 27791,
+      "sha256": "2e79c18e1409934cae4eb84256f46c498ecb44e1bf19812542c9c9eef27f1bb2"
+    }
+  ],
+  "artifacts_count": 26,
+  "raw_unchanged_before_after": true,
+  "boundaries": {
+    "repository_writes": false,
+    "build_or_QEMU_run": false,
+    "USB_or_ptrace_run": false,
+    "runner_verify_called": false,
+    "raw_rewritten": false
+  }
+}

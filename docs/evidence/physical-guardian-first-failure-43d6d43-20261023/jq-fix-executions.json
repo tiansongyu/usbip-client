@@ -1,0 +1,1370 @@
+[
+  {
+    "name": "actual jq compiles occurrence line 29",
+    "line": 29,
+    "filter": "any(.[]; .event==\"fatal\" and .seq==$seq)",
+    "args": [
+      "-n",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 30",
+    "line": 30,
+    "filter": "[.[]|select(.event==\"done\" and .seq==$seq)]|length==1",
+    "args": [
+      "-n",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 31",
+    "line": 31,
+    "filter": "[.[]|select(.seq==$seq)]",
+    "args": [
+      "-n",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 42",
+    "line": 42,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == -1 and .[0].errno == 16",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 44",
+    "line": 44,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc >= 0 and .[0].errno == 0",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 46",
+    "line": 46,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == 0 and .[0].errno == 0",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 61",
+    "line": 61,
+    "filter": "{number:$number,alternate:$alternate,driver:(if $driver==\"\" then null else $driver end)}",
+    "args": [
+      "-n",
+      "--argjson",
+      "number",
+      "0",
+      "--argjson",
+      "alternate",
+      "0",
+      "--arg",
+      "driver",
+      "usbhid"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 63",
+    "line": 63,
+    "filter": "{bus_id:$bus,interfaces:(sort_by(.number))}",
+    "args": [
+      "-n",
+      "--arg",
+      "bus",
+      "1-1"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 65",
+    "line": 65,
+    "filter": ".",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 66",
+    "line": 66,
+    "filter": "map({bus_id,interfaces})==$full[0]",
+    "args": [
+      "-n",
+      "--slurpfile",
+      "full",
+      "/tmp/rustusb-guardian-jq-fix-20261023/full.json"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 74",
+    "line": 74,
+    "filter": "{fd:($fd|tonumber),node:$node,identity:$identity}",
+    "args": [
+      "-n",
+      "--arg",
+      "fd",
+      "5",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002",
+      "--arg",
+      "identity",
+      "5:161:bd:1"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 77",
+    "line": 77,
+    "filter": ".",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 81",
+    "line": 81,
+    "filter": "{label:$mark,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}",
+    "args": [
+      "-n",
+      "--arg",
+      "mark",
+      "b-opened-before-import",
+      "--arg",
+      "boot",
+      "fixture-boot",
+      "--argjson",
+      "seq",
+      "3",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "tick",
+      "1234",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json",
+      "--slurpfile",
+      "sysfs",
+      "/tmp/rustusb-guardian-jq-fix-20261023/sysfs.json",
+      "--slurpfile",
+      "full",
+      "/tmp/rustusb-guardian-jq-fix-20261023/full.json",
+      "--slurpfile",
+      "pending",
+      "/tmp/rustusb-guardian-jq-fix-20261023/pending.json",
+      "--slurpfile",
+      "disk",
+      "/tmp/rustusb-guardian-jq-fix-20261023/disk.json",
+      "--slurpfile",
+      "fds",
+      "/tmp/rustusb-guardian-jq-fix-20261023/fds.json"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 99",
+    "line": 99,
+    "filter": "[.[]|select(.event==\"ready\" and .pid==$pid and .starttime==$start and .uid==0)]|length==1",
+    "args": [
+      "-n",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 110",
+    "line": 110,
+    "filter": "[.[]|select(.node==$node)]|select(length==1)|.[0].fd",
+    "args": [
+      "-n",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 111",
+    "line": 111,
+    "filter": "[.[]|select(.node==$node)]|select(length==1)|.[0].fd",
+    "args": [
+      "-n",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 121",
+    "line": 121,
+    "filter": "{pid:$pid,starttime:$start,wait_code:$code,signal:9,signal_count:1,terminal_resources:null}",
+    "args": [
+      "-n",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "code",
+      "137"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 125",
+    "line": 125,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:\"usbfs\"}])",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 134",
+    "line": 134,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:null}])",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 137",
+    "line": 137,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:null}])",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 154",
+    "line": 154,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:null}])",
+    "args": [
+      "-n"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 161",
+    "line": 161,
+    "filter": ".==$original[0]",
+    "args": [
+      "-n",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 164",
+    "line": 164,
+    "filter": ".==$original[0]",
+    "args": [
+      "-n",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "actual jq compiles occurrence line 172",
+    "line": 172,
+    "filter": "{pid:$pid,starttime:$start,wait_code:$code,role:\"guardian\"}",
+    "args": [
+      "-n",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "code",
+      "137"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "old reserved label failure reproduced",
+    "line": 81,
+    "filter": "{label:$label,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}",
+    "args": [
+      "-Mcn",
+      "--arg",
+      "label",
+      "b-opened-before-import",
+      "--arg",
+      "boot",
+      "fixture-boot",
+      "--argjson",
+      "seq",
+      "3",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "tick",
+      "1234",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json",
+      "--slurpfile",
+      "sysfs",
+      "/tmp/rustusb-guardian-jq-fix-20261023/sysfs.json",
+      "--slurpfile",
+      "full",
+      "/tmp/rustusb-guardian-jq-fix-20261023/full.json",
+      "--slurpfile",
+      "pending",
+      "/tmp/rustusb-guardian-jq-fix-20261023/pending.json",
+      "--slurpfile",
+      "disk",
+      "/tmp/rustusb-guardian-jq-fix-20261023/disk.json",
+      "--slurpfile",
+      "fds",
+      "/tmp/rustusb-guardian-jq-fix-20261023/fds.json"
+    ],
+    "exit_code": 3,
+    "stdout": "",
+    "stderr": "jq: error: syntax error, unexpected label, expecting IDENT or __loc__ (Unix shell quoting issues?) at <top-level>, line 1:\n{label:$label,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}        \njq: 1 compile error\n",
+    "expected_exit_code": 3,
+    "expected_json_stream": null,
+    "result": "PASS"
+  },
+  {
+    "name": "fatal match",
+    "line": 29,
+    "filter": "any(.[]; .event==\"fatal\" and .seq==$seq)",
+    "args": [
+      "-se",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "fatal wrong sequence",
+    "line": 29,
+    "filter": "any(.[]; .event==\"fatal\" and .seq==$seq)",
+    "args": [
+      "-se",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "done exactly once",
+    "line": 30,
+    "filter": "[.[]|select(.event==\"done\" and .seq==$seq)]|length==1",
+    "args": [
+      "-se",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "duplicate done rejected",
+    "line": 30,
+    "filter": "[.[]|select(.event==\"done\" and .seq==$seq)]|length==1",
+    "args": [
+      "-se",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "sequence records selected",
+    "line": 31,
+    "filter": "[.[]|select(.seq==$seq)]",
+    "args": [
+      "-sc",
+      "--argjson",
+      "seq",
+      "3"
+    ],
+    "exit_code": 0,
+    "stdout": "[{\"seq\":3,\"event\":\"ioctl\"}]\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      [
+        {
+          "seq": 3,
+          "event": "ioctl"
+        }
+      ]
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "ioctl accepted busy",
+    "line": 42,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == -1 and .[0].errno == 16",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "ioctl failure rejected line 42",
+    "line": 42,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == -1 and .[0].errno == 16",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "duplicate ioctl rejected line 42",
+    "line": 42,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == -1 and .[0].errno == 16",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "ioctl accepted connect",
+    "line": 44,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc >= 0 and .[0].errno == 0",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "ioctl failure rejected line 44",
+    "line": 44,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc >= 0 and .[0].errno == 0",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "duplicate ioctl rejected line 44",
+    "line": 44,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc >= 0 and .[0].errno == 0",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "ioctl accepted claim-release",
+    "line": 46,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == 0 and .[0].errno == 0",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "ioctl failure rejected line 46",
+    "line": 46,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == 0 and .[0].errno == 0",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "duplicate ioctl rejected line 46",
+    "line": 46,
+    "filter": "[.[]|select(.event==\"ioctl\")]|length==1 and .[0].rc == 0 and .[0].errno == 0",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "interface record construction",
+    "line": 61,
+    "filter": "{number:$number,alternate:$alternate,driver:(if $driver==\"\" then null else $driver end)}",
+    "args": [
+      "-Mcn",
+      "--argjson",
+      "number",
+      "0",
+      "--argjson",
+      "alternate",
+      "0",
+      "--arg",
+      "driver",
+      "usbhid"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"number\":0,\"alternate\":0,\"driver\":\"usbhid\"}\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      {
+        "number": 0,
+        "alternate": 0,
+        "driver": "usbhid"
+      }
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "full interfaces sorted",
+    "line": 63,
+    "filter": "{bus_id:$bus,interfaces:(sort_by(.number))}",
+    "args": [
+      "-sc",
+      "--arg",
+      "bus",
+      "1-1"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"bus_id\":\"1-1\",\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"usbhid\"},{\"number\":1,\"alternate\":1,\"driver\":null}]}\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      {
+        "bus_id": "1-1",
+        "interfaces": [
+          {
+            "number": 0,
+            "alternate": 0,
+            "driver": "usbhid"
+          },
+          {
+            "number": 1,
+            "alternate": 1,
+            "driver": null
+          }
+        ]
+      }
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "slurp collection preserves input",
+    "line": 77,
+    "filter": ".",
+    "args": [
+      "-s"
+    ],
+    "exit_code": 0,
+    "stdout": "[\n  {\n    \"a\": 1\n  },\n  {\n    \"a\": 2\n  }\n]\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      [
+        {
+          "a": 1
+        },
+        {
+          "a": 2
+        }
+      ]
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "complete interfaces agree",
+    "line": 66,
+    "filter": "map({bus_id,interfaces})==$full[0]",
+    "args": [
+      "-e",
+      "--slurpfile",
+      "full",
+      "/tmp/rustusb-guardian-jq-fix-20261023/full.json"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "missing interface rejected",
+    "line": 66,
+    "filter": "map({bus_id,interfaces})==$full[0]",
+    "args": [
+      "-e",
+      "--slurpfile",
+      "full",
+      "/tmp/rustusb-guardian-jq-fix-20261023/full.json"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "FD record construction",
+    "line": 74,
+    "filter": "{fd:($fd|tonumber),node:$node,identity:$identity}",
+    "args": [
+      "-Mcn",
+      "--arg",
+      "fd",
+      "5",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002",
+      "--arg",
+      "identity",
+      "5:161:bd:1"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"fd\":5,\"node\":\"/dev/bus/usb/001/002\",\"identity\":\"5:161:bd:1\"}\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      {
+        "fd": 5,
+        "node": "/dev/bus/usb/001/002",
+        "identity": "5:161:bd:1"
+      }
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "complete guardian record shape unchanged",
+    "line": 81,
+    "filter": "{label:$mark,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}",
+    "args": [
+      "-Mcn",
+      "--arg",
+      "mark",
+      "b-opened-before-import",
+      "--arg",
+      "boot",
+      "fixture-boot",
+      "--argjson",
+      "seq",
+      "3",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "tick",
+      "1234",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json",
+      "--slurpfile",
+      "sysfs",
+      "/tmp/rustusb-guardian-jq-fix-20261023/sysfs.json",
+      "--slurpfile",
+      "full",
+      "/tmp/rustusb-guardian-jq-fix-20261023/full.json",
+      "--slurpfile",
+      "pending",
+      "/tmp/rustusb-guardian-jq-fix-20261023/pending.json",
+      "--slurpfile",
+      "disk",
+      "/tmp/rustusb-guardian-jq-fix-20261023/disk.json",
+      "--slurpfile",
+      "fds",
+      "/tmp/rustusb-guardian-jq-fix-20261023/fds.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"label\":\"b-opened-before-import\",\"seq\":3,\"tick\":1234,\"boot_id\":\"fixture-boot\",\"guardian\":{\"pid\":700,\"starttime\":900,\"uids\":[0,0,0,0],\"fds\":[{\"fd\":5,\"node\":\"/dev/bus/usb/001/002\",\"identity\":\"5:161:bd:1\"}]},\"original\":[{\"bus_id\":\"1-1\",\"configuration\":1,\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"usbhid\"}]},{\"bus_id\":\"1-2\",\"configuration\":1,\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"ftdi_sio\"}]}],\"sysfs\":[{\"bus_id\":\"1-1\",\"configuration\":1,\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"usbhid\"}]},{\"bus_id\":\"1-2\",\"configuration\":1,\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"ftdi_sio\"}]}],\"full_interfaces\":[{\"bus_id\":\"1-1\",\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"usbhid\"}]},{\"bus_id\":\"1-2\",\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"ftdi_sio\"}]}],\"pending\":{\"records\":[]},\"journal\":{\"records\":[]}}\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      {
+        "label": "b-opened-before-import",
+        "seq": 3,
+        "tick": 1234,
+        "boot_id": "fixture-boot",
+        "guardian": {
+          "pid": 700,
+          "starttime": 900,
+          "uids": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "fds": [
+            {
+              "fd": 5,
+              "node": "/dev/bus/usb/001/002",
+              "identity": "5:161:bd:1"
+            }
+          ]
+        },
+        "original": [
+          {
+            "bus_id": "1-1",
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbhid"
+              }
+            ]
+          },
+          {
+            "bus_id": "1-2",
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "ftdi_sio"
+              }
+            ]
+          }
+        ],
+        "sysfs": [
+          {
+            "bus_id": "1-1",
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbhid"
+              }
+            ]
+          },
+          {
+            "bus_id": "1-2",
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "ftdi_sio"
+              }
+            ]
+          }
+        ],
+        "full_interfaces": [
+          {
+            "bus_id": "1-1",
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbhid"
+              }
+            ]
+          },
+          {
+            "bus_id": "1-2",
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "ftdi_sio"
+              }
+            ]
+          }
+        ],
+        "pending": {
+          "records": []
+        },
+        "journal": {
+          "records": []
+        }
+      }
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "root ready exact identity",
+    "line": 99,
+    "filter": "[.[]|select(.event==\"ready\" and .pid==$pid and .starttime==$start and .uid==0)]|length==1",
+    "args": [
+      "-se",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "wrong root ready PID rejected",
+    "line": 99,
+    "filter": "[.[]|select(.event==\"ready\" and .pid==$pid and .starttime==$start and .uid==0)]|length==1",
+    "args": [
+      "-se",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "duplicate root ready rejected",
+    "line": 99,
+    "filter": "[.[]|select(.event==\"ready\" and .pid==$pid and .starttime==$start and .uid==0)]|length==1",
+    "args": [
+      "-se",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "one matching source FD selected",
+    "line": 111,
+    "filter": "[.[]|select(.node==$node)]|select(length==1)|.[0].fd",
+    "args": [
+      "-er",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002"
+    ],
+    "exit_code": 0,
+    "stdout": "5\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      5
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "duplicate source FD rejected",
+    "line": 111,
+    "filter": "[.[]|select(.node==$node)]|select(length==1)|.[0].fd",
+    "args": [
+      "-er",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002"
+    ],
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_code": 4,
+    "expected_json_stream": [],
+    "result": "PASS"
+  },
+  {
+    "name": "missing source FD rejected",
+    "line": 111,
+    "filter": "[.[]|select(.node==$node)]|select(length==1)|.[0].fd",
+    "args": [
+      "-er",
+      "--arg",
+      "node",
+      "/dev/bus/usb/001/002"
+    ],
+    "exit_code": 4,
+    "stdout": "",
+    "stderr": "",
+    "expected_exit_code": 4,
+    "expected_json_stream": [],
+    "result": "PASS"
+  },
+  {
+    "name": "actual kill wait record",
+    "line": 121,
+    "filter": "{pid:$pid,starttime:$start,wait_code:$code,signal:9,signal_count:1,terminal_resources:null}",
+    "args": [
+      "-Mcn",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "code",
+      "137"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"pid\":700,\"starttime\":900,\"wait_code\":137,\"signal\":9,\"signal_count\":1,\"terminal_resources\":null}\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      {
+        "pid": 700,
+        "starttime": 900,
+        "wait_code": 137,
+        "signal": 9,
+        "signal_count": 1,
+        "terminal_resources": null
+      }
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "exact driver state line 125",
+    "line": 125,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:\"usbfs\"}])",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "unexpected interface rejected line 125",
+    "line": 125,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:\"usbfs\"}])",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "exact driver state line 154",
+    "line": 154,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:null}])",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "unexpected interface rejected line 154",
+    "line": 154,
+    "filter": "all(.[];.interfaces==[{number:0,alternate:0,driver:null}])",
+    "args": [
+      "-e"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "original full baseline equals current",
+    "line": 164,
+    "filter": ".==$original[0]",
+    "args": [
+      "-e",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json"
+    ],
+    "exit_code": 0,
+    "stdout": "true\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      true
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "original baseline mismatch rejected",
+    "line": 164,
+    "filter": ".==$original[0]",
+    "args": [
+      "-e",
+      "--slurpfile",
+      "original",
+      "/tmp/rustusb-guardian-jq-fix-20261023/original.json"
+    ],
+    "exit_code": 1,
+    "stdout": "false\n",
+    "stderr": "",
+    "expected_exit_code": 1,
+    "expected_json_stream": [
+      false
+    ],
+    "result": "PASS"
+  },
+  {
+    "name": "guardian wait record shape",
+    "line": 172,
+    "filter": "{pid:$pid,starttime:$start,wait_code:$code,role:\"guardian\"}",
+    "args": [
+      "-Mcn",
+      "--argjson",
+      "pid",
+      "700",
+      "--argjson",
+      "start",
+      "900",
+      "--argjson",
+      "code",
+      "137"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"pid\":700,\"starttime\":900,\"wait_code\":137,\"role\":\"guardian\"}\n",
+    "stderr": "",
+    "expected_exit_code": 0,
+    "expected_json_stream": [
+      {
+        "pid": 700,
+        "starttime": 900,
+        "wait_code": 137,
+        "role": "guardian"
+      }
+    ],
+    "result": "PASS"
+  }
+]

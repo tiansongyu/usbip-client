@@ -326,3 +326,5 @@
 - 先追加机制实验设计：保留产品及原 journal harness，新 guest probe 分别持有独立 B 和 pidfd_getfd 的 A 副本，以 kcmp、真实 wait137、plain claim/release/CONNECT 与外部 C 占用作正反对照。实际恢复后仍需完整原基线、只读退休及第三轮真实 I/O。此时尚未实现或运行该实验，不把研究结论当作产品自动恢复。
 - 固定 Linux v6.8 审查核七份源码 Git blob/SHA，确认 CONNECT 不指定原 driver、非零 alternate 在 unbind 时可能回0、接口可 claim 不等于设备级 EP0 已全部结束。集成审查最初把所有恢复都要求逐操作持久事务，讨论后收窄：明确基线恢复授权可支持同配置/alternate的CONNECT-only路径；跨配置仍需变更日志，旧只读记录不能静默升级。初版与澄清均保留，不把建议标成实现。
 - 三个新测试文件组合复用旧 journal：六个唯一替换锚包含失败采证，保留原184检查和20秒观察。独立预审发现数字全空白可能误当0，编译前修正并以13个合法/非法输入实际验证；root严格C编译、生成init与片段sh-n、旧SHA漂移拒绝和宿主普通UID运行拒绝均通过。probe只在guest root及固定启动标记下打开两指定字符节点，FIFO只由root probe持有，不向普通CLI继承。静态证据已归档；当前尚无QEMU运行结论。
+- 测试/设计提交43d6d43后从clean冻结149输入，首轮QEMU实际exit1/FAIL，source/head/ELF/clean guards全通过。新probe已独立打开B并ready，随后guardian_record内jq保留变量`label`导致编译错误；原第一轮真实I/O及normal/reopen关闭已记录，但第二epoch尚未启动，KILL/dup/C/恢复均未执行。后续client wait超时不是首因，两guest退出0不覆盖FAIL。26份原件已按bytes归档；只修变量名并补实际jq表达式检查，原断言、时限和产品不变。
+- 独立首FAIL复核213项核验原来源与已完成/缺失范围；未保存的第一轮client evdev/RX hex不从路径成功推造。修复仅将jq变量改mark，JSON字段仍label；24处/19种filter的60次实际编译与正反fixture及附加静态检查共64项通过，含旧错误的真实复现。原失败和复核、修复检查一起保存，下一次仍从新clean提交执行。

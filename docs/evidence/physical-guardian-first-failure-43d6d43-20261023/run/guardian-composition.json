@@ -1,0 +1,59 @@
+{
+  "scope": "Disposable guest-root USBFS mechanism experiment: independent B, retained A duplicate, external C OFD refusal, exact original-driver restoration via B, read-only root reconciliation and third real I/O. No product automatic recovery or FD revocation.",
+  "composition": [
+    {
+      "before": "/tmp/client-outcomes.jsonl; do\n",
+      "after": "/tmp/client-outcomes.jsonl /tmp/guardian-probe.log /tmp/guardian-probe.jsonl /tmp/guardian-record.json /tmp/guardian-reply.json /tmp/guardian-pending.json /tmp/guardian-kill-wait.json /tmp/guardian-final-wait.json /tmp/guardian-full-interfaces.json /tmp/guardian-fds.json; do\n",
+      "matches": 1
+    },
+    {
+      "before": "    STAGE=kill-service\n    start_ready killed\n",
+      "after": "    STAGE=kill-service\n    . /usr/lib/guest-guardian-fragments.sh\n    guardian_start\n    start_ready killed\n",
+      "matches": 1
+    },
+    {
+      "before": "    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n",
+      "after": "    guardian_arm\n    KILL_PID=$SERVER_PID; KILL_START=$SERVER_START\n",
+      "matches": 1
+    },
+    {
+      "before": "    send_control 192.0.2.2 cycle-2-killed\n",
+      "after": "    send_control 192.0.2.2 cycle-2-killed\n    guardian_after_kill\n",
+      "matches": 1
+    },
+    {
+      "before": "    if wait \"$KILL_PID\"; then code=0; else code=$?; fi\n",
+      "after": "    code=$GUARDIAN_KILL_WAIT # Actual child wait already recorded exactly once.\n",
+      "matches": 1
+    },
+    {
+      "before": "    printf '%s' \"$HID_BUS:1.0\" > /sys/bus/usb/drivers/usbhid/bind\n    printf '%s' \"$FTDI_BUS:1.0\" > /sys/bus/usb/drivers/ftdi_sio/bind\n",
+      "after": "    guardian_restore\n",
+      "matches": 1
+    }
+  ],
+  "base_sha256": {
+    "run-journal-qemu.py": "1cefbc14bc45c9e9b5c9f6f0d9784be834fe3ee5856f8bc2937b7baabbbc01aa",
+    "guest-journal-init.sh": "2236c3080d17e447c4d9cdec495609ab6c7d3976d6c92306e3b1286e9d94d8d4"
+  },
+  "generated_init_sha256": "b050eb23c217d710989bd668df8b39f0f9fb58a1a9db370a880ea50b61a201a1",
+  "probe_build_command": [
+    "cc",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-pedantic",
+    "/home/ubuntu/github/usbip-client/scripts/qemu/usbfs-guardian-probe.c",
+    "-o",
+    "/tmp/rustusb-journal-qemu-mq8z7thn/usbfs-guardian-probe"
+  ],
+  "cc_version": "cc (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "probe_sha256": "3e718ee53da36984e48f92ad095532a1eb83a5b592273ccbbc1f5c7066afeb61",
+  "copied_probe_sha256": "3e718ee53da36984e48f92ad095532a1eb83a5b592273ccbbc1f5c7066afeb61",
+  "uapi_header_sha256": {
+    "/usr/include/linux/usbdevice_fs.h": "0951526a52edc949b7fba71bdec97e5a51939a7d0ae8a4513a52211daf7ef936",
+    "/usr/include/linux/kcmp.h": "0b7634bdb4051caeac95179b9f18b54603ab66cdbaade524dbb33d767335b686"
+  }
+}

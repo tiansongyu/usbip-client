@@ -1,0 +1,16 @@
+RUSTUSB_JOURNAL_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0
+RUSTUSB_JOURNAL_BOOT role=client kernel=6.8.0-106-generic
+RUSTUSB_JOURNAL_ISOLATION: PASS role=client carrier=1 ip_forward=0
+RUSTUSB_JOURNAL_HELPER: PASS role=client allowed_uid=1000 denied_uid=1001
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_JOURNAL_WAIT_INPUT key=1
+RUSTUSB_JOURNAL_WAIT_SERIAL cycle=1 bytes=35
+cat: read error: No such device
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}

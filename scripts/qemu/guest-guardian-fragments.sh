@@ -78,7 +78,7 @@ guardian_record() {
     guardian_boot=$(cat /proc/sys/kernel/random/boot_id) || return 1
     guardian_uid=$(awk '/^Uid:/{print $2 ":" $3 ":" $4 ":" $5}' "/proc/$GUARDIAN_PID/status") || return 1
     [ "$guardian_uid" = 0:0:0:0 ] || return 1
-    jq -Mcn --arg label "$guardian_tag" --arg boot "$guardian_boot" --argjson seq "$GUARDIAN_SEQ" --argjson pid "$GUARDIAN_PID" --argjson start "$GUARDIAN_START" --argjson tick "$(ticks)" --slurpfile original /tmp/original-sysfs.json --slurpfile sysfs /tmp/sysfs.json --slurpfile full /tmp/guardian-full-interfaces.json --slurpfile pending /tmp/guardian-pending.json --slurpfile disk /var/lib/rustusb/physical/journal.json --slurpfile fds /tmp/guardian-fds.json '{label:$label,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}' > /tmp/guardian-record.json || return 1
+    jq -Mcn --arg mark "$guardian_tag" --arg boot "$guardian_boot" --argjson seq "$GUARDIAN_SEQ" --argjson pid "$GUARDIAN_PID" --argjson start "$GUARDIAN_START" --argjson tick "$(ticks)" --slurpfile original /tmp/original-sysfs.json --slurpfile sysfs /tmp/sysfs.json --slurpfile full /tmp/guardian-full-interfaces.json --slurpfile pending /tmp/guardian-pending.json --slurpfile disk /var/lib/rustusb/physical/journal.json --slurpfile fds /tmp/guardian-fds.json '{label:$mark,seq:$seq,tick:$tick,boot_id:$boot,guardian:{pid:$pid,starttime:$start,uids:[0,0,0,0],fds:$fds[0]},original:$original[0],sysfs:$sysfs[0],full_interfaces:$full[0],pending:$pending[0],journal:$disk[0]}' > /tmp/guardian-record.json || return 1
     printf 'RUSTUSB_GUARDIAN_RECORD '; cat /tmp/guardian-record.json
 }
 guardian_start() {
