@@ -1,0 +1,87 @@
+{
+  "status": "SOURCE_FROZEN_NOT_BUILT",
+  "head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "files": {
+    "crates/rustusb-core/src/server_session.rs": "6386e869eb02960c67191ded6b2e6d4179c5662edced09a8f57f9272c2750b19",
+    "crates/rustusb-rust-backend/src/lib.rs": "ebfeb769d109d40199f159570a15fb4437b3a8007d7a839ddf8a9078bd98ff8b",
+    "crates/rustusb-rust-backend/src/monitor.rs": "812e65decf4a7d27fab8fda4aa406311977ce1f182c8c114b0828450c8f9b365",
+    "crates/rustusb-rust-backend/src/counted.rs": "6c59d0182b0e5136b3672a237e3f5ff7d5c08410effb9c21059429e2e6dc4eb1",
+    "crates/rustusb-rust-backend/src/managed.rs": "c9b8a314d2fba2d29a27327188e05c7e3a8a4465b74e56364a729a9106be3a0d",
+    "crates/rustusb-rust-backend/src/server.rs": "2cfac598a7c6e22ffabd7ca690539ec1385b629d936665cab832497d3bd5999b",
+    "crates/rustusb-rust-backend/src/server_tls_tests.rs": "547cbd0c10888043268b39f07906ebacd42dedb8073adc8b3cb48396aeb5c769",
+    "crates/rustusb-rust-backend/src/server_managed_tests.rs": "6023d60c860f75617d5683bd3de852d3d3c9283170a2b85a020513444ef593fc",
+    "crates/rustusb-rust-backend/src/session.rs": "043155d19c5a02982f52558f657d3ee8a3a15389c40ae8dc9bc19f74d9fbdb03",
+    "crates/rustusb-rust-backend/src/physical.rs": "235465a9d0b5be42b19ce8bbcbb7ebe19237b545b48fc9af98dca03bb79a8ee3",
+    "crates/rustusb-rust-backend/src/physical/worker.rs": "57bc13bb18b3929e5a85e6139ef5d4455f032900d966e36ce59fe87ddc623b5a"
+  },
+  "api": {
+    "ServerMonitor": [
+      "new() -> Self",
+      "snapshot() -> Result<ServerMonitorSnapshot>",
+      "events_after(after: u64, limit: usize) -> Result<ServerEventPage>; limit 1..64",
+      "changes() -> watch::Receiver<u64>",
+      "request_disconnect(id) / admit(id) / reject(id) -> Result<bool>",
+      "acknowledge(id, terminal_revision: u64) -> Result<bool>",
+      "control() -> ServerControl (weak stop-only)"
+    ],
+    "ServerHandle": [
+      "bind_managed_tls(config, VirtualBackend, TlsServer, ServerMonitor) -> Result<Self>",
+      "bind_physical_managed_tls(config, PhysicalBackend, TlsServer, ServerMonitor) -> Result<Self>",
+      "monitor() -> Option<ServerMonitor>"
+    ],
+    "DTO_module": "rustusb_core::server_session",
+    "retain_observer": "Caller retains monitor clone; final observer Drop requests stop. Writer and control do not keep observer alive."
+  },
+  "bounds": {
+    "active": 16,
+    "total_including_unacknowledged_terminal": 64,
+    "events_per_attempt_including_reserved_terminal": 8,
+    "event_page": 64,
+    "admission_seconds": 5,
+    "claim_ready_seconds": 5,
+    "cleanup_soft_notice_seconds": 10
+  },
+  "ownership": [
+    "Application admission before atomic key/ACL claim; actual backend claim still rechecks slot/key/ACL.",
+    "USBFS unique per-attempt terminal watch originates in actual supervisor; claim waiter cancellation does not imply cleanup.",
+    "Soft cleanup deadline reports phase CleanupUnconfirmed with cleanup=None and retains connection task/permit until actual terminal.",
+    "Managed shutdown stops and joins without aborting claim/lease owners; Drop initiates but does not claim proof.",
+    "No monitor helper correlation or FD capability is invented; service owns helper grant correlation."
+  ],
+  "metrics": "Successful post-IMPORT-flush plaintext application read/write bytes including headers; partial accepted writes retained; no TLS overhead or heartbeat/RTT inference.",
+  "tests_added_source_only": 10,
+  "tests": [
+    "real TLS admission before claim; isolated HID stop while CDC bytes continue; reuse and shutdown",
+    "real TLS admission reject vs busy claim cleanup facts",
+    "last observer drop stops actual lease",
+    "16-active/64-total unacked terminal bounds; exact revision ack; cursor gap",
+    "5-second admission and observer loss",
+    "bounded lifecycle history reserves terminal and Drop is unconfirmed after claim",
+    "partial write then error and flush preserves actual count",
+    "management excluded, successful reads and failed writes counted correctly",
+    "claim completion soft deadline keeps ownership until exact witness",
+    "lost claim completion witness is unconfirmed"
+  ],
+  "verification_executed": [
+    "individual owned-file rustfmt",
+    "git diff --check scoped owned paths",
+    "read-only source review"
+  ],
+  "not_executed": [
+    "Cargo",
+    "Clippy",
+    "rustdoc",
+    "QEMU",
+    "USB device operation",
+    "commit",
+    "push"
+  ],
+  "cross_review": {
+    "service_jobs_rust_server": "Found CleanupUnconfirmed+cleanup=None incorrectly finished/acked; reported to author and root; author reports fix to observe only, await actual Some terminal."
+  },
+  "limitations": [
+    "Source is not a runtime pass; parent performs all builds and tests.",
+    "Native runner uses same pure DTO, not backend engine dependency.",
+    "No heartbeat framing, root proof recovery, frontend extraction or hardware completion is claimed."
+  ]
+}

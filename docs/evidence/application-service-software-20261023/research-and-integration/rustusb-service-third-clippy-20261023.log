@@ -1,0 +1,110 @@
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+error: this `if` statement can be collapsed
+   --> crates/rustusb-service/src/jobs/native.rs:298:9
+    |
+298 | /         if let Err(error) = export.close().await {
+299 | |             if first.is_none() {
+300 | |                 first = Some(error);
+301 | |             }
+302 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+298 ~         if let Err(error) = export.close().await
+299 ~             && first.is_none() {
+300 |                 first = Some(error);
+301 ~             }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/rustusb-service/src/runtime.rs:181:9
+    |
+181 | /         if stopping {
+182 | |             if let Ok(controls) = self.controls.lock() {
+183 | |                 controls.stop_all();
+184 | |             }
+185 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+181 ~         if stopping
+182 ~             && let Ok(controls) = self.controls.lock() {
+183 |                 controls.stop_all();
+184 ~             }
+    |
+
+error: this `if` statement can be collapsed
+    --> crates/rustusb-service/src/runtime.rs:1083:13
+     |
+1083 | /             if let BrokerOperationState::Terminal { terminal } = &status.operation {
+1084 | |                 if terminal.kind == attempt.kind
+1085 | |                     && terminal.correlation == attempt.correlation
+1086 | |                     && terminal.device_key == session.device_key
+...    |
+1099 | |             }
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+     |
+1083 ~             if let BrokerOperationState::Terminal { terminal } = &status.operation
+1084 ~                 && terminal.kind == attempt.kind
+1085 |                     && terminal.correlation == attempt.correlation
+ ...
+1097 |                     }
+1098 ~                 }
+     |
+
+error: this `if` statement can be collapsed
+    --> crates/rustusb-service/src/runtime.rs:1084:17
+     |
+1084 | /                 if terminal.kind == attempt.kind
+1085 | |                     && terminal.correlation == attempt.correlation
+1086 | |                     && terminal.device_key == session.device_key
+1087 | |                     && terminal.owner_uid == self.config.manifest.broker_uid
+...    |
+1098 | |                 }
+     | |_________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+     |
+1091 ~                         .is_none_or(|id| *id == terminal.resource_id)
+1092 ~                     && attempt.proof != Some(terminal.proof) {
+1093 |                         attempt.proof = Some(terminal.proof);
+1094 |                         attempt.resource_id = Some(terminal.resource_id.clone());
+1095 |                         changed = true;
+1096 ~                     }
+     |
+
+error: this `if` statement can be collapsed
+    --> crates/rustusb-service/src/runtime.rs:1112:9
+     |
+1112 | /         if next
+1113 | |             .sessions
+1114 | |             .iter()
+1115 | |             .filter(|s| s.job_id == job_id)
+...    |
+1121 | |         }
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+     |
+1116 ~             .all(|s| matches!(s.cleanup, Some(Cleanup::Verified | Cleanup::NotStarted)))
+1117 ~             && let Some(job) = next.jobs.iter_mut().find(|j| j.id == job_id) {
+1118 |                 job.state = JobState::Finished;
+1119 ~             }
+     |
+
+error: could not compile `rustusb-service` (lib) due to 5 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-service` (lib test) due to 5 previous errors

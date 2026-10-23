@@ -1,0 +1,149 @@
+   Compiling rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.58s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-3568dcf8c688cc88)
+
+running 97 tests
+test broker::tests::pending_page_is_sorted_bounded_and_cursor_is_only_a_continuation ... ok
+test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+test broker::tests::retired_import_scope_still_requires_original_logical_server_and_current_pool ... ok
+test broker::tests::tracked_and_old_ipc_shapes_are_separate_and_query_echo_is_typed ... ok
+test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+test journal::tests::existing_directory_without_journal_is_never_initialized ... ok
+test journal::tests::protected_traversal_rejects_symlink_writable_wrong_owner_and_escape ... ok
+test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+test linux::tests::early_uid_refusal_survives_a_failed_status_request_write ... ok
+test linux::tests::early_uid_refusal_of_physical_capability_requires_no_acknowledgement ... ok
+test linux::tests::cancelling_recovery_wait_does_not_unlock_actual_blocking_work ... ok
+test linux::tests::failed_request_write_cannot_be_replaced_by_invalid_or_success_response ... ok
+test linux::tests::legacy_empty_pending_keeps_exact_protocol_shape ... ok
+test linux::tests::management_reconciliation_never_uses_the_ordinary_uid_allowlist ... ok
+test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+test linux::tests::physical_capability_denial_precedes_scanning_or_opening_usb ... ok
+test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+test native_channel::tests::dropped_handle_commands_close_control_and_invalidate ... ok
+test native_channel::tests::queued_commit_observes_eof_before_lock_or_mutation ... ok
+test native_channel::tests::cancelled_commit_waiter_cannot_consume_close_response ... ok
+test native_channel::tests::stopped_helper_wins_even_when_mutation_lock_is_free ... ok
+test native_export::tests::dropped_export_handle_closes_control_without_claiming_cleanup ... ok
+test native_export::tests::cancelled_stub_commit_consumes_reply_before_close ... ok
+test journal::tests::invalid_owner_receipt_interface_and_uuid_are_rejected ... ok
+test journal::tests::lifetime_lock_excludes_other_openers ... ok
+test native_state::tests::published_registration_and_actual_export_phases_remain_distinct ... ok
+test journal::tests::missing_original_driver_is_not_an_explicit_unbound_baseline ... ok
+test journal::tests::recovery_permission_is_required_in_v2_and_forbidden_in_v1 ... ok
+test journal::tests::strict_nested_fields_reject_duplicate_and_unknown_permissions_without_fallback ... ok
+test journal::tests::lost_lifetime_lock_cannot_create_a_second_lock_domain ... ok
+test journal::tests::pre_rename_failure_keeps_old_disk_and_poison_refuses_all_access ... ok
+test journal::tests::disk_three_requires_correlations_and_terminals_and_rejects_cross_namespace_proof ... ok
+test journal::tests::duplicate_lease_or_device_does_not_change_durable_table ... ok
+test journal::tests::secure_stale_temporary_is_removed_only_under_owned_lock ... ok
+test linux::tests::pending_pages_preserve_complete_baselines_without_exceeding_ipc_bound ... ok
+test physical::tests::ancillary_marker_missing_or_duplicate_rights_are_rejected ... ok
+test physical::tests::regular_files_cannot_be_usb_capabilities ... ok
+test physical::tests::descriptor_handoff_preserves_data_and_cloexec_without_root_or_usb ... ok
+test physical::tests::wrong_marker_and_truncated_rights_are_rejected ... ok
+test physical_lifecycle::tests::original_complete_baseline_rejects_each_independent_difference ... ok
+test physical_lifecycle::tests::peer_identity_requires_uid_pid_start_and_boot_not_a_bearer_lease ... ok
+test journal::tests::uncertain_upgrade_never_installs_cache_and_reopen_keeps_actual_permissions ... ok
+test journal::tests::uncertain_post_rename_failure_never_installs_new_cache_or_reopens_grants ... ok
+test physical_lifecycle::tests::same_path_replacement_is_gone_not_the_old_generation ... ok
+test physical_lifecycle::tests::stat_command_with_spaces_and_closing_parentheses_keeps_field_offsets ... ok
+test physical_recovery::tests::already_restored_and_original_none_do_not_connect ... ok
+test physical_recovery::tests::exact_scope_allows_only_missing_original_drivers ... ok
+test physical_recovery::tests::legacy_manual_authorization_fails_before_any_os_device_observation ... ok
+test journal::tests::table_capacity_is_enforced_without_poisoning_valid_cache ... ok
+test physical_recovery::tests::losing_an_earlier_driver_before_final_check_does_not_converge ... ok
+test physical_recovery::tests::real_connect_errno_is_retained_until_actual_original_binding ... ok
+test physical_recovery::tests::sibling_probe_reobserves_full_state_and_skips_second_connect ... ok
+test physical_recovery::tests::successful_ioctl_with_wrong_driver_or_scope_is_not_restoration ... ok
+test secure_policy_tests::secure_usbfs_does_not_assert_trusted_network ... ok
+test tests::command_output_is_not_exposed ... ok
+test secure_policy_tests::secure_role_is_separate_and_pools_cannot_bypass_it ... ok
+test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+test tests::native_secure_commands_have_strict_bounded_wire_shapes ... ok
+test tests::physical_lifecycle_wire_requires_version_and_rejects_extra_privilege_fields ... ok
+test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+test physical_lifecycle::tests::automatic_owner_observation_rejects_old_boot_and_unknown_process_state ... ok
+test tests::physical_policy_is_separate_bounded_and_backward_compatible ... ok
+test tests::recovery_policy_requires_explicit_unique_bounded_physical_subset ... ok
+test journal::tests::strict_schema_rejects_corruption_unknown_fields_versions_and_duplicates ... ok
+test native_state::tests::journal_lock_and_same_bytes_identity_are_enforced_without_usb ... ok
+test journal::tests::durable_reserve_reload_and_idempotent_retirement ... ok
+test journal::tests::legacy_records_stay_manual_until_a_distinct_opt_in_grant_upgrades_storage ... ok
+test journal::tests::symlinks_hardlinks_and_permissive_files_are_rejected ... ok
+test native_state::tests::export_registration_survives_restart_and_blocks_adoption_without_usb ... ok
+test journal::tests::old_schemas_forbid_tracking_fields_and_disk_three_rejects_duplicate_or_excess_slots ... ok
+test journal::tests::byte_record_and_interface_limits_fail_closed ... ok
+test journal::tests::tracked_attempt_reuse_is_rejected_before_mutation_for_active_and_terminal ... ok
+test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+test native_state::tests::persisted_prepared_channel_blocks_new_grants_after_restart ... ok
+test native_state::tracking_tests::wrong_proof_or_duplicate_attempt_never_removes_active_record ... ok
+test journal::tests::schema_two_never_downgrades_after_authorized_record_or_empty_table_retirement ... ok
+test native_state::tracking_tests::verified_cleanup_proof_survives_original_operation_eof_error ... ok
+test journal::tests::tracked_upgrade_failure_preserves_cache_and_quarantines_all_reads ... ok
+test journal::tests::failed_terminal_commit_never_installs_partial_cache_or_suppresses_durable_evidence ... ok
+test native_state::tracking_tests::legacy_bytes_stay_v1_then_tracked_migration_keeps_original_owner_and_phase ... ok
+test native_state::tracking_tests::terminal_is_atomic_retained_after_reopen_and_scoped_by_kind_uid ... ok
+test native_state::tracking_tests::stub_proof_and_parent_occupancy_change_in_one_commit ... ok
+test journal::tests::physical_terminal_proofs_are_atomic_owner_scoped_and_survive_reopen ... ok
+test journal::tests::tracked_slots_reserve_cleanup_capacity_and_evict_only_oldest_terminal ... ok
+test native_state::tracking_tests::new_format_missing_correlation_and_legacy_tracking_field_are_rejected ... ok
+test journal::tests::active_file_loss_truncation_and_same_length_rewrite_quarantine_store ... ok
+test native_state::tracking_tests::failure_before_and_after_rename_never_acknowledges_lost_proof ... ok
+test native_state::tests::pending_pages_are_small_stable_summaries_and_validate_cursors ... ok
+test journal::tests::tracked_upgrade_preserves_old_permissions_and_explicit_null_correlations ... ok
+test native_state::tracking_tests::capacity_reserves_active_slots_and_only_admission_evicts_oldest_terminal ... ok
+
+test result: ok. 97 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
+
+     Running unittests src/main.rs (target/debug/deps/rustusb_helper-5fe17e99ac4f9965)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-9bf784cafdba5a7a)
+
+running 15 tests
+test config::tests::exact_profile_action_and_os_uid_are_required ... ok
+test config::tests::malformed_or_ambiguous_manifests_fail_before_credentials ... ok
+test ipc::tests::unix_credentials_and_framing_come_from_the_actual_connection ... ok
+test ipc::tests::oversized_empty_and_unknown_requests_fail_without_allocating_unboundedly ... ok
+test jobs::rust_server::tests::soft_cleanup_deadline_is_not_finished_until_real_terminal ... ok
+test jobs::io::tests::real_duplex_bytes_are_counted_and_first_eof_closes_both_sides ... ok
+test store::platform::tests::bounded_audit_preserves_monotonic_cursor_gap ... ok
+test store::platform::tests::corrupt_changed_symlink_and_hardlink_state_are_never_reset ... ok
+test runtime::tests::finished_job_with_retained_child_is_not_pruned_into_an_orphan ... ok
+test store::platform::tests::atomic_restart_lock_and_sequence_are_real_filesystem_operations ... ok
+test runtime::tests::unauthorized_stop_does_not_signal_and_is_durably_audited ... ok
+test runtime::tests::explicit_retry_never_starts_unknown_or_expired_requests ... ok
+test runtime::tests::verified_finish_from_error_audits_recovering_before_disconnected ... ok
+test runtime::tests::canonical_retention_matches_memory_store_and_reopened_disk ... ok
+test runtime::tests::admission_capacity_refusal_keeps_journal_healthy_and_allows_finish ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s
+
+   Doc-tests rustusb_daemon
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_service
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

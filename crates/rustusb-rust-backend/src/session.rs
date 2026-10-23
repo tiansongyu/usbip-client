@@ -93,6 +93,24 @@ pub(crate) trait ServingBackend: Clone + Send + Sync + 'static {
         expected: Option<&DeviceKey>,
         access: &ConnectionAccess,
     ) -> impl Future<Output = Result<Self::Lease>> + Send;
+    /// Managed attempts supply a unique completion witness for cancellation before a lease exists.
+    fn claim_managed(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+        terminal: tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>,
+    ) -> impl Future<Output = Result<Self::Lease>> + Send {
+        async move {
+            let result = self.claim(bus_id, expected, access).await;
+            if result.is_err() {
+                terminal.send_replace(Some(
+                    rustusb_core::server_session::ServerCleanup::Unconfirmed,
+                ));
+            }
+            result
+        }
+    }
     /// Await all sessions already closing, never treating a deadline as release.
     fn settle_closed(&self) -> impl Future<Output = Result<()>> + Send;
 }
@@ -151,6 +169,21 @@ impl ServingBackend for VirtualBackend {
             wake: None,
             tick: Box::pin(tokio::time::sleep(Duration::from_millis(10))),
         })
+    }
+    async fn claim_managed(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+        terminal: tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>,
+    ) -> Result<Self::Lease> {
+        let result = ServingBackend::claim(self, bus_id, expected, access).await;
+        if result.is_err() {
+            terminal.send_replace(Some(
+                rustusb_core::server_session::ServerCleanup::NotStarted,
+            ));
+        }
+        result
     }
     async fn settle_closed(&self) -> Result<()> {
         Ok(())

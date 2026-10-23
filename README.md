@@ -86,6 +86,12 @@ cargo build --workspace --release --all-features --locked
 
 Choose `--backend native` for approved kernel exports or `--backend usbfs` for the experimental physical adapter. A Native-only CLI can use the `secure-transport` feature. Keep `secure-attach` running while using the device; SIGINT or SIGTERM starts supervised cleanup. Unconfirmed operations remain pending for administrator verification.
 
+For supervised jobs independent of the requesting CLI, see the experimental
+[application service guide](docs/application-service-guide.md). Its nonroot agent
+provides fixed profiles, OS-UID action authorization, per-connection stop and
+bounded durable session/audit history. New agent QEMU acceptance is recorded
+separately from the encrypted foreground-path results below.
+
 ## Choose a backend
 
 | Backend | Device source and data path | Status |

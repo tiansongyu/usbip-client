@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "result": "source_ready_unexecuted",
+  "file": "crates/rustusb-service/src/runtime_tests.rs",
+  "bytes": 18081,
+  "sha256": "017abfd529a8b39136222eb617412f7ddccebc7eb47d7ebd2cc8604cd0caa84d",
+  "tests": [
+    "canonical_retention_matches_memory_store_and_reopened_disk",
+    "finished_job_with_retained_child_is_not_pruned_into_an_orphan",
+    "admission_capacity_refusal_keeps_journal_healthy_and_allows_finish",
+    "explicit_retry_never_starts_unknown_or_expired_requests",
+    "unauthorized_stop_does_not_signal_and_is_durably_audited",
+    "verified_finish_from_error_audits_recovering_before_disconnected"
+  ],
+  "checks": {
+    "single_file_rustfmt_check": "PASS",
+    "cargo": "not_run",
+    "qemu": "not_run"
+  },
+  "scope": "Real temporary filesystem and actual Runtime/Store recorder methods with synthetic metadata; no TLS load/helper/contact/USB ownership or cleanup claim. Fixture operator uses actual euid; Store::fixture injects the temporary trust anchor only."
+}

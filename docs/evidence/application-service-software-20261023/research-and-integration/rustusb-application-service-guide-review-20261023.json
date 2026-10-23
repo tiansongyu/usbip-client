@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "result": "no_specific_false_claim_found_clarifications_recommended",
+  "baseline_head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "scope": "Read-only new guide to actual CLI/config/runtime/jobs; no product run or hardware evidence generated. Root is executing software gates independently.",
+  "source_snapshot": [
+    {
+      "path": "docs/application-service-guide.md",
+      "bytes": 10116,
+      "sha256": "851425aeec7f0e8a76d4e88f1567741824714ab202f49ed369c34887f810dd3d"
+    },
+    {
+      "path": "crates/rustusb-cli/src/agent.rs",
+      "bytes": 4952,
+      "sha256": "ae173a8de61cf6054f7882f402c3a1d2ba7b8daf503bba412c2c0790021be93d"
+    },
+    {
+      "path": "crates/rustusb-cli/Cargo.toml",
+      "bytes": 1040,
+      "sha256": "84d4276aaee5571f4c0b3e8edcd231d793129e10fdd01090d515966f1a51e190"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "bytes": 40929,
+      "sha256": "4b58e0a0e07e7ac2746fa12aaf20b02f1ff6c9264e9d056012c1db095cdb0393"
+    },
+    {
+      "path": "crates/rustusb-service/src/model.rs",
+      "bytes": 8995,
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095"
+    },
+    {
+      "path": "crates/rustusb-service/src/config.rs",
+      "bytes": 12508,
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd"
+    },
+    {
+      "path": "crates/rustusb-service/src/rpc.rs",
+      "bytes": 5533,
+      "sha256": "b9a78e9007bcb8573580c6bdd0cebf306396289ec79c9a9eb470a2cecdb4ee85"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "bytes": 5223,
+      "sha256": "e7c84f12191dee01d07530b6ff6bcdb233daf3a3bd0531ebfd81b7f339450671"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 18373,
+      "sha256": "113eca7692aca0c2587c67041e1865f2a5998b8f01bfc47f1ed852580bc832ee"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "bytes": 21702,
+      "sha256": "901918e3d9f85e34585c6330931f5664dc963003ecbf13af3a87aea65073c757"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/io.rs",
+      "bytes": 4446,
+      "sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2"
+    }
+  ],
+  "verified": [
+    "fixed root-trusted profile inputs/dedicated broker and kernel operator UID/action ACL",
+    "Native-only secure-transport feature does not force Rust engine/nusb; virtual and USBFS optional feature edges",
+    "actual CLI profiles/start/request-id/retry/jobs/sessions/events/audit/discover/stop syntax",
+    "retained retry replays same UID/profile; explicit unknown/expired retry starts no work",
+    "client LocalEnumeration vs incoming ImportReplyFlushed Connected evidence; availability separate",
+    "stop_accepted does not claim cleanup; Rust Export single-stop Unsupported while Native Export supported",
+    "cooperative repeated SIGINT/SIGTERM waits owned task tree; SIGKILL is not a cleanup receipt",
+    "journal 2MiB bound, half-budget admission and bounded audit/request history",
+    "exact helper terminal matching with no adoption of old FD or arbitrary reconciliation privilege",
+    "zero-session intent startup may finish based on invariant that durable Begin precedes any helper acquisition",
+    "reserved unsent/failed prepare with no handle/proof remains Unconfirmed",
+    "counters are actual successful post-IMPORT application read/write bytes; no raw payload/TLS-wire/RTT claim",
+    "foreground secure commands remain separate implementations, shared extraction explicitly unfinished",
+    "guide marks implementation under validation rather than claiming new QEMU/whole Phase3 completion"
+  ],
+  "clarifications": [
+    {
+      "guide_section": "Observe and recover",
+      "code": "runtime.rs::start_recovery/recovered",
+      "text": "Proof queries also cover same-epoch Unconfirmed sessions once their job has no actual owner; both functions reject live-owner resolution. Add this explicitly rather than implying restart is required."
+    },
+    {
+      "guide_section": "Observe and recover",
+      "code": "jobs/rust_server.rs; runtime.rs::start_recovery",
+      "text": "Explicitly include virtual export and both Rust incoming roles with no independent helper attempt. This revision does not retire their application sessions by borrowing another export/grant proof; helper pending/reconcile is not an automatic app-record retirement API."
+    },
+    {
+      "guide_section": "Prerequisites / manifest",
+      "code": "config.rs and root helper broker UID policy",
+      "text": "The dedicated broker UID remains the trust boundary for the maximum helper pool. Do not share it with ordinary operators; profile RPC ACLs do not isolate arbitrary processes sharing that UID."
+    }
+  ],
+  "execution_boundaries": {
+    "repo_edits": false,
+    "cargo": false,
+    "qemu": false,
+    "product_cli": false,
+    "host_usb_modules_network": false
+  },
+  "limits": [
+    "Static source review only; current guide hashes may change when root applies clarifications",
+    "No claim that the review executed examples or independently verified the ongoing software gate"
+  ]
+}

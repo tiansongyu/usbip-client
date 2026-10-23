@@ -1,0 +1,45 @@
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+error[E0061]: this method takes 1 argument but 3 arguments were supplied
+   --> crates/rustusb-rust-backend/src/session.rs:180:27
+    |
+180 |         let result = self.claim(bus_id, expected, access).await;
+    |                           ^^^^^         --------  ------ unexpected argument #3 of type `&ConnectionAccess`
+    |                                         |
+    |                                         unexpected argument #2 of type `std::option::Option<&rustusb_core::DeviceKey>`
+    |
+note: method defined here
+   --> crates/rustusb-rust-backend/src/device.rs:413:12
+    |
+413 |     pub fn claim(&self, bus_id: &str) -> Result<DeviceLease> {
+    |            ^^^^^
+help: remove the extra arguments
+    |
+180 -         let result = self.claim(bus_id, expected, access).await;
+180 +         let result = self.claim(bus_id).await;
+    |
+
+error[E0277]: `std::result::Result<DeviceLease, rustusb_core::Error>` is not a future
+   --> crates/rustusb-rust-backend/src/session.rs:180:59
+    |
+180 |         let result = self.claim(bus_id, expected, access).await;
+    |                                                           ^^^^^ `std::result::Result<DeviceLease, rustusb_core::Error>` is not a future
+    |
+    = help: the trait `Future` is not implemented for `std::result::Result<DeviceLease, rustusb_core::Error>`
+    = note: std::result::Result<DeviceLease, rustusb_core::Error> must be a future or must implement `IntoFuture` to be awaited
+    = note: required for `std::result::Result<DeviceLease, rustusb_core::Error>` to implement `IntoFuture`
+help: remove the `.await`
+    |
+180 -         let result = self.claim(bus_id, expected, access).await;
+180 +         let result = self.claim(bus_id, expected, access);
+    |
+
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+Some errors have detailed explanations: E0061, E0277.
+For more information about an error, try `rustc --explain E0061`.
+error: could not compile `rustusb-rust-backend` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

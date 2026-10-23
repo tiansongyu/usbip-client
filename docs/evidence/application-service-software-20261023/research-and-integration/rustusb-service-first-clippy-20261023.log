@@ -1,0 +1,29 @@
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+error[E0277]: `?` couldn't convert the error to `Error`
+   --> crates/rustusb-core/src/application.rs:251:99
+    |
+249 |     fn unknown_is_not_a_cleanup_success_receipt() -> Result<()> {
+    |                                                      ---------- expected `Error` because of this
+250 |         assert!(matches!(
+251 |             serde_json::from_value::<BrokerOperationState>(serde_json::json!({"state":"unknown"}))?,
+    |             --------------------------------------------------------------------------------------^ the trait `std::convert::From<serde_json::Error>` is not implemented for `Error`
+    |             |
+    |             this can't be annotated with `?` because it has type `Result<_, serde_json::Error>`
+    |
+note: `Error` needs to implement `From<serde_json::Error>`
+   --> crates/rustusb-core/src/lib.rs:13:1
+    |
+ 13 | pub enum Error {
+    | ^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+help: the trait `From<serde_json::Error>` is not implemented for `Error`
+      but trait `From<std::io::Error>` is implemented for it
+   --> crates/rustusb-core/src/lib.rs:19:10
+    |
+ 19 |     Io(#[from] std::io::Error),
+    |          ^^^^
+    = help: for that trait implementation, expected `std::io::Error`, found `serde_json::Error`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `rustusb-core` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

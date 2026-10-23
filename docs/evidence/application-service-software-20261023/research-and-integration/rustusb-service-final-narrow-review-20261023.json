@@ -1,0 +1,117 @@
+{
+  "review": "final narrow service audit/capacity/recovery follow-up",
+  "captured_utc": "2026-10-23T15:21:47.556163+00:00",
+  "head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "verdict": "NO_NEW_SOURCE_BLOCKER_IDENTIFIED",
+  "source": {
+    "crates/rustusb-service/src/runtime.rs": "4b58e0a0e07e7ac2746fa12aaf20b02f1ff6c9264e9d056012c1db095cdb0393",
+    "crates/rustusb-service/src/store.rs": "69cf2d7decac8b2d7d79ba7623cf9173e016f1cf65ca13349b8bb3eae2ca0dd3",
+    "crates/rustusb-service/src/model.rs": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095",
+    "crates/rustusb-service/src/rpc.rs": "b9a78e9007bcb8573580c6bdd0cebf306396289ec79c9a9eb470a2cecdb4ee85",
+    "crates/rustusb-service/src/context.rs": "03df42825292db4b3360f80daee87049648ce0f1cb9e22bce74dd0d3dc4f0a1e",
+    "crates/rustusb-service/src/jobs/client.rs": "e7c84f12191dee01d07530b6ff6bcdb233daf3a3bd0531ebfd81b7f339450671",
+    "crates/rustusb-service/src/jobs/native.rs": "113eca7692aca0c2587c67041e1865f2a5998b8f01bfc47f1ed852580bc832ee",
+    "crates/rustusb-service/src/jobs/rust_server.rs": "901918e3d9f85e34585c6330931f5664dc963003ecbf13af3a87aea65073c757",
+    "crates/rustusb-service/src/jobs/mod.rs": "d66dfd6a9d20374e20dda51388122a9cd3e8e8aa6de0614ffa6cd1cd84a59784",
+    "crates/rustusb-core/src/application.rs": "b8dc2ca4ddd4cb47e1307bfecddf4c24412dd7b5ad71839b6444b465f3050b79",
+    "docs/application-service-guide.md": "851425aeec7f0e8a76d4e88f1567741824714ab202f49ed369c34887f810dd3d",
+    "crates/rustusb-core/src/lib.rs": "f44d45dda77e99239747330825102001a7a970bd3cb1b92591d76c7c8f33ad42",
+    "crates/rustusb-service/src/config.rs": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd"
+  },
+  "supersedes_boundary": [
+    "Previous review R5 is resolved by actual profile=None audit filtering for UID0 or actor UID; R4 remains explicitly documented historical-profile diagnostic limitation."
+  ],
+  "findings": {
+    "R5": "Runtime::events first authorizes requested current profile Action::Audit; global profile=None events are visible only for root or matching actor UID. Ordinary Events/read remains profile-scoped. This exposes retained denial facts without leaking another nonroot actor global facts.",
+    "R4": "Guide explicitly requires unresolved profiles to remain until coordination; removing one preserves state but current RPC cannot query that removed profile. Root protected-journal diagnosis is stated, not represented as normal RPC visibility.",
+    "S2": "start/begin/attempt call preflight(true) before persistence/admission. persist preflight(false) occurs before spawning a store commit, so a predictable bound/schema rejection does not poison healthy recording. Existing owner cleanup facts retain full 2MiB limit; durable I/O failures still poison recording, preserving fail-closed behavior.",
+    "recovery_no_live_owner": "start_recovery filters out jobs present in Controls.jobs and recovered repeats the same guard before applying results. Same-epoch unconfirmed attempts whose actual worker returned may now be inspected. No elapsed time, PID death or fresh epoch resource count supplies a terminal proof. Matching schema, kind, complete correlation, stable device key, broker UID and received resource ID checks remain.",
+    "zero_session_intent": "On restart, non-Finished jobs whose retained sessions all have Verified/NotStarted may become Finished; empty set is intentional. Client begin_session is awaited before TLS IMPORT/helper prepare, Native export prepare begins and awaits a session before helper acquisition, Native incoming begins before stub, and Rust virtual/physical first obtain export contexts before backend/listener/grant. Removing old verified terminal sessions does not remove an unresolved session. Therefore a legitimately produced empty job has no possible unrecorded helper acquisition, and finishing the job does not assert any USB device was released."
+  },
+  "capacity_argument": {
+    "scope": "Static conservative bound for states produced by the current fixed schema and admission sequence, not a benchmark or runtime failure-injection test. Future field additions require recalculating the reserve.",
+    "last_admission_limit_bytes": 1048576,
+    "full_store_limit_bytes": 2097152,
+    "existing_attempt_minimum_encoded_bytes_lower_bound": 200,
+    "maximum_existing_attempts_from_admission_bytes": 5242,
+    "existing_attempt_resource_id_and_proof_max_growth_bytes": 64,
+    "audit_entire_ring_max_count": 1024,
+    "conservative_audit_item_max_bytes": 500,
+    "sessions_max": 512,
+    "conservative_mutable_session_fields_growth_bytes": 150,
+    "jobs_max": 512,
+    "conservative_mutable_job_fields_growth_bytes": 50,
+    "global_sequence_growth_allowance_bytes": 20,
+    "growth_upper_bound_bytes": 949908,
+    "reserved_bytes": 1048576,
+    "remaining_margin_bytes": 98668,
+    "reasoning": [
+      "All correlations/resource IDs are validated fixed 36-character UUIDs. Existing attempt kind/correlation is immutable; only null resource ID/proof gains bounded data without new admission.",
+      "New attempts, new sessions and new jobs require fresh 1MiB admission; after the last admitted operation their counts cannot grow without resetting that bound.",
+      "Principal/profile/device key and other strings are immutable after admission; no arbitrary error or payload string is added during close.",
+      "Each of the three counters may grow from one digit to a 20-digit u64; lifecycle/error/evidence/cleanup are finite enums. Other boolean fields do not add unbounded data.",
+      "Audit is capped at 1024 entries and all fields are typed IDs, bounded ASCII profile labels, finite enums or bounded integers. Charging the entire maximum ring again is conservative.",
+      "Requests do not grow during cleanup/recovery; pruning only reduces encoded size."
+    ],
+    "analysis_only_json_examples": {
+      "minimum_kind_attempt_example_bytes": 227,
+      "max_field_audit_example_bytes": 362,
+      "implementation": "Python JSON compact encoding of public fixed-field shapes, no service/product execution, no synthetic USB evidence",
+      "command_verbatim": "python3 - <<'PY'\nimport json\nuuid='00000000-0000-0000-0000-000000000001'\ncorrelation={'instance_id':uuid,'session_id':uuid,'attempt_id':uuid}\na={'kind':'native_stub','correlation':correlation,'resource_id':None,'proof':None}\nz={'sequence':2**64-1,'actor_uid':2**32-1,'profile':'p'*64,'job_id':uuid,'session_id':uuid,'action':'admission','failure':'invalid_input','state':'Disconnecting','evidence':'import_reply_flushed','cleanup':'unconfirmed'}\nenc=lambda value:len(json.dumps(value,separators=(',',':'),ensure_ascii=False).encode())\nprint({'analysis_only_not_product_execution':True,'minimum_example_attempt_bytes':enc(a),'max_field_example_audit_bytes':enc(z),'conservative_attempt_min':200,'conservative_attempt_growth':64,'conservative_event_max':500,'conservative_session_growth':150,'conservative_job_growth':50,'post_admission_growth_upper_bound':(1048576//200)*64+1024*500+512*150+512*50+20,'reserved_bytes':1048576})\nPY",
+      "stdout_verbatim": "{'analysis_only_not_product_execution': True, 'minimum_example_attempt_bytes': 227, 'max_field_example_audit_bytes': 362, 'conservative_attempt_min': 200, 'conservative_attempt_growth': 64, 'conservative_event_max': 500, 'conservative_session_growth': 150, 'conservative_job_growth': 50, 'post_admission_growth_upper_bound': 949908, 'reserved_bytes': 1048576}",
+      "placeholder_note": "The same 36-character UUID placeholder is reused only to measure JSON field lengths; actual BrokerCorrelation::validate requires distinct values. Replacing these placeholders with distinct canonical UUIDs does not change any length. This was not a valid product fixture or a product execution."
+    },
+    "field_assumptions": [
+      {
+        "fields": "Attempt.kind, correlation.instance_id/session_id/attempt_id",
+        "immutable": true,
+        "source": "core/application.rs validates canonical 36-character UUIDs; store/model Attempt",
+        "bound": "Entire smallest example 227B; use conservative lower bound 200B for count."
+      },
+      {
+        "fields": "Attempt.resource_id, proof",
+        "bound": "null to quoted UUID adds 34B; null to largest proof name native_import_intent_released adds 26B; charge 64B total."
+      },
+      {
+        "fields": "Session.metrics.app_rx_bytes/app_tx_bytes/elapsed_millis",
+        "bound": "Each decimal u64 grows by at most 19B; total 57B. saturated false->true does not grow."
+      },
+      {
+        "fields": "Session.state/evidence/operation_error/cleanup/terminal/stop_requested",
+        "bound": "Finite enums and booleans. Alongside counter growth charge at most 150B per session. IDs, device key, role, principal/profile and existing attempt identities cannot grow."
+      },
+      {
+        "fields": "Job.state/operation_error/stop_requested",
+        "bound": "Finite enums and boolean; charge at most 50B per job. Job/profile/operator/epoch identities do not change."
+      },
+      {
+        "fields": "AuditEvent sequence/actor_uid/profile/job_id/session_id/action/failure/state/evidence/cleanup",
+        "bound": "u64/u32, ASCII profile <=64, UUID <=36 and finite enums; max-field compact example 362B; charge 500B each for all 1024 entries, including JSON punctuation."
+      },
+      {
+        "fields": "State.sequence",
+        "bound": "At most 19 additional decimal digits; charge 20B."
+      },
+      {
+        "fields": "State.requests / counts of jobs sessions attempts",
+        "bound": "No new job/session/attempt without preflight(true); no new request record without admitted Start. No post-admission growth counted twice; pruning only removes data."
+      }
+    ]
+  },
+  "verification_boundary": {
+    "performed": [
+      "read-only fixed source review",
+      "source SHA256 capture",
+      "bounded public JSON-size arithmetic"
+    ],
+    "not_performed": [
+      "Cargo or builds",
+      "product runtime tests",
+      "QEMU",
+      "USB or helper operations",
+      "repository writes",
+      "commits",
+      "pushes"
+    ]
+  }
+}

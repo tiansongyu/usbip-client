@@ -1,0 +1,13 @@
+{
+  "source_base": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "first_gate": "FAIL: eight new Native temporary-root fixtures were group-writable under actual umask 0002; original log/guards retained",
+  "first_gate_source_reconstruction": [
+    "crates/rustusb-daemon/src/native_tracking_tests.rs",
+    "crates/rustusb-service/src/runtime_tests.rs",
+    "crates/rustusb-service/src/store.rs"
+  ],
+  "second_gate": "PASS: default 196/all-features 279/vendor 20 = 495 test executions; 39 result lines, no failures/ignored; 150 selected inputs unchanged",
+  "scope": "software/source review only; no agent QEMU, physical hardware, performance, heartbeat or full Phase3 claim",
+  "independent_review_note": "Author/independent source snapshots precede root integration fixes and formatting; their SHA belongs to each report, not the final tree",
+  "native_only": "cargo tree and cargo check CLI secure-transport: service present, Rust engine/nusb/rusb absent"
+}

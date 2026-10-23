@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "review": "read_only_service_jobs_integration",
+  "baseline_head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "scope": [
+    "runtime/context/model/config/rpc to actual jobs lifecycle",
+    "store::commit/prune only to establish state canonicalization contract"
+  ],
+  "executed": {
+    "cargo": false,
+    "qemu": false,
+    "product_cli": false,
+    "repo_edits": false
+  },
+  "source_snapshot": [
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "bytes": 40038,
+      "sha256": "4553dfc983c66440c2137d14a683e4c351cd7b83513d40fb250eb1b364a977ee"
+    },
+    {
+      "path": "crates/rustusb-service/src/context.rs",
+      "bytes": 6695,
+      "sha256": "03df42825292db4b3360f80daee87049648ce0f1cb9e22bce74dd0d3dc4f0a1e"
+    },
+    {
+      "path": "crates/rustusb-service/src/model.rs",
+      "bytes": 8995,
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095"
+    },
+    {
+      "path": "crates/rustusb-service/src/config.rs",
+      "bytes": 12508,
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd"
+    },
+    {
+      "path": "crates/rustusb-service/src/rpc.rs",
+      "bytes": 5533,
+      "sha256": "b9a78e9007bcb8573580c6bdd0cebf306396289ec79c9a9eb470a2cecdb4ee85"
+    },
+    {
+      "path": "crates/rustusb-service/src/store.rs",
+      "bytes": 15925,
+      "sha256": "00edf3782b798b059bd3d67024614280d7ab0535f9ef5b1664a8abb2129e0c98"
+    }
+  ],
+  "must_fix": [
+    {
+      "id": "S1",
+      "file": "crates/rustusb-service/src/runtime.rs",
+      "functions": [
+        "Runtime::persist",
+        "Store::commit"
+      ],
+      "finding": "Store::commit prunes its owned State clone, while Runtime::persist installs the original unpruned next. Disk and runtime state diverge after retention is exercised. Runtime queries/dedup can retain expired records and repeatedly exceed bounds despite discardable terminals.",
+      "minimal_fix": "Commit one canonical pruned state and install exactly that committed state; prefer commit returns Store.state clone or preflight prune+validate once.",
+      "regression": "Exercise more than 128 terminal sessions/jobs and 256 requests; runtime state, committed disk and reloaded state must be identical and remain usable."
+    },
+    {
+      "id": "S2",
+      "file": "crates/rustusb-service/src/runtime.rs",
+      "functions": [
+        "Runtime::persist",
+        "Runtime::begin",
+        "Runtime::start"
+      ],
+      "finding": "All commit errors mark healthy=false, including pre-write state validation/encoded capacity refusal. A rejected admission can permanently prevent valid cleanup Finish facts from being committed, even when the filesystem is healthy.",
+      "minimal_fix": "Bounded canonical preflight before admitting new work, reserve terminal recording capacity, and distinguish safe admission rejection from uncertain write failure. Do not weaken poison after actual I/O uncertainty.",
+      "regression": "At the admission bound refuse new work while an already admitted owner can still persist actual verified cleanup."
+    }
+  ],
+  "reported_related_store_issue": {
+    "owner": "journal_integration_review",
+    "finding": "Independent jobs pruning may remove a Finished job that still has retained child sessions; State::validate then rejects the orphan. Example: oldest completed job has one verified child, followed by 128 completed zero-child jobs."
+  },
+  "recovery_boundaries": [
+    {
+      "file": "runtime.rs",
+      "functions": [
+        "start_recovery",
+        "recovered"
+      ],
+      "finding": "Only previous-instance sessions are queried. A same-instance ended job with Unconfirmed typed close cannot consume an already retained exact helper terminal until agent restart.",
+      "suggestion": "Query only absent-owner/unconfirmed current jobs as well, preserving exact kind/correlation/device/UID/resource checks; otherwise document restart requirement."
+    },
+    {
+      "file": "runtime.rs",
+      "functions": [
+        "open",
+        "start_recovery"
+      ],
+      "finding": "A durable Starting job killed before any Begin has no sessions/attempts to query, and remains Recovering forever, blocking its fixed profile.",
+      "suggestion": "Define a narrow no-resource-intent criterion justified by the invariant that Begin must durably precede any helper request, or expose explicit safe administrator coordination; never infer arbitrary hardware restoration."
+    }
+  ],
+  "verified_alignment": [
+    "Root manifest selects immutable profiles/configs, RPC carries no endpoint/path/credentials",
+    "Actual TLS principal/key comes from runner, session Begin precedes admit/helper prepare",
+    "Connected accepted only with role-specific receipt evidence",
+    "Finish cannot declare NotStarted after a durable helper attempt",
+    "Rust export single-stop is explicitly Unsupported in the Controls fast path; per-incoming stop remains independent",
+    "Actual cleanup is awaited by jobs after operation/report errors, and soft backend deadline without cleanup Some is nonterminal",
+    "Recovery proof checks kind/correlation/device/owner UID and optional exact helper resource ID; Unknown is not success"
+  ],
+  "limits": [
+    "Static source review, not new execution evidence",
+    "Root is compiling/modifying owned code concurrently; hashes identify reviewed snapshot rather than a final freeze",
+    "No claim of complete shared foreground extraction, heartbeat/RTT, hardware acceptance or crash FD revocation"
+  ]
+}

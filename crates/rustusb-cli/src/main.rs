@@ -1,5 +1,8 @@
 //! Unprivileged RustUSB frontend. Mutations use the common authenticated local service.
 
+#[cfg(all(feature = "secure-transport", target_os = "linux"))]
+mod agent;
+
 #[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod event_output;
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
@@ -57,6 +60,15 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Run or query the nonroot shared application service using fixed profiles.
+    #[cfg(all(feature = "secure-transport", target_os = "linux"))]
+    Agent {
+        /// Root-managed public manifest; callers cannot override profile endpoints.
+        #[arg(long)]
+        config: PathBuf,
+        #[command(subcommand)]
+        command: agent::Command,
+    },
     /// Serve configured devices with mandatory mutual TLS and per-device authorization.
     #[cfg(feature = "secure-transport")]
     SecureServer {
@@ -261,6 +273,8 @@ async fn invoke(cli: &Cli, req: Request) -> Result<()> {
 
 async fn run(cli: Cli) -> Result<()> {
     match &cli.command {
+        #[cfg(all(feature = "secure-transport", target_os = "linux"))]
+        Command::Agent { config, command } => agent::run(config.clone(), command.clone()).await,
         #[cfg(feature = "secure-transport")]
         Command::SecureServer {
             config,
@@ -544,6 +558,11 @@ async fn main() -> ExitCode {
         return ExitCode::FAILURE;
     }
     let owns_signal_cleanup = match &cli.command {
+        #[cfg(all(feature = "secure-transport", target_os = "linux"))]
+        Command::Agent {
+            command: agent::Command::Run,
+            ..
+        } => true,
         #[cfg(feature = "rust-backend")]
         Command::VirtualServer { .. } => true,
         #[cfg(feature = "physical-nusb")]

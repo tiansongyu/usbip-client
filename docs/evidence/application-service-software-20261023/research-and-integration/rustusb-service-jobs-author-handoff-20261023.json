@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "baseline_head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "result": "source_ready_uncompiled",
+  "files": [
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "bytes": 5223,
+      "sha256": "e7c84f12191dee01d07530b6ff6bcdb233daf3a3bd0531ebfd81b7f339450671"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/io.rs",
+      "bytes": 4446,
+      "sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "bytes": 4896,
+      "sha256": "d66dfd6a9d20374e20dda51388122a9cd3e8e8aa6de0614ffa6cd1cd84a59784"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 18385,
+      "sha256": "a8890d72c1a70088ad443ed9b5c7c4acfd2b4c22f4109cd51e7cd660376f14a3"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "bytes": 21702,
+      "sha256": "901918e3d9f85e34585c6330931f5664dc963003ecbf13af3a87aea65073c757"
+    }
+  ],
+  "checks": {
+    "single_file_rustfmt_check": "PASS",
+    "forbidden_unsafe_panic_unwrap_expect_scan": "no_matches",
+    "cargo": "not_run_by_author",
+    "qemu": "not_run_by_author"
+  },
+  "implemented": [
+    "direct Client owned Native helper relay",
+    "direct Native TLS server export/stub owners",
+    "managed Rust virtual/USBFS admission monitor bridge",
+    "independent helper correlation per capability",
+    "per incoming session stop and byte samples",
+    "actual cleanup awaited after operation or persistence failure"
+  ],
+  "boundaries": [
+    "old foreground runners unchanged; shared extraction not claimed",
+    "Rust Export single-stop unsupported; job stop closes owned server",
+    "reserved helper attempt with no returned handle remains unconfirmed",
+    "raw-v1 heartbeat/RTT unavailable",
+    "new source/tests have not been compiled/executed",
+    "no host USB/module/network operation"
+  ]
+}

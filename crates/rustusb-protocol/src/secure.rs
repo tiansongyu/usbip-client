@@ -218,7 +218,8 @@ pub async fn write_catalog_mapping(
 }
 
 /// Matched catalog entry from the authenticated mapping and standard descriptor response.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CatalogDevice {
     /// Exact backend-qualified authorization key.
     pub device_key: DeviceKey,

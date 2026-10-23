@@ -709,3 +709,6 @@ async fn production_secure_client_codecs_preserve_the_imported_tls_stream() -> T
     handle.shutdown().await?;
     Ok(())
 }
+
+#[path = "server_managed_tests.rs"]
+mod managed_tests;

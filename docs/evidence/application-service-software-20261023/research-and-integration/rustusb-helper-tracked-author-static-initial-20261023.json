@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "task": "tracked helper lifecycle author handoff",
+  "time_utc": "2026-10-23T15:02:50.382004+00:00",
+  "head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "source_files": [
+    {
+      "path": "crates/rustusb-daemon/src/broker.rs",
+      "bytes": 15906,
+      "sha256": "8104fe723fb8688ae559eda2c1a2b9631ff8250028b5a86d0d09124cf746c435"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/journal.rs",
+      "bytes": 65556,
+      "sha256": "047390d737c91da59ae6fba45262ee32e7fa4c6823a96dda5dc054d17b127995"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/journal_tracked_tests.rs",
+      "bytes": 16531,
+      "sha256": "13effe1d046a18958d050f5d85b26e73356e166b2bd2b80b660a23c58c43547b"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "bytes": 40648,
+      "sha256": "14aea05b3fe18a67ee5448531cf89811d87de9160e13a97e8e989d8350f27eda"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "bytes": 85131,
+      "sha256": "fc7d2aec9701e80f6ece4cf2c383924bab3e4b89d4e9c4bb5b75bdca091760b4"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_channel.rs",
+      "bytes": 29317,
+      "sha256": "bd3a3b110f831336a7f7a97cb0ba27426eba2bf33dd228f9679e34ea9ba96f45"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_export.rs",
+      "bytes": 33218,
+      "sha256": "3dc9e4afff7e0a95efc010c26fab2b065be7288d9f59bff0675dbebd4a8d31c7"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_state.rs",
+      "bytes": 38941,
+      "sha256": "e44b96f96aac1f16f15e0e819ead3e8c3078abba2a59197c2142aa6d8e7e463d"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_tracking.rs",
+      "bytes": 21482,
+      "sha256": "04b3911b27a37675d76a5e6dfa0d9e627a23420d7c536c68c20c79554ed7a183"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_tracking_tests.rs",
+      "bytes": 9340,
+      "sha256": "823aae2713000b33c1fd72e921c9815b6052ece2d1c16090d3bc4e575f3a7997"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "bytes": 15659,
+      "sha256": "6cc00541a5f172341dd2dbda4d4560a1d072e0dec3b5a1faa1d0ab24113fba5c"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical_recovery.rs",
+      "bytes": 12658,
+      "sha256": "6cccf9295727c1bb3a3277079c91ea4be9ad5ae8ab6a62e8da855788232a6af0"
+    },
+    {
+      "path": "crates/rustusb-native/src/channel.rs",
+      "bytes": 37612,
+      "sha256": "3d77ff555b39ac8a9e2098a22dfb0b8e219dba9355197cbf458f038dfbea9b95"
+    },
+    {
+      "path": "crates/rustusb-native/src/export_channel.rs",
+      "bytes": 26766,
+      "sha256": "95b3a25a27e6f73b98f29a57530c2f56079ec90a7f92dfb64e61d916e6d2aba6"
+    }
+  ],
+  "checks": [
+    {
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2024",
+        "--check",
+        "crates/rustusb-daemon/src/broker.rs",
+        "crates/rustusb-daemon/src/journal.rs",
+        "crates/rustusb-daemon/src/journal_tracked_tests.rs",
+        "crates/rustusb-daemon/src/lib.rs",
+        "crates/rustusb-daemon/src/linux.rs",
+        "crates/rustusb-daemon/src/native_channel.rs",
+        "crates/rustusb-daemon/src/native_export.rs",
+        "crates/rustusb-daemon/src/native_state.rs",
+        "crates/rustusb-daemon/src/native_tracking.rs",
+        "crates/rustusb-daemon/src/native_tracking_tests.rs",
+        "crates/rustusb-daemon/src/physical_lifecycle.rs",
+        "crates/rustusb-daemon/src/physical_recovery.rs",
+        "crates/rustusb-native/src/channel.rs",
+        "crates/rustusb-native/src/export_channel.rs"
+      ],
+      "exit_code": 1,
+      "stdout": "Diff in /home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/journal_tracked_tests.rs:1:\n fn correlation(number: u32) -> Result<BrokerCorrelation> {\n     Ok(BrokerCorrelation {\n\u001b[31m-        instance_id: rustusb_core::application::InstanceId::new(\"10000000-0000-0000-0000-000000000001\")?,\n\u001b(B\u001b[m\u001b[31m-        session_id: rustusb_core::application::SessionId::new(\"20000000-0000-0000-0000-000000000002\")?,\n\u001b(B\u001b[m\u001b[31m-        attempt_id: rustusb_core::application::AttemptId::new(format!(\"30000000-0000-0000-0000-{number:012x}\"))?,\n\u001b(B\u001b[m\u001b[32m+        instance_id: rustusb_core::application::InstanceId::new(\n\u001b(B\u001b[m\u001b[32m+            \"10000000-0000-0000-0000-000000000001\",\n\u001b(B\u001b[m\u001b[32m+        )?,\n\u001b(B\u001b[m\u001b[32m+        session_id: rustusb_core::application::SessionId::new(\n\u001b(B\u001b[m\u001b[32m+            \"20000000-0000-0000-0000-000000000002\",\n\u001b(B\u001b[m\u001b[32m+        )?,\n\u001b(B\u001b[m\u001b[32m+        attempt_id: rustusb_core::application::AttemptId::new(format!(\n\u001b(B\u001b[m\u001b[32m+            \"30000000-0000-0000-0000-{number:012x}\"\n\u001b(B\u001b[m\u001b[32m+        ))?,\n\u001b(B\u001b[m     })\n }\n \nDiff in /home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/journal_tracked_tests.rs:157:\n         assert!(store.reserve(repeated).is_err());\n         let mut invalid = tracked_record(3)?;\n         let mut aliases = correlation(3)?;\n\u001b[31m-        aliases.attempt_id = rustusb_core::application::AttemptId::new(aliases.instance_id.as_str())?;\n\u001b(B\u001b[m\u001b[32m+        aliases.attempt_id =\n\u001b(B\u001b[m\u001b[32m+            rustusb_core::application::AttemptId::new(aliases.instance_id.as_str())?;\n\u001b(B\u001b[m         invalid.correlation = Some(aliases);\n         assert!(store.reserve(invalid).is_err());\n         let mut root = tracked_record(3)?;\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "crates/rustusb-daemon/src/broker.rs",
+        "crates/rustusb-daemon/src/journal.rs",
+        "crates/rustusb-daemon/src/journal_tracked_tests.rs",
+        "crates/rustusb-daemon/src/lib.rs",
+        "crates/rustusb-daemon/src/linux.rs",
+        "crates/rustusb-daemon/src/native_channel.rs",
+        "crates/rustusb-daemon/src/native_export.rs",
+        "crates/rustusb-daemon/src/native_state.rs",
+        "crates/rustusb-daemon/src/native_tracking.rs",
+        "crates/rustusb-daemon/src/native_tracking_tests.rs",
+        "crates/rustusb-daemon/src/physical_lifecycle.rs",
+        "crates/rustusb-daemon/src/physical_recovery.rs",
+        "crates/rustusb-native/src/channel.rs",
+        "crates/rustusb-native/src/export_channel.rs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "check_count": 2,
+  "static_pass": false,
+  "authored_tests_not_executed": {
+    "native_tempdir_storage": 8,
+    "physical_tempdir_storage": 8,
+    "broker_scope_paging_ipc_shapes": 3
+  },
+  "apis": [
+    "prepare_native_import_tracked(socket,target,correlation)",
+    "prepare_native_export_tracked(socket,id,correlation)",
+    "NativeExportHandle::open_stub_tracked(correlation)",
+    "open_secure_physical_tracked(socket,id,correlation)",
+    "inspect_broker_operation(socket,kind,correlation)",
+    "broker_pending(socket,kind,after:Option<ResourceId>)"
+  ],
+  "getters": [
+    "NativeImportHandle::channel_id()->&str",
+    "NativeExportHandle::lease_id()->&str",
+    "NativeStubHandle::channel_id()->&str",
+    "NativeStubHandle::lease_id()->&str"
+  ],
+  "storage": {
+    "native": [
+      1,
+      2
+    ],
+    "physical": [
+      1,
+      2,
+      3
+    ],
+    "terminal_slots_per_store": 128,
+    "pending_page_max": 8,
+    "duplicate_namespace": "kind + owner UID + exact correlation, per store; application supplies fresh attempts per capability",
+    "old_untracked_schema_preserved": true,
+    "retirement_atomic_same_file": true,
+    "unknown_is_not_cleanup": true
+  },
+  "limits": [
+    "No Cargo, rustc, build, runtime tests, QEMU, or host USB operations executed by this agent.",
+    "No cross-store transaction or permanent exactly-once guarantee.",
+    "Root reconciliation permissions and USBFS EOF behavior are unchanged.",
+    "Typed Native cleanup proof wrappers preserve actual existing syscalls, generation checks and deadlines.",
+    "NativeExportRestored on a stub terminal is parent baseline reconciliation evidence, not a claimed old socket shutdown.",
+    "Current runtime/QEMU evidence belongs to earlier source; new tracked APIs still require root verification."
+  ]
+}

@@ -424,44 +424,17 @@ impl ServingBackend for PhysicalBackend {
         expected: Option<&DeviceKey>,
         access: &ConnectionAccess,
     ) -> Result<Self::Lease> {
-        let slot = self
-            .slots
-            .iter()
-            .find(|slot| slot.metadata.bus_id.as_str() == bus_id)
-            .ok_or_else(|| Error::InvalidInput("unknown physical device".into()))?
-            .clone();
-        let (ready, receipt) = oneshot::channel();
-        {
-            let mut tasks = self.tasks.lock().map_err(|_| {
-                Error::State("physical task lock is poisoned; device is quarantined".into())
-            })?;
-            let mut state = slot.lock()?;
-            access.require(&slot.key, expected)?;
-            tasks.check_supervisors()?;
-            if state.state == "gone" {
-                return Err(Error::InvalidInput(
-                    "physical generation is gone; request a new explicit grant".into(),
-                ));
-            }
-            if state.state != "available" {
-                return Err(Error::State(
-                    "physical device is owned, stale, or awaiting cleanup".into(),
-                ));
-            }
-            state.state = "claiming".into();
-            state.leased = true;
-            state.cleanup_verified = false;
-            drop(state);
-            let budget = self.budget.clone();
-            // The supervisor owns USB state even if IMPORT is cancelled. Its
-            // task is tracked so close can await its actual final return.
-            tasks.supervisors.0.spawn(async move {
-                worker::supervise(slot, budget, ready).await;
-            });
-        }
-        receipt
+        self.claim_attempt(bus_id, expected, access, None).await
+    }
+    async fn claim_managed(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+        terminal: tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>,
+    ) -> Result<Self::Lease> {
+        self.claim_attempt(bus_id, expected, access, Some(terminal))
             .await
-            .map_err(|_| Error::State("physical supervisor ended before claim receipt".into()))?
     }
     async fn settle_closed(&self) -> Result<()> {
         for slot in self.slots.iter() {
@@ -646,6 +619,81 @@ fn error_completion(status: i32) -> Completion {
         status,
         actual_length: 0,
         data: Vec::new(),
+    }
+}
+
+// A unique per-attempt witness: early validation failure touched no USB. Once
+// moved to the supervisor, only that worker may publish its actual outcome.
+struct ClaimCompletion(
+    Option<tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>>,
+);
+impl ClaimCompletion {
+    fn take(
+        &mut self,
+    ) -> Option<tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>>
+    {
+        self.0.take()
+    }
+}
+impl Drop for ClaimCompletion {
+    fn drop(&mut self) {
+        if let Some(sender) = self.0.take() {
+            sender.send_replace(Some(
+                rustusb_core::server_session::ServerCleanup::NotStarted,
+            ));
+        }
+    }
+}
+impl PhysicalBackend {
+    async fn claim_attempt(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+        terminal: Option<
+            tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>,
+        >,
+    ) -> Result<PhysicalLease> {
+        let mut terminal = ClaimCompletion(terminal);
+        let slot = self
+            .slots
+            .iter()
+            .find(|slot| slot.metadata.bus_id.as_str() == bus_id)
+            .ok_or_else(|| Error::InvalidInput("unknown physical device".into()))?
+            .clone();
+        let (ready, receipt) = oneshot::channel();
+        {
+            let mut tasks = self.tasks.lock().map_err(|_| {
+                Error::State("physical task lock is poisoned; device is quarantined".into())
+            })?;
+            let mut state = slot.lock()?;
+            access.require(&slot.key, expected)?;
+            tasks.check_supervisors()?;
+            if state.state == "gone" {
+                return Err(Error::InvalidInput(
+                    "physical generation is gone; request a new explicit grant".into(),
+                ));
+            }
+            if state.state != "available" {
+                return Err(Error::State(
+                    "physical device is owned, stale, or awaiting cleanup".into(),
+                ));
+            }
+            state.state = "claiming".into();
+            state.leased = true;
+            state.cleanup_verified = false;
+            drop(state);
+            let budget = self.budget.clone();
+            // The supervisor owns USB state even if IMPORT is cancelled. Its
+            // task is tracked so close can await its actual final return.
+            let terminal = terminal.take();
+            tasks.supervisors.0.spawn(async move {
+                worker::supervise(slot, budget, ready, terminal).await;
+            });
+        }
+        receipt
+            .await
+            .map_err(|_| Error::State("physical supervisor ended before claim receipt".into()))?
     }
 }
 

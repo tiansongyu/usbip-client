@@ -1,0 +1,156 @@
+{
+  "review": "independent read-only application service safety review",
+  "captured_utc": "2026-10-23T15:10:41.906420+00:00",
+  "head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "status": "NO_REMAINING_SOURCE_BLOCKER_IDENTIFIED_AFTER_REVIEWED_FIXES; NOT_RUNTIME_VALIDATION",
+  "source_snapshot": {
+    "crates/rustusb-service/src/runtime.rs": {
+      "sha256": "540fd383aa1c4ddf378c5260b9ebf54fa2a4bf6f9d7a0dde870391d18ab274dd",
+      "bytes": 40115
+    },
+    "crates/rustusb-service/src/ipc.rs": {
+      "sha256": "76fbae9f3728f0cf77feb1a13c7829ad457996d724e5bf70b37551156ef978de",
+      "bytes": 13307
+    },
+    "crates/rustusb-service/src/fs.rs": {
+      "sha256": "83315132168353c37421f0f1e1e2c4391316fcd6fd19810ece90bb51fa1b0829",
+      "bytes": 5556
+    },
+    "crates/rustusb-service/src/store.rs": {
+      "sha256": "0783cef9c8bd36b5bac8b160e1aa96ed6b38b571b6b542cc5bfae2639c9bc4a6",
+      "bytes": 16672
+    },
+    "crates/rustusb-service/src/config.rs": {
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd",
+      "bytes": 12508
+    },
+    "crates/rustusb-service/src/context.rs": {
+      "sha256": "03df42825292db4b3360f80daee87049648ce0f1cb9e22bce74dd0d3dc4f0a1e",
+      "bytes": 6695
+    },
+    "crates/rustusb-service/src/model.rs": {
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095",
+      "bytes": 8995
+    },
+    "crates/rustusb-service/src/rpc.rs": {
+      "sha256": "b9a78e9007bcb8573580c6bdd0cebf306396289ec79c9a9eb470a2cecdb4ee85",
+      "bytes": 5533
+    },
+    "crates/rustusb-cli/src/agent.rs": {
+      "sha256": "ae173a8de61cf6054f7882f402c3a1d2ba7b8daf503bba412c2c0790021be93d",
+      "bytes": 4952
+    },
+    "crates/rustusb-cli/src/main.rs": {
+      "sha256": "97467ee8f56142881ea9739f34942a077c371ae633d68866777ca3ec2efb0f56",
+      "bytes": 24992
+    },
+    "docs/research/application-service-design.md": {
+      "sha256": "39273075eda6204d213e53848b83803fc247b364a06450a9b1c118838402b943",
+      "bytes": 11772
+    },
+    "crates/rustusb-core/src/application.rs": {
+      "sha256": "c91d2889a9690a5eeb71525f198be44ad897296728baf1ce69653bb234b930a2",
+      "bytes": 9407
+    },
+    "crates/rustusb-core/src/lib.rs": {
+      "sha256": "f44d45dda77e99239747330825102001a7a970bd3cb1b92591d76c7c8f33ad42",
+      "bytes": 13405
+    }
+  },
+  "source_snapshot_scope": "Root is actively editing. Hashes identify this review snapshot, not a promised final freeze or executed build.",
+  "findings": [
+    {
+      "id": "R1a",
+      "severity": "must-fix",
+      "issue": "Runtime adopted unpruned candidate while Store committed a pruned clone, causing memory/disk divergence and unbounded retained runtime history.",
+      "resolution": "Observed root fix: Runtime::persist prunes and validates the same candidate before copying it to Store and adopting it after durable commit.",
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "line": 134
+    },
+    {
+      "id": "R1b",
+      "severity": "must-fix",
+      "issue": "Pruning oldest Finished job could orphan a retained session, making strict State::validate reject the next transaction. Concrete case: oldest finished job owns one retained verified session and 128 later finished jobs have none.",
+      "resolution": "Observed root fix: job pruning selects only Finished jobs with no retained session references.",
+      "path": "crates/rustusb-service/src/store.rs",
+      "line": 97
+    },
+    {
+      "id": "R2",
+      "severity": "must-fix",
+      "issue": "Fast stop authorization error returned before actor dispatch, yielding EOF and bypassing fixed error reply and denial audit for existing IDs.",
+      "resolution": "Observed root fix: fast stop errors do not escape; request reaches actor authorization/error/audit path, while successful authorized stop remains independent of a slow durable transaction.",
+      "path": "crates/rustusb-service/src/ipc.rs",
+      "line": 161
+    },
+    {
+      "id": "R3",
+      "severity": "contract mismatch",
+      "issue": "A previously evicted random request UUID was indistinguishable from a new Start, contradicting unconditional expired-ID rejection.",
+      "resolution": "Observed explicit RetryStart branch returns RequestExpired before any new intent or worker; CLI --retry requires --request-id. Ordinary Start remains an explicit new intent outside retained history.",
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "line": 453
+    },
+    {
+      "id": "R0",
+      "severity": "preexisting known fix",
+      "issue": "Verified cleanup following soft timeout Error needs recovery transition and audit rather than direct state assignment.",
+      "resolution": "Observed Finish transition Error->Recovering->Disconnected with intermediate audit, preserving actual final cleanup requirement.",
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "line": 877
+    }
+  ],
+  "nonblocking_boundaries": [
+    {
+      "id": "R4",
+      "issue": "Removing a historical profile from the current manifest makes its retained records unavailable through per-profile RPC, including root, although unresolved state remains persisted and is not falsely retired.",
+      "boundary": "Parent notified; keep a profile until coordination or use protected state diagnostics. No new historical-query API was implemented by this reviewer."
+    },
+    {
+      "id": "R5",
+      "issue": "Denied events use profile=None; the current profile-filtered Audit/Events RPC cannot return them.",
+      "boundary": "They are persisted and available in the protected state file; no global denial-history UI/RPC proof claimed."
+    },
+    "Audit is a bounded sequence history, not permanent archiving or complete Phase3 audit validation.",
+    "Heartbeat/RTT is unavailable in raw USB/IP v1; no synthetic health inference reviewed or claimed.",
+    "Individual Rust Export stop is intentionally unsupported; incoming session stop remains independently routed.",
+    "Reserved but unsent helper attempts may remain conservatively unconfirmed; this review does not reclassify them as recovered.",
+    "Legacy foreground commands remain separate adapters in this slice; same-runner extraction is not claimed."
+  ],
+  "reviewed_invariants": [
+    "Kernel SO_PEERCRED determines local UID; stop capability lookup independently authorizes exact current profile/action before setting any watch. Opaque IDs are not bearer authorization.",
+    "RPC schema rejects unknown fields, accepts no arbitrary path/endpoint/certificate/helper request, and uses 65536-byte frames, 16 accepted requests and bounded pages under five-second request deadline.",
+    "Client verifies protected directory chain, socket owner/mode/type and inode identity plus server peer UID; root-managed manifest fixes endpoint and credential configuration.",
+    "State/control leaves and regular files are descriptor-relative, NOFOLLOW, owner/mode/nlink checked; endpoint/data locks and before/after identity checks reject conflicting or replaced state.",
+    "Store commit uses bounded encoding, file fsync, rename and directory fsync before success; failed recording refuses new admissions while independent cooperative stop remains available.",
+    "Durable job/session/attempt intent precedes worker start or helper request acknowledgement; UI task cancellation does not own or abort worker JoinSet tasks.",
+    "Runtime shutdown requests stop and waits for actual worker/recovery task return; request task lifetime is independent of device ownership.",
+    "Root recovery accepts only matching schema/kind/correlation/device key/broker UID/resource ID; Unknown or absent proof does not retire old state. Per-attempt proof kind remains visible in retained records.",
+    "CLI agent run owns signal handling and awaits service cleanup, including repeated signals; startup blocking load is joined on cancellation."
+  ],
+  "suggested_targeted_tests": [
+    "Canonical state equality across runtime, committed store, and restart after more than 128 terminals and 256 requests.",
+    "Oldest finished job with one retained session and 128 later sessionless jobs remains referentially valid after pruning.",
+    "Unauthorized actual UDS Stop returns fixed Permission response, records Denied, and does not set stop flags.",
+    "RetryStart unknown/expired ID creates no job/session/worker; retained exact UID/profile retry returns original job; cross-UID/profile reuse denied.",
+    "Per-session stop under slow durable recording still reaches owner while unrelated session transfers continue.",
+    "Actual cleanup after soft Error produces Recovering then Disconnected and preserves operation-vs-cleanup evidence.",
+    "Kernel helper exact terminal proof permits old attempt reconciliation; mismatched kind/key/UID/correlation/resource and Unknown never retire it."
+  ],
+  "verification_boundary": {
+    "executed": [
+      "read-only source inspection",
+      "source hashes and static line references"
+    ],
+    "not_executed": [
+      "Cargo",
+      "Clippy",
+      "runtime tests",
+      "QEMU",
+      "USB operations",
+      "repository edits",
+      "commits",
+      "pushes"
+    ]
+  }
+}

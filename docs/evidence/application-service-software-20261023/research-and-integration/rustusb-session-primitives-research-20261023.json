@@ -1,0 +1,35 @@
+{
+  "scope": "Exact existing Cargo.lock dependency source for service lifecycle design; no new dependency version chosen",
+  "versions": {
+    "tokio": "1.54.1",
+    "rustix": "1.1.5"
+  },
+  "sources": [
+    {
+      "path": "/home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/src/task/join_set.rs",
+      "bytes": 28662,
+      "sha256": "421b2f5af3e877a85fdd8920688f10e05e62cd75d2149c7db997277ffbf3074e"
+    },
+    {
+      "path": "/home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/src/net/unix/stream.rs",
+      "bytes": 42594,
+      "sha256": "49241a823e4af7be9bb71b589fcef2d436ccd667ae56e7fd4e0de02b4973db6a"
+    },
+    {
+      "path": "/home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.5/src/fs/fd.rs",
+      "bytes": 10487,
+      "sha256": "cdeddb69610f9bab80cefd74449dce842d7f1c16123958bbd7ea0a3520fdc7bc"
+    }
+  ],
+  "official_docs_attempts": [
+    "https://docs.rs/tokio/1.54.1/tokio/task/struct.JoinSet.html",
+    "https://docs.rs/tokio/1.54.1/tokio/net/struct.UnixStream.html",
+    "https://docs.rs/rustix/1.1.5/rustix/fs/fn.flock.html"
+  ],
+  "web_result": "three official versioned docs URLs inaccessible in web tool; exact installed official crate source used instead",
+  "facts": [
+    "JoinSet::shutdown calls abort_all; it is not cooperative resource completion. Owner supervisor must signal and join_next.",
+    "UnixStream::peer_cred returns kernel-observed UCred; public request fields cannot authorize UID.",
+    "rustix safe flock API operates on AsFd; filesystem work stays in owned blocking tasks."
+  ]
+}

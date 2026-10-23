@@ -95,6 +95,24 @@ pub fn load_client(path: &Path) -> Result<LoadedClientConfig> {
     }
 }
 
+/// Read a bounded root-owned public JSON document under protected ancestors.
+///
+/// This reads no private credentials and does not require the caller to be the
+/// broker UID. It reuses the trusted regular-file, hardlink, symlink and changing
+/// file checks used for TLS configuration. Callers must validate their own schema.
+/// Run this synchronous filesystem operation off an asynchronous worker.
+pub fn read_root_document(path: &Path) -> Result<Vec<u8>> {
+    #[cfg(target_os = "linux")]
+    {
+        platform::read_root_document(path)
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = path;
+        Err(crate::Error::UnsupportedConfigurationPlatform)
+    }
+}
+
 #[cfg(target_os = "linux")]
 mod platform {
     use super::*;
@@ -364,6 +382,16 @@ mod platform {
             context,
         )?;
         Ok((roots, DerIdentity::new(chain, key)?))
+    }
+
+    pub(super) fn read_root_document(path: &Path) -> Result<Vec<u8>> {
+        read_file(
+            path,
+            Kind::Public,
+            MAX_CONFIG,
+            "public document",
+            &Context::system(),
+        )
     }
 
     fn load_server_inner(path: &Path, context: &Context) -> Result<LoadedServerConfig> {

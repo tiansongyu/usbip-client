@@ -1165,6 +1165,9 @@ pub(super) async fn supervise(
     slot: Arc<Slot>,
     budget: Arc<Semaphore>,
     ready: oneshot::Sender<Result<PhysicalLease>>,
+    terminal: Option<
+        tokio::sync::watch::Sender<Option<rustusb_core::server_session::ServerCleanup>>,
+    >,
 ) {
     let (disconnect, disconnect_receipt) = oneshot::channel();
     let signals = Arc::new(Signals {
@@ -1222,6 +1225,11 @@ pub(super) async fn supervise(
         });
         watchdogs.abort_all();
         while watchdogs.join_next().await.is_some() {}
+        if let Some(terminal) = &terminal {
+            terminal.send_replace(Some(
+                rustusb_core::server_session::ServerCleanup::NotStarted,
+            ));
+        }
         let _ = ready.send(Err(Error::InvalidInput(
             "physical generation is gone before IMPORT".into(),
         )));
@@ -1234,6 +1242,11 @@ pub(super) async fn supervise(
         });
         watchdogs.abort_all();
         while watchdogs.join_next().await.is_some() {}
+        if let Some(terminal) = &terminal {
+            terminal.send_replace(Some(
+                rustusb_core::server_session::ServerCleanup::Unconfirmed,
+            ));
+        }
         let _ = ready.send(Err(error));
         return;
     }
@@ -1421,6 +1434,13 @@ pub(super) async fn supervise(
     } else {
         result
     };
+    if let Some(terminal) = terminal {
+        terminal.send_replace(Some(if result.is_ok() {
+            rustusb_core::server_session::ServerCleanup::Verified
+        } else {
+            rustusb_core::server_session::ServerCleanup::Unconfirmed
+        }));
+    }
     let _ = cleanup.send(result);
 }
 

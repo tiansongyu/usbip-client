@@ -35,6 +35,7 @@ flowchart LR
 | rustusb-linux | sysfs 设备/接口/端点扫描、指纹、能力与存储检查 | core、sha2；阻塞读取在调用边界隔离 |
 | rustusb-native | 固定 usbip 命令、内核状态、强代际与匿名kernel通道 | core、protocol、serde、Tokio、tracing、rustix |
 | rustusb-daemon | root helper、root 管理的策略、OS 身份和 IPC；客户端库 | 前述 crate |
+| rustusb-service | 非root job/session owner、profile/action授权、本机应用RPC、持久状态/基础audit及精确Root证明协调 | core、protocol、daemon、native、transport、Tokio；Rust engine可选 |
 | rustusb-cli | clap 命令与日志 | 前述公开服务接口，不直接写 sysfs |
 | rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、transport、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
 | rustusb-transport | 有界mTLS stream、证书principal/device ACL、可信配置；接入安全broker及USB/IP engine | core、rustls、tokio-rustls、Tokio、sha2、serde、serde_json、rustix、thiserror；rcgen仅测试 |
@@ -85,7 +86,7 @@ Bus ID 是当前寻址，不是持久身份。持久候选 ID 将 VID/PID、可�
 
 ## Phase 1 实际接口与截止
 
-可编译契约位于 `rustusb-core`；`NativeBackend` 实现 ExportBackend/ImportBackend，并提供 `attach_session` 返回已验证端口、`detach_session` 在同一锁内复核身份。`rustusb-daemon::Request` 是受控特权接口，`request` 是普通前端的共享入口；没有为概念名额外建立空 SessionManager/PrivilegedOperations trait。helper 内部管理已认领会话，`sessions` 返回内核快照和是否受管。
+可编译领域契约位于 `rustusb-core`；`NativeBackend` 实现 ExportBackend/ImportBackend，并提供 `attach_session` 返回已验证端口、`detach_session` 在同一锁内复核身份。`rustusb-daemon::Request` 是受控特权接口，旧`request`入口及helper的`sessions`保持内核快照/受管状态语义。新`rustusb-service`直接拥有安全job/设备session及清理树，普通operator通过固定profile的应用RPC访问，不能发送任意helper Request。Rust managed IMPORT先获得应用持久准入，再真实claim；Native每能力独立tracked attempt，helper退休与terminal proof同原子事务。没有为概念名建立空trait，旧前台runner统一提取仍待做，详见[实施契约](research/application-service-design.md)。
 
 | 操作 | 当前截止/资源边界 | 超时语义 |
 | --- | --- | --- |

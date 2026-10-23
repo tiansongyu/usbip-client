@@ -119,24 +119,27 @@ impl Default for SecureServerConfig {
 enum ListenerMode {
     Legacy(ServerConfig),
     Tls(TlsServer),
+    ManagedTls(TlsServer, crate::monitor::MonitorWriter),
 }
 
 impl ListenerMode {
     fn permits(&self, peer: IpAddr) -> bool {
         match self {
             Self::Legacy(config) => config.permits(peer),
-            Self::Tls(_) => true,
+            Self::Tls(_) | Self::ManagedTls(_, _) => true,
         }
     }
 }
 
 /// Owns the listening task and its entire connection/reader task tree.
-/// Dropping this handle aborts that tree; `shutdown` additionally awaits cleanup.
+/// `shutdown` cooperatively joins managed sessions and awaits actual cleanup.
+/// Drop requests managed stop without claiming completion; legacy Drop aborts its tree.
 #[derive(Debug)]
 pub struct ServerHandle {
     address: SocketAddr,
     stop: Option<oneshot::Sender<()>>,
     task: Option<JoinHandle<Result<()>>>,
+    monitor: Option<crate::monitor::MonitorWriter>,
 }
 
 impl ServerHandle {
@@ -175,6 +178,45 @@ impl ServerHandle {
         Self::bind_tls_backend(config, backend, tls).await
     }
 
+    /// Serve virtual profiles with pre-claim durable application admission and per-session control.
+    /// Create and retain a monitor clone before binding; no callback is awaited while holding a lease.
+    pub async fn bind_managed_tls(
+        config: SecureServerConfig,
+        backend: VirtualBackend,
+        tls: TlsServer,
+        monitor: crate::ServerMonitor,
+    ) -> Result<Self> {
+        Self::bind_listener(
+            config.listen,
+            ListenerMode::ManagedTls(tls, monitor.writer()),
+            backend,
+        )
+        .await
+    }
+
+    /// Serve explicitly granted physical devices with managed admission and actual cleanup observations.
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    pub async fn bind_physical_managed_tls(
+        config: SecureServerConfig,
+        backend: crate::physical::PhysicalBackend,
+        tls: TlsServer,
+        monitor: crate::ServerMonitor,
+    ) -> Result<Self> {
+        Self::bind_listener(
+            config.listen,
+            ListenerMode::ManagedTls(tls, monitor.writer()),
+            backend,
+        )
+        .await
+    }
+
+    /// Borrow a new observation handle if this is a managed server whose observer is still alive.
+    pub fn monitor(&self) -> Option<crate::ServerMonitor> {
+        self.monitor
+            .as_ref()
+            .and_then(crate::monitor::MonitorWriter::observer)
+    }
+
     async fn bind_backend<B: ServingBackend>(config: ServerConfig, backend: B) -> Result<Self> {
         config.validate()?;
         Self::bind_listener(config.listen, ListenerMode::Legacy(config), backend).await
@@ -195,12 +237,20 @@ impl ServerHandle {
     ) -> Result<Self> {
         let listener = TcpListener::bind(address).await?;
         let address = listener.local_addr()?;
+        let monitor = match &mode {
+            ListenerMode::ManagedTls(_, monitor) => {
+                monitor.attach()?;
+                Some(monitor.clone())
+            }
+            _ => None,
+        };
         let (stop, receiver) = oneshot::channel();
         let task = tokio::spawn(listen(listener, mode, backend, receiver));
         Ok(Self {
             address,
             stop: Some(stop),
             task: Some(task),
+            monitor,
         })
     }
 
@@ -230,7 +280,14 @@ impl Drop for ServerHandle {
             let _ = stop.send(());
         }
         if let Some(task) = self.task.take() {
-            task.abort();
+            if let Some(monitor) = &self.monitor {
+                monitor.stop_all();
+                // The owned listener remains alive to join actual cleanup. Drop
+                // requests shutdown; it cannot manufacture a cleanup receipt.
+                drop(task);
+            } else {
+                task.abort();
+            }
         }
     }
 }
@@ -243,9 +300,22 @@ async fn listen<B: ServingBackend>(
 ) -> Result<()> {
     let limit = std::sync::Arc::new(Semaphore::new(MAX_CONNECTIONS));
     let mut connections = JoinSet::new();
+    let monitor = match &mode {
+        ListenerMode::ManagedTls(_, monitor) => Some(monitor.clone()),
+        _ => None,
+    };
+    let mut observed_stop = monitor
+        .as_ref()
+        .map(crate::monitor::MonitorWriter::stopping);
     let outcome = loop {
         tokio::select! {
             _ = &mut stop => break Ok(()),
+            _ = async {
+                match &mut observed_stop {
+                    Some(receiver) => crate::monitor::server_stopped(receiver).await,
+                    None => std::future::pending().await,
+                }
+            } => break Ok(()),
             accepted = listener.accept() => {
                 let (stream, peer) = match accepted {
                     Ok(connection) => connection,
@@ -273,7 +343,11 @@ async fn listen<B: ServingBackend>(
         }
     };
     drop(listener);
-    connections.abort_all();
+    if let Some(monitor) = &monitor {
+        monitor.stop_all();
+    } else {
+        connections.abort_all();
+    }
     while connections.join_next().await.is_some() {}
     tokio::time::timeout(CLEANUP_DEADLINE, backend.settle_closed())
         .await
@@ -285,7 +359,10 @@ async fn listen<B: ServingBackend>(
     outcome
 }
 
-async fn write_frame(writer: &mut (impl AsyncWrite + Unpin), frame: &[u8]) -> Result<()> {
+pub(crate) async fn write_frame(
+    writer: &mut (impl AsyncWrite + Unpin),
+    frame: &[u8],
+) -> Result<()> {
     tokio::time::timeout(wire::FRAME_DEADLINE, async {
         writer.write_all(frame).await?;
         writer.flush().await?;
@@ -377,6 +454,9 @@ async fn accepted_connection<B: ServingBackend>(
     stream.set_nodelay(true)?;
     match mode {
         ListenerMode::Legacy(_) => connection(stream, backend, ConnectionAccess::Legacy).await,
+        ListenerMode::ManagedTls(tls, monitor) => {
+            crate::managed::accepted(stream, backend, tls, monitor).await
+        }
         ListenerMode::Tls(tls) => {
             let stream = tls.accept(stream).await.map_err(|error| match error {
                 rustusb_transport::Error::Timeout => Error::Timeout("mutual TLS handshake".into()),
@@ -428,7 +508,7 @@ where
     result
 }
 
-async fn imported_connection<L: SessionLease, R: AsyncRead + Unpin>(
+pub(crate) async fn imported_connection<L: SessionLease, R: AsyncRead + Unpin>(
     lease: &mut L,
     mut reader: R,
     writer: &mut (impl AsyncWrite + Unpin),

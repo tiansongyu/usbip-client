@@ -1,0 +1,124 @@
++ set -euo pipefail
+++ dirname scripts/check.sh
++ cd scripts/..
++ cargo fmt --all -- --check
++ cargo clippy --workspace --all-targets --locked -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
++ cargo test --workspace --locked
+   Compiling rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+   Compiling rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+   Compiling rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+   Compiling rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.25s
+     Running unittests src/main.rs (target/debug/deps/rustusb-56a176e08a7b6318)
+
+running 1 test
+test tests::cli_schema_and_input_validation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+
+running 6 tests
+test application::tests::correlation_and_wire_identities_are_strict ... ok
+test device_key::tests::canonical_namespaces_round_trip_and_remain_distinct ... ok
+test application::tests::unknown_is_not_a_cleanup_success_receipt ... ok
+test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+test device_key::tests::untrusted_keys_cannot_alias_profiles_or_temporary_addresses ... ok
+test tests::validate_external_identifiers_and_serde ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-a49610c265f40d69)
+
+running 44 tests
+test broker::tests::pending_page_is_sorted_bounded_and_cursor_is_only_a_continuation ... ok
+test broker::tests::retired_import_scope_still_requires_original_logical_server_and_current_pool ... ok
+test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+test broker::tests::tracked_and_old_ipc_shapes_are_separate_and_query_echo_is_typed ... ok
+test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+test linux::tests::early_uid_refusal_survives_a_failed_status_request_write ... ok
+test linux::tests::failed_request_write_cannot_be_replaced_by_invalid_or_success_response ... ok
+test native_channel::tests::queued_commit_observes_eof_before_lock_or_mutation ... ok
+test native_channel::tests::stopped_helper_wins_even_when_mutation_lock_is_free ... ok
+test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+test native_channel::tests::dropped_handle_commands_close_control_and_invalidate ... ok
+test native_export::tests::dropped_export_handle_closes_control_without_claiming_cleanup ... ok
+test native_state::tests::published_registration_and_actual_export_phases_remain_distinct ... ok
+test native_export::tests::cancelled_stub_commit_consumes_reply_before_close ... ok
+test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+test tests::command_output_is_not_exposed ... ok
+test secure_policy_tests::secure_role_is_separate_and_pools_cannot_bypass_it ... ok
+test tests::recovery_policy_requires_explicit_unique_bounded_physical_subset ... ok
+test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+test tests::native_secure_commands_have_strict_bounded_wire_shapes ... ok
+test native_channel::tests::cancelled_commit_waiter_cannot_consume_close_response ... ok
+test native_state::tracking_tests::capacity_reserves_active_slots_and_only_admission_evicts_oldest_terminal ... FAILED
+test tests::physical_policy_is_separate_bounded_and_backward_compatible ... ok
+test native_state::tracking_tests::failure_before_and_after_rename_never_acknowledges_lost_proof ... FAILED
+test native_state::tracking_tests::new_format_missing_correlation_and_legacy_tracking_field_are_rejected ... FAILED
+test native_state::tracking_tests::legacy_bytes_stay_v1_then_tracked_migration_keeps_original_owner_and_phase ... FAILED
+test native_state::tracking_tests::terminal_is_atomic_retained_after_reopen_and_scoped_by_kind_uid ... FAILED
+test native_state::tracking_tests::stub_proof_and_parent_occupancy_change_in_one_commit ... FAILED
+test native_state::tracking_tests::wrong_proof_or_duplicate_attempt_never_removes_active_record ... FAILED
+test native_state::tracking_tests::verified_cleanup_proof_survives_original_operation_eof_error ... FAILED
+test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+test native_state::tests::journal_lock_and_same_bytes_identity_are_enforced_without_usb ... ok
+test native_state::tests::persisted_prepared_channel_blocks_new_grants_after_restart ... ok
+test native_state::tests::export_registration_survives_restart_and_blocks_adoption_without_usb ... ok
+test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+test native_state::tests::pending_pages_are_small_stable_summaries_and_validate_cursors ... ok
+
+failures:
+
+---- native_state::tracking_tests::capacity_reserves_active_slots_and_only_admission_evicts_oldest_terminal stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::failure_before_and_after_rename_never_acknowledges_lost_proof stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::new_format_missing_correlation_and_legacy_tracking_field_are_rejected stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::legacy_bytes_stay_v1_then_tracked_migration_keeps_original_owner_and_phase stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::terminal_is_atomic_retained_after_reopen_and_scoped_by_kind_uid stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::stub_proof_and_parent_occupancy_change_in_one_commit stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::wrong_proof_or_duplicate_attempt_never_removes_active_record stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+---- native_state::tracking_tests::verified_cleanup_proof_survives_original_operation_eof_error stdout ----
+Error: Permission("Native channel journal requires protected, owner-controlled directories")
+
+
+failures:
+    native_state::tracking_tests::capacity_reserves_active_slots_and_only_admission_evicts_oldest_terminal
+    native_state::tracking_tests::failure_before_and_after_rename_never_acknowledges_lost_proof
+    native_state::tracking_tests::legacy_bytes_stay_v1_then_tracked_migration_keeps_original_owner_and_phase
+    native_state::tracking_tests::new_format_missing_correlation_and_legacy_tracking_field_are_rejected
+    native_state::tracking_tests::stub_proof_and_parent_occupancy_change_in_one_commit
+    native_state::tracking_tests::terminal_is_atomic_retained_after_reopen_and_scoped_by_kind_uid
+    native_state::tracking_tests::verified_cleanup_proof_survives_original_operation_eof_error
+    native_state::tracking_tests::wrong_proof_or_duplicate_attempt_never_removes_active_record
+
+test result: FAILED. 36 passed; 8 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p rustusb-daemon --lib`

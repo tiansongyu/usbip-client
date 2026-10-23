@@ -1,0 +1,33 @@
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+error: enclosing `Ok` and `?` operator are unneeded
+  --> crates/rustusb-rust-backend/src/server_managed_tests.rs:29:5
+   |
+29 | /     Ok(tokio::time::timeout(Duration::from_secs(2), async {
+30 | |         loop {
+31 | |             if let Some(session) = monitor.snapshot()?.sessions.into_iter().find(&predicate) {
+32 | |                 return Ok::<_, Box<dyn std::error::Error + Send + Sync>>(session);
+...  |
+36 | |     })
+37 | |     .await??)
+   | |_____________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#needless_question_mark
+   = note: `-D clippy::needless-question-mark` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_question_mark)]`
+help: remove the enclosing `Ok` and `?` operator
+   |
+29 ~     tokio::time::timeout(Duration::from_secs(2), async {
+30 |         loop {
+...
+36 |     })
+37 ~     .await?
+   |
+
+error: could not compile `rustusb-rust-backend` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

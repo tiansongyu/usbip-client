@@ -421,3 +421,13 @@
 - 英文README/中文入口、展示页及安全/架构/路线图/兼容性同步实测范围，旧Native图明确legacy；全局readme-site四文件仍等原安装且发现symlink有效。15份维护文件、303本地/GitHub映射链接、28表格及SVG经文档复核，修正五个历史措辞/目录独立连接等一致性点；站点128检查和JS语法通过。CUA本地1280/375的DOM无横向overflow、手机图切换及新版文案可读、console无warn/error；两截图接口不可用，不称本轮pixel/键盘/noJS/reduced-motion重验。精确b83c931软件CI39955861064四job及Pages39955860984均success，仅记后续status不重计f955的详细412。123软件输入仍保持；真实G1/G2、ISO/跨配置/崩溃与完整Phase3及后续阶段继续未完成，原完整goal保持active。
 
 - 最终内容与1518运行/复核原件、9文档验证原件逐original/bytes/SHA/staged blob核后提交18907f1并正常push；125 QEMU输入仍逐b83c931字节相同。精确18907f1软件CI39959240032四job全部completed/success，Pages39959240010 check/deploy均success；线上HTML/CSS/JS/三SVG六资源HTTPS200、逐18907f1字节一致。CUA线上实际412/6/12文案与安全guide链接可见、图已加载、console无warn/error；这是DOM确认而非pixel截图。全局skill四文件及发现symlink最终保持，临时本地预览已关闭。八份发布回执另行归档；最后仅提交该发布记录，不重归属软件/QEMU/详细CI版本，完整原目标继续active。
+
+### 2026-10-23：共享应用服务、独立会话控制与持久清理证明（实施中）
+
+- 从clean `8e6baf5`继续完整原目标；重新读取原始需求、开发skill、当前日志与实际安全runner。先写`docs/research/application-service-design.md`，再实施纯core IDs/事实DTO、helper tracked与原子terminal、backend managed admission/定向stop，以及非root应用服务。实际job由库直接拥有，不启动CLI子进程。前台命令统一提取另行验收；本轮不宣称消除全部重复。
+- 采用锁定Tokio1.54.1/rustix1.1.5实际官方crate源码；JoinSet shutdown会abort，因此owner supervisor必须合作stop并join。raw USB/IP v1不插ping，RTT/heartbeat仍无值；基础有界审计不等同永久归档/日志轮转，原完整Phase3及硬件G1/G2不因新API而完成。本节尚无本轮软件或QEMU通过结果。
+
+- 三路并行实施后统一整合：真实service runner直接持有client/Native/virtual/USBFS任务；Rust managed monitor先持久admission再claim，独立attempt完成witness不以全局settle代替；helper同事务保存tracked terminal，旧schema保持严格迁移。源审发现canonical裁剪内存/磁盘分叉、Finished父job孤儿引用、fast-stop拒绝早EOF无audit和过期retry语义四项，修复后补六项真实临时FS回归。容量准入上限1MiB/总2MiB预留完成空间；写前容量拒绝保持healthy。Error后的真正cleanup经Recovering审计，operation与cleanup独立。
+- 首次cargo check暴露trait/inherent claim同名解析，改为明确ServingBackend调用；第二次暴露catalog响应缺Deserialize及unused import，补纯DTO严格decoder后第三次check通过。Clippy依次修core测试serde错误映射、测试needless question mark及五处collapsible if，default和all-features均通过。首完整软件gate在默认daemon新8个fixture失败（umask0002使临时祖先group writable），150输入前后保持、原失败保留；仅给测试私有root显式0700，不放宽产品目录验证。daemon/service all-features定向实测随后通过；第二完整gate进行中。尚未运行新agent QEMU。
+
+- 第二完整`scripts/check.sh` exit0：default196/all-features279/vendor20，共495次测试、39个result，零失败忽略；150选定输入前后SHA保持，fmt/两Clippy/两release/两rustdoc全部通过。Native-only CLI的dependency tree及`cargo check --features secure-transport`另行通过，确认有service而无Rust engine/nusb/rusb，不重复计入495。49份研究/交接/检查原件归档`docs/evidence/application-service-software-20261023`；首gate变化的3个fixture源码从仅反转chmod改动恢复，逐首run SHA精确匹配，明确标作reconstructed而非伪称原运行现场拷贝。先提交helper/Core基础`cdd14ed`，随后提交应用owner/monitor与软件证据。

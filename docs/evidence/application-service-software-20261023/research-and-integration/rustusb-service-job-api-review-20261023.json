@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "status": "READ_ONLY_PROPOSED_API_ADDENDUM",
+  "head": "8e6baf5ab64a42f6698f15c8928dcdd6591e4570",
+  "report": {
+    "path": "/tmp/rustusb-service-job-api-review-20261023.md",
+    "length": 10517,
+    "sha256": "d1b00a1bf7a80f402c54039b53c768f1d281e2bdc88f7eec30473710e62a3d2b"
+  },
+  "decision_recommendation": "Backend-owned bounded monitor/snapshot/watch/disconnect; no arbitrary async observer callback or backend-to-service dependency. Real runner extraction into root-chosen rustusb-service; foreground adapters preserve original wire/event/signal/backpressure contracts.",
+  "cross_review": "Aligned with journal_integration_review on backend authority, ImportStarted vs flush accepted vs actual cleanup, no false client enumeration, and claim cancellation ownership.",
+  "repository_writes": false,
+  "executed": "Read-only code/hash parsing only; no Cargo/CLI/QEMU/USB."
+}
