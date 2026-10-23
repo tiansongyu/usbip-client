@@ -1,0 +1,64 @@
+    Updating crates.io index
+     Locking 9 packages to latest Rust 1.97 compatible versions
+      Adding atomic-waker v1.1.2
+      Adding equivalent v1.0.3
+      Adding fnv v1.0.7
+      Adding futures-sink v0.3.34
+      Adding h2 v0.4.20
+      Adding hashbrown v0.17.1
+      Adding http v1.5.0
+      Adding indexmap v2.14.2
+      Adding tokio-util v0.7.20
+ Downloading crates ...
+  Downloaded equivalent v1.0.3
+  Downloaded tokio-util v0.7.20
+   Compiling futures-sink v0.3.34
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling atomic-waker v1.1.2
+   Compiling http v1.5.0
+   Compiling fnv v1.0.7
+   Compiling rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+   Compiling tokio-util v0.7.20
+   Compiling indexmap v2.14.2
+   Compiling h2 v0.4.20
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+error: future cannot be sent between threads safely
+   --> crates/rustusb-transport/src/link.rs:556:16
+    |
+556 |       let task = tokio::spawn(async move {
+    |  ________________^
+557 | |         let guard = DriverGuard(task_shared.clone());
+558 | |         let result = driver(
+559 | |             connection,
+...   |
+569 | |         result
+570 | |     });
+    | |______^ future created by async block is not `Send`
+    |
+    = help: the trait `Sync` is not implemented for `(dyn Future<Output = ()> + Send + 'static)`
+note: future is not `Send` as this value is used across an await
+   --> crates/rustusb-transport/src/link.rs:771:9
+    |
+771 | /         tokio::select! {
+772 | |             _ = stop.changed() => {},
+773 | |             _ = &mut notified => {},
+774 | |             result = poll_fn(|cx| {
+...   |
+806 | |             },
+807 | |         }
+    | |         ^
+    | |         |
+    | |_________await occurs here, with `futures_init` maybe used later
+    |           has type `(impl Future<Output = std::result::Result<(), tokio::sync::watch::error::RecvError>>, &mut Pin<&mut Notified<'_>>, PollFn<{closure@crates/rustusb-transport/src/link.rs:774:30: 774:34}>, PollFn<{closure@crates/rustusb-transport/src/link.rs:784:30: 784:34}>, PollFn<{closure@crates/rustusb-transport/src/link.rs:787:30: 787:34}>, Sleep)` which is not `Send`
+note: required by a bound in `tokio::spawn`
+   --> /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/src/task/spawn.rs:176:21
+    |
+174 |     pub fn spawn<F>(future: F) -> JoinHandle<F::Output>
+    |            ----- required by a bound in this function
+175 |     where
+176 |         F: Future + Send + 'static,
+    |                     ^^^^ required by this bound in `spawn`
+    = note: this error originates in the macro `$crate::select` which comes from the expansion of the macro `tokio::select` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: could not compile `rustusb-transport` (lib test) due to 1 previous error

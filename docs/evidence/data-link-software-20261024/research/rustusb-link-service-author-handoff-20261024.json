@@ -1,0 +1,148 @@
+{
+  "status": "source_frozen_uncompiled",
+  "utc": "2026-10-23T19:50:26.440775+00:00",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "files": [
+    {
+      "path": "crates/rustusb-cli/src/agent.rs",
+      "sha256": "99207ef70d818d686fea3a66de2da8164e3933433828da1d66db433cb59bbbfd",
+      "bytes": 5212
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/lib.rs",
+      "sha256": "809f3db7ae75996626d1d3c365ec7953c3a57878bafa036c63a8c07d80da1d84",
+      "bytes": 861
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/link.rs",
+      "sha256": "8891fb1adf89b227f4c131f5b2591922a8d7d4326077e9876d14533b5949caf9",
+      "bytes": 4861
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/managed.rs",
+      "sha256": "b73a64ca96b211268d9cb0f4eb353df318189d22aec97ba97dff82ffc3b8b84a",
+      "bytes": 14414
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/monitor.rs",
+      "sha256": "a61a62b40db7e78ac99bcd23aecfc1a0d430d021802305454d4aeec040183958",
+      "bytes": 25335
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server.rs",
+      "sha256": "a0d3247bfab29cbcbfe5c2feaee88771d71997e596b3e3e44d1c81069e9b9d65",
+      "bytes": 65444
+    },
+    {
+      "path": "crates/rustusb-service/src/context.rs",
+      "sha256": "093cfa32978d4c307346c8bf2186f578a7057c9e3d71bf0518ede9cc4d287e9c",
+      "bytes": 6810
+    },
+    {
+      "path": "crates/rustusb-service/src/health.rs",
+      "sha256": "cf51ce86f05690287cce700dccdad237e2e7800858c6667f55115ee7ec6b43e3",
+      "bytes": 9375
+    },
+    {
+      "path": "crates/rustusb-service/src/ipc.rs",
+      "sha256": "48ecce824ea2034facb18305668eebaab3811f5f0dd6012d978031e4ccc25fe0",
+      "bytes": 14129
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "sha256": "794cc6f66fb41dbe3bc7838d5b150724371c2edf10579508185116b87496d6b4",
+      "bytes": 18591
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/link.rs",
+      "sha256": "1d0962a2e8557dba86c0d2ae397b3e2def10440e9fc31248af72326c09b18809",
+      "bytes": 6147
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "sha256": "e46fe22aaeea8e0348f50539a40491de1936034a7a86448d9551c853426fb867",
+      "bytes": 7054
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "sha256": "e1d6a67940f43fb19506bba77ce2a1c7745c7149624b9330f90711326a4b645a",
+      "bytes": 48811
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "sha256": "c49f3e8c7843d3f2c36354e8f70318588aab7594f1d82f79c649a94f45e07b2f",
+      "bytes": 51275
+    },
+    {
+      "path": "crates/rustusb-service/src/lib.rs",
+      "sha256": "df90d01d572bbe55fdc5ed65fed4788fcfce532f03a56cb76b604ca09bbbbef8",
+      "bytes": 1015
+    },
+    {
+      "path": "crates/rustusb-service/src/rpc.rs",
+      "sha256": "07408a3c1a6793662e6bd40ba5d706ae30cad030e0efdc2f477e03ece35e6a1f",
+      "bytes": 6196
+    },
+    {
+      "path": "crates/rustusb-service/src/run_context.rs",
+      "sha256": "10552e7ae07f4fda1e94805f37a5dd93181df71fcdf6f2176510f096a6f9528f",
+      "bytes": 11731
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "sha256": "b66178bce96b683c5338dded6fca8ed5311f8a6c47caa16fd3b6b58f54b8ef41",
+      "bytes": 46333
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime_tests.rs",
+      "sha256": "4f2270dbc84bcee55bfa1e79f966d088208930a9d7c21751dbc8eeae7768bf46",
+      "bytes": 26467
+    },
+    {
+      "path": "crates/rustusb-service/src/store.rs",
+      "sha256": "21275ae843c72624a5ac3ae099aa47f2b8cc2277116e85dd82e3bc6506f988cb",
+      "bytes": 21694
+    }
+  ],
+  "checks": {
+    "single_file_rustfmt": "PASS syntax only",
+    "git_diff_check_owned": "PASS",
+    "cargo": "NOT RUN per parent ownership",
+    "qemu": "NOT RUN"
+  },
+  "api": {
+    "cli": "agent health PROFILE [--after SESSION_ID]",
+    "request": "IPC1 op=session_health",
+    "response": "IPC1 response.result=session_health, sessions/next_after, max16",
+    "disk": "strict private schema2 link_history, atomic strict schema1 migration, no downgrade, 2048 bytes per health entry reserved within original 1MiB admission and 2MiB total",
+    "legacy": "old Session/Metrics and IPC1 bodies unchanged; raw_v1 health explicit unavailable",
+    "backend": "ServerControl::link_health(id) -> core::Result<Option<LinkHealth>>; link source bound atomically before monitor admission visibility"
+  },
+  "ownership": [
+    "Catalog LinkOwner retained across cancellation and joined",
+    "Client acquired-handle Resource/Prepared/Connected/sample recording futures retained; fatal/stop -> pure I/O join -> LinkOwner join -> actual helper close -> original ACK -> Closing/Finish",
+    "Native independent byte relay and link-ended selection on retained ACK; actual stub close/unlock precedes old ACK",
+    "Rust managed per-attempt completion and lease cleanup remain real; v2 foreground handshake cancellation also retains unique completion witness",
+    "Listener v2 cooperative shutdown retains and joins child tree; Drop initiates without claiming cleanup",
+    "Final health observation failure does not withhold actual backend cleanup event; health remains explicit error"
+  ],
+  "tests_added": [
+    "strict legacy DTO migration/unknown and missing fields/public Session and Metrics unchanged",
+    "real filesystem atomic schema upgrade",
+    "bounded authorized health reads while actual Store mutex blocks persistence",
+    "same-epoch/previous-epoch and export health distinctions",
+    "health growth admission reservation",
+    "maximum-width fixed health DTO/RTT decrease/monotonic counters/frozen terminal",
+    "raw reporter source and final sample immutability",
+    "client link-ended retained already-polled ACK and actual duplex release before ACK",
+    "Native link-ended retained already-polled ACK and actual duplex/lock release before ACK"
+  ],
+  "limits": [
+    "No runtime claim yet; tests above are source fixtures only",
+    "Duplex cleanup fixtures prove owned software stream/lock ordering, not USB/helper/kernel cleanup",
+    "Accepted helper mutation or backend initialization hard blocking still requires its real owner completion",
+    "Export preparation WAL stalls before a data session exists remain the previously documented limitation",
+    "RTT is transport enqueue-to-library-pong elapsed, not wire nonce or USB completion",
+    "No heartbeat fields added to old public Session/Metrics; no per-probe WAL events"
+  ]
+}

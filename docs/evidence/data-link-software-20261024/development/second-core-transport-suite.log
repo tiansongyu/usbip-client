@@ -1,0 +1,90 @@
+   Compiling rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.04s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+
+running 10 tests
+test application::tests::correlation_and_wire_identities_are_strict ... ok
+test device_key::tests::untrusted_keys_cannot_alias_profiles_or_temporary_addresses ... ok
+test application::tests::unknown_is_not_a_cleanup_success_receipt ... ok
+test device_key::tests::canonical_namespaces_round_trip_and_remain_distinct ... ok
+test link_health::tests::legacy_projection_cannot_claim_a_probe_or_zero_stats ... ok
+test link_health::tests::nullable_progress_times_are_explicit_even_when_null ... ok
+test link_health::tests::v2_requires_real_identity_stats_and_consistent_probe_relationships ... ok
+test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+test link_health::tests::nullable_health_fields_are_required_and_duplicates_are_rejected ... ok
+test tests::validate_external_identifiers_and_serde ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_transport-724c42c0cf6a46bd)
+
+running 53 tests
+test flush::tests::vectored_fallback_uses_scalar_prefix_once_without_changing_bytes ... ok
+test flush::tests::segmented_successful_prefixes_require_complete_data_frames ... ok
+test flush::tests::cancelled_receipt_does_not_keep_its_old_target ... ok
+test flush::tests::blocked_write_and_flush_each_need_their_actual_wakeup ... ok
+test flush::tests::zero_data_end_stream_requires_last_header_byte_and_flush ... ok
+test config::platform::tests::metadata_requires_real_expected_owner_and_private_key_mode ... ok
+test flush::tests::client_preface_is_exact_and_accepted_one_byte_at_a_time ... ok
+test flush::tests::write_flush_zero_and_drop_failures_wake_pending_receipts ... ok
+test config::platform::tests::bounded_reads_reject_oversize_and_detect_changed_identity ... ok
+test link::tests::policy_has_fixed_production_bounds ... ok
+test config::platform::tests::path_traversal_and_production_trust_are_not_weakened_by_fixture_context ... ok
+test link::tests::adversarial_tests::actual_trailer_headers_are_rejected_instead_of_clean_application_eof ... ok
+test link::tests::cooperative_stop_is_joined_and_monitor_does_not_keep_network_alive ... ok
+test link::tests::actual_counter_exhaustion_remains_distinct_from_metadata_poison ... ok
+test link::tests::adversarial_tests::empty_nonfinal_flood_has_a_lifetime_bound_despite_zero_byte_credit ... ok
+test config::platform::tests::schema_unknown_duplicate_and_broker_mismatch_fail_before_credentials ... ok
+test link::tests::adversarial_tests::buffered_one_byte_batch_hits_real_auto_metadata_budget ... ok
+test tls::tests::credential_input_bounds_malformed_der_and_mismatched_key_fail_closed ... ok
+test link::tests::half_close_keeps_cached_bytes_and_reverse_direction_until_actual_consumption ... ok
+test tls::tests::stable_device_keys_and_certificate_hex_are_strict ... ok
+test tls::tests::principal_policy_rejects_ambiguous_empty_and_excessive_fields ... ok
+test tls::tests::cancelled_handshake_releases_its_already_acquired_permit ... ok
+test link::tests::poisoned_shutdown_metadata_cannot_claim_fin_or_healthy_terminal ... ok
+test tls::tests::invalid_server_name_is_rejected_before_handshake ... ok
+test tls::tests::absent_client_certificate_cannot_produce_authenticated_stream ... ok
+test tls::tests::unknown_server_ca_is_rejected ... ok
+test tls::tests::wrong_server_name_fails_standard_verification ... ok
+test tls::tests::missing_and_wrong_alpn_fail_closed ... ok
+test tls::tests::expired_pinned_client_and_wrong_client_usage_fail_pki ... ok
+test tls::tests::valid_but_unmapped_or_removed_pin_is_not_authorized ... ok
+test link::tests::many_legal_small_messages_do_not_exhaust_retired_frame_metadata ... ok
+test link::tests::poison_during_capacity_update_is_an_io_error_not_pending_or_counter_overflow ... ok
+test config::platform::tests::symlink_hardlink_fifo_directory_and_unsafe_parent_are_refused ... ok
+test config::platform::tests::private_file_and_json_errors_never_include_input_bytes_or_paths ... ok
+test config::platform::tests::valid_fixture_loads_typed_immutable_server_and_client ... ok
+test config::platform::tests::explicit_v2_trusted_fixture_selects_framing_and_preserves_v1 ... ok
+test config::platform::tests::ambiguous_pools_and_outside_principal_devices_fail_closed ... ok
+test config::platform::tests::v2_policy_and_version_shapes_reject_ambiguity_before_credentials ... ok
+test config::platform::tests::client_alias_name_endpoint_and_device_are_strict ... ok
+test tls::tests::pinned_client_from_unknown_ca_is_still_rejected ... ok
+test tls::tests::debug_and_configuration_errors_do_not_expose_credentials_or_io ... ok
+test tls::tests::real_mutual_tls_maps_leaf_and_transfers_flushed_data_both_ways ... ok
+test tls::tests::link::explicit_v2_never_downgrades_to_raw_peer ... ok
+test tls::tests::expired_server_and_wrong_server_usage_fail_pki ... ok
+test tls::tests::resumption_is_disabled_on_repeated_real_handshakes ... ok
+test link::tests::adversarial_tests::promptly_consumed_one_byte_frames_are_legal_not_blanket_rejected ... ok
+test tls::tests::authenticated_streams_hold_all_sixteen_permits_across_server_clones ... ok
+test tls::tests::handshake_timeout_closes_transport_and_returns_permit ... ok
+test tls::tests::link::cancelled_authenticated_setup_has_no_detached_driver_or_permit ... ok
+test link::tests::real_ping_continues_at_full_window_but_credit_waits_for_actual_reads ... ok
+test link::tests::no_same_connection_pong_is_terminal_and_wakes_pending_application_read ... ok
+test link::tests::quiet_tests::peer_ping_payload_is_captured_unquiet_but_never_leaks_from_owned_link ... ok
+test tls::tests::link::framed_tcp_mtls_preserves_authentication_flush_and_actual_tuple ... ok
+
+test result: ok. 53 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+   Doc-tests rustusb_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_transport
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

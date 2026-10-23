@@ -1,0 +1,39 @@
+    Checking hashbrown v0.17.1
+    Checking equivalent v1.0.3
+    Checking futures-sink v0.3.34
+    Checking atomic-waker v1.1.2
+    Checking fnv v1.0.7
+    Checking http v1.5.0
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking tokio-util v0.7.20
+    Checking indexmap v2.14.2
+    Checking h2 v0.4.20
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+error: the method `write_pending` doesn't need a mutable reference
+   --> crates/rustusb-transport/src/link.rs:776:41
+    |
+776 |                 if shared.write_pending((&mut flush).write_pending()).is_err() { return Poll::Ready(Err(failed())); }
+    |                                         ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#unnecessary_mut_passed
+    = note: `-D clippy::unnecessary-mut-passed` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::unnecessary_mut_passed)]`
+help: remove this `mut`
+    |
+776 -                 if shared.write_pending((&mut flush).write_pending()).is_err() { return Poll::Ready(Err(failed())); }
+776 +                 if shared.write_pending((&flush).write_pending()).is_err() { return Poll::Ready(Err(failed())); }
+    |
+
+error: this expression borrows a value the compiler would automatically borrow
+   --> crates/rustusb-transport/src/link.rs:776:41
+    |
+776 |                 if shared.write_pending((&mut flush).write_pending()).is_err() { return Poll::Ready(Err(failed())); }
+    |                                         ^^^^^^^^^^^^ help: change this to: `flush`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#needless_borrow
+    = note: `-D clippy::needless-borrow` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::needless_borrow)]`
+
+error: could not compile `rustusb-transport` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-transport` (lib test) due to 2 previous errors

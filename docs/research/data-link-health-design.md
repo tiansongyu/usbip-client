@@ -31,7 +31,7 @@ application owner → cooperative stop → join LinkDriver → actual helper/lea
                                                   → durable Closing/Finish
 ```
 
-本轮冻结的公开接口（尚待编译与运行验证，不以本段当通过证据）：
+本轮冻结的公开接口（软件验证另见证据归档；本设计本身不作为QEMU或设备通过证据）：
 
 ```rust,ignore
 pub enum LinkProtocol { RawV1, FramedV2 }

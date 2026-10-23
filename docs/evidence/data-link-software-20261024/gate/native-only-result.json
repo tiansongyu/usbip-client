@@ -1,0 +1,46 @@
+{
+  "runs": [
+    {
+      "tag": "native-only-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport"
+      ],
+      "exit": 0,
+      "seconds": 1.240581634978298
+    },
+    {
+      "tag": "native-only-tree",
+      "command": [
+        "cargo",
+        "tree",
+        "--locked",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--prefix",
+        "none",
+        "-e",
+        "normal",
+        "--format",
+        "{p}"
+      ],
+      "exit": 0,
+      "seconds": 0.04242965398589149
+    }
+  ],
+  "forbidden": [],
+  "required_present": [
+    "rustusb-service",
+    "rustusb-transport",
+    "h2"
+  ]
+}

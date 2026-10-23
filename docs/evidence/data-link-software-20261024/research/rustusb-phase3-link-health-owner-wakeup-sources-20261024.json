@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "status": "PROPOSED_SOURCE_REVIEW_ADDENDUM",
+  "utc": "2026-10-23T18:50:18.083785+00:00",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "report": {
+    "path": "/tmp/rustusb-phase3-link-health-owner-wakeup-addon-20261024.md",
+    "sha256": "00da6cc5088b65c11633282a442c5a252af6fc0bdd1ac7b02ec488afe1b88598",
+    "bytes": 9942
+  },
+  "sources": [
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "sha256": "6e193185bb10b2811bdc3f063c16df066157e9e5d02de9cb437b4d4d7e3aa7b5"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "sha256": "a01f3bb165d97b80ba2d56cfa962d42ae80e0915dc1185d85768e44ef8bb889e"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/io.rs",
+      "sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "sha256": "c03fca3081f6b566e032da80e1cb7f43e8806357bc2b44890df25215f9e91f8e"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/managed.rs",
+      "sha256": "c9b8a314d2fba2d29a27327188e05c7e3a8a4465b74e56364a729a9106be3a0d"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server.rs",
+      "sha256": "2cfac598a7c6e22ffabd7ca690539ec1385b629d936665cab832497d3bd5999b"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/monitor.rs",
+      "sha256": "812e65decf4a7d27fab8fda4aa406311977ce1f182c8c114b0828450c8f9b365"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_channel.rs",
+      "sha256": "bd3a3b110f831336a7f7a97cb0ba27426eba2bf33dd228f9679e34ea9ba96f45"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_export.rs",
+      "sha256": "3dc9e4afff7e0a95efc010c26fab2b065be7288d9f59bff0675dbebd4a8d31c7"
+    }
+  ],
+  "not_performed": [
+    "repository mutation",
+    "Cargo/compilation/tests",
+    "QEMU/USB"
+  ],
+  "main_findings": [
+    "Direct sticky ended signal is required while Native/Client sample WAL waits",
+    "Pure byte relay may stall writing kernelR; only endpoint drop is insufficient",
+    "Rust managed postadmission lifecycle does not await service WAL",
+    "Rust reader may block in bounded parsed-frame send; outer ended select is required",
+    "Accepted helper commit private actor retains exchange; later exactclose remains required",
+    "Preparation Resource ACK indefinite stall remains explicit unresolved scope"
+  ],
+  "external_source_scope": "h2 fixed-payload/Draining/flush-fence points attributed to transport reviewer, not independently audited here"
+}

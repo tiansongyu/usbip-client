@@ -490,3 +490,6 @@
 - 完整`bash scripts/check.sh`首次运行PASS：251默认+337all-features+20vendor共608次执行、39条结果，0失败/忽略。164项Rust/TOML/lock/check输入前后不变；实际run是dirty candidate031，随后逐source输入映射提交，不冒充clean运行。N独立重建357个qualified测试名（不是608个独立case）并核全输入。默认/all-features fmt、Clippy、tests、release、rustdoc及vendor均执行；工具链/最终ELF另收。
 - 同一all-features CLI 76546440…/helper b4af4b5f…的本地四signal与两背压均PASS；Native-only secure-transport check/tree已独立记录，service/transport/h2存在且无Rust engine/nusb/rusb。新增英文操作指南`docs/data-link-health.md`，仍明确QEMU/硬件/完整Phase3未验收。旧九组agent verifier增强为strict disk2与raw-v1无伪RTT，不改IPC1/原设备断言。
 - 传输/core/配置/研究与依赖单元已提交`85f2bb1`；接下来提交服务owner接线，再从干净提交运行旧九组兼容回归。新的heartbeat定向阀门实际harness仍在收尾，其软件夹具不是QEMU通过证据。
+
+- 服务owner/health/操作指南与旧agent disk2 verifier提交`e29cc11`。164项实际软件gate输入逐Gitblob映射该commit全部一致，保持原dirty031run身份；同样本的Native-only check/tree PASS且无Rust engine/nusb/rusb。软件/研究/原compile与Clippy失败/本地runtime共101份约5.13MB归档`docs/evidence/data-link-software-20261024`，逐original/bytes/SHA与staged blob核验后提交。
+- 在独立干净worktree锁e29cc11启动旧九QEMU矩阵，不受primary新harness并行编辑影响。当前六组virtual/USBFS/Native×双栈前台均PASS；两agent与原SIGTERM尚未报告完成。本项只记既有raw-v1兼容，新的v2/3方向定向blackhole与硬件未由此通过。

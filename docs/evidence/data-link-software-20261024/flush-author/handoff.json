@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T19:17:34.802786+00:00",
+  "status": "source_frozen_runtime_not_executed",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "owned_file": {
+    "path": "crates/rustusb-transport/src/flush/tests.rs",
+    "bytes": 17766,
+    "sha256": "c0c59e9995425953a80967f18cae43bf3f203c5856b075d7a723fca9ea8d56ef",
+    "copy": "/tmp/rustusb-flush-fence-tests-20261024/tests.rs"
+  },
+  "related_source_snapshots": [
+    {
+      "path": "crates/rustusb-transport/src/flush.rs",
+      "bytes": 10713,
+      "sha256": "012bdad0560e97404fbd8be944d1b94023558c2ae7d6b701a646964866a1e8ba",
+      "ownership": "root; read only by author"
+    },
+    {
+      "path": "crates/rustusb-transport/src/lib.rs",
+      "bytes": 3416,
+      "sha256": "ce079272c4a4b94dba65f6060bb5f60e645ff55e98b7cc481e25d632c89529ed",
+      "ownership": "root; read only by author"
+    },
+    {
+      "path": "crates/rustusb-transport/Cargo.toml",
+      "bytes": 508,
+      "sha256": "1a509a8e2c169436b98dcb5e30239644be8618cf3e5801af8cdda285e748cf08",
+      "ownership": "root; read only by author"
+    },
+    {
+      "path": "docs/research/data-link-health-design.md",
+      "bytes": 12146,
+      "sha256": "e8fc6ad0b30bd43d47a3a61d305cf32fc9d29b6136ea687f6cb99ee5c7edc739",
+      "ownership": "root; read only by author"
+    }
+  ],
+  "tests_declared_not_executed": [
+    "segmented_successful_prefixes_require_complete_data_frames",
+    "blocked_write_and_flush_each_need_their_actual_wakeup",
+    "client_preface_is_exact_and_accepted_one_byte_at_a_time",
+    "zero_data_end_stream_requires_last_header_byte_and_flush",
+    "write_flush_zero_and_drop_failures_wake_pending_receipts",
+    "cancelled_receipt_does_not_keep_its_old_target",
+    "vectored_fallback_uses_scalar_prefix_once_without_changing_bytes"
+  ],
+  "static_checks": [
+    {
+      "argv": [
+        "rustfmt",
+        "--check",
+        "--edition",
+        "2024",
+        "crates/rustusb-transport/src/flush/tests.rs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "passed": true,
+      "note": "single owned file only"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "crates/rustusb-transport/src/flush/tests.rs"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "passed": true,
+      "note": "git no-index exit1 denotes new file differs from /dev/null; empty --check output means no whitespace diagnostic"
+    }
+  ],
+  "source_checks": {
+    "no_unsafe_unwrap_expect_panic_calls": true,
+    "no_direct_parser_or_production_state_access": true,
+    "actual_pending_then_wakeup_tasks": true,
+    "write_flush_error_waiter_completes_before_writer_drop": true
+  },
+  "changes": "Only new owned tests.rs written and single-file rustfmt. No production source/Cargo/main edits; no Cargo, rustc, QEMU, host USB, commits or test execution. Other workspace changes belong to root.",
+  "scope": "Controlled AsyncWrite boundary/wakeup fixtures only; not h2 encoder integration, TLS flush, wire emission, heartbeat, USB or QEMU evidence. Source declares seven tests, none run by this agent.",
+  "suggested_root_test": [
+    "cargo",
+    "test",
+    "-p",
+    "rustusb-transport",
+    "flush::tests",
+    "--",
+    "--nocapture"
+  ],
+  "git_status_at_handoff": " M crates/rustusb-transport/src/lib.rs\n M docs/work-log.md\n?? crates/rustusb-transport/src/flush.rs\n?? crates/rustusb-transport/src/flush/\n?? docs/research/data-link-health-design.md\n",
+  "static_inspection_note": "First reporting script incorrectly treated expected git --no-index exit1/empty diagnostics as fatal, before writing a report. Corrected exit interpretation only; tests.rs unchanged. This was not a compiler/test failure."
+}

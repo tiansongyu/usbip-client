@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_FROZEN_UNCOMPILED",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "files": [
+    {
+      "path": "crates/rustusb-core/src/lib.rs",
+      "bytes": 13426,
+      "sha256": "6e4a1de1cd307df3fd010c0fd9676290ae3e815520abf15d036708564373fe91"
+    },
+    {
+      "path": "crates/rustusb-core/src/link_health.rs",
+      "bytes": 10131,
+      "sha256": "933d439b1f27f6950a279a0e7eecfb103dfba036687661eaee3841dcd7939744"
+    },
+    {
+      "path": "crates/rustusb-transport/src/link.rs",
+      "bytes": 36269,
+      "sha256": "2a11f3b2a0355c66de83189f992d05fa61beb9d326d7c6aff2718dc0a29886ec"
+    },
+    {
+      "path": "crates/rustusb-transport/src/quiet.rs",
+      "bytes": 2286,
+      "sha256": "4fb83430838ab28b6ba1037349295890655a67988485680777ec2c358708ca52"
+    },
+    {
+      "path": "crates/rustusb-transport/src/link/tests.rs",
+      "bytes": 8839,
+      "sha256": "f72a7425087891990f21fea75d1f396eb356cb5186e6b4d9e1386581e7d6e38e"
+    }
+  ],
+  "implemented": [
+    "core fixed typed health DTO/raw_v1/validation with2source tests",
+    "single stream1 fixed CONNECT with pre-spawn owned setup",
+    "quiet h2 method/poll/map/Drop wrappers without unsafe",
+    "bounded LinkIo capacity/write+actual Root flush/FIN receipt",
+    "owned Connection/probe/RX pump+actual-consumed credit+nonowning facts",
+    "explicit timeout/localstall/normalhalfclose and stop+join result errors",
+    "6h2software contract tests with8second overall bounds"
+  ],
+  "validation": [
+    {
+      "command": "rustfmt --edition 2024 <four owned source files>",
+      "result": "PASS syntax/format only"
+    }
+  ],
+  "not_run": [
+    "Cargo",
+    "compile",
+    "tests",
+    "QEMU",
+    "USB operations"
+  ],
+  "pending_root_tests": [
+    "Root actual TCP/mTLS tests",
+    "Root-owned quiet_tests.rs now referenced; runtime unexecuted.",
+    "Root complete fmt/Clippy/workspace/integration runs"
+  ],
+  "limits": [
+    "No runtime/build success claimed; first actual Root compilation/testing may expose integration defects.",
+    "No hardware/blackhole evidence from h2duplex tests.",
+    "No helper device cleanup proof produced by transport.",
+    "NormalEOS remains distinct from timeout/fatal; fully-ended watch cannot prove USB release."
+  ]
+}

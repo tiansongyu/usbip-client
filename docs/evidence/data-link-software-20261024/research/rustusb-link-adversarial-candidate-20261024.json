@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "CANDIDATE_NOT_APPLIED_NOT_COMPILED",
+  "patch": {
+    "path": "/tmp/rustusb-link-adversarial-candidate-20261024.patch",
+    "bytes": 6725,
+    "sha256": "fbbdc2e06581400a7d8850810a42195ae36d87b36a78553f4596965de4130301"
+  },
+  "intended_tests": 4,
+  "source_basis": "h2 0.4.20 b0e890842ac16d3c76836fd4fcc06421acb15fa7 counts.rs120..147, streams.rs655..662, exact Gitblobs in source-manifest",
+  "bounds": [
+    "private128KiB duplex, at most129 frames/1290B burst, 8s whole-test deadline",
+    "No large unbounded sender, no network/USB device or helper privilege",
+    "No quiet logger bypass, actual GOAWAY reason code checked from raw private peer bytes"
+  ],
+  "expectations_not_yet_verified": [
+    "129*1B buffered corpus is intended to exhaust Auto metadata budget before pump handoff; actual driver scheduling/runtime may instead retire frames. A failure must be retained/analyzed, not force a blanket1B rejection.",
+    "101 nonfinal empty DATA lifetime cap is independent of pump retirement; intended actual GOAWAY ENHANCE_YOUR_CALM11.",
+    "Current driver may drop Connection on RecvStream error before outgoing GOAWAY is flushed; wire reason could be missing even when typedProtocol is correct. Preserve such failure and assess whether the test should add separate upstream-only cause fixture; do not invent a raw wire reason.",
+    "Trailers must be typedProtocol and application InvalidData, not EOF; received bytes before error are not USB input.",
+    "1024 sequential consumed1B frames positive prevents overclaim that every small frame is malicious."
+  ],
+  "actual_validation": "rustfmt parse/format only; no Cargo, compile, test or QEMU. Poison/counter3 tests are separately authorized real candidate source, not duplicated by this patch."
+}

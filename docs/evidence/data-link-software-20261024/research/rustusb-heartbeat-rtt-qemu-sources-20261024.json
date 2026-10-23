@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "status": "proposed_design_only",
+  "created_utc": "2026-10-23T18:40:45.385176+00:00",
+  "author": "/root/journal_harness_review; author of prior secure/agent harness work, no claim of independent new runtime verification",
+  "repository": "/home/ubuntu/github/usbip-client",
+  "source_head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "git_status_at_report": "",
+  "scope": "Read-only design for same IMPORT TLS data-connection heartbeat/RTT and targeted Ethernet blackhole. No repository modifications, Cargo/build, QEMU, device operation or test execution. Only /tmp design/source research outputs.",
+  "project_source_files_count": 25,
+  "project_sources": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 7548,
+      "sha256": "e0cd7adb52dddad300b032c5802ee25cfbde5153094892a62730284cdebbe6fc",
+      "git_blob_sha256": "e0cd7adb52dddad300b032c5802ee25cfbde5153094892a62730284cdebbe6fc",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "bytes": 4344,
+      "sha256": "79fd06707d087134d97bc5e31554190cc6e5b0e623f8d396d06cd0e15f56e32f",
+      "git_blob_sha256": "79fd06707d087134d97bc5e31554190cc6e5b0e623f8d396d06cd0e15f56e32f",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "docs/requirements.md",
+      "bytes": 19823,
+      "sha256": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c",
+      "git_blob_sha256": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 24859,
+      "sha256": "1fd0fc752460a625d639e40ffe96b7ce9870110557ae3ce88710b2a3223d6cca",
+      "git_blob_sha256": "1fd0fc752460a625d639e40ffe96b7ce9870110557ae3ce88710b2a3223d6cca",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "docs/work-log.md",
+      "bytes": 135621,
+      "sha256": "2e11a7871e1f288c1658cd73f7cc92feb947ca58868baa7ec3d6d1583f17865c",
+      "git_blob_sha256": "2e11a7871e1f288c1658cd73f7cc92feb947ca58868baa7ec3d6d1583f17865c",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "docs/research/application-service-design.md",
+      "bytes": 12917,
+      "sha256": "5b3fa27cd14c3b519a421792eaedb983fab66fc5e047f9530170ffc543c8315c",
+      "git_blob_sha256": "5b3fa27cd14c3b519a421792eaedb983fab66fc5e047f9530170ffc543c8315c",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "docs/research/shared-owner-design.md",
+      "bytes": 6100,
+      "sha256": "a5529d87ba6f6e5bf9c77e576f512160e7f10baa0e36f41f2d2b344ee826c75f",
+      "git_blob_sha256": "a5529d87ba6f6e5bf9c77e576f512160e7f10baa0e36f41f2d2b344ee826c75f",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "docs/research/secure-usbip-integration.md",
+      "bytes": 10131,
+      "sha256": "be6244e2c8f35a95da0a150ee4bfb3f0e4906b0e9c58ecd836ff530984eff0a7",
+      "git_blob_sha256": "be6244e2c8f35a95da0a150ee4bfb3f0e4906b0e9c58ecd836ff530984eff0a7",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+      "git_blob_sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "scripts/qemu/guest-secure-init.sh",
+      "bytes": 35715,
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+      "git_blob_sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 45120,
+      "sha256": "3f9d1ab41078f0de9b00442fd117f3398382badc08a7d0b369cd1dbd2d1983d6",
+      "git_blob_sha256": "3f9d1ab41078f0de9b00442fd117f3398382badc08a7d0b369cd1dbd2d1983d6",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 21660,
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a",
+      "git_blob_sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "scripts/qemu/run-fault-qemu.py",
+      "bytes": 14271,
+      "sha256": "a9c62e4a6f3f5db699f927b1798fd94169d0c817a367ebe27f359788bcdac3d7",
+      "git_blob_sha256": "a9c62e4a6f3f5db699f927b1798fd94169d0c817a367ebe27f359788bcdac3d7",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "scripts/qemu/guest-fault-init.sh",
+      "bytes": 11503,
+      "sha256": "6106ed85d3775eae8a035136bfd240afdafddc5188cb76ddff5d691105101479",
+      "git_blob_sha256": "6106ed85d3775eae8a035136bfd240afdafddc5188cb76ddff5d691105101479",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "bytes": 11076,
+      "sha256": "a01f3bb165d97b80ba2d56cfa962d42ae80e0915dc1185d85768e44ef8bb889e",
+      "git_blob_sha256": "a01f3bb165d97b80ba2d56cfa962d42ae80e0915dc1185d85768e44ef8bb889e",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/io.rs",
+      "bytes": 4446,
+      "sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2",
+      "git_blob_sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 43079,
+      "sha256": "6e193185bb10b2811bdc3f063c16df066157e9e5d02de9cb437b4d4d7e3aa7b5",
+      "git_blob_sha256": "6e193185bb10b2811bdc3f063c16df066157e9e5d02de9cb437b4d4d7e3aa7b5",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-service/src/model.rs",
+      "bytes": 8995,
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095",
+      "git_blob_sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "bytes": 32134,
+      "sha256": "235465a9d0b5be42b19ce8bbcbb7ebe19237b545b48fc9af98dca03bb79a8ee3",
+      "git_blob_sha256": "235465a9d0b5be42b19ce8bbcbb7ebe19237b545b48fc9af98dca03bb79a8ee3",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/device.rs",
+      "bytes": 47332,
+      "sha256": "6e7d502fe15edb448322907d8aba09e1d3b8cade087c82da05205c02dbf05dd0",
+      "git_blob_sha256": "6e7d502fe15edb448322907d8aba09e1d3b8cade087c82da05205c02dbf05dd0",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/managed.rs",
+      "bytes": 12289,
+      "sha256": "c9b8a314d2fba2d29a27327188e05c7e3a8a4465b74e56364a729a9106be3a0d",
+      "git_blob_sha256": "c9b8a314d2fba2d29a27327188e05c7e3a8a4465b74e56364a729a9106be3a0d",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/monitor.rs",
+      "bytes": 23129,
+      "sha256": "812e65decf4a7d27fab8fda4aa406311977ce1f182c8c114b0828450c8f9b365",
+      "git_blob_sha256": "812e65decf4a7d27fab8fda4aa406311977ce1f182c8c114b0828450c8f9b365",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-transport/src/lib.rs",
+      "bytes": 3405,
+      "sha256": "34fe904c4a6c7f5c899d8ec9db7b28b8c829489a31c1017071b7e00631c89d70",
+      "git_blob_sha256": "34fe904c4a6c7f5c899d8ec9db7b28b8c829489a31c1017071b7e00631c89d70",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls.rs",
+      "bytes": 13397,
+      "sha256": "0048c9f2f76ce64cf135f6c430cd996b80e249fe152a70440d99dee8ee38f716",
+      "git_blob_sha256": "0048c9f2f76ce64cf135f6c430cd996b80e249fe152a70440d99dee8ee38f716",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 3283,
+      "sha256": "67092afdddc20ff9e8a53d4949765aa94389ee066f533ea912be52c0e3ee0bb1",
+      "git_blob_sha256": "67092afdddc20ff9e8a53d4949765aa94389ee066f533ea912be52c0e3ee0bb1",
+      "matches_head_git_blob": true,
+      "inspection": "source/document reading or targeted referenced lines; not runtime validation"
+    }
+  ],
+  "external_skill": {
+    "path": "/home/ubuntu/.agents/skills/writing-technical-design/SKILL.md",
+    "bytes": 12738,
+    "sha256": "71de6bb966093f7c5d0e7b3322988d9a1a7685b5ee6d76b9f7a24caf35c21da6",
+    "scope_note": "Used source-backed technical design method; did not create project rules or component skills."
+  },
+  "fixed_primary_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/qemu/qemu/v6.2.0/net/socket.c",
+      "path": "/tmp/rustusb-heartbeat-qemu-source-research-20261024/net__socket.c",
+      "bytes": 23038,
+      "sha256": "5a32cd1d64bb614bbb7249e68c76e3a6c14d022d501e7e37e794b7f2576a8b7d",
+      "downloaded_bytes_and_hash_rechecked": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/qemu/qemu/v6.2.0/net/net.c",
+      "path": "/tmp/rustusb-heartbeat-qemu-source-research-20261024/net__net.c",
+      "bytes": 46423,
+      "sha256": "a89d9c09dfcb3ecf42eab220257803d15230f4822e990b23c249ea246926b3be",
+      "downloaded_bytes_and_hash_rechecked": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/qemu/qemu/v6.2.0/include/net/net.h",
+      "path": "/tmp/rustusb-heartbeat-qemu-source-research-20261024/include__net__net.h",
+      "bytes": 9666,
+      "sha256": "e7089bdc8f6ccb953a1d620d2492ba413198e76020e250817de85665318b73b7",
+      "downloaded_bytes_and_hash_rechecked": true
+    }
+  ],
+  "auxiliary_current_documentation_url": "https://www.qemu.org/docs/master/system/devices/net.html",
+  "design": {
+    "path": "/tmp/rustusb-heartbeat-rtt-qemu-design-20261024.md",
+    "bytes": 17848,
+    "sha256": "753fdcaa562870f991f5c8f3a262495664ad02c59eb96e59d082738c436e74ae"
+  },
+  "proposed_not_implemented": [
+    "h2 0.4.20 candidate with one USB stream per IMPORT TLS connection, new v2 no silent downgrade",
+    "Independent LinkDriver timing; no unproven wire-flush timestamp",
+    "Exact actual tuple/connection-instance metadata with per-attempt local samples",
+    "New host Ethernet valve and dedicated fault-aware pcap auditor",
+    "Two initial dual-guest candidate runs, expanded six backend/family groups only after actual execution",
+    "Separate read-only agent health operation preserves sessions JSON; actual DATA flush fence required for ImportReplyFlushed, PING ack is not a substitute"
+  ],
+  "evidence_boundaries": [
+    "Existing ss SOCK_DESTROY is active TCP abort, not blackhole.",
+    "Existing agent actual_io closes tty FD4; Connected/previous I/O is not pending-URB proof.",
+    "USBFS pending_urbs and usbfs_inflight prove sampled requests; same-URB continuity needs submit ID evidence.",
+    "Native pending-URB mechanism remains separate unimplemented instrumentation requirement if claimed.",
+    "h2 Pong is transport liveness, not USB completion or data-consumer progress.",
+    "Private key bytes and TLS session secrets must never be logged.",
+    "Old parser/old PASS results not reused as new verdict.",
+    "ARM native software CI is not ARM QEMU/USB evidence.",
+    "No Phase2/G1/G2/fullPhase3 or later-stage completion claim."
+  ],
+  "runtime_tests_executed": 0,
+  "new_usb_cases_executed": 0
+}

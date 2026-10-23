@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "status": "STATIC_REVIEW_NO_MUSTFIX_IDENTIFIED",
+  "head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "scope": "Cross-review Root-authored TLS/config/flush/memory-DER TCP test sources only; not author-independent review of my own link.rs/quiet.rs.",
+  "files": [
+    {
+      "path": "crates/rustusb-transport/src/tls.rs",
+      "bytes": 20077,
+      "sha256": "bdf0a3d363dac46ad56e71e7332e2df22866c4e1a107b29408327a4787ada497"
+    },
+    {
+      "path": "crates/rustusb-transport/src/config.rs",
+      "bytes": 22791,
+      "sha256": "a10f00e49ef8cf78b9cfdd6aecfe82eae67a567fa3c7fe9322340c4dd6db83ba"
+    },
+    {
+      "path": "crates/rustusb-transport/src/flush.rs",
+      "bytes": 11360,
+      "sha256": "f1c1ab00c6b292b818729ab776dba09bcc2710544c7a5e14c1fdb9b66516ecb4"
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls/tests/link.rs",
+      "bytes": 6274,
+      "sha256": "d86354e35e752dc5ce006c29d4190ba5b72928d5638fd7ca62d05cec791571da"
+    }
+  ],
+  "checks": [
+    {
+      "item": "raw_v1_separation",
+      "result": "PASS_SOURCE",
+      "evidence": "old new/connect/accept select ALPN1 only; new_with_link has ALPN2 only; raw connect/accept reject framed configuration and v2 factories reject raw."
+    },
+    {
+      "item": "tls_and_acl",
+      "result": "PASS_SOURCE",
+      "evidence": "TLS1.3 only, PKI client verifier/server-name verification, no resumption/0RTT; mapped leaf peer and serverpin stay private."
+    },
+    {
+      "item": "server_budget",
+      "result": "PASS_SOURCE",
+      "evidence": "permit obtained before TLS; AuthenticatedStream owns it, moved intact into TrackingIo/h2 connection; LinkIo peer clone cannot extract/duplicate permit."
+    },
+    {
+      "item": "factory_cancellation",
+      "result": "PASS_SOURCE",
+      "evidence": "TLS+bounded h2 setup before Link driver spawn; no await after start returns Link, so setup timeout drops only pure network preparation. Root source tests cover authenticated preface stall cancellation and permit return."
+    },
+    {
+      "item": "strict_schema_2",
+      "result": "PASS_SOURCE",
+      "evidence": "Version dispatch parses original bytes into frozen schema1 or deny_unknown_fields schema2 DTO; no Value roundtrip loses duplicate keys; duplicate schema/role/data_link fields fail derived deserialization. Required framed_v2 policy validated via ProbePolicy."
+    },
+    {
+      "item": "trusted_files",
+      "result": "PASS_SOURCE",
+      "evidence": "Root ownership/parent/mode/hardlink/NOFOLLOW/NONBLOCK/boundedread checks remain common to both schema paths. No new RPC override paths."
+    },
+    {
+      "item": "flush_fence",
+      "result": "PASS_SOURCE",
+      "evidence": "strict24B client preface and partial9B headers; only full unpadded stream1 DATA counts, zeroFIN tracked independently, only actual inner flush/shutdown ReadyOk publishes counters; failure/Drop wake waiters."
+    },
+    {
+      "item": "pending_observation",
+      "result": "PASS_SOURCE",
+      "evidence": "write/flush/shutdown Pending set true, any Ready resets false. Label is last observed underlying poll state, not proof of remote or device progress."
+    },
+    {
+      "item": "software_scope",
+      "result": "PASS_SOURCE",
+      "evidence": "3 new TCP/memory-DER mTLS tests use actual socket tuples and PKI/permit/flush/credit/cancellation; do not claim trusted-file loading, helper or USB evidence."
+    }
+  ],
+  "remaining_validation": [
+    "Root first actual Cargo compile failed before test execution on my driver borrowing nonSync FlushMonitor through shared reference. Authorized exclusive-borrow source fix is now frozen at a5674c916fe3e4e85dda9d1cd726a8eed4bc1faafef32d627dc3f2c9775ab96d; no second compile conclusion claimed by reviewer.",
+    "Targeted runtime fence/credit/quiet/cancellation tests and full workspace gates remain Root-owned.",
+    "The 5s TLS and additional5s h2 setup network stages are individually bounded; service caller total deadline must still cover DNS/TCP/TLS/h2/management and cannot silently stack beyond its existing overall budget."
+  ],
+  "commands_not_run": [
+    "Cargo",
+    "CLI",
+    "tests",
+    "QEMU",
+    "USB operations"
+  ],
+  "repository_edits_in_review": [
+    "Only separately authorized link.rs exclusive-borrow compile fix; Root-owned four reviewed files untouched."
+  ]
+}

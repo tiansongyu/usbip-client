@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "status": "DESIGN_RESEARCH_COMPLETE_NOT_IMPLEMENTED",
+  "baseline_head": "031f63d9b27fa8712a13089f95aa61c1c2c223aa",
+  "date": "2026-10-24",
+  "reviewer": "native_diagnostics",
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-phase3-data-link-design-20261024.md",
+      "bytes": 16869,
+      "sha256": "1392758d995f67b1bc1ff8f879ef2b5dac4fc5fe6fb93991bb0712771ebcc330"
+    },
+    {
+      "path": "/tmp/rustusb-phase3-link-api-skeleton-20261024.rs",
+      "bytes": 10595,
+      "sha256": "563a344199ff6c28d89e95f1eaa385dd094b2e2835ae03ea19b7bfe961936647"
+    },
+    {
+      "path": "/tmp/rustusb-heartbeat-research-20261024/source-manifest.json",
+      "bytes": 20565,
+      "sha256": "137b0fa287baa2e466a5a5855310b142a15c5aaa07db21e0dc096b62f968d00b"
+    }
+  ],
+  "sources": {
+    "h2_version": "0.4.20",
+    "h2_commit": "b0e890842ac16d3c76836fd4fcc06421acb15fa7",
+    "h2_crate_sha256": "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118",
+    "h2_selected_files_gitblob_verified": 15,
+    "existing_registry_selected_files_checksum_verified": 10,
+    "tokio": "1.54.1",
+    "tokio_rustls": "0.26.6",
+    "rustls": "0.23.46",
+    "repository_baseline_files": 16
+  },
+  "recommendation": {
+    "wire": "one authenticated TLS/h2 connection per USB data session, stream1 only, bounded fixed CONNECT",
+    "negotiation": "strict ALPN rustusb-usbip/2/config2; existing raw-v1/schema1 retained without fallback",
+    "owner": "Link{io,owner,monitor}; owner stop+join mandatory; monitor no TLS/lease/permit",
+    "receive": "owned pump -> fixed65535B duplex; h2 credit only exact actual app-read delta, received_total published before exposing bytes",
+    "flush": "Root TrackingIo local encoded headers only; complete stream1 DATA offset then actual TLS poll_flush; independent zero-FIN fence",
+    "rtt": "one pending fixed h2 USER ping; enqueue to matching library pong elapsed; local seq is not a wire nonce",
+    "logging": "quiet scoped NoSubscriber around all h2 calls/polls/Ready mappings/Drops; no raw h2 Display/Debug",
+    "integration": "driver independent of WAL/app reads; relay itself ended-select while kernel write blocked; actual helper cleanup and Root proof remain distinct"
+  },
+  "must_freeze_before_implementation": [
+    "Root exact trusted config2 names/ranges and TLS new v2 methods",
+    "fixed CONNECT authority/method and allowed headers",
+    "final DTO names and snapshot semantics with I",
+    "optional FlushMonitor real write_pending snapshot hook"
+  ],
+  "scope_limits": [
+    "No repository modifications by reviewer, Cargo, CLI, compile, tests, QEMU or USB operations.",
+    "Design/API declaration sheet was not compiled and is not runtime verification.",
+    "Four reviewed RustSec advisories covered by0.4.20 does not constitute transitive cargo-audit.",
+    "PING/PONG endpoint response is not USB completion or DATA consumption proof.",
+    "65535B logical payload bound is not exact process RSS.",
+    "Half-close preserves foreground drain versus managed first-EOF policy; errors/timeout are not clean EOF.",
+    "Root authored proposed design and flush/lib in-flight changes independently; current whole worktree is not claimed clean."
+  ],
+  "diagnostics": [
+    {
+      "stage": "manifest_generation",
+      "result": "corrected_path",
+      "detail": "First metadata-only generator referenced nonexistent service/src/io.rs; stopped before writing final manifest. Correct path jobs/io.rs used; no product command executed."
+    }
+  ]
+}
