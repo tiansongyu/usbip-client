@@ -395,3 +395,13 @@
 - 最后十份维护文档244个本地目标/锚和站点122检查、JS语法、diff检查通过；保留较早243项QA而不混计。八个新索引共135份归档原件，逐bytes/SHA/原临时文件及staged Gitblob核对；109选定QEMU输入逐clean24a424b Gitblob仍一致。最终只交付文档/证据，不重归属软件或QEMU版本，完整原目标继续active；下一项为受限broker/helper FD所有权和实际USB/IP安全集成。
 
 - 最终staged核验在提交前发现新归档中的.log被仓库忽略规则排除，前面目录add没有收入这些原件；校验中止，未产生最终交付commit。随后仅按八个显式索引补入缺失日志并重新核135原件的staged bytes/SHA，软件/QEMU/CI及原始文件不变；这是归档打包修正，不是运行重测。
+
+## 继续：安全USB/IP产品接入
+
+- 上一goal turn为实际进展：TLS基础库与clean24a424b匿名kernel机制已验证，交付push056341c。本轮从clean重新读完整原始需求、AGENTS、核心skill及架构/安全设计，完整目标仍active。先细化secure-usbip-integration契约，再实施真实engine、稳定key前导、可信配置与专用helper角色；DEVLIST独立连接、IMPORT→URB同TLS，Native及Rust两条最终路径均保留。标准DEVLIST不带稳定key的真实缺口通过有界映射帧解决，不以BusID冒充权限身份。
+
+- 第一批已落共享key/前导、Rust engine实际TLS与原子ACL、root可信配置、broker专用USBFS授权和受监督Native客户端FD。开发验证core/protocol15、transport27及backend56通过；首backend测试有旧无效id夹具失败，保留原UnsafeDevice断言并改合法指纹、另验非法key拒绝。两轮workspace编译分别发现Error::State字符串转换及MutexGuard临时借用类型错误，原日志保留后修；第三轮allfeatures实际215次、0失败忽略通过，尚未完整软件gate或QEMU。独立审查发现Native变更队列等待不看EOF/stop，作者补biased取消与取得锁后复查，实际新测试覆盖。继续Native export/stub及完整broker前端，不将先通的Rust路径缩成最终目标。
+
+- Native服务端真实export/stub及CLI已落地，管理codec提取到protocol::server共享，protocol/backend定向67项通过；删除该轮发现的一个unused import后，共享四crate严格Clippy通过。完整软件门禁首轮停在default Clippy四个等价条件风格错误，保留原日志并按相同授权语义修正，未把此前215项重归属新服务端。QEMU harness已隔离每端私钥、记录各自ramfs/payload及要求实际CRNG/RTC，静态夹具不计设备运行；Native harness扩展与独立源码审查继续。
+
+- 完整门禁第二轮发现root新增Native管理CLI误调用不存在的helper函数，改用原invoke后第三轮scripts/check.sh exit0：default151/allfeatures225/vendor20共396次、35result、0失败忽略，121选定软件输入前后SHA保持；全部fmt/Clippy/release/严格rustdoc通过。另Native-only secure-transport CLI六项通过，feature tree无Rust engine。helper与共享协议/客户端两个独立源码审查无mustfix，新增英文secure-guide先标实际QEMU待验收，未改硬件或整体Phase完成状态。
