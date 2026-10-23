@@ -22,6 +22,7 @@ use std::{
     time::Duration,
 };
 use tokio::sync::{Notify, OwnedSemaphorePermit, Semaphore, mpsc, oneshot};
+use tokio::task::{JoinHandle, JoinSet};
 
 const BUFFER_BUDGET: usize = 16 * 1024 * 1024;
 const MAX_REQUESTS: usize = 64;
@@ -144,12 +145,47 @@ impl Slot {
     }
 }
 
+#[derive(Default)]
+struct Supervisors(JoinSet<()>);
+
+impl Drop for Supervisors {
+    fn drop(&mut self) {
+        // Closing or dropping the registry must never abort a supervisor that
+        // still owns real USB requests, buffers, or an uncertain operation.
+        self.0.detach_all();
+    }
+}
+
+#[derive(Default)]
+struct BackgroundTasks {
+    closing: bool,
+    monitors: Vec<JoinHandle<()>>,
+    supervisors: Supervisors,
+    failed: bool,
+}
+
+impl BackgroundTasks {
+    fn check_supervisors(&mut self) -> Result<()> {
+        while let Some(result) = self.supervisors.0.try_join_next() {
+            self.failed |= result.is_err();
+        }
+        if self.closing || self.failed {
+            return Err(Error::State(
+                "physical registry is closing or a supervisor failed; delegation remains unresolved"
+                    .into(),
+            ));
+        }
+        Ok(())
+    }
+}
+
 /// A registry of explicitly granted Linux usbfs capabilities.
 /// No method enumerates, opens, or automatically authorizes another device.
 #[derive(Clone)]
 pub struct PhysicalBackend {
     slots: Arc<Vec<Arc<Slot>>>,
     budget: Arc<Semaphore>,
+    tasks: Arc<Mutex<BackgroundTasks>>,
 }
 
 impl PhysicalBackend {
@@ -167,11 +203,15 @@ impl PhysicalBackend {
             if !ids.insert(source.device.bus_id.to_string()) {
                 return Err(Error::InvalidInput("duplicate physical source".into()));
             }
-            let slot = Arc::new(observe::initialize(source).await?);
-            let weak = Arc::downgrade(&slot);
+            slots.push(Arc::new(observe::initialize(source).await?));
+        }
+        // Do not leave monitors behind when a later source fails initialization.
+        let mut tasks = BackgroundTasks::default();
+        for slot in &slots {
+            let weak = Arc::downgrade(slot);
             // Sleep without retaining a slot; dropping the registry terminates
             // idle monitors, while a leased supervisor keeps only its own slot.
-            tokio::spawn(async move {
+            tasks.monitors.push(tokio::spawn(async move {
                 loop {
                     tokio::time::sleep(Duration::from_millis(250)).await;
                     let Some(slot) = weak.upgrade() else {
@@ -199,12 +239,12 @@ impl PhysicalBackend {
                         }
                     });
                 }
-            });
-            slots.push(slot);
+            }));
         }
         Ok(Self {
             slots: Arc::new(slots),
             budget: Arc::new(Semaphore::new(BUFFER_BUDGET)),
+            tasks: Arc::new(Mutex::new(tasks)),
         })
     }
 
@@ -219,6 +259,67 @@ impl PhysicalBackend {
                 .map(|slot| slot.lock().map(|state| state.clone()))
                 .collect::<Result<_>>()?,
         })
+    }
+
+    /// Close this registry after its server has shut down and return owned state.
+    ///
+    /// Other registry clones, active requests, or uncertain cleanup prevent a
+    /// successful close. Known monitors and supervisors are joined before the
+    /// registry's device descriptors are dropped. This does not revoke or prove
+    /// the absence of capabilities copied to other owners. Cancellation or a
+    /// timeout never aborts a supervisor that may still own physical work.
+    pub async fn close(self) -> Result<PhysicalSnapshot> {
+        if Arc::strong_count(&self.slots) != 1 {
+            return Err(Error::State(
+                "other physical registry clones remain; delegation cannot be finished".into(),
+            ));
+        }
+        closeable(&self.snapshot()?)?;
+        let (monitors, mut supervisors, failed) = {
+            let mut tasks = self.tasks.lock().map_err(|_| {
+                Error::State("physical task lock is poisoned; delegation remains unresolved".into())
+            })?;
+            tasks.closing = true;
+            (
+                std::mem::take(&mut tasks.monitors),
+                std::mem::take(&mut tasks.supervisors),
+                tasks.failed,
+            )
+        };
+        let joined = async {
+            let mut failed = failed;
+            // These observers only read sysfs. Their temporary slot references
+            // must end before the final registry descriptor is released.
+            for monitor in &monitors {
+                monitor.abort();
+            }
+            for monitor in monitors {
+                if let Err(error) = monitor.await {
+                    failed |= !error.is_cancelled();
+                }
+            }
+            while let Some(result) = supervisors.0.join_next().await {
+                failed |= result.is_err();
+            }
+            if failed {
+                return Err(Error::State(
+                    "physical background task failed; delegation remains unresolved".into(),
+                ));
+            }
+            Ok(())
+        };
+        tokio::time::timeout(CLEANUP_DEADLINE, joined)
+            .await
+            .map_err(|_| {
+                Error::Timeout(
+                    "physical background tasks have not ended; delegation remains unresolved"
+                        .into(),
+                )
+            })??;
+        let snapshot = self.snapshot()?;
+        closeable(&snapshot)?;
+        drop(self);
+        Ok(snapshot)
     }
 
     /// Return registered metadata, always excluding gone generations.
@@ -292,7 +393,12 @@ impl ServingBackend for PhysicalBackend {
             .find(|slot| slot.metadata.bus_id.as_str() == bus_id)
             .ok_or_else(|| Error::InvalidInput("unknown physical device".into()))?
             .clone();
+        let (ready, receipt) = oneshot::channel();
         {
+            let mut tasks = self.tasks.lock().map_err(|_| {
+                Error::State("physical task lock is poisoned; device is quarantined".into())
+            })?;
+            tasks.check_supervisors()?;
             let mut state = slot.lock()?;
             if state.state == "gone" {
                 return Err(Error::InvalidInput(
@@ -307,13 +413,14 @@ impl ServingBackend for PhysicalBackend {
             state.state = "claiming".into();
             state.leased = true;
             state.cleanup_verified = false;
+            drop(state);
+            let budget = self.budget.clone();
+            // The supervisor owns USB state even if IMPORT is cancelled. Its
+            // task is tracked so close can await its actual final return.
+            tasks.supervisors.0.spawn(async move {
+                worker::supervise(slot, budget, ready).await;
+            });
         }
-        let (ready, receipt) = oneshot::channel();
-        let budget = self.budget.clone();
-        // The supervisor owns USB state even if this IMPORT future is cancelled.
-        tokio::spawn(async move {
-            worker::supervise(slot, budget, ready).await;
-        });
         receipt
             .await
             .map_err(|_| Error::State("physical supervisor ended before claim receipt".into()))?
@@ -339,6 +446,24 @@ impl ServingBackend for PhysicalBackend {
         }
         Ok(())
     }
+}
+
+fn closeable(snapshot: &PhysicalSnapshot) -> Result<()> {
+    if snapshot.buffer_bytes_reserved != 0
+        || snapshot.devices.iter().any(|device| {
+            !matches!(device.state.as_str(), "available" | "gone")
+                || device.leased
+                || !device.cleanup_verified
+                || device.pending_urbs != 0
+                || device.queued_urbs != 0
+                || device.usbfs_inflight != 0
+        })
+    {
+        return Err(Error::State(
+            "physical requests or cleanup remain unresolved; delegation cannot be finished".into(),
+        ));
+    }
+    Ok(())
 }
 
 impl SessionLease for PhysicalLease {
@@ -490,6 +615,111 @@ fn error_completion(status: i32) -> Completion {
 mod tests {
     use super::*;
     use std::{fs::File, os::unix::fs::MetadataExt};
+
+    fn empty_registry(tasks: BackgroundTasks) -> PhysicalBackend {
+        PhysicalBackend {
+            slots: Arc::new(Vec::new()),
+            budget: Arc::new(Semaphore::new(BUFFER_BUDGET)),
+            tasks: Arc::new(Mutex::new(tasks)),
+        }
+    }
+
+    #[tokio::test]
+    async fn close_rejects_another_registry_owner_without_disabling_it() -> Result<()> {
+        let backend = empty_registry(BackgroundTasks::default());
+        assert!(matches!(
+            backend.clone().close().await,
+            Err(Error::State(_))
+        ));
+        assert_eq!(backend.snapshot()?.buffer_bytes_reserved, 0);
+        assert!(backend.close().await?.devices.is_empty());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn close_joins_read_only_monitor_then_waits_for_supervisor_return() -> Result<()> {
+        struct MonitorEnded(Option<oneshot::Sender<()>>);
+        impl Drop for MonitorEnded {
+            fn drop(&mut self) {
+                if let Some(ended) = self.0.take() {
+                    let _ = ended.send(());
+                }
+            }
+        }
+
+        let (monitor_started, started) = oneshot::channel();
+        let (monitor_ended, ended) = oneshot::channel();
+        let (release_supervisor, release) = oneshot::channel();
+        let (supervisor_ended, completed) = oneshot::channel();
+        let mut tasks = BackgroundTasks::default();
+        tasks.monitors.push(tokio::spawn(async move {
+            let _owner = MonitorEnded(Some(monitor_ended));
+            let _ = monitor_started.send(());
+            std::future::pending::<()>().await;
+        }));
+        tasks.supervisors.0.spawn(async move {
+            let _ = release.await;
+            let _ = supervisor_ended.send(());
+        });
+        tokio::time::timeout(Duration::from_secs(5), started)
+            .await
+            .map_err(|_| Error::Timeout("monitor fixture did not start".into()))?
+            .map_err(|_| Error::State("monitor fixture did not start".into()))?;
+        let closing = tokio::spawn(empty_registry(tasks).close());
+        tokio::time::timeout(Duration::from_secs(5), ended)
+            .await
+            .map_err(|_| Error::Timeout("close did not release the monitor".into()))?
+            .map_err(|_| Error::State("close did not release the monitor".into()))?;
+        // The monitor witness establishes that close is already in progress;
+        // the supervisor remains gated, without a sleep-based timing guess.
+        assert!(!closing.is_finished());
+        release_supervisor
+            .send(())
+            .map_err(|_| Error::State("supervisor was aborted before release".into()))?;
+        tokio::time::timeout(Duration::from_secs(5), completed)
+            .await
+            .map_err(|_| Error::Timeout("supervisor did not actually return".into()))?
+            .map_err(|_| Error::State("supervisor did not actually return".into()))?;
+        assert!(
+            closing
+                .await
+                .map_err(|_| Error::State("close fixture task failed".into()))??
+                .devices
+                .is_empty()
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn dropping_supervisor_tracking_does_not_abort_owned_work() -> Result<()> {
+        let (release, gated) = oneshot::channel();
+        let (finished, observed) = oneshot::channel();
+        let mut supervisors = Supervisors::default();
+        supervisors.0.spawn(async move {
+            let _ = gated.await;
+            let _ = finished.send(());
+        });
+        drop(supervisors);
+        release
+            .send(())
+            .map_err(|_| Error::State("tracked work was aborted on drop".into()))?;
+        tokio::time::timeout(Duration::from_secs(5), observed)
+            .await
+            .map_err(|_| Error::Timeout("detached work did not finish".into()))?
+            .map_err(|_| Error::State("detached work did not finish".into()))?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn failed_supervisor_join_does_not_report_closed() {
+        let mut tasks = BackgroundTasks::default();
+        let handle = tasks.supervisors.0.spawn(std::future::pending::<()>());
+        handle.abort();
+        assert!(matches!(
+            empty_registry(tasks).close().await,
+            Err(Error::State(_))
+        ));
+    }
 
     #[test]
     fn reservations_cover_two_buffers_and_remain_bounded_until_retirement() -> Result<()> {

@@ -47,6 +47,21 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Inspect unresolved physical grants through the root helper (root only).
+    #[cfg(feature = "physical-nusb")]
+    PhysicalPending {
+        /// Continue a previous bounded page using its next_after value.
+        #[arg(long)]
+        after: Option<String>,
+    },
+    /// Verify restored physical state and retire its grant record (root only; no USB writes).
+    #[cfg(feature = "physical-nusb")]
+    PhysicalReconcile {
+        lease_id: String,
+        /// Acknowledge that the old generation is gone, without affecting its replacement.
+        #[arg(long)]
+        acknowledge_gone: bool,
+    },
     /// Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS).
     #[cfg(feature = "physical-nusb")]
     PhysicalServer {
@@ -368,6 +383,30 @@ async fn run(cli: Cli) -> Result<()> {
                 &cli,
                 Request::Detach {
                     port: VhciPort(*port),
+                },
+            )
+            .await
+        }
+        #[cfg(feature = "physical-nusb")]
+        Command::PhysicalPending { after } => {
+            invoke(
+                &cli,
+                Request::PhysicalPending {
+                    after: after.clone(),
+                },
+            )
+            .await
+        }
+        #[cfg(feature = "physical-nusb")]
+        Command::PhysicalReconcile {
+            lease_id,
+            acknowledge_gone,
+        } => {
+            invoke(
+                &cli,
+                Request::ReconcilePhysical {
+                    lease_id: lease_id.clone(),
+                    acknowledge_gone: *acknowledge_gone,
                 },
             )
             .await

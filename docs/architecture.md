@@ -126,9 +126,11 @@ Linux 物理 adapter 使用固定 nusb 0.2.8 本地许可源码的小扩展，�
 
 EOF、写失败、Drop 和 shutdown 只发起关闭。监督器保留真实请求直到回收，释放实际取得的接口；恢复 alternate 和驱动仅限本会话确证取得的原接口，不接管新外部占用。每个原接口恢复前重新观察，内核 probe 已同步恢复 sibling 或原 alternate 时不重复 claim/CONNECT；CONNECT 错误也只有实际原驱动已在同代际/原配置恢复才能收敛。仅当本会话修改过配置且当前仍匹配最后确认状态并通过安全检查时，才可恢复原配置。原配置、alternate、驱动和代际须独立核对；超时或不确定时保持隔离，不能用丢弃 future 冒充取消。热拔会关闭对应 TCP，即使没有活动 URB；旧 slot 不重新打开 Bus ID，重插需要重新核验并获取新代际 FD。
 
-FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策略变更或关闭 helper socket 无法撤销已经交付的 FD。它不是逐请求沙箱，也没有实现可撤销的持久租约。部署边界见[安全模型](security.md)，使用方法见[物理服务指南](rust-physical-server.md)。干净37bc6b4的USBFS正常/热拔及原虚拟回归均已通过；软件检查不能代替双端实际 I/O、驱动恢复、热拔及真实硬件验收，最新结果见[工作日志](work-log.md)。
+FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策略变更或关闭 helper socket 无法撤销已经交付的 FD。它不是逐请求沙箱，也没有实现可撤销的持久租约；新增的持久授权记录只协调可信服务的合作结束。部署边界见[安全模型](security.md)，使用方法见[物理服务指南](rust-physical-server.md)。干净37bc6b4的USBFS正常/热拔及原虚拟回归均已通过；软件检查不能代替双端实际 I/O、驱动恢复、热拔及真实硬件验收，最新结果见[工作日志](work-log.md)。
 
-原配置/alternate/driver 与自有变更范围目前仅在物理服务进程内保存。[SIGKILL/首次重启负向](research/physical-crash-recovery.md)已证实新进程会采用当时空驱动为新 original；其 `cleanup_verified` 仅对应本次基线，不验证旧会话。跨进程恢复[draft](research/physical-crash-recovery-design.md)尚未实现，特别是保留 SCM_RIGHTS 的同一 OFD 副本会延长旧 claim 生命周期，不能当作独立恢复 open。
+[SIGKILL/首次重启负向](research/physical-crash-recovery.md)已证实旧版本重启会采用空驱动为新 original。新增的 schema 1 物理授权账本在 FD 交付前保存完整原配置/接口/alternate/driver、代际与 OS owner，同指纹未决记录阻止新 grant。helper 在 root 管理的目录内用独占锁和原子文件/目录 fsync 保存，损坏和不确定提交拒绝继续使用。普通服务 shutdown 后 join 自有后台任务并释放 registry，`FinishPhysical` 验证原 OS owner 和实际原基线再退休记录；未知交付或初始化取消仍需协调。管理员只读 `PhysicalPending`/`ReconcilePhysical` 可检查恢复后的同代际或明确确认旧代际已消失，不执行恢复写入。具体契约见[实施切片](research/physical-crash-recovery-design.md)，使用方法见[指南](rust-physical-server.md)。
+
+持久记录不是 FD 撤销或自动崩溃恢复：helper 不保留旧 USBFS OFD 来冒充独立恢复 open，原会话实际修改范围仍由后端内存管理。自动恢复的监督、可信变更范围与可安全执行的恢复操作仍在后续设计中，不能仅凭 PID 消失清记录。软件和 QEMU 证据分别记账，旧负向结果保持。
 
 ## 技术依据
 

@@ -11,7 +11,11 @@ use std::path::Path;
 /// Read-only helper readiness diagnostics shared by all frontends.
 pub mod diagnostics;
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
+mod journal;
+#[cfg(all(feature = "physical-usb", target_os = "linux"))]
 mod physical;
+#[cfg(all(feature = "physical-usb", target_os = "linux"))]
+mod physical_lifecycle;
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
 pub use physical::PhysicalGrant;
 
@@ -27,9 +31,31 @@ pub const STATUS_SCHEMA_VERSION: u32 = 1;
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
+    /// Complete an original owner's cooperative physical capability lifecycle.
+    #[cfg(feature = "physical-usb")]
+    FinishPhysical {
+        /// Helper-issued UUID; not a bearer authorization token.
+        lease_id: String,
+    },
+    /// Read a bounded page of unresolved physical grants (root only).
+    #[cfg(feature = "physical-usb")]
+    PhysicalPending {
+        /// Continue after the last lease ID of the preceding page.
+        after: Option<String>,
+    },
+    /// Independently verify restored state or acknowledge a gone generation (root only).
+    #[cfg(feature = "physical-usb")]
+    ReconcilePhysical {
+        /// Exact unresolved helper-issued lease ID.
+        lease_id: String,
+        /// Explicitly permit retiring an old generation that no longer exists.
+        acknowledge_gone: bool,
+    },
     /// Delegate one approved current usbfs device capability to this local caller.
     #[cfg(feature = "physical-usb")]
     OpenPhysical {
+        /// Required durable lifecycle protocol version, currently 1.
+        journal_schema_version: u32,
         /// Exact physical-device fingerprint from the separate administrator allowlist.
         device_id: String,
     },
@@ -68,8 +94,23 @@ pub enum Request {
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 enum RequestWire {
     #[cfg(feature = "physical-usb")]
+    FinishPhysical {
+        lease_id: String,
+    },
+    #[cfg(feature = "physical-usb")]
+    PhysicalPending {
+        #[serde(default)]
+        after: Option<String>,
+    },
+    #[cfg(feature = "physical-usb")]
+    ReconcilePhysical {
+        lease_id: String,
+        acknowledge_gone: bool,
+    },
+    #[cfg(feature = "physical-usb")]
     OpenPhysical {
         device_id: String,
+        journal_schema_version: u32,
     },
     Export {
         device_id: String,
@@ -94,7 +135,25 @@ impl<'de> Deserialize<'de> for Request {
     ) -> std::result::Result<Self, D::Error> {
         Ok(match RequestWire::deserialize(deserializer)? {
             #[cfg(feature = "physical-usb")]
-            RequestWire::OpenPhysical { device_id } => Self::OpenPhysical { device_id },
+            RequestWire::FinishPhysical { lease_id } => Self::FinishPhysical { lease_id },
+            #[cfg(feature = "physical-usb")]
+            RequestWire::PhysicalPending { after } => Self::PhysicalPending { after },
+            #[cfg(feature = "physical-usb")]
+            RequestWire::ReconcilePhysical {
+                lease_id,
+                acknowledge_gone,
+            } => Self::ReconcilePhysical {
+                lease_id,
+                acknowledge_gone,
+            },
+            #[cfg(feature = "physical-usb")]
+            RequestWire::OpenPhysical {
+                device_id,
+                journal_schema_version,
+            } => Self::OpenPhysical {
+                device_id,
+                journal_schema_version,
+            },
             RequestWire::Export { device_id } => Self::Export { device_id },
             RequestWire::Unexport { device_id } => Self::Unexport { device_id },
             RequestWire::Attach { peer, bus_id } => Self::Attach { peer, bus_id },
@@ -308,11 +367,26 @@ pub async fn open_physical(socket: &Path, device_id: String) -> Result<PhysicalG
 pub async fn serve(config: &Path, socket: &Path) -> Result<()> {
     #[cfg(target_os = "linux")]
     {
-        linux::serve(config, socket).await
+        linux::serve(config, socket, Path::new("/var/lib/rustusb/physical")).await
     }
     #[cfg(not(target_os = "linux"))]
     {
         let _ = (config, socket);
+        Err(Error::Unsupported("Linux root helper required".into()))
+    }
+}
+
+/// Run the helper with an administrator-selected physical journal directory.
+/// Frontends cannot select this path. An existing missing/corrupt journal fails
+/// closed; deleting the entire directory destroys the recovery history.
+pub async fn serve_with_physical_state(config: &Path, socket: &Path, state: &Path) -> Result<()> {
+    #[cfg(target_os = "linux")]
+    {
+        linux::serve(config, socket, state).await
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = (config, socket, state);
         Err(Error::Unsupported("Linux root helper required".into()))
     }
 }
@@ -404,6 +478,41 @@ mod tests {
             assert!(
                 serde_json::from_str::<Request>(input).is_err(),
                 "accepted {input}"
+            );
+        }
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[test]
+    fn physical_lifecycle_wire_requires_version_and_rejects_extra_privilege_fields() {
+        let id = format!("usb-{}", "a".repeat(64));
+        let lease = "00000000-0000-0000-0000-000000000001";
+        for invalid in [
+            serde_json::json!({"op":"open_physical","device_id":id}),
+            serde_json::json!({"op":"finish_physical","lease_id":lease,"uid":0}),
+            serde_json::json!({"op":"physical_pending","path":"/tmp/elsewhere"}),
+            serde_json::json!({"op":"reconcile_physical","lease_id":lease,"acknowledge_gone":false,"force":true}),
+            serde_json::json!({"op":"reconcile_physical","lease_id":lease}),
+        ] {
+            assert!(serde_json::from_value::<Request>(invalid).is_err());
+        }
+        for valid in [
+            Request::OpenPhysical {
+                device_id: id,
+                journal_schema_version: 1,
+            },
+            Request::FinishPhysical {
+                lease_id: lease.into(),
+            },
+            Request::PhysicalPending { after: None },
+            Request::ReconcilePhysical {
+                lease_id: lease.into(),
+                acknowledge_gone: false,
+            },
+        ] {
+            assert!(
+                serde_json::to_value(valid)
+                    .is_ok_and(|value| serde_json::from_value::<Request>(value).is_ok())
             );
         }
     }

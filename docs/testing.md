@@ -222,3 +222,10 @@ Ubuntu 22.04 / 24.04 × x86_64 / aarch64 的组合各有状态；HWE、OEM 或�
 ```
 
 阶段裁决依照 [roadmap](roadmap.md) 逐项 gate：自动检查通过只满足软件项；G1 仍需双 Ubuntu 真实设备；G2 需 Rust 后端 / QEMU / 互操作；G3 需实际数据通道与安全；后续 UI、安装、性能和 Windows 各自验收。任何失败和跳过均保留，修复后关联新记录，不能覆盖原始结果造成全部通过的假象。
+
+
+## 持久物理授权记录
+
+独立 `python3 scripts/qemu/run-journal-qemu.py --evidence /tmp/rustusb-journal-observation` 使用两台隔离 guest、QEMU HID/FTDI，不操作宿主 USB。新目录必须不存在。它检查真实 I/O 后正常结束退休、正常再次启动、真实 I/O 后 SIGKILL/wait137、跨 helper 重启保留原基线并明确拒绝新服务、普通 UID 管理拒绝、原驱动未恢复时 root 协调拒绝、guest 管理员显式恢复原驱动后核验退休和再启动。最后再启动仅 ready/关闭，不冒充又一轮 I/O；本场景不覆盖 ECM、重插或断电，因此另跑原相应回归。
+
+原 `run-crash-qemu.py` 保持不变，旧 clean1342a6a 的恢复 FAIL 不因新 guard 改判。新 runner 的绿色只证明 guard/正常退休/显式协调，不证明 SIGKILL 后自动恢复驱动。每次实际版本、命令、失败和来源以工作日志及证据索引为准。

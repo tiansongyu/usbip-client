@@ -283,3 +283,14 @@
 - 信号前实际KEY1 down/up及FTDI各35B，两个lease各inflight1、预算2832，HIDpending1/FTDIpending2含queued1。已核普通PID303/start293发送一次KILL，wait137；20.06秒后同代际/config1/alt0/root0600但两个driver均null，旧stopped缺失且末资源保持未知。client先0.19秒自主NULL/旧设备消失再清理缓存。新PID12905/start2517首次无IMPORT重启确实ready，original/current均null且cleanup_verified=true，正常shutdown ACK/wait0/stopped后外部driver仍null；新epoch0不替代旧清理证据。
 - 19份运行原件按bytes归档，新增实际FTDI host sink35B原件；RX和evdev hex在原client证据中。静态报告及原始提取检查压缩包亦保存，根逐140文件核归档前仍匹配。首次观测证明基线丢失风险，不推导永久泄漏或所有FD副本已结束；自动恢复与未决租约仍未实现。
 - 另一agent运行后独立raw复核74/74通过，未调用runner.verify，逐Git140输入/7脚本/分层fingerprint、双向原bytes和evdev、所有epoch/sysfs/FD/VHCI事实相符；原运行FAIL保持。报告及可复核脚本按实际SHA归档，未重跑QEMU或扩展既有绿色矩阵。
+
+
+## 继续：持久物理授权基线与合作结束
+
+- 从 clean a484d11 继续，重读完整原始需求和项目约定。已有 FD 是可信服务的整设备能力，正常合作结束不以不可实现的全系统 FD 撤销为前提；实际自动崩溃恢复保持后续范围。先在 physical-crash-recovery-design.md 写明确实施契约，再按持久 Store、helper/客户端接入、后台任务回收及独立 QEMU 四部分实施。
+- 新增 root 账本保存完整原配置/接口/alternate/driver、boot/receipt 和 OS owner，授权前落盘，同指纹未决禁止重新授权；正常 Finish 由原 owner 发起并独立核验。root-only pending 分页/只读 reconcile 不替代 USB 状态恢复。未知交付和初始化取消保留记录；不接受任意设备或状态路径 RPC，不新增依赖或核心 unsafe。
+- backend close 跟踪/join 自有 monitor 和 supervisor，保存末快照后释放 registry，CLI 再 Finish 后输出 stopped。新增独立 journal 双 guest 场景保留旧 crash harness；当前仍是实现候选，尚未有本轮编译/QEMU结论，不能引用旧绿色矩阵作为此版本已通过。
+
+- 首次定向编译暴露root新增schema的三个测试构造遗漏和目录组件双引用类型，原日志保留；修复后首次Store测试因tempfile目录继承组可写umask被正确拒绝，改为fixture明确0700，不放宽生产权限。随后daemon48、后端45及CLI定向测试通过。root补运行期同inode字节损坏/删除/截断拒绝、缺lock禁止另建锁域、缺driver字段不能冒充显式null，以及分页/协议/OS owner测试。
+- 完整 `bash scripts/check.sh` 在工作树候选上实际exit0：default89/allfeatures142/vendor19共250次，31result、0失败/忽略，fmt/两组Clippy/release/严格rustdoc通过；98项软件输入前后SHA不变。待提交后从clean运行新QEMU与原正常/热拔/ECM/TERM回归；尚不宣称这些运行已通过。
+- 新harness独立预审发现管理拒绝只查非零可能掩盖错误原因；改为按phase/UID核单个JSON ok=false及精确error。首次提取检查44/46揭示jq -e对空/多JSON流的宽松性，修为jq -se且length==1后46/46通过，原报告保留。两脚本各自755、原crash与TERM脚本未改。

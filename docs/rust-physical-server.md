@@ -65,6 +65,29 @@ rustusb --socket /run/rustusb/control.sock physical-server \
 
 拔出后旧 slot 不会自动授权同端口的新设备。重新连接需要管理员核对新设备，再显式重新启动服务获取新代际的 FD；无序列号设备的候选指纹仍不构成可靠硬件身份认证。
 
-Unix信号监听在helper通信前注册，等待异步helper响应时可取消；这不终止已运行的blocking内核初始化。合作停止须等待原有清理，真实验证见[报告](research/server-signal-shutdown.md)。SIGKILL/崩溃与持久重启恢复仍未实现，不能用进程退出代替设备恢复核验。
+Unix信号监听在helper通信前注册，等待异步helper响应时可取消；这不终止已运行的blocking内核初始化。合作停止须等待原有清理，真实验证见[报告](research/server-signal-shutdown.md)。SIGKILL/崩溃后的自动驱动恢复仍未实现，不能用进程退出代替设备恢复核验。新的持久授权保护与管理员协调见下节；运行证据以测试报告为准。
 
 在 [SIGKILL/首次重启测试](research/physical-crash-recovery.md)中，旧进程退出后原驱动没有恢复，新进程却以当时的空驱动作为 original 并报告 `cleanup_verified=true`。该字段只验证当前进程的基线。强制退出后不能靠重启后的 ready/stopped 判断旧设备已恢复；应保留原状态和诊断，由管理员核对同代际配置、alternate 与驱动。
+
+
+## 持久授权记录与管理员协调
+
+helper 与物理客户端需一起升级到 journal schema 1；旧版 OpenPhysical 请求在授权前拒绝。每次授权在 FD 交付前保存原配置、完整接口/alternate/driver、代际和 OS owner，不保存序列号或 USB 数据。默认目录 `/var/lib/rustusb/physical` 由 helper 首次创建，root0700，固定 journal/lock 文件 root0600；root helper 可用 `--physical-state-dir` 选另一受保护绝对路径。前端不能选择状态路径；同一设备的所有 helper 必须共用一个状态目录，不得用另一个目录绕过未决记录。
+
+正常服务结束会先清理 USB、等待自己的后台任务、释放 registry，再由 helper 独立核验并清除记录。交付不确定、初始化中断、清理或记录写入失败会保留未决状态；下一次同指纹启动被拒绝，包括同端口的新代际。已交付 FD 不可由该记录撤销，获授权服务仍是受信任进程。
+
+管理员首先停止并回收旧服务进程，读取原始记录：
+
+```bash
+sudo rustusb --json physical-pending
+```
+
+输出是 `schema_version`、`records` 和 `next_after`；若 `next_after` 非空，用 `--after <值>` 继续。先依据记录与现场状态，由管理员恢复**同代际**设备的原配置、全部 alternate 和驱动。确认之后执行：
+
+```bash
+sudo rustusb --json physical-reconcile <lease-id>
+```
+
+该命令只读设备状态并退休记录，不执行 bind、配置切换或强制清理；状态仍不匹配则失败并保留记录。旧代际已拔出或跨启动消失时，管理员可加 `--acknowledge-gone` 确认结束旧记录，命令不操作替代设备；随后重新启动仍需当前策略和新的完整扫描/FD receipt。这不是每次重插都自动要求修改 allowlist 的机制。
+
+不要删除 journal、lock 或整个目录来解除拒绝。已有目录缺 journal、损坏、不安全权限、重复 helper 或提交不确定都会拒绝授权；删除整个目录会破坏不可恢复的原始历史，程序无法区分管理员删除与首次安装。本轮不声称断电耐久已实测，也没有自动重新绑定驱动。实现与验收状态见[设计](research/physical-crash-recovery-design.md)。

@@ -26,6 +26,8 @@ const FD_DEADLINE: Duration = Duration::from_secs(5);
 /// An administrator-authorized descriptor for one current whole USB device.
 /// The descriptor is a device-scoped write capability, not a per-request sandbox.
 pub struct PhysicalGrant {
+    /// Durable helper grant ID; finish after releasing this owner's capability.
+    pub lease_id: String,
     /// Open usbfs descriptor; dropping closes this process's reference.
     pub fd: OwnedFd,
     /// Validated device metadata, including potentially sensitive descriptors.
@@ -46,6 +48,7 @@ impl fmt::Debug for PhysicalGrant {
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct GrantDescription {
+    pub lease_id: String,
     pub device: Device,
     pub receipt: PhysicalDeviceReceipt,
 }
@@ -155,6 +158,7 @@ pub(crate) fn open_current(device: Device) -> Result<PhysicalGrant> {
         bus_number: bus,
     };
     Ok(PhysicalGrant {
+        lease_id: String::new(),
         fd: file.into(),
         device,
         receipt,
@@ -165,6 +169,7 @@ pub(crate) fn validate_received(
     fd: OwnedFd,
     description: GrantDescription,
 ) -> Result<PhysicalGrant> {
+    super::journal::validate_lease_id(&description.lease_id)?;
     let file = File::from(fd);
     let metadata = file.metadata()?;
     let (bus, _, sysfs) = paths(&description.device)?;
@@ -194,6 +199,7 @@ pub(crate) fn validate_received(
         ));
     }
     Ok(PhysicalGrant {
+        lease_id: description.lease_id,
         fd: file.into(),
         device: description.device,
         receipt: description.receipt,

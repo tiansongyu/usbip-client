@@ -1,0 +1,80 @@
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+error[E0277]: the trait bound `&&OsStr: Arg` is not satisfied
+   --> crates/rustusb-daemon/src/journal.rs:270:58
+    |
+270 |         let child = match rustix::fs::openat(&directory, name, flags, Mode::empty()) {
+    |                           ------------------             ^^^^ the trait `Arg` is not implemented for `&&OsStr`
+    |                           |
+    |                           required by a bound introduced by this call
+    |
+note: required by a bound in `openat`
+   --> /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.5/src/fs/at.rs:84:18
+    |
+ 84 | pub fn openat<P: path::Arg, Fd: AsFd>(
+    |                  ^^^^^^^^^ required by this bound in `openat`
+help: consider dereferencing here
+    |
+270 |         let child = match rustix::fs::openat(&directory, *name, flags, Mode::empty()) {
+    |                                                          +
+
+error[E0277]: the trait bound `&&OsStr: Arg` is not satisfied
+   --> crates/rustusb-daemon/src/journal.rs:273:55
+    |
+273 |                 match rustix::fs::mkdirat(&directory, name, Mode::RUSR | Mode::WUSR | Mode::XUSR) {
+    |                       -------------------             ^^^^ the trait `Arg` is not implemented for `&&OsStr`
+    |                       |
+    |                       required by a bound introduced by this call
+    |
+note: required by a bound in `mkdirat`
+   --> /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.5/src/fs/at.rs:205:19
+    |
+205 | pub fn mkdirat<P: path::Arg, Fd: AsFd>(dirfd: Fd, path: P, mode: Mode) -> io::Result<()> {
+    |                   ^^^^^^^^^ required by this bound in `mkdirat`
+help: consider dereferencing here
+    |
+273 |                 match rustix::fs::mkdirat(&directory, *name, Mode::RUSR | Mode::WUSR | Mode::XUSR) {
+    |                                                       +
+
+error[E0277]: the trait bound `&&OsStr: Arg` is not satisfied
+   --> crates/rustusb-daemon/src/journal.rs:278:60
+    |
+278 |                 let child = rustix::fs::openat(&directory, name, flags, Mode::empty())
+    |                             ------------------             ^^^^ the trait `Arg` is not implemented for `&&OsStr`
+    |                             |
+    |                             required by a bound introduced by this call
+    |
+note: required by a bound in `openat`
+   --> /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.5/src/fs/at.rs:84:18
+    |
+ 84 | pub fn openat<P: path::Arg, Fd: AsFd>(
+    |                  ^^^^^^^^^ required by this bound in `openat`
+help: consider dereferencing here
+    |
+278 |                 let child = rustix::fs::openat(&directory, *name, flags, Mode::empty())
+    |                                                            +
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `rustusb-daemon` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error[E0063]: missing field `journal_schema_version` in initializer of `Request`
+    --> crates/rustusb-daemon/src/linux.rs:1242:27
+     |
+1242 |         early_uid_refusal(Request::OpenPhysical {
+     |                           ^^^^^^^^^^^^^^^^^^^^^ missing `journal_schema_version`
+
+error[E0063]: missing fields `handoffs` and `journal` in initializer of `linux::App`
+    --> crates/rustusb-daemon/src/linux.rs:1358:36
+     |
+1358 |             let service = Arc::new(App {
+     |                                    ^^^ missing `handoffs` and `journal`
+
+error[E0063]: missing field `journal_schema_version` in initializer of `Request`
+    --> crates/rustusb-daemon/src/linux.rs:1374:39
+     |
+1374 |             write_frame(&mut client, &Request::OpenPhysical { device_id: id }).await?;
+     |                                       ^^^^^^^^^^^^^^^^^^^^^ missing `journal_schema_version`
+
+Some errors have detailed explanations: E0063, E0277.
+For more information about an error, try `rustc --explain E0063`.
+error: could not compile `rustusb-daemon` (lib test) due to 6 previous errors

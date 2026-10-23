@@ -1,0 +1,294 @@
+{
+  "scope": "Static source review and extracted administrative refusal check fixtures only; no Cargo build, QEMU or USB operations.",
+  "initial_files": [
+    {
+      "path": "scripts/qemu/run-journal-qemu.py",
+      "bytes": 31539,
+      "sha256": "b75e6ea6caa2a7f1da0d173f0f81d9899336b47abc8c2faf165cb85f754d83cb",
+      "saved": "/tmp/rustusb-journal-harness-review-20261023/run-journal-qemu.py.before"
+    },
+    {
+      "path": "scripts/qemu/guest-journal-init.sh",
+      "bytes": 30903,
+      "sha256": "f2c54d4fe7175cd6e33cef4ca4d1f2408611be37f3553902740cc63d27303bae",
+      "saved": "/tmp/rustusb-journal-harness-review-20261023/guest-journal-init.sh.before"
+    }
+  ],
+  "final_files": [
+    {
+      "path": "scripts/qemu/run-journal-qemu.py",
+      "bytes": 32481,
+      "sha256": "544e5dafdf62be06ca19127ffbcf8faf160c3e7f8b5384469438d320dda3bc1c",
+      "mode": "0o755"
+    },
+    {
+      "path": "scripts/qemu/guest-journal-init.sh",
+      "bytes": 31813,
+      "sha256": "3bba5c507849ffd63d614c1a63f7eb8d8c0b947bb1c08145581f1aa24e5ff146",
+      "mode": "0o755"
+    }
+  ],
+  "mustfix_corrected": "Nonzero arbitrary CLI failures previously counted as authorization or unrestored-baseline refusals. Both guest and host now require actual JSON ok=false and the phase/UID-specific error.",
+  "checks": [
+    {
+      "name": "host_accept_specific_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_exit_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_not_json",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_json_array",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_json_boolean",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_ok_true",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_missing_ok",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_nonstring_error",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_unknown_phase",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_wrong_uid",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_stderr_only",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_multiple_json",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_exit_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_not_json",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_json_array",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_json_boolean",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_ok_true",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_missing_ok",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_nonstring_error",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_stderr_only",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_multiple_json",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_wrong_error",
+      "result": "PASS"
+    },
+    {
+      "name": "run-journal-qemu.py_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "run-physical-qemu.py_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "run-native-qemu.py_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "sh_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "bash_syntax",
+      "result": "PASS"
+    }
+  ],
+  "passed": 46,
+  "total": 46,
+  "shellcheck": {
+    "exit_code": 1,
+    "warning": "SC2034 unused loop attempt (existing bounded polling counter; no control-flow failure)",
+    "log": "/tmp/rustusb-journal-harness-review-20261023/shellcheck.txt"
+  },
+  "limitations": [
+    "Only simulated HID/FTDI with config1/alternate0; no ECM/nonzero-alt journal runtime acceptance.",
+    "Post-administrator-reconcile epoch verifies fresh ready/finish without IMPORT, not post-reconcile actual USB I/O.",
+    "No power-loss, OS-reboot, helper hard-kill, changed-generation or arbitrary forwarded-FD recovery proof.",
+    "The product never auto-restores the killed epoch; the guest administrator explicitly writes the two fixed test driver bind paths."
+  ],
+  "source_review": [
+    {
+      "name": "api_contract",
+      "result": "PASS",
+      "evidence": "CLI success is unwrapped data; pending records/schema_version/next_after and reconcile status/observation match current product. CLI JSON failures now require ok=false and exact semantic reason."
+    },
+    {
+      "name": "privilege_and_scope",
+      "result": "PASS",
+      "evidence": "Host refuses root and uses private Unix socketpair/QMP/FTDI; guest checks PID1 and dedicated command-line marker before sysfs/device operations; root-only binds are fixed synthetic usbhid/ftdi_sio paths after same-generation baseline comparison."
+    },
+    {
+      "name": "ordinary_service_identity",
+      "result": "PASS",
+      "evidence": "Guest ordinary_identity and server_identity explicitly return on UID/capability/exe/starttime/node-FD failure; pre-KILL call is direct, then one UID1000 SIGKILL and actual wait137; stdin FIFO held open."
+    },
+    {
+      "name": "normal_then_restart",
+      "result": "PASS",
+      "evidence": "Normal actual HID/FTDI pending workload is shut down before independently restored sysfs and empty journal; separate reopened no-IMPORT epoch gets fresh leases and finishes; killed epoch performs a second real I/O cycle."
+    },
+    {
+      "name": "persistent_crash_barrier",
+      "result": "PASS",
+      "evidence": "Two same-ID restart attempts require nonzero/no-ready/exact unresolved-grant reason and unchanged original records; helper receives TERM and actual wait0 before new PID restart and raw journal reload comparison."
+    },
+    {
+      "name": "admin_reconciliation",
+      "result": "PASS",
+      "evidence": "UID1000 and UID1001 are rejected by distinct actual JSON errors; root refuses same-generation unrestored baseline, guest administrator binds original drivers, independent sysfs matches before root returns retired/restored and pending becomes empty."
+    },
+    {
+      "name": "actual_io_and_disconnection",
+      "result": "PASS",
+      "evidence": "QMP key1/key2 plus raw evdev down/up records, FTDI RX/TX per-cycle35B and host70B exact sink; current sessions/receipts verified before stop, spontaneous VHCI NULL/old nodes gone observed before explicit detach."
+    },
+    {
+      "name": "honest_killed_epoch",
+      "result": "PASS",
+      "evidence": "Killed epoch terminal snapshot/resources remain null/unobservable; no stopped event allowed, driver-null after kill is an explicit current guard-slice fact, not automatic recovery success."
+    },
+    {
+      "name": "channels_and_terminal_result",
+      "result": "PASS",
+      "evidence": "Kernel ttyS0 separated from strict JSON/control evidence ttyS1; both beacons and collection markers required; kernel faults or FAIL markers sticky; both QEMU exits and exact injections/TX required before PASS."
+    },
+    {
+      "name": "source_and_binary_guards",
+      "result": "PASS",
+      "evidence": "Native+physical+journal layered fingerprints cover Rust/Cargo/vendor and seven harness inputs; source copies, actual guest ELF identity, original/final Git/source/binary values recorded; no skip-build path."
+    },
+    {
+      "name": "old_negative_unchanged",
+      "result": "PASS",
+      "evidence": "git diff -- scripts/qemu/run-crash-qemu.py scripts/qemu/guest-crash-init.sh is empty."
+    }
+  ],
+  "repo_write_scope": [
+    "scripts/qemu/run-journal-qemu.py",
+    "scripts/qemu/guest-journal-init.sh"
+  ],
+  "old_negative_diff_bytes": 0,
+  "no_remaining_mustfix_in_reviewed_slice": true
+}

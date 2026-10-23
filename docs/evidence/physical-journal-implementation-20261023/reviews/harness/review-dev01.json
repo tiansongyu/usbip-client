@@ -1,0 +1,231 @@
+{
+  "scope": "Static source review and extracted administrative refusal check fixtures only; no Cargo build, QEMU or USB operations.",
+  "initial_files": [
+    {
+      "path": "scripts/qemu/run-journal-qemu.py",
+      "bytes": 31539,
+      "sha256": "b75e6ea6caa2a7f1da0d173f0f81d9899336b47abc8c2faf165cb85f754d83cb",
+      "saved": "/tmp/rustusb-journal-harness-review-20261023/run-journal-qemu.py.before"
+    },
+    {
+      "path": "scripts/qemu/guest-journal-init.sh",
+      "bytes": 30903,
+      "sha256": "f2c54d4fe7175cd6e33cef4ca4d1f2408611be37f3553902740cc63d27303bae",
+      "saved": "/tmp/rustusb-journal-harness-review-20261023/guest-journal-init.sh.before"
+    }
+  ],
+  "final_files": [
+    {
+      "path": "scripts/qemu/run-journal-qemu.py",
+      "bytes": 32481,
+      "sha256": "544e5dafdf62be06ca19127ffbcf8faf160c3e7f8b5384469438d320dda3bc1c",
+      "mode": "0o755"
+    },
+    {
+      "path": "scripts/qemu/guest-journal-init.sh",
+      "bytes": 31789,
+      "sha256": "cf150e1740f44a4bc43710cc592ab476d0e3559f3ae36e75030957af7dd62e5a",
+      "mode": "0o755"
+    }
+  ],
+  "mustfix_corrected": "Nonzero arbitrary CLI failures previously counted as authorization or unrestored-baseline refusals. Both guest and host now require actual JSON ok=false and the phase/UID-specific error.",
+  "checks": [
+    {
+      "name": "host_accept_specific_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "host_accept_specific_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "old_accepts_wrong_error_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "new_rejects_wrong_error_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_exit_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_not_json",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_json_array",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_json_boolean",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_ok_true",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_missing_ok",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_nonstring_error",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_unknown_phase",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_wrong_uid",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_stderr_only",
+      "result": "PASS"
+    },
+    {
+      "name": "host_rejects_multiple_json",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_pending-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_reconcile-denied_1000",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_pending-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_reconcile-denied_1001",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_accept_specific_unrestored-refused_0",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_exit_zero",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_not_json",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_json_array",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_json_boolean",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_ok_true",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_missing_ok",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_nonstring_error",
+      "result": "PASS"
+    },
+    {
+      "name": "guest_rejects_stderr_only",
+      "result": "FAIL"
+    },
+    {
+      "name": "guest_rejects_multiple_json",
+      "result": "FAIL"
+    },
+    {
+      "name": "guest_rejects_wrong_error",
+      "result": "PASS"
+    },
+    {
+      "name": "run-journal-qemu.py_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "run-physical-qemu.py_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "run-native-qemu.py_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "sh_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "bash_syntax",
+      "result": "PASS"
+    }
+  ],
+  "passed": 44,
+  "total": 46,
+  "shellcheck": {
+    "exit_code": 1,
+    "warning": "SC2034 unused loop attempt (existing bounded polling counter; no control-flow failure)",
+    "log": "/tmp/rustusb-journal-harness-review-20261023/shellcheck.txt"
+  },
+  "limitations": [
+    "Only simulated HID/FTDI with config1/alternate0; no ECM/nonzero-alt journal runtime acceptance.",
+    "Post-administrator-reconcile epoch verifies fresh ready/finish without IMPORT, not post-reconcile actual USB I/O.",
+    "No power-loss, OS-reboot, helper hard-kill, changed-generation or arbitrary forwarded-FD recovery proof.",
+    "The product never auto-restores the killed epoch; the guest administrator explicitly writes the two fixed test driver bind paths."
+  ]
+}

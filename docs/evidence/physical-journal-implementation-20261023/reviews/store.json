@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-23T05:38:57.610121+00:00",
+  "result": "PASS_SOURCE_REVIEW_NO_MUST_FIX",
+  "scope": "Final read-only review of journal Store plus helper owner/baseline/handoff integration; no runtime or QEMU acceptance claimed.",
+  "head": "a484d116b7d6acbc80ec7d84ab76b25707838115",
+  "worktree_clean": false,
+  "worktree_status": [
+    " M crates/rustusb-cli/src/main.rs",
+    " M crates/rustusb-cli/src/physical_server.rs",
+    " M crates/rustusb-daemon/src/lib.rs",
+    " M crates/rustusb-daemon/src/linux.rs",
+    " M crates/rustusb-daemon/src/main.rs",
+    " M crates/rustusb-daemon/src/physical.rs",
+    " M crates/rustusb-rust-backend/src/physical.rs",
+    " M docs/research/physical-crash-recovery-design.md",
+    " M docs/rust-physical-server.md",
+    " M docs/security.md",
+    " M docs/work-log.md",
+    "?? crates/rustusb-daemon/src/journal.rs",
+    "?? crates/rustusb-daemon/src/physical_lifecycle.rs",
+    "?? scripts/qemu/guest-journal-init.sh",
+    "?? scripts/qemu/run-journal-qemu.py"
+  ],
+  "reviewer_authorship": "Reviewer authored the initial journal.rs implementation. Root subsequently added the runtime byte checks, missing-lock rejection, required-driver deserialization, bus-zero guard and integration. This is not an independent implementation audit of the reviewer-authored initial Store.",
+  "sources": [
+    {
+      "path": "crates/rustusb-daemon/src/journal.rs",
+      "bytes": 39018,
+      "sha256": "52d4e5fa87863326bc32d6d7eba8b14d4ed27e8199dbf60b4f4a6989b2f21730"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "bytes": 12458,
+      "sha256": "ad2c67a46c4e013165ec5f365ae85ca5de1edf070d5543c98d21a7f3912d2f0b"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "bytes": 60427,
+      "sha256": "97ecd3229eeed5e8191a5f57a756e2326d6aa6100c76ea1e82b005a81bfd6f1a"
+    },
+    {
+      "path": "docs/research/physical-crash-recovery-design.md",
+      "bytes": 10962,
+      "sha256": "77292bf593ee754fc960bfaf84ef65aa1e3ddc665ad6c65270357851b12cccd8"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 3309,
+      "sha256": "db657514fb92cb15b13d439b5c9630b55f53b49a8313c04501ab03354077cf62"
+    },
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "bytes": 3719,
+      "sha256": "10ef52f9f77ca2da0eca60f9fee0f7b7082a6eb4bf0f658cf0e887f581ba2380"
+    }
+  ],
+  "checks": [
+    {
+      "id": "schema_and_field_bounds",
+      "result": "PASS_SOURCE",
+      "finding": "Version 1, bounded records/interfaces and 16MiB input; strict nested schemas and typed validation reject corruption, duplicates and malformed identifiers.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 21,
+          "anchor": "const SCHEMA_VERSION"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 100,
+          "anchor": "fn bounded_vec"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 172,
+          "anchor": "fn validate_record"
+        }
+      ]
+    },
+    {
+      "id": "required_driver",
+      "result": "PASS_SOURCE",
+      "finding": "driver is required even when its legitimate explicit value is null; omitted fields cannot silently establish an unbound original.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 39,
+          "anchor": "#[serde(deserialize_with = \"required_driver\")]"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 136,
+          "anchor": "fn required_driver"
+        }
+      ]
+    },
+    {
+      "id": "bus_zero_short_circuit",
+      "result": "PASS_SOURCE",
+      "finding": "Explicit bus==0 rejection precedes unsigned minor arithmetic, including corrupted-input defense.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 194,
+          "anchor": "if bus == 0"
+        }
+      ]
+    },
+    {
+      "id": "protected_paths_and_files",
+      "result": "PASS_SOURCE",
+      "finding": "Directory-FD traversal rejects symlinks/parent escapes/untrusted ownership or write permissions; fixed regular 0600 one-link files use NOFOLLOW/NONBLOCK.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 247,
+          "anchor": "fn open_directory"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 307,
+          "anchor": "fn validate_file"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 336,
+          "anchor": "fn open_file"
+        }
+      ]
+    },
+    {
+      "id": "lifetime_lock_missing_lock",
+      "result": "PASS_SOURCE",
+      "finding": "Exclusive nonblocking flock is retained by Store; an existing final directory missing lock or journal is not silently initialized.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 385,
+          "anchor": "fn open_anchored"
+        }
+      ]
+    },
+    {
+      "id": "runtime_missing_replaced_truncated_modified",
+      "result": "PASS_SOURCE",
+      "finding": "healthy compares known directory/lock/journal identity and bounded original journal bytes. Missing, replaced, truncated and same-inode modified content poison the Store.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 428,
+          "anchor": "fn healthy"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 442,
+          "anchor": "fn check_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "atomic_update_and_poison",
+      "result": "PASS_SOURCE",
+      "finding": "Exclusive temporary creation, file sync, rename and directory sync precede cache installation. An uncertain write retains the old cache and refuses subsequent reads and mutations.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 571,
+          "anchor": "fn commit"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 582,
+          "anchor": "fn write_atomic"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 512,
+          "anchor": "pub(crate) fn reserve"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 558,
+          "anchor": "pub(crate) fn retire"
+        }
+      ]
+    },
+    {
+      "id": "read_errors_not_empty",
+      "result": "PASS_SOURCE",
+      "finding": "get, has_device and records return Result, so poison or backing-file uncertainty is not represented as absence or an empty authorization table.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 534,
+          "anchor": "pub(crate) fn get("
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 541,
+          "anchor": "pub(crate) fn has_device"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/journal.rs",
+          "line": 551,
+          "anchor": "pub(crate) fn records("
+        }
+      ]
+    },
+    {
+      "id": "durable_before_delivery",
+      "result": "PASS_SOURCE",
+      "finding": "open_physical awaits reserve before constructing a handoff for JSON/ancillary-FD delivery; uncertainty leaves the durable record unresolved.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/linux.rs",
+          "line": 125,
+          "anchor": "async fn open_physical"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/linux.rs",
+          "line": 158,
+          "anchor": "store.reserve(record)"
+        }
+      ]
+    },
+    {
+      "id": "handoff_fd_drop_order",
+      "result": "PASS_SOURCE",
+      "finding": "Handoff fields declare grant before tracking, so the helper grant FD is dropped before tracking permits finish; finish independently waits for active handoff tracking.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/linux.rs",
+          "line": 85,
+          "anchor": "struct Handoff {"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/linux.rs",
+          "line": 91,
+          "anchor": "struct HandoffTracking"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/linux.rs",
+          "line": 175,
+          "anchor": "async fn finish_physical"
+        }
+      ]
+    },
+    {
+      "id": "owner_and_admin_boundary",
+      "result": "PASS_SOURCE",
+      "finding": "Cooperative finish compares UID, PID, start_time and boot_id. Root reconciliation is a separate path and requires the original owner to have ended.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+          "line": 63,
+          "anchor": "pub(crate) fn require_owner"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+          "line": 70,
+          "anchor": "pub(crate) fn require_ended_owner"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/linux.rs",
+          "line": 175,
+          "anchor": "async fn finish_physical"
+        }
+      ]
+    },
+    {
+      "id": "full_baseline_generation",
+      "result": "PASS_SOURCE",
+      "finding": "Capture and verify reobserve complete original configuration, interface/alternate/driver set and generation; gone handling never applies the saved baseline to replacement hardware.",
+      "source": [
+        {
+          "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+          "line": 150,
+          "anchor": "fn observe_current"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+          "line": 202,
+          "anchor": "pub(crate) fn capture"
+        },
+        {
+          "path": "crates/rustusb-daemon/src/physical_lifecycle.rs",
+          "line": 219,
+          "anchor": "pub(crate) fn verify"
+        }
+      ]
+    }
+  ],
+  "checks_count": 12,
+  "must_fix": [],
+  "current_product_slice": {
+    "implemented_source_scope": "Persistent unresolved authorization guard and cooperative finish / root read-only reconciliation.",
+    "automatic_recovery": false,
+    "fd_revocation": false,
+    "finish_meaning": "Trusted original service declares its known capabilities finished; helper separately checks original full state before retiring management history. This is not proof that every possible delegated OFD reference disappeared.",
+    "uncertainty": "Pending/failed handoffs, unverified cleanup, corruption or uncertain durable writes remain fail-closed.",
+    "external_admin_race": "Read-only before/after observations do not linearize against concurrent privileged external sysfs/device mutations."
+  },
+  "prior_design_research_not_implemented": {
+    "retained_A": "A helper-kept duplicate of the old USBFS OFD A can deliberately retain that old state. It is not independent recovery authority and child death does not close all references.",
+    "independent_B": "An independently opened USBFS OFD B has a separate kernel usb_dev_state; it cannot release or reap claims belonging to A.",
+    "A_plus_B_candidate": "A future limited recovery design could combine a controlled last-close boundary for A with independent B and write-ahead/acknowledged ownership/configuration history under an explicit trusted-worker/no-untracked-forwarding boundary. None of those automatic recovery actions are implemented or validated by this Store review.",
+    "guardian_alternative": "An ordinary guardian holding independent B was a design alternative, not a completed product path.",
+    "limitations": "PID death, DROP_PRIVILEGES, epoll HUP, dup/SCM_RIGHTS or CONNECT autoprobe alone do not prove capability retirement and restoration to the saved original driver."
+  },
+  "execution_boundaries": {
+    "reviewer_ran_cargo": false,
+    "reviewer_ran_fmt": false,
+    "reviewer_ran_qemu": false,
+    "reviewer_accessed_host_usb_modules_network": false,
+    "reviewer_modified_repository_after_handoff": false,
+    "only_output_written_by_this_review": "/tmp/rustusb-journal-store-review-20261023.json",
+    "root_reported_software_results_not_reexecuted_here": "Parent reported development daemon 48 tests, backend 45 tests and CLI checks passed; full scripts/check.sh was in progress. This review does not independently attest those executions."
+  },
+  "reviewed_sources_unchanged_during_report": true
+}

@@ -49,3 +49,15 @@
 6. 证据收集完成与产品恢复通过分开。旧实现的恢复断言若失败，最终保持 FAIL；重启行为按实际观察报告，不把预期失败转成恢复 PASS。源码、构建、二进制、模块和前后校验均记录。
 
 后续产品修复需补充 supervisor/helper 自身死亡、FD 转交残留引用、授权中断、journal 损坏/磁盘错误、外部 claim、重插代际拒绝、配置/alternate 操作中断及可验证恢复后再导入。第一项负向不替代这些验收、真实硬件 G1/G2 或原项目后续阶段。
+
+## 2026-10-23：持久授权记录的实施切片
+
+本次先实现可信基线和合作结束协议，自动恢复仍未实现。现有安全模型已信任取得整设备 FD 的服务；因此正常结束不要求证明系统中所有外部 FD 副本消失。结束声明只表示该可信服务停止使用并释放其已知能力，helper 独立核验原配置、完整接口/alternate/driver、boot 与代际后退休管理记录；它不是能力撤销证明。
+
+- helper 在交付任何 FD 前，将随机 lease ID、OS peer UID/PID/starttime/boot ID，以及不含原始设备字符串的基线原子落盘。默认 `/var/lib/rustusb/physical`，root helper 可用 `--physical-state-dir` 指定测试/部署目录，前端不得指定路径。记录上限 256，文件上限 16 MiB，完整接口上限 256。固定文件、root 目录链、NOFOLLOW、0600、独占锁、文件及目录 fsync；损坏/缺失文件或不确定提交失败均拒绝继续授权，不能当成空表。首次创建新目录可初始化；管理员删除整个状态目录不在可检测保证内，不能这样清理未决记录。
+- 同一 device ID 的未决记录阻止后续 grant，包括同指纹的新代际；helper 重启加载原记录。记录从 FD 授权前开始，与后续 IMPORT 不混同。FD ACK/发送/客户端校验失败保留未决，不用未发送的猜测清记录。
+- 新 `FinishPhysical { lease_id }` 只接受原 OS owner；客户端先 shutdown、等待自己已知后台任务结束、保存末快照并关闭 registry，再请求结束。helper 只读复核同代际完整基线。已经物理消失的旧代际可以完成旧记录，但不操作替代设备。响应丢失后的 absent 仅报告 not_pending，不冒充再次核验。helper 自有发送 FD 必须在允许 finish 前释放。
+- `PhysicalPending` 和 `ReconcilePhysical { lease_id, acknowledge_gone }` 为 root-only 管理接口；后者只核验并退休，不写 sysfs、不自动 bind、不接受任意路径。仍存在的设备必须同代际且完整恢复；旧代际消失需显式 acknowledge_gone，替代代际不接受旧恢复记录。下一次授权仍须重新读策略、扫描和生成新 receipt，并不声称每次重插都需管理员修改 allowlist。
+- setup 部分失败会尝试结束已收到的 grant；交付中取消/未知结果保留未决供管理员核验。stdout 失败和重复信号不能跳过已开始的清理与 finish。cleanup 或独立观察失败保留记录及明确错误，不悄然采用新的 original。
+
+软件测试覆盖持久重载/原子失败、重复/并发/损坏/权限/锁、owner 与完整基线拒绝；新增独立 QEMU 场景验证正常再次启动、SIGKILL 后跨 helper 重启持续拒绝、管理员恢复前拒绝与恢复后再授权。旧负向证据和断言保持不变；initramfs 的进程重启不代表断电或 OS 重启耐久验证。完整多配置/alternate 能力保留，不通过限制设备功能消除恢复问题。

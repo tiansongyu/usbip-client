@@ -33,11 +33,16 @@ root 拥有的设备 allowlist 是 helper 的授权依据，普通用户配置�
 
 ### 实验性 USBFS FD 能力
 
-`OpenPhysical` 只接受精确设备指纹，不接受设备路径。helper 先检查 UID、物理 allowlist、可信网络声明和当前完整接口安全状态，拒绝存储、Hub、未知/不完整接口以及 `usbfs` / `usbip-host` 已占用的设备；再打开固定 `/dev/bus/usb/BBB/DDD`。路径父链受 root 保护，节点须为匹配设备号的 root 字符设备，使用 NOFOLLOW/CLOEXEC，节点/sysfs 的 dev/inode、地址和元数据前后匹配。普通服务不需要改变节点所有者，也不直接打开调用者指定路径。
+`OpenPhysical` 只接受精确设备指纹及必需的 journal schema 版本，不接受设备路径。helper 先检查 UID、物理 allowlist、可信网络声明和当前完整接口安全状态，拒绝存储、Hub、未知/不完整接口以及 `usbfs` / `usbip-host` 已占用的设备；再打开固定 `/dev/bus/usb/BBB/DDD`。路径父链受 root 保护，节点须为匹配设备号的 root 字符设备，使用 NOFOLLOW/CLOEXEC，节点/sysfs 的 dev/inode、地址和元数据前后匹配。普通服务不需要改变节点所有者，也不直接打开调用者指定路径。
 
 客户端验证受保护 UDS 路径和 root `SO_PEERCRED`。helper 先发送有界 JSON 描述，收到单字节 ACK 后才用 SCM_RIGHTS 发送一个 FD；接收方拒绝错误标记、多 FD、截断或未知 ancillary，检查 CLOEXEC、读写模式、节点与代际 receipt。UID 可在 helper 读取请求前被拒绝；首次发送失败时仅允许在同一已验证 socket 上有界读取完整 `ok=false` 拒绝，不重发操作，不把 EPIPE 当作权限证明。拒绝路径不进入 ACK/FD 阶段。
 
-**该 FD 是整台设备的写能力。** helper 不逐条代理 URB，不能限制拿到 FD 的进程只发某些控制请求，也不能通过关闭 socket、修改策略或重启 helper 撤销已交付 FD。信任获得能力的普通服务进程是本轮明确前提；它不是逐请求沙箱、持久租约或远端用户身份授权。Native/物理 allowlist 互斥只防止本工具策略中的交叉控制，不能阻止外部管理员或其他进程改动设备。策略变更须重启 helper，并单独协调已有能力和正在使用的设备。
+**该 FD 是整台设备的写能力。** helper 不逐条代理 URB，不能限制拿到 FD 的进程只发某些控制请求，也不能通过关闭 socket、修改策略或重启 helper 撤销已交付 FD。信任获得能力的普通服务进程是本轮明确前提；它不是逐请求沙箱、可撤销租约或远端用户身份授权。Native/物理 allowlist 互斥只防止本工具策略中的交叉控制，不能阻止外部管理员或其他进程改动设备。策略变更须重启 helper，并单独协调已有能力和正在使用的设备。
+
+
+物理授权另有有界、root-only 持久账本：FD 交付前预留同指纹独占记录，保存完整原基线和 SO_PEERCRED UID/PID、`/proc/PID/stat` starttime、boot ID；UUID 不是 bearer token。schema 1 的 `FinishPhysical` 仅接受原 OS owner 的合作结束声明，helper 独立复核同代际完整状态后退休管理记录；这是可信服务生命周期协议，不证明外部 FD 副本不存在，也不撤销能力。root-only `PhysicalPending` 和 `ReconcilePhysical` 不受普通 allowed UID 的共享管理权影响；协调要求旧 owner 已结束，同代际原状态已恢复，或管理员明确确认旧代际消失，绝不对替代设备写入旧基线。
+
+状态路径只在 root helper 启动参数中指定，采用受保护目录 FD 相对操作、NOFOLLOW、0600 单链接文件、独占 flock、原子 rename 及文件/目录 fsync。上限 256 个未决设备、每设备 256 个接口、16 MiB 文件；管理列表按 64 KiB IPC 边界分页。损坏/缺失/权限变化或不确定提交失败不当作空表，拒绝继续使用；不防御管理员删除整个目录或选择另一目录绕过记录。完整多配置/alternate 能力保持，自动崩溃恢复和断电实验仍未完成。[proc_pid_stat(5)](https://man7.org/linux/man-pages/man5/proc_pid_stat.5.html)、[fsync(2)](https://man7.org/linux/man-pages/man2/fsync.2.html)说明进程代际字段和目录持久化要求；这些接口本身不提供 USB 恢复证明。
 
 systemd 安装阶段应对普通服务启用只读文件系统、禁止新增权限、最小地址族及能力集合等隔离；helper 的系统访问只能按实际操作放行。当前 helper 不加载模块；未来若引入该操作，须重新验证 `ProtectKernelModules` 等限制。`ProtectSystem` 不能替代 socket ACL，也不能撤销已传递的 USBFS FD。每个单元须在目标 Ubuntu 的 systemd 版本上验证实际限制和功能，不能把配置文本当成有效隔离。[systemd.exec 官方说明](https://www.freedesktop.org/software/systemd/man/250/systemd.exec.html)
 
