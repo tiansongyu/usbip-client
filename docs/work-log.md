@@ -214,3 +214,8 @@
 - root单进程在上述clean head串行默认locked all-features构建执行configuration/alternate/clear各UNLINK与EOF六场景；全部完成前没有仓库写入或并行构建，6次exit0/12guest exit0/48独立wire检查，source/binary前后guard与guest四ELF匹配。25秒初始ARM修订包含在该最终源码，后续RPC3秒/门8秒/errno和资源断言保持。
 - 配置/alternate真实ioctl0，CLEAR真实-32；取消期间B的-104形成worker witness，后到C不得越门，新空map或失败保留原map行为准确；CLEAR的C真正inflight1/384B后再取消。EOF先实际pending2再closing/queued0，保留512B及原FD/slot、DEVLIST隐藏/第二IMPORT busy，terminal后才恢复。每轮同generation/cfg1/alt0,1/双cdc_ether和末pending/queued/inflight/预算0、available/cleanup_verified独立匹配，server/tracer exit0。
 - root最终六summary/Git源码及96软件输入复核通过，CLI/helper仍与前次最终ECM完全相同。最终85份产物已按长度/SHA逐项归档，root核73份原/tmp逐bytes和12份manifest相同；第二独立raw复核不调用runner.verify，572/572通过，准确区分run期间clean与归档后docs dirty。四平台CI39886203010和四job均实际completed/success，每格216次执行0失败/忽略及两个背压通过，原log与API响应按原bytes保留，见`evidence/publication-host-state-20261023.json`。此次syscall-entry证据不外推kernel内部active/成功clear、真实硬件或完整Phase2。
+
+## 继续：显式USBFS release结果
+
+- 上一交付54da6151已push且工作树clean，其最新四平台CI39887093631已实际全部completed/success，各216次测试与两个背压通过，精确记录`evidence/publication-host-state-docs-20261023.json`。原完整需求重新读取，Phase2其他缺口与所有后续阶段仍保留。
+- 并行核固定Linux6.8 devio/driver和nusb来源后，确认普通USBFS不能靠claim-setalt-release保证None+非零alt恢复；不擅自宣布该缺口解决。另定位产品使用best-effort release造成真实RELEASEINTERFACE错误不可见，设计见`research/usbfs-checked-release-design.md`。先保留portable API兼容，新增Linux checked释放与首errno传播，并计划来宾外部unbind产生真实EINVAL的修复前/后验证。尚无本轮实现或新测试结果。
