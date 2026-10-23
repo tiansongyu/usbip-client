@@ -370,3 +370,12 @@
 - 两名agent独立raw复核L615/615、P/C516/516通过，均未调用runner verifier；核当前155/旧109源、实际旧ELF、三helper epoch、immutable记录/窗口、C四真实ioctl及close/wait、全部三周期原I/O。P/C审查器初稿硬编码Cargo flag顺序误判两项，初稿保留并按实际顺序修；原QEMU未重跑/改判。报告明确人工bind与产品CONNECT没有syscall tracing，纯primary仅早于pending API/新grant。
 
 - 精确4565f7a的software39928383971与Pages39928383815实际attempt1 completed/success，四原生格各268次、31result/0失败忽略、两背压/四信号通过；187个该CI采证输入逐Gitblob及真实执行身份/前后guard通过。219项独立CI审查及48份原件/原manifest已归档；初稿artifact误含.nojekyll的审查器单项误判按实际tar排除隐藏规则修正，初稿保留，未重跑CI。Pages按该版本115检查，本地新README为119检查；不混用计数或把CI软件当USB内核验收。
+
+## 继续：真实USB数据通道安全设计与内核端点验证
+
+- 上一goal turn为实际进展：三恢复边界首次QEMU通过、独立raw及四平台CI归档，交付已push a7406d7。本轮从clean重新读完整原始需求、项目约定和核心skill，完整目标仍active。技术设计沿用docs/research，候选架构保持proposed；未把硬件G1/G2或Phase2改为完成。
+- 开始Phase3源核：实际registry核rustls0.23.46/tokio-rustls0.26.6稳定版本；并行只读审查Native socket-family/FD交付、principal→设备ACL/专用UID和双栈全数据QEMU。先写secure-transport-design，再验证匿名AF_UNIX pair能否承载真实kernelstub↔VHCI数据；本项不是TLS或安全远程连接验收。当前未新增TLS依赖/产品API。
+
+- 固定registry下载的rustls0.23.46/tokio-rustls0.26.6/rcgen0.14.10已逐checksum核官方crate，核7个API/资源限制源文件。先在设计补TLS基础模块候选契约，再准备新非空transport crate：强制mTLS/TLS1.3/ALPN、leaf-pin principal+device ACL、16连接/握手截止/stream持permit。采用显式内置ring provider、关闭TLS12/默认provider及resumption/0RTT；候选尚未编译验收，不宣称USB链已加密。内核AF_UNIX单VM真I/O实验与此独立实施，避免有意建立可抢占的loopback端口。
+
+- 新transport首次18项真实TLS/策略测试全通过；完整scripts/check.sh exit0，104个选定Rust/Cargo/check输入前后SHA相同，新增模块未接设备或CLI。独立冻结源审查28项无mustfix，显式补双方握手后ALPN检查，避免把配置ALPN误当强制协商；依赖清单实际148包。guest-only probe严格rustc及普通宿主UID首guard拒绝通过，尚未执行QEMU。预审中root误套旧%pK显示，作者核固定v6.8为%06u后纠正；这是审查纠正，不是产品或运行失败。
