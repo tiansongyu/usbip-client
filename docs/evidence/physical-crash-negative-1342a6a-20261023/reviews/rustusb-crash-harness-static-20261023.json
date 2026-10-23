@@ -1,0 +1,439 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "static syntax/literal jq and explicitly reconstructed parser fixtures only; no Cargo/QEMU/network/USB access",
+  "sources": {
+    "run-crash-qemu.py": {
+      "bytes": 30727,
+      "sha256": "6715b259d3503297ec18aa6daadec38eadbc1596f5f4b708e5ef59ce986b9f6e"
+    },
+    "guest-crash-init.sh": {
+      "bytes": 29079,
+      "sha256": "cb648a50cae2cf86cb6b804a5cf250c32856783420a5be2535c745b97a83d923"
+    }
+  },
+  "synthetic_shape_source": {
+    "path": "/tmp/rustusb-sigterm-fixed-qemu-934358f-20261023/sigterm/summary.json",
+    "sha256": "9c8a75c5c10fcb3ca3463cd77aff6f22705e9f3b062682c6eee92b3f150ad9b0"
+  },
+  "checks": [
+    {
+      "name": "python_compile_to_tmp",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "name": "sh -n",
+      "result": "PASS",
+      "detail": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "/bin/busybox sh -n",
+      "result": "PASS",
+      "detail": {
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_1",
+      "result": "PASS",
+      "detail": {
+        "filter": ".schema_version == 1 and .helper.status == \"available\" and .helper.peer_verified == true and .network_security_verified == false and .hardware_test_performed == false and .built_in_encryption == false",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_2",
+      "result": "PASS",
+      "detail": {
+        "filter": "length == 2 and all(.[]; (.export_blockers | length) == 0)",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_3",
+      "result": "PASS",
+      "detail": {
+        "filter": "length == 2 and all(.[]; (.export_blockers | length) == 0)",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_4",
+      "result": "PASS",
+      "detail": {
+        "filter": "{device_id:$id,bus_id:$bus,node:$node,generation:$gen,node_identity:$ni,node_owner_mode:$mode,devnum:(try ($dn|tonumber) catch null),configuration:(try ($cfg|tonumber) catch null),interfaces:[{number:0,alternate:(try ($alt|tonumber) catch null),driver:(if $driver == \"\" then null else $driver end)}]}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_5",
+      "result": "PASS",
+      "detail": {
+        "filter": ".",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_6",
+      "result": "PASS",
+      "detail": {
+        "filter": "length == 2 and .[0].interfaces == [{number:0,alternate:0,driver:\"usbhid\"}] and .[1].interfaces == [{number:0,alternate:0,driver:\"ftdi_sio\"}]",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_7",
+      "result": "PASS",
+      "detail": {
+        "filter": "length == 2 and all(.[]; .configuration == 1 and .node_owner_mode == \"0:600\" and (.generation|length)>0 and (.node_identity|length)>0) and .[0].interfaces == [{number:0,alternate:0,driver:\"usbhid\"}] and .[1].interfaces == [{number:0,alternate:0,driver:\"ftdi_sio\"}]",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_8",
+      "result": "PASS",
+      "detail": {
+        "filter": "{allowed_uids:[1000],export_device_ids:[],physical_device_ids:[$hid,$ftdi],peers:[],trusted_network:true}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_9",
+      "result": "PASS",
+      "detail": {
+        "filter": ".helper.kernel_available == false",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_10",
+      "result": "PASS",
+      "detail": {
+        "filter": ".ok == false and .data == null and (.error|contains(\"caller UID is not approved by the administrator\"))",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_11",
+      "result": "PASS",
+      "detail": {
+        "filter": "{node:$node,fd:($fd|tonumber),identity:$identity}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_12",
+      "result": "PASS",
+      "detail": {
+        "filter": ".",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_13",
+      "result": "PASS",
+      "detail": {
+        "filter": "{pid:$pid,starttime:$start,exe:\"/usr/bin/rustusb\",uids:[1000,1000,1000,1000],cap_effective:0,cap_permitted:0,cap_ambient:0,fds:$fds[0]}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_14",
+      "result": "PASS",
+      "detail": {
+        "filter": "any(.[]; .id==$id and (.event==\"snapshot\" or (.event==\"ack\" and .ok==true)))",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_15",
+      "result": "PASS",
+      "detail": {
+        "filter": "[.[]|select(.id==$id)] | length==1 and .[0].schema_version==1 and .[0].event==\"snapshot\"",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_16",
+      "result": "PASS",
+      "detail": {
+        "filter": ".[]|select(.id==$id and .event==\"snapshot\")|.snapshot",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_17",
+      "result": "PASS",
+      "detail": {
+        "filter": "{\"label\":$tag,epoch:$epoch,sysfs:$sysfs[0],snapshot:$snapshot[0],identity:$identity[0]}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_18",
+      "result": "PASS",
+      "detail": {
+        "filter": "any(.[];.event==\"ready\")",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_19",
+      "result": "PASS",
+      "detail": {
+        "filter": "length==1 and .[0].schema_version==1 and .[0].event==\"ready\" and .[0].address==\"192.0.2.1:3240\"",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_20",
+      "result": "PASS",
+      "detail": {
+        "filter": ".buffer_bytes_reserved==0 and (.devices|length)==2 and all(.devices[];.state==\"available\" and (.leased|not) and .cleanup_verified and .pending_urbs==0 and .queued_urbs==0 and .usbfs_inflight==0 and .current_drivers==.original_drivers)",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_21",
+      "result": "PASS",
+      "detail": {
+        "filter": "(.devices|length)==2 and all(.devices[];.state==\"leased\" and .leased and all(.current_drivers[];.driver==\"usbfs\"))",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_22",
+      "result": "PASS",
+      "detail": {
+        "filter": ".buffer_bytes_reserved>0 and (.devices|length)==2 and all(.devices[];.state==\"leased\" and .leased and .pending_urbs>=1 and .usbfs_inflight>=1 and all(.current_drivers[];.driver==\"usbfs\"))",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_23",
+      "result": "PASS",
+      "detail": {
+        "filter": "length==2 and all(.[];.interfaces==[{number:0,alternate:0,driver:\"usbfs\"}]) and (map(del(.interfaces))==($original[0]|map(del(.interfaces))))",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_24",
+      "result": "PASS",
+      "detail": {
+        "filter": ".==$original[0]",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_25",
+      "result": "PASS",
+      "detail": {
+        "filter": ".==$original[0]",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_26",
+      "result": "PASS",
+      "detail": {
+        "filter": "{\"label\":\"post-crash\",epoch:\"initial\",sysfs:$sysfs[0],snapshot:null,snapshot_observable:false,reason:\"SIGKILL ended the process; no final backend snapshot is inferred\"}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_27",
+      "result": "PASS",
+      "detail": {
+        "filter": "{schema_version:1,event:\"crash_outcome\",role:\"server\",epoch:\"initial\",signal:9,signal_count:1,sender_uid:1000,pid:$pid,starttime:$start,pre_snapshot_id:$pre,wait_code:$wait,process_exit_observed:$exited,pid_absent:$absent,fd_table_absent:$fd,restored_sysfs:$restored,within_observation_window:$window,helper_alive:$helper,observation_centiseconds:$elapsed,observation_limit_seconds:20,stdin_kept_open:true,shutdown_before_crash:false,final_backend_snapshot:null,final_backend_snapshot_observable:false}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_28",
+      "result": "PASS",
+      "detail": {
+        "filter": "any(.[];.schema_version==1 and .event==\"ready\")",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_29",
+      "result": "PASS",
+      "detail": {
+        "filter": "[.[]|select(.event==\"ready\")][0].snapshot",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_30",
+      "result": "PASS",
+      "detail": {
+        "filter": ".==$original[0]",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_31",
+      "result": "PASS",
+      "detail": {
+        "filter": "{\"label\":\"post-restart\",epoch:\"restart\",sysfs:$sysfs[0],snapshot:null,snapshot_source:\"actual restart events, never the killed epoch\"}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_32",
+      "result": "PASS",
+      "detail": {
+        "filter": "{schema_version:1,event:\"restart_outcome\",role:\"server\",epoch:\"restart\",attempted:true,attempt_count:1,pid:$pid,starttime:(try ($start|tonumber) catch null),ready_observed:$ready,identity_verified:$identity,shutdown_control_attempted:$attempted,shutdown_ack_observed:$ack,process_exit_observed:$exited,wait_code:$wait,restored_initial_sysfs:$restored,helper_alive:$helper,new_imports_sent:false,startup_limit_seconds:10,shutdown_limit_seconds:20}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_33",
+      "result": "PASS",
+      "detail": {
+        "filter": "([.[]|select(.event==\"stopped\")]|length)==1 and .[-1].event==\"stopped\" and .[-1].snapshot.buffer_bytes_reserved==0 and all(.[-1].snapshot.devices[];.state==\"available\" and (.leased|not) and .cleanup_verified and .pending_urbs==0 and .queued_urbs==0 and .usbfs_inflight==0)",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_34",
+      "result": "PASS",
+      "detail": {
+        "filter": "{allowed_uids:[1000],export_device_ids:[],peers:[{host:\"192.0.2.1\",port:3240}],trusted_network:true}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_35",
+      "result": "PASS",
+      "detail": {
+        "filter": ".helper.kernel_available == true and .native.vhci_hcd.sysfs.status == \"available\"",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_36",
+      "result": "PASS",
+      "detail": {
+        "filter": "length==2",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_37",
+      "result": "PASS",
+      "detail": {
+        "filter": "length==2 and all(.[]; .managed==true and .session.status==6) and any(.[]; .session==$hid[0]) and any(.[]; .session==$ftdi[0])",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_38",
+      "result": "PASS",
+      "detail": {
+        "filter": "length==2 and all(.[]; .managed) and any(.[]; .session==$hid[0]) and any(.[]; .session==$ftdi[0])",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_39",
+      "result": "PASS",
+      "detail": {
+        "filter": "length==0",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "jq_filter_40",
+      "result": "PASS",
+      "detail": {
+        "filter": "{schema_version:1,event:\"crash_outcome\",role:\"client\",spontaneous_disconnect:$disconnected,hid_generation_gone:$hg,ftdi_generation_gone:$fg,helper_alive:$helper,receipts:[$hid[0],$ftdi[0]],sessions:$sessions[0],vhci_status:$vhci,input_event_hex:$input,input_event_format:\"linux_x86_64_24\",rx_hex:$rxhex,rx_sha256:$rx,tx_sha256:$tx,serial_in_bytes:35,serial_out_bytes:35,observation_centiseconds:$elapsed,observation_limit_seconds:20,detach_before_observation:false,new_imports_after_crash:false}",
+        "exit_code": 0,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "synthetic_restored_parser_shape_all_checks",
+      "result": "PASS",
+      "detail": []
+    },
+    {
+      "name": "synthetic_negative_collection_retained",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "name": "synthetic_negative_facts_still_pass",
+      "result": "PASS",
+      "detail": []
+    },
+    {
+      "name": "synthetic_negative_recovery_is_fail",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "name": "synthetic_missing_killed_snapshot_not_zero",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "name": "synthetic_restart_refusal_retains_collection",
+      "result": "PASS",
+      "detail": null
+    },
+    {
+      "name": "ansi_json_rejected",
+      "result": "PASS",
+      "detail": null
+    }
+  ]
+}

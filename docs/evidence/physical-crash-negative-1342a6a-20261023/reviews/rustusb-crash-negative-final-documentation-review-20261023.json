@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "reviewer": "phase2_scope_review",
+  "status": "PASS_NO_MUST_FIX",
+  "scope": "Bounded final documentation consistency review against the actual copied summary/execution, relevant Git source identity, and already completed independent raw74 review. No duplicate raw audit, runner.verify, repository modification, build, QEMU, USB, or real signals.",
+  "runtime_result": "FAIL",
+  "evidence_collection_complete": true,
+  "runner_exit_code": 1,
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "host_check_counts": {
+    "total": 55,
+    "fixture_pass": 13,
+    "fact_pass": 35,
+    "recovery_pass": 3,
+    "recovery_fail": 4,
+    "all_pass": 51,
+    "all_fail": 4
+  },
+  "reviewed_documents": [
+    {
+      "path": "README.md",
+      "bytes": 10618,
+      "sha256": "630a975713cc1e63e339cb2ed9750d96af74adc4246bd439e3ffd89ec86685c9"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 3309,
+      "sha256": "db657514fb92cb15b13d439b5c9630b55f53b49a8313c04501ab03354077cf62"
+    },
+    {
+      "path": "docs/acceptance.md",
+      "bytes": 39224,
+      "sha256": "821142e421c5c333adac4bb01790004a3d9c2f803c88151d40dee4aad8912522"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 20978,
+      "sha256": "21d42c6535d31aa760c2e4d0edda7a18b5a4c87de3dae395f3412988cccd43c0"
+    },
+    {
+      "path": "docs/testing.md",
+      "bytes": 26195,
+      "sha256": "cbc328e75b6f2e12d5a77d9d97d6dd25663fe46a887258bccaa4c143f52b5694"
+    },
+    {
+      "path": "docs/roadmap.md",
+      "bytes": 14678,
+      "sha256": "65976e80f5845d054578d0698422a7ea98bae2a0655493e0357bd734c57449a7"
+    },
+    {
+      "path": "docs/rust-physical-server.md",
+      "bytes": 6573,
+      "sha256": "27ae46fda57ebc517537ee798beff4e9bc3209136d8036a034a60edc4eb8ce7f"
+    },
+    {
+      "path": "docs/work-log.md",
+      "bytes": 81147,
+      "sha256": "86a97e635d041232a7bef25a36b2b6573c9e94d9f45e03d1ebd9b53aceb5c0b1"
+    },
+    {
+      "path": "docs/research/physical-crash-recovery-design.md",
+      "bytes": 7965,
+      "sha256": "3fe7ceab7d54811c79d6630415087548d3c422e56cbcb5de065d33785e98077f"
+    },
+    {
+      "path": "docs/research/physical-crash-recovery.md",
+      "bytes": 6050,
+      "sha256": "220496b236dba8f430531c96907973f41f8d30e375beeab830d7482f699eb695"
+    }
+  ],
+  "findings": [
+    {
+      "name": "runtime_verdict",
+      "result": "PASS",
+      "finding": "FAIL / collection complete / runner exit1 / guest0 remain separate everywhere, including E24 and README."
+    },
+    {
+      "name": "counts",
+      "result": "PASS",
+      "finding": "55 host checks correctly split as 13 fixture PASS, 35 fact PASS, and 7 recovery checks = 3 PASS + 4 FAIL; totals 51 PASS / 4 FAIL."
+    },
+    {
+      "name": "failure_names",
+      "result": "PASS",
+      "finding": "The four described failures match server_guest_recovery_verdict, original_sysfs_restored_after_kill, restart_original_still_matches_initial_baseline, initial_original_sysfs_after_first_restart."
+    },
+    {
+      "name": "source_attribution",
+      "result": "PASS",
+      "finding": "Clean 1342a6a runtime, 140 input freeze, locked all-features build, actual CLI/helper hashes and original TERM/product source identity match summary/execution/Git. No full222/old USB/CI run is reassigned to the new commit."
+    },
+    {
+      "name": "pre_kill",
+      "result": "PASS",
+      "finding": "Docs match actual summary observations: UID1000, PID303/start293, real KEY1/35B each direction, two live leases/inflight1, budget2832, HID pending1 and FTDI pending2/queued1."
+    },
+    {
+      "name": "killed_epoch",
+      "result": "PASS",
+      "finding": "One KILL/wait137, process and its own FD table gone, same generation/config1/alt0/root0600 with both original drivers still null at 20.06s; old stopped/terminal/resources/reap remain unavailable."
+    },
+    {
+      "name": "client_semantics",
+      "result": "PASS",
+      "finding": "Table label corrected to autonomous client disconnect observation and explicitly states guest remains alive; 0.19s NULL/old generations gone precedes cache detach and is only one observation, not a performance benchmark."
+    },
+    {
+      "name": "restart_epoch",
+      "result": "PASS",
+      "finding": "First no-IMPORT PID12905/start2517 ready/stopped has original/current driver None and fresh zero counters; cleanup_verified and wait0 describe that new process baseline only, never old recovery."
+    },
+    {
+      "name": "restoration_scope",
+      "result": "PASS",
+      "finding": "No permanent-leak, all-FD-copies-ended, revocation, automatic driver restore, or hardware/Phase2/Phase3 completion inference."
+    },
+    {
+      "name": "payload_limits",
+      "result": "PASS",
+      "finding": "New actual FTDI host sink35B and RX/evdev hex are correctly distinguished from prior TERM missing payload; newly explicit no USB/IP wire capture limitation prevents a packet-capture overclaim."
+    },
+    {
+      "name": "design_history",
+      "result": "PASS",
+      "finding": "Draft header and current observations are consistent; original plan wording was changed to past plan and actual first negative result. Trusted baseline/retirement/admin reconciliation, independent open vs dup and boot/helper/journal boundaries remain proposals."
+    },
+    {
+      "name": "review_provenance",
+      "result": "PASS",
+      "finding": "Author50, extracted15 and independent source review are distinguished from USB runtime; NOT_REPRODUCED first extraction and deliberately derived fault variant are honestly retained. New74 raw review preserves runtime FAIL and links its parser."
+    },
+    {
+      "name": "operability_scope",
+      "result": "PASS",
+      "finding": "Future unresolved record guard is not implemented; normal retirement/admin reconciliation and preservation of legitimate unbound interfaces/multi-config/alternate remain required."
+    },
+    {
+      "name": "links",
+      "result": "PASS",
+      "finding": "All newly added local doc link targets exist except the specifically predeclared top-level index, which root will generate after this review report."
+    }
+  ],
+  "must_fix_remaining": [],
+  "resolved_review_comments": [
+    "Replaced misleading client-exited table label with autonomous disconnect observation and explicit still-running client guest.",
+    "Changed stale design future-tense problem/first-test wording to distinguish original plan from completed negative observation."
+  ],
+  "reviewed_evidence": {
+    "summary_path": "/home/ubuntu/github/usbip-client/docs/evidence/physical-crash-negative-1342a6a-20261023/run/summary.json",
+    "summary_sha256": "1d94ac926349a5190a1c36034e0c3bd63f8cc0d15737b6a91a7f5ced142d8c4d",
+    "copy_equals_actual_tmp": true,
+    "execution_exit_code": 1,
+    "product_and_old_term_git_bytes_equal_e0e6118_to_1342a6a": true,
+    "independent_raw_review_path": "/home/ubuntu/github/usbip-client/docs/evidence/physical-crash-negative-1342a6a-20261023/reviews/rustusb-crash-negative-1342a6a-independent-review-20261023.json",
+    "independent_raw_review_sha256": "3bd6ae2d6354d80b46f1ef016051b9223082edf06a35fd2f34ae762ee2cff546",
+    "independent_raw_review_checks": 74,
+    "independent_raw_review_result": "PASS_REVIEW_OF_PRESERVED_FAILURE"
+  },
+  "new_local_doc_links_checked": 18,
+  "predeclared_pending_index": {
+    "path": "/home/ubuntu/github/usbip-client/docs/evidence/physical-crash-negative-1342a6a-20261023.json",
+    "references": [
+      {
+        "doc": "docs/acceptance.md",
+        "target": "evidence/physical-crash-negative-1342a6a-20261023.json"
+      },
+      {
+        "doc": "docs/research/physical-crash-recovery.md",
+        "target": "../evidence/physical-crash-negative-1342a6a-20261023.json"
+      }
+    ],
+    "reason": "Root explicitly generates this aggregate only after final raw and documentation reports; excluded from unexpected missing-link findings. This review does not assert the future index already exists."
+  },
+  "unexpected_missing_links": [],
+  "limits": [
+    "Document review PASS does not change the unique runtime recovery FAIL.",
+    "A runtime-independent raw audit is supplied by native_diagnostics; this reviewer did not repeat it or import the runner verifier.",
+    "Final aggregate index creation and publication remain root work; document hashes describe bytes at this review, not future post-index edits."
+  ]
+}

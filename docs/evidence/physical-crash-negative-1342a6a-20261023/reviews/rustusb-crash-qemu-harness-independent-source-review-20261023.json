@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "reviewer": "phase2_scope_review",
+  "status": "PASS_NO_MUST_FIX",
+  "scope": "Independent read-only final source review plus specifically authorized extracted-function/stubbed-shell identity checks. No repository edits, Cargo/builds, QEMU, real signals, host proc writes, host USB/module/network mutation or actual integration by reviewer.",
+  "observed_head": "1342a6a64cb6045052e49b701b773c4e00811fa8",
+  "frozen_sources": [
+    {
+      "path": "scripts/qemu/run-crash-qemu.py",
+      "bytes": 30727,
+      "sha256": "6715b259d3503297ec18aa6daadec38eadbc1596f5f4b708e5ef59ce986b9f6e"
+    },
+    {
+      "path": "scripts/qemu/guest-crash-init.sh",
+      "bytes": 29079,
+      "sha256": "cb648a50cae2cf86cb6b804a5cf250c32856783420a5be2535c745b97a83d923"
+    }
+  ],
+  "must_fix_remaining": [],
+  "reviewed_points": [
+    {
+      "name": "isolation",
+      "source_assessment": "PASS",
+      "finding": "Guest requires PID1, RUSTUSB_QEMU_GUEST=1 and explicit rustusb.crash_test=1 before mounting and module/device operations. Runner requires ordinary host UID/x86_64, creates private socketpair networking, temporary initramfs/QMP/FTDI Unix sockets and no host USB control."
+    },
+    {
+      "name": "source_provenance",
+      "source_assessment": "PASS",
+      "finding": "Runner records script/lock/product fingerprint, build argv and release ELF identity, guest ELF equality, utility/module/kernel/initramfs provenance, and explicit post source/binary/commit guards. Reviewer did not execute these operations."
+    },
+    {
+      "name": "machine_channel",
+      "source_assessment": "PASS",
+      "finding": "Separate ttyS1 program evidence and ttyS0 kernel console. Exact delimited JSON parsing neither removes ANSI nor rewrites data. Integrity and guest FAIL are searched in both channels."
+    },
+    {
+      "name": "identity",
+      "source_assessment": "PASS",
+      "finding": "Before KILL, server_identity verifies actual executable, PID start time, all four UIDs and effective/permitted/ambient capabilities, and per-device proc-FD node identity. All failed checks propagate explicitly, including when called under if during restart."
+    },
+    {
+      "name": "signal_target",
+      "source_assessment": "PASS",
+      "finding": "One source-level UID1000 KILL command targets the exact initial owned child PID after identity/claim/pending observations; no broad process matching or helper signal. stdin FIFO is retained by init, so initial EOF/shutdown is not the trigger."
+    },
+    {
+      "name": "initial_baseline",
+      "source_assessment": "PASS",
+      "finding": "Original sysfs is separately copied before service operation. Baseline, held and pre-crash evidence retain initial snapshot and independent generation/config/alt/driver/root0600/node identity. Later epochs do not overwrite the saved initial baseline."
+    },
+    {
+      "name": "real_io_and_claims",
+      "source_assessment": "PASS",
+      "finding": "Initial client attaches actual HID/FTDI through helper/VHCI, confirms same receipts and native usbhid/ftdi_sio, real KEY1 down/up and exact 35B RX/TX, then server checks real leased/pending/inflight/budget and independent usbfs claims before KILL."
+    },
+    {
+      "name": "wait_and_absence",
+      "source_assessment": "PASS",
+      "finding": "wait uses an explicit if/else preserving actual signal exit status; wait137 is checked as a process fact rather than requiring graceful exit0. Killed epoch has no invented stopped event, final snapshot or terminal/reap counters."
+    },
+    {
+      "name": "bounded_observation",
+      "source_assessment": "PASS",
+      "finding": "Guest uses elapsed-time deadlines for initial server/client observation and restart startup/shutdown. Unrestored initial state is collected to the observation deadline; elapsed and actual flags are retained. Host has an overall bounded integration deadline and failure grace, followed by owned-QEMU reap."
+    },
+    {
+      "name": "client_before_detach",
+      "source_assessment": "PASS",
+      "finding": "Client records sessions, old-generation absence and raw VHCI status before any detach. Held readers persist through crash observation. Cache detach is later and failures set PASS=false while continuing final handshake."
+    },
+    {
+      "name": "both_primary_before_restart",
+      "source_assessment": "PASS",
+      "finding": "Server persists initial events/stderr/outcome before primary-server-observed; client persists its outcome before primary-client-observed. This barrier completes both primary observations before server launches exactly one restart."
+    },
+    {
+      "name": "one_restart_no_import",
+      "source_assessment": "PASS",
+      "finding": "Only one launch_server restart call. Client issues no post-crash attach/IMPORT and waits through restart. Restart-ready/refused/timeout are separate labels and raw events/stderr/outcome; ordinary cooperative shutdown is attempted only after verified ready identity."
+    },
+    {
+      "name": "different_epochs",
+      "source_assessment": "PASS",
+      "finding": "Verifier holds initial_events, restart_events and observations separately, with exactly one restart observation label. It never substitutes a fresh registry zero snapshot for killed-epoch cleanup."
+    },
+    {
+      "name": "wrong_fresh_baseline_rejected",
+      "source_assessment": "PASS",
+      "finding": "Fresh ready device-ID set must exactly match the two initial IDs; original/current drivers are compared by device_id to initial baseline, plus independent initial sysfs equality. New-epoch cleanup_verified=true or zero counters do not satisfy old restoration if drivers changed to None."
+    },
+    {
+      "name": "restart_refusal_preserved",
+      "source_assessment": "PASS",
+      "finding": "Empty restart event block/refusal/timeout remains parseable observational evidence without fabricated ready. Recovery checks still fail, and raw stderr/actual wait/null are preserved; no retry is launched."
+    },
+    {
+      "name": "collection_vs_recovery",
+      "source_assessment": "PASS",
+      "finding": "Both COLLECTION_COMPLETE markers are recorded separately from every fact/recovery check. The default result stays FAIL; any failed check, observed failure_started, wrong TX/injection set or nonzero guest exit prevents PASS. Expected negative recovery is not relabelled PASS by evidence completion or guest poweroff0."
+    },
+    {
+      "name": "raw_payload_preservation",
+      "source_assessment": "PASS",
+      "finding": "Host collector saves the actual synthetic FTDI TX bytes as ftdi-host-tx.bin in finally and separately records bytes/digest/exact-match. Client includes evdev and RX hex/receipt/VHCI evidence for independent decoding; these are harness-only fixed fixture data."
+    },
+    {
+      "name": "scope",
+      "source_assessment": "PASS",
+      "finding": "Exactly the two new scripts reviewed; existing product, dependency, helper, native and prior QEMU harness files are not changed by reviewer. No guardian/lease guard/automatic restore/TLS/hardware claim is introduced."
+    }
+  ],
+  "resolved_review_findings": [
+    {
+      "issue": "POSIX/ash conditional function invocation suppresses errexit inside its body. Original restart if server_identity could mask an early identity rejection with later successful jq.",
+      "resolution": "ordinary_identity and server_identity now explicitly return on every required identity/FD/stat/jq failure; exact frozen guest matches targeted test source."
+    },
+    {
+      "issue": "Final acceptance should explicitly retain an earlier observed host failure rather than rely only on final appended-log inspection.",
+      "resolution": "Final main condition includes failure_started is not None; default summary FAIL and verification failures remain rejecting."
+    },
+    {
+      "issue": "Fresh device order must not determine the original-driver comparison.",
+      "resolution": "Verifier checks len2 plus exact initial device-ID set and uses original_by_id for fresh driver mapping."
+    }
+  ],
+  "targeted_identity_validation": {
+    "report": "/tmp/rustusb-crash-identity-targeted-source-tests-20261023.json",
+    "report_sha256": "6e2492a2dec80472cf6af1bdfeaacae35ea13f1dbd494a9f690c06b4bdd8c38d",
+    "passed": 15,
+    "failed": 0,
+    "shell": [
+      "/usr/bin/busybox",
+      "sh"
+    ],
+    "source_sha256": "cb648a50cae2cf86cb6b804a5cf250c32856783420a5be2535c745b97a83d923",
+    "fixture_directory": "/tmp/rustusb-crash-identity-targeted-20261023-7ztrpriy",
+    "cases": "8 ordinary identity checks, 6 server identity/FD/stat/jq failure propagation cases, 1 explicitly derived no-return fault variant proving conditional-call false success.",
+    "provenance_note": "The separately preserved file named negative-before captured an already-fixed revision during concurrent authoring; it says NOT_REPRODUCED. No old raw source archive is claimed. Faulty negative here is explicitly derived by removing explicit returns from the actual extracted fixed function."
+  },
+  "author_static_validation": {
+    "path": "/tmp/rustusb-crash-harness-static-20261023.json",
+    "reported_passed": 50,
+    "scope": "Author-reported syntax/jq and synthetic parser validation; not an independent QEMU result and not duplicated by this reviewer."
+  },
+  "actual_runtime_claims": [],
+  "limitations": [
+    "All before/after guards, real pending USBFS, exact I/O, SIGKILL wait137, timed sysfs behavior, client auto-NULL, first restart accepted/refused, and final product recovery verdict remain to be established by the actual root-owned integration run.",
+    "No unavailable killed-epoch terminal/USBFS reap/budget result is inferred.",
+    "A no-must-fix source review permits the bounded negative experiment; it does not establish correctness of a future recovery guard or close hardware G1/G2, kernel-internal-blocking, storage, supervisor/helper-crash or Phase3 gates.",
+    "The first tiny extraction file named negative-before actually captured the concurrently repaired source and reports NOT_REPRODUCED. It is not a captured old failing source; the later faulty variant is explicitly derived."
+  ]
+}

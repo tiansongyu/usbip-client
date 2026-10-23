@@ -128,6 +128,8 @@ EOF、写失败、Drop 和 shutdown 只发起关闭。监督器保留真实请�
 
 FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策略变更或关闭 helper socket 无法撤销已经交付的 FD。它不是逐请求沙箱，也没有实现可撤销的持久租约。部署边界见[安全模型](security.md)，使用方法见[物理服务指南](rust-physical-server.md)。干净37bc6b4的USBFS正常/热拔及原虚拟回归均已通过；软件检查不能代替双端实际 I/O、驱动恢复、热拔及真实硬件验收，最新结果见[工作日志](work-log.md)。
 
+原配置/alternate/driver 与自有变更范围目前仅在物理服务进程内保存。[SIGKILL/首次重启负向](research/physical-crash-recovery.md)已证实新进程会采用当时空驱动为新 original；其 `cleanup_verified` 仅对应本次基线，不验证旧会话。跨进程恢复[draft](research/physical-crash-recovery-design.md)尚未实现，特别是保留 SCM_RIGHTS 的同一 OFD 副本会延长旧 claim 生命周期，不能当作独立恢复 open。
+
 ## 技术依据
 
 完整内核与 Rust 审计将写入 `research/`。Rust 2024 起点为 [1.85](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)，当前构建使用安装的稳定 1.97.1；最终依赖版本以 Cargo.lock 为准。

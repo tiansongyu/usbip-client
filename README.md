@@ -10,6 +10,8 @@
 
 可选 `virtual-server` / `physical-server` 已加入 Unix `SIGINT` / `SIGTERM` 合作停止，见[信号停止报告](docs/research/server-signal-shutdown.md)。修复 `d39517b` 在干净 `934358f` 的222次软件测试、四项本地信号用例和四项QEMU回归通过，8个guest正常退出；各构建feature和ELF来源分别记录。四平台[CI39899971271](docs/evidence/publication-server-signals-934358f-20261023.json)已通过，每格222次测试执行、原两项背压及新增四种信号场景均通过。该改动不提供SIGKILL、崩溃或持久重启恢复；真实设备G1/G2仍未完成。
 
+新增 [SIGKILL/首次重启负向验收](docs/research/physical-crash-recovery.md)在 clean `1342a6a` 完整收集证据，恢复结果为 FAIL：进程退出和客户端断连后，服务端原驱动未恢复；重启会以空驱动建立新基线。新进程的 `cleanup_verified` 不能证明旧会话恢复。当前只有复现与设计，尚无自动恢复修复。
+
 历史Native基线：59项软件测试及当轮Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
 
 另在干净b487144完成[三机争用与交接](docs/research/native-qemu-contention.md)、[主动TCP中止后清理/重连](docs/research/native-qemu-transport-abort.md)，五个guest均正常退出。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI全部通过；这不替代ARM USB内核路径或真实硬件测试。

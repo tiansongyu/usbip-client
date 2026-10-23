@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "scope": "Only two extracted function definitions with stubbed kill/readlink/awk/stat/jq, nonexistent process sentinel, isolated tmp outputs. No whole guest sourcing, real signal, host proc write, USB, Cargo or QEMU.",
+  "source_path": "scripts/qemu/guest-crash-init.sh",
+  "source_sha256": "cb648a50cae2cf86cb6b804a5cf250c32856783420a5be2535c745b97a83d923",
+  "source_is_final_frozen": false,
+  "shell": [
+    "/usr/bin/busybox",
+    "sh"
+  ],
+  "fixture_directory": "/tmp/rustusb-crash-identity-targeted-20261023-7ztrpriy",
+  "checks": [
+    {
+      "case": "ordinary_kill",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_exe",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_start",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe",
+        "start"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_uid",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe",
+        "start",
+        "uid"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_CapEff",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe",
+        "start",
+        "uid",
+        "CapEff"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_CapPrm",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe",
+        "start",
+        "uid",
+        "CapEff",
+        "CapPrm"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_CapAmb",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe",
+        "start",
+        "uid",
+        "CapEff",
+        "CapPrm",
+        "CapAmb"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "ordinary_valid",
+      "expected_status": 0,
+      "stdout": "status=0\n",
+      "stderr": "",
+      "trace": [
+        "kill",
+        "exe",
+        "start",
+        "uid",
+        "CapEff",
+        "CapPrm",
+        "CapAmb"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "server_ordinary",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "ordinary"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "server_missing_fd",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "ordinary",
+        "readlink"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "server_fd_stat_error",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "ordinary",
+        "readlink",
+        "stat:-L -c %d:%i:%t:%T /proc/RUSTUSB_TEST_NO_HOST_PID/fd/*"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "server_node_stat_error",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "ordinary",
+        "readlink",
+        "stat:-L -c %d:%i:%t:%T /proc/RUSTUSB_TEST_NO_HOST_PID/fd/*",
+        "stat:-L -c %d:%i:%t:%T /RUSTUSB_TEST/hid"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "server_mismatch",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "ordinary",
+        "readlink",
+        "stat:-L -c %d:%i:%t:%T /proc/RUSTUSB_TEST_NO_HOST_PID/fd/*",
+        "stat:-L -c %d:%i:%t:%T /RUSTUSB_TEST/hid"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "server_jq_error",
+      "expected_status": 1,
+      "stdout": "status=1\n",
+      "stderr": "",
+      "trace": [
+        "ordinary",
+        "readlink",
+        "stat:-L -c %d:%i:%t:%T /proc/RUSTUSB_TEST_NO_HOST_PID/fd/*",
+        "stat:-L -c %d:%i:%t:%T /RUSTUSB_TEST/hid",
+        "jq"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "derived_fault_without_explicit_return",
+      "expected": "Semantic failure demonstration: conditional returns zero despite ordinary identity rejection and reaches jq; not captured old source.",
+      "stdout": "status=0\n",
+      "stderr": "",
+      "trace": [
+        "ordinary",
+        "readlink",
+        "stat:-L -c %d:%i:%t:%T /proc/RUSTUSB_TEST_NO_HOST_PID/fd/*",
+        "stat:-L -c %d:%i:%t:%T /RUSTUSB_TEST/hid",
+        "jq",
+        "readlink",
+        "stat:-L -c %d:%i:%t:%T /proc/RUSTUSB_TEST_NO_HOST_PID/fd/*",
+        "stat:-L -c %d:%i:%t:%T /RUSTUSB_TEST/ftdi",
+        "jq",
+        "jq",
+        "jq"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "passed": 15,
+  "failed": 0,
+  "initial_capture_note": "The separately preserved file named negative-before captured an already-fixed revision during concurrent authoring; it says NOT_REPRODUCED. No old raw source archive is claimed. Faulty negative here is explicitly derived by removing explicit returns from the actual extracted fixed function."
+}

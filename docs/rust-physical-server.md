@@ -66,3 +66,5 @@ rustusb --socket /run/rustusb/control.sock physical-server \
 拔出后旧 slot 不会自动授权同端口的新设备。重新连接需要管理员核对新设备，再显式重新启动服务获取新代际的 FD；无序列号设备的候选指纹仍不构成可靠硬件身份认证。
 
 Unix信号监听在helper通信前注册，等待异步helper响应时可取消；这不终止已运行的blocking内核初始化。合作停止须等待原有清理，真实验证见[报告](research/server-signal-shutdown.md)。SIGKILL/崩溃与持久重启恢复仍未实现，不能用进程退出代替设备恢复核验。
+
+在 [SIGKILL/首次重启测试](research/physical-crash-recovery.md)中，旧进程退出后原驱动没有恢复，新进程却以当时的空驱动作为 original 并报告 `cleanup_verified=true`。该字段只验证当前进程的基线。强制退出后不能靠重启后的 ready/stopped 判断旧设备已恢复；应保留原状态和诊断，由管理员核对同代际配置、alternate 与驱动。

@@ -1,14 +1,14 @@
 # USBFS 异常退出与重启协调设计
 
-2026-10-23；基线 `e0e6118d85ca5641c8f33f700fbf9bd7668729f9`。状态：**draft，先验证现状**。本文件不声明已实现 SIGKILL 恢复。需求来自 [4.5 断线恢复和异常测试](../requirements.md)，已有合作停止证据见 [SIGTERM 报告](server-signal-shutdown.md)。
+2026-10-23；基线 `e0e6118d85ca5641c8f33f700fbf9bd7668729f9`。状态：**draft；第一项现状验证已完成，恢复 FAIL**，见[实际报告](physical-crash-recovery.md)。本文件不声明已实现 SIGKILL 恢复。需求来自 [4.5 断线恢复和异常测试](../requirements.md)，已有合作停止证据见 [SIGTERM 报告](server-signal-shutdown.md)。
 
 ## 当前问题与本轮范围
 
 `physical_server::run` 在普通用户进程中持有 USBFS adapter。helper 校验策略、设备和代际后通过 SCM_RIGHTS 交付设备 FD，交付后不保留租约或恢复日志。`physical::Slot` 和 worker 在内存中保存原配置、驱动、alternate、已取得接口及配置变更信息。正常关闭会等待请求终态并校验恢复；进程被 SIGKILL 后无法执行这段清理。
 
-当前重新启动通过 helper 重新扫描，`observe::initialize` 从此刻的设备元数据建立新基线。因此，需要实测：旧进程死亡后驱动是否仍为空，以及首次新服务是否把该状态作为 original 并报告 `cleanup_verified`。不能由源码推断永久泄漏，也不能把新进程的干净快照当成旧设备已经恢复。
+当前重新启动通过 helper 重新扫描，`observe::initialize` 从此刻的设备元数据建立新基线。原计划据此实测旧进程死亡后驱动是否仍为空、首次新服务是否将其作为 original 并报告 `cleanup_verified`；现已在下述第一项 QEMU 验收中观察到两者，详见实际报告。不能由此推断永久泄漏，也不能把新进程的干净快照当成旧设备已经恢复。
 
-本轮先新增独立的 QEMU 负向验收，冻结现有产品代码，保存强制退出及首次重启的真实结果；基于结果细化跨进程方案。现有 SIGTERM harness 和已验收的产品路径保持原样。后续实现须先解决恢复授权与持久状态边界，不能只添加一个信号 handler。
+本轮已按计划新增独立的 QEMU 负向验收，冻结现有产品代码，保存强制退出及首次重启的真实结果；后续基于结果细化跨进程方案。现有 SIGTERM harness 和已验收的产品路径保持原样。后续实现须先解决恢复授权与持久状态边界，不能只添加一个信号 handler。
 
 ## 已核对的机制
 

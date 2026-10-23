@@ -141,6 +141,12 @@ python3 scripts/qemu/run-sigterm-qemu.py --evidence /tmp/rustusb-sigterm-qemu
 
 clean934358f的四项QEMU及8guest均已通过；原虚拟回归使用`--features rustusb-cli/rust-backend`，TERM/物理正常/热拔使用`--all-features`，不得写为四项相同ELF。旧负向、完整命令、source/binary guard及限制见[报告](research/server-signal-shutdown.md)。重复信号、SIGKILL/abort、内核内部硬阻塞和真实硬件不因本轮通过改为已验收。
 
+## SIGKILL 与首次重启负向
+
+`python3 scripts/qemu/run-crash-qemu.py --evidence /tmp/rustusb-crash-observation` 使用两个隔离 guest，真实 HID/FTDI I/O 后对普通自有服务发送一次 SIGKILL，保留旧 sysfs 基线、wait137 和客户端自主清理，再进行一次无 IMPORT 的普通重启/合作停止。目录必须尚不存在。
+
+clean1342a6a 的唯一实跑为恢复 FAIL、证据收集完整、runner exit1/两 guest exit0：55 host 检查中 4 项恢复断言失败。20.06 秒后原驱动仍为 null，重启采用 null 新基线；旧进程末资源不可观察。独立 host FTDI 原始 35 字节、RX/evdev hex、完整串口及来源见[报告](research/physical-crash-recovery.md)。这是持续保留的负向验收，不纳入默认绿色 CI，不改判为 XFAIL 成功，也未实现自动恢复。
+
 原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。上述独立入口与各自报告分别记录已执行范围，不能复用Native通过标签替代其他后端或设备的验证。
 
 ## 5. 状态机和异常测试
