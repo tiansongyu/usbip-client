@@ -1,6 +1,6 @@
 # USBFS 显式释放结果与错误传播
 
-2026-10-23，基线`54da615`。状态：实现已合入`4e81a11`，222次软件测试通过；首轮clean十一项候选矩阵10PASS/1FAIL，最终冻结尚待下述物理测试输出隔离修订。承接[host-state最终验证](usbfs-host-state-races.md)，不将本轮扩展为原无驱动非零alternate的通用恢复承诺。
+2026-10-23，基线`54da615`。状态：实现已合入`4e81a11`，222次软件测试通过；最终clean `6e809a1` 十一项QEMU全部PASS，113case/22guest exit0；三轮候选FAIL及修订过程保留，见[最终报告](usbfs-checked-release.md)。承接[host-state最终验证](usbfs-host-state-races.md)，不将本轮扩展为原无驱动非零alternate的通用恢复承诺。
 
 ## 已核实的问题
 

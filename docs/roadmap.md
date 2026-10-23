@@ -56,6 +56,10 @@ CLI 和应用核心普通权限运行，Unix socket root helper 只执行固定�
 
 新增[host-state确定性测试](research/usbfs-host-state-race-design.md)使用仅来宾ptrace门，实际生产worker和nusb抵达syscall-entry后处理UNLINK/EOF；三动作各两模式在同一clean `c921a27`最终六场景通过，48项协议检查、12guest正常退出；开发六PASS与三FAIL另存。它覆盖真实blocking线程入口后的生命周期，不证明kernel USB handler内部阻塞或真实硬件故障；所有开发FAIL保留。
 
+最新[checked release子步骤](research/usbfs-checked-release.md)已修复真实释放errno被portable best-effort契约掩盖的问题；本机及[37c2d61四平台软件](evidence/publication-native-fixture-20261023.json)每格222项通过，同一clean6e809a1的11项QEMU最终PASS，113case/22guest0，旧产品和三轮候选FAIL均保留。不是完整G2完成。
+
+下一步优先在隔离guest验证SIGTERM停止与合作清理：现有虚拟/物理CLI只等待Ctrl-C，SIGTERM与SIGKILL的应用恢复不能假定已完成。SIGKILL需独立跨进程监督设计，不能用SIGTERM处理冒称hard-crash恢复。范围[复核修正版](evidence/phase2-scope-review-rev2-20261023.json)明确现有ECM cycle2已有官方直接usbip互操作证据，撤回重复测试建议；ISO、无原驱动非零alternate、真正kernel内部挂起、成功clear/真实partial及硬件仍单列未完成。
+
 **G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
 
 ## 6. Phase 3：安全远程连接和恢复

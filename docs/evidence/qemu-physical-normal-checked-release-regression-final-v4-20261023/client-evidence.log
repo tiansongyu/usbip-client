@@ -1,0 +1,106 @@
+RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0
+RUSTUSB_PHYSICAL_BOOT role=client kernel=6.8.0-106-generic
+RUSTUSB_PHYSICAL_ISOLATION role=client ip_forward=0
+  "error": "state: permission denied: caller UID is not approved by the administrator",
+2026-10-23T03:26:07.068130Z ERROR rustusb: operation failed error=state: permission denied: caller UID is not approved by the administrator
+RUSTUSB_PHYSICAL_UID_GATE: PASS denied_uid=1001 allowed_uid=1000
+{"event":"physical_probe_case","case":"real_unsupported_control_stall_and_survival","result":"PASS"}
+{"event":"physical_probe_case","case":"real_control_descriptor_and_speed","result":"PASS"}
+{"event":"physical_probe_case","case":"real_configuration_barrier_preserves_following_in","result":"PASS"}
+RUSTUSB_PHYSICAL_PROBE_WAIT_INPUT key=3
+{"event":"physical_probe_case","case":"real_unlink_reaped_no_old_completion_or_input_loss","result":"PASS"}
+{"event":"physical_probe_case","case":"real_pending_eof_releases_lease","result":"PASS"}
+{"event":"physical_probe_case","case":"real_zero_bulk_out_actual_zero","result":"PASS"}
+{"event":"physical_probe_case","case":"real_one_byte_bulk_in_pending_cancelled","result":"PASS"}
+{"event":"physical_probe_case","case":"real_zero_bulk_in_original_length","result":"PASS","observation":"pending_cancelled"}
+RUSTUSB_PHYSICAL_PROBE_WAIT_SERIAL bytes=13
+{"event":"physical_probe_case","case":"real_non_mps_fifteen_byte_bulk_in","result":"PASS"}
+{"event":"physical_probe_case","case":"real_ftdi_descriptor_and_speed","result":"PASS"}
+{"event":"physical_probe_case","case":"all_lifecycle_checks","result":"PASS"}
+{
+  "local_bus_id": "1-1",
+  "local_device_address": 2,
+  "local_device_generation": {
+    "filesystem_device": 23,
+    "inode": 25433
+  },
+  "port": 0,
+  "product_id": 1,
+  "remote_device_id": 65538,
+  "status": 6,
+  "vendor_id": 1575
+}
+{
+  "local_bus_id": "1-2",
+  "local_device_address": 3,
+  "local_device_generation": {
+    "filesystem_device": 23,
+    "inode": 25667
+  },
+  "port": 1,
+  "product_id": 24577,
+  "remote_device_id": 65539,
+  "status": 6,
+  "vendor_id": 1027
+}
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=1 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio
+RUSTUSB_PHYSICAL_WAIT_INPUT cycle=1
+RUSTUSB_PHYSICAL_WAIT_SERIAL cycle=1
+RUSTUSB_PHYSICAL_HID: PASS cycle=1 key_code=2 down=true up=true same_receipt=true
+RUSTUSB_PHYSICAL_FTDI: PASS cycle=1 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}
+RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=1 kernel_sessions=0 both_devices_removed=true
+{"event":"physical_probe_case","case":"both_real_devices_available","result":"PASS"}
+RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=1 available_devices=2
+{
+  "local_bus_id": "1-1",
+  "local_device_address": 4,
+  "local_device_generation": {
+    "filesystem_device": 23,
+    "inode": 25851
+  },
+  "port": 0,
+  "product_id": 1,
+  "remote_device_id": 65538,
+  "status": 6,
+  "vendor_id": 1575
+}
+{
+  "local_bus_id": "1-2",
+  "local_device_address": 5,
+  "local_device_generation": {
+    "filesystem_device": 23,
+    "inode": 26085
+  },
+  "port": 1,
+  "product_id": 24577,
+  "remote_device_id": 65539,
+  "status": 6,
+  "vendor_id": 1027
+}
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=2 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio
+RUSTUSB_PHYSICAL_WAIT_INPUT cycle=2
+RUSTUSB_PHYSICAL_WAIT_SERIAL cycle=2
+RUSTUSB_PHYSICAL_HID: PASS cycle=2 key_code=3 down=true up=true same_receipt=true
+RUSTUSB_PHYSICAL_FTDI: PASS cycle=2 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}
+RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=2 kernel_sessions=0 both_devices_removed=true
+{"event":"physical_probe_case","case":"both_real_devices_available","result":"PASS"}
+RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=2 available_devices=2
+RUSTUSB_PHYSICAL_RESULT: PASS role=client

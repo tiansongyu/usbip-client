@@ -110,10 +110,10 @@ G1-Q 入口为 `scripts/qemu/run-native-qemu.py` 和 `scripts/qemu/guest-init.sh
 
 可选Rust虚拟服务、USBFS物理adapter及ECM各有独立入口：`scripts/qemu/run-userspace-qemu.py`、`scripts/qemu/run-physical-qemu.py`（热拔加`--hot-unplug`）、`scripts/qemu/run-composite-qemu.py`。ECM的两个私有netdev捕获只含合成测试数据，可用`python3 docs/evidence/verify-composite-captures.py <evidence-directory>`独立检查精确UDP字节和帧边界；USBMON仅在来宾显式诊断。最新ECM与原物理正常/热拔在同一干净22d172d三项通过，范围和所有失败见[报告](research/composite-qemu.md)。默认均构建，顺序运行避免共享release产物变化；检查期间禁止仓库写入，最终summary须记录clean、来源和guest退出码。
 
-USBFS host-state syscall-entry取消/断线使用独立入口，另需Linux x86_64 C编译器及libc/Linux headers；宿主以普通用户运行，不在宿主ptrace或访问USB。先提交并确认工作树干净，以下六轮必须串行、默认locked构建且期间不写仓库，`/tmp`证据目录须尚不存在：
+USBFS host-state syscall-entry取消/断线使用独立入口，另需Linux x86_64 C编译器及libc/Linux headers；宿主以普通用户运行，不在宿主ptrace或访问USB。先提交并确认工作树干净，以下八轮必须串行、默认locked构建且期间不写仓库，`/tmp`证据目录须尚不存在：
 
 ```bash
-for operation in configuration alternate clear; do
+for operation in release configuration alternate clear; do
   for mode in unlink eof; do
     python3 scripts/qemu/run-host-state-qemu.py \
       --operation "$operation" --mode "$mode" \
@@ -123,6 +123,10 @@ done
 ```
 
 每轮两个一次性来宾，实际普通UID1000 physical server及独立wire probe通过匹配门nonce协调；tracer仅在server来宾运行。首次ARM启动idle25秒、后续RPC3秒、持门8秒，未使用`--skip-build`才可作最终证据。该门位于真实ioctl执行前，不能称kernel内部挂起；CLEAR模型返回的-32必须保留。同一干净c921a27六场景最终PASS，48项协议检查和12guest正常退出；范围、三个开发FAIL和最终裁决见[专项报告](research/usbfs-host-state-races.md)。
+
+最新[checked release最终验收](research/usbfs-checked-release.md)在同一clean6e809a1完成上述八项、ECM及HID/FTDI正常/热拔共十一项，113case/22guest exit0。release动作仅在guest对授权IF0外部unbind产生真实EINVAL，必须保留-22、继续释放IF1、零SET_CONFIGURATION入口和独立恢复。probe按调用记录诊断，不重试；tracer以parent-only SIGCHLD通知等待减少观察开销，原frame2秒/RPC3秒/门8秒不变。发现FAIL立即锁定失败，最多30秒仅收集peer诊断且受原overall限制；guest0不替代FAIL。
+
+物理runner的ttyS0保存kernel console、ttyS1保存程序证据；两通道均检查FAIL/内核完整性错误，终止后再次检查。启动须等待两设备均无blocker，原100次/50ms及最终完整断言保留。完整marker或严格JSON被打断仍FAIL，不通过拼接原始日志改判。
 
 原生 `usbip attach` 需要权限，测试时由管理员按发行版规则执行；不要为了手册方便给整个 RustUSB setuid。上述独立入口与各自报告分别记录已执行范围，不能复用Native通过标签替代其他后端或设备的验证。
 

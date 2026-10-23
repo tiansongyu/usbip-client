@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "review_kind": "read_only_phase2_scope_and_next_task",
+  "reviewed_at_utc": "2026-10-23T03:03:36.399778+00:00",
+  "git_head": "ab44a8445d35d9c738f6441c9a42c924c35b0107",
+  "working_tree": "dirty; parallel root/agent evidence and physical dual-UART work observed; no clean-tree claim",
+  "actions": "Read local requirements, phase plan, acceptance, design and code. No repository edits, builds, QEMU, host USB/module/network/ptrace operations. This JSON is the sole output file.",
+  "scope_decision": {
+    "phase2_original_requirement": "Optional Rust server, virtual devices, physical sharing, unified backend interfaces, official Linux USB/IP interoperation; validate upstream limitations individually and do not claim unverified device classes. docs/requirements.md:696",
+    "not_a_requirement_to_support_every_usb_class_before_any_further_work": "The original Phase2 explicitly permits unsupported classes with accurate reasons. Rejecting ISO is an honest implemented limitation, not ISO support or a full Phase2 pass.",
+    "current_substep": "Checked release product change and final matrix are being completed by root. This review neither revalidates nor overrides their runtime verdict.",
+    "whole_phase_status": "Partial; physical G1/G2 and unimplemented/untested capabilities remain open.",
+    "phase3_boundary": "Remote credentials/TLS, comprehensive per-user device leases, heartbeats, durable restart reconciliation and full nine-state application session management remain Phase3. Existing trusted-network flags/local UID allowlists and actor states do not satisfy those requirements."
+  },
+  "recommended_next_task": {
+    "title": "Close the explicit Rust Server → independent official Linux usbip CLI interoperability gap",
+    "classification": "Coverage gap; no confirmed product fault",
+    "priority_reason": "Directly named by original requirements and G2; removes the shared RustUSB management implementation from the client oracle. Bounded and available in the existing isolated QEMU infrastructure, unlike real hardware and generic kernel-blocking fixtures.",
+    "evidence": [
+      "docs/requirements.md:592 and :696",
+      "docs/roadmap.md:59",
+      "scripts/qemu/guest-userspace-init.sh:197-198 invokes RustUSB attach for both profiles",
+      "scripts/qemu/guest-physical-init.sh:350-351 invokes RustUSB attach for USBFS devices",
+      "scripts/qemu/guest-init.sh:273 already demonstrates direct /usr/bin/usbip attach, but against the Native server scenario"
+    ],
+    "scope": [
+      "Add an explicit official-client mode to existing virtual and physical/composite harnesses rather than a second protocol implementation.",
+      "In disposable client guest only, invoke actual /usr/bin/usbip list --remote, attach --remote --busid, port, and detach --port. Record exact argv, exit codes, binary SHA and kernel/module versions.",
+      "Server remains actual ordinary-user RustUSB virtual or physical server; retain helper FD authorization, device policy and current kernel-integrity checks.",
+      "Run two bounded frozen scenarios: fixed virtual HID + CDC ACM, and USBFS ECM configuration/alternate model or already supported HID/FTDI. Require real VHCI native-driver enumeration, exact input/serial/UDP bytes, detach/reconnect, and independently observed server resource/config/alternate/driver cleanup.",
+      "Assert client helper has not adopted official-CLI-created ports as managed; only the explicitly selected disposable guest official CLI cleans those ports."
+    ],
+    "acceptance": "Both scenarios PASS with raw logs and exact artifacts on one clean source revision. Record which of the three interoperability directions each proves. If product code is unchanged, do not rerun all eleven host-state scenarios merely for this client-mode addition.",
+    "stop_rule": "Once the explicit official-client path is verified, do not extend it into repeated host-state fault permutations. Keep unsupported capabilities and real hardware as separate open entries."
+  },
+  "remaining_product_gaps": [
+    {
+      "item": "ISO transfer execution and per-packet status/actual/frame semantics",
+      "evidence": "wire.rs:141-154 explicitly rejects positive num_packets before allocation; endpoint execution supports bulk/interrupt, not ISO",
+      "qemu_feasibility": "A future bounded virtual ISO or QEMU audio fixture is possible, but would require new wire/adapter semantics and vendor allocation/cancellation work; this is not a missing assertion on current supported code.",
+      "verdict": "Mandatory long-term capability for UVC/audio support; keep unsupported now. Do not mislabel a rejection test as transfer support or demand all classes merely to close this bounded Phase2 substep."
+    },
+    {
+      "item": "Exact recovery of originally unbound interface at nonzero alternate",
+      "evidence": "worker.rs:1069-1105 temporarily claims/sets/releases; checked-release-design.md:11 records Linux unbind can reset alt0 even after successful RELEASEINTERFACE",
+      "qemu_feasibility": "Existing ECM model can establish the case, but generic restoration through ordinary USBFS has not been demonstrated.",
+      "verdict": "Real capability gap, not fixed by release_checked or driver-owned CDC recovery. Do not claim a test-only change solves it; any narrow preflight exclusion is safety degradation, not restored support."
+    },
+    {
+      "item": "Physical service hard-crash ownership and local-driver recovery",
+      "evidence": "physical_server.rs:95-110 performs recovery on cooperative shutdown only; daemon physical FD handoff is not a persistent lease/recovery supervisor; worker uses detach_and_claim_interface_no_reattach",
+      "qemu_feasibility": "One deterministic guest-only server termination while real HID/FTDI or ECM is leased can observe kernel/sysfs/FD state.",
+      "verdict": "Source-identified risk, not a reproduced runtime failure in this review. Kernel FD closure cannot be assumed to execute Rust restoration. If reproduced, fix bounded crash ownership first; durable startup adoption/journaling remains Phase3."
+    }
+  ],
+  "remaining_coverage_gaps": [
+    {
+      "item": "Kernel USB handler internally active/non-cancellable blocking",
+      "verdict": "Current syscall-entry gates do not prove this. Needs a justified guest-only kernel/QEMU fixture or actual hardware behavior; another ptrace pause before ioctl does not close it."
+    },
+    {
+      "item": "Successful CLEAR_HALT and subsequent endpoint data",
+      "verdict": "Existing QEMU model supplies a real failure path. A model implementing success is needed before claiming successful endpoint recovery. It is a limited model coverage gap until a product fault is observed."
+    },
+    {
+      "item": "Genuine nonzero error partial data for actual USBFS I/O",
+      "verdict": "Current controlled adapter tests cover mappings; ECM kernel reports -32 with one opaque byte. Do not call that observed application-level partial payload semantics. Needs a suitable device/model."
+    },
+    {
+      "item": "Two fresh physical IMPORTs racing for the same available generation",
+      "verdict": "PhysicalBackend::claim changes available to claiming under slot mutex before await, providing a source ownership mechanism. Existing hold-and-busy tests are not simultaneous-first-import evidence; a single bounded race test may be useful, but this is lower priority than explicit official-client interoperation."
+    },
+    {
+      "item": "R01-R12 requirement accounting",
+      "verdict": "Maintain a compact disposition table pointing to existing engine/parser/worker evidence. R11 remote authentication/TLS belongs Phase3; do not claim a local listener policy satisfies it. R12 default no-payload logs should eventually gain a sensitive-marker regression, not raw USB logging."
+    }
+  ],
+  "hardware_only_pending": [
+    "Two real Ubuntu hosts with one administrator-selected non-storage USB device for G1/G2",
+    "Real HID/serial/JTAG/storage/UVC/audio model and firmware compatibility",
+    "Ubuntu 24.04 and aarch64 kernel USB/hardware interoperability; software CI alone is insufficient",
+    "Real performance/long-running USB and WAN behavior; QEMU timings are not product performance"
+  ],
+  "do_not_expand_this_substep": [
+    "Do not reopen all prior raw evidence or rerun passed matrices without source changes or a specific unresolved concern.",
+    "Do not add arbitrary kernel hooks solely to turn an inherently unavailable hardware gate green.",
+    "Do not call Phase1/Phase2 complete because the bounded eleven-run matrix passes.",
+    "Do not count TUI, TLS, GUI, packaging, metrics or Windows as implemented in this Phase2 closure."
+  ],
+  "inputs_sha256": {
+    "AGENTS.md": "e27c291703d40e6e2cce8fa8b7ebd425022ef3895d0745a4c5b758cbc5ddfc12",
+    "docs/requirements.md": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c",
+    "docs/roadmap.md": "83c5bab97f43733cd747a8d2b200fc6ae94de4fcce072b691f5c6f3206571989",
+    "docs/acceptance.md": "8ebc9e1533d1907436a72d6842af4b0996e3029ecf2872e7ff8a31309049f5e2",
+    "docs/architecture.md": "46a78b5b47990d4c9c18b42653622dca5c7d1c77a1e1f59cdd8e0e246aec2c8c",
+    "docs/research/rust-backend-audit.md": "601a3cbe9634d578d7b513e7603ea081ce7208575da147099d785041f8d863db",
+    "docs/research/rust-physical-backend-design.md": "d2604cdbd09d74e7b5a7f4a5521ef4d057f4ad1daa9b801406fb041b0bf0c4a2",
+    "docs/research/usbfs-checked-release-design.md": "2389d26fd421838563ef6612660303a37ac47e0d990afc9d1d23cd02bdbb5039",
+    "crates/rustusb-rust-backend/src/wire.rs": "e34c8c9d2662d677ff4ba51fefcec1f087e61b8fd800c0caf31b4326b8119374",
+    "crates/rustusb-rust-backend/src/physical.rs": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2",
+    "crates/rustusb-rust-backend/src/physical/worker.rs": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f",
+    "crates/rustusb-rust-backend/src/physical/observe.rs": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d",
+    "crates/rustusb-rust-backend/src/physical/safety.rs": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2",
+    "crates/rustusb-rust-backend/src/server.rs": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532",
+    "crates/rustusb-daemon/src/physical.rs": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48",
+    "crates/rustusb-cli/src/physical_server.rs": "be92e432a5e485b55ec9551f464f658999fd934b3355df745201639763ad0922",
+    "scripts/qemu/guest-userspace-init.sh": "a9cce38d4fef0e7724ae040248085da65d84548e3cf1b7211c74615a7e81368f",
+    "scripts/qemu/guest-physical-init.sh": "e62da0544782a411f8ff95c02be3f9865865dc09e03c1d713599b1871cb39226",
+    "scripts/qemu/guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  }
+}

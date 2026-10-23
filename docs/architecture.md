@@ -1,6 +1,6 @@
 # RustUSB 技术架构
 
-状态：已实现结构与分阶段设计约束；2026-10-22。实现范围及验证结果以工作日志为准。
+状态：已实现结构与分阶段设计约束；2026-10-23。实现范围及验证结果以工作日志为准。
 
 ## 路线
 
@@ -115,6 +115,8 @@ Linux 物理 adapter 使用固定 nusb 0.2.8 本地许可源码的小扩展，�
 物理注册只接受 `PhysicalSource` 中已打开的 FD、设备元数据和代际 receipt，CLI 不接受任意 USB 路径。root helper 按调用 UID、`physical_device_ids`、可信网络声明及当前全部接口安全状态授权，打开固定 `/dev/bus/usb/BBB/DDD` 字符节点。该列表与 Native 的 `export_device_ids` 必须不相交，旧策略缺少物理列表时默认空。节点类型、权限、设备号及节点/sysfs 的 dev/inode、USB 地址前后匹配，并使用 NOFOLLOW/CLOEXEC。受保护 UDS 先交付有界 JSON，收到单字节 ACK 后才通过 SCM_RIGHTS 交付一个 FD；接收方复核 root peer、FD 数量、标记、截断和 receipt。
 
 打开能力不等于 claim：服务在 IMPORT 时独占当前设备的全部已验证接口。slot 经 `available → claiming → leased → closing`，成功清理才回到 `available`；无法确认进入 `quarantined`，真实消失进入 `gone`。queued UNLINK 不提交硬件；active UNLINK 等真实 terminal 裁决，取消赢才回复 -104 且不再回复原 SUBMIT，完成赢则保留原 errno/partial 并回复 UNLINK0。取消不能撤回已送出的部分 OUT 数据。
+
+显式释放使用本地nusb扩展的Linux `Interface::release_checked()`：共享引用返回Busy，最后owner只尝试一次真实RELEASEINTERFACE，保留errno且析构不重发；portable release/Drop仍维持原契约。worker逐项await所有接口并保留首错，释放失败不执行SET_CONFIGURATION；临时alternate claim也显式checked释放。ioctl成功仍不等于原状态恢复，独立config/alternate/driver/grant核验保持。实现与最终QEMU范围见[checked release报告](research/usbfs-checked-release.md)。
 
 每个新接口 detach/claim 前，物理可选 feature 复用 `rustusb-linux` scanner 重新检查当前配置的设备身份、完整接口集合、存储驱动/块后代和外部占用；此前已取得的 usbfs 接口仅按本次持有集合放行。扫描前后核对配置和代际，配置 0 不执行接口 claim。释放自有接口后、恢复配置或驱动前也重新检查，不能在新配置已经出现危险驱动时盲目回滚。该检查不能预知所有 inactive vendor quirk 或消除外部管理员的 TOCTOU。
 

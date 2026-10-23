@@ -6,7 +6,7 @@
 
 可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，见[虚拟服务指南](docs/rust-virtual-server.md)与干净cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)。
 
-实验性 `physical-nusb` 后端通过受限 helper 的 FD 授权，在普通用户进程中使用真实 Linux USBFS，见[物理服务指南](docs/rust-physical-server.md)。干净提交37bc6b4的QEMU HID/FTDI正常、热拔及原虚拟HID/CDC回归全部通过，见[专项报告](docs/research/physical-qemu.md)。最新配置安全与多接口恢复修复的[软件检查](docs/evidence/composite-software-validation-20261022.json)及[四平台CI](docs/evidence/publication-composite-20261022.json)默认89项/all-features113项和vendor14项通过；[ECM及HID/FTDI最终仿真](docs/research/composite-qemu.md)在同一干净22d172d上三项通过，6guest均正常退出。新增[host-state取消/断线测试](docs/research/usbfs-host-state-races.md)在同一干净c921a27的六场景通过，48项协议检查、12guest正常退出，覆盖真实blocking线程的syscall-entry窗口；该冻结提交的[四平台软件CI](docs/evidence/publication-host-state-20261023.json)每格216项测试通过。真实物理硬件、内核内部挂起、ISO、认证和TLS仍未验收，不代表完整Phase2已完成。
+实验性 `physical-nusb` 后端通过受限 helper 的 FD 授权，在普通用户进程中使用 Linux USBFS，见[物理服务指南](docs/rust-physical-server.md)。最新[checked release 修复与验收](docs/research/usbfs-checked-release.md)保留真实释放错误，失败后不执行配置切换；同一干净 `6e809a1` 的 11 项 QEMU 全部通过，含 8 个取消/断线场景、ECM 与 HID/FTDI 正常/热拔回归，共113项协议检查、22个guest正常退出。完整软件检查及37c2d61的[四平台CI](docs/evidence/publication-native-fixture-20261023.json)每格222项通过。真实硬件、内核内部挂起、ISO、认证和TLS仍未验收，完整Phase2仍未完成。
 
 历史Native基线：59项软件测试及当轮Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
 

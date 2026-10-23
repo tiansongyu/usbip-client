@@ -1,6 +1,6 @@
 # 需求逐项验收审计
 
-审计日期：2026-10-22。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目七项Native双QEMU矩阵在干净b4cbfc3全部通过，新增三机争用与主动TCP中止在干净b487144通过；可选Rust固定虚拟HID/CDC在干净cfeffd3的双QEMU实际功能和清理通过；USBFS adapter正常/热拔及原虚拟回归在干净37bc6b4全部通过；最新配置安全/多接口恢复在干净22d172d完成ECM、HID/FTDI正常和热拔三项最终回归，四平台软件CI每格216项通过；双Ubuntu真实设备、安全远程产品及长期功能仍未完成。**
+审计日期：2026-10-23。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目七项Native双QEMU矩阵在干净b4cbfc3全部通过，新增三机争用与主动TCP中止在干净b487144通过；可选Rust固定虚拟HID/CDC在干净cfeffd3的双QEMU实际功能和清理通过；USBFS adapter正常/热拔及原虚拟回归在干净37bc6b4全部通过；最新配置安全/多接口恢复在干净22d172d完成ECM、HID/FTDI正常和热拔三项最终回归，最新checked release在clean6e809a1的十一项QEMU通过，113case/22guest0，软件及37c2d61四平台CI每格222项通过；双Ubuntu真实设备、安全远程产品及长期功能仍未完成。**
 
 状态约定：`已交付` 表示文档 / 源码存在且已核对；`软件已验证` 表示适用自动测试有结果；`部分` 表示功能或证据尚不覆盖原要求；`待验收` 表示有实现或计划但缺必需运行证据；`后续阶段` 表示明确尚未实现。文档存在、测试通过和产品支持互不替代。
 
@@ -27,8 +27,13 @@
 | E17 | [Composite最终报告](research/composite-qemu.md)、[最终三项索引](evidence/composite-final-20261022.json)、[root独立PCAP核对](evidence/composite-capture-final-verification-20261022.json) | 同一干净22d172d、三次默认locked all-features构建、6guest exit0；ECM 19probe和两周期精确38/39B UDP及双driver/config/alt恢复；原HID/FTDI正常与热拔各15probe，host精确70/140B，末pending/queued/inflight/预算0；不证明任意Composite或真实硬件 |
 | E18 | [host-state测试设计](research/usbfs-host-state-race-design.md)、[最终报告](research/usbfs-host-state-races.md)、[最终六场景索引](evidence/host-state-final-20261023.json) | 未改生产代码/vendor/旧harness，真实Special blocking TID的syscall-entry门；configuration/alternate/clear × UNLINK/EOF在同一clean c921a27最终六场景PASS，48probe/12guest exit0，开发3FAIL保留，不称kernel内部active或真实硬件通过 |
 | E19 | [host-state完整软件gate](evidence/host-state-software-validation-20261023.json)、[冻结提交四平台CI](evidence/publication-host-state-20261023.json)、[实际CI39886203010](https://github.com/tiansongyu/usbip-client/actions/runs/39886203010) | 本机及Ubuntu22.04/24.04 × x86_64/aarch64每格216次测试执行、0失败/忽略；四job实际completed/success，各两项4096B stdout背压通过；源码c921a27，原joblog/API响应已归档，不代替USB内核或真实硬件 |
+| E20 | [checked release设计/报告](research/usbfs-checked-release.md)、[软件gate](evidence/checked-release-software-validation-20261023.json)、[最终11项索引](evidence/checked-release-final-v4-20261023.json) | 产品4e81a11修复真实release errno与全部await；软件89/114/19共222项；clean6e809a1串行11PASS/113case/22guest0，真实release-22/后续IF1完成/零SET_CONFIGURATION及恢复；ECM/物理正常热拔通过，旧负向及三轮候选FAIL保留，不称完整G2 |
+| E21 | [checked release产品CI](evidence/publication-checked-release-20261023.json)、[测试工具CI](evidence/publication-checked-release-harness-20261023.json)、[实际39894149759](https://github.com/tiansongyu/usbip-client/actions/runs/39894149759) | Ubuntu22.04/24.04 × x86_64/aarch64原生4job均completed/success，每格222项0失败/忽略及两项4096B背压；后续冻结只改物理启动predicate，96软件输入相同，不代替USB内核或真实硬件 |
 
-当前本机软件环境为 Ubuntu 22.04.5 x86_64、内核 6.8.0-106-generic、稳定 Rust / Cargo 1.97.1。最新192640c产品本机软件检查见E15，四格原生软件CI均已通过(E16)；37bc与虚拟服务历史分别见E14/E12。最新三项ECM/物理最终冻结回归(E17)及六项host-state入口窗口测试(E18)通过，最新四平台软件CI见E19；真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
+| E22 | [Native测试夹具修订](research/native-test-fixture-readiness.md)、[完整软件gate](evidence/native-fixture-full-software-validation-20261023.json)、[四平台CI](evidence/publication-native-fixture-20261023.json) | 37c2d61仅cfg(test)修订，生产Native字节相同；本机及四原生CI各222项0失败/忽略、各两背压通过，6e809旧CI3/1原样保留；重建ELF哈希不同，QEMU结果继续锁6e809原输入/产物，未重归属 |
+
+
+当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订后的最新软件/CI见E22；历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
 ## 2. Phase 0 九项产物
 
@@ -72,7 +77,7 @@
 | 设备断开 | helper 受管端口 → native detach_session 比对原身份 → 确认NULL及旧设备generation已移除 | 软件已验证端口复用拒绝 / 幂等 / 真实状态等待；重启未知端口不能由普通 CLI 接管 |
 | CLI | clap devices / doctor / discover / export / unexport / attach / detach / sessions / status，JSON 输出；feature可选virtual-server / physical-server | 已实现并有 schema 测试 / 只读 smoke及E10/E13仿真；peers / logs / config / benchmark 后续，非占位成功 |
 | 基础日志 | CLI tracing 文本 / JSON stderr、helper UID / 动作 / 结果 / 安全错误类别、Native 状态核验日志 | 已实现基础部分；审计完整性、轮转、保留策略、指标、诊断包与隐私全面测试后续 |
-| G1 软件 gate | E15当前本机完整软件检查、E16当前四平台CI | 默认89/allfeatures113项、vendor14纯测试及两组Clippy/release/Rustdoc通过；四平台全部通过；历史结果保留，后续源码变更仍须重新验证 |
+| G1 软件 gate | E22本机完整软件检查及固定提交四平台CI | 默认89/allfeatures114项、vendor19纯测试及两组Clippy/release/Rustdoc通过；37c2d61四平台全部通过；历史结果保留，后续源码变更仍须重新验证 |
 | G1-Q 用户要求的本项目 QEMU gate | E07七项矩阵、E09三机争用/双机传输中止，原始日志与完整指纹 | **干净提交b4cbfc3七项全部PASS**；三方向Native互操作各HID/FTDI两周期，reconnect三周期及新代际拒绝控制，14guest exit0；E09另5guest exit0，争用交接与真实TCPabort清理通过；doctor/UID/资源释放逐项核验 |
 | G1 两台 Ubuntu 真实设备 gate | 原需求要求真实 USB 设备被客户端内核枚举并完成功能 | **未执行**；无物理测试设备和双机记录，仿真不能代替；Phase 1 不能据当前证据标全完成 |
 
@@ -114,7 +119,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 原要求测试类别 | 当前证据 | 状态和缺失 |
 | --- | --- | --- |
-| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E15：默认89/allfeatures113、vendor14，共216项；历史E13/E14为89/103/14、E03为59、E10为75/76项 | 本机软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
+| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E22：默认89/allfeatures114、vendor19，共222项；历史E13/E14为89/103/14、E03为59、E10为75/76项 | 本机软件快照通过；认证仅本机 UID / policy，非远端认证；描述符非完整用户态 USB 实现；取消 / 状态覆盖仅目前边界 |
 | 三方向互操作 | E07：managed / linux-client / linux-server各HID和FTDI | Native三方向实际功能及清理通过；E10另验证自有虚拟Rust Server→RustUSB Native client/VHCI；独立官方CLI专场、物理及完整G2仍待验收 |
 | QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游HID/CDC有E02；本项目Native有E07；虚拟与USBFS有E10/E13 | 七项Native矩阵通过；FTDI不是CDC，E13新增USBFS HID/FTDI正常与热拔，并复跑本项目标准双接口CDC虚拟服务；完整网络/热插拔异常矩阵后续 |
 | 真实 U 盘 / 串口 / HID / JTAG / 摄像头 | compatibility 与 testing 定义逐设备测试 | 全部未执行；存储拒绝；UVC / Audio / Composite / alt / ISO 各需独立证据 |
@@ -126,26 +131,26 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 必需命令 / 约束 | 证据及判定 |
 | --- | --- |
-| `cargo fmt --all -- --check` | scripts/check.sh 首项，当前E15本机脚本整体通过；成功无输出正常。后续源码修改需重跑 |
-| `cargo clippy --workspace --all-targets -- -D warnings` | E15默认与all-features两组通过；自有工作区 forbid unsafe / deny unwrap_used / expect_used / panic；vendor原有unsafe另见许可/来源记录。它不证明协议与硬件语义正确 |
-| `cargo test --workspace` | E15默认89/allfeatures113项，另有vendor14纯测试，0失败/0忽略；历史数量保留于E03/E10/E13/E14，各test名称和范围可核对；无硬件通过结论 |
-| `cargo build --workspace --release` | E15默认与all-features release成功；编译产物不是双机 USB 验收 |
-| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E15两组通过；不代表所有架构能力均实装 |
+| `cargo fmt --all -- --check` | scripts/check.sh 首项，E22完整脚本通过；成功无输出正常。后续源码修改需重跑 |
+| `cargo clippy --workspace --all-targets -- -D warnings` | E22默认与all-features两组通过；自有工作区 forbid unsafe / deny unwrap_used / expect_used / panic；vendor原有unsafe另见许可/来源记录。它不证明协议与硬件语义正确 |
+| `cargo test --workspace` | E22默认89/allfeatures114项，另有vendor19纯测试，0失败/0忽略；历史数量保留于E03/E10/E13/E14，各test名称和范围可核对；无硬件通过结论 |
+| `cargo build --workspace --release` | E22默认与all-features release成功；编译产物不是双机 USB 验收 |
+| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E22两组通过；不代表所有架构能力均实装 |
 | 工具链 / 依赖 / 许可 | 锁定稳定 1.97.1 和 2024；Cargo.lock / inventory / third-party；最终变更后更新清单；未声称完成发布合规认证 |
 | 平台 / 资源 / 清理 | 有界输入、明确平台错误、阻塞隔离、固定进程、真实 sysfs 与保守未知资源处理 | 目标所有 OS / 架构及长期异常路径仍需独立 gate，不用 lint 或绿色 CI 覆盖 |
 
-历史Native轮次E03最终59项及全部质量检查通过。E07针对同一源码、干净提交b4cbfc3的七项QEMU矩阵全部PASS；Native源码及七项脚本在后续E08–E12、截至cfeffd3虚拟子步骤时保持未变。最新E13新增USBFS adapter，并在9b0da33最小修复Native成功detach后的变化快照观察；原失败及新增3项确定性回归保留，原七项脚本未改。当前软件产品基线为192640c，三项最终QEMU基线为22d172d，四平台结果见E16；37bc6b4历史结果见E13/E14；不将旧矩阵声称为当前源码的完整重跑。
+历史Native轮次E03最终59项及全部质量检查通过。E07针对同一源码、干净提交b4cbfc3的七项QEMU矩阵全部PASS；Native源码及七项脚本在后续E08–E12、截至cfeffd3虚拟子步骤时保持未变。历史E13新增USBFS adapter，并在9b0da33最小修复Native成功detach后的变化快照观察；原失败及新增3项确定性回归保留，原七项脚本未改。历史Composite软件产品基线为192640c，三项QEMU基线为22d172d，四平台结果见E16；最新checked release产品4e81a11和最终11项QEMU的6e809a1见E20/E21；37bc6b4历史结果见E13/E14；不将旧矩阵声称为当前源码的完整重跑。
 
 ## 9. 用户追加的过程记录、commit、push 和 QEMU
 
 | 用户要求 | 审计时事实 | 最终必须补足的证据 |
 | --- | --- | --- |
 | 合适 commit | 历史研究/实现/验收记录保留；最新USBFS helper/engine/CLI、IPC与Native修复、QEMU/证据分别提交，见work-log | 按产品、测试、验收证据提交；每次普通push后核对远端main，不强推 |
-| 记录所有过程 | work-log保存研究、实施和失败修复；E13保留f42d最终FAIL与37bc最终PASS；E15–E17新增全部7次开发FAIL、dirty PASS与22d最终三项PASS | 最后文档归档另行提交；失败记录与对应源码/脚本快照保留 |
-| push 指定仓库 | origin fetch/push均为 `git@github.com:tiansongyu/usbip-client.git`；22d172d普通push exit0；37bc6b4历史远端核对见E14 | 最后文档提交后再次普通push与SHA核对；最新自身SHA以Git实际历史为准 |
-| 使用 QEMU 仿真 | E07七项Native矩阵、E09争用/中止、E10虚拟服务，E13 USBFS正常/热拔及原虚拟回归，最新E17 ECM及HID/FTDI回归 | 最新三项同一干净22d172d、默认locked all-features构建、6guest exit0、相同产物指纹核验；不替代真实硬件 |
+| 记录所有过程 | work-log保存研究、实施和失败修复；E13保留f42d最终FAIL与37bc最终PASS；E15–E17保留全部7次开发FAIL、dirty PASS与22d三项PASS；E20另保留两旧产品FAIL、三轮候选FAIL和最终11PASS，6e809的CI失败及cfg(test)修订独立保留 | 最后文档归档另行提交；失败记录与对应源码/脚本快照保留 |
+| push 指定仓库 | origin fetch/push均为 `git@github.com:tiansongyu/usbip-client.git`；4e81a11/ab44a84/19ffa11/6e809a1/37c2d61普通push成功；历史远端核对见对应工作日志 | 最后文档提交后再次普通push与SHA核对；最新自身SHA以Git实际历史为准 |
+| 使用 QEMU 仿真 | E07七项Native矩阵、E09争用/中止、E10虚拟服务，E13 USBFS正常/热拔及原虚拟回归，E17历史ECM回归及E20最终十一项 | 最新十一项同一干净6e809a1、默认locked all-features构建、113case/22guest exit0、相同产物指纹核验；不替代真实硬件 |
 
-### 历史Native轮次裁决（最新Composite裁决见第13节）
+### 历史Native轮次裁决（历史Composite裁决见第13节，最新checked release见E20）
 
 - 本轮G1-Q七项具体命令、summary、原始双端日志和二进制哈希均见[E07矩阵报告](research/native-qemu-matrix.md)；全部exit0，同一干净b4cbfc3、七次locked构建、14guest exit0。旧21e98f9重连FAIL与修复后的同场景PASS均保留。
 - 历史Native轮次最终[软件输出](evidence/software-checks-phase1-runtime-2026-10-22.txt)：59项及fmt/Clippy/release/Rustdoc全部通过；产品a4d258c，QEMU基线b4cbfc3；测试端ETXTBSY排查/修复和20轮稳定性记录另附，生产命令未增重试。
@@ -175,3 +180,10 @@ Phase2已交付并验证固定虚拟服务子步骤(E10/E11)及USBFS adapter的Q
 ## 13. Composite配置与恢复子步骤裁决（2026-10-22）
 
 E15软件gate、E16四平台CI与独立源码复核通过，新增两个接口由同一driver probe恢复的确定性回归，以及当前配置storage/块后代/外部占用拒绝检查。ECM双来宾dirty开发dev08已完成19probe和两个导入周期的实际38/39B UDP、USBMON/wire错误字段一致及原双driver恢复，全部7次开发FAIL保留。E17在同一干净22d172d默认locked构建完成ECM、HID/FTDI正常与热拔三项最终PASS，6guest exit0；ECM实际两周期精确38/39B UDP、USBMON/wire一致和双driver/config1/alt0,1恢复，root独立PCAP验证通过。真实Special blocking线程syscall-entry后的取消/EOF在E18同一clean c921a27最终六场景已通过；kernel内部active窗口尚未覆盖。原driver无绑定且为非零alternate的恢复、任意Composite/ISO、真实硬件和完整G2仍未完成。
+
+
+## 14. 本轮checked release与证据结论
+
+E20的clean6e809a1十一项QEMU全部通过，113case/22guest0，覆盖release两项真实-22传播、剩余IF1释放、零SET_CONFIGURATION入口及原六host-state和ECM/HID/FTDI回归。其他动作仍按其真实配置/alternate/clear errno验证，不把release故障预期套用于全部8项。
+
+冻结提交的CI6e809a1实际3 PASS/1 FAIL，原日志和缺项完整保留；E22只修复既有Native测试夹具，37c2d61本机及四原生CI均实际222项通过。生产Native字节不变不意味着重建ELF哈希相同，原QEMU产物仍只归其真实6e809a1来源。完整Phase2、真实硬件G1/G2和后续安全/界面阶段继续保留原范围。

@@ -237,3 +237,14 @@
 - 诊断/通知修订与完整证据提交19ffa119107e169765789ccdd071e860fca195af并push，远端一致/clean，95份indexed Gitblob核对通过。v3从全部12脚本前置快照串行运行十一项，无repo写/并行build；前10PASS，最后physicalhot在select-simulated-devices前置FAIL，整批仍FAIL。
 - 原失败快照FTDI已出现但interfaces空、bNumInterfaces不可读和blockers非空；harness按count2提前break后被原严格完整性断言拒绝，未开始helper/IMPORT，不能说USB热拔产品故障。只计划把启动等待成功条件改为同原最终完整predicate，原100次/50ms不变。原所有FAIL保留，先fixture与单项hot后再freeze。
 - 启动完整predicate四项fixture和shell语法通过；dirty hot dev03实际完整PASS：15case/140B/两guest0，独立raw113/113；仅guest loopbreak同原最终断言，不改变100/50ms或USB断言。19ffa11四原生CI39894149759也实际全completed/success，各222项+两项背压，root核原log/平台/计数并归档，不能覆盖v3 QEMU FAIL。
+
+- 启动等待修订及v3/dev03/CI证据提交6e809a1c870e3ef84a7891eeca499b949366edf3并push，远端一致clean，132份indexed Gitblob核对通过；v3独立诊断与前10项复核随后定稿，保留10PASS1FAIL及明确未进入hot产品路径。
+- root在clean6e809a1前置捕获全部12脚本，串行默认locked all-features执行v4十一项；全部PASS，113case/22guest0，运行期间无repo写/并行构建，source/binary guards及所有来源一致。root核同CLI/helper/guest、96软件输入与222gate完全一致；真实release-22、IF1继续释放、无SETCONFIG、原cfg/alt/driver和资源0均核。ECM两个私有PCAP独立逐帧实际38/39B和校验和通过；physical正常70B/热拔140B精确内容及完整双串口marker通过。
+- root首次归档复核误把归档开始后docs dirty当成运行时dirty，在读取run前停止；已纠正为只允许新增evidence路径并逐冻结Gitblob核所有软件/scripts，原run clean和结果未变，说明保存root-review JSON。不是一次QEMU或产品FAIL。
+- 后续范围审查rev1漏读ECM官方cycle2，root核源码/原日志后撤回过宽重复互操作建议；rev2与原版都保留，下一步优先SIGTERM合作停止的独立guest复现/修复，SIGKILL跨进程监督单列。未把原硬件G1/G2、ISO、内核内部active或后续安全/TUI/GUI阶段改为完成。
+- 最终v4独立raw复核1047/1047通过；110份索引产物（97原copy、12manifest、1来源说明）全归档，历史378产物及全部FAIL未改。root核原bytes/SHA/Git来源后同步README/AGENTS/架构/测试/兼容/roadmap/逐项验收E20/E21及第三方边界，准备最终文档证据提交。
+- 最终QEMU后核freeze6e809 CI39894822120实际3success/1failure：Ubuntu24ARM旧Native代际测试在200ms fake-command deadline失败，原代际断言未到；六原log/API已完整归档，其他3格各222项。未重跑旧CI碰碰运气；并行定位仅test fixture确定性，拟取消40ms时序猜测且保留真实timeout用例的严格期限，生产Native/USBFS与最终QEMU源不改。
+- Native测试修订设计：普通fixture command5秒、专门timeout用例显式原200ms/kill-reap；settle150ms不变。更替代际由fake命令顺序NULL/mv旧dir/mkdir新dir后退出，取消后台argv/40ms时序猜测，保留原generation与路径断言并核精确一次detach。仅cfg(test)，生产默认15s/10s与QEMU源码不改。
+- cfg(test)修订及原CI失败/定向31项日志提交37c2d61f84626329a4089524261ea60ae6299e64并push。root随后完整scripts/check.sh exit0，89/114/19共222项、0失败/忽略，96软件输入始终等于37c2d61且前后不变，pending docs dirty明确单列。release重新构建后CLI/helper哈希实际改变，root纠正派生复核中“应相同”的不当预期，按真实值记录；不将旧QEMU二进制重归新commit，本次test-only未重复USB矩阵。
+- 37c2d61最新CI39895914376实际四job均completed/success：22ARM120226207665、24ARM120226207837、22x86 120226207911、24x86 120226208020。root逐原生日志核版本/架构、31组结果89/114/19共222项0失败/忽略、两项4096B不drain背压和lease关闭；原4log+2API+manifest已存，汇总publication-native-fixture-20261023.json。较早6e809 CI3/1不改判。
+- 独立文档审查提出三处必须澄清，均已修正：-22/IF1/零SETCONFIG只针对release两项；各CI结果标精确提交；acceptance旧E15/192640c/22d历史描述不冒充当前，新增E22区分test-only后的软件与6e809 QEMU。准备最终文档证据提交与普通push；最终自身SHA和remote核验以实际Git历史为准，不造自引用。

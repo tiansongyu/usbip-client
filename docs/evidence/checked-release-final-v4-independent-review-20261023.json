@@ -1,0 +1,4031 @@
+{
+  "schema_version": 1,
+  "review_result": "PASS",
+  "runtime_matrix_result": "PASS",
+  "reviewed_at_utc": "2026-10-23T03:28:20.701991+00:00",
+  "scope": "Independent raw clean final-v4 eleven-run review; original failures from previous candidates remain preserved",
+  "frozen_commit": "6e809a1c870e3ef84a7891eeca499b949366edf3",
+  "method": "Own parsers over original raw serial/evidence JSON, tracer entry/exit, independent sysfs snapshots, PCAP/USBMON and probe assertions. No runner verify imported or called.",
+  "aggregate_assertions": {
+    "same_clean_frozen_commit_source_and_sequence": true,
+    "exact_twelve_source_inputs": true,
+    "frozen_source_snapshot_and_git:run-host-state-qemu.py": true,
+    "frozen_source_snapshot_and_git:guest-host-state-init.sh": true,
+    "frozen_source_snapshot_and_git:host-state-wire-probe.rs": true,
+    "frozen_source_snapshot_and_git:usbfs-syscall-gate.c": true,
+    "frozen_source_snapshot_and_git:run-composite-qemu.py": true,
+    "frozen_source_snapshot_and_git:guest-composite-init.sh": true,
+    "frozen_source_snapshot_and_git:composite-wire-probe.rs": true,
+    "frozen_source_snapshot_and_git:run-physical-qemu.py": true,
+    "frozen_source_snapshot_and_git:guest-physical-init.sh": true,
+    "frozen_source_snapshot_and_git:physical-wire-probe.rs": true,
+    "frozen_source_snapshot_and_git:run-native-qemu.py": true,
+    "frozen_source_snapshot_and_git:guest-init.sh": true,
+    "all_eleven_commands_default_build": true,
+    "all_eleven_after_same_clean_HEAD": true,
+    "all_eleven_serial_no_overlap": true,
+    "host-state-release-unlink_clean_frozen_run_start": true,
+    "host-state-release-unlink_source_subset_exact": true,
+    "host-state-release-unlink_actual_locked_allfeatures_build": true,
+    "host-state-release-unlink_guest_copy_matches_release": true,
+    "host-state-release-eof_clean_frozen_run_start": true,
+    "host-state-release-eof_source_subset_exact": true,
+    "host-state-release-eof_actual_locked_allfeatures_build": true,
+    "host-state-release-eof_guest_copy_matches_release": true,
+    "host-state-configuration-unlink_clean_frozen_run_start": true,
+    "host-state-configuration-unlink_source_subset_exact": true,
+    "host-state-configuration-unlink_actual_locked_allfeatures_build": true,
+    "host-state-configuration-unlink_guest_copy_matches_release": true,
+    "host-state-configuration-eof_clean_frozen_run_start": true,
+    "host-state-configuration-eof_source_subset_exact": true,
+    "host-state-configuration-eof_actual_locked_allfeatures_build": true,
+    "host-state-configuration-eof_guest_copy_matches_release": true,
+    "host-state-alternate-unlink_clean_frozen_run_start": true,
+    "host-state-alternate-unlink_source_subset_exact": true,
+    "host-state-alternate-unlink_actual_locked_allfeatures_build": true,
+    "host-state-alternate-unlink_guest_copy_matches_release": true,
+    "host-state-alternate-eof_clean_frozen_run_start": true,
+    "host-state-alternate-eof_source_subset_exact": true,
+    "host-state-alternate-eof_actual_locked_allfeatures_build": true,
+    "host-state-alternate-eof_guest_copy_matches_release": true,
+    "host-state-clear-unlink_clean_frozen_run_start": true,
+    "host-state-clear-unlink_source_subset_exact": true,
+    "host-state-clear-unlink_actual_locked_allfeatures_build": true,
+    "host-state-clear-unlink_guest_copy_matches_release": true,
+    "host-state-clear-eof_clean_frozen_run_start": true,
+    "host-state-clear-eof_source_subset_exact": true,
+    "host-state-clear-eof_actual_locked_allfeatures_build": true,
+    "host-state-clear-eof_guest_copy_matches_release": true,
+    "composite_clean_frozen_run_start": true,
+    "composite_source_subset_exact": true,
+    "composite_actual_locked_allfeatures_build": true,
+    "composite_guest_copy_matches_release": true,
+    "physical-normal_clean_frozen_run_start": true,
+    "physical-normal_source_subset_exact": true,
+    "physical-normal_actual_locked_allfeatures_build": true,
+    "physical-normal_guest_copy_matches_release": true,
+    "physical-hot_clean_frozen_run_start": true,
+    "physical-hot_source_subset_exact": true,
+    "physical-hot_actual_locked_allfeatures_build": true,
+    "physical-hot_guest_copy_matches_release": true,
+    "same_CLI_helper_binaries_all_eleven": true,
+    "eleven_actual_run_records": true,
+    "observed_exact113_wire_cases": true,
+    "all22_guest_exit_zero": true,
+    "all_runtime_source_sequence_original_bytes_unchanged": true
+  },
+  "runs": [
+    {
+      "kind": "host-state-release-unlink",
+      "runtime_result": "PASS",
+      "wire_cases": 9,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "all_trace_zero_SET_CONFIGURATION": true,
+        "reacquisition_after_real_failure": true,
+        "exactly_one_remaining_release_before_first_reclaim": true,
+        "remaining_release_actual_zero": true,
+        "external_unbind_explicitly_labeled": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "B_queued_cancel_worker_witness_minus104": true,
+        "A_actual_errno_and_UNLINK0": true,
+        "same_connection_actual_health": true,
+        "C_new_empty_map_EPIPE": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "held_retained_both_usbfs_claims": true,
+        "witness_same_generation_identity": true,
+        "witness_lease_pending_budget_retained": true,
+        "witness_queue_and_real_inflight": true,
+        "witness_actual_sysfs_ownership": true,
+        "witness_retained_both_usbfs_claims": true,
+        "release-fault_same_generation_identity": true,
+        "release-fault_lease_pending_budget_retained": true,
+        "release-fault_queue_and_real_inflight": true,
+        "release-fault_actual_sysfs_ownership": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 287,
+          "tracee_starttime": 317,
+          "tid": 291,
+          "fd": 10,
+          "request": 2147767568,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": -22,
+          "is_error": true,
+          "hold_ns": 858506372
+        },
+        "trace_events": 49,
+        "ptrace_stops": 5781,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 239530,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 9738,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 372721,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 971,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 641,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 731,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 245592,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 4499,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 10346679,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 5150,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 141666,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 9227,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 390173,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 24636,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 1122,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 511,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_cancel_worker_witness",
+          "dependent_request_waits",
+          "active_completion_wins",
+          "new_empty_endpoint_map",
+          "same_connection_health",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "witness",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 640,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "release-fault",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 640,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ],
+        "subsequent_release_before_first_claim": [
+          {
+            "tid": 290,
+            "fd": 10,
+            "request": 2147767568,
+            "entry_ns": 4879067311,
+            "exit_ns": 4879458596,
+            "return_value": 0
+          }
+        ],
+        "all_trace_configuration_entries": 0
+      }
+    },
+    {
+      "kind": "host-state-release-eof",
+      "runtime_result": "PASS",
+      "wire_cases": 7,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "all_trace_zero_SET_CONFIGURATION": true,
+        "reacquisition_after_real_failure": true,
+        "exactly_one_remaining_release_before_first_reclaim": true,
+        "remaining_release_actual_zero": true,
+        "external_unbind_explicitly_labeled": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "EOF_original_lease_hidden_busy": true,
+        "EOF_no_old_wire_completion_claim": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "held_retained_both_usbfs_claims": true,
+        "accepted_same_generation_identity": true,
+        "accepted_lease_pending_budget_retained": true,
+        "accepted_queue_and_real_inflight": true,
+        "accepted_actual_sysfs_ownership": true,
+        "accepted_retained_both_usbfs_claims": true,
+        "closed_same_generation_identity": true,
+        "closed_lease_pending_budget_retained": true,
+        "closed_queue_and_real_inflight": true,
+        "closed_actual_sysfs_ownership": true,
+        "closed_retained_both_usbfs_claims": true,
+        "release-fault_same_generation_identity": true,
+        "release-fault_lease_pending_budget_retained": true,
+        "release-fault_queue_and_real_inflight": true,
+        "release-fault_actual_sysfs_ownership": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 289,
+          "tracee_starttime": 316,
+          "tid": 294,
+          "fd": 10,
+          "request": 2147767568,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": -22,
+          "is_error": true,
+          "hold_ns": 807014089
+        },
+        "trace_events": 49,
+        "ptrace_stops": 5519,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 185429,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 14046,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 248887,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 742,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 561,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 114986,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 258536,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 4579,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 9873739,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 1112,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 208512,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 15018,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 232206,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 1152,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 238900,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 17813,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 357091,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 1152,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 1092,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 1032,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_request_accepted",
+          "eof_holds_lease",
+          "closing_hidden_and_busy",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "accepted",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 512,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "closed",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "closing",
+            "budget": 512,
+            "pending": 2,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "release-fault",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "closing",
+            "budget": 512,
+            "pending": 2,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ],
+        "subsequent_release_before_first_claim": [
+          {
+            "tid": 293,
+            "fd": 10,
+            "request": 2147767568,
+            "entry_ns": 4828424794,
+            "exit_ns": 4828878767,
+            "return_value": 0
+          }
+        ],
+        "all_trace_configuration_entries": 0
+      }
+    },
+    {
+      "kind": "host-state-configuration-unlink",
+      "runtime_result": "PASS",
+      "wire_cases": 9,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "B_queued_cancel_worker_witness_minus104": true,
+        "A_actual_errno_and_UNLINK0": true,
+        "same_connection_actual_health": true,
+        "C_new_empty_map_EPIPE": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "witness_same_generation_identity": true,
+        "witness_lease_pending_budget_retained": true,
+        "witness_queue_and_real_inflight": true,
+        "witness_actual_sysfs_ownership": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 288,
+          "tracee_starttime": 316,
+          "tid": 291,
+          "fd": 10,
+          "request": 2147767557,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": 0,
+          "is_error": false,
+          "hold_ns": 700635892
+        },
+        "trace_events": 53,
+        "ptrace_stops": 5611,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 218049,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 21930,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 228910,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 1974,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 1793,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 97875,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 220566,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 5851,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 9494287,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 1142,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 257464,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 16401,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 347594,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 993,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 1132,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 1042,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_cancel_worker_witness",
+          "dependent_request_waits",
+          "active_completion_wins",
+          "new_empty_endpoint_map",
+          "same_connection_health",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": null,
+                "alternate": 0
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "witness",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": null,
+                "alternate": 0
+              }
+            ],
+            "state": "leased",
+            "budget": 640,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "host-state-configuration-eof",
+      "runtime_result": "PASS",
+      "wire_cases": 7,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "EOF_original_lease_hidden_busy": true,
+        "EOF_no_old_wire_completion_claim": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "accepted_same_generation_identity": true,
+        "accepted_lease_pending_budget_retained": true,
+        "accepted_queue_and_real_inflight": true,
+        "accepted_actual_sysfs_ownership": true,
+        "closed_same_generation_identity": true,
+        "closed_lease_pending_budget_retained": true,
+        "closed_queue_and_real_inflight": true,
+        "closed_actual_sysfs_ownership": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 285,
+          "tracee_starttime": 316,
+          "tid": 288,
+          "fd": 10,
+          "request": 2147767557,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": 0,
+          "is_error": false,
+          "hold_ns": 651308950
+        },
+        "trace_events": 51,
+        "ptrace_stops": 5403,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 228590,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 9768,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 247394,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 431,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 541,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 119034,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 121268,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 3947,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 8723838,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 5100,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 131978,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 13836,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 352342,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 1203,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 249479,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 11963,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 307528,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 491,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 671,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 521,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_request_accepted",
+          "eof_holds_lease",
+          "closing_hidden_and_busy",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": null,
+                "alternate": 0
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "accepted",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": null,
+                "alternate": 0
+              }
+            ],
+            "state": "leased",
+            "budget": 512,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "closed",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": null,
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": null,
+                "alternate": 0
+              }
+            ],
+            "state": "closing",
+            "budget": 512,
+            "pending": 2,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "host-state-alternate-unlink",
+      "runtime_result": "PASS",
+      "wire_cases": 9,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "B_queued_cancel_worker_witness_minus104": true,
+        "A_actual_errno_and_UNLINK0": true,
+        "same_connection_actual_health": true,
+        "C_new_empty_map_EPIPE": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "held_retained_both_usbfs_claims": true,
+        "witness_same_generation_identity": true,
+        "witness_lease_pending_budget_retained": true,
+        "witness_queue_and_real_inflight": true,
+        "witness_actual_sysfs_ownership": true,
+        "witness_retained_both_usbfs_claims": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 287,
+          "tracee_starttime": 316,
+          "tid": 290,
+          "fd": 10,
+          "request": 2148029700,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": 0,
+          "is_error": false,
+          "hold_ns": 715736739
+        },
+        "trace_events": 43,
+        "ptrace_stops": 4555,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 234100,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 9638,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 276901,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 942,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 871,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 110157,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 280567,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 8536,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 10627157,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 3115,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 127028,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 13135,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 219444,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 962,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 1233,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 102884,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_cancel_worker_witness",
+          "dependent_request_waits",
+          "active_completion_wins",
+          "new_empty_endpoint_map",
+          "same_connection_health",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "witness",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 640,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "host-state-alternate-eof",
+      "runtime_result": "PASS",
+      "wire_cases": 7,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "EOF_original_lease_hidden_busy": true,
+        "EOF_no_old_wire_completion_claim": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "held_retained_both_usbfs_claims": true,
+        "accepted_same_generation_identity": true,
+        "accepted_lease_pending_budget_retained": true,
+        "accepted_queue_and_real_inflight": true,
+        "accepted_actual_sysfs_ownership": true,
+        "accepted_retained_both_usbfs_claims": true,
+        "closed_same_generation_identity": true,
+        "closed_lease_pending_budget_retained": true,
+        "closed_queue_and_real_inflight": true,
+        "closed_actual_sysfs_ownership": true,
+        "closed_retained_both_usbfs_claims": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 292,
+          "tracee_starttime": 316,
+          "tid": 296,
+          "fd": 10,
+          "request": 2148029700,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": 0,
+          "is_error": false,
+          "hold_ns": 673931244
+        },
+        "trace_events": 43,
+        "ptrace_stops": 4253,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 260841,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 12533,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 356340,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 831,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 542,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 491,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 236886,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 4779,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 12541876,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 3757,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 146014,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 17883,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 339668,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 1512,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 143841,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 8987,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 310694,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 601,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 612,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 501,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_request_accepted",
+          "eof_holds_lease",
+          "closing_hidden_and_busy",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "accepted",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 512,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "closed",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "closing",
+            "budget": 512,
+            "pending": 2,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "host-state-clear-unlink",
+      "runtime_result": "PASS",
+      "wire_cases": 9,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "B_queued_cancel_worker_witness_minus104": true,
+        "A_actual_errno_and_UNLINK0": true,
+        "same_connection_actual_health": true,
+        "C_clear_error_retains_pending_endpoint": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "held_retained_both_usbfs_claims": true,
+        "witness_same_generation_identity": true,
+        "witness_lease_pending_budget_retained": true,
+        "witness_queue_and_real_inflight": true,
+        "witness_actual_sysfs_ownership": true,
+        "witness_retained_both_usbfs_claims": true,
+        "pending_same_generation_identity": true,
+        "pending_lease_pending_budget_retained": true,
+        "pending_queue_and_real_inflight": true,
+        "pending_actual_sysfs_ownership": true,
+        "pending_retained_both_usbfs_claims": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 287,
+          "tracee_starttime": 316,
+          "tid": 291,
+          "fd": 10,
+          "request": 2147767573,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": -32,
+          "is_error": true,
+          "hold_ns": 726380325
+        },
+        "trace_events": 43,
+        "ptrace_stops": 4565,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 231905,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 11362,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 244650,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 1082,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 902,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 117141,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 118713,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 5851,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 10618510,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 2786,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 291738,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 9137,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 387719,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 932,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 701,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 521,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_cancel_worker_witness",
+          "dependent_request_waits",
+          "active_completion_wins",
+          "clear_error_preserves_pending_endpoint",
+          "same_connection_health",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "witness",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 640,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "pending",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 384,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 1
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "host-state-clear-eof",
+      "runtime_result": "PASS",
+      "wire_cases": 7,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "summary_terminal_clean_frozen_PASS": true,
+        "actual_operation_mode": true,
+        "both_guest_exits_zero": true,
+        "source_and_binary_after_guards": true,
+        "guest_payload_matches_build": true,
+        "default_locked_allfeatures_build": true,
+        "ordinary_host_uid": true,
+        "private_guest_only_topology": true,
+        "bounded_deadlines_25_3_8_120": true,
+        "source_snapshot:run-host-state-qemu.py": true,
+        "source_snapshot:guest-host-state-init.sh": true,
+        "source_snapshot:host-state-wire-probe.rs": true,
+        "source_snapshot:usbfs-syscall-gate.c": true,
+        "server_guest_pass": true,
+        "server_actual_binary_hashes": true,
+        "server_no_kernel_oops": true,
+        "server_isolation": true,
+        "client_guest_pass": true,
+        "client_actual_binary_hashes": true,
+        "client_no_kernel_oops": true,
+        "client_isolation": true,
+        "server_uid": true,
+        "uid_gate": true,
+        "node_root0600": true,
+        "peer_quiet": true,
+        "raw_trace_equals_summary": true,
+        "raw_observations_equal_summary": true,
+        "raw_events_equal_summary": true,
+        "beacons_one_strict_json": true,
+        "ready_ordinary_uid_zero_cap": true,
+        "held_exit_same_pid_tid_fd_node_generation": true,
+        "ready_same_tracee_generation": true,
+        "target_identity_and_actual_errno": true,
+        "one_armed": true,
+        "one_held": true,
+        "one_released": true,
+        "one_exit": true,
+        "one_finished": true,
+        "raw_gate_matches_independent_beacon_identity_and_order": true,
+        "entry_release_exit_order": true,
+        "hold_under_eight_seconds": true,
+        "all_raw_timestamps_monotonic": true,
+        "all_schema_no_failure": true,
+        "held_counters_frozen": true,
+        "no_mutation_entry_during_hold": true,
+        "only_A_not_queued_B_enters_target": true,
+        "independent_ioctl_categories_and_counters": true,
+        "each_real_ioctl_has_same_tid_fd_exit": true,
+        "all_mutations_same_authorized_node_fd_generation": true,
+        "tracer_and_server_normal_exit": true,
+        "wire_exact_case_order": true,
+        "wire_all_identity_PASS": true,
+        "one_terminal_wire_count": true,
+        "raw_wire_cases_equal_summary": true,
+        "EOF_original_lease_hidden_busy": true,
+        "EOF_no_old_wire_completion_claim": true,
+        "exact_independent_observation_labels": true,
+        "actual_original_sysfs": true,
+        "baseline_same_generation_identity": true,
+        "baseline_resources_retired_and_available": true,
+        "baseline_original_sysfs_drivers_restored": true,
+        "held_same_generation_identity": true,
+        "held_lease_pending_budget_retained": true,
+        "held_queue_and_real_inflight": true,
+        "held_actual_sysfs_ownership": true,
+        "held_retained_both_usbfs_claims": true,
+        "accepted_same_generation_identity": true,
+        "accepted_lease_pending_budget_retained": true,
+        "accepted_queue_and_real_inflight": true,
+        "accepted_actual_sysfs_ownership": true,
+        "accepted_retained_both_usbfs_claims": true,
+        "closed_same_generation_identity": true,
+        "closed_lease_pending_budget_retained": true,
+        "closed_queue_and_real_inflight": true,
+        "closed_actual_sysfs_ownership": true,
+        "closed_retained_both_usbfs_claims": true,
+        "restored_same_generation_identity": true,
+        "restored_resources_retired_and_available": true,
+        "restored_original_sysfs_drivers_restored": true,
+        "stopped_same_generation_identity": true,
+        "stopped_resources_retired_and_available": true,
+        "stopped_original_sysfs_drivers_restored": true,
+        "server_events_no_error_final_stopped_snapshot": true,
+        "no_raw_nonce_in_production_stderr": true,
+        "all_raw_bytes_unchanged_during_review": true,
+        "all_diagnostic_IO_START_terminal_pairs_complete": true,
+        "all_diagnostic_IO_terminals_OK_no_errno": true,
+        "initial_list_import_diagnostic_phase_order": true,
+        "failure_grace_not_used_for_PASS": true
+      },
+      "facts": {
+        "actual_syscall": {
+          "tracee_pid": 288,
+          "tracee_starttime": 316,
+          "tid": 291,
+          "fd": 10,
+          "request": 2147767573,
+          "node_device": 5,
+          "node_inode": 159,
+          "node_rdev": 48385,
+          "return_value": -32,
+          "is_error": true,
+          "hold_ns": 672862515
+        },
+        "trace_events": 43,
+        "ptrace_stops": 4235,
+        "io_terminals": [
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 191991,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 10209,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 268335,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 471,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 611,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 481,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_connect",
+            "result": "OK",
+            "elapsed_ns": 257874,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_write",
+            "result": "OK",
+            "elapsed_ns": 4558,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_header",
+            "result": "OK",
+            "elapsed_ns": 8321313,
+            "raw_os_error": null
+          },
+          {
+            "phase": "import_device",
+            "result": "OK",
+            "elapsed_ns": 1643,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 188786,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 8776,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 247224,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 622,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_connect",
+            "result": "OK",
+            "elapsed_ns": 252845,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_write",
+            "result": "OK",
+            "elapsed_ns": 11371,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_header",
+            "result": "OK",
+            "elapsed_ns": 238098,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_device",
+            "result": "OK",
+            "elapsed_ns": 1001,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_interfaces",
+            "result": "OK",
+            "elapsed_ns": 751,
+            "raw_os_error": null
+          },
+          {
+            "phase": "devlist_eof",
+            "result": "OK",
+            "elapsed_ns": 87865,
+            "raw_os_error": null
+          }
+        ],
+        "wire_case_names": [
+          "import_identity",
+          "syscall_entry_held",
+          "queued_request_accepted",
+          "eof_holds_lease",
+          "closing_hidden_and_busy",
+          "original_state_restored",
+          "bounded_server_shutdown"
+        ],
+        "independent_states": [
+          {
+            "label": "baseline",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "held",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 256,
+            "pending": 1,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "accepted",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "leased",
+            "budget": 512,
+            "pending": 2,
+            "queued": 1,
+            "inflight": 0
+          },
+          {
+            "label": "closed",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "usbfs",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "usbfs",
+                "alternate": 1
+              }
+            ],
+            "state": "closing",
+            "budget": 512,
+            "pending": 2,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "restored",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          },
+          {
+            "label": "stopped",
+            "generation": "23:24606",
+            "sysfs_configuration": 1,
+            "sysfs_interfaces": [
+              {
+                "number": 0,
+                "driver": "cdc_ether",
+                "alternate": 0
+              },
+              {
+                "number": 1,
+                "driver": "cdc_ether",
+                "alternate": 1
+              }
+            ],
+            "state": "available",
+            "budget": 0,
+            "pending": 0,
+            "queued": 0,
+            "inflight": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "composite",
+      "runtime_result": "PASS",
+      "wire_cases": 19,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "original_terminal_result_preserved": true,
+        "same_clean_frozen_commit_at_run_start": true,
+        "both_actual_guest_exits_zero": true,
+        "actual_default_locked_build": true,
+        "ordinary_host_uid": true,
+        "guest_binaries_match_release": true,
+        "frozen_git_script:run-composite-qemu.py": true,
+        "frozen_git_script:guest-composite-init.sh": true,
+        "frozen_git_script:composite-wire-probe.rs": true,
+        "frozen_git_script:run-native-qemu.py": true,
+        "frozen_git_script:guest-init.sh": true,
+        "server_own_terminal_PASS_marker": true,
+        "server_no_kernel_integrity_failure": true,
+        "client_own_terminal_PASS_marker": true,
+        "client_no_kernel_integrity_failure": true,
+        "all_raw_server_events_schema_without_error": true,
+        "one_final_stopped": true,
+        "raw_server_events_match_summary": true,
+        "nineteen_actual_wire_cases_PASS": true,
+        "exact_lifecycle_and_two_ownership_cycles": true,
+        "unique_kernel_reported_interrupt_partial": true,
+        "same_usbmon_URB_S_then_C_exact_length": true,
+        "wire_equals_kernel_reported_errno_actual_opaque_byte": true,
+        "exact_composite_snapshot_labels": true,
+        "baseline_same_device_original_config": true,
+        "baseline_original_drivers_and_all_resources_retired": true,
+        "held-1_same_device_original_config": true,
+        "held-1_actual_dual_claim": true,
+        "io-1_same_device_original_config": true,
+        "io-1_actual_dual_claim": true,
+        "released-1_same_device_original_config": true,
+        "released-1_original_drivers_and_all_resources_retired": true,
+        "held-2_same_device_original_config": true,
+        "held-2_actual_dual_claim": true,
+        "io-2_same_device_original_config": true,
+        "io-2_actual_dual_claim": true,
+        "released-2_same_device_original_config": true,
+        "released-2_original_drivers_and_all_resources_retired": true,
+        "stopped_same_device_original_config": true,
+        "stopped_original_drivers_and_all_resources_retired": true,
+        "peer_cycle1_exact_actual_UDP": true,
+        "client_cycle1_exact_actual_UDP": true,
+        "client_cycle_RUSTUSB_COMPOSITE_IO: PASS cycle=1 exact_udp=true same_receipt=true": true,
+        "client_cycle_RUSTUSB_COMPOSITE_CLIENT_RELEASED: PASS cycle=1 sessions=0 old_device_gone=true": true,
+        "server_cycle_RUSTUSB_COMPOSITE_HELD: PASS cycle=1 config=1 alt1=1 both_drivers=usbfs": true,
+        "server_cycle_RUSTUSB_COMPOSITE_RELEASED: PASS cycle=1 config=1 alt0=0 alt1=1 drivers=cdc_ether inflight=0 budget=0": true,
+        "cycle1_real_USB_bulk_counters_progress": true,
+        "peer_cycle2_exact_actual_UDP": true,
+        "client_cycle2_exact_actual_UDP": true,
+        "client_cycle_RUSTUSB_COMPOSITE_IO: PASS cycle=2 exact_udp=true same_receipt=true": true,
+        "client_cycle_RUSTUSB_COMPOSITE_CLIENT_RELEASED: PASS cycle=2 sessions=0 old_device_gone=true": true,
+        "server_cycle_RUSTUSB_COMPOSITE_HELD: PASS cycle=2 config=1 alt1=1 both_drivers=usbfs": true,
+        "server_cycle_RUSTUSB_COMPOSITE_RELEASED: PASS cycle=2 config=1 alt0=0 alt1=1 drivers=cdc_ether inflight=0 budget=0": true,
+        "cycle2_real_USB_bulk_counters_progress": true,
+        "official_cycle_independent_ownership_refusal": true,
+        "ordinary_server_helper_separate_nodecap_boundaries": true,
+        "data-usb.pcap_ethernet_linktype": true,
+        "data-usb.pcap_UDP_exact_expected_payload_0": true,
+        "data-usb.pcap_UDP_independent_lengths_and_checksums_0": true,
+        "data-usb.pcap_request1_exact_endpoint": true,
+        "data-usb.pcap_UDP_exact_expected_payload_1": true,
+        "data-usb.pcap_UDP_independent_lengths_and_checksums_1": true,
+        "data-usb.pcap_response1_exact_endpoint": true,
+        "data-usb.pcap_UDP_exact_expected_payload_2": true,
+        "data-usb.pcap_UDP_independent_lengths_and_checksums_2": true,
+        "data-usb.pcap_request2_exact_endpoint": true,
+        "data-usb.pcap_UDP_exact_expected_payload_3": true,
+        "data-usb.pcap_UDP_independent_lengths_and_checksums_3": true,
+        "data-usb.pcap_response2_exact_endpoint": true,
+        "data-usb.pcap_all_records_complete": true,
+        "data-usb.pcap_two_cycles_once_each": true,
+        "data-peer.pcap_ethernet_linktype": true,
+        "data-peer.pcap_UDP_exact_expected_payload_0": true,
+        "data-peer.pcap_UDP_independent_lengths_and_checksums_0": true,
+        "data-peer.pcap_request1_exact_endpoint": true,
+        "data-peer.pcap_UDP_exact_expected_payload_1": true,
+        "data-peer.pcap_UDP_independent_lengths_and_checksums_1": true,
+        "data-peer.pcap_response1_exact_endpoint": true,
+        "data-peer.pcap_UDP_exact_expected_payload_2": true,
+        "data-peer.pcap_UDP_independent_lengths_and_checksums_2": true,
+        "data-peer.pcap_request2_exact_endpoint": true,
+        "data-peer.pcap_UDP_exact_expected_payload_3": true,
+        "data-peer.pcap_UDP_independent_lengths_and_checksums_3": true,
+        "data-peer.pcap_response2_exact_endpoint": true,
+        "data-peer.pcap_all_records_complete": true,
+        "data-peer.pcap_two_cycles_once_each": true
+      },
+      "facts": {
+        "usbmon_kernel_reported_partial": {
+          "completion": "ffff899c040def00 4926559 C Ii:1:002:1 -32:32 1 = 00",
+          "submission": "ffff899c040def00 4908659 S Ii:1:002:1 -115:32 1 <",
+          "tag": "ffff899c040def00",
+          "opaque_hex": "00"
+        },
+        "pcap_actual_udp": [
+          {
+            "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/data-usb.pcap",
+            "records": 17,
+            "actual_udp": [
+              {
+                "label": "request1",
+                "src": "198.18.0.2",
+                "dst": "198.18.0.1",
+                "src_port": 48002,
+                "dst_port": 48001,
+                "payload_bytes": 38,
+                "payload_sha256": "b9abcb127658042be40504080bb98334017f55441d409754d3caf9a029e1e517",
+                "frame_bytes": 80
+              },
+              {
+                "label": "response1",
+                "src": "198.18.0.1",
+                "dst": "198.18.0.2",
+                "src_port": 48001,
+                "dst_port": 48002,
+                "payload_bytes": 39,
+                "payload_sha256": "fddb52db9d2bd15bb5cdecc54c50ef4782323780612e8d1534b6f3fab504cb38",
+                "frame_bytes": 81
+              },
+              {
+                "label": "request2",
+                "src": "198.18.0.2",
+                "dst": "198.18.0.1",
+                "src_port": 48002,
+                "dst_port": 48001,
+                "payload_bytes": 38,
+                "payload_sha256": "68d3135d64ee4d6bbdb12d211859bf4498c24caa985a7e5ac976fcec1e7a851d",
+                "frame_bytes": 80
+              },
+              {
+                "label": "response2",
+                "src": "198.18.0.1",
+                "dst": "198.18.0.2",
+                "src_port": 48001,
+                "dst_port": 48002,
+                "payload_bytes": 39,
+                "payload_sha256": "bb1890f05c3bf9cb296b6706db9ad3bcff9c9a28697564994700014829f5be72",
+                "frame_bytes": 81
+              }
+            ]
+          },
+          {
+            "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/data-peer.pcap",
+            "records": 17,
+            "actual_udp": [
+              {
+                "label": "request1",
+                "src": "198.18.0.2",
+                "dst": "198.18.0.1",
+                "src_port": 48002,
+                "dst_port": 48001,
+                "payload_bytes": 38,
+                "payload_sha256": "b9abcb127658042be40504080bb98334017f55441d409754d3caf9a029e1e517",
+                "frame_bytes": 80
+              },
+              {
+                "label": "response1",
+                "src": "198.18.0.1",
+                "dst": "198.18.0.2",
+                "src_port": 48001,
+                "dst_port": 48002,
+                "payload_bytes": 39,
+                "payload_sha256": "fddb52db9d2bd15bb5cdecc54c50ef4782323780612e8d1534b6f3fab504cb38",
+                "frame_bytes": 81
+              },
+              {
+                "label": "request2",
+                "src": "198.18.0.2",
+                "dst": "198.18.0.1",
+                "src_port": 48002,
+                "dst_port": 48001,
+                "payload_bytes": 38,
+                "payload_sha256": "68d3135d64ee4d6bbdb12d211859bf4498c24caa985a7e5ac976fcec1e7a851d",
+                "frame_bytes": 80
+              },
+              {
+                "label": "response2",
+                "src": "198.18.0.1",
+                "dst": "198.18.0.2",
+                "src_port": 48001,
+                "dst_port": 48002,
+                "payload_bytes": 39,
+                "payload_sha256": "bb1890f05c3bf9cb296b6706db9ad3bcff9c9a28697564994700014829f5be72",
+                "frame_bytes": 81
+              }
+            ]
+          }
+        ],
+        "wire_case_names": [
+          "descriptor_index_is_not_configuration_value",
+          "configuration_two_data_alt_zero_is_active",
+          "configuration_barrier_uses_new_empty_endpoint_map",
+          "alternate_one_enables_real_pending_bulk_endpoint",
+          "alternate_barrier_retires_old_queued_and_active_requests",
+          "nonexistent_alternate_stalls_without_state_change",
+          "real_control_stall_preserves_connection",
+          "real_interrupt_stall_preserves_connection",
+          "model_clear_halt_failure_is_not_faked_success",
+          "configuration_zero_and_reconfiguration_are_observed",
+          "host_state_unlink_has_real_winner",
+          "pending_real_endpoint_eof_recovers_original_device",
+          "submitted_host_state_eof_cleanup_converges",
+          "unsupported_iso_frame_is_explicitly_rejected",
+          "all_lifecycle_checks",
+          "ecm_exclusive_busy",
+          "original_ecm_available",
+          "ecm_exclusive_busy",
+          "original_ecm_available"
+        ]
+      }
+    },
+    {
+      "kind": "physical-normal",
+      "runtime_result": "PASS",
+      "wire_cases": 15,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "original_terminal_result_preserved": true,
+        "same_clean_frozen_commit_at_run_start": true,
+        "both_actual_guest_exits_zero": true,
+        "actual_default_locked_build": true,
+        "ordinary_host_uid": true,
+        "guest_binaries_match_release": true,
+        "frozen_git_script:run-physical-qemu.py": true,
+        "frozen_git_script:guest-physical-init.sh": true,
+        "frozen_git_script:physical-wire-probe.rs": true,
+        "frozen_git_script:run-native-qemu.py": true,
+        "frozen_git_script:guest-init.sh": true,
+        "server_own_terminal_PASS_marker": true,
+        "server_no_kernel_integrity_failure": true,
+        "client_own_terminal_PASS_marker": true,
+        "client_no_kernel_integrity_failure": true,
+        "all_raw_server_events_schema_without_error": true,
+        "one_final_stopped": true,
+        "raw_server_events_match_summary": true,
+        "fifteen_raw_wire_cases_PASS": true,
+        "raw_wire_equals_summary": true,
+        "both_busy_and_available_cycles": true,
+        "baseline_same_registered_device_identities": true,
+        "baseline_original_driver_cleanup_and_zero_resources": true,
+        "held-1_same_registered_device_identities": true,
+        "held-1_both_leases_real_usbfs_claims": true,
+        "io-1_same_registered_device_identities": true,
+        "io-1_both_leases_real_usbfs_claims": true,
+        "released-1_same_registered_device_identities": true,
+        "released-1_original_driver_cleanup_and_zero_resources": true,
+        "held-2_same_registered_device_identities": true,
+        "held-2_both_leases_real_usbfs_claims": true,
+        "io-2_same_registered_device_identities": true,
+        "io-2_both_leases_real_usbfs_claims": true,
+        "released-2_same_registered_device_identities": true,
+        "released-2_original_driver_cleanup_and_zero_resources": true,
+        "stopped_same_registered_device_identities": true,
+        "stopped_original_driver_cleanup_and_zero_resources": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_HID: PASS cycle=1 key_code=2 down=true up=true same_receipt=true": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_FTDI: PASS cycle=1 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=1 kernel_sessions=0 both_devices_removed=true": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=1 available_devices=2": true,
+        "cycle1_actual_server_driver_restore": true,
+        "cycle1_actual_hid_interrupt_completed": true,
+        "cycle1_actual_ftdi_out35_and_in_statusbytes": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_HID: PASS cycle=2 key_code=3 down=true up=true same_receipt=true": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_FTDI: PASS cycle=2 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=2 kernel_sessions=0 both_devices_removed=true": true,
+        "cycle_marker_RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=2 available_devices=2": true,
+        "cycle2_actual_server_driver_restore": true,
+        "cycle2_actual_hid_interrupt_completed": true,
+        "cycle2_actual_ftdi_out35_and_in_statusbytes": true,
+        "reported_host_serial_length_and_hash_equals_independent_expected_payload": true,
+        "ordinary_helper_and_node_boundaries": true,
+        "server_one_exact_S1_channel_beacon": true,
+        "server_kernel_S0_has_no_evidence_beacon": true,
+        "server_two_actual_QEMU_serial_arguments": true,
+        "server_kernel_console_only_S0": true,
+        "server_both_channels_all_integrity_and_FAIL_guards": true,
+        "client_one_exact_S1_channel_beacon": true,
+        "client_kernel_S0_has_no_evidence_beacon": true,
+        "client_two_actual_QEMU_serial_arguments": true,
+        "client_kernel_console_only_S0": true,
+        "client_both_channels_all_integrity_and_FAIL_guards": true,
+        "independent_full_software_source_fingerprint": true
+      },
+      "facts": {
+        "wire_case_names": [
+          "real_unsupported_control_stall_and_survival",
+          "real_control_descriptor_and_speed",
+          "real_configuration_barrier_preserves_following_in",
+          "real_unlink_reaped_no_old_completion_or_input_loss",
+          "real_pending_eof_releases_lease",
+          "real_zero_bulk_out_actual_zero",
+          "real_one_byte_bulk_in_pending_cancelled",
+          "real_zero_bulk_in_original_length",
+          "real_non_mps_fifteen_byte_bulk_in",
+          "real_ftdi_descriptor_and_speed",
+          "all_lifecycle_checks",
+          "both_real_devices_exclusive_busy",
+          "both_real_devices_available",
+          "both_real_devices_exclusive_busy",
+          "both_real_devices_available"
+        ],
+        "reported_host_serial_bytes": 70,
+        "independent_expected_serial_sha256": "a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5",
+        "strict_serial_payload_scope": "No separate raw host payload artifact; expected SHA compared to runner observation and strict guest exact-content assertions."
+      }
+    },
+    {
+      "kind": "physical-hot",
+      "runtime_result": "PASS",
+      "wire_cases": 15,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "assertions": {
+        "terminal_smoke_PASS": true,
+        "final_clean_scope": true,
+        "both_actual_guest_exits_zero": true,
+        "default_actual_locked_allfeatures_build": true,
+        "ordinary_host_uid1000": true,
+        "payload_guest_binary_hashes_equal_release": true,
+        "five_pre_run_source_hashes_exact": true,
+        "actual_source_snapshot:run-physical-qemu.py": true,
+        "actual_source_snapshot:guest-physical-init.sh": true,
+        "actual_source_snapshot:physical-wire-probe.rs": true,
+        "actual_source_snapshot:run-native-qemu.py": true,
+        "actual_source_snapshot:guest-init.sh": true,
+        "unchanged_dependency_matches_frozen_Git:physical-wire-probe.rs": true,
+        "unchanged_dependency_matches_frozen_Git:run-native-qemu.py": true,
+        "unchanged_dependency_matches_frozen_Git:guest-init.sh": true,
+        "independently_recomputed_full_software_source_fingerprint": true,
+        "actual_release_binaries_still_match_guards": true,
+        "same_product_binary_as_previous_candidate": true,
+        "private_topology": true,
+        "server_exact_one_role_channel_beacon": true,
+        "server_beacon_on_evidence_not_kernel": true,
+        "server_two_actual_QEMU_serial_files": true,
+        "server_kernel_console_only_ttyS0": true,
+        "server_summary_channel_map": true,
+        "server_both_channels_all_failure_guards": true,
+        "server_actual_kernel_boot_and_USB_on_S0": true,
+        "server_program_uninterleaved_no_kernel_printk": true,
+        "server_own_exact_guest_PASS": true,
+        "server_isolation_no_forwarding": true,
+        "client_exact_one_role_channel_beacon": true,
+        "client_beacon_on_evidence_not_kernel": true,
+        "client_two_actual_QEMU_serial_files": true,
+        "client_kernel_console_only_ttyS0": true,
+        "client_summary_channel_map": true,
+        "client_both_channels_all_failure_guards": true,
+        "client_actual_kernel_boot_and_USB_on_S0": true,
+        "client_program_uninterleaved_no_kernel_printk": true,
+        "client_own_exact_guest_PASS": true,
+        "client_isolation_no_forwarding": true,
+        "raw_JSON_events_match_summary": true,
+        "all_event_schema1_no_error": true,
+        "final_one_clean_stopped_event": true,
+        "actual_fifteen_wire_cases": true,
+        "all_old_wire_cases_and_exclusivity_retained": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_SERVER_MODULES: PASS usbip_host=false vhci_hcd=false": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_SERVER_UID: PASS uid=1000 app_root=false capabilities=0": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_FD_GATE: PASS direct_uid1000=denied direct_uid1001=denied nodes=root0600": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_HELPER_UID_GATE: PASS denied_uid=1001 allowed_uid=1000": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_OPEN_FD_DENIED: PASS uid=1001 route=open_physical json_refusal=true closed=true": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_PROBE_CLEANUP: PASS original_drivers=true inflight=0": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_GONE: PASS old_hid_gone=true ftdi_leased=true inflight_hid=0": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_REINSERT_STALE: PASS new_generation=true old_slot_gone=true nodes=root0600": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_STOPPED: PASS exit=0 ftdi_driver=ftdi_sio gone_hid=true inflight=0": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_SERVER_HELD: PASS cycle=1 drivers=usbfs leases=2": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_SERVER_RELEASED: PASS cycle=1 inflight=0 drivers=usbhid,ftdi_sio": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_SERVER_HELD: PASS cycle=2 drivers=usbfs leases=2": true,
+        "server_old_strict_marker:RUSTUSB_PHYSICAL_SERVER_RELEASED: PASS cycle=2 inflight=0 drivers=usbhid,ftdi_sio": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_UID_GATE: PASS denied_uid=1001 allowed_uid=1000": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_UNPLUG: PASS hid_kernel_gone=true ftdi_same_receipt=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_FTDI_CONTINUES: PASS before=35 after=35 exact_bytes=true same_receipt=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_NO_AUTO_AUTH: PASS reinserted_hid_not_advertised=true available_devices=1": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=1 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_HID: PASS cycle=1 key_code=2 down=true up=true same_receipt=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_FTDI: PASS cycle=1 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=1 kernel_sessions=0 both_devices_removed=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=1 available_devices=2": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=2 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_HID: PASS cycle=2 key_code=3 down=true up=true same_receipt=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_FTDI: PASS cycle=2 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=2 kernel_sessions=0 both_devices_removed=true": true,
+        "client_old_strict_marker:RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=2 available_devices=2": true,
+        "all_twelve_original_hot_snapshot_labels": true,
+        "baseline_real_cancel_reap_thresholds": true,
+        "original_device_speed_EP0_metadata": true,
+        "cycle1_actual_HID_interrupt_completed": true,
+        "cycle1_actual_FTDI_exact35B_out_and_in_progress": true,
+        "cycle2_actual_HID_interrupt_completed": true,
+        "cycle2_actual_FTDI_exact35B_out_and_in_progress": true,
+        "same_FTDI_USB_IO_continues_after_HID_gone": true,
+        "baseline_same_registered_generations": true,
+        "baseline_original_both_driver_and_zero_resources": true,
+        "held-1_same_registered_generations": true,
+        "held-1_both_actual_usbfs_leases": true,
+        "io-1_same_registered_generations": true,
+        "io-1_both_actual_usbfs_leases": true,
+        "released-1_same_registered_generations": true,
+        "released-1_original_both_driver_and_zero_resources": true,
+        "held-2_same_registered_generations": true,
+        "held-2_both_actual_usbfs_leases": true,
+        "io-2_same_registered_generations": true,
+        "io-2_both_actual_usbfs_leases": true,
+        "released-2_same_registered_generations": true,
+        "released-2_original_both_driver_and_zero_resources": true,
+        "unplug-held_same_registered_generations": true,
+        "unplug-gone_same_registered_generations": true,
+        "unplug-gone_old_hid_Gone_terminal": true,
+        "unplug-io_same_registered_generations": true,
+        "unplug-io_old_hid_Gone_terminal": true,
+        "unplug-released_same_registered_generations": true,
+        "unplug-released_old_hid_Gone_terminal": true,
+        "unplug-released_remaining_ftdi_driver_restored_and_all_resources_zero": true,
+        "replug-stale_same_registered_generations": true,
+        "replug-stale_old_hid_Gone_terminal": true,
+        "replug-stale_remaining_ftdi_driver_restored_and_all_resources_zero": true,
+        "stopped_same_registered_generations": true,
+        "stopped_old_hid_Gone_terminal": true,
+        "stopped_remaining_ftdi_driver_restored_and_all_resources_zero": true,
+        "reported_host_exact140B_and_independent_expected_SHA": true,
+        "input_output_ledger_exact_sizes": true,
+        "all_real_injections_recorded": true,
+        "actual_QMP_DEVICE_DELETED": true,
+        "runner_terminal_result_PASS": true,
+        "all_raw_source_artifact_bytes_unchanged": true
+      },
+      "facts": {
+        "wire_case_names": [
+          "real_unsupported_control_stall_and_survival",
+          "real_control_descriptor_and_speed",
+          "real_configuration_barrier_preserves_following_in",
+          "real_unlink_reaped_no_old_completion_or_input_loss",
+          "real_pending_eof_releases_lease",
+          "real_zero_bulk_out_actual_zero",
+          "real_one_byte_bulk_in_pending_cancelled",
+          "real_zero_bulk_in_original_length",
+          "real_non_mps_fifteen_byte_bulk_in",
+          "real_ftdi_descriptor_and_speed",
+          "all_lifecycle_checks",
+          "both_real_devices_exclusive_busy",
+          "both_real_devices_available",
+          "both_real_devices_exclusive_busy",
+          "both_real_devices_available"
+        ],
+        "two_channel_beacons": {
+          "server": "RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=server device=ttyS1 kernel_console=ttyS0",
+          "client": "RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0"
+        },
+        "reported_host_serial_bytes": 140,
+        "reported_host_serial_sha256": "7d2284a6df1220f6daa02362b9cc884b2aca1a86386c045f8157f27b090c5e2c",
+        "old_hid_Gone_and_remaining_FTDI_restored": true
+      }
+    }
+  ],
+  "totals": {
+    "runs": 11,
+    "actual_wire_cases": 113,
+    "guest_exit0": 22,
+    "per_run_assertions": 981,
+    "per_run_assertions_passed": 981,
+    "aggregate_assertions": 66,
+    "aggregate_assertions_passed": 66,
+    "artifacts": 97
+  },
+  "binary_sha256": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023/client-serial.log",
+      "bytes": 35922,
+      "sha256": "656ec0dcc0c8e6bec0294326919360b6ea3386d4b4e45a97fd73981ede66f41b"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023/server-serial.log",
+      "bytes": 63465,
+      "sha256": "95132620409e2b0b13e24bf028675eadb62012d878c601485168fb49456f0577"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023/summary.json",
+      "bytes": 62528,
+      "sha256": "5e938d335dc396546922e6cd1dc2fa98f682a072b90bdb95b99e61c8c3b706b9"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v4-20261023-runner.log",
+      "bytes": 146,
+      "sha256": "18191361ff1be4b4c48255ecf6c241c57e9d71123a6f7c01d3ce2b4d610c6094"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023/client-serial.log",
+      "bytes": 35678,
+      "sha256": "9f98486f78c0c0b6a69dfdfcf3164b3da2e1f70fdf16440743ebc6699c7bedcf"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023/server-serial.log",
+      "bytes": 62583,
+      "sha256": "fa004c62f06f3901948fe48d2fd4bc865965c86b45175a3304156a84bad991fc"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023/summary.json",
+      "bytes": 61390,
+      "sha256": "5a7f06e6d5891dd5758e470b18ab60fe80c97f9b6273ee5e1c360c53a9cc8336"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-unlink-final-v4-20261023-runner.log",
+      "bytes": 152,
+      "sha256": "fd9127dc6d4f5feec8c466b4bd958aa2689287f0598c1c8187bd26bfbaa08791"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023/client-serial.log",
+      "bytes": 35835,
+      "sha256": "d9eeb491192f74455d317461da5bb0af78db533bde262c588cadf7b4ee44ff4c"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023/server-qemu.stderr",
+      "bytes": 246,
+      "sha256": "d46009914ec8eb5ae180e744f23c081c084875accefaf8be6be96d0956ae2eb8"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023/server-serial.log",
+      "bytes": 63189,
+      "sha256": "2e0f5a6d15bd7500e2c00ec9477166947aec6eb59cf1682e9472ddd5636527c1"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023/summary.json",
+      "bytes": 62164,
+      "sha256": "b70874dca7f464ae01ba197322caba165b366331486b118a18958171eb9f338b"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-eof-final-v4-20261023-runner.log",
+      "bytes": 138,
+      "sha256": "828989494130a46054dfbd5567f65217a735f7b87a7fcff330d5c01dd1912bc7"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023/client-serial.log",
+      "bytes": 35594,
+      "sha256": "da1feaa1e53a3f728f48b5e56e2336e427404cecfa8ea002a41298ed0aa48232"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023/server-qemu.stderr",
+      "bytes": 246,
+      "sha256": "d46009914ec8eb5ae180e744f23c081c084875accefaf8be6be96d0956ae2eb8"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023/server-serial.log",
+      "bytes": 64060,
+      "sha256": "30f5a77d6b8b0e373a95063bef75e9929ef9794b889375c8b9437781d5290997"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023/summary.json",
+      "bytes": 64556,
+      "sha256": "0073f3335ca5183acf9781be50dacbea72b0a0bbe97e8bd41043a24d09e9ef0f"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-clear-unlink-final-v4-20261023-runner.log",
+      "bytes": 144,
+      "sha256": "78f29f64982fe629f7cbf2f8d9080585888fa34397c9a04f334b562c52141137"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023/client-serial.log",
+      "bytes": 36012,
+      "sha256": "6ceaad2b78a515af92d0e4f71d27eb5743170bf99bd913ae35ef3f68334f1d69"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023/server-serial.log",
+      "bytes": 67170,
+      "sha256": "988a99554f507e6fe8f9509a6eb47c0f6fc7c63d1c7275404c86ee2e57d0caef"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023/summary.json",
+      "bytes": 68081,
+      "sha256": "b674564f1003ee9e0d0f0c4aa6ebe32b0bc94580ff78afab606fa363285e5b9e"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-eof-final-v4-20261023-runner.log",
+      "bytes": 154,
+      "sha256": "23508b129a11286448111ea31a41700f263787f95be380c4f4cbace0ef441455"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023/client-serial.log",
+      "bytes": 35781,
+      "sha256": "648aaae0ee152b3b2957cc6dd95f596329ec573346178bfdb265c2e85e58f59f"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023/server-serial.log",
+      "bytes": 67089,
+      "sha256": "005e80b5efc323240a0bde5293e809dc26d7b066a846b5ec9f42302e0f253992"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023/summary.json",
+      "bytes": 68192,
+      "sha256": "4175358981b1e969ea9384dbd48d6afd138570804b0cf7771710514927f857a8"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-configuration-unlink-final-v4-20261023-runner.log",
+      "bytes": 160,
+      "sha256": "5ec8bb2187ae4171540d8dd747ce59e115dd5ffc1f7291c232c3276d1615c9f5"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-sequence-20261023.json",
+      "bytes": 10042,
+      "sha256": "dd2ff4eb6cf7b9867169046296e23625ffc95c2cd4d30f984bd6805772ca2f8d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/composite-wire-probe.rs",
+      "bytes": 29860,
+      "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/guest-composite-init.sh",
+      "bytes": 20780,
+      "sha256": "6b9e08c26f67250fc0bfaa960919f6ad81873e021f9df5818853e4712ceed527"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/guest-host-state-init.sh",
+      "bytes": 21679,
+      "sha256": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/guest-physical-init.sh",
+      "bytes": 28271,
+      "sha256": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/host-state-wire-probe.rs",
+      "bytes": 28001,
+      "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/run-composite-qemu.py",
+      "bytes": 22328,
+      "sha256": "5b3b070d8adf29e07f19a67e62df265bc62a1549ae5f756817581a72ab6c6048"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/run-host-state-qemu.py",
+      "bytes": 30779,
+      "sha256": "606fca92944bbb6a54644e664912e39eed36b7aa69f4f15755e1b3b049d5ca91"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/source.json",
+      "bytes": 1419,
+      "sha256": "4c9020ca3689004de807fa619817b964c9a76687226e68624e54650dc7fc3d5f"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v4-source-20261023/usbfs-syscall-gate.c",
+      "bytes": 35043,
+      "sha256": "7443e276651dabd7d311486c4b2cafbc1a1a24e562869192c055311835dc5ff2"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023/client-serial.log",
+      "bytes": 35884,
+      "sha256": "70155cf1ae9d284202ecd70f46971d3fd917623d06bb30ac9d8033d6f4f530f1"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023/server-serial.log",
+      "bytes": 67788,
+      "sha256": "125bc0d391cc5614318f5580b617504f33a7c3d1c5d564e1e04683394812d384"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023/summary.json",
+      "bytes": 69720,
+      "sha256": "c8a490839ead4de9e8e190e8953053f7f9053cbf846d70abaaac7543a539a965"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-eof-final-v4-20261023-runner.log",
+      "bytes": 142,
+      "sha256": "481ea4cf5494ac19f39e4ed80935b703dfcdb6531824d5d731fafeb36adb1e9f"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/client-serial.log",
+      "bytes": 35623,
+      "sha256": "b7773cc574fe0b7017d2b5aa9e7a355bbb3073a985b07ec4175d309813597ea9"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/server-serial.log",
+      "bytes": 66893,
+      "sha256": "0e04b6ef8f00b9dff6482bca30b5f7f36d10967a4c0d7afd6faaa99c191a8428"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/summary.json",
+      "bytes": 68564,
+      "sha256": "6a1518a0608b17c046f141700390ccf34f65ac148bc3c5817872578b0b1e5512"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-release-unlink-final-v4-20261023-runner.log",
+      "bytes": 148,
+      "sha256": "84366226093813774709536dc4d9ec3fc56042e42009e6b40a28e6b8061f3533"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/client-serial.log",
+      "bytes": 38386,
+      "sha256": "11707e22dac05038f710b2c63f1d7ce72116bd627c8307dcd42d31e6dc70ce19"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/data-peer.pcap",
+      "bytes": 1604,
+      "sha256": "ea5275668a0e6cf28a2f2c5cbd4ece1487224447492997b6e5034b1c1177d552"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/data-usb.pcap",
+      "bytes": 1604,
+      "sha256": "c0ca003fca067b5e3af92dfe2042726f11551941aae1b376945dc5b3fe161bf8"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/server-qemu.stderr",
+      "bytes": 1873,
+      "sha256": "2eba343beed27c2256b716576fd91500e1bd3d519b7ded12e2cad397db21913b"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/server-serial.log",
+      "bytes": 52075,
+      "sha256": "5ac6fbf6e0050e6ae0d192960ffc093db49b279c42b9ff49f8b81e5252b5c9d0"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023/summary.json",
+      "bytes": 39876,
+      "sha256": "6c0a6515b7c24a5552fe45d446afd272a008956ddc06f74b202f50135b092eb5"
+    },
+    {
+      "path": "/tmp/rustusb-composite-checked-release-regression-final-v4-20261023-runner.log",
+      "bytes": 108,
+      "sha256": "bfa2eaebdb15c7950230df3e2d6f700ead1f5a9330ccdb14f4ab7e7a740b96a4"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/client-evidence.log",
+      "bytes": 4762,
+      "sha256": "a63f2540fd8406f1aa74a32d7c393ae21ae56c90eaf65dc78f4c3e41ba28abab"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/client-serial.log",
+      "bytes": 39480,
+      "sha256": "53d1cabbd14c363d6c1518f00f1c5510d5d7f72d99c268c50a29d30a9c97f834"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/server-evidence.log",
+      "bytes": 20984,
+      "sha256": "9e4a3eae35a5533f470aec077715eefe6732cbd4b3b64fb784d4c3d1802e34f8"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/server-serial.log",
+      "bytes": 36117,
+      "sha256": "6201a15ff85d94e33b8e9fae951b9ced270dd04c73e41a250265d003e977b440"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023/summary.json",
+      "bytes": 78436,
+      "sha256": "e7c46692442fe301820682a95ae5f541ce74edb1bc4862d0b9d935d892a122a8"
+    },
+    {
+      "path": "/tmp/rustusb-physical-hot-checked-release-regression-final-v4-20261023-runner.log",
+      "bytes": 111,
+      "sha256": "2d91df00dd490c18726254bf4bfc159dabc43b23e71a3b77656b2b515671ad51"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/client-evidence.log",
+      "bytes": 4135,
+      "sha256": "7852b6e63ffea2feaf1791ca73a2e0790d50e1322d8bd330230b85be7ca37f7d"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/client-serial.log",
+      "bytes": 36810,
+      "sha256": "fa401eb9e7551e1a3fee82edd93e8aa46309a43d98606eda70e4a89735578adc"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/server-evidence.log",
+      "bytes": 14205,
+      "sha256": "72a922bd7392ab643edec825c63a04535c0967e1524195ad5e28b958315ed39f"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/server-serial.log",
+      "bytes": 35029,
+      "sha256": "4182eb82e9737c3b383adf183a89d9c08fe1abdd46cd388f2f571a61f3e4986c"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023/summary.json",
+      "bytes": 52806,
+      "sha256": "3e448132fc0387746d04719ea98b3c5ba240f71d0d15aa3277019bd903fde299"
+    },
+    {
+      "path": "/tmp/rustusb-physical-normal-checked-release-regression-final-v4-20261023-runner.log",
+      "bytes": 114,
+      "sha256": "a06e43df4a312b7902ee278dc735555c35bf6b72acac2749a7b901cf257511b1"
+    }
+  ],
+  "failed_assertions": [],
+  "review_time_worktree_porcelain": "?? docs/evidence/checked-release-final-v4-20261023.json\n?? docs/evidence/checked-release-final-v4-sequence-20261023.json\n?? docs/evidence/qemu-checked-release-alternate-eof-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-alternate-unlink-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-clear-eof-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-clear-unlink-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-configuration-eof-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-configuration-unlink-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-final-v4-source-20261023/\n?? docs/evidence/qemu-checked-release-release-eof-final-v4-20261023/\n?? docs/evidence/qemu-checked-release-release-unlink-final-v4-20261023/\n?? docs/evidence/qemu-composite-checked-release-regression-final-v4-20261023/\n?? docs/evidence/qemu-physical-hot-checked-release-regression-final-v4-20261023/\n?? docs/evidence/qemu-physical-normal-checked-release-regression-final-v4-20261023/\n",
+  "limitations": [
+    "No in-kernel active-window, arbitrary hardware, performance benchmark or wholePhase2 acceptance claim.",
+    "Syscall-entry pause precedes kernel handler. Deliberate release fault is guest-root IF0 external unbind; tracer does not inspect ioctl argument memory.",
+    "USBMON -32/actual1/opaque byte is kernel-reported QEMU/UHCI behavior and does not prove a physical error transferred a byte.",
+    "FTDI host payload has no separate raw artifact; independent expected SHA is compared to original host observation and strict guest content assertions.",
+    "Run-start/sequence clean facts are distinct from later review-time documentation dirtiness.",
+    "No repository writes, builds/Cargo, QEMU, USB, ptrace, module or host-network operations performed."
+  ]
+}

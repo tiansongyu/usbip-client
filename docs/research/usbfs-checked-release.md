@@ -1,6 +1,6 @@
 # USBFS checked release：错误传播与 QEMU 验证
 
-2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。产品修复已合入 `4e81a11`；首轮 clean 候选矩阵为 10 PASS、1 FAIL；第二轮在第六项启动阶段失败，后五项未运行，第三轮亦为10 PASS、1 FAIL，完整冻结验收仍待完成。实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
+2026-10-23。产品修复 `4e81a11` 已通过完整软件 gate；最终同一 clean `6e809a1c870e3ef84a7891eeca499b949366edf3` 的十一项 QEMU 全部 PASS，113项协议检查、22个guest exit0。前两次旧产品负向FAIL及三轮候选FAIL均保留。最终证据见[索引](../evidence/checked-release-final-v4-20261023.json)，实现契约见[设计](usbfs-checked-release-design.md)。
 
 ## 测试路径与来源
 
@@ -27,13 +27,13 @@ dev02 的 [server 串口](../evidence/qemu-checked-release-old-product-eof-dev02
 
 [独立负向复核](../evidence/checked-release-old-product-independent-review-20261023.json)直接检查原始产物，69/69项复核通过，原两轮裁决仍为FAIL；另存[源码与设计复核](../evidence/checked-release-design-independent-review-20261023.json)及[归档核对](../evidence/checked-release-development-archive-verification-20261023.json)。
 
-## 归档与剩余验收
+## 旧产品归档与当时的待验收项
 
 两个原始运行目录及各自外部 runner log、共同四脚本/source.json、两份静态记录逐字节复制；四个目录各附 `artifacts.sha256`。原始 CRLF、ANSI、空 stderr 和失败内容均保留，未补写运行时产物。索引中的 21 份来源复制和 4 份新生成清单共 25 项；聚合索引本身不自引用。
 
 [静态记录](../evidence/qemu-checked-release-static-20261023/host-state-release-harness-static-20261023.json)明确是已观察 tool 结果的派生转录及独立构建物哈希，没有重构 raw 编译日志；独立 ELF 不归档。新解析器对[旧六项 clean 原日志的只读回归](../evidence/qemu-checked-release-static-20261023/host-state-release-old-six-parser-20261023.json)通过 48 个 case，不代表重新运行 QEMU，也不能替代本轮修复验证。
 
-后续须用修复产品证明原 -22 的 wire 传播、剩余 IF1 显式释放继续完成、全程零 SET_CONFIGURATION 入口、后到 C 使用实际空 map，以及原双 CDC driver/config1/alt0,1 和全部资源的真实恢复；EOF 场景不要求关闭连接上出现 A 回复。完成开发与软件 gate 后，还须在同一 clean 提交执行新两项和既定回归。checked ioctl 的结果不等于完整状态恢复；本轮不证明原无 driver/非零 alternate 通用恢复、内核内部 active 窗口、真实硬件或整个 Phase2。
+当时待用修复产品证明原 -22 的 wire 传播、剩余 IF1 显式释放继续完成、全程零 SET_CONFIGURATION 入口、后到 C 使用实际空 map，以及原双 CDC driver/config1/alt0,1 和全部资源的真实恢复；EOF 场景不要求关闭连接上出现 A 回复。这些项目现已在下述最终v4得到范围内验证。checked ioctl 的结果不等于完整状态恢复；本轮不证明原无 driver/非零 alternate 通用恢复、内核内部 active 窗口、真实硬件或整个 Phase2。
 
 
 ## 产品修复与软件验证
@@ -48,7 +48,7 @@ dev02 的 [server 串口](../evidence/qemu-checked-release-old-product-eof-dev02
 
 同一 clean `4e81a11` 串行运行十一项，运行期间没有仓库写入或并行构建；[原 sequence](../evidence/checked-release-candidate-sequence-20261023.json)和[106份归档索引](../evidence/checked-release-candidate-20261023.json)保留整体 FAIL。
 
-- 新 release UNLINK/EOF 及原 configuration/alternate/clear 六项全部 PASS，共64项 wire case、16个guest exit0。真实首release=-22，后续IF1 release=0，首次 reclaim 前仅有这一次后续release；全trace没有SET_CONFIGURATION入口。UNLINK收到A=-22/UNLINK0；EOF不要求已关闭连接回复。最终同代际原cfg1/alt0,1/双cdc_ether及资源0恢复。
+- 新 release UNLINK/EOF 及原 configuration/alternate/clear 六项全部 PASS，共64项 wire case、16个guest exit0。其中release两项的真实首release=-22，后续IF1 release=0，首次 reclaim 前仅有这一次后续release；全trace没有SET_CONFIGURATION入口。UNLINK收到A=-22/UNLINK0；EOF不要求已关闭连接回复。最终同代际原cfg1/alt0,1/双cdc_ether及资源0恢复。
 - ECM回归 PASS，19项probe，两个周期均实际UDP38B请求/39B响应。独立私有PCAP解码、IPv4/UDP校验和、USBMON同tag的模型STALL -32/1 opaque数据及恢复通过。
 - 原HID/FTDI normal回归 PASS，15项probe与70B精确串口输出。
 - hot回归严格 FAIL：server原ttyS0的 `RUSTUSB_PHYSICAL_REINSERT_STALE` 标记被内核 `hid-generic` printk 从中间插断。两guest exit0及可观察的Gone/FTDI继续/140B/资源0不替代host缺完整marker的裁决；不拼接原字节、不补填未到达的after字段。
@@ -84,3 +84,29 @@ dev02 的 [server 串口](../evidence/qemu-checked-release-old-product-eof-dev02
 只将物理guest启动loop的break改为原最终完整predicate：设备数2且全部export_blockers为空。原100次、50ms间隔和最终断言均保留，产品scanner和授权不改。实际失败快照、明确标注的synthetic ready/单设备/空列表四个fixture通过，旧谓词会提前结束，新谓词继续等待。[启动开发索引](../evidence/physical-startup-development-20261023.json)中的dirty hot dev03完整PASS（15case、140B精确FTDI、两guest0），[独立复核](../evidence/physical-startup-hot-dev03-independent-review-20261023.json)113/113通过。随后提交冻结distinct v4完整矩阵，不覆盖v3失败。
 
 `19ffa11` 的[四平台CI](../evidence/publication-checked-release-harness-20261023.json)也实际全部completed/success，每格222项、0失败/忽略及两项4096B stdout背压通过；[完整原log/API](../evidence/ci-checked-release-harness-19ffa11-20261023/artifacts.sha256)已保留。这不改写其QEMU矩阵FAIL。
+
+
+## 最终冻结 v4：十一项全部 PASS
+
+全部12harness输入在clean `6e809a1c870e3ef84a7891eeca499b949366edf3` 运行前捕获。十一项依次默认locked all-features构建、串行运行；全部terminal前无仓库写入或并行构建。[原sequence](../evidence/checked-release-final-v4-sequence-20261023.json)逐项记录同HEAD、开始/结束clean及exit0，[最终索引](../evidence/checked-release-final-v4-20261023.json)保存所有原始产物、源码和清单。
+
+| 范围 | 最终结果 |
+| --- | --- |
+| release/configuration/alternate/clear × UNLINK/EOF | 8 PASS、64wire case、16guest exit0；其中release两项真实-22/后续IF1 release0/全trace无SET_CONFIGURATION，configuration场景仍验证实际配置ioctl；原cfg1/alt0,1/双driver及所有资源恢复 |
+| ECM | PASS、19probe；两周期实际UDP38B请求/39B响应；第二周期官方usbip直接管理并拒绝helper接管；USBMON与wire的UHCI模型STALL -32/1 opaque字节相同，原状态恢复 |
+| HID/FTDI正常 | PASS、15probe、两guest exit0；70B精确FTDI输出，两周期真实输入及清理 |
+| HID/FTDI热拔 | PASS、15probe、两guest exit0；140B精确输出、HID Gone时FTDI继续、重插不继承授权，完整stale marker及末资源0 |
+
+[root核对](../evidence/checked-release-final-v4-root-verification-20261023.json)确认113case/22guest0、全部脚本对应冻结Git blob、CLI/helper及来宾产物相同、96软件输入与已过222项gate一致。host-state保存显式after哈希；ECM/physical的PASS在runner检查source/binary guard之后，原summary未持久after字段，索引不补造。归档开始后docs dirty与运行期间clean分别记录。
+
+[root独立PCAP解码](../evidence/checked-release-final-v4-capture-verification-20261023.json)逐帧确认两个私有捕获中的两轮请求/响应、地址/端口、IPv4/UDP校验和及payload SHA。没有用上轮PCAP大小或派生summary替代实际字节。本轮只证明固定QEMU6.2/Linux6.8模型；原无驱动非零alternate、kernel内部active、成功clear-halt/真实错误partial、SIGKILL恢复、真实硬件、ISO及完整Phase2仍未完成。
+
+
+[最终独立raw复核](../evidence/checked-release-final-v4-independent-review-20261023.json)1047/1047通过，覆盖全部十一项及原始来源前后SHA。[归档核对](../evidence/checked-release-final-v4-archive-verification-20261023.json)确认110索引产物、97份原字节来源复制与12清单/1来源说明，全部旧FAIL及378项历史产物不变。最终报告本身不自引用，提交与push实况以Git历史为准。
+
+
+## 冻结提交软件CI失败：独立保留
+
+最终QEMU全部PASS之后核到 `6e809a1` 的[CI39894822120](https://github.com/tiansongyu/usbip-client/actions/runs/39894822120)实际为3 PASS/1 FAIL，原日志/API见[失败记录](../evidence/publication-checked-release-freeze-failure-20261023.json)。Ubuntu24.04 ARM job120222691647在既有Native `detach_does_not_wait_for_replacement_generation_at_same_path` 测试失败，报固定fake usbip子进程超过fixture200ms命令期限；不是原代际断言已失败，也不是USB硬件操作。其他3格各222项通过。较早4e81a11/19ffa11四格全通过仍是各自版本事实，不能覆盖本次FAIL。
+
+`37c2d61` 仅修正 `#[cfg(test)]` 的fixture同步与预算：取消该测试用40ms sleep推算命令/代际更替时序，保留旧代际消失和替换路径不能阻塞的断言；非timeout目标测试不应以宿主进程调度速度充当产品契约。真正测试超时的用例必须保留显式较短期限和kill/reap断言。生产Native路径、QEMU脚本和产品release修复不变；[修正说明](native-test-fixture-readiness.md)记录31项定向及完整222项软件gate通过，[新提交37c2d61四平台CI](../evidence/publication-native-fixture-20261023.json)实际全部completed/success，每格222项和两项背压通过，不对旧失败重分类。重建后ELF哈希不同，不将6e809a1的QEMU产物改归37c2d61。

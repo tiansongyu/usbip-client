@@ -1,0 +1,161 @@
+{
+  "schema_version": 2,
+  "review_kind": "read_only_phase2_scope_and_next_task",
+  "reviewed_at_utc": "2026-10-23T03:20:48.984145+00:00",
+  "git_head": "19ffa119107e169765789ccdd071e860fca195af",
+  "working_tree": "Root final v3 matrix in progress. No repository mutation, build or QEMU performed by this review; no clean-tree claim or matrix verdict.",
+  "actions": "Read local requirements, phase plan, acceptance, design and code. No repository edits, builds, QEMU, host USB/module/network/ptrace operations. This JSON is the sole output file.",
+  "scope_decision": {
+    "phase2_original_requirement": "Optional Rust server, virtual devices, physical sharing, unified backend interfaces, official Linux USB/IP interoperation; validate upstream limitations individually and do not claim unverified device classes. docs/requirements.md:696",
+    "not_a_requirement_to_support_every_usb_class_before_any_further_work": "The original Phase2 explicitly permits unsupported classes with accurate reasons. Rejecting ISO is an honest implemented limitation, not ISO support or a full Phase2 pass.",
+    "current_substep": "Checked release product change and final matrix are being completed by root. This review neither revalidates nor overrides their runtime verdict.",
+    "whole_phase_status": "Partial; physical G1/G2 and unimplemented/untested capabilities remain open.",
+    "phase3_boundary": "Remote credentials/TLS, comprehensive per-user device leases, heartbeats, durable restart reconciliation and full nine-state application session management remain Phase3. Existing trusted-network flags/local UID allowlists and actor states do not satisfy those requirements."
+  },
+  "recommended_next_task": {
+    "title": "Determine service-termination behavior, then add cooperative SIGTERM cleanup without claiming SIGKILL recovery",
+    "classification": "Source-identified concrete product lifecycle gap; requires an old-product guest reproduction before a runtime defect verdict",
+    "priority_reason": "The physical service explicitly owns interface/config/alternate restoration but subscribes only to Ctrl-C. A normal service stop using SIGTERM can bypass this restoration. Addressing that control path has more product value than repeating official-client interoperation already proved by Composite.",
+    "evidence": [
+      "crates/rustusb-cli/src/physical_server.rs:95-106 selects only tokio::signal::ctrl_c and then calls server.shutdown",
+      "crates/rustusb-cli/src/virtual_server.rs:236 likewise subscribes only to ctrl_c",
+      "crates/rustusb-cli/src/main.rs:401-410 gives these servers ownership of signal cleanup rather than wrapping them in another termination handler",
+      "crates/rustusb-rust-backend/src/physical/worker.rs:246-250 uses detach_and_claim_interface_no_reattach",
+      "crates/rustusb-daemon/src/linux.rs:525-540 sends the granted FD then ends the request; no retained grant lifetime monitor here"
+    ],
+    "first_bounded_experiment": [
+      "After root finishes and freezes the current matrix, run one new isolated QEMU physical/ECM service-termination fixture with the exact current unmodified product.",
+      "Establish a real leased non-storage QEMU device and a pending real request or a non-default relevant state; record ordinary-user server PID/starttime, exact generation/node, original drivers/config/alternate and client receipt.",
+      "Send SIGTERM only to that validated disposable-guest server PID; observe actual process exit, client disconnect/VHCI state and server independent sysfs/resource state within fixed deadlines. Preserve failure and exact pre-run source/binary snapshots.",
+      "Separately terminate with SIGKILL in a distinct bounded run if hard-crash semantics are the next intended scope. Do not infer SIGKILL behavior from SIGTERM or vice versa."
+    ],
+    "conditional_implementation": [
+      "If SIGTERM skips cleanup as source suggests, register Unix SIGTERM and SIGINT before accepting work and route either to the existing single server.shutdown cleanup path. Keep cross-platform behavior explicit.",
+      "Use the same termination contract for virtual/physical server lifecycle without adding new root authority, arbitrary commands or a second USB engine.",
+      "Preserve output-backpressure behavior, existing shutdown deadlines, exact errno, quarantine semantics and original-generation checks. The signal must not drop the cleanup future or falsely report restoration."
+    ],
+    "acceptance": "After the focused change, ordinary-user server SIGTERM triggers real cancellation and terminal reaping; client closure is observed; original config/alternate/drivers are independently verified, resources return to zero, and exit/result accurately reflects cleanup. Retain old-product failure and new-product evidence. Run relevant software gates and focused cancellation/output-backpressure regressions; broaden QEMU reruns only for affected product paths.",
+    "hard_crash_boundary": "SIGKILL cannot execute Rust signal handling or destructors. Cross-process ownership supervision or safe explicit administrator recovery must be designed and tested separately; merely adding SIGTERM does not solve hard crashes, helper loss, power loss or durable restart reconciliation.",
+    "stop_rule": "Close the bounded cooperative service-stop gap, record any SIGKILL result and remaining recovery requirement, then move to the separately planned recovery design. Do not create more host-state ptrace permutations or claim full Phase3 complete."
+  },
+  "remaining_product_gaps": [
+    {
+      "item": "ISO transfer execution and per-packet status/actual/frame semantics",
+      "evidence": "wire.rs:141-154 explicitly rejects positive num_packets before allocation; endpoint execution supports bulk/interrupt, not ISO",
+      "qemu_feasibility": "A future bounded virtual ISO or QEMU audio fixture is possible, but would require new wire/adapter semantics and vendor allocation/cancellation work; this is not a missing assertion on current supported code.",
+      "verdict": "Mandatory long-term capability for UVC/audio support; keep unsupported now. Do not mislabel a rejection test as transfer support or demand all classes merely to close this bounded Phase2 substep."
+    },
+    {
+      "item": "Exact recovery of originally unbound interface at nonzero alternate",
+      "evidence": "worker.rs:1069-1105 temporarily claims/sets/releases; checked-release-design.md:11 records Linux unbind can reset alt0 even after successful RELEASEINTERFACE",
+      "qemu_feasibility": "Existing ECM model can establish the case, but generic restoration through ordinary USBFS has not been demonstrated.",
+      "verdict": "Real capability gap, not fixed by release_checked or driver-owned CDC recovery. Do not claim a test-only change solves it; any narrow preflight exclusion is safety degradation, not restored support."
+    },
+    {
+      "item": "Cooperative SIGTERM versus hard-crash ownership and local-driver recovery",
+      "evidence": "physical_server.rs:95-106 handles Ctrl-C only; virtual_server.rs:236 likewise. Physical worker uses no_reattach, while daemon linux.rs:525-540 hands off the FD without a retained lifetime supervisor. Linux v6.8 devio.c:1089-1125 closes usbfs state by releasing claims, but has no Rust original-driver/config/alternate journal.",
+      "qemu_feasibility": "One deterministic guest-only server termination while real HID/FTDI or ECM is leased can observe kernel/sysfs/FD state.",
+      "verdict": "The missing SIGTERM cleanup path is a concrete source-level gap; resulting USB state is not yet runtime-reproduced here. First fix the bounded cooperative shutdown path if reproduced. SIGKILL recovery needs independent cross-process ownership/reconciliation and is not fixed by signal handling."
+    }
+  ],
+  "remaining_coverage_gaps": [
+    {
+      "item": "Kernel USB handler internally active/non-cancellable blocking",
+      "verdict": "Current syscall-entry gates do not prove this. Needs a justified guest-only kernel/QEMU fixture or actual hardware behavior; another ptrace pause before ioctl does not close it."
+    },
+    {
+      "item": "Successful CLEAR_HALT and subsequent endpoint data",
+      "verdict": "Existing QEMU model supplies a real failure path. A model implementing success is needed before claiming successful endpoint recovery. It is a limited model coverage gap until a product fault is observed."
+    },
+    {
+      "item": "Genuine nonzero error partial data for actual USBFS I/O",
+      "verdict": "Current controlled adapter tests cover mappings; ECM kernel reports -32 with one opaque byte. Do not call that observed application-level partial payload semantics. Needs a suitable device/model."
+    },
+    {
+      "item": "Two fresh physical IMPORTs racing for the same available generation",
+      "verdict": "PhysicalBackend::claim changes available to claiming under slot mutex before await, providing a source ownership mechanism. Existing hold-and-busy tests are not simultaneous-first-import evidence; a single bounded race test may be useful, but this is lower priority than explicit official-client interoperation."
+    },
+    {
+      "item": "R01-R12 requirement accounting",
+      "verdict": "Maintain a compact disposition table pointing to existing evidence. R11 remote authentication/TLS belongs Phase3. Composite already has a default-production-log fixed-payload absence regression; comprehensive credentials/serial/config secrecy remains a separate broader audit, not evidence that the existing payload gate is absent."
+    }
+  ],
+  "hardware_only_pending": [
+    "Two real Ubuntu hosts with one administrator-selected non-storage USB device for G1/G2",
+    "Real HID/serial/JTAG/storage/UVC/audio model and firmware compatibility",
+    "Ubuntu 24.04 and aarch64 kernel USB/hardware interoperability; software CI alone is insufficient",
+    "Real performance/long-running USB and WAN behavior; QEMU timings are not product performance"
+  ],
+  "do_not_expand_this_substep": [
+    "Do not repeat official physical/composite client interoperation already covered by clean22d and checked-release candidate Composite cycle2.",
+    "Do not reopen all prior raw evidence or rerun passed matrices without source changes or a specific unresolved concern.",
+    "Do not add arbitrary kernel hooks solely to turn an inherently unavailable hardware gate green.",
+    "Do not call Phase1/Phase2 complete because the bounded eleven-run matrix passes.",
+    "Do not count TUI, TLS, GUI, packaging, metrics or Windows as implemented in this Phase2 closure."
+  ],
+  "inputs_sha256": {
+    "AGENTS.md": "e27c291703d40e6e2cce8fa8b7ebd425022ef3895d0745a4c5b758cbc5ddfc12",
+    "docs/requirements.md": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c",
+    "docs/roadmap.md": "83c5bab97f43733cd747a8d2b200fc6ae94de4fcce072b691f5c6f3206571989",
+    "docs/acceptance.md": "8ebc9e1533d1907436a72d6842af4b0996e3029ecf2872e7ff8a31309049f5e2",
+    "docs/architecture.md": "46a78b5b47990d4c9c18b42653622dca5c7d1c77a1e1f59cdd8e0e246aec2c8c",
+    "docs/research/rust-backend-audit.md": "601a3cbe9634d578d7b513e7603ea081ce7208575da147099d785041f8d863db",
+    "docs/research/rust-physical-backend-design.md": "d2604cdbd09d74e7b5a7f4a5521ef4d057f4ad1daa9b801406fb041b0bf0c4a2",
+    "docs/research/usbfs-checked-release-design.md": "75a1ef3d33d2e159586b8fab2199e2b9e91efce06d34b116229b06c679a18a72",
+    "crates/rustusb-rust-backend/src/wire.rs": "e34c8c9d2662d677ff4ba51fefcec1f087e61b8fd800c0caf31b4326b8119374",
+    "crates/rustusb-rust-backend/src/physical.rs": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2",
+    "crates/rustusb-rust-backend/src/physical/worker.rs": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f",
+    "crates/rustusb-rust-backend/src/physical/observe.rs": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d",
+    "crates/rustusb-rust-backend/src/physical/safety.rs": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2",
+    "crates/rustusb-rust-backend/src/server.rs": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532",
+    "crates/rustusb-daemon/src/physical.rs": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48",
+    "crates/rustusb-cli/src/physical_server.rs": "be92e432a5e485b55ec9551f464f658999fd934b3355df745201639763ad0922",
+    "scripts/qemu/guest-userspace-init.sh": "a9cce38d4fef0e7724ae040248085da65d84548e3cf1b7211c74615a7e81368f",
+    "scripts/qemu/guest-physical-init.sh": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+    "scripts/qemu/guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+    "scripts/qemu/guest-composite-init.sh": "6b9e08c26f67250fc0bfaa960919f6ad81873e021f9df5818853e4712ceed527",
+    "docs/research/composite-qemu.md": "caece4919cba169f6f9fb8070588fef7b8d3f9bfb018a07c4c1afda031930e00",
+    "docs/research/userspace-qemu.md": "71bd575475fbc9b9ef9109a7dd4fc5014ad8d8a9f76123621621c956cea4d129",
+    "crates/rustusb-cli/src/virtual_server.rs": "969c66a45b70781600b1c958fd486fbd01ea81dbda0e14a69233303acc255218",
+    "crates/rustusb-cli/src/main.rs": "5927b8ae2b378a6568887cc48e21a3b69756f2862b7cb4e1fd196bbb65c0e6e7",
+    "crates/rustusb-daemon/src/linux.rs": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301",
+    "docs/evidence/qemu-composite-final-20261022/client-serial.log": "0805fc1cc000ecb83eaf25af3100710bb7713ff2c89ed31e1432a449f213bc7d",
+    "docs/evidence/qemu-composite-final-20261022/server-serial.log": "4fbc3951cb6659759db53bc68aa56b4b7a8d901892910a8a503404beefaa20c2",
+    "docs/evidence/qemu-checked-release-candidate-composite-regression-20261023/client-serial.log": "aac312a8daed0228d26c00114d27bfb6cea393dfc45391d1cdde76acbde9d325",
+    "docs/evidence/qemu-checked-release-candidate-composite-regression-20261023/server-serial.log": "40ec3454224fdc7dcf226b89f3596fbd56b12b5d34444da16891bdc4e5857721"
+  },
+  "supersedes": {
+    "path": "/tmp/rustusb-phase2-scope-review-20261023.json",
+    "sha256": "b2439d86aae7da940220fcb8b67c26f204276737f162529859f5928543ced6a4",
+    "preserved_unchanged": true,
+    "reason": "Rev1 omitted the already-tested official CLI cycle in guest-composite-init.sh and incorrectly recommended repeating broad physical/composite interoperability. This correction withdraws that recommendation."
+  },
+  "correction": {
+    "missed_fact": "guest-composite-init.sh cycle2 directly runs /usr/bin/usbip attach, port and detach. The client helper observes the port as unmanaged and refuses detach; actual UDP continues and the official owner then detaches.",
+    "source": "scripts/qemu/guest-composite-init.sh:322-377",
+    "runtime_evidence_rechecked": [
+      "docs/evidence/qemu-composite-final-20261022/client-serial.log:518,537,540",
+      "docs/evidence/qemu-checked-release-candidate-composite-regression-20261023/client-serial.log:515,534,537"
+    ],
+    "proven_scope": "Independent official Linux usbip attach/port/detach against the actual USBFS Rust Server is already covered, alongside the managed RustUSB client cycle, real cdc_ether/VHCI I/O, exact 38/39B UDP, ownership refusal and original-state cleanup. This read-only correction checks source and markers; original PCAP review is not rerun.",
+    "second_missed_fact": "Composite tests already scan production server output for both fixed UDP payload markers and require absence at the default log level.",
+    "log_evidence": [
+      "scripts/qemu/guest-composite-init.sh:281-287",
+      "docs/evidence/qemu-composite-final-20261022/server-serial.log:663",
+      "docs/evidence/qemu-checked-release-candidate-composite-regression-20261023/server-serial.log:663"
+    ],
+    "consequence": "Do not call physical/composite official-client interoperation or fixed-payload log scanning unimplemented. A virtual HID/CDC direct-CLI variant is optional profile-specific coverage, not a high-priority product task."
+  },
+  "optional_lower_priority_coverage": {
+    "virtual_hid_cdc_official_cli": "guest-userspace-init.sh:197-198 currently imports fixed virtual HID/CDC through RustUSB CLI/helper. A direct official-CLI cycle would add profile-specific confirmation, but shared Rust server management and real official-client compatibility already have Composite evidence. It is lower value than process-termination correctness and not a reason to repeat physical/composite runs.",
+    "official_devlist": "A direct usbip list invocation can be a small supplemental check if needed; absence of that exact CLI command does not erase existing direct official attach/port/detach evidence."
+  },
+  "kernel_source_reference": {
+    "version": "Linux v6.8 already-pinned source copies; read only, no new fetch/build",
+    "files": {
+      "/tmp/rustusb-composite-review-20261022/devio.c": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "/tmp/rustusb-composite-review-20261022/driver.c": "2f81e953001354db884b6ce1624839d64399acef0150a14cf357ae77cb2aca37"
+    },
+    "scope": "devio usbdev_release/releaseintf and driver usb_driver_release_interface examined to avoid assuming last FD close restores application original driver/config/alternate. This is source analysis, not a runtime crash result."
+  }
+}

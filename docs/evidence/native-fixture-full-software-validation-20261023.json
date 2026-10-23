@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Complete software gate after native cfg(test)-only fixture revision; pending documentation/evidence changes are distinct from committed frozen96 software inputs",
+  "git_commit": "37c2d61f84626329a4089524261ea60ae6299e64",
+  "working_tree_dirty": true,
+  "command": [
+    "bash",
+    "scripts/check.sh"
+  ],
+  "exit_code": 0,
+  "default_tests": 89,
+  "all_features_tests": 114,
+  "vendor_tests": 19,
+  "total_test_executions": 222,
+  "failed": 0,
+  "ignored": 0,
+  "software_inputs_unchanged_during_gate": 96,
+  "software_inputs": {
+    "path": "docs/evidence/native-fixture-full-software-inputs-20261023.json",
+    "sha256": "9b9ec9d956cdc8d73bb507acfa0af5bf1a3dc9524019ec83a11b3382c5877914"
+  },
+  "raw_output": {
+    "path": "docs/evidence/native-fixture-full-software-20261023.txt",
+    "bytes": 27983,
+    "sha256": "a33593d6d694d2437b4c91486548fc5d1f8e04e7877798f8bea1eae28c8e3544"
+  },
+  "production_native_bytes_unchanged": true,
+  "release_binary_sha256_before_gate": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "release_binary_sha256_after_gate": {
+    "rustusb": "eabb5e9134b733a11dd97fea3520c1c95f1dde7b7e5bb8eeef6fc4ec567f2ba0",
+    "rustusb-helper": "837aec7045ab08d935e8d887b686db8e160a5c849fd236c653710c0320dca46b"
+  },
+  "release_binaries_equal_previous_qemu": false,
+  "qemu_evidence_source_commit": "6e809a1c870e3ef84a7891eeca499b949366edf3",
+  "qemu_not_rerun_for_cfgtest_only_change": true,
+  "limits": [
+    "The rebuilt CLI/helper hashes differ from the frozen6e809 QEMU binaries. QEMU acceptance remains pinned to original6e809 inputs/binaries, not reattributed to37c2d61.",
+    "An initial review expected binary equality after a cfg(test) change and stopped on that assertion; corrected to record actual differing hashes rather than invent identity. No software gate failed."
+  ]
+}

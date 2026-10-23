@@ -1,0 +1,2635 @@
+{
+  "result": "PASS",
+  "started_at_utc": "20261023T032430Z",
+  "scope": "two isolated x86_64 QEMU guests; real USBFS Special syscall-entry gate; not in-kernel execution or physical hardware",
+  "operation": "release",
+  "mode": "unlink",
+  "nonce": "cr-v4-release-unlink",
+  "git_commit": "6e809a1c870e3ef84a7891eeca499b949366edf3",
+  "working_tree_dirty": false,
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "c_compiler_version": "cc (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--all-features"
+  ],
+  "source_fingerprint_sha256": "d502e1b33f14c03cd37a91dc967ca47a1c35fd6b8b09ac1a3511b0a4d2ffafc4",
+  "cargo_lock_sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a",
+  "script_sha256": {
+    "run-host-state-qemu.py": "606fca92944bbb6a54644e664912e39eed36b7aa69f4f15755e1b3b049d5ca91",
+    "guest-host-state-init.sh": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31",
+    "host-state-wire-probe.rs": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408",
+    "usbfs-syscall-gate.c": "7443e276651dabd7d311486c4b2cafbc1a1a24e562869192c055311835dc5ff2",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "guests": 2,
+    "management": "192.0.2.0/24",
+    "usb_controller": "piix3-usb-uhci",
+    "private_socketpairs": 2,
+    "server_peer_nic_down": true,
+    "host_network_listener": false,
+    "host_ptrace": false,
+    "host_usb": false,
+    "ip_forward": false
+  },
+  "startup_arm_idle_deadline_seconds": 25,
+  "failure_diagnostic_grace_seconds": 30,
+  "gate_deadline_seconds": 8,
+  "rpc_deadline_seconds": 3,
+  "tracer_deadline_seconds": 120,
+  "binary_sha256": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "probe_build_command": [
+    "rustc",
+    "--edition=2024",
+    "-O",
+    "-D",
+    "warnings",
+    "/home/ubuntu/github/usbip-client/scripts/qemu/host-state-wire-probe.rs",
+    "-o",
+    "/tmp/rustusb-host-state-qemu-owuixmvk/host-state-wire-probe"
+  ],
+  "tracer_build_command": [
+    "cc",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "/home/ubuntu/github/usbip-client/scripts/qemu/usbfs-syscall-gate.c",
+    "-o",
+    "/tmp/rustusb-host-state-qemu-owuixmvk/usbfs-syscall-gate"
+  ],
+  "probe_binary_sha256": "5cc6234391253ca33af4880ec3b64b86ca1815b9ef14c7cfc9feaa2af1e9ca2b",
+  "tracer_binary_sha256": "7847bb9f5dea6e7090daee6e4d5dbfc6df0d89f9e41f939f8ed9a10c385e1a31",
+  "guest_binary_sha256": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "guest_test_tool_sha256": {
+    "host-state-wire-probe": "5cc6234391253ca33af4880ec3b64b86ca1815b9ef14c7cfc9feaa2af1e9ca2b",
+    "usbfs-syscall-gate": "7847bb9f5dea6e7090daee6e4d5dbfc6df0d89f9e41f939f8ed9a10c385e1a31"
+  },
+  "kernel_modules": {
+    "usb-common": {
+      "kind": "builtin"
+    },
+    "usbcore": {
+      "kind": "builtin"
+    },
+    "e1000": {
+      "kind": "module",
+      "guest_sha256": "9ba908b09b2248d6540136faf03a54066e03130fd2275db9cedccdc71803a79c"
+    },
+    "mii": {
+      "kind": "module",
+      "guest_sha256": "ab2aca8f273cf6d9eeb490da250cb63015d7643412b4fb53c381617124a0842a"
+    },
+    "usbnet": {
+      "kind": "module",
+      "guest_sha256": "5505494b5a09bd7c3bf99075eb92b78c5954428abd8c3abd8ba0a37248307093"
+    },
+    "cdc_ether": {
+      "kind": "module",
+      "guest_sha256": "c574b54eab157d0e140dedb494f092b65ddfb505cc418d986221d13912150b86"
+    },
+    "uhci-hcd": {
+      "kind": "builtin"
+    }
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "fe9af30cbea96db8ad2f425ebb11b74af54be10ef2c41b5e32f2b95c0f0078af",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "qemu_commands": {
+    "server": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-host-state-qemu-owuixmvk/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-host-state-qemu-owuixmvk/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.host_state_test=1 rustusb.role=server rustusb.operation=release rustusb.mode=unlink rustusb.nonce=cr-v4-release-unlink",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/server-serial.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=control,fd=3",
+      "-device",
+      "e1000,id=control-nic,netdev=control,mac=52:54:00:00:00:61",
+      "-device",
+      "piix3-usb-uhci,id=usb",
+      "-netdev",
+      "socket,id=usbdata,fd=5",
+      "-device",
+      "usb-net,id=ecm,bus=usb.0,port=1,netdev=usbdata,mac=52:54:00:cc:00:02",
+      "-netdev",
+      "socket,id=peerdata,fd=6",
+      "-device",
+      "e1000,id=peer-nic,netdev=peerdata,mac=52:54:00:cc:00:01"
+    ],
+    "client": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-host-state-qemu-owuixmvk/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-host-state-qemu-owuixmvk/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.host_state_test=1 rustusb.role=client rustusb.operation=release rustusb.mode=unlink rustusb.nonce=cr-v4-release-unlink",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-checked-release-release-unlink-final-v4-20261023/client-serial.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=control,fd=4",
+      "-device",
+      "e1000,id=control-nic,netdev=control,mac=52:54:00:00:00:62"
+    ]
+  },
+  "observed_guest_executable_sha256": {
+    "server": {
+      "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+      "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0",
+      "host-state-wire-probe": "5cc6234391253ca33af4880ec3b64b86ca1815b9ef14c7cfc9feaa2af1e9ca2b",
+      "usbfs-syscall-gate": "7847bb9f5dea6e7090daee6e4d5dbfc6df0d89f9e41f939f8ed9a10c385e1a31"
+    },
+    "client": {
+      "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+      "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0",
+      "host-state-wire-probe": "5cc6234391253ca33af4880ec3b64b86ca1815b9ef14c7cfc9feaa2af1e9ca2b",
+      "usbfs-syscall-gate": "7847bb9f5dea6e7090daee6e4d5dbfc6df0d89f9e41f939f8ed9a10c385e1a31"
+    }
+  },
+  "protocol_probe_cases": [
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "import_identity",
+      "result": "PASS",
+      "elapsed_ns": 1339516641
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "syscall_entry_held",
+      "result": "PASS",
+      "elapsed_ns": 1606125093
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "queued_cancel_worker_witness",
+      "result": "PASS",
+      "elapsed_ns": 1758124436,
+      "unlink_status": -104
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "dependent_request_waits",
+      "result": "PASS",
+      "elapsed_ns": 2014172857
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "active_completion_wins",
+      "result": "PASS",
+      "elapsed_ns": 2233790286,
+      "submit_status": -22,
+      "actual_length": 0,
+      "unlink_status": 0
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "new_empty_endpoint_map",
+      "result": "PASS",
+      "elapsed_ns": 2390151830,
+      "status": -32,
+      "actual_length": 0
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "same_connection_health",
+      "result": "PASS",
+      "elapsed_ns": 2550180667,
+      "configuration": 1,
+      "alternate": 0
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "original_state_restored",
+      "result": "PASS",
+      "elapsed_ns": 2668161544
+    },
+    {
+      "event": "host_state_probe_case",
+      "operation": "release",
+      "mode": "unlink",
+      "nonce": "cr-v4-release-unlink",
+      "case": "bounded_server_shutdown",
+      "result": "PASS",
+      "elapsed_ns": 2824479645
+    }
+  ],
+  "protocol_probe_result": {
+    "event": "host_state_probe_result",
+    "operation": "release",
+    "mode": "unlink",
+    "nonce": "cr-v4-release-unlink",
+    "result": "PASS",
+    "cases": 9,
+    "elapsed_ns": 2824491969
+  },
+  "server_events": [
+    {
+      "address": "192.0.2.1:3240",
+      "event": "ready",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 0,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "snapshot-1",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 0,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "snapshot-2",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 256,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 0,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "snapshot-3",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 640,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 1,
+              "errors": 1,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 1
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "snapshot-4",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 640,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 1,
+              "errors": 1,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 1
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "snapshot-5",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 2,
+              "bytes_out": 0,
+              "controls": 4,
+              "errors": 3,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 2
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "snapshot-6",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 2,
+              "bytes_out": 0,
+              "controls": 4,
+              "errors": 3,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 2
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "ack",
+      "id": "stop",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "stopped",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 2,
+              "bytes_out": 0,
+              "controls": 4,
+              "errors": 3,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 2
+          }
+        ],
+        "schema_version": 1
+      }
+    }
+  ],
+  "server_observations": [
+    {
+      "label": "baseline",
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 0,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      },
+      "sysfs": {
+        "generation": "23:24606",
+        "configuration": 1,
+        "interfaces": [
+          {
+            "number": 0,
+            "driver": "cdc_ether",
+            "alternate": 0
+          },
+          {
+            "number": 1,
+            "driver": "cdc_ether",
+            "alternate": 1
+          }
+        ]
+      }
+    },
+    {
+      "label": "held",
+      "snapshot": {
+        "buffer_bytes_reserved": 256,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 0,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      },
+      "sysfs": {
+        "generation": "23:24606",
+        "configuration": 1,
+        "interfaces": [
+          {
+            "number": 0,
+            "driver": "usbfs",
+            "alternate": 0
+          },
+          {
+            "number": 1,
+            "driver": "usbfs",
+            "alternate": 1
+          }
+        ]
+      }
+    },
+    {
+      "label": "witness",
+      "snapshot": {
+        "buffer_bytes_reserved": 640,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 1,
+              "errors": 1,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 1
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      },
+      "sysfs": {
+        "generation": "23:24606",
+        "configuration": 1,
+        "interfaces": [
+          {
+            "number": 0,
+            "driver": "usbfs",
+            "alternate": 0
+          },
+          {
+            "number": 1,
+            "driver": "usbfs",
+            "alternate": 1
+          }
+        ]
+      }
+    },
+    {
+      "label": "release-fault",
+      "snapshot": {
+        "buffer_bytes_reserved": 640,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 1,
+              "errors": 1,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 1
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              },
+              {
+                "driver": "usbfs",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      },
+      "sysfs": {
+        "generation": "23:24606",
+        "configuration": 1,
+        "interfaces": [
+          {
+            "number": 0,
+            "driver": null,
+            "alternate": 0
+          },
+          {
+            "number": 1,
+            "driver": "usbfs",
+            "alternate": 1
+          }
+        ]
+      }
+    },
+    {
+      "label": "restored",
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 2,
+              "bytes_out": 0,
+              "controls": 4,
+              "errors": 3,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 2
+          }
+        ],
+        "schema_version": 1
+      },
+      "sysfs": {
+        "generation": "23:24606",
+        "configuration": 1,
+        "interfaces": [
+          {
+            "number": 0,
+            "driver": "cdc_ether",
+            "alternate": 0
+          },
+          {
+            "number": 1,
+            "driver": "cdc_ether",
+            "alternate": 1
+          }
+        ]
+      }
+    },
+    {
+      "label": "stopped",
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 1,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 2,
+              "bytes_out": 0,
+              "controls": 4,
+              "errors": 3,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 1,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "device_id": "usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "cdc_ether",
+                "interface": 0
+              },
+              {
+                "driver": "cdc_ether",
+                "interface": 1
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 2
+          }
+        ],
+        "schema_version": 1
+      },
+      "sysfs": {
+        "generation": "23:24606",
+        "configuration": 1,
+        "interfaces": [
+          {
+            "number": 0,
+            "driver": "cdc_ether",
+            "alternate": 0
+          },
+          {
+            "number": 1,
+            "driver": "cdc_ether",
+            "alternate": 1
+          }
+        ]
+      }
+    }
+  ],
+  "tracer_events": [
+    {
+      "schema_version": 1,
+      "event": "start",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3170444348,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "event": "launcher_exec",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3170555837,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "event": "ready",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3171342967,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3172149984,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 288
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3172208464,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 289
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3173392930,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 290
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3173642359,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 291
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3174628363,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 292
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3174901105,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 293
+    },
+    {
+      "schema_version": 1,
+      "event": "thread_clone",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3175090341,
+      "mutation_counts": {
+        "claim": 0,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "new_tid": 294
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 3996442452,
+      "mutation_counts": {
+        "claim": 1,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4001920680,
+      "mutation_counts": {
+        "claim": 1,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4003387086,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4003398748,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 0,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2148029700,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4003437381,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "alternate"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "",
+      "operation": "",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2148029700,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4003883078,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "alternate",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "armed",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 0,
+      "fd": -1,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4005268332,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 0,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4020387002,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release"
+    },
+    {
+      "schema_version": 1,
+      "event": "held",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": true,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4020436355,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "event": "released",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": true,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4878926687,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4878945452,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release",
+      "return_value": -22,
+      "is_error": true
+    },
+    {
+      "schema_version": 1,
+      "event": "exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4878968996,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release",
+      "return_value": -22,
+      "is_error": true
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4879067311,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 2,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4879458596,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 2,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4881266215,
+      "mutation_counts": {
+        "claim": 3,
+        "release": 2,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4881280532,
+      "mutation_counts": {
+        "claim": 3,
+        "release": 2,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4883027295,
+      "mutation_counts": {
+        "claim": 4,
+        "release": 2,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2164806939,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4883034910,
+      "mutation_counts": {
+        "claim": 4,
+        "release": 2,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5215791675,
+      "mutation_counts": {
+        "claim": 4,
+        "release": 3,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5218032577,
+      "mutation_counts": {
+        "claim": 4,
+        "release": 3,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5218111115,
+      "mutation_counts": {
+        "claim": 4,
+        "release": 4,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5218120653,
+      "mutation_counts": {
+        "claim": 4,
+        "release": 4,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767567,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5220571229,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 4,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767567,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5220591277,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 4,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "claim",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2148029700,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5220639047,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 4,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "alternate"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2148029700,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5221511998,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 4,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "alternate",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5221570307,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": 10,
+      "request": 2147767568,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5222487852,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 0
+      },
+      "mutation": "release",
+      "return_value": 0,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_entry",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 3222295826,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5222725909,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "mutation": "driver"
+    },
+    {
+      "schema_version": 1,
+      "event": "ioctl_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 3222295826,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5226852135,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "mutation": "driver",
+      "return_value": 1,
+      "is_error": false
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 293,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5334385794,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5334443813,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 290,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5334497253,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 289,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5334517572,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 294,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5335177232,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 292,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5335267742,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 288,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5335270197,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "tracee_exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5335276639,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "exit_code": 0,
+      "signal": 0
+    },
+    {
+      "schema_version": 1,
+      "event": "finished",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 287,
+      "fd": -1,
+      "request": 0,
+      "held": false,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 5335277881,
+      "mutation_counts": {
+        "claim": 5,
+        "release": 5,
+        "configuration": 0,
+        "alternate": 2,
+        "clear": 0,
+        "driver": 1
+      },
+      "tracee_exit_code": 0,
+      "ptrace_stops": 5781
+    }
+  ],
+  "tracer_beacons": {
+    "ready": {
+      "schema_version": 1,
+      "event": "ready",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "uid": 1000,
+      "gid": 1000,
+      "cap_effective": 0,
+      "cap_permitted": 0,
+      "cap_ambient": 0,
+      "cap_inheritable": 0,
+      "monotonic_ns": 3171332658
+    },
+    "held": {
+      "schema_version": 1,
+      "event": "held",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4020420315,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      }
+    },
+    "exit": {
+      "schema_version": 1,
+      "event": "exit",
+      "nonce": "cr-v4-release-unlink",
+      "operation": "release",
+      "tracer_pid": 284,
+      "tracee_pid": 287,
+      "tracee_starttime": 317,
+      "tid": 291,
+      "fd": 10,
+      "request": 2147767568,
+      "node_device": 5,
+      "node_inode": 159,
+      "node_rdev": 48385,
+      "monotonic_ns": 4878959909,
+      "mutation_counts": {
+        "claim": 2,
+        "release": 1,
+        "configuration": 0,
+        "alternate": 1,
+        "clear": 0,
+        "driver": 0
+      },
+      "return_value": -22,
+      "is_error": true
+    }
+  },
+  "source_fingerprint_after_sha256": "d502e1b33f14c03cd37a91dc967ca47a1c35fd6b8b09ac1a3511b0a4d2ffafc4",
+  "binary_after_sha256": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "pass_markers_verified": true,
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "server_checks": [
+    "RUSTUSB_HOST_STATE_BOOT role=server operation=release mode=unlink nonce=cr-v4-release-unlink kernel=6.8.0-106-generic",
+    "RUSTUSB_HOST_STATE_PEER_QUIET: PASS interface=eth1 down=true",
+    "RUSTUSB_HOST_STATE_MANAGEMENT_READY: PASS role=server interface=eth0 carrier=1 attempts=42",
+    "RUSTUSB_HOST_STATE_ISOLATION: PASS role=server ip_forward=0 native_usb_modules=false",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_BEGIN",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_END",
+    "RUSTUSB_HOST_STATE_ORIGINAL: PASS config=1 interfaces=2 alt0=0 alt1=1 drivers=cdc_ether node=root0600 direct_open=denied",
+    "RUSTUSB_HOST_STATE_UID_GATE: PASS allowed_uid=1000 denied_uid=1001 peer_verified=true",
+    "RUSTUSB_HOST_STATE_SERVER_UID: PASS uid=1000 capabilities=0 tracer_root=true helper_separate=true",
+    "RUSTUSB_HOST_STATE_RPC command=ARM nonce=cr-v4-release-unlink",
+    "RUSTUSB_HOST_STATE_RPC command=HELD nonce=cr-v4-release-unlink",
+    "RUSTUSB_HOST_STATE_HELD: PASS syscall_entry=true kernel_handler_active_unproven=true pending=1 budget=256",
+    "RUSTUSB_HOST_STATE_RPC command=WITNESS nonce=cr-v4-release-unlink",
+    "RUSTUSB_HOST_STATE_WITNESS: PASS pending=2 budget=640 dependent_deferred=true",
+    "RUSTUSB_HOST_STATE_RPC command=RELEASE nonce=cr-v4-release-unlink",
+    "RUSTUSB_HOST_STATE_RELEASE_FAULT: PASS action=guest_root_usbfs_unbind interface=0 bus=1-1 generation_unchanged=true fd_unchanged=true if0_none=true if1_usbfs=true budget_unchanged=true",
+    "RUSTUSB_HOST_STATE_EXIT: PASS operation=release retval=-22 untouched=true",
+    "RUSTUSB_HOST_STATE_RPC command=RESTORED nonce=cr-v4-release-unlink",
+    "RUSTUSB_HOST_STATE_RESTORED: PASS original_config_alt_drivers=true pending=0 queued=0 inflight=0 budget=0",
+    "RUSTUSB_HOST_STATE_RPC command=DONE nonce=cr-v4-release-unlink",
+    "RUSTUSB_HOST_STATE_STOPPED: PASS ordinary_server_exit=0 tracer_exit=0 restored=true",
+    "RUSTUSB_HOST_STATE_OBSERVATIONS_BEGIN",
+    "RUSTUSB_HOST_STATE_OBSERVATIONS_END",
+    "RUSTUSB_HOST_STATE_EVENTS_BEGIN",
+    "RUSTUSB_HOST_STATE_EVENTS_END",
+    "RUSTUSB_HOST_STATE_TRACE_BEGIN",
+    "RUSTUSB_HOST_STATE_TRACE_END",
+    "RUSTUSB_HOST_STATE_BEACONS_BEGIN",
+    "RUSTUSB_HOST_STATE_BEACONS_END",
+    "RUSTUSB_HOST_STATE_STDERR_BEGIN",
+    "RUSTUSB_HOST_STATE_STDERR_END",
+    "RUSTUSB_HOST_STATE_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_HOST_STATE_BOOT role=client operation=release mode=unlink nonce=cr-v4-release-unlink kernel=6.8.0-106-generic",
+    "RUSTUSB_HOST_STATE_MANAGEMENT_READY: PASS role=client interface=eth0 carrier=1 attempts=42",
+    "RUSTUSB_HOST_STATE_ISOLATION: PASS role=client ip_forward=0 native_usb_modules=false",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_BEGIN",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_END",
+    "RUSTUSB_HOST_STATE_PROBE_UID: PASS uid=1000",
+    "RUSTUSB_HOST_STATE_RESULT: PASS role=client"
+  ]
+}
