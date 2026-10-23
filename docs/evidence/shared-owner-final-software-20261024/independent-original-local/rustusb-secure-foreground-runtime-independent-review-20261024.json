@@ -1,0 +1,686 @@
+{
+  "schema_version": 1,
+  "review_kind": "Independent raw parsing plus separately labelled source-linked runtime assertions",
+  "source_root": "/tmp/rustusb-secure-foreground-tests-iyGrsz",
+  "head_at_review": "4d700c22754fc5e4efb37fee391e00ff340d5829",
+  "worktree_scope": "dirty candidate; full software gate still running when review requested",
+  "raw_artifacts_before": {
+    "blocked-deadline/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "blocked-deadline/events-consumed.json": {
+      "bytes": 4403,
+      "sha256": "5fdf12035262983c160ffaa607c148fcd1003f3df98df3fdab458ee49d54ac29"
+    },
+    "blocked-deadline/stderr.log": {
+      "bytes": 55,
+      "sha256": "a3819b52ca2cba844dd6ec03df8383de8ec5513e569ae143a58e292f53fcc03d"
+    },
+    "blocked-deadline/stdout-consumed.log": {
+      "bytes": 2734,
+      "sha256": "38a24b601b61039abaccee63cb838d3da593b873f3264770b579a9e6e99cb365"
+    },
+    "blocked-deadline/summary.json": {
+      "bytes": 509,
+      "sha256": "ac918045364cb0e3fd9ef36ec1da22021f01afe8205cbfe1ea7f53be14556fae"
+    },
+    "blocked-int/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "blocked-int/events-consumed.json": {
+      "bytes": 4403,
+      "sha256": "0f78bc84bcef21beea989d7455c7f56b03e7721bdd06a0617ffff7e81b108413"
+    },
+    "blocked-int/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "blocked-int/stdout-consumed.log": {
+      "bytes": 2734,
+      "sha256": "8e2b5459b1bca6414759c4110453c72916f833978cd34455d7452148b1546c2a"
+    },
+    "blocked-int/summary.json": {
+      "bytes": 504,
+      "sha256": "ca20684860628116b467252a5d71dfddecaba7b55c48b28b3fded5f8bd5f9dc6"
+    },
+    "blocked-term/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "blocked-term/events-consumed.json": {
+      "bytes": 4403,
+      "sha256": "8dca5297f112043a6a44e8fcb45d0efeca7ba301463aa3823976be09ec316b09"
+    },
+    "blocked-term/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "blocked-term/stdout-consumed.log": {
+      "bytes": 2734,
+      "sha256": "54d8c3d3602643fd07f8ff3872e342e0c616d3db2627e832e9b5ab437a892227"
+    },
+    "blocked-term/summary.json": {
+      "bytes": 505,
+      "sha256": "17efa199f43758945fc013baf73cae1d3603b3928f67f62e7f1520e26cad1ef8"
+    },
+    "ready-int/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "ready-int/events-consumed.json": {
+      "bytes": 6657,
+      "sha256": "aec14c723cbd658a548c9a19fb5703b7c5edf1fcc824b5cb3be94429e717960b"
+    },
+    "ready-int/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ready-int/stdout-consumed.log": {
+      "bytes": 4076,
+      "sha256": "077a423abb715e732ec1169e96cb726e43a761d15d752f1cd2c404a1fb86ea60"
+    },
+    "ready-int/summary.json": {
+      "bytes": 2783,
+      "sha256": "91782a5818c47092185ea1b2f1df72b8a072f766b9dae6a4ea9fe9f39cc00ead"
+    },
+    "ready-term/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "ready-term/events-consumed.json": {
+      "bytes": 6657,
+      "sha256": "3fa3189f8b815966d5121b998413d8be4bd1e93e606ad7b60e87542ef3a3f15c"
+    },
+    "ready-term/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ready-term/stdout-consumed.log": {
+      "bytes": 4076,
+      "sha256": "c21b23f312513257fa54aabd95d7475acdb6fee67ae3de234da6af6704514d57"
+    },
+    "ready-term/summary.json": {
+      "bytes": 2784,
+      "sha256": "d6da48143a69438869fcfff740ed9a3bfc5d169da45c3f66c6ec949ead9cd44b"
+    },
+    "summary.json": {
+      "bytes": 8265,
+      "sha256": "71da5b17d2ee58182997b115e7e2548ca48f4b62411ace0ce40b0e42d1811285"
+    }
+  },
+  "sources_before": {
+    "crates/rustusb-cli/src/secure_foreground_tests.rs": {
+      "bytes": 24748,
+      "sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+    },
+    "crates/rustusb-cli/src/foreground.rs": {
+      "bytes": 6074,
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82"
+    },
+    "crates/rustusb-service/src/foreground.rs": {
+      "bytes": 14752,
+      "sha256": "9bcb5d683e3750405e776ec45cc0094a1cb31fef9ad6684f31b7185ee7e760f9"
+    },
+    "crates/rustusb-service/src/jobs/native.rs": {
+      "bytes": 43079,
+      "sha256": "6e193185bb10b2811bdc3f063c16df066157e9e5d02de9cb437b4d4d7e3aa7b5"
+    }
+  },
+  "cases": [
+    {
+      "case": "ready-int",
+      "result": "PASS",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.006397316,
+      "pending_profiles": 2,
+      "raw_event_order": [
+        "ready",
+        "snapshot",
+        "stopped"
+      ],
+      "tls_closures": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "actual_cleanup_snapshot_observed": true,
+      "blocked_writer_task": null
+    },
+    {
+      "case": "ready-term",
+      "result": "PASS",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.006592468,
+      "pending_profiles": 2,
+      "raw_event_order": [
+        "ready",
+        "snapshot",
+        "stopped"
+      ],
+      "tls_closures": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "actual_cleanup_snapshot_observed": true,
+      "blocked_writer_task": null
+    },
+    {
+      "case": "blocked-int",
+      "result": "PASS",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.006347389,
+      "pending_profiles": 2,
+      "raw_event_order": [
+        "ready",
+        "snapshot"
+      ],
+      "tls_closures": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "actual_cleanup_snapshot_observed": false,
+      "blocked_writer_task": "2180435"
+    },
+    {
+      "case": "blocked-term",
+      "result": "PASS",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.005414807,
+      "pending_profiles": 2,
+      "raw_event_order": [
+        "ready",
+        "snapshot"
+      ],
+      "tls_closures": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "actual_cleanup_snapshot_observed": false,
+      "blocked_writer_task": "2180442"
+    },
+    {
+      "case": "blocked-deadline",
+      "result": "PASS",
+      "actual_exit": 1,
+      "elapsed_seconds": 5.004280458,
+      "pending_profiles": 2,
+      "raw_event_order": [
+        "ready",
+        "snapshot"
+      ],
+      "tls_closures": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "actual_cleanup_snapshot_observed": false,
+      "blocked_writer_task": "2180453"
+    }
+  ],
+  "checks": [
+    {
+      "id": "top_exact_five_case_identity",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "summary.json"
+    },
+    {
+      "id": "artifact_inventory_exact",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "26 exact expected artifacts; no key/certificate/config evidence files"
+    },
+    {
+      "id": "ready-int.summary_index_identity",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-int/summary.json vs top index"
+    },
+    {
+      "id": "ready-int.raw_stdout_equals_event_artifact",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-int/stdout-consumed.log and events-consumed.json parsed independently"
+    },
+    {
+      "id": "ready-int.actual_ready_loopback",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-int/stdout-consumed.log ready"
+    },
+    {
+      "id": "ready-int.actual_nonempty_pending_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-int/before.json + raw snapshot: exact profiles, sessions_started/control1, leased/config1/pending1 each, queues0"
+    },
+    {
+      "id": "ready-int.summary_tls_pending_in_and_closure",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "ready-int/summary.json; socket observations recorded by test parent"
+    },
+    {
+      "id": "ready-int.actual_wait_and_deadline",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "ready-int/summary.json actual wait status/elapsed"
+    },
+    {
+      "id": "ready-int.actual_stopped_resources",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-int/raw stopped: same2 profiles/sessions_started1/control1, no leases/pending/config/queues"
+    },
+    {
+      "id": "ready-int.exact_stderr",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-int/stderr.log"
+    },
+    {
+      "id": "ready-term.summary_index_identity",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-term/summary.json vs top index"
+    },
+    {
+      "id": "ready-term.raw_stdout_equals_event_artifact",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-term/stdout-consumed.log and events-consumed.json parsed independently"
+    },
+    {
+      "id": "ready-term.actual_ready_loopback",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-term/stdout-consumed.log ready"
+    },
+    {
+      "id": "ready-term.actual_nonempty_pending_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-term/before.json + raw snapshot: exact profiles, sessions_started/control1, leased/config1/pending1 each, queues0"
+    },
+    {
+      "id": "ready-term.summary_tls_pending_in_and_closure",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "ready-term/summary.json; socket observations recorded by test parent"
+    },
+    {
+      "id": "ready-term.actual_wait_and_deadline",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "ready-term/summary.json actual wait status/elapsed"
+    },
+    {
+      "id": "ready-term.actual_stopped_resources",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-term/raw stopped: same2 profiles/sessions_started1/control1, no leases/pending/config/queues"
+    },
+    {
+      "id": "ready-term.exact_stderr",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "ready-term/stderr.log"
+    },
+    {
+      "id": "blocked-int.summary_index_identity",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-int/summary.json vs top index"
+    },
+    {
+      "id": "blocked-int.raw_stdout_equals_event_artifact",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-int/stdout-consumed.log and events-consumed.json parsed independently"
+    },
+    {
+      "id": "blocked-int.actual_ready_loopback",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-int/stdout-consumed.log ready"
+    },
+    {
+      "id": "blocked-int.actual_nonempty_pending_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-int/before.json + raw snapshot: exact profiles, sessions_started/control1, leased/config1/pending1 each, queues0"
+    },
+    {
+      "id": "blocked-int.summary_tls_pending_in_and_closure",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "blocked-int/summary.json; socket observations recorded by test parent"
+    },
+    {
+      "id": "blocked-int.actual_wait_and_deadline",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "blocked-int/summary.json actual wait status/elapsed"
+    },
+    {
+      "id": "blocked-int.full_pipe_and_writer_record",
+      "result": "PASS",
+      "kind": "source_linked_runtime_assertion",
+      "evidence": "blocked-int/summary.json; source enforces EAGAIN/FIONREAD/pipe_write and independent OFD flags before building record"
+    },
+    {
+      "id": "blocked-int.no_drain_no_cleanup_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-int/raw stdout stops before fill; Output.frozen source rejects subsequent reads; summary does not claim backend restoration"
+    },
+    {
+      "id": "blocked-int.exact_stderr",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-int/stderr.log"
+    },
+    {
+      "id": "blocked-term.summary_index_identity",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-term/summary.json vs top index"
+    },
+    {
+      "id": "blocked-term.raw_stdout_equals_event_artifact",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-term/stdout-consumed.log and events-consumed.json parsed independently"
+    },
+    {
+      "id": "blocked-term.actual_ready_loopback",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-term/stdout-consumed.log ready"
+    },
+    {
+      "id": "blocked-term.actual_nonempty_pending_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-term/before.json + raw snapshot: exact profiles, sessions_started/control1, leased/config1/pending1 each, queues0"
+    },
+    {
+      "id": "blocked-term.summary_tls_pending_in_and_closure",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "blocked-term/summary.json; socket observations recorded by test parent"
+    },
+    {
+      "id": "blocked-term.actual_wait_and_deadline",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "blocked-term/summary.json actual wait status/elapsed"
+    },
+    {
+      "id": "blocked-term.full_pipe_and_writer_record",
+      "result": "PASS",
+      "kind": "source_linked_runtime_assertion",
+      "evidence": "blocked-term/summary.json; source enforces EAGAIN/FIONREAD/pipe_write and independent OFD flags before building record"
+    },
+    {
+      "id": "blocked-term.no_drain_no_cleanup_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-term/raw stdout stops before fill; Output.frozen source rejects subsequent reads; summary does not claim backend restoration"
+    },
+    {
+      "id": "blocked-term.exact_stderr",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-term/stderr.log"
+    },
+    {
+      "id": "blocked-deadline.summary_index_identity",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-deadline/summary.json vs top index"
+    },
+    {
+      "id": "blocked-deadline.raw_stdout_equals_event_artifact",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-deadline/stdout-consumed.log and events-consumed.json parsed independently"
+    },
+    {
+      "id": "blocked-deadline.actual_ready_loopback",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-deadline/stdout-consumed.log ready"
+    },
+    {
+      "id": "blocked-deadline.actual_nonempty_pending_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-deadline/before.json + raw snapshot: exact profiles, sessions_started/control1, leased/config1/pending1 each, queues0"
+    },
+    {
+      "id": "blocked-deadline.summary_tls_pending_in_and_closure",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "blocked-deadline/summary.json; socket observations recorded by test parent"
+    },
+    {
+      "id": "blocked-deadline.actual_wait_and_deadline",
+      "result": "PASS",
+      "kind": "runtime_observation_record",
+      "evidence": "blocked-deadline/summary.json actual wait status/elapsed"
+    },
+    {
+      "id": "blocked-deadline.full_pipe_and_writer_record",
+      "result": "PASS",
+      "kind": "source_linked_runtime_assertion",
+      "evidence": "blocked-deadline/summary.json; source enforces EAGAIN/FIONREAD/pipe_write and independent OFD flags before building record"
+    },
+    {
+      "id": "blocked-deadline.no_drain_no_cleanup_snapshot",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-deadline/raw stdout stops before fill; Output.frozen source rejects subsequent reads; summary does not claim backend restoration"
+    },
+    {
+      "id": "blocked-deadline.exact_stderr",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "blocked-deadline/stderr.log"
+    },
+    {
+      "id": "source.actual_adapter_and_test_only_marker",
+      "result": "PASS",
+      "kind": "source",
+      "evidence": "secure_foreground_tests.rs exact reviewed source"
+    },
+    {
+      "id": "source.retained_no_drain_and_real_wchan",
+      "result": "PASS",
+      "kind": "source",
+      "evidence": "test source uses independent OFD; does not set O_NONBLOCK on inherited writer"
+    },
+    {
+      "id": "source.real_pending_read_assertion",
+      "result": "PASS",
+      "kind": "source",
+      "evidence": "real TLS IN noncompletion asserted by parent; no independent per-URB trace retained"
+    },
+    {
+      "id": "source.no_retry_and_no_secret_evidence",
+      "result": "PASS",
+      "kind": "source",
+      "evidence": "failure terminates matrix, temporary private DER not copied to retained directory"
+    },
+    {
+      "id": "source.native_root_fixture_revision",
+      "result": "PASS",
+      "kind": "source",
+      "evidence": "root-only correction of two author test-key constructors; no new author source write"
+    },
+    {
+      "id": "raw_bytes_unchanged",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "all26 artifacts rehashed after parsing"
+    },
+    {
+      "id": "source_bytes_unchanged",
+      "result": "PASS",
+      "kind": "direct_raw",
+      "evidence": "four source files rehashed; reviewer made no source writes"
+    }
+  ],
+  "raw_artifacts_after": {
+    "blocked-deadline/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "blocked-deadline/events-consumed.json": {
+      "bytes": 4403,
+      "sha256": "5fdf12035262983c160ffaa607c148fcd1003f3df98df3fdab458ee49d54ac29"
+    },
+    "blocked-deadline/stderr.log": {
+      "bytes": 55,
+      "sha256": "a3819b52ca2cba844dd6ec03df8383de8ec5513e569ae143a58e292f53fcc03d"
+    },
+    "blocked-deadline/stdout-consumed.log": {
+      "bytes": 2734,
+      "sha256": "38a24b601b61039abaccee63cb838d3da593b873f3264770b579a9e6e99cb365"
+    },
+    "blocked-deadline/summary.json": {
+      "bytes": 509,
+      "sha256": "ac918045364cb0e3fd9ef36ec1da22021f01afe8205cbfe1ea7f53be14556fae"
+    },
+    "blocked-int/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "blocked-int/events-consumed.json": {
+      "bytes": 4403,
+      "sha256": "0f78bc84bcef21beea989d7455c7f56b03e7721bdd06a0617ffff7e81b108413"
+    },
+    "blocked-int/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "blocked-int/stdout-consumed.log": {
+      "bytes": 2734,
+      "sha256": "8e2b5459b1bca6414759c4110453c72916f833978cd34455d7452148b1546c2a"
+    },
+    "blocked-int/summary.json": {
+      "bytes": 504,
+      "sha256": "ca20684860628116b467252a5d71dfddecaba7b55c48b28b3fded5f8bd5f9dc6"
+    },
+    "blocked-term/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "blocked-term/events-consumed.json": {
+      "bytes": 4403,
+      "sha256": "8dca5297f112043a6a44e8fcb45d0efeca7ba301463aa3823976be09ec316b09"
+    },
+    "blocked-term/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "blocked-term/stdout-consumed.log": {
+      "bytes": 2734,
+      "sha256": "54d8c3d3602643fd07f8ff3872e342e0c616d3db2627e832e9b5ab437a892227"
+    },
+    "blocked-term/summary.json": {
+      "bytes": 505,
+      "sha256": "17efa199f43758945fc013baf73cae1d3603b3928f67f62e7f1520e26cad1ef8"
+    },
+    "ready-int/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "ready-int/events-consumed.json": {
+      "bytes": 6657,
+      "sha256": "aec14c723cbd658a548c9a19fb5703b7c5edf1fcc824b5cb3be94429e717960b"
+    },
+    "ready-int/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ready-int/stdout-consumed.log": {
+      "bytes": 4076,
+      "sha256": "077a423abb715e732ec1169e96cb726e43a761d15d752f1cd2c404a1fb86ea60"
+    },
+    "ready-int/summary.json": {
+      "bytes": 2783,
+      "sha256": "91782a5818c47092185ea1b2f1df72b8a072f766b9dae6a4ea9fe9f39cc00ead"
+    },
+    "ready-term/before.json": {
+      "bytes": 2117,
+      "sha256": "2b0b89e1cb46dd5f47594b46f0a25f1e466d7c5e590cb584d9293c9635265bb0"
+    },
+    "ready-term/events-consumed.json": {
+      "bytes": 6657,
+      "sha256": "3fa3189f8b815966d5121b998413d8be4bd1e93e606ad7b60e87542ef3a3f15c"
+    },
+    "ready-term/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ready-term/stdout-consumed.log": {
+      "bytes": 4076,
+      "sha256": "c21b23f312513257fa54aabd95d7475acdb6fee67ae3de234da6af6704514d57"
+    },
+    "ready-term/summary.json": {
+      "bytes": 2784,
+      "sha256": "d6da48143a69438869fcfff740ed9a3bfc5d169da45c3f66c6ec949ead9cd44b"
+    },
+    "summary.json": {
+      "bytes": 8265,
+      "sha256": "71da5b17d2ee58182997b115e7e2548ca48f4b62411ace0ce40b0e42d1811285"
+    }
+  },
+  "sources_after": {
+    "crates/rustusb-cli/src/secure_foreground_tests.rs": {
+      "bytes": 24748,
+      "sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+    },
+    "crates/rustusb-cli/src/foreground.rs": {
+      "bytes": 6074,
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82"
+    },
+    "crates/rustusb-service/src/foreground.rs": {
+      "bytes": 14752,
+      "sha256": "9bcb5d683e3750405e776ec45cc0094a1cb31fef9ad6684f31b7185ee7e760f9"
+    },
+    "crates/rustusb-service/src/jobs/native.rs": {
+      "bytes": 43079,
+      "sha256": "6e193185bb10b2811bdc3f063c16df066157e9e5d02de9cb437b4d4d7e3aa7b5"
+    }
+  },
+  "counts": {
+    "lifecycle_scenarios": 5,
+    "diagnostic_assertions": 52,
+    "passed": 52,
+    "failed": 0,
+    "usb_hardware_cases": 0
+  },
+  "result": "PASS_WITH_SCOPE_LIMITATIONS",
+  "scope_limitations": [
+    "Memory-DER cfg(test) child calls actual CLI adapter/shared virtual owner. It bypasses trusted root-owned configuration file loading, helper authorization, Native/USBFS kernel paths, and all real USB/hardware/QEMU.",
+    "Ready cleanup is directly visible in original stopped snapshots. Blocked cases have no stopped snapshot and independently retain that limitation: process wait/TLS socket closure alone is not a backend or physical restoration proof.",
+    "Full-pipe counts, writer TID, wait statuses/timings and TLS closures are parent runtime observation records backed by source assertions. No separate raw /proc wchan/fdinfo/FIONREAD dump, wire transcript, packet capture or per-child ELF/UID/caps inventory was retained; none is reconstructed retroactively.",
+    "Pending config1/lease1/pending1 per profile is directly present in original stdout; 40ms real IN noncompletion is enforced by test source and PASS outcome but no raw URB completion trace is retained.",
+    "Each process is launched as current_exe exact cfg(test) child in the reviewed source. Exact child ELF/source linkage belongs to root fullgate workflow evidence, not a per-child guard in this directory. Fullgate final success is not claimed while it is still running.",
+    "Five lifecycle scenarios and reviewer diagnostic assertions are not USB case counts or additional unit-test executions. Timeout elapsed includes bounded pipe setup; these five observations are not a benchmark.",
+    "Private keys remain only in automatically dropped private temporary credentials directory; no secret PKI JSON or private key bytes/hashes are copied into this review."
+  ],
+  "reviewer_actions": {
+    "repository_writes": false,
+    "cargo_build_cli_or_subprocess_test_runs": false,
+    "qemu_usb_modules_network_mutation": false,
+    "only_tmp_report_and_parser_written": true
+  },
+  "parser": {
+    "path": "/tmp/rustusb-secure-foreground-runtime-independent-review-20261024.py",
+    "bytes": 11293,
+    "sha256": "6f3f14760df421782ca29c33284c1afc0864b1695f79604f7901eef48adb0f3a"
+  }
+}

@@ -54,7 +54,11 @@ pub(super) async fn run(
         let selection = tokio::time::timeout(timeout, async {
             let selected = discover(&config, timeout).await?.into_iter()
                 .find(|entry| entry.device_key == config.device)
-                .ok_or_else(|| Error::Permission("configured remote device unavailable or unauthorized".into()))?;
+                .ok_or_else(|| Error::Permission(if context.is_foreground() {
+                    "configured remote device is unavailable or unauthorized"
+                } else {
+                    "configured remote device unavailable or unauthorized"
+                }.into()))?;
             rustusb_protocol::secure::import_device(connect(&config).await?, &selected).await
         });
         let (network, remote) = tokio::select! {

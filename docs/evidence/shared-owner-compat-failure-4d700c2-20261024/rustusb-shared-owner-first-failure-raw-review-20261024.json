@@ -1,0 +1,1988 @@
+{
+  "schema_version": 1,
+  "runtime_verdict": "FAIL",
+  "audit_status": "CONFIRMED_FAILURE_BOUNDARY",
+  "head": "4d700c22754fc5e4efb37fee391e00ff340d5829",
+  "scope": "Failure boundary only; not a full lifecycle acceptance. Raw parser author also reviewed/authored related harnesses; independent method, not independent reviewer identity.",
+  "limits": [
+    "Only one virtual/IPv4 run executed; other eight not executed.",
+    "Two connected/configured Native receipts are not completion of payload I/O or final cleanup.",
+    "No runner.verify/pcap_review, Cargo/QEMU/USB/device process invocation.",
+    "Actual guest0 indicates orderly collection/poweroff, not product/harness PASS.",
+    "No claim of unchanged contender kernel snapshot: native-after-contender artifact was not reached."
+  ],
+  "finding": "Foreground catalog-unavailable refusal text lost the word is; retained original fixed-string harness assertion aborts before native-after-contender/I/O. Product refusal was observed; lifecycle acceptance was not reached.",
+  "source_input_count": 154,
+  "artifact_count": 222,
+  "decoded_guest_artifacts": {
+    "server": 14,
+    "client": 36
+  },
+  "binary_sha256": {
+    "rustusb": "1df2e02617bc2997f9fc9f2d5d628812eff50444718ef59b5234f941ee912d64",
+    "rustusb-helper": "cc6525a4aa746fcfea5e05ee6a6cbc5975cf24bd82d13928da6e50a5fccb3c2a"
+  },
+  "connected_receipts": [
+    {
+      "channel_id": "6d32bd87-7cfd-4e17-85d2-d8874fea428c",
+      "kernel": {
+        "intent": {
+          "controller": {
+            "attribute_device": 23,
+            "attribute_inode": 24986,
+            "filesystem_device": 23,
+            "inode": 24966,
+            "path": "/sys/devices/platform/vhci_hcd.0"
+          },
+          "port": 0
+        },
+        "kernel_socket_inode": 1791,
+        "profile": {
+          "configuration": 1,
+          "interfaces": [
+            {
+              "alternate": 0,
+              "class": 3,
+              "number": 0,
+              "protocol": 1,
+              "subclass": 1
+            }
+          ]
+        },
+        "session": {
+          "local_bus_id": "1-1",
+          "local_device_address": 2,
+          "local_device_generation": {
+            "filesystem_device": 23,
+            "inode": 25585
+          },
+          "port": 0,
+          "product_id": 1,
+          "remote_device_id": 65537,
+          "status": 6,
+          "vendor_id": 4660
+        }
+      },
+      "target": {
+        "device_key": "virtual:hid",
+        "remote": {
+          "bus_id": "1-1",
+          "bus_number": 1,
+          "class": 0,
+          "configuration": 1,
+          "device_number": 1,
+          "device_version": 256,
+          "interfaces": [
+            {
+              "class": 3,
+              "protocol": 1,
+              "subclass": 1
+            }
+          ],
+          "num_configurations": 1,
+          "path": "/virtual/rustusb/1-1",
+          "product_id": 1,
+          "protocol": 0,
+          "speed": 2,
+          "subclass": 0,
+          "vendor_id": 4660
+        },
+        "server_id": "qemu-server"
+      }
+    },
+    {
+      "channel_id": "85760288-c792-46c4-8fa1-a73768f45d77",
+      "kernel": {
+        "intent": {
+          "controller": {
+            "attribute_device": 23,
+            "attribute_inode": 24986,
+            "filesystem_device": 23,
+            "inode": 24966,
+            "path": "/sys/devices/platform/vhci_hcd.0"
+          },
+          "port": 1
+        },
+        "kernel_socket_inode": 181,
+        "profile": {
+          "configuration": 1,
+          "interfaces": [
+            {
+              "alternate": 0,
+              "class": 2,
+              "number": 0,
+              "protocol": 0,
+              "subclass": 2
+            },
+            {
+              "alternate": 0,
+              "class": 10,
+              "number": 1,
+              "protocol": 0,
+              "subclass": 0
+            }
+          ]
+        },
+        "session": {
+          "local_bus_id": "1-2",
+          "local_device_address": 3,
+          "local_device_generation": {
+            "filesystem_device": 23,
+            "inode": 25794
+          },
+          "port": 1,
+          "product_id": 2,
+          "remote_device_id": 65538,
+          "status": 6,
+          "vendor_id": 4660
+        }
+      },
+      "target": {
+        "device_key": "virtual:cdc-acm",
+        "remote": {
+          "bus_id": "1-2",
+          "bus_number": 1,
+          "class": 239,
+          "configuration": 1,
+          "device_number": 2,
+          "device_version": 256,
+          "interfaces": [
+            {
+              "class": 2,
+              "protocol": 0,
+              "subclass": 2
+            },
+            {
+              "class": 10,
+              "protocol": 0,
+              "subclass": 0
+            }
+          ],
+          "num_configurations": 1,
+          "path": "/virtual/rustusb/1-2",
+          "product_id": 2,
+          "protocol": 1,
+          "speed": 2,
+          "subclass": 2,
+          "vendor_id": 4660
+        },
+        "server_id": "qemu-server"
+      }
+    }
+  ],
+  "preserved_kernel_warning_lines": {
+    "server": [],
+    "client": [
+      {
+        "line": 467,
+        "text": "[    3.995662] vhci_hcd: vhci_device speed not set"
+      },
+      {
+        "line": 469,
+        "text": "[    4.109655] vhci_hcd: vhci_device speed not set"
+      },
+      {
+        "line": 481,
+        "text": "[    4.451647] vhci_hcd: vhci_device speed not set"
+      },
+      {
+        "line": 483,
+        "text": "[    4.565660] vhci_hcd: vhci_device speed not set"
+      }
+    ]
+  },
+  "summary_sha256": "1cbc30107c93eddf0b6d65c6e88fad492bd9ecb1c6dd193c16fa9d5d11fb7ac0",
+  "checks": [
+    {
+      "name": "terminal_FAIL_exact_source_and_all_guards",
+      "passed": true
+    },
+    {
+      "name": "batch_first_failure_stopped_remaining",
+      "passed": true
+    },
+    {
+      "name": "source:Cargo.lock",
+      "passed": true
+    },
+    {
+      "name": "source:Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/agent.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/event_output.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/foreground.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/main.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/physical_server.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/secure_client.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/secure_server.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/shutdown_signals.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-cli/src/virtual_server.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-core/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-core/src/application.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-core/src/device_key.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-core/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-core/src/server_session.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/ancillary.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/broker.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/diagnostics.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/journal.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/journal_tracked_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/linux.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/main.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/native_channel.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/native_export.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/native_state.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/native_tracking.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/native_tracking_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/physical.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-daemon/src/physical_recovery.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-linux/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-linux/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-linux/tests/discovery.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-native/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-native/src/channel.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-native/src/channel_initial_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-native/src/diagnostics.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-native/src/export_channel.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-native/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-protocol/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-protocol/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-protocol/src/secure.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-protocol/src/server.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/counted.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/device.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/managed.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/monitor.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/physical.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/physical/observe.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/physical/safety.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/physical/worker.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/server.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/server_managed_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/session.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-rust-backend/src/wire.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/config.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/context.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/foreground.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/fs.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/ipc.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/jobs/client.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/jobs/io.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/jobs/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/jobs/native.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/jobs/rust_server.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/model.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/rpc.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/run_context.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/runtime.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/runtime_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-service/src/store.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/src/acl.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/src/config.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/src/config/platform/tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/src/tls.rs",
+      "passed": true
+    },
+    {
+      "name": "source:crates/rustusb-transport/src/tls/tests.rs",
+      "passed": true
+    },
+    {
+      "name": "source:scripts/qemu/guest-init.sh",
+      "passed": true
+    },
+    {
+      "name": "source:scripts/qemu/guest-secure-init.sh",
+      "passed": true
+    },
+    {
+      "name": "source:scripts/qemu/run-native-qemu.py",
+      "passed": true
+    },
+    {
+      "name": "source:scripts/qemu/run-physical-qemu.py",
+      "passed": true
+    },
+    {
+      "name": "source:scripts/qemu/run-secure-qemu.py",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/bulk.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/bulk_io.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/bulk_io_smol.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/bulk_io_tokio.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/buses.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/control.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/detach.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/detach_claim.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/list.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/examples/string_descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/bitset.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/device.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/error.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/io/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/io/read.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/io/write.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/maybe_future.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/device.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/events.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/webusb/device.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/webusb/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/webusb/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/webusb/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/device.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/platform/windows_winusb/util.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/transfer/buffer.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/transfer/control.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/transfer/internal.rs",
+      "passed": true
+    },
+    {
+      "name": "source:vendor/nusb/src/transfer/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:build.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:ca-public.der",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-evidence.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-payload-dependencies.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:certificate-generation.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-public.der",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-external.pcap",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-serial.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-public.der",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-qemu.stderr",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-serial.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:tool-versions.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-payload-dependencies.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-external.pcap",
+      "passed": true
+    },
+    {
+      "name": "artifact:kernel.config",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-qemu.stderr",
+      "passed": true
+    },
+    {
+      "name": "artifact:host-control.jsonl",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-evidence.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/random-ready.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/failure-native-channels.status.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/server.events",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/keys.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/failure-dmesg.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/rtc.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/clock-observation.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/failure-tcp.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/identity-server.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/executable-server.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/server.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/failure-physical-journal.status.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/server-config.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:server-artifacts/network.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/random-ready.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/attach-hid-1.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/executable-hid-1.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/client-hid-config.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/native-after-denied.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/identity-serial-1.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/failure-native-channels.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/identity-hid-1.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/failure-native-channels.status.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/helper.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/denied-request.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/keys.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/failure-dmesg.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/executable-helper.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/rtc.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/identity-helper.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/attach-hid-1.events",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/clock-observation.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/attach-serial-1.events",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/attach-serial-1.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/denied-response.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/client-serial-config.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/failure-tcp.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/failure-native-channels.read.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/failure-physical-journal.status.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/native-held-1.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/native-before-denied.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/contender-1.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/plaintext-6.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/channels-held-1.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/network.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/local-identities-1.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/helper-policy.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/catalog-initial.json",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/plaintext-4.log",
+      "passed": true
+    },
+    {
+      "name": "artifact:client-artifacts/executable-serial-1.txt",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/Cargo.lock",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/scripts/qemu/run-secure-qemu.py",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/scripts/qemu/run-physical-qemu.py",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/scripts/qemu/guest-secure-init.sh",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/scripts/qemu/run-native-qemu.py",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/scripts/qemu/guest-init.sh",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/bitset.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/maybe_future.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/error.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/device.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/transfer/control.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/transfer/internal.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/transfer/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/transfer/buffer.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/util.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/windows_winusb/device.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/events.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/macos_iokit/device.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/webusb/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/webusb/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/webusb/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/webusb/device.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/io/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/io/write.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/src/io/read.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/detach.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/bulk_io_smol.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/bulk.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/control.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/detach_claim.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/bulk_io_tokio.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/string_descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/bulk_io.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/list.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/vendor/nusb/examples/buses.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-linux/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-linux/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-linux/tests/discovery.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-native/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-native/src/diagnostics.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-native/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-native/src/export_channel.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-native/src/channel_initial_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-native/src/channel.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/secure_server.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/shutdown_signals.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/agent.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/foreground.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/physical_server.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/main.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/secure_client.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/virtual_server.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-cli/src/event_output.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-protocol/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-protocol/src/server.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-protocol/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-protocol/src/secure.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/src/tls.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/src/acl.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/src/config.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/src/config/platform/tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-transport/src/tls/tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/context.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/ipc.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/model.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/rpc.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/fs.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/runtime.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/store.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/foreground.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/config.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/runtime_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/run_context.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/jobs/rust_server.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/jobs/native.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/jobs/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/jobs/io.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-service/src/jobs/client.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-core/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-core/src/device_key.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-core/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-core/src/server_session.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-core/src/application.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/server.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/counted.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/session.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/wire.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/physical.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/server_managed_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/monitor.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/managed.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/device.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/physical/safety.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/physical/observe.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-rust-backend/src/physical/worker.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/native_export.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/physical_recovery.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/broker.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/native_tracking.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/native_state.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/native_channel.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/diagnostics.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/journal.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/journal_tracked_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/native_tracking_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/physical.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/linux.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/ancillary.rs",
+      "passed": true
+    },
+    {
+      "name": "artifact:source/crates/rustusb-daemon/src/main.rs",
+      "passed": true
+    },
+    {
+      "name": "base64:server/clock-observation.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/executable-server.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/failure-dmesg.log",
+      "passed": true
+    },
+    {
+      "name": "base64:server/failure-native-channels.status.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/failure-physical-journal.status.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/failure-tcp.log",
+      "passed": true
+    },
+    {
+      "name": "base64:server/identity-server.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/keys.json",
+      "passed": true
+    },
+    {
+      "name": "base64:server/network.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/random-ready.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/rtc.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:server/server-config.json",
+      "passed": true
+    },
+    {
+      "name": "base64:server/server.events",
+      "passed": true
+    },
+    {
+      "name": "base64:server/server.log",
+      "passed": true
+    },
+    {
+      "name": "server:all_original_frames",
+      "passed": true
+    },
+    {
+      "name": "server:explicit_guest_FAIL",
+      "passed": true
+    },
+    {
+      "name": "server:no_kernel_panic",
+      "passed": true
+    },
+    {
+      "name": "server:actualELF:executable-server.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/attach-hid-1.events",
+      "passed": true
+    },
+    {
+      "name": "base64:client/attach-hid-1.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/attach-serial-1.events",
+      "passed": true
+    },
+    {
+      "name": "base64:client/attach-serial-1.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/catalog-initial.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/channels-held-1.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/client-hid-config.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/client-serial-config.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/clock-observation.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/contender-1.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/denied-request.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/denied-response.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/executable-helper.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/executable-hid-1.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/executable-serial-1.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/failure-dmesg.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/failure-native-channels.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/failure-native-channels.read.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/failure-native-channels.status.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/failure-physical-journal.status.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/failure-tcp.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/helper-policy.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/helper.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/identity-helper.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/identity-hid-1.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/identity-serial-1.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/keys.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/local-identities-1.json",
+      "passed": true
+    },
+    {
+      "name": "base64:client/native-after-denied.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/native-before-denied.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/native-held-1.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/network.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/plaintext-4.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/plaintext-6.log",
+      "passed": true
+    },
+    {
+      "name": "base64:client/random-ready.txt",
+      "passed": true
+    },
+    {
+      "name": "base64:client/rtc.txt",
+      "passed": true
+    },
+    {
+      "name": "client:all_original_frames",
+      "passed": true
+    },
+    {
+      "name": "client:explicit_guest_FAIL",
+      "passed": true
+    },
+    {
+      "name": "client:no_kernel_panic",
+      "passed": true
+    },
+    {
+      "name": "client:actualELF:executable-helper.txt",
+      "passed": true
+    },
+    {
+      "name": "client:actualELF:executable-hid-1.txt",
+      "passed": true
+    },
+    {
+      "name": "client:actualELF:executable-serial-1.txt",
+      "passed": true
+    },
+    {
+      "name": "two_observed_legacy_schema1_records",
+      "passed": true
+    },
+    {
+      "name": "hid:one_connected_receipt_only",
+      "passed": true
+    },
+    {
+      "name": "hid:actual_full_journal_receipt",
+      "passed": true
+    },
+    {
+      "name": "serial:one_connected_receipt_only",
+      "passed": true
+    },
+    {
+      "name": "serial:actual_full_journal_receipt",
+      "passed": true
+    },
+    {
+      "name": "exact_mismatch_preserved",
+      "passed": true
+    },
+    {
+      "name": "source_confirms_original_text_contract",
+      "passed": true
+    },
+    {
+      "name": "after_contender_and_io_not_captured",
+      "passed": true
+    },
+    {
+      "name": "original_summary_unchanged",
+      "passed": true
+    }
+  ],
+  "checks_total": 447,
+  "checks_passed": 447,
+  "parser_sha256": "edd01eb376f5708eb667d2442360fb91bd73f04646b1d4cdfb89908466bade4f"
+}
