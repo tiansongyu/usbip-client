@@ -248,3 +248,9 @@
 - cfg(test)修订及原CI失败/定向31项日志提交37c2d61f84626329a4089524261ea60ae6299e64并push。root随后完整scripts/check.sh exit0，89/114/19共222项、0失败/忽略，96软件输入始终等于37c2d61且前后不变，pending docs dirty明确单列。release重新构建后CLI/helper哈希实际改变，root纠正派生复核中“应相同”的不当预期，按真实值记录；不将旧QEMU二进制重归新commit，本次test-only未重复USB矩阵。
 - 37c2d61最新CI39895914376实际四job均completed/success：22ARM120226207665、24ARM120226207837、22x86 120226207911、24x86 120226208020。root逐原生日志核版本/架构、31组结果89/114/19共222项0失败/忽略、两项4096B不drain背压和lease关闭；原4log+2API+manifest已存，汇总publication-native-fixture-20261023.json。较早6e809 CI3/1不改判。
 - 独立文档审查提出三处必须澄清，均已修正：-22/IF1/零SETCONFIG只针对release两项；各CI结果标精确提交；acceptance旧E15/192640c/22d历史描述不冒充当前，新增E22区分test-only后的软件与6e809 QEMU。准备最终文档证据提交与普通push；最终自身SHA和remote核验以实际Git历史为准，不造自引用。
+
+## 继续：Rust服务SIGTERM合作停止
+
+- 上一goal turn有实际进展：修复、验收及Native测试夹具修订均已提交。root重新读取完整原始需求/AGENTS/项目skill，核main cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd和SSH远端同SHA，开始时工作树clean。完整目标仍active，未缩为现有测试。
+- 源码确认两个Rust服务只select ctrl_c，main让服务拥有清理。并行只读设计产品signal入口、QEMU旧负向和本地child验收，未修改生产代码或执行新测试；方案见research/server-signal-shutdown-design.md，明确setup取消/提前注册、总await cleanup和SIGKILL能力边界。
+- 固定Tokio1.54.1线上三个docs页面工具访问失败，registry也无.cargo-checksum.json；改用实际缓存crate archive SHA核Cargo.lock package checksum，再逐bytes核两signal源码。未用其他版本代替、未复制上游实现或添加依赖。

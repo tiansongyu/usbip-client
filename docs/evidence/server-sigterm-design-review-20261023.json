@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "kind": "read_only_sigterm_design_review",
+  "at_utc": "2026-10-23T03:52:28.555213+00:00",
+  "git_head": "cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd",
+  "verdict": "APPROVE minimal design subject to the lifecycle boundaries below; no implementation or runtime test performed",
+  "no_repository_writes_or_builds": true,
+  "minimum_design": [
+    "Add private CLI ShutdownSignals behind the existing rust-backend feature. On Unix, new synchronously creates Tokio signal(SignalKind::interrupt()) and signal(SignalKind::terminate()) inside the already-running Tokio runtime. Return I/O registration errors before helper communication, capability handoff or listener bind.",
+    "Hold the ShutdownSignals local in the outer run scope through setup, operations, awaited server.shutdown and the final event. recv selects the two owned Signal::recv futures and maps an unexpected None to a contextual I/O error. Do not respawn a ctrl_c future or reinstall signal streams each loop.",
+    "Physical pure selection/config validation may happen before registration. EventOutput::new must succeed before bind_physical. Cancel a prepare future containing Status, OpenPhysical/FD transfer and PhysicalBackend::from_sources on a shutdown signal; those phases have no listener, IMPORT, interface claim or driver detach.",
+    "Use a signal-first biased select for cancellable prepare so a pending signal prevents beginning the next side-effecting stage. Finish preparation without any listener in the result. Avoid an outer select over run or over a future that can already produce/start a ServerHandle.",
+    "Await the small SocketAddr listener bind step directly. Once it succeeds, establish the cleanup fence immediately: all event/control errors are stored as the operation result, then server.shutdown is always awaited exactly once. A pending setup signal is then observed by the operations selection and closes the newly obtained server through the same fence.",
+    "A second SIGINT/SIGTERM during cleanup is captured by the retained Tokio registrations and must not cancel or replace the shutdown future. No escalation-on-second-signal behavior in this change.",
+    "Return a cleanup error before an operation/output error. Optionally record the secondary bounded operation error through tracing if both fail; do not fabricate cleanup success or destroy its error context.",
+    "Preserve current EventOutput.in_flight behavior: if signal cancelled an in-progress output, clean connections first and do not retry the blocked consumer for stopped. If final stopped output fails after verified cleanup, report that output failure honestly.",
+    "On non-Unix retain portable ctrl_c behavior with cfg-gated implementation; do not claim Unix early SIGTERM registration or Windows physical USB support there. No dependency, unsafe, helper policy, wire, nusb or USB mutation change is required."
+  ],
+  "must_fix_or_explicitly_document": [
+    {
+      "item": "No fallible early return after bind before cleanup fence",
+      "why": "Current physical EventOutput::new is after bind_physical. If thread creation fails, ServerHandle Drop only initiates stop; it does not await the task. Move output creation before bind. Ready events, controls creation and snapshots remain inside the operation result."
+    },
+    {
+      "item": "Virtual cleanup error precedence",
+      "why": "Current virtual sequence awaits shutdown but applies result? before shutdown?, hiding a simultaneous cleanup failure. Match physical semantics: cleanup error wins."
+    },
+    {
+      "item": "Startup signal responsiveness",
+      "why": "Early registration alone queues TERM while helper request can await for a long deadline. Cancel the listener-free prepare stage instead of delaying all observation until after bind."
+    },
+    {
+      "item": "No cancelling a produced server handle",
+      "why": "Bind_backend starts the listener task before returning its handle. Selecting a signal over an outer setup future could discard a Ready ServerHandle through Drop without awaiting shutdown. Keep preparation listener-free and bind outside that select."
+    },
+    {
+      "item": "Cancellation is not blocking-task termination",
+      "why": "observe::initialize uses spawn_blocking and nusb Device::from_fd uses BlockingTask backed by Tokio JoinHandle. Dropping prepare stops the async caller and drops normal owned values but cannot stop an already-running blocking syscall. Tokio runtime teardown may still wait for it. Claim prompt cancellation of async helper waits, not bounded termination of arbitrary kernel-blocked initialization or immediate final FD closure."
+    },
+    {
+      "item": "Registration and stream lifetime",
+      "why": "Avoid registering streams inside the signal select branch or storing only a lazy ctrl_c future. Retain one owned pair outside setup. Tokio registration is process-global and dropping a listener does not restore the OS default; tests must not rely on default restoration."
+    },
+    {
+      "item": "Hard crash boundary",
+      "why": "SIGKILL, process abort, runtime failure, helper loss and durable restart reconciliation remain outside cooperative SIGTERM handling. No new helper supervisor should be implied by this patch."
+    }
+  ],
+  "source_validation": {
+    "tokio_version": "Cargo.lock pins 1.54.1; exact cached primary source inspected, no network fetch required",
+    "tokio_unix_facts": [
+      "unix.rs:398 signal registration is synchronous and requires a current enabled Tokio reactor",
+      "unix.rs:308-316 signals may coalesce; one notification means at least one signal, not a count",
+      "unix.rs:331-340 and :374-379 registration replaces default handler for process lifetime and is not unregistered by dropping Signal",
+      "unix.rs:419-427 recv never returns None in 1.54.1 and is cancellation safe; handling None defensively is still fine"
+    ],
+    "ctrl_c_fact": "ctrl_c.rs:13-16 registration occurs only when the returned future is first polled; constructing the future alone is not early registration",
+    "prepare_no_claim_fact": "PhysicalBackend::from_sources documentation and implementation validate metadata/FD and create weak idle monitors. Actual detach_and_claim is only reached by the supervisor after IMPORT.",
+    "helper_cancel_fact": "OpenPhysical helper opens/validates the approved FD and performs bounded handoff only. Dropping a pre-listener caller does not require undoing a USB interface claim, but accepted helper work may finish its already-started open/validation before the undelivered grant closes."
+  },
+  "meaningful_validation": [
+    {
+      "test": "Existing CLI stdout-backpressure regression, add sigterm mode",
+      "expect": "Actual ordinary-user CLI child acquires a virtual lease, fills stdout without draining, then SIGTERM exits through cleanup with expected zero status and closed lease socket. Existing SIGINT success and five-second deadline/nonzero error cases remain unchanged."
+    },
+    {
+      "test": "Physical QEMU cooperative SIGTERM with pending real work",
+      "expect": "Actual ordinary-user physical server, helper-granted FD, real VHCI I/O first. Deliver TERM to the validated guest PID/starttime only; require client closure and independent original config/alternate/drivers plus zero final requests/budget. This cannot be replaced by a local virtual test."
+    },
+    {
+      "test": "Repeated TERM while cleanup is demonstrably pending",
+      "expect": "Reuse one existing isolated host-state gate or another observed pending terminal to keep cleanup active, send a second TERM, verify process remains alive/ownership and budget held until real terminal, then release and require original restoration. One representative operation is enough for signal semantics; do not duplicate all eleven old scenarios."
+    },
+    {
+      "test": "Startup TERM before listener",
+      "expect": "A disposable-guest protected root-owned helper fixture may accept the initial Status request and deliberately withhold response. Ordinary-user server TERM should stop the async wait promptly, create no TCP listener and perform no OpenPhysical/IMPORT/claim. Clearly label this as a setup-control fixture rather than real helper/USB proof."
+    },
+    {
+      "test": "Default/all-feature software gates and current cancellation/output regressions",
+      "expect": "No new dependency or vendor changes; fmt, Clippy, workspace tests/builds/rustdoc appropriate to actual diff. Signal-delivery tests should use subprocesses, because global signal registration makes sending TERM to a parallel Rust unit-test process unsafe and misleading."
+    },
+    {
+      "test": "Error precedence and early event failure",
+      "expect": "Retain known cleanup-quarantine tests and source-review the unified cleanup fence. If a focused fake lease can produce both operation failure and cleanup failure, assert cleanup error remains visible; avoid adding tests that only mirror a two-line Result ordering helper."
+    }
+  ],
+  "inputs_sha256": {
+    "crates/rustusb-cli/src/main.rs": "5927b8ae2b378a6568887cc48e21a3b69756f2862b7cb4e1fd196bbb65c0e6e7",
+    "crates/rustusb-cli/src/physical_server.rs": "be92e432a5e485b55ec9551f464f658999fd934b3355df745201639763ad0922",
+    "crates/rustusb-cli/src/virtual_server.rs": "969c66a45b70781600b1c958fd486fbd01ea81dbda0e14a69233303acc255218",
+    "crates/rustusb-rust-backend/src/physical.rs": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2",
+    "crates/rustusb-rust-backend/src/physical/observe.rs": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d",
+    "crates/rustusb-rust-backend/src/server.rs": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532",
+    "crates/rustusb-daemon/src/linux.rs": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301",
+    "vendor/nusb/src/maybe_future.rs": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e",
+    "vendor/nusb/src/platform/linux_usbfs/device.rs": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e",
+    "scripts/test-virtual-backpressure.py": "b53ed78d710c7f748baa78687efea25b23db77c501acde8cc6decff2dbc0b823",
+    "Cargo.toml": "9b06bd0a1e9ef4aa2eadfad02dc9f5e67ef0613be574d118c8388a0763e2c552",
+    "Cargo.lock": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a"
+  },
+  "tokio_source_sha256": {
+    "/home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/src/signal/unix.rs": "8dcfb6950a39c1fd27c500670cc24e7df4c95278b6e7e52e7629b25e91fe49ea",
+    "/home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/src/signal/ctrl_c.rs": "9b2a47659fe106805036a664310040c07d98c061d7104270d9a641025cc875f0"
+  }
+}

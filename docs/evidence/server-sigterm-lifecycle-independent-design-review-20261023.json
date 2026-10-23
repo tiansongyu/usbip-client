@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "scope": "Read-only signal lifecycle and local subprocess/QEMU acceptance design; no new tests executed",
+  "source_commit": "cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd",
+  "observed_source_facts": [
+    {
+      "path": "crates/rustusb-cli/src/main.rs:401",
+      "fact": "virtual/physical own their signal cleanup; outer main does not race their future. Only generic helper commands have outer Ctrl-C cancellation."
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs:176",
+      "fact": "EventOutput/backend/bind occur before ctrl_c select at236; only SIGINT is handled, and stopped event after cleanup is outside that select."
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs:32",
+      "fact": "Helper status/FD grants, from_sources, bind and EventOutput construction occur before ctrl_c select at100; no SIGTERM subscription."
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs:75",
+      "fact": "stdout dedicated stdwriter thread owns bounded events only, channel2, per-event5s deadline; cancelled output remains in_flight and final output is skipped after shutdown."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server.rs:143",
+      "fact": "shutdown sends stop and awaits listener. Listener drops listener, aborts+joins connection tree then awaits backend settle_closed with10s deadline. Dropping handle alone aborts tree and is not proof of awaited backend cleanup."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs:435",
+      "fact": "Physical begin_close drains event buffers then marks network_closed and requests close. Worker independently cancels/reaps/checked-releases and restores before zeroing permits/state."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs:1382",
+      "fact": "restore awaited before state available/cleanup_verified. Response budget is retained until network close. Quarantined/error paths are not reusable restoration success."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/session.rs:193",
+      "fact": "Virtual close clears pending/events and drops owned lease; DeviceLease Drop resets configuration/queues/pending and leased=false."
+    },
+    {
+      "path": "scripts/test-virtual-backpressure.py:33",
+      "fact": "Existing local subprocess test uses one imported virtual lease,4096pipe+100snapshots,0.2s sleep then SIGINT/deadline; it does not handle TERM or assert a real pending URB/both profiles."
+    }
+  ],
+  "minimal_signal_contract": [
+    "Create Unix SIGINT+SIGTERM subscriptions synchronously before the first await or device/helper/listener acquisition; merely constructing a lazy ctrl_c future does not prove early registration.",
+    "Keep subscriptions owned through setup, operations, shutdown and final event. A received signal must request cooperative cleanup and await server.shutdown; do not let outer main or second signal drop/abort cleanup future.",
+    "Signal during failed/blocked ready output must still reach listener/lease cleanup. Final stopped output after successful cleanup may be skipped or cancelled under known backpressure rather than reblocking the same writer.",
+    "Successful normal output must expose stopped only after backend cleanup; failure/quarantine reports nonzero and must not claim available/original restoration. SIGKILL/process crash recovery remains explicitly excluded."
+  ],
+  "local_subprocess_matrix": {
+    "scope": "ordinary-user virtual server only, no physical USB/module/helper required",
+    "cases": [
+      {
+        "mode": "ready",
+        "signal": "SIGINT",
+        "expected": "exit0; fresh schema1 stopped snapshot proves both leases false, pending0/config0/queues0; both dataTCP EOF"
+      },
+      {
+        "mode": "ready",
+        "signal": "SIGTERM",
+        "expected": "same as SIGINT; old product expected subprocess returncode-15, not cooperative cleanup"
+      },
+      {
+        "mode": "blocked_stdout",
+        "signal": "SIGINT",
+        "expected": "stdout unread after verified backpressure, child bounded exit0, both dataTCP EOF; stopped may be absent by design"
+      },
+      {
+        "mode": "blocked_stdout",
+        "signal": "SIGTERM",
+        "expected": "same as blocked SIGINT; old product expected-15; retain old FAIL"
+      },
+      {
+        "mode": "blocked_stdout",
+        "signal": "none",
+        "expected": "keep existing negative control: output deadline yields nonzero with blocked-consumer diagnostic and closes lease sockets"
+      }
+    ],
+    "setup": [
+      "Popen only the requested binary with --json virtual-server --listen127.0.0.1:0 --control-stdin; stderr regular bounded test log avoids making this an arbitrary-stderr-blocking test.",
+      "Read exact ready JSON under5s bound. IMPORT both fixed virtual profiles1-1/1-2; strictly check headers and312B identities.",
+      "Send real SET_CONFIGURATION1 control and read actual success for each session. Submit HID interruptIN ep1 len8 and CDC bulkIN ep2 len64 without injecting input.",
+      "Request a local snapshot and require schema1, exact two profiles hid_keyboard/cdc_acm, leased=true/config1/pending_urbs>=1 for each before signalling. No sleep-only claim of pending state.",
+      "Signal only the exact live Popen child via process.send_signal, never the harness process/group/parent. Record signal name/PID/starttime, returncode, elapsed, prestate/poststate and dataTCP closure.",
+      "A bounded finally may kill and reap its own failed child for test hygiene, but forced fallback makes the case FAIL and cannot be counted as successful signal cleanup."
+    ],
+    "deadlines": {
+      "ready_seconds": 5,
+      "socket_IO_seconds": 3,
+      "child_exit_outer_seconds": 8,
+      "data_EOF_seconds": 1,
+      "output_deadline_control": "existing5s output deadline, expect nonzero by8s; do not reinterpret TERM-15 as timeout or success"
+    },
+    "backpressure_determinism": [
+      "Verify real pipe capacity with F_GETPIPE_SZ and unread occupancy; no0.2s-only assumption of a blocked writer. Small atomic event writes can block before occupancy reaches4096, so100snapshot count alone does not prove exactly-full capacity.",
+      "If an exact4096full state is required, use a test-owned pipe, retain its blocking writer in parent, drain ready/pre-snapshot, then fill the known-empty pipe with4096test filler before enqueueing one snapshot; verify FIONREAD==capacity and never drain afterward. Do not set O_NONBLOCK on shared writer OFD inherited by child, which would turn the child write into EAGAIN instead of blocking.",
+      "A physically full pipe establishes consumer backpressure, not an exact Rust await instruction. If claiming writer-inflight, require a Linux-only observable blocked writer witness or explicit private test receipt; otherwise word coverage accurately."
+    ],
+    "cleanup_evidence_limit": "For ready output, final fresh backend snapshot proves virtual lease cleanup in-process. For blocked output, exit0+TCP EOF alone cannot prove physical USB cleanup; combine code-path assertions with separate QEMU sysfs/FD/driver evidence. Do not invent a stopped event that was intentionally skipped."
+  },
+  "QEMU_physical_handoff_to_harness_agent": {
+    "pre_signal": "Actual same-generation HID+FTDI lease receipts, privateFD char dev/inode/rdev, UID1000/caps0, both kernel drivers usbfs, actual input/serial content, snapshot eachpending>=1/usbfs_inflight>=1 and budget>0. Keep helper alive and evdev/serial reader handles subscribed.",
+    "signal": "Guest-root kill-TERM only recorded ordinary serverPID with matchingstarttime. Do not close controlstdin/dataTCP first and accidentally test EOF/shutdown instead.",
+    "post_signal": "Capture waitstatus without set-e early exit (if wait...then rc0 else rc=$? fi). Even old143 continue independent bounded socketEOF, PID/FD loss, exact same-generation config/alt/driver restore, client VHCI NULL/oldsysfs gone and logs. Evaluate overall pass only after evidence collection.",
+    "old_negative_evidence": "Old Python Popen exposes-15 and guest shell wait typically143. Save these as real FAIL. OS closes TCP/FD on process termination, so those alone are not cooperative worker cleanup. Preserve actual unrecovered/unknown drivers and missing stopped/cleanup_verified rather than claiming permanent leak or successful restoration.",
+    "fixed_positive": "With drained output require exit0, actual final backend cleanup_verified with all pending/queued/inflight/budget0 and independent original same-generation sysfs config/alternate/drivers. FD closure via PID exit is additional evidence, not replacement."
+  },
+  "must_fix_for_new_goal": [
+    "Add early SIGTERM registration as well as SIGINT; preserve awaited cleanup across setup/output/secondary signals.",
+    "Do not test only OS socket closure or count wait143 as success.",
+    "No broad bounded-exit promise for uninterruptible physical ioctl or arbitrary blocked stderr is established by virtual local tests."
+  ],
+  "test_execution_performed": false,
+  "source_artifacts": [
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "bytes": 15753,
+      "sha256": "5927b8ae2b378a6568887cc48e21a3b69756f2862b7cb4e1fd196bbb65c0e6e7"
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs",
+      "bytes": 9837,
+      "sha256": "969c66a45b70781600b1c958fd486fbd01ea81dbda0e14a69233303acc255218"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "bytes": 5011,
+      "sha256": "be92e432a5e485b55ec9551f464f658999fd934b3355df745201639763ad0922"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server.rs",
+      "bytes": 52043,
+      "sha256": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/session.rs",
+      "bytes": 7489,
+      "sha256": "d7fe7367f6a1f870268eea22f51bd665b2e4eb90b653ee0499e9bc8d4caa578a"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/device.rs",
+      "bytes": 46211,
+      "sha256": "28d794af0311c8e2214ab127d9458ec6ec4a07e9bd7b6531d02b550967f5b82e"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "bytes": 20028,
+      "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+      "bytes": 55625,
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+    },
+    {
+      "path": "scripts/test-virtual-backpressure.py",
+      "bytes": 4080,
+      "sha256": "b53ed78d710c7f748baa78687efea25b23db77c501acde8cc6decff2dbc0b823"
+    }
+  ],
+  "limitations": [
+    "Read-only design review; no new local subprocess/QEMU/USB/signal operations executed and no repository sources modified.",
+    "Existing asynchronous backend unit fixtures test shutdown waiting/quarantine, not actual physical ioctl completion or this new CLI signal path.",
+    "Physical shutdown has a10s cleanup-report deadline; a non-cancellable blocking ioctl may outlive it and Tokio runtime destruction is not a physical force-cancel. Do not generalize normal QEMU timing into a kernel-hang recovery promise.",
+    "No SIGKILL, helper capability revocation or cross-process persistent lease/recovery claim."
+  ]
+}
