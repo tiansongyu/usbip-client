@@ -1,0 +1,21 @@
+--- /home/ubuntu/github/usbip-client/docs/evidence/shared-owner-final-b45c2e8-20261024/reviews/lifecycle/secure.py
++++ /tmp/rustusb-data-link-compat-independent-review-20261024/secure.py
+@@ -3,8 +3,8 @@
+ import argparse,base64,hashlib,json,re,struct,subprocess
+ from pathlib import Path
+ REPO=Path('/home/ubuntu/github/usbip-client')
+-HEAD='b45c2e8c67a06396360fee0af6c0a092a950a6ff'
+-LOCK=json.loads(Path('/tmp/rustusb-shared-owner-fixed-review-20261024/source-lock.json').read_text())
++HEAD='e29cc1163ff9ce3cd73833c15eb24611941bac34'
++LOCK=json.loads(Path('/tmp/rustusb-data-link-compat-independent-review-20261024/source-lock.json').read_text())
+ EXPECTED_BINARIES=None
+ BLOBS={}
+ def sha(b):return hashlib.sha256(b).hexdigest()
+@@ -175,6 +175,6 @@
+  try:
+   report['group']=audit(a.evidence.resolve(),a.backend,a.family);report['result']=report['group']['result']
+  except Exception as e:report['error']=type(e).__name__+': '+str(e)
+- report['parser_sha256']=sha(Path(__file__).read_bytes());report['source_lock_sha256']=sha(Path('/tmp/rustusb-shared-owner-fixed-review-20261024/source-lock.json').read_bytes());report['expected_binaries_file_sha256']=sha(a.expected_binaries.read_bytes())
++ report['parser_sha256']=sha(Path(__file__).read_bytes());report['source_lock_sha256']=sha(Path('/tmp/rustusb-data-link-compat-independent-review-20261024/source-lock.json').read_bytes());report['expected_binaries_file_sha256']=sha(a.expected_binaries.read_bytes())
+  a.output.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'result':report['result'],'output':str(a.output),'error':report.get('error'),'checks':report.get('group',{}).get('assertion_count')}));return int(report['result']!='PASS')
+ if __name__=='__main__':raise SystemExit(main())

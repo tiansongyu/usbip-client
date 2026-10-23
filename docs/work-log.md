@@ -496,3 +496,5 @@
 
 - clean e29cc11旧九QEMU全部PASS/18guest0，204输入前后稳定，八新harness四guard与旧SIGTERM独立guard均真；同actual CLI76546440…/helperb4af4b5f…字节与软件gate一致。I独立raw复核3879个记录谓词与244个额外batch谓词（都非USBcase）、1030个guest base64原件、2579个原件SHA，204Gitblob/166secure/168agent选定源一致；两agent各16份private disk2严格关联。旧证据及原FAIL不改；仍保留SIGTERM startup helperAcceptance=false、非pending Native KILL与USBFS无中间grantjournal等原边界。
 - Native新v2定向blackhole harness七源冻结，H静态68项/55jq、AF_UNIX合成114观察与3边界/8phase正负fixtures通过，N源码交叉审查无具体阻断；这些不是QEMU。每方向fresh HID attempt、serial原连接持续I/O，双端health/tuple精确绑定，最后actualSIGTERM/Rootproof/完整baseline先于网络teardown。Native pending和独立procFD关联未由此证明。即将提交后以独立clean Native worktree首跑；primary另行实现virtual/USBFS四组，避免源guard并行竞态。
+
+- 旧九组clean e29全部运行原件、独立raw审查与matrix runner共2628份/约29.99MB归档`docs/evidence/data-link-compat-e29cc11-20261024`，逐original/bytes/SHA/staged blob核对；诊断数3879+244与USB case严格分开。新Native7源已提交`e1529ea`并从独立clean worktree实际首Native-v4启动，证据目录`/tmp/rustusb-data-link-native-ipv4-e1529ea-20261024`；本句不宣告新case通过。primary另两份Rust backend guest扩展由I拥有、run分派由H拥有，均不影响冻结Native首跑。

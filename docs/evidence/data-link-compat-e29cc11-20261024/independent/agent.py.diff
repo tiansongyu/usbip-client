@@ -1,0 +1,58 @@
+--- /home/ubuntu/github/usbip-client/docs/evidence/shared-owner-final-b45c2e8-20261024/reviews/lifecycle/agent.py
++++ /tmp/rustusb-data-link-compat-independent-review-20261024/agent.py
+@@ -2,8 +2,8 @@
+ """Read-only independent evidence parser. No harness imports or verification calls."""
+ import argparse,base64,collections,datetime,hashlib,json,pathlib,re,struct,subprocess
+ REPO=pathlib.Path('/home/ubuntu/github/usbip-client')
+-EXPECTED='b45c2e8c67a06396360fee0af6c0a092a950a6ff'
+-LOCK=json.loads(pathlib.Path('/tmp/rustusb-shared-owner-fixed-review-20261024/source-lock.json').read_text())
++EXPECTED='e29cc1163ff9ce3cd73833c15eb24611941bac34'
++LOCK=json.loads(pathlib.Path('/tmp/rustusb-data-link-compat-independent-review-20261024/source-lock.json').read_text())
+ EXPECTED_BINARIES=None
+ def sha(b):return hashlib.sha256(b).hexdigest()
+ def identity(s):return tuple(s[k] for k in ['id','instance_id','job_id','profile','role','device_key','principal'])
+@@ -26,8 +26,8 @@
+    self.check('source_gitblob',name,len(archived)==entry['bytes'] and sha(archived)==entry['sha256'] and archived==committed);source_count+=1
+   self.check('provenance','exact current frozen input set includes service/core',summary['source_inputs']=={p:LOCK['source_hashes'][p] for p in LOCK['agent_inputs']})
+   software_manifest_path=LOCK['software_manifest_git_path']
+-  software_manifest_bytes=subprocess.check_output(['git','show',EXPECTED+':'+software_manifest_path],cwd=REPO);software_manifest=json.loads(software_manifest_bytes)
+-  self.check('software_attribution','actual completed shared-owner source manifest',sha(software_manifest_bytes)==LOCK['software_manifest_sha256'] and len(software_manifest)==LOCK['software_input_count'])
++  software_manifest_bytes=pathlib.Path(software_manifest_path).read_bytes();software_manifest=json.loads(software_manifest_bytes)
++  self.check('software_attribution','actual completed data-link candidate source manifest mapped to e29cc11',sha(software_manifest_bytes)==LOCK['software_manifest_sha256'] and len(software_manifest)==LOCK['software_input_count'])
+   for entry in software_manifest:
+    name=entry['path'];current=subprocess.check_output(['git','show',EXPECTED+':'+name],cwd=REPO)
+    self.check('software_attribution',name,len(current)==entry['bytes'] and sha(current)==entry['sha256'])
+@@ -69,6 +69,26 @@
+    self.check('authorization',role+' two typed denials',all(self.obj(role,'denied-'+kind+'.json')['response']=={'result':'error','code':'permission'} for kind in ['uid','profile']))
+    self.check('authorization',role+' denial leaves resources untouched',all(denied[k]==[] for k in ['jobs','sessions','requests']) and self.read(role,'root-before-denied.json')==self.read(role,'root-after-denied.json'))
+    self.check('authorization',role+' real denied actor audit',[(x['actor_uid'],x['action'],x['failure']) for x in denied['audit']]==[(1002,'denied','permission'),(1000,'denied','permission')])
++  disk_captures=[]
++  session_fields={'id','instance_id','job_id','profile','role','device_key','principal','state','evidence','stop_requested','terminal','operation_error','cleanup','metrics','attempts'}
++  raw_v1={'protocol':'raw_v1','identity':None,'sample_sequence':0,'elapsed_millis':0,'phase':'ended','probe':'unavailable_raw_v1','last_probe_sequence':None,'last_probe_enqueued_millis':None,'last_reply_sequence':None,'last_reply_millis':None,'last_round_trip_micros':None,'stats':None,'end':None}
++  for role,files in self.raw.items():
++   for filename,body in files.items():
++    if not filename.endswith('.json'):continue
++    document=json.loads(body)
++    if not isinstance(document,dict) or not {'jobs','sessions','sequence','audit','requests'}<=set(document):continue
++    self.check('private_disk2',role+'/'+filename+' exact private shape',set(document)=={'schema_version','sequence','jobs','sessions','audit','requests','link_history'} and document['schema_version']==2)
++    sessions={s['id']:s for s in document['sessions']};history=document['link_history']
++    self.check('private_disk2',role+'/'+filename+' unique complete session association',len(sessions)==len(document['sessions'])==len(history)==len({x['session_id'] for x in history}) and {x['session_id'] for x in history}==set(sessions))
++    for row in history:
++     session=sessions[row['session_id']]
++     self.check('private_disk2',role+'/'+filename+'/'+row['session_id']+' immutable epoch and exact null/raw projection',set(row)=={'session_id','instance_id','link'} and row['instance_id']==session['instance_id'] and (row['link'] is None if session['role']=='export' else row['link'] in (None,raw_v1)))
++     self.check('legacy_ipc',role+'/'+filename+'/'+row['session_id']+' Session/Metrics shape unchanged',set(session)==session_fields and set(session['metrics'])=={'app_rx_bytes','app_tx_bytes','elapsed_millis','saturated'})
++     if session['role']!='export' and (session['state']=='Connected' or session['terminal'] and session['cleanup']=='verified'):
++      self.check('private_disk2',role+'/'+filename+'/'+row['session_id']+' observed data session explicitly raw unavailable',row['link']==raw_v1)
++    disk_captures.append({'role':role,'file':filename,'sessions':len(sessions),'sha256':sha(body)})
++  self.check('private_disk2','nonvacuous state captures from both guests',len(disk_captures)>=4 and {x['role'] for x in disk_captures}=={'server','client'})
++  self.facts['private_disk2']={'captures':disk_captures,'scope':'Private application disk2 only. Existing helper tracked disk2 is separately audited; TLS configs/manifest/IPC remain1. No v2 heartbeat observation is inferred from raw-v1 runs.'}
+   self.facts['actual_processes']=all_receipt_ids
+   keys=self.obj('server','keys.json');self.check('usb_identity','same two exact keys',keys==self.obj('client','keys.json') and len(set(keys))==2 and all(k.startswith('native:usb-') for k in keys));hid,serial=keys
+   final={role:self.obj(role,'agent-stopped-2.json' if role=='server' else 'agent-final.json') for role in ['server','client']}
+@@ -225,5 +245,5 @@
+  EXPECTED_BINARIES=json.loads(args.expected_binaries.read_text())
+  if set(EXPECTED_BINARIES)!={'rustusb','rustusb-helper'} or not all(re.fullmatch('[0-9a-f]{64}',v) for v in EXPECTED_BINARIES.values()):raise ValueError('exact completed-build locked ELF map required')
+  if args.output.exists():raise FileExistsError('preserve earlier reviewer result')
+- r=Audit(args.evidence.resolve()).report();r['parser_sha256']=sha(pathlib.Path(__file__).read_bytes());r['source_lock_sha256']=sha(pathlib.Path('/tmp/rustusb-shared-owner-fixed-review-20261024/source-lock.json').read_bytes());r['reuse']={'original':'/tmp/rustusb-agent-config-independent-raw-audit-20261024.py','sha256':'6d60e2dd0c035c6bcb12f97f1fec0d206c62ceec786da1ac679f6f6b7236b706','changes':'Only source/current software and ELF attribution plus output preservation; actual lifecycle/configuration assertions retained.'};args.output.write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({'result':r['result'],'checks':r['check_count'],'categories':r['category_counts'],'error':r['error'],'output':str(args.output)}));return int(r['result']!='PASS')
++ r=Audit(args.evidence.resolve()).report();r['parser_sha256']=sha(pathlib.Path(__file__).read_bytes());r['source_lock_sha256']=sha(pathlib.Path('/tmp/rustusb-data-link-compat-independent-review-20261024/source-lock.json').read_bytes());r['reuse']={'original':'/tmp/rustusb-agent-config-independent-raw-audit-20261024.py','sha256':'6d60e2dd0c035c6bcb12f97f1fec0d206c62ceec786da1ac679f6f6b7236b706','changes':'e29cc11 source/ELF and local software-manifest provenance; added strict private application disk2/association/raw-v1/unchanged DTO checks; all prior lifecycle/configuration assertions retained.'};args.output.write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({'result':r['result'],'checks':r['check_count'],'categories':r['category_counts'],'error':r['error'],'output':str(args.output)}));return int(r['result']!='PASS')
+ if __name__=='__main__':raise SystemExit(main())

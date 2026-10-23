@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "broker_uid": 2000,
+  "listen": "192.0.2.1:3241",
+  "devices": [
+    "virtual:hid",
+    "virtual:cdc-acm"
+  ],
+  "principals": [
+    {
+      "id": "qemu-client",
+      "pins": [
+        "c1cd75b4b52cbe63109e1bc320c8ba8d9f90e7ee470645cfbed529e8f6de6336"
+      ],
+      "devices": [
+        "virtual:hid",
+        "virtual:cdc-acm"
+      ]
+    }
+  ],
+  "ca_certificates": [
+    "/etc/rustusb/ca.der"
+  ],
+  "certificate_chain": [
+    "/etc/rustusb/server.der"
+  ],
+  "private_key": "/etc/rustusb/server-key.der"
+}
