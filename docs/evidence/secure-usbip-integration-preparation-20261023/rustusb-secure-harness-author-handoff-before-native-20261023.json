@@ -1,0 +1,74 @@
+{
+  "status": "SOURCE_FROZEN_STATIC_PASS_NOT_QEMU",
+  "head_at_handoff": "056341c30d15157d941566c90193c9d384b51d45",
+  "files": {
+    "scripts/qemu/run-secure-qemu.py": {
+      "sha256": "ec5d97a40291fca9947781971e00a0bdd905e7dfa8ee91cc36e5bba2e12fc675",
+      "bytes": 36726
+    },
+    "scripts/qemu/guest-secure-init.sh": {
+      "sha256": "4b4bca0b1ae2cf4ab4a5c6fc2b8b9257cba0ef4e391201cb15521e538dacb50a",
+      "bytes": 25532
+    }
+  },
+  "scope": [
+    "virtual/usbfs x ipv4/ipv6: four independent real two-guest product runs",
+    "actual secure-server/discover/attach CLI; no Native server variant",
+    "dedicated UID2000; UID1000 rejected from secure helper operations with unchanged primary resources",
+    "external socketpair NIC PCAP; ttyS2 host controls, ttyS1 artifacts, ttyS0 kernel",
+    "two cycles actual HID key down/up and 35B serial each direction, CDC echo, anonymous VHCI receipts",
+    "client SIGTERM/wait0/verified cleanup/NULL/Gone and new actual import; server SIGTERM/wait0; physical exact baseline and durable record retirement"
+  ],
+  "command_template": "python3 scripts/qemu/run-secure-qemu.py --kernel 6.8.0-106-generic --backend virtual|usbfs --family ipv4|ipv6 --evidence /tmp/unique-directory",
+  "preconditions": [
+    "ordinary x86_64 host user",
+    "clean committed source required",
+    "default locked workspace all-features release build performed by root runner",
+    "host QEMU/kernel/modules/native tools/busybox/jq/setpriv/OpenSSL/nc.openbsd/ip required"
+  ],
+  "static": [
+    "Python AST",
+    "dash and BusyBox sh -n",
+    "ShellCheck ash",
+    "all 36 embedded jq filters compiled with null fixtures",
+    "14 explicitly synthetic parser/artifact and real ephemeral OpenSSL chain checks",
+    "git diff --check",
+    "both role archives parsed from real cpio with inert payload dependency scaffold: exact own key only, shared public DER, no CA private key; not executable guest evidence"
+  ],
+  "static_records": [
+    "/tmp/rustusb-secure-harness-static-20261023.py",
+    "/tmp/rustusb-secure-harness-static-20261023.json",
+    "/tmp/rustusb-secure-harness-jq-check-20261023.py",
+    "/tmp/rustusb-secure-harness-jq-static-20261023.json",
+    "/tmp/rustusb-secure-harness-openssl-static-20261023.log",
+    "/tmp/rustusb-secure-role-payload-static-20261023.py",
+    "/tmp/rustusb-secure-role-payload-static-20261023.json"
+  ],
+  "preflight_corrections": [
+    "fixed RemoteDevice bus_number/device_number field use after source check",
+    "constructed fixture detected final-position URB signature scan off-by-one; fixed before any QEMU",
+    "constructed truncated-packet fixture prompted declared IP/TCP length checks; fixed before any QEMU",
+    "isolated control polling counter to avoid changing outer release poll index",
+    "wait up to25s for failure trap artifact dump before terminating guest; original first error retained",
+    "check final FTDI tail, actual guest executable hashes and post-run ELF/source/head/clean guards",
+    "root review: split initramfs by server/client role; only own role private key is copied and guest asserts other key absent",
+    "record each role initramfs/payload hash and credential file inventory",
+    "explicit QEMU RTC base=utc,clock=host; guest requires actual CRNG marker and epoch within host packing time [-5,+1800] seconds; no new RNG device or weak entropy seed",
+    "current Native journal now includes exports; client held/empty checks require exports==[]"
+  ],
+  "boundaries": [
+    "no author Cargo build/test/probe/QEMU execution",
+    "no hardware, Native secure server, full Phase3, FD global revocation or malicious same-broker-UID claim",
+    "contender is a second independent broker process in the client guest and is refused at unavailable authorized catalog; this is not direct IMPORT busy coverage",
+    "encrypted external framing plus real product I/O and known signature absence; no TLS secret log/decryption",
+    "client ALPN offer observed; actual negotiated ALPN is enforced by product source/tests, not visible encrypted handshake",
+    "two client attach processes own distinct devices; no third guest"
+  ],
+  "secrets": "Separate role-specific temporary initramfs contains only its own private key. CA key stays host temporary credentials directory; opposite role private key never copied. Evidence retains only public DER, credential filenames and per-role image digests; all temporary keys and images are removed.",
+  "next": "root independent preflight, commit frozen source, sole sequential actual QEMU runs; preserve first failures",
+  "rng_rtc": {
+    "observed_prior_environment": "clean24a424b original kernel log has random: crng init done at0.003719 and RTC system clock set; not a new secure run result",
+    "new_run_requirements": "each actual guest must record CRNG marker, RTC and bounded epoch or fail before TLS",
+    "no_virtio_rng": "no unmatched module/device was added"
+  }
+}

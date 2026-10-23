@@ -1,0 +1,74 @@
+{
+  "result": "SOURCE_FACT_CONFIRMED_RUNTIME_CAUSE_NOT_YET_PROVEN",
+  "scope": "Read-only Native import enumeration/transient audit after first QEMU failure; no code changes/build/QEMU; first failed run is preserved.",
+  "kernel_reference": "Linux v6.8 e8f897f4afef0031fe618a8e94127a0934896aba; cached official source, not a claim that Ubuntu carries no downstream deltas",
+  "sources": [
+    {
+      "path": "/tmp/rustusb-vhci-family-source-20261023/drivers__usb__usbip__vhci_hcd.c",
+      "sha256": "043dc9e555ed4d4f1ecd606e43bed83a9240bb3a8ba6a19de5f437c8a4308c4e",
+      "bytes": 39249,
+      "git_blob": "82650c11e4516125777dc55e4719e398fbbb644c",
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/usbip/vhci_hcd.c",
+      "api_cache": "/tmp/rustusb-vhci-family-source-20261023/drivers__usb__usbip__vhci_hcd.c.api.json"
+    },
+    {
+      "path": "/tmp/rustusb-vhci-family-source-20261023/drivers__usb__usbip__vhci_sysfs.c",
+      "sha256": "8c3a861a5a474f8688779fa1127c6b31a78a330c3918e0844feb1eda82886e34",
+      "bytes": 12450,
+      "git_blob": "e2847cd3e6e363767a6dbf411f24bb628eb29566",
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/usbip/vhci_sysfs.c",
+      "api_cache": "/tmp/rustusb-vhci-family-source-20261023/drivers__usb__usbip__vhci_sysfs.c.api.json"
+    },
+    {
+      "path": "/tmp/rustusb-native-export-state-source-20261023/drivers__usb__core__hub.c",
+      "sha256": "d486569c6da9a3166ae06fa5a9ab27b3ff11ad708ea57846e07e58ce2038626f",
+      "bytes": 187820,
+      "git_blob": "e38a4124f6102a5ff2a47107a8286815cfc5c8e2",
+      "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/hub.c?format=TEXT"
+    }
+  ],
+  "product_source": {
+    "path": "crates/rustusb-native/src/channel.rs",
+    "sha256": "dc46c36b87c813c8c7fa95aa34cddd22ee454db465d6603feb7e8b3ea454ff2c",
+    "bytes": 26215,
+    "equals_first_run_frozen_source": true
+  },
+  "findings": [
+    {
+      "classification": "fixed-source fact",
+      "evidence": "vhci_hcd.c759-774: USB_REQ_SET_ADDRESS installs udev and sets VDEV_ST_USED under lock. vhci_sysfs.c47-52 immediately prints USED speed/devid/sockfd/dev_name.",
+      "conclusion": "VHCI status6 names the assigned device before full sysfs registration; it is not an enumeration-ready receipt."
+    },
+    {
+      "classification": "fixed-source ordering",
+      "evidence": "hub.c4992 sends hub_set_address during hub_port_init; connect path calls hub_port_init at5412 then usb_new_device at5483. usb_new_device reads descriptors2585, announces2600, callsdevice_add2614.",
+      "conclusion": "A real USED-to-device_add interval is possible, independently of the first run missing stderr."
+    },
+    {
+      "classification": "current-product behavior",
+      "evidence": "channel.rs530-540 immediately callsobserve_local; lines237-262 canonicalize/readdevnum/VIDPID through?; any missingpath/attribute IO returnsErr immediately. Existing waits only actualemptyconfiguration at282-285 or complete-interface-count notyetpresent at315-317.",
+      "conclusion": "Current10s loop does not tolerate pre-device_add missing local sysfs. Do not convert every IO/permission/protocol/identity failure into retry."
+    },
+    {
+      "classification": "identity invariant to preserve in any later fix",
+      "evidence": "channel.rs539 replaces self.local on eachUSED observation whileprofileNone; no priorlocal comparison incommit. Returningprofile success at541-548 recheckscontrolleronly.",
+      "conclusion": "Pin first observed local hardwaregeneration; do not overwrite it whenretrying. Revalidate sameport/row/expectedremoteidentity andlocalgeneration before returningfullprofile."
+    }
+  ],
+  "first_run": {
+    "directory": "/tmp/rustusb-secure-qemu-virtual-ipv4-first-20261023",
+    "head": "41e2c67a71a0257cd1e0aec109477b93869e9cc0",
+    "result": "FAIL",
+    "observed": "HID enumerated, serial SetAddress3 at4.610895 then connectionclosed4.621520. Childpid201alreadygone. Trapfailedbase64notfound, so serialattachstderr unavailable; PID1exit127 causedkernelpanic.",
+    "attribution": "Temporal ordering is consistent with enumeration observation failure but does not identify the actual first product error. Await second diagnosticrun.",
+    "forbidden_reinterpretation": "BothQEMUexit0 does not override guestFAIL; not a productpanic or TLS/USBsuccess."
+  },
+  "conditional_fix_contract": [
+    "Only explicitlyclassified initialnot-ready observation canreturnPending; retain finiteoriginaldeadline/cancel checks.",
+    "Beforeanyretry verifyselectedcontroller/port/expecteddevid/speed; keepownedK+originalattribute/mutationguardthroughactualblocking work.",
+    "Oncea localgenerationis observed, disappearance/replacement oridentitymismatch failsclosed; neveradoptthenewsameBusID.",
+    "Malformednumbers,wrongVIDPID/config/interfaceclass,Permission,unrelatedIO remainerrors.",
+    "Completionneedsfullprofileandpostobservation same row+localgeneration check.",
+    "CleanupcontinuesownKshutdown only; neverguessedportdetach. Withoutcompletegenerationreceipt keepuncertainintent and rootread-onlyreconciliation contract."
+  ]
+}

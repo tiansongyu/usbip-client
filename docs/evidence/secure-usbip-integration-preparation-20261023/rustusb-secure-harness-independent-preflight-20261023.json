@@ -1,0 +1,89 @@
+{
+  "result": "READ_ONLY_PREFLIGHT_NO_MUSTFIX",
+  "reviewed_head_at_report": "41e2c67a71a0257cd1e0aec109477b93869e9cc0",
+  "checks_count": 12,
+  "checks": [
+    {
+      "name": "actual interface",
+      "evidence": "Current secure-server --backend virtual|usbfs|native, secure-discover, secure-attach, helper flags and policy fields match sources; helpers preserve trusted_network:false and role UID2000 separate from allowedUID1000.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "Native phase semantics",
+      "evidence": "Exported actual0-byte cfg/count and0IF/statusAVAILABLE separated from published registrationcfg1; held fulloriginalIF/alt class with emptydrivers/statusUSED; released configured/statusAVAILABLE; fulloriginal driver baseline only after exportclose.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "journal ownership",
+      "evidence": "Server Native durable2exports/noimports; current server PID/UID, boundreceipt and unchanged preexport record acrosscycles; observedstub IDs thennull; client2observed records/noexports thenempty. Root final fullbaseline and both recordsets empty.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "credentials",
+      "evidence": "Separate role initramfs onlyownprivatekey; oppositeprivatekey/CAkey absent; CAkeyhosttemporary only; publicDER archived; broker600key and protectedrootparent files alignconfigloader.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "guest guards",
+      "evidence": "PID1+environment marker beforemount; proc cmdline dedicatedsecure marker beforeUSB/setup; role/backend/family exactallowlist; hostordinaryx86_64; nohostUSB/tap/module ops.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "network and modules",
+      "evidence": "IndependentnetworkFDsocketpair with e1000/dualstackstaticaddress, allhostcoordinationttyS2/evidencettyS1/kernelttyS0/QMPandFTDI separate. ClientVHCI, serverNativeusbip-host only whenselected, xHCIHID480+FTDI12 fixedprofile; CDCmodule explicitlyadded.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "real I/O",
+      "evidence": "Two completecycles require realclientevdev down/up KEY1/KEY2, exact35B RX/TX eachdirection, CDCechoorhostFTDITX70B, ownCLI /proc/exe SHA+UID/capreceipts, distinctNativeimportchannelIDs.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "refusals and reuse",
+      "evidence": "UID1000 securehelperrequest actualstructuredrefusal with before/afterstate equality; rawusbfs open denied; secondbroker contender refused through unavailablecatalog; aftercooperativeclose sameauthenticatedcatalog returns andsecondrealI/Ocycle succeeds.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "cleanup evidence",
+      "evidence": "SIGTERM actualchildwait0, connected/disconnected receipt, VHCIallNULL/oldlocalBusIDsGone, clientjournalempty, serverreleaseobservations and finalserverwait0+baseline restoration. QEMUprocess0 alone is insufficient: terminalguestPASS/noFAIL and artifactdecoder also required.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "failure collector",
+      "evidence": "EXITtrap capturesFAILstage/dmesg/tcp thenboundedbase64artifacts, hostkeepsfirsterror, sendsABORT andallows25s dumpbeforeterminate. Partial/duplicate/oversizeartifact fails; no originalfailedrun reassignment.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "capture parser",
+      "evidence": "FullEthernet PCAP lengths, IP/TCPheaderbounds, nofragmentedTCP, SYNanchoredcontiguoussequence/retransmit overlapchecked, allTCPaccounted to3240/3241, exactfamilyTLS, realRSTbothfamilies, completeTLSrecords/ServerHelloTLS1.3/clientALPNoffer and specifiedplainmanagement/URB/fixture signatures absent.",
+      "result": "source inspected; runtime pending"
+    },
+    {
+      "name": "provenance",
+      "evidence": "Cleancommittedbefore requirement; frozenallRust/manifests/runnerdependencies copied; lockedallfeaturesbuildbyrunner unlessexplicitdevelopment skip; actualELFpayload/proc matching; kernelimage/config/module payload hashes; finalsource/ELF/head/cleanguards and evidence manifest.",
+      "result": "source inspected; runtime pending"
+    }
+  ],
+  "mustfix": [],
+  "files": [
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "bytes": 40836,
+      "sha256": "043adf169b3759faf6d831e10e68087dde0cb845281d2d4bb467c3c8b8adc1c2"
+    },
+    {
+      "path": "scripts/qemu/guest-secure-init.sh",
+      "bytes": 32287,
+      "sha256": "5667bf614770e2d050ca28ca89fd8273fa00cc10beac0c710c378855f927a202"
+    }
+  ],
+  "author_static_report": "/tmp/rustusb-secure-harness-author-handoff-20261023.json",
+  "reviewer_execution": "No Cargo/rustc/QEMU/probe/USB execution; no repository edits; did not invoke runner.verify or pcap_review. Author synthetic checks read as synthetic, not guest evidence.",
+  "runtime_boundaries": [
+    "This is six distinct positive real-product modes, not already passed guest runs or full Phase3.",
+    "No QEMU bad/expired/revoked/no-certificate/illegal-key failure matrix, direct IMPORT busy refusal, SIGKILL or stdout-backpressure coverage is added by these six modes. Existingsoftwarechecksareseparate.",
+    "PCAP shows framing and specified signature absence; it does not decrypt data or expose negotiatedALPN/certificate verification. Actualproduct source+logs+USBoutcomes supplythe remainingconnection semantics.",
+    "Selectedfixedkernel/BusyBox/nc/rustls/QEMU runtimeassumptions remain to be checked by firstactual run. Original failures must be preserved.",
+    "Independent terminalrawreviewwillparse originalfiles separately withoutcallingrunner.verify."
+  ]
+}

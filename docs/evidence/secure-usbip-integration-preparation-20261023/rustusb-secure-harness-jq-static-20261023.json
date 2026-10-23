@@ -1,0 +1,251 @@
+{
+  "scope": "actual jq compiler with null variable fixtures; syntax only, not guest assertions",
+  "source_sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+  "programs": [
+    {
+      "shell_token_index": 764,
+      "filter": "{name:$name,number:$number,alt:$alt,class:$class,subclass:$subclass,protocol:$protocol,driver:$driver}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 791,
+      "filter": "{bus:$bus,generation:$generation,devnum:$devnum,path:$path,busnum:$busnum,vendor:$vendor,product:$product,speed:$speed,release:$release,configuration:$cfg,num_interfaces:$count,configuration_bytes:$configuration_bytes,count_bytes:$count_bytes,interfaces:($interfaces|sort_by(.name)),device_driver:$device_driver,usbip_status:$usbip_status}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 845,
+      "filter": "sort_by(.bus)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 856,
+      "filter": "\n        def hardware: del(.configuration,.num_interfaces,.configuration_bytes,.count_bytes,.interfaces,.device_driver,.usbip_status);\n        length==2 and (map(hardware))==($before[0]|map(hardware)) and\n        all(.[]; .device_driver==\"usbip-host\") and\n        (if $phase==\"exported\" then\n            all(.[]; .configuration==\"\" and .num_interfaces==\"\" and .configuration_bytes==0 and .count_bytes==0 and .interfaces==[] and .usbip_status==1)\n         else\n            all(.[]; (.configuration|tonumber)==1 and (.num_interfaces|tonumber)==1 and (.interfaces|length)==1) and\n            (map(.interfaces|map(.driver=\"\")))==($before[0]|map(.interfaces|map(.driver=\"\"))) and\n            all(.[]; all(.interfaces[]; .driver==\"\")) and\n            all(.[]; .usbip_status==(if $phase==\"held\" then 2 else 1 end))\n         end)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 874,
+      "filter": "\n        .schema_version==1 and .records==[] and (.exports|length)==2 and\n        ([.exports[].registration.device_key]|sort)==($keys[0]|sort) and\n        ([.exports[]|del(.stub)]|sort_by(.lease_id))==($original[0].exports|map(del(.stub))|sort_by(.lease_id)) and\n        all(.exports[]; .owner.uid==2000 and .owner.pid==$pid and .bound!=null and .registration.original_device_driver==\"usb\" and\n            .bound.generation==.registration.generation and .bound.bound_profile.configuration==null and .bound.bound_profile.interfaces==[]) and\n        (if $phase==\"held\" then all(.exports[]; .stub.state.phase==\"observed\" and .stub.state.receipt.usbip_status==2 and .stub.state.receipt.export==.bound)\n         else all(.exports[]; .stub==null) end)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 948,
+      "filter": ".schema_version == 1 and .records == [] and .exports == []",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 980,
+      "filter": "any(.[]; .id == $id and (.event == \"snapshot\" or (.event == \"ack\" and .ok == true)))",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1008,
+      "filter": ".[] | select(.event == \"snapshot\" and .id == $id) | .snapshot",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1037,
+      "filter": "all(.devices[]; .leased == false and .pending_urbs == 0 and .configuration == 0 and .hid_queued_reports == 0 and .cdc_queued_bytes == 0)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1052,
+      "filter": ".buffer_bytes_reserved == 0 and all(.devices[]; .state == \"available\" and .leased == false and .pending_urbs == 0 and .queued_urbs == 0 and .usbfs_inflight == 0 and .cleanup_verified == true and .current_drivers == .original_drivers)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1061,
+      "filter": ".metadata_scope==\"published_registration_not_live_configuration\" and (.devices|length)==2 and all(.devices[]; .accepting_imports==true)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1197,
+      "filter": "length == 2 and all(.[]; (.export_blockers|length) == 0)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1208,
+      "filter": "length == 2 and all(.[]; (.export_blockers|length) == 0)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1251,
+      "filter": "length == 2 and all(.[]; (.configuration|tonumber)==1 and (.interfaces|length)==1) and ([.[].interfaces[].driver]|sort)==[\"ftdi_sio\",\"usbhid\"]",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1323,
+      "filter": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_native_device_ids:[$hid,$serial]}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1334,
+      "filter": "{op:\"prepare_native_export\",device_id:$id}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1343,
+      "filter": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_physical_device_ids:[$hid,$serial]}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1354,
+      "filter": "{op:\"open_secure_physical\",journal_schema_version:1,device_id:$id}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1380,
+      "filter": ".ok == false and .data == null and (.error|contains(\"not the configured secure broker\"))",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1397,
+      "filter": ".records == []",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1409,
+      "filter": ".records==[] and .exports==[]",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1421,
+      "filter": "[$hid,$serial]",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1436,
+      "filter": "{schema_version:1,broker_uid:2000,listen:$listen,devices:$keys[0],principals:[{id:\"qemu-client\",pins:[$pin],devices:$keys[0]}],ca_certificates:[\"/etc/rustusb/ca.der\"],certificate_chain:[\"/etc/rustusb/server.der\"],private_key:\"/etc/rustusb/server-key.der\"}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1506,
+      "filter": "any(.[]; .event==\"ready\" and .transport==\"mutual_tls\")",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1521,
+      "filter": "any(.[]; .event==\"ready\" and .transport==\"mutual_tls\" and .address==$address)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1543,
+      "filter": "any(.[]; .event==\"ready\" and .backend==\"native\" and .snapshot.metadata_scope==\"published_registration_not_live_configuration\" and ([.snapshot.devices[].device_key]|sort)==($keys[0]|sort) and all(.snapshot.devices[]; .accepting_imports==true and .published_device.configuration==1 and (.published_device.interfaces|length)==1))",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1576,
+      "filter": ".metadata_scope==\"published_registration_not_live_configuration\" and (.devices|length)==2 and all(.devices[]; .accepting_imports==false and .published_device.configuration==1)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1589,
+      "filter": "(.devices|length)==2 and all(.devices[]; .leased==true and .configuration==1)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1637,
+      "filter": "all(.devices[]; .leased==true and .configuration==1) and (.devices[]|select(.profile==\"hid_keyboard\")|.counters.hid_taps)==$cycle and (.devices[]|select(.profile==\"cdc_acm\")|.counters.cdc_out_bytes)==(35*$cycle) and (.devices[]|select(.profile==\"cdc_acm\")|.counters.cdc_in_bytes)==(70*$cycle) and (.devices[]|select(.profile==\"cdc_acm\")|.counters.cdc_injected_bytes)==(35*$cycle)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1653,
+      "filter": "all(.devices[]; .leased==true and .configuration==1 and .counters.controls>0) and (.devices[]|select(.device_id==$hid)|.counters.interrupt_in)>=2 and (.devices[]|select(.device_id==$serial)|.counters.bulk_in)>0 and (.devices[]|select(.device_id==$serial)|.counters.bulk_out)>0",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1666,
+      "filter": ".metadata_scope==\"published_registration_not_live_configuration\" and (.devices|length)==2 and all(.devices[]; .accepting_imports==false)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1706,
+      "filter": "any(.[]; .event==\"stopped\" and .backend==\"native\" and .transport==\"mutual_tls\" and .exports_closed==2 and .export_cleanup_verified==true) and all(.[]; .event!=\"error\")",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1713,
+      "filter": "any(.[]; .event==\"stopped\" and all(.snapshot.devices[]; .leased==false and .pending_urbs==0)) and all(.[]; .event!=\"error\")",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1742,
+      "filter": ".records == []",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1752,
+      "filter": ".schema_version==1 and .records==[] and .exports==[]",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1785,
+      "filter": "length==2 and all(.[]; type==\"string\")",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1799,
+      "filter": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_imports:[{server_id:\"qemu-server\",device_keys:$keys[0]}]}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1831,
+      "filter": "{schema_version:1,broker_uid:2000,server_id:\"qemu-server\",endpoint:{host:$host,port:3241},server_name:\"rustusb-qemu.test\",device:$key,ca_certificates:[\"/etc/rustusb/ca.der\"],certificate_chain:[\"/etc/rustusb/client.der\"],private_key:\"/etc/rustusb/client-key.der\"}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1855,
+      "filter": "length==2 and (map(.device_key)|sort)==($keys[0]|sort)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1866,
+      "filter": ".[0] | {op:\"prepare_native_import\",target:{server_id:\"qemu-server\",device_key:.device_key,remote:.device}}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 1888,
+      "filter": ".ok==false and .data==null and (.error|contains(\"not the configured secure broker\"))",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2001,
+      "filter": "any(.[]; .event==\"connected\" and .transport==\"mtls\")",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2016,
+      "filter": "any(.[]; .event==\"connected\" and .transport==\"mtls\" and .receipt.kernel.session.status==6)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2110,
+      "filter": "any(.[]; .event==\"connected\" and .receipt.target.remote.speed==3)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2116,
+      "filter": "any(.[]; .event==\"connected\" and .receipt.target.remote.speed==2)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2123,
+      "filter": "{hid:{bus_id:$hid,vendor:$hid_vid,product:\"0001\"},serial:{bus_id:$serial,vendor:$serial_vid,product:$serial_pid,interfaces:$serial_interfaces}}",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2151,
+      "filter": ".schema_version==1 and .exports==[] and (.records|length)==2 and all(.records[]; .owner.uid==2000 and .state.phase==\"observed\")",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2428,
+      "filter": "any(.[]; .event==\"disconnected\" and .cleanup_verified==true)",
+      "compile_exit": 0
+    },
+    {
+      "shell_token_index": 2462,
+      "filter": ".==$original[0]",
+      "compile_exit": 0
+    }
+  ]
+}

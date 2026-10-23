@@ -409,3 +409,5 @@
 - 设计db2d4c8、产品80a21f1及六模式harness41e2c67已正常push。首clean41e2c67 virtual/IPv4实际QEMU FAIL：HID已枚举，第二个serial attach进程提前结束，原因待完整诊断；trap缺少base64导致原始guest文件导出中断并退出PID1，产生真实kernel panic，不能称采集完整或设备运行通过。source/head/clean/binary guard与FAIL分别记账，142份已有原件归档保留；先修采证依赖再定位，不以guest退出或重跑覆盖首FAIL。精确41e2c67软件CI39950528568与Pages39950528577已触发，尚不标运行中job通过。
 
 - 采证修复clean5f1e25b第二次virtual/IPv4仍FAIL，182份原件归档；两guest0、四guards真且全部已输出文件可提取，不能覆盖实际FAIL。日志确认serial helper I/O失败，但客户端cleanup错误掩盖原operation。先在设计固定两错误都保留，再修CLI结果合并与完成RPC优先于失效通知，actual close仍总await；第四轮完整软件gate再次396/35result零失败忽略，121输入前后保持。新failure trap只读采有界Native/physical持久文件，准备第三次诊断。独立固定v6.8确认USED早于device_add的窗口，但未仅凭相关性改判首因；Native代码仍未改。41e2c67四平台CI已独立169项复核通过，每格396及本地信号/背压原范围，原QEMU失败保持。
+
+- 第三clean18817cd virtual/IPv4整体FAIL：cycle1真实HID key2 down/up、serial双向各35B和CDC echo、TERM/wait0/NULL/Gone/空journal及目录重用均通过；cycle2 HID失败。216份原件完整保留，operation NotFound与cleanup未确认同时可见，失败journal完整捕获为Intent；两guest0与四guards真不替代FAIL。没有逐syscall定位缺失属性。按已更新设计实施Native初始化Pending/Ready与首次目录代际固定，补真实临时文件夹具，由另一agent只读审；原Native调用方、10秒deadline和实际blockingguard/ownK边界不变。

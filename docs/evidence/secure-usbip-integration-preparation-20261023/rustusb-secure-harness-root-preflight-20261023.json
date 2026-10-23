@@ -1,0 +1,60 @@
+{
+  "scope": "Root static syntax/source-handoff preflight only; no QEMU or USB execution",
+  "checks": [
+    {
+      "name": "python AST",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "dash",
+        "-n",
+        "scripts/qemu/guest-secure-init.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "shellcheck",
+        "-s",
+        "ash",
+        "scripts/qemu/guest-secure-init.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/qemu/run-secure-qemu.py",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: run-secure-qemu.py [-h] [--kernel KERNEL] --backend\n                          {virtual,usbfs,native} --family {ipv4,ipv6}\n                          [--timeout TIMEOUT] --evidence EVIDENCE\n                          [--skip-build]\n\nTwo disposable guests: actual mTLS catalog/IMPORT/URB, kernel VHCI and I/O.\nOne isolated NIC socketpair is the complete external link. Host coordination,\nevidence, QMP and simulated FTDI are separate Unix/serial channels. No host\nUSB, tap, public listener, module load or product stand-in is used. Virtual,\nUSBFS and Native secure servers x IPv4/IPv6 are six distinct actual-product\nruns.\n\noptions:\n  -h, --help            show this help message and exit\n  --kernel KERNEL\n  --backend {virtual,usbfs,native}\n  --family {ipv4,ipv6}\n  --timeout TIMEOUT\n  --evidence EVIDENCE\n  --skip-build          development only; final evidence uses the locked all-\n                        features build\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "files": {
+    "scripts/qemu/run-secure-qemu.py": {
+      "sha256": "043adf169b3759faf6d831e10e68087dde0cb845281d2d4bb467c3c8b8adc1c2",
+      "bytes": 40836
+    },
+    "scripts/qemu/guest-secure-init.sh": {
+      "sha256": "5667bf614770e2d050ca28ca89fd8273fa00cc10beac0c710c378855f927a202",
+      "bytes": 32287
+    }
+  }
+}

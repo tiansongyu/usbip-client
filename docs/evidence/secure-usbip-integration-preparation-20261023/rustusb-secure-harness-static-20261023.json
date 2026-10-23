@@ -1,0 +1,75 @@
+{
+  "scope": "synthetic parser fixtures and real temporary OpenSSL generation only; no guest/build/probe/QEMU",
+  "checks": [
+    {
+      "name": "constructed ipv4 segmented/retransmitted TLS framing",
+      "passed": true
+    },
+    {
+      "name": "constructed ipv6 TLS framing",
+      "passed": true
+    },
+    {
+      "name": "explicit clear test marker rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "clear USB/IP management or fixture data on external link"
+    },
+    {
+      "name": "explicit clear management rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "clear USB/IP management or fixture data on external link"
+    },
+    {
+      "name": "explicit clear URB signature rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "recognizable clear USB/IP URB header on external link"
+    },
+    {
+      "name": "TCP gap rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "TCP stream capture contains a gap"
+    },
+    {
+      "name": "missing IPv6 refusal rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "both IPv4/IPv6 3240 refusals not observed as real RST"
+    },
+    {
+      "name": "wrong TLS address family rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "TLS used the wrong IP family"
+    },
+    {
+      "name": "truncated TLS bytes rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "truncated IPv4 packet"
+    },
+    {
+      "name": "exact base64 byte artifact extracted",
+      "passed": true
+    },
+    {
+      "name": "truncated artifact rejected",
+      "expected_rejection": "RuntimeError",
+      "message": "incomplete artifact dump: server"
+    },
+    {
+      "name": "OpenSSL actual generated server PKCS8 DER",
+      "passed": true
+    },
+    {
+      "name": "OpenSSL actual server chain verified",
+      "passed": true
+    },
+    {
+      "name": "OpenSSL actual client chain verified",
+      "passed": true
+    }
+  ],
+  "public_certificates": {
+    "ca.der": "6a1d0b6c482215f57e907a8f0280eaa347cd7eedecf58c97010db46151710ebc",
+    "server.der": "4b9e03b1aff0da9294351861036e3989a335ba139dadf1870159652b91068821",
+    "client.der": "f3bae64837f104727041f659101a91003420af795b0459168083604b3e9634d4"
+  },
+  "source_sha256": "f49b75005f169413921042309840d85bcc04a6f4c1fb2c158abe724a8617847b"
+}

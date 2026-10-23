@@ -1,0 +1,62 @@
+{
+  "status": "FROZEN_DIAGNOSTIC_ONLY_NOT_RUNTIME_SUCCESS",
+  "head_before_change": "5f1e25b06fa38bda7c8f4aa1fcfe04d7e3f272a1",
+  "files": {
+    "scripts/qemu/run-secure-qemu.py": {
+      "sha256": "f49b75005f169413921042309840d85bcc04a6f4c1fb2c158abe724a8617847b",
+      "bytes": 44737
+    },
+    "scripts/qemu/guest-secure-init.sh": {
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+      "bytes": 35715
+    }
+  },
+  "scope": "only owned guest failure trap, fixed-path bounded read-only Native/physical journal snapshots before artifact dump; runner/product unchanged",
+  "paths": [
+    "/var/lib/rustusb/native/channels.json",
+    "/var/lib/rustusb/physical/journal.json"
+  ],
+  "bounds": {
+    "read_seconds": 2,
+    "complete_bytes": 1048576,
+    "oversize_detection_bytes": 1048577,
+    "oversize_prefix_bytes": 1048576
+  },
+  "states": [
+    "copied complete json",
+    "absent",
+    "unreadable plus read_exit/read.log",
+    "nonregular including symlink",
+    "over_limit incomplete prefix",
+    "copy_failed"
+  ],
+  "semantics": [
+    "independent per-file snapshots, not joint atomic state",
+    "original failure exit status preserved",
+    "does not invoke helper, alter USB or rewrite source logs/journals",
+    "no proc/FD collection expansion"
+  ],
+  "static": [
+    "dash and BusyBox sh -n",
+    "ShellCheck",
+    "49 jq filters compiled",
+    "six isolated actual filesystem capture fixtures",
+    "one isolated encoder-failure dump fixture with later complete blocks retained",
+    "git diff --check"
+  ],
+  "evidence": [
+    "/tmp/rustusb-secure-journal-failure-fixture-20261023.py",
+    "/tmp/rustusb-secure-journal-failure-fixture-20261023.json",
+    "/tmp/rustusb-secure-dump-failure-fixture-20261023.py",
+    "/tmp/rustusb-secure-dump-failure-fixture-20261023.json"
+  ],
+  "dependency_boundary": "uses existing preflighted head/timeout/cp/rm/wc and shell builtins, no additional applet or ELF; earlier actual payload preflight locks earlier guest source and is not relabeled as this source",
+  "excluded": [
+    "Cargo",
+    "guest init execution",
+    "QEMU",
+    "USB/probe/product execution",
+    "product source edits"
+  ],
+  "history": "first41e2c67 and second5f1e25b FAILs remain unchanged; journals are for next diagnosis and cannot reconstruct past missing state"
+}

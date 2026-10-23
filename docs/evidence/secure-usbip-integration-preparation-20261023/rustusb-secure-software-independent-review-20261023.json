@@ -1,0 +1,1182 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Independent read-only existing log/JSON/raw protocol/source parser; no runner verification imports and no Cargo, product, test, QEMU or USB execution.",
+  "attribution": {
+    "head": "056341c30d15157d941566c90193c9d384b51d45",
+    "source_scope": "selected software source inputs, dirty candidate; excludes docs, harness, generated target",
+    "candidate_dirty": true,
+    "default_test_executions": 151,
+    "all_features_test_executions": 225,
+    "vendored_test_executions": 20,
+    "full_gate_total": 396,
+    "result_rows": 35,
+    "native_only_cli_tests_separate": 6,
+    "release_binaries": {
+      "target/release/rustusb": {
+        "length": 10213952,
+        "sha256": "ab0b467620672be97ed0d40336a4401111793fdcdc88116ad6ce678a454cb8f4"
+      },
+      "target/release/rustusb-helper": {
+        "length": 5440872,
+        "sha256": "40cbeec7b4f0cce4522bb5b2f105f31c5bd71b6e89e80b12efefc5673cd9e989"
+      }
+    },
+    "local_signal_build": "--skip-build explicitly external prebuilt; actual per-child ELF and workflow-linked preceding all-features release SHA agree; features are not inferred merely from --skip-build.",
+    "commands": [
+      "cargo fmt --all -- --check",
+      "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "cargo test --workspace --locked",
+      "cargo build --workspace --release --locked",
+      "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --no-deps --locked",
+      "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "cargo test --workspace --all-features --locked",
+      "cargo build --workspace --all-features --release --locked",
+      "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+      "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests"
+    ],
+    "command_evidence_limit": "scripts/check.sh uses set -e and recorded overall exit0; compiler/test/release/rustdoc completions observed. Silent fmt and exact flags are linked to fixed checked script and root execution record, not separately printed shell xtrace."
+  },
+  "local_signal_cases": [
+    {
+      "mode": "ready",
+      "signal": "sigint",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.000802797,
+      "backend_cleanup_snapshot_observed": true
+    },
+    {
+      "mode": "ready",
+      "signal": "sigterm",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.010761167,
+      "backend_cleanup_snapshot_observed": true
+    },
+    {
+      "mode": "blocked",
+      "signal": "sigint",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.001076364,
+      "backend_cleanup_snapshot_observed": false
+    },
+    {
+      "mode": "blocked",
+      "signal": "sigterm",
+      "actual_exit": 0,
+      "elapsed_seconds": 0.001075963,
+      "backend_cleanup_snapshot_observed": false
+    }
+  ],
+  "limits": [
+    "Dirty candidate software validation is not a clean-commit QEMU run, hardware G1/G2, encrypted physical end-to-end acceptance or entire Phase3 completion.",
+    "Native-only six tests are separate from 396 full-gate executions and do not identify the all-features release binary.",
+    "Local signal scenarios exercise ordinary-user loopback virtual profiles, not TLS or physical USB/kernel cleanup.",
+    "Ready mode has actual virtual stopped snapshot; blocked mode intentionally has none and socket EOF alone is not claimed as backend cleanup proof.",
+    "Legacy two-case backpressure runner records no per-child /proc ELF or source guards; its release SHA association is workflow provenance only (root states no intervening release rebuild), not independent process identity proof.",
+    "Neither local runner provides real physical input/USB forwarding evidence."
+  ],
+  "checks": [
+    {
+      "name": "121 selected inputs, same exact records before and after",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: Cargo.lock",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/event_output.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/main.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/native_server.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/physical_server.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/secure_client.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/secure_server.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/server_binding.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/shutdown_signals.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-cli/src/virtual_server.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-core/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-core/src/device_key.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-core/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/ancillary.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/diagnostics.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/journal.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/linux.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/main.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/native_channel.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/native_export.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/native_state.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/physical.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-daemon/src/physical_recovery.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-linux/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-linux/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-linux/tests/discovery.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-native/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-native/src/channel.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-native/src/diagnostics.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-native/src/export_channel.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-native/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-protocol/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-protocol/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-protocol/src/secure.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-protocol/src/server.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/device.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/physical/observe.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/physical/safety.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/physical/worker.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/physical.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/server.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/session.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-rust-backend/src/wire.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/src/acl.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/src/config/platform/tests.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/src/config.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/src/tls/tests.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: crates/rustusb-transport/src/tls.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: scripts/check.sh",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/.cargo/config.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/Cargo.toml",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/bulk.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/bulk_io.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/bulk_io_smol.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/bulk_io_tokio.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/buses.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/control.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/detach.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/detach_claim.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/list.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/examples/string_descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/bitset.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/descriptors.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/device.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/error.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/io/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/io/read.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/io/write.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/lib.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/maybe_future.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/device.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/events.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/webusb/device.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/webusb/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/webusb/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/webusb/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/device.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/platform/windows_winusb/util.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/transfer/buffer.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/transfer/control.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/transfer/internal.rs",
+      "passed": true
+    },
+    {
+      "name": "selected input still matches: vendor/nusb/src/transfer/mod.rs",
+      "passed": true
+    },
+    {
+      "name": "overall actual recorded exit status zero",
+      "passed": true
+    },
+    {
+      "name": "35 actual result rows and 396 named executions",
+      "passed": true
+    },
+    {
+      "name": "151 default / 225 all-features / 20 vendored executions",
+      "passed": true,
+      "detail": [
+        151,
+        225,
+        20
+      ]
+    },
+    {
+      "name": "all actual result fields failure/ignore/measure/filter zero",
+      "passed": true
+    },
+    {
+      "name": "recomputed results equal parent result, without using it as parser",
+      "passed": true
+    },
+    {
+      "name": "raw log has two release completions and two rustdoc generation completions",
+      "passed": true
+    },
+    {
+      "name": "no warning/error compilation diagnostics in successful full log",
+      "passed": true
+    },
+    {
+      "name": "checked sequential script includes fmt / both Clippy / release / rustdoc / vendor tests",
+      "passed": true
+    },
+    {
+      "name": "release ELF current bytes match recorded result: target/release/rustusb",
+      "passed": true
+    },
+    {
+      "name": "release ELF current bytes match recorded result: target/release/rustusb-helper",
+      "passed": true
+    },
+    {
+      "name": "Native-only actual six tests pass with no ignored or failed",
+      "passed": true
+    },
+    {
+      "name": "Native-only dependency tree includes transport/native/daemon but no Rust USB engine",
+      "passed": true
+    },
+    {
+      "name": "four distinct local ready/blocked INT/TERM cases",
+      "passed": true
+    },
+    {
+      "name": "signals skipped build recorded honestly as external prebuilt features not inferred",
+      "passed": true
+    },
+    {
+      "name": "actual selected signal binary agrees with full-gate all-features release ELF",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/after.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/before.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/protocol.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/result.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/stderr.log",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/stdout-consumed.bin",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/stdout-events.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigint/synthetic-padding.bin",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/after.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/before.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/protocol.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/result.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/stderr.log",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/stdout-consumed.bin",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/stdout-events.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: blocked-sigterm/synthetic-padding.bin",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/after.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/before.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/protocol.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/result.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/stderr.log",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/stdout-consumed.bin",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigint/stdout-events.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/after.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/before.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/protocol.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/result.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/stderr.log",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/stdout-consumed.bin",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: ready-sigterm/stdout-events.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: source-after.json",
+      "passed": true
+    },
+    {
+      "name": "local indexed raw length and SHA: source-before.json",
+      "passed": true
+    },
+    {
+      "name": "all 32 preexisting signal raw artifacts indexed",
+      "passed": true
+    },
+    {
+      "name": "local source artifacts match embedded exact snapshots",
+      "passed": true
+    },
+    {
+      "name": "local snapshots same source files/HEAD and explicitly dirty candidate",
+      "passed": true
+    },
+    {
+      "name": "recomputed local source fingerprint before",
+      "passed": true
+    },
+    {
+      "name": "recomputed local source fingerprint after",
+      "passed": true
+    },
+    {
+      "name": "all 313 local captured source current bytes match",
+      "passed": true,
+      "detail": 313
+    },
+    {
+      "name": "ready-sigint: case actual artifacts equal summary",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: stdout parsed from raw byte prefix matches exact retained events",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: actual two profiles configured and held with one pending each",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: 1-1 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: 1-2 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: signal sent only to original ordinary child identity",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: actual /proc child ELF SHA and inode match selected release",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: actual cooperative exit0 bounded8s without force or unexpected data",
+      "passed": true
+    },
+    {
+      "name": "ready-sigint: retained stopped resource snapshot proves virtual backend cleanup, beyond socket EOF",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: case actual artifacts equal summary",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: stdout parsed from raw byte prefix matches exact retained events",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: actual two profiles configured and held with one pending each",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: 1-1 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: 1-2 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: signal sent only to original ordinary child identity",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: actual /proc child ELF SHA and inode match selected release",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: actual cooperative exit0 bounded8s without force or unexpected data",
+      "passed": true
+    },
+    {
+      "name": "ready-sigterm: retained stopped resource snapshot proves virtual backend cleanup, beyond socket EOF",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: case actual artifacts equal summary",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: stdout parsed from raw byte prefix matches exact retained events",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: actual two profiles configured and held with one pending each",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: 1-1 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: 1-2 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: signal sent only to original ordinary child identity",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: actual /proc child ELF SHA and inode match selected release",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: actual cooperative exit0 bounded8s without force or unexpected data",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: actual pipe4096 full, separate writer EAGAIN and child writer blocked before signal",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigint: no drain or fake backend stopped receipt while output remains blocked",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: case actual artifacts equal summary",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: stdout parsed from raw byte prefix matches exact retained events",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: actual two profiles configured and held with one pending each",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: 1-1 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: 1-2 independent IMPORT/config/pending binary decode",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: signal sent only to original ordinary child identity",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: actual /proc child ELF SHA and inode match selected release",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: actual cooperative exit0 bounded8s without force or unexpected data",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: actual pipe4096 full, separate writer EAGAIN and child writer blocked before signal",
+      "passed": true
+    },
+    {
+      "name": "blocked-sigterm: no drain or fake backend stopped receipt while output remains blocked",
+      "passed": true
+    },
+    {
+      "name": "legacy two recorded backpressure scenarios meet original exits/time/socket assertions",
+      "passed": true
+    },
+    {
+      "name": "legacy script default binary path points at selected release, no invented per-child ELF guard",
+      "passed": true
+    },
+    {
+      "name": "all inspected raw/source artifacts unchanged across this review",
+      "passed": true
+    }
+  ],
+  "counts": {
+    "checks": 216,
+    "passed": 216,
+    "failed": 0
+  },
+  "artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/check.sh",
+      "length": 674,
+      "sha256": "f1b64bafbb48dda4597ad7f1c44c177b6d72db2f8fb0d83f6975e8545b308c76"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/test-virtual-backpressure.py",
+      "length": 4080,
+      "sha256": "b53ed78d710c7f748baa78687efea25b23db77c501acde8cc6decff2dbc0b823"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-backpressure-20261023.log",
+      "length": 527,
+      "sha256": "4801a720ea3d35b0283a84e7b13e1ae2decbafb741ea3a2c481a4f572d3fcddc"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023.log",
+      "length": 245,
+      "sha256": "a38e65414498f7cfbc27adf1e9ecf55a9805c2087adcc4bfeba8dacd65b90562"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/after.json",
+      "length": 388,
+      "sha256": "2ef997f04a1a7bd2ac76eb38e7f403bf958ab36426c854a6523ea91a545812ae"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/before.json",
+      "length": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/protocol.json",
+      "length": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/result.json",
+      "length": 10590,
+      "sha256": "012cc65fbf4acdbc90ed9e1338e62c04e965e4b9a7e8ec0c3a8dff265f0595ab"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/stderr.log",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/stdout-consumed.bin",
+      "length": 2693,
+      "sha256": "d85317c08efc336f6412d748ba57066630924147b53b7e298b1af1589cc30461"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/stdout-events.json",
+      "length": 4373,
+      "sha256": "7fd7d4116ca97117c9f835a38ba615552d77f8f65b2d90237d2a8d1bc35db187"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigint/synthetic-padding.bin",
+      "length": 4096,
+      "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/after.json",
+      "length": 388,
+      "sha256": "53d741f44bf344d4afde963aa8d182516935edb3dec32a0b89a4df1b31714da3"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/before.json",
+      "length": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/protocol.json",
+      "length": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/result.json",
+      "length": 10592,
+      "sha256": "2d9d3b0e36895d80c8d1c6cfd740851bc1cceb550e0fd14e105819793df02193"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/stderr.log",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/stdout-consumed.bin",
+      "length": 2693,
+      "sha256": "82a23e7f152d413faaf5952baa5576828bbbeb1db6f6b6a70da116309ef31c44"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/stdout-events.json",
+      "length": 4373,
+      "sha256": "831ef8088f1b3c111c5bb7ed6c376e9de2a25b931942d35668a8d88338b89747"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/blocked-sigterm/synthetic-padding.bin",
+      "length": 4096,
+      "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/after.json",
+      "length": 2793,
+      "sha256": "e41e450d277cc1c4c865e6fc1d791a564371687c3c198fb7e455bf8eaa57c26b"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/before.json",
+      "length": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/protocol.json",
+      "length": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/result.json",
+      "length": 14379,
+      "sha256": "53a7bc0134f4deab088831c8a811370bca51cdcfb12e6e2e78ae4dbecc79bde0"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/stderr.log",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/stdout-consumed.bin",
+      "length": 4035,
+      "sha256": "93bb0e775e60f481b1822cd371952471c388fa4fc14d5b5ddf9c1e310bc3495f"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigint/stdout-events.json",
+      "length": 6627,
+      "sha256": "57bb207a4b4fa6f2336b6009d9ac1cd60b32e22f7396633da040b33048a73e2c"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/after.json",
+      "length": 2793,
+      "sha256": "648fabbebe4417e069c39df2629b38b1239ec40be708e75497e29663722a7633"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/before.json",
+      "length": 2118,
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/protocol.json",
+      "length": 2971,
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/result.json",
+      "length": 14381,
+      "sha256": "e4d22b129c996c5af3c003699d793a46fc4ada0a83cc102f11bea87d8f63763d"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/stderr.log",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/stdout-consumed.bin",
+      "length": 4035,
+      "sha256": "aa032497508679e0fe30ca93da022956e206a7fb96ed32157759a0a8a25240fe"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/ready-sigterm/stdout-events.json",
+      "length": 6627,
+      "sha256": "82cb76eda09f38b6bf236f6df37fdc8ffc357e6774d10f7c29cf8b427c6fe87f"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/source-after.json",
+      "length": 69583,
+      "sha256": "48b424aa9ea3debdbcf7640a7f8f02e6206214a90ff2b7abe9332b45b0f88ac4"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/source-before.json",
+      "length": 69583,
+      "sha256": "48b424aa9ea3debdbcf7640a7f8f02e6206214a90ff2b7abe9332b45b0f88ac4"
+    },
+    {
+      "path": "/tmp/rustusb-secure-local-signals-20261023/summary.json",
+      "length": 209165,
+      "sha256": "76972a87107fe77bc4a210fb565c27fbe0f98d428b0b8a04bbd57d92fc236ee9"
+    },
+    {
+      "path": "/tmp/rustusb-secure-native-only-status-20261023.json",
+      "length": 55,
+      "sha256": "52d8523ee25ea4d70c0a24e3bf04ab568eb81ef5deee1e6045d04bc3dfc4f527"
+    },
+    {
+      "path": "/tmp/rustusb-secure-native-only-tests-20261023.log",
+      "length": 1232,
+      "sha256": "5dc77e1a12dd0207b9892ecf627ed4c476e6b9564cfbe95c67f53d73e878a8b8"
+    },
+    {
+      "path": "/tmp/rustusb-secure-native-only-tree-20261023.txt",
+      "length": 8037,
+      "sha256": "c0746126a845454428162a20f92238dbb750dd9d4b82ad9ec8a74afa39b31ca1"
+    },
+    {
+      "path": "/tmp/rustusb-secure-software-third-20261023.log",
+      "length": 46432,
+      "sha256": "40b73d9faee53f8bafc8f26001df052436cbae80abfcb32d07265bbfdebdb240"
+    },
+    {
+      "path": "/tmp/rustusb-secure-software-third-after-20261023.json",
+      "length": 21115,
+      "sha256": "52cc63d63e6f984134a638aad813fcdb9d49c853d8b7183a5a2fb434ad5af5fb"
+    },
+    {
+      "path": "/tmp/rustusb-secure-software-third-inputs-20261023.json",
+      "length": 21351,
+      "sha256": "bea7444614d8e735304211344cc81fe54be992c64d749cf4842ee76b75e48206"
+    },
+    {
+      "path": "/tmp/rustusb-secure-software-third-result-20261023.json",
+      "length": 765,
+      "sha256": "3f9a8c5ebcc23c1ad4a442ee9e6858932765b6a18ec78fe51676e50d093bcbf5"
+    },
+    {
+      "path": "/tmp/rustusb-secure-software-third-status-20261023.json",
+      "length": 75,
+      "sha256": "e80497b6b8915b7924affc9bb4e2de7a5c05b336eb50cb186ae7de0abd1cb143"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "scope": "Extracted read-only journal capture on temporary fixtures; no guest/helper/USB execution.",
+  "source_sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+  "cases": {
+    "copied": {
+      "expected_status": "copied",
+      "actual_status_text": "source=/tmp/rustusb-journal-failure-static-uyvzxjbr/inputs/copied\nlimit_bytes=1048576\nstatus=copied\ncomplete=true\nbytes=47\n"
+    },
+    "absent": {
+      "expected_status": "absent",
+      "actual_status_text": "source=/tmp/rustusb-journal-failure-static-uyvzxjbr/inputs/absent\nlimit_bytes=1048576\nstatus=absent\n"
+    },
+    "unreadable": {
+      "expected_status": "unreadable",
+      "actual_status_text": "source=/tmp/rustusb-journal-failure-static-uyvzxjbr/inputs/unreadable\nlimit_bytes=1048576\nstatus=unreadable\nread_exit=1\n"
+    },
+    "over_limit": {
+      "expected_status": "over_limit",
+      "actual_status_text": "source=/tmp/rustusb-journal-failure-static-uyvzxjbr/inputs/over_limit\nlimit_bytes=1048576\nstatus=over_limit\ncomplete=false\n"
+    },
+    "symlink": {
+      "expected_status": "nonregular",
+      "actual_status_text": "source=/tmp/rustusb-journal-failure-static-uyvzxjbr/inputs/symlink\nlimit_bytes=1048576\nstatus=nonregular\n"
+    },
+    "directory": {
+      "expected_status": "nonregular",
+      "actual_status_text": "source=/tmp/rustusb-journal-failure-static-uyvzxjbr/inputs/directory\nlimit_bytes=1048576\nstatus=nonregular\n"
+    }
+  },
+  "source_contents_unchanged": true,
+  "original_failure_status_preserved": true,
+  "oversize_prefix_exactly_1MiB": true
+}

@@ -1,0 +1,62 @@
+{
+  "status": "SOURCE_FROZEN_STATIC_PASS_NOT_QEMU",
+  "head_at_handoff": "056341c30d15157d941566c90193c9d384b51d45",
+  "files": {
+    "scripts/qemu/run-secure-qemu.py": {
+      "sha256": "0afb5c5f9d8ec4974c3c68bbbcdcb6dc348cbdde35a027a3c74929d31073bd1e",
+      "bytes": 35373
+    },
+    "scripts/qemu/guest-secure-init.sh": {
+      "sha256": "ae6604c413be9307822fac8a5bdf85285166892abcdcf49959932a97fc198c30",
+      "bytes": 24431
+    }
+  },
+  "scope": [
+    "virtual/usbfs x ipv4/ipv6: four independent real two-guest product runs",
+    "actual secure-server/discover/attach CLI; no Native server variant",
+    "dedicated UID2000; UID1000 rejected from secure helper operations with unchanged primary resources",
+    "external socketpair NIC PCAP; ttyS2 host controls, ttyS1 artifacts, ttyS0 kernel",
+    "two cycles actual HID key down/up and 35B serial each direction, CDC echo, anonymous VHCI receipts",
+    "client SIGTERM/wait0/verified cleanup/NULL/Gone and new actual import; server SIGTERM/wait0; physical exact baseline and durable record retirement"
+  ],
+  "command_template": "python3 scripts/qemu/run-secure-qemu.py --kernel 6.8.0-106-generic --backend virtual|usbfs --family ipv4|ipv6 --evidence /tmp/unique-directory",
+  "preconditions": [
+    "ordinary x86_64 host user",
+    "clean committed source required",
+    "default locked workspace all-features release build performed by root runner",
+    "host QEMU/kernel/modules/native tools/busybox/jq/setpriv/OpenSSL/nc.openbsd/ip required"
+  ],
+  "static": [
+    "Python AST",
+    "dash and BusyBox sh -n",
+    "ShellCheck ash",
+    "all 36 embedded jq filters compiled with null fixtures",
+    "14 explicitly synthetic parser/artifact and real ephemeral OpenSSL chain checks",
+    "git diff --check"
+  ],
+  "static_records": [
+    "/tmp/rustusb-secure-harness-static-20261023.py",
+    "/tmp/rustusb-secure-harness-static-20261023.json",
+    "/tmp/rustusb-secure-harness-jq-check-20261023.py",
+    "/tmp/rustusb-secure-harness-jq-static-20261023.json",
+    "/tmp/rustusb-secure-harness-openssl-static-20261023.log"
+  ],
+  "preflight_corrections": [
+    "fixed RemoteDevice bus_number/device_number field use after source check",
+    "constructed fixture detected final-position URB signature scan off-by-one; fixed before any QEMU",
+    "constructed truncated-packet fixture prompted declared IP/TCP length checks; fixed before any QEMU",
+    "isolated control polling counter to avoid changing outer release poll index",
+    "wait up to25s for failure trap artifact dump before terminating guest; original first error retained",
+    "check final FTDI tail, actual guest executable hashes and post-run ELF/source/head/clean guards"
+  ],
+  "boundaries": [
+    "no author Cargo build/test/probe/QEMU execution",
+    "no hardware, Native secure server, full Phase3, FD global revocation or malicious same-broker-UID claim",
+    "contender is a second independent broker process in the client guest and is refused at unavailable authorized catalog; this is not direct IMPORT busy coverage",
+    "encrypted external framing plus real product I/O and known signature absence; no TLS secret log/decryption",
+    "client ALPN offer observed; actual negotiated ALPN is enforced by product source/tests, not visible encrypted handshake",
+    "two client attach processes own distinct devices; no third guest"
+  ],
+  "secrets": "private keys created under TemporaryDirectory, never printed or retained in evidence; only public DER archived; initramfs digest retained after temporary image removal",
+  "next": "root independent preflight, commit frozen source, sole sequential actual QEMU runs; preserve first failures"
+}
