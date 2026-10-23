@@ -1,0 +1,470 @@
+{
+  "scope": "author static checks only; no product executable, Cargo, QEMU, USB or generated PID1 executed",
+  "checks": [
+    {
+      "name": "Python AST",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "generated PID1 shell syntax",
+      "pass": true,
+      "detail": {
+        "argv": [
+          "dash",
+          "-n",
+          "/tmp/rustusb-agent-generated-init.sh"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "generated PID1 ShellCheck",
+      "pass": true,
+      "detail": {
+        "argv": [
+          "shellcheck",
+          "-s",
+          "sh",
+          "/tmp/rustusb-agent-generated-init.sh"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "fragment shell syntax",
+      "pass": true,
+      "detail": {
+        "argv": [
+          "dash",
+          "-n",
+          "scripts/qemu/guest-agent-init.sh"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "runner help",
+      "pass": true,
+      "detail": {
+        "argv": [
+          "python3",
+          "scripts/qemu/run-agent-qemu.py",
+          "--help"
+        ],
+        "exit": 0,
+        "stdout": "usage: run-agent-qemu.py [-h] [--kernel KERNEL] [--backend {native}] --family\n                         {ipv4,ipv6} [--timeout TIMEOUT] --evidence EVIDENCE\n                         [--skip-build]\n\nTwo disposable guests: real nonroot agent ownership, Native TLS USB and\nrecovery. This first slice supports Native only. It uses QEMU keyboard/FTDI\ninput, never a production agent input RPC. Virtual and USBFS matrices remain\nseparate followups.\n\noptions:\n  -h, --help            show this help message and exit\n  --kernel KERNEL\n  --backend {native}\n  --family {ipv4,ipv6}\n  --timeout TIMEOUT\n  --evidence EVIDENCE\n  --skip-build          development only; final evidence uses the locked all-\n                        features build\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "owned diff whitespace",
+      "pass": true,
+      "detail": {
+        "argv": [
+          "git",
+          "diff",
+          "--check",
+          "--",
+          "scripts/qemu/run-agent-qemu.py",
+          "scripts/qemu/guest-agent-init.sh"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "actual jq compile 1",
+      "pass": false,
+      "detail": {
+        "expression": " >> /tmp/interfaces.jsonl\n        done\n        jq -nc --arg bus \"$bus\" --arg generation \"$(stat -Lc ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( >> /tmp/interfaces.jsonl                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 2",
+      "pass": false,
+      "detail": {
+        "expression": " \"$base\")\"              --arg devnum \"$(cat \"$base/devnum\")\" --arg cfg \"$(cat \"$base/bConfigurationValue\")\"              --arg count \"$(cat \"$base/bNumInterfaces\")\" --slurpfile interfaces /tmp/interfaces.jsonl              --arg path \"$(readlink -f \"$base\")\" --arg busnum \"$(cat \"$base/busnum\")\"              --arg vendor \"$(cat \"$base/idVendor\")\" --arg product \"$(cat \"$base/idProduct\")\"              --arg speed \"$(cat \"$base/speed\")\" --arg release \"$(cat \"$base/bcdDevice\")\"              --arg device_driver \"$(readlink \"$base/driver\" | sed ",
+        "stderr": "jq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"$base\")\"              --arg devnum \"$(cat \"$base/devnum\")\" --arg cfg \"$(cat \"$base/bConfigurationValue\")\"              --arg count \"$(cat \"$base/bNumInterfaces\")\" --slurpfile interfaces /tmp/interfaces.jsonl              --arg path \"$(readlink -f \"$base\")\" --arg busnum \"$(cat \"$base/busnum\")\"              --arg vendor \"$(cat \"$base/idVendor\")\" --arg product \"$(cat \"$base/idProduct\")\"              --arg speed \"$(cat \"$base/speed\")\" --arg release \"$(cat \"$base/bcdDevice\")\"              --arg device_driver \"$(readlink \"$base/driver\" | sed ) else true end                        \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( \"$base\")\"              --arg devnum \"$(cat \"$base/devnum\")\" --arg cfg \"$(cat \"$base/bConfigurationValue\")\"              --arg count \"$(cat \"$base/bNumInterfaces\")\" --slurpfile interfaces /tmp/interfaces.jsonl              --arg path \"$(readlink -f \"$base\")\" --arg busnum \"$(cat \"$base/busnum\")\"              --arg vendor \"$(cat \"$base/idVendor\")\" --arg product \"$(cat \"$base/idProduct\")\"              --arg speed \"$(cat \"$base/speed\")\" --arg release \"$(cat \"$base/bcdDevice\")\"              --arg device_driver \"$(readlink \"$base/driver\" | sed ) else true end\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 3",
+      "pass": false,
+      "detail": {
+        "expression": " >> /tmp/baseline-rows.jsonl\n    done\n    jq -s ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( >> /tmp/baseline-rows.jsonl                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 4",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/baseline-rows.jsonl > \"$1\"\n}\nnative_host_phase() {\n    host_baseline \"/tmp/host-$1.json\"\n    jq -e --arg phase \"$2\" --slurpfile before /tmp/host-before.json ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/baseline-rows.jsonl > \"$1\"                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/baseline-rows.jsonl > \"$1\"\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 5",
+      "pass": false,
+      "detail": {
+        "expression": " \"/tmp/profiles-$AGENT_EPOCH.json\" > /dev/null\n    identity \"$AGENT_PID\" \"agent-$AGENT_EPOCH\"\n    [ \"$(stat -c ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"/tmp/profiles-$AGENT_EPOCH.json\" > /dev/null                                                    \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 6",
+      "pass": false,
+      "detail": {
+        "expression": " \"/tmp/start-$1-$AGENT_EPOCH.json\" > /dev/null\n    # The requesting CLI has actually returned before any I/O below.\n    echo \"AGENT_START_RETURNED role=$ROLE profile=$1 epoch=$AGENT_EPOCH wait=0\"\n}\nsessions() { agent sessions \"$1\" > \"$2\"; jq -e ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"/tmp/start-$1-$AGENT_EPOCH.json\" > /dev/null                                                    \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( \"/tmp/start-$1-$AGENT_EPOCH.json\" > /dev/null\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 7",
+      "pass": false,
+      "detail": {
+        "expression": " \"$2\" > /dev/null; }\nwait_sessions() {\n    # shellcheck disable=SC2034\n    for session_poll in $(seq 1 400); do\n        sessions \"$1\" \"$2\"\n        if jq -e \"$3\" \"$2\" > /dev/null; then return 0; fi\n        kill -0 \"$AGENT_PID\"; sleep 0.05\n    done\n    return 1\n}\nempty_native() {\n    native_snapshot \"$1\"\n    awk ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"$2\" > /dev/null; }                       \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( \"$2\" > /dev/null; }\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 8",
+      "pass": false,
+      "detail": {
+        "expression": " /var/lib/rustusb/native/channels.json > /dev/null\n}\nawait_empty() {\n    # shellcheck disable=SC2034\n    for empty_poll in $(seq 1 300); do\n        if empty_native \"$1\"; then return 0; fi\n        sleep 0.05\n    done\n    return 1\n}\ndenied() {\n    cp /var/lib/rustusb/agent/state.json /tmp/agent-before-denied.json\n    if [ -f /var/lib/rustusb/native/channels.json ]; then cp /var/lib/rustusb/native/channels.json /tmp/root-before-denied.json; else echo absent > /tmp/root-before-denied.json; fi\n    if agent_other start \"$1\" > /tmp/denied-uid.json 2> /tmp/denied-uid.log; then return 1; else denied_rc=$?; fi\n    [ \"$denied_rc\" = 1 ]\n    if agent start unknown-profile > /tmp/denied-profile.json 2> /tmp/denied-profile.log; then return 1; else denied_rc=$?; fi\n    [ \"$denied_rc\" = 1 ]\n    for denied_file in /tmp/denied-uid.json /tmp/denied-profile.json; do jq -e ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /var/lib/rustusb/native/channels.json > /dev/null                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /var/lib/rustusb/native/channels.json > /dev/null\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 9",
+      "pass": false,
+      "detail": {
+        "expression": " \"$denied_file\" > /dev/null; done\n    cp /var/lib/rustusb/agent/state.json /tmp/agent-after-denied.json\n    jq -e --slurpfile before /tmp/agent-before-denied.json ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"$denied_file\" > /dev/null; done                                 \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 10",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/agent-after-denied.json > /dev/null\n    if [ -f /var/lib/rustusb/native/channels.json ]; then cp /var/lib/rustusb/native/channels.json /tmp/root-after-denied.json; else echo absent > /tmp/root-after-denied.json; fi\n    cmp /tmp/root-before-denied.json /tmp/root-after-denied.json\n    echo \"AGENT_DENIED role=$ROLE unauthorized_uid=1002 unknown_profile=true resources_unchanged=true\"\n}\nmanifest() {\n    mkdir -p /run/agent /var/lib/rustusb/agent\n    chown 2000:2000 /run/agent /var/lib/rustusb/agent\n    chmod 711 /run/agent; chmod 700 /var/lib/rustusb/agent\n    jq -n --slurpfile profiles /tmp/agent-profiles.json ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/agent-after-denied.json > /dev/null                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/agent-after-denied.json > /dev/null\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 11",
+      "pass": false,
+      "detail": {
+        "expression": " > /etc/rustusb/agent.json\n    chmod 644 /etc/rustusb/agent.json\n    [ \"$(stat -c ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > /etc/rustusb/agent.json                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 12",
+      "pass": false,
+      "detail": {
+        "expression": " \"/tmp/client-receipts-$1.json\" > /dev/null\n    HID_LOCAL=$(jq -er --arg key \"$HID_KEY\" ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"/tmp/client-receipts-$1.json\" > /dev/null                                                 \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 13",
+      "pass": false,
+      "detail": {
+        "expression": " \"/tmp/client-receipts-$1.json\")\n    SERIAL_LOCAL=$(jq -er --arg key \"$SERIAL_KEY\" ",
+        "stderr": "jq: error: syntax error, unexpected IDENT (Unix shell quoting issues?) at <top-level>, line 2:\n    SERIAL_LOCAL=$(jq -er --arg key \"$SERIAL_KEY\" ) else true end    \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( \"/tmp/client-receipts-$1.json\")\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 14",
+      "pass": false,
+      "detail": {
+        "expression": " \"/tmp/client-receipts-$1.json\")\n    [ \"$HID_LOCAL\" != \"$SERIAL_LOCAL\" ]\n    [ \"$(cat \"/sys/bus/usb/devices/$HID_LOCAL/idVendor\")\" = 0627 ]\n    [ \"$(cat \"/sys/bus/usb/devices/$HID_LOCAL/idProduct\")\" = 0001 ]\n    [ \"$(cat \"/sys/bus/usb/devices/$HID_LOCAL/speed\")\" = 480 ]\n    [ \"$(cat \"/sys/bus/usb/devices/$SERIAL_LOCAL/idVendor\")\" = 0403 ]\n    [ \"$(cat \"/sys/bus/usb/devices/$SERIAL_LOCAL/idProduct\")\" = 6001 ]\n    [ \"$(cat \"/sys/bus/usb/devices/$SERIAL_LOCAL/speed\")\" = 12 ]\n    # shellcheck disable=SC2034\n    for local_poll in $(seq 1 150); do\n        EVENT=$(find \"$(readlink -f \"/sys/bus/usb/devices/$HID_LOCAL\")\" -name ",
+        "stderr": "jq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 3:\n    [ \"$(cat \"/sys/bus/usb/devices/$HID_LOCAL/idVendor\")\" = 0627 ]                                                      \njq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 4:\n    [ \"$(cat \"/sys/bus/usb/devices/$HID_LOCAL/idProduct\")\" = 0001 ]                                                       \njq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 5:\n    [ \"$(cat \"/sys/bus/usb/devices/$HID_LOCAL/speed\")\" = 480 ]                                                   \njq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 6:\n    [ \"$(cat \"/sys/bus/usb/devices/$SERIAL_LOCAL/idVendor\")\" = 0403 ]                                                         \njq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 7:\n    [ \"$(cat \"/sys/bus/usb/devices/$SERIAL_LOCAL/idProduct\")\" = 6001 ]                                                          \njq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 8:\n    [ \"$(cat \"/sys/bus/usb/devices/$SERIAL_LOCAL/speed\")\" = 12 ]                                                      \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( \"/tmp/client-receipts-$1.json\")\njq: 7 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 15",
+      "pass": false,
+      "detail": {
+        "expression": " > \"/tmp/local-identities-$1.json\"\n}\nactual_io() {\n    IO_ROUND=$1 IO_HID=$2\n    if [ \"$IO_HID\" = yes ]; then\n        : > \"/tmp/input-$IO_ROUND.bin\"\n        cat \"$EVENT\" > \"/tmp/input-$IO_ROUND.bin\" & INPUT_PID=$!\n    fi\n    stty -F \"$TTY\" raw -echo 57600 clocal -hupcl\n    exec 4<> \"$TTY\"\n    timeout 15 dd bs=1 count=35 <&4 > \"/tmp/rx-$IO_ROUND.bin\" 2> \"/tmp/dd-$IO_ROUND.log\" & RX_PID=$!\n    echo \"AGENT_CLIENT_WAIT_INPUT round=$IO_ROUND hid=$IO_HID\"\n    wait \"$RX_PID\"\n    printf ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > \"/tmp/local-identities-$1.json\"                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( > \"/tmp/local-identities-$1.json\"\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 16",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/devices.json > /dev/null; then break; fi\n        sleep 0.05\n    done\n    jq -e ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/devices.json > /dev/null; then break; fi                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 17",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/devices.json > /dev/null\n    HID_ID=$(jq -er ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/devices.json > /dev/null                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 18",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/devices.json)\n    SERIAL_ID=$(jq -er ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/devices.json)                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/devices.json)\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 19",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/devices.json)\n    HID_BUS=$(jq -er --arg id \"$HID_ID\" ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/devices.json)                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/devices.json)\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 20",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/devices.json)\n    SERIAL_BUS=$(jq -er --arg id \"$SERIAL_ID\" ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/devices.json)                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/devices.json)\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 21",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/devices.json)\n    HID_KEY=\"native:$HID_ID\" SERIAL_KEY=\"native:$SERIAL_ID\"\n    host_baseline /tmp/host-before.json\n    jq -e ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/devices.json)                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/devices.json)\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 22",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/host-before.json > /dev/null\n    for bus in \"$HID_BUS\" \"$SERIAL_BUS\"; do\n        node=$(printf ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/host-before.json > /dev/null                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 23",
+      "pass": false,
+      "detail": {
+        "expression": " > /etc/rustusb/policy.json\n    start_helper\n    jq -nc --arg hid \"$HID_KEY\" --arg serial \"$SERIAL_KEY\" ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > /etc/rustusb/policy.json                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 24",
+      "pass": false,
+      "detail": {
+        "expression": " > /tmp/keys.json\n    echo \"AGENT_KEYS $(cat /tmp/keys.json)\"\n    PIN=$(cat /etc/rustusb/client-pin.txt)\n    jq -n --arg listen \"$LISTEN\" --arg pin \"$PIN\" --slurpfile keys /tmp/keys.json ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > /tmp/keys.json                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( > /tmp/keys.json\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 25",
+      "pass": false,
+      "detail": {
+        "expression": " > /etc/rustusb/server.json\n    chown 2000:2000 /etc/rustusb/server-key.der; chmod 600 /etc/rustusb/server-key.der\n    echo ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > /etc/rustusb/server.json                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 26",
+      "pass": false,
+      "detail": {
+        "expression": "\n        native_host_phase \"exported-$epoch\" exported\n        agent_snapshot \"exported-$epoch\"\n        echo \"AGENT_SERVER_READY epoch=$epoch\"\n        if [ \"$epoch\" = 1 ]; then\n            host_expect HELD1\n            wait_sessions server /tmp/server-held-1.json ",
+        "stderr": "jq: error: syntax error, unexpected QQSTRING_START (Unix shell quoting issues?) at <top-level>, line 2:\n        native_host_phase \"exported-$epoch\" exported                          \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 27",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/server-held-1.json)\n            agent stop-session \"$STOP_ID\" > /tmp/stop-hid.json\n            jq -e ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/server-held-1.json)                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/server-held-1.json)\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 28",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/stop-hid.json > /dev/null\n            wait_sessions server /tmp/server-target-stopped.json ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/stop-hid.json > /dev/null                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 29",
+      "pass": false,
+      "detail": {
+        "expression": "\n            agent_snapshot target-stopped\n            echo AGENT_SERVER_HID_STOPPED\n            host_expect CLIENT_RECOVERED\n            wait_sessions server /tmp/server-old-released.json ",
+        "stderr": "jq: error: syntax error, unexpected IDENT (Unix shell quoting issues?) at <top-level>, line 2:\n            agent_snapshot target-stopped                           \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 30",
+      "pass": false,
+      "detail": {
+        "expression": "\n        else\n            host_expect HELD3\n            wait_sessions server /tmp/server-held-3.json ",
+        "stderr": "jq: error: syntax error, unexpected else (Unix shell quoting issues?) at <top-level>, line 2:\n        else        \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 31",
+      "pass": false,
+      "detail": {
+        "expression": "\n            native_host_phase held-3 held; agent_snapshot held-3\n            echo AGENT_SERVER_HELD3\n            host_expect CLIENT_CLOSED\n        fi\n        kill -TERM \"$AGENT_PID\"; wait_exit \"$AGENT_PID\" \"agent-$epoch\"\n        host_baseline \"/tmp/host-restored-$epoch.json\"; cmp /tmp/host-before.json \"/tmp/host-restored-$epoch.json\"\n        agent_snapshot \"stopped-$epoch\"\n        jq -e ",
+        "stderr": "jq: error: syntax error, unexpected IDENT (Unix shell quoting issues?) at <top-level>, line 2:\n            native_host_phase held-3 held; agent_snapshot held-3                              \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 32",
+      "pass": false,
+      "detail": {
+        "expression": " \"/tmp/root-stopped-$epoch.json\" > /dev/null\n        if [ \"$epoch\" = 1 ]; then\n            agent_start 2\n            echo AGENT_SERVER_RESTARTED\n            host_expect RESTART2\n        fi\n    done\n    echo AGENT_SERVER_FINISHED\nelse\n    STAGE=client-prepare\n    for name in usbip-core vhci-hcd; do [ ! -f \"/modules/$name.ko\" ] || insmod \"/modules/$name.ko\"; done\n    host_read; printf ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( \"/tmp/root-stopped-$epoch.json\" > /dev/null                                                  \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 33",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/keys.json > /dev/null\n    HID_KEY=$(jq -er ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/keys.json > /dev/null                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 34",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/keys.json) SERIAL_KEY=$(jq -er ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/keys.json) SERIAL_KEY=$(jq -er ) else true end                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/keys.json) SERIAL_KEY=$(jq -er ) else true end\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 35",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/keys.json)\n    jq -n --slurpfile keys /tmp/keys.json ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/keys.json)                \njq: error: Possibly unterminated 'if' statement at <top-level>, line 1:\nif false then ( /tmp/keys.json)\njq: 2 compile errors\n"
+      }
+    },
+    {
+      "name": "actual jq compile 36",
+      "pass": false,
+      "detail": {
+        "expression": " > /etc/rustusb/policy.json\n    start_helper\n    chown 2000:2000 /etc/rustusb/client-key.der; chmod 600 /etc/rustusb/client-key.der\n    for profile in hid serial; do\n        if [ \"$profile\" = hid ]; then key=$HID_KEY; else key=$SERIAL_KEY; fi\n        jq -n --arg host \"$HOST\" --arg key \"$key\" ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > /etc/rustusb/policy.json                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 37",
+      "pass": false,
+      "detail": {
+        "expression": " > \"/etc/rustusb/client-$profile.json\"\n    done\n    echo ",
+        "stderr": "jq: error: syntax error, unexpected '>' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( > \"/etc/rustusb/client-$profile.json\"                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 38",
+      "pass": false,
+      "detail": {
+        "expression": " /tmp/catalog-initial.json > /dev/null\n    for epoch in 1 2; do\n        STAGE=\"client-epoch-$epoch\"\n        for profile in hid serial; do\n            start_job \"$profile\"\n            wait_sessions \"$profile\" \"/tmp/client-$profile-connected-$epoch.json\" ",
+        "stderr": "jq: error: syntax error, unexpected '/' (Unix shell quoting issues?) at <top-level>, line 1:\nif false then ( /tmp/catalog-initial.json > /dev/null                \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 39",
+      "pass": false,
+      "detail": {
+        "expression": "\n        done\n        if [ \"$epoch\" = 1 ]; then round=1; else round=3; fi\n        record_client_locals \"$round\"; agent_snapshot \"held-$round\"\n        actual_io \"$round\" yes\n        if [ \"$epoch\" = 1 ]; then\n            host_expect HID_STOPPED\n            wait_sessions hid /tmp/client-hid-stopped.json ",
+        "stderr": "jq: error: syntax error, unexpected if (Unix shell quoting issues?) at <top-level>, line 3:\n        if [ \"$epoch\" = 1 ]; then round=1; else round=3; fi        \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "actual jq compile 40",
+      "pass": false,
+      "detail": {
+        "expression": "\n            [ ! -e \"/sys/bus/usb/devices/$HID_LOCAL\" ] && [ -d \"/sys/bus/usb/devices/$SERIAL_LOCAL\" ]\n            native_snapshot /tmp/vhci-target-stopped.txt\n            awk ",
+        "stderr": "jq: error: syntax error, unexpected INVALID_CHARACTER (Unix shell quoting issues?) at <top-level>, line 2:\n            [ ! -e \"/sys/bus/usb/devices/$HID_LOCAL\" ] && [ -d \"/sys/bus/usb/devices/$SERIAL_LOCAL\" ]              \njq: 1 compile error\n"
+      }
+    },
+    {
+      "name": "fixture connected import",
+      "pass": true,
+      "detail": {
+        "exit": 0,
+        "expected_match": true,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "fixture server proof cannot replace local enumeration",
+      "pass": true,
+      "detail": {
+        "exit": 1,
+        "expected_match": false,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "fixture Root proof positive",
+      "pass": true,
+      "detail": {
+        "exit": 0,
+        "expected_match": true,
+        "stderr": ""
+      }
+    },
+    {
+      "name": "fixture missing attempt proof rejected",
+      "pass": true,
+      "detail": {
+        "exit": 1,
+        "expected_match": false,
+        "stderr": ""
+      }
+    }
+  ],
+  "check_count": 50,
+  "jq_compile_count": 40,
+  "all_pass": false,
+  "files": [
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 33523,
+      "sha256": "f1b2dc7444aec89bbfa6992e5c7a61a40460894f1fbe1109e54170ddb8b4e192"
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 18396,
+      "sha256": "69d1cbee056f99d50732701b3060692e69c070062641a4d69b3a54086ce23608"
+    },
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38"
+    },
+    {
+      "path": "scripts/qemu/guest-secure-init.sh",
+      "bytes": 35715,
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16"
+    }
+  ],
+  "generated_init": {
+    "path": "/tmp/rustusb-agent-generated-init.sh",
+    "bytes": 31165,
+    "sha256": "ea56613bd6ffb1b7a02ffd738dd8c8a18cd714023c0a4d66e5ca3293f6ac5003"
+  }
+}

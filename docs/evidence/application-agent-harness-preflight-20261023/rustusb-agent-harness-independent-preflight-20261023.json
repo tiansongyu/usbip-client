@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "result": "NO_REMAINING_SPECIFIC_MUST_FIX_IN_FROZEN_REVISION2",
+  "head": "2a0f8d74ab913c84245055cee2ccba1b83c799a0",
+  "scope": "Independent preflight source review of the two new Native-only agent QEMU files. No Cargo, product CLI, helper, USB, ptrace or QEMU execution. No repository edit.",
+  "source_snapshot": [
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 39033,
+      "sha256": "997a80e4903ad3f01eb9f3e69196245a6c3c571f6549d22f747e8adcce1aef89"
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 19262,
+      "sha256": "9588a07031d145a2b982ad610910db1d8e1d77ce8653e99c3ce2e0c71da95c43"
+    }
+  ],
+  "closed_findings": [
+    {
+      "id": "H1",
+      "finding": "Background HID reader could open evdev after QMP injection",
+      "closure": "Parent shell opens evdev FD3 before launching reader; reader closes duplicate3/control5; WAIT only after subscription is established."
+    },
+    {
+      "id": "H2",
+      "finding": "New Store has no committed state.json before first mutation, so initial cp deterministically failed",
+      "closure": "Before denial records actual absent status and actual public empty jobs/sessions responses. First permission-denial audit creates the real file. No fake prior raw state is generated."
+    },
+    {
+      "id": "H3",
+      "finding": "Final server all/terminal/metrics assertions allowed empty session history",
+      "closure": "history_identity requires exact two-server-job/eight-session and four-client-job/four-session sets with original start/held IDs, role counts, instance/key/principal and each capability attempt preserved; terminal counts are exact nonzero8/4."
+    },
+    {
+      "id": "H4",
+      "finding": "Kernel S0 loop guard could miss final output between last read and guest exit",
+      "closure": "verify rereads both complete S0 logs after actual QEMU exits and rejects the same Kernel panic/Oops markers."
+    }
+  ],
+  "additional_hardening_verified": [
+    "Root terminal proof must equal NativeImportReleased/NativeExportRestored/NativeStubAvailable by capability kind even if app proof was not populated; PreviousBoot/Gone/NotStarted are rejected in this fixed sameboot/nohotplug scenario.",
+    "Captured helper status requires all actual UID columns0; agents require all UID columns2000 and zero Inh/Prm/Eff/Amb capabilities."
+  ],
+  "lifecycle_checks_reviewed": [
+    "UID1000 operators return from real CLI Start before QMP/HID/FTDI I/O; UID1002/unknown profile reject without new root capabilities.",
+    "Actual source/backend pool is Native only, TLS-managed catalog+IMPORT+URB; no production input RPC and no host USB passthrough.",
+    "Per-incoming HID stop retains exact serial export/stub/import resource and another35B actual serial I/O; exported device sessions remain available.",
+    "SIGKILL targets the harness-owned agent PID and captures one actual wait137, preserves old application identity/attempt without rewriting old terminal0.",
+    "Helper remains alive to perform its own kernel cleanup; old serial app session resolves only by exact retained helper proof after new application epoch.",
+    "Server TERM verifies the complete original driver/configuration/interface generation baseline before restart; new epochs/attempt IDs and final real HID/FTDI I/O are distinct.",
+    "Actual FTDI injected and received byte files compare three exact35B rounds per direction (105B), and evdev records require KEY1/KEY3 down/up.",
+    "Listener/capability/metadata/helper roots are separate; root policy has no legacy export/peer permission and no trusted_network bypass.",
+    "Both guests must exit0 with one exact PASS each and complete artifact framing; source/HEAD/clean and actual ELF receipts are checked before PASS.",
+    "Host creates QEMU socketpair NICs and emulated keyboard/FTDI only; host module/USB/network mutation is absent. Kernel copy is bounded existing support behavior.",
+    "First failure is retained; ABORT triggers guest trap and a bounded25s diagnostic grace collects artifacts before host termination."
+  ],
+  "independent_static": {
+    "path": "/tmp/rustusb-agent-independent-final-static-20261023.json",
+    "bytes": 1199,
+    "sha256": "45f51e43af1dc67dd0e41e5b6b4e3fd12708255167dd8f7900b87ae22d6f07ac",
+    "checks": {
+      "python_ast": true,
+      "generated_dash_n": true,
+      "parent_evdev_open_before_reader_and_wait": true,
+      "raw_before_store_absence": true,
+      "public_empty_before_denials": true,
+      "exact_two_epoch_history": true,
+      "final_kernel_reread": true,
+      "proof_kind_checks": true,
+      "actual_root_helper_uid": true,
+      "qemu_usb_models_only": true
+    },
+    "generated_guest_bytes": 32031,
+    "generated_guest_sha256": "d38c479db86f93e25e73e15e4e4d841e1b100dfba7fea55763621646156732b4",
+    "generated_dash_n": ""
+  },
+  "limits": [
+    "Static preflight is not actual USB or product-run evidence. Author static fixtures are kept separate and are not independently promoted to device tests.",
+    "Only Native/IPv4 or Native/IPv6 is selectable; virtual and USBFS managed integration matrices are not implemented by these files.",
+    "TTY fd4 is closed at the end of I/O round2. KILL proves a still Connected capability lifecycle, not a specifically observed active USB URB/kernel ioctl at that instant.",
+    "TCP/TLS packet classification is the existing shared support; this review does not call runner.verify/pcap_review or claim independent packet analysis of a run that has not happened.",
+    "No hardware G1/G2, all-family execution, FD revocation or full Phase3 completion claim."
+  ],
+  "reviewer_notes": [
+    "The first final textual check used an exact whitespace needle and raised ValueError; corrected whitespace-tolerant source predicate passes. This was not a harness run or product failure."
+  ]
+}

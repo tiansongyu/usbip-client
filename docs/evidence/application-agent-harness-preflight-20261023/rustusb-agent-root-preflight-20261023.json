@@ -1,0 +1,48 @@
+{
+  "scope": "root independent static preflight, not a QEMU result",
+  "inputs": {
+    "scripts/qemu/run-agent-qemu.py": {
+      "bytes": 39033,
+      "sha256": "997a80e4903ad3f01eb9f3e69196245a6c3c571f6549d22f747e8adcce1aef89"
+    },
+    "scripts/qemu/guest-agent-init.sh": {
+      "bytes": 19262,
+      "sha256": "9588a07031d145a2b982ad610910db1d8e1d77ce8653e99c3ce2e0c71da95c43"
+    }
+  },
+  "qemu_selected_inputs": 154,
+  "service_selected_inputs": 16,
+  "checks": [
+    {
+      "command": [
+        "dash",
+        "-n"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "shellcheck",
+        "--shell=sh",
+        "-"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "run-agent-qemu.py",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: run-agent-qemu.py [-h] [--kernel KERNEL] [--backend {native}] --family\n                         {ipv4,ipv6} [--timeout TIMEOUT] --evidence EVIDENCE\n                         [--skip-build]\n\nTwo disposable guests: real nonroot agent ownership, Native TLS USB and\nrecovery. This first slice supports Native only. It uses QEMU keyboard/FTDI\ninput, never a production agent input RPC. Virtual and USBFS matrices remain\nseparate followups.\n\noptions:\n  -h, --help            show this help message and exit\n  --kernel KERNEL\n  --backend {native}\n  --family {ipv4,ipv6}\n  --timeout TIMEOUT\n  --evidence EVIDENCE\n  --skip-build          development only; final evidence uses the locked all-\n                        features build\n",
+      "stderr": ""
+    }
+  ],
+  "generated_init_sha256": "d38c479db86f93e25e73e15e4e4d841e1b100dfba7fea55763621646156732b4",
+  "initial_checker_note": "First root checker asserted a whitespace-sensitive exec3 literal and failed against valid exec 3< SPACE path. Both generated dash/shellcheck exited0; corrected the checker regex only, without changing harness source."
+}
