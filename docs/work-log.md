@@ -513,3 +513,5 @@
 - clean934新矩阵前四项Native/USBFS×双栈全部PASS（12方向），第五virtual-v4实际FAIL，余下virtual-v6与旧九共10项未执行。不是Catalog产品回归：client在原nc-w2的3240负向探测即超时，未产生catalog/jobs/sessions，0arm；两个原network.txt显示NO-CARRIER，真实dmesg LinkUp在guest约2.767秒，valve完整转发9包且无TCP/SYN。H源码核drive每轮无条件poll阀门，不是最初怀疑的virtual漏pump。准备在新harness初始增加实际carrier=1/operstate=up的有界事实屏障并收原件，保留nc-w2/refused原断言，不以sleep或扩大超时覆盖。四PASS/一FAIL与所有未运行项原样保留。
 
 - 626修复后软件/实际xtrace/165输入Git映射/工具与ELF/Native-only/本地runtime/作者与独立审查共71份约7.41MB归档`docs/evidence/data-link-management-software-20261024`，逐original/bytes/SHA/staged blob核。此前608、首mTLS FAIL及e152 QEMU FAIL继续独立归档。当前934矩阵四PASS/virtual readiness FAIL不改变626软件结论，也不宣告15组全通过。
+
+- 934原矩阵四PASS/virtual准备FAIL/十未运行、源与ELFguards及只读诊断共2552份约29.36MB归档`docs/evidence/data-link-matrix-93428ce-20261024`，逐original/bytes/SHA/staged核。修正精度：valve9个socket完整forward并不代表peerPCAP收到9（server6/client8），失败拆解期间不能给完整PacketAudit结论；Host START为send时刻而非nc syscall开始。LinkUp晚于初始NO-CARRIER与负向探测超时相符，保留为事实支持的readiness候选，不凭跨时钟差宣称精确nc截止。新屏障将直接采carrier/operstate/uptime并有hostACK，原nc/probe门槛保持。

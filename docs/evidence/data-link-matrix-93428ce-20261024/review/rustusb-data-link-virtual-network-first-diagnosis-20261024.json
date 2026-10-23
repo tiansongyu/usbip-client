@@ -1,0 +1,509 @@
+{
+  "analyzer_history": "First diagnostic parser incorrectly required all receiving PCAP records even during failed teardown. Original parser and assertion failure are retained; current audit verifies source ingress and reports incomplete receiving evidence explicitly.",
+  "check_count": 56,
+  "checks": [
+    {
+      "name": "original first virtual overall FAIL retained",
+      "passed": true
+    },
+    {
+      "name": "reported source guards true and actual two guest0 not a PASS",
+      "passed": true
+    },
+    {
+      "name": "actual IPv4 plaintext connect timeout",
+      "passed": true
+    },
+    {
+      "name": "Catalog/IMPORT not reached",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap bounded Ethernet pcap header",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "server-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap bounded Ethernet pcap header",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "client-external.pcap complete packet",
+      "passed": true
+    },
+    {
+      "name": "exact ARP IPv4 shape",
+      "passed": true
+    },
+    {
+      "name": "no deliberately armed fault or drop",
+      "passed": true
+    },
+    {
+      "name": "all nine observed frames actually forwarded",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "exact ingress-forward tuple",
+      "passed": true
+    },
+    {
+      "name": "original ingress present in source capture",
+      "passed": true
+    },
+    {
+      "name": "no TCP was even observed before failure",
+      "passed": true
+    },
+    {
+      "name": "server capture contains only ARP/IPv6 boot traffic",
+      "passed": true
+    },
+    {
+      "name": "server all actual ingress source frames captured",
+      "passed": true
+    },
+    {
+      "name": "client capture contains only ARP/IPv6 boot traffic",
+      "passed": true
+    },
+    {
+      "name": "client all actual ingress source frames captured",
+      "passed": true
+    },
+    {
+      "name": "host only sent keys and START before failure",
+      "passed": true
+    },
+    {
+      "name": "server actual initial NO-CARRIER with expected static addresses",
+      "passed": true
+    },
+    {
+      "name": "server actual later carrier-up kernel event",
+      "passed": true
+    },
+    {
+      "name": "server generated init lacks carrier/operstate readiness barrier",
+      "passed": true
+    },
+    {
+      "name": "actual virtual drive continuously polls same valve",
+      "passed": true
+    },
+    {
+      "name": "client actual initial NO-CARRIER with expected static addresses",
+      "passed": true
+    },
+    {
+      "name": "client actual later carrier-up kernel event",
+      "passed": true
+    },
+    {
+      "name": "client generated init lacks carrier/operstate readiness barrier",
+      "passed": true
+    },
+    {
+      "name": "actual virtual drive continuously polls same valve",
+      "passed": true
+    },
+    {
+      "name": "all originals unchanged after read",
+      "passed": true
+    }
+  ],
+  "finding": "The new guest configures eth0/addressing without waiting for carrier. Both original snapshots are NO-CARRIER, later e1000 link-up is around guest uptime2.768s, and the early fixed two-second nc refusal test gets only a timeout with no TCP/SYN captured. The virtual path has no physical device enumeration delay. This supports a missing guest network readiness precondition, not an intentional valve drop or evidence of product TLS/USB failure.",
+  "forward_latencies": [
+    {
+      "forward_delay_ms": 0.358872,
+      "ingress_since_valve_start_ms": 2871.072409,
+      "kind": "icmpv6_mldv2",
+      "origin": "server",
+      "packet_id": 1
+    },
+    {
+      "forward_delay_ms": 0.295401,
+      "ingress_since_valve_start_ms": 2871.150698,
+      "kind": "icmpv6_rs",
+      "origin": "server",
+      "packet_id": 2
+    },
+    {
+      "forward_delay_ms": 0.218865,
+      "ingress_since_valve_start_ms": 2872.169422,
+      "kind": "icmpv6_mldv2",
+      "origin": "client",
+      "packet_id": 3
+    },
+    {
+      "forward_delay_ms": 0.023986,
+      "ingress_since_valve_start_ms": 2872.370303,
+      "kind": "icmpv6_rs",
+      "origin": "client",
+      "packet_id": 4
+    },
+    {
+      "forward_delay_ms": 0.446678,
+      "ingress_since_valve_start_ms": 2873.798214,
+      "kind": "icmpv6_mldv2",
+      "origin": "server",
+      "packet_id": 5
+    },
+    {
+      "forward_delay_ms": 0.223444,
+      "ingress_since_valve_start_ms": 2874.311068,
+      "kind": "icmpv6_mldv2",
+      "origin": "client",
+      "packet_id": 6
+    },
+    {
+      "forward_delay_ms": 0.260395,
+      "ingress_since_valve_start_ms": 3095.446227,
+      "kind": "icmpv6_mldv2",
+      "origin": "client",
+      "packet_id": 7
+    },
+    {
+      "forward_delay_ms": 50.230419,
+      "ingress_since_valve_start_ms": 3357.5389,
+      "kind": "arp",
+      "origin": "client",
+      "packet_id": 8
+    },
+    {
+      "forward_delay_ms": 50.271757,
+      "ingress_since_valve_start_ms": 3458.128211,
+      "kind": "icmpv6_mldv2",
+      "origin": "server",
+      "packet_id": 9
+    }
+  ],
+  "host_control_relative_ms": [
+    {
+      "mark": "keys",
+      "role": "client",
+      "since_valve_start_ms": 860.900229
+    },
+    {
+      "mark": "start",
+      "role": "client",
+      "since_valve_start_ms": 1272.27351
+    }
+  ],
+  "network": [
+    {
+      "initial_state": "NO-CARRIER",
+      "kernel_line": "[    2.767611] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX",
+      "kernel_link_up_uptime_seconds": 2.767611,
+      "role": "server"
+    },
+    {
+      "initial_state": "NO-CARRIER",
+      "kernel_line": "[    2.768591] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX",
+      "kernel_link_up_uptime_seconds": 2.768591,
+      "role": "client"
+    }
+  ],
+  "originals": {
+    "client-artifacts/failure-dmesg.log": {
+      "bytes": 32126,
+      "sha256": "436bc9dc98706c6934442a63129ceb382dc60285dabfae39b051f61e864be741"
+    },
+    "client-artifacts/network.txt": {
+      "bytes": 315,
+      "sha256": "97ac987294fc47f61e4574d03b451bc10cd27a88007332d11231771a501d9117"
+    },
+    "client-artifacts/plaintext-4.log": {
+      "bytes": 86,
+      "sha256": "8bc79753690e4a3649b26fb36b7b38dc38970ca6d3c422cb82c542966acdcf80"
+    },
+    "client-external.pcap": {
+      "bytes": 902,
+      "sha256": "a18198a91c90f110e733b7494239b4803d603c7e319d643b17801c42322f0c90"
+    },
+    "client-generated-link-init.sh": {
+      "bytes": 45061,
+      "sha256": "05e8076d1df7dcac88b7b6d4a63d06845d808f2d193eee6b72b575324d333b78"
+    },
+    "host-control.jsonl": {
+      "bytes": 209,
+      "sha256": "6f6941c40ad375b79b9db3b33d58780e2bbef888e9662f2456155833d11c66b5"
+    },
+    "server-artifacts/failure-dmesg.log": {
+      "bytes": 30786,
+      "sha256": "e949a852635461b0a28a34fbe3d2e09af9b84bd1db5a4f8862bfae62a1422d35"
+    },
+    "server-artifacts/network.txt": {
+      "bytes": 315,
+      "sha256": "d1de2891cc8ce427b5d33cd47d4a9426ee4f45185a7774381dd1c1fd08fa9252"
+    },
+    "server-external.pcap": {
+      "bytes": 700,
+      "sha256": "07ba838bf82a45ce1e51de66dd201a87f28091c667c216914c3ebcc8f5f1db82"
+    },
+    "server-generated-link-init.sh": {
+      "bytes": 45061,
+      "sha256": "05e8076d1df7dcac88b7b6d4a63d06845d808f2d193eee6b72b575324d333b78"
+    },
+    "source/scripts/qemu_data_link_health/run.py": {
+      "bytes": 31608,
+      "sha256": "66880633849887035530df4fb6c700bcf4ca4b16bc144b02031fe9c5fa86cf1a"
+    },
+    "summary.json": {
+      "bytes": 100833,
+      "sha256": "2375083dfcfb3ac36f4f8af5ccf2e3e36ce8159169174acaa3de1c9928b49195"
+    },
+    "valve.jsonl": {
+      "bytes": 4485,
+      "sha256": "cc2cdc71f297530b183b596223a9741f1f94159934c3e4f489bffe0a829ccaa3"
+    }
+  },
+  "pump": "The recorded packet receive-to-forward latency for the first seven frames is below0.5ms. All nine ingress frames match source PCAPs and have completed socket-forward records. Receiving PCAPs are incomplete during failure teardown, so this is not a full receiving-side packet audit; final two delays (~50ms) are collector pacing after first failure. Actual drive calls valve.poll every iteration independently of the optional FTDI path.",
+  "raw_pcaps": {
+    "client": [
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "d35ed3b08fa91905a6a03363258768503fe1f5f9bd6f9ab651146482536bc325",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760168853937
+      },
+      {
+        "bytes": 70,
+        "dst_mac": "33:33:00:00:00:02",
+        "ethertype": "0x86dd",
+        "sha256": "dc5019ec092e2a98a75bfe2fa1845ada6d2738b5c2be51b4f6f97eec1cb273e9",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760168853943
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "67c0a17adeed95a6628b7339414c51e705d3a2f9b7791585a253f9c4485f2505",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760168854578
+      },
+      {
+        "bytes": 70,
+        "dst_mac": "33:33:00:00:00:02",
+        "ethertype": "0x86dd",
+        "sha256": "ca92ff64377da0e92e971ca084c55c5efac3b942e1de4f1c6324304dfb0d977f",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760168854773
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "67c0a17adeed95a6628b7339414c51e705d3a2f9b7791585a253f9c4485f2505",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760168856684
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "d35ed3b08fa91905a6a03363258768503fe1f5f9bd6f9ab651146482536bc325",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760168856720
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "67c0a17adeed95a6628b7339414c51e705d3a2f9b7791585a253f9c4485f2505",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760169077793
+      },
+      {
+        "arp": {
+          "opcode": 1,
+          "sender_ip": "192.0.2.2",
+          "target_ip": "192.0.2.1"
+        },
+        "bytes": 60,
+        "dst_mac": "ff:ff:ff:ff:ff:ff",
+        "ethertype": "0x806",
+        "sha256": "3372d5e8d1aed6d52ee013009299b2eca8f51f23944e63c4b8d0e3036c6ba2fa",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760169301693
+      }
+    ],
+    "server": [
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "d35ed3b08fa91905a6a03363258768503fe1f5f9bd6f9ab651146482536bc325",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760168853498
+      },
+      {
+        "bytes": 70,
+        "dst_mac": "33:33:00:00:00:02",
+        "ethertype": "0x86dd",
+        "sha256": "dc5019ec092e2a98a75bfe2fa1845ada6d2738b5c2be51b4f6f97eec1cb273e9",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760168853563
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "67c0a17adeed95a6628b7339414c51e705d3a2f9b7791585a253f9c4485f2505",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760168854986
+      },
+      {
+        "bytes": 70,
+        "dst_mac": "33:33:00:00:00:02",
+        "ethertype": "0x86dd",
+        "sha256": "ca92ff64377da0e92e971ca084c55c5efac3b942e1de4f1c6324304dfb0d977f",
+        "src_mac": "52:54:00:00:00:62",
+        "timestamp_unix_micros": 1792760168854994
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "d35ed3b08fa91905a6a03363258768503fe1f5f9bd6f9ab651146482536bc325",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760168856266
+      },
+      {
+        "bytes": 110,
+        "dst_mac": "33:33:00:00:00:16",
+        "ethertype": "0x86dd",
+        "sha256": "d35ed3b08fa91905a6a03363258768503fe1f5f9bd6f9ab651146482536bc325",
+        "src_mac": "52:54:00:00:00:61",
+        "timestamp_unix_micros": 1792760169429341
+      }
+    ]
+  },
+  "recommended_minimal_change": "Only new harness generated common network prefix: preserve initial snapshot, bounded read-only carrier==1 and operstate==up readiness barrier in both guests before workload, record observed values/uptime and final network snapshot. Keep original timeout5/nc-w2/Connection refused checks and all valve/TLS/lifecycle bounds unchanged. No sleeps-only or TCP retries masking failure.",
+  "result": "READ_ONLY_NETWORK_DIAGNOSIS_ORIGINAL_FAIL",
+  "scope": "Author of harness; independent stdlib raw pcap and source diagnosis, no runner verifier/packet auditor/Cargo/QEMU or source edit.",
+  "source_lines": {
+    "generated:144": "ip link set eth0 up",
+    "generated:149": "ip addr show dev eth0 > /tmp/network.txt",
+    "generated:697": "        if timeout 5 /usr/bin/nc-openbsd \"-$family\" -z -v -w 2 \"$peer\" 3240 > \"/tmp/plaintext-$family.log\" 2>&1; then exit 1; else plain_rc=$?; fi"
+  },
+  "timing_boundary": "Host START is a send timestamp, not a logged guest nc start. Guest uptime and host monotonic clocks are distinct; raw evidence does not assign an exact syscall timestamp. No catalog/IMPORT/heartbeat fault occurred."
+}

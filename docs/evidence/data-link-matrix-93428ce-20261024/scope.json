@@ -1,0 +1,29 @@
+{
+  "result": "FAIL",
+  "commit": "93428ce0d27ca159003fdd98e0b9e61db7bb9d40",
+  "clean": true,
+  "passed": [
+    "health-native-ipv4",
+    "health-native-ipv6",
+    "health-usbfs-ipv4",
+    "health-usbfs-ipv6"
+  ],
+  "failed": "health-virtual-ipv4",
+  "unrun": [
+    "health-virtual-ipv6",
+    "six existing secure runs",
+    "two existing agent runs",
+    "one existing SIGTERM run"
+  ],
+  "new_fault_phases_passed": 12,
+  "guest_exits_zero": 10,
+  "notes": [
+    "Four complete new health runs pass; matrix as a whole fails at the fifth run and stops.",
+    "Virtual preparation fails at plaintext3240 nc-w2, before Catalog/IMPORT/fault arming.",
+    "Nine complete socket-forward records are not proof all nine frames arrived at peer PCAP.",
+    "No TCP/SYN appears; initial guest snapshots are NO-CARRIER and later LinkUp is observed.",
+    "HostSTART is send time, not the exact guest nc syscall start or deadline.",
+    "Carrier readiness barrier is a fixture fix; nc/probe policies are not widened.",
+    "No pending-URB/hardware/whole Phase3 acceptance is inferred."
+  ]
+}
