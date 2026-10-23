@@ -30,6 +30,7 @@ physical = secure.physical
 digest, git, command = secure.digest, secure.git, secure.command
 credentials, connect_unix, artifacts = secure.credentials, secure.connect_unix, secure.artifacts
 verification = load("prepare_verifier", OWN / "verify.py")
+local_mode = load("prepare_local_mode", OWN / "local.py")
 
 def inputs():
     result = agent_support.inputs()
@@ -39,7 +40,7 @@ def inputs():
     return dict(sorted(result.items()))
 
 def guest_source(case, stop):
-    if case not in {"native-resource", "usbfs-resource", "usbfs-initializer"} or stop not in {"job", "term"}:
+    if case not in {"native-resource", "native-available", "usbfs-resource", "usbfs-initializer"} or stop not in {"job", "term", "session"} or (stop == "session" and not case.startswith("native-")) or (case == "native-available" and stop != "session"):
         raise ValueError("fixed prepare case/stop required")
     prefix = agent_support.unique_before(agent_support.guest_source(), 'if [ "$ROLE" = server ]; then\n    STAGE=server-devices\n')
     anchor = '[ "${AGENT_COMMON:-}" = 1 ] && [ "$BACKEND" = native ] || exit 2'
@@ -47,7 +48,9 @@ def guest_source(case, stop):
         raise RuntimeError("agent helper composition guard changed")
     prefix = prefix.replace(anchor, '[ "${AGENT_COMMON:-}" = 1 ] || exit 2')
     prefix = prefix.replace("RUSTUSB_AGENT_RESULT", "RUSTUSB_PREPARE_RESULT")
-    return prefix + f"\nCASE={case} STOP_MODE={stop} PREPARE_COMMON=1\n" + (OWN / "guest-init.sh").read_text()
+    body = (OWN / "guest-init.sh").read_text()
+    if stop == "session": body = local_mode.compose(body)
+    return prefix + f"\nCASE={case} STOP_MODE={stop} PREPARE_COMMON=1\n" + body
 
 def payload(work, kernel, certificates, role, probe, case, stop):
     _, provenance = secure.payload(work, kernel, certificates, role)
@@ -71,14 +74,16 @@ def payload(work, kernel, certificates, role, probe, case, stop):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kernel", default=os.uname().release)
-    parser.add_argument("--case", choices=["native-resource", "usbfs-resource", "usbfs-initializer"], default="native-resource")
-    parser.add_argument("--stop", choices=["job", "term"], default="job")
+    parser.add_argument("--case", choices=["native-resource", "native-available", "usbfs-resource", "usbfs-initializer"], default="native-resource")
+    parser.add_argument("--stop", choices=["job", "term", "session"], default="job")
     parser.add_argument("--family", choices=["ipv4", "ipv6"], default="ipv4")
     parser.add_argument("--timeout", type=int, default=300)
     parser.add_argument("--evidence", type=Path, required=True)
     parser.add_argument("--skip-build", action="store_true", help="development only; final evidence uses the locked all-features build")
     args = parser.parse_args()
-    args.backend = "native" if args.case == "native-resource" else "usbfs"
+    args.backend = "native" if args.case.startswith("native-") else "usbfs"
+    if (args.stop == "session" and args.backend != "native") or (args.case == "native-available" and args.stop != "session"):
+        parser.error("local StopSession is Native only; native-available requires --stop session")
     if os.geteuid() == 0 or os.uname().machine != "x86_64": raise RuntimeError("ordinary x86_64 host user required")
     if not 60 <= args.timeout <= 900: raise RuntimeError("timeout must be 60..900 seconds")
     evidence = args.evidence.resolve()
@@ -188,7 +193,20 @@ def main():
                 if "PREPARE_SERVER_READY\n" in logs["server"] and "PREPARE_CLIENT_READY\n" in logs["client"]:
                     send_once("start-target", "server", "START_TARGET")
                 if "PREPARE_GATE_HELD\n" in logs["server"]: send_once("held", "client", "HELD")
-                if "PREPARE_LISTENER_REFUSED\n" in logs["client"]: send_once("stop-target", "server", "STOP_TARGET")
+                if "PREPARE_LISTENER_REFUSED\n" in logs["client"] or "PREPARE_LOCAL_LISTENER_PROBED\n" in logs["client"]: send_once("stop-target", "server", "STOP_TARGET")
+                if "PREPARE_LOCAL_SURVIVOR_READY\n" in logs["server"]: send_once("start-survivor", "client", "START_SURVIVOR")
+                if "PREPARE_LOCAL_WAIT_HID\n" in logs["client"] and "survivor-injected" not in sent:
+                    arguments = {"keys": [{"type": "qcode", "data": "1"}], "hold-time": 100}
+                    response = qmp.call("send-key", arguments)
+                    (evidence / "qmp-survivor-input.json").write_text(json.dumps({"command":"send-key","arguments":arguments,"return":response}) + "\n")
+                    sent.add("survivor-injected")
+                if "PREPARE_LOCAL_SURVIVOR_IO\n" in logs["client"]: send_once("survivor-io", "server", "SURVIVOR_IO")
+                if "PREPARE_LOCAL_DETACH_HID\n" in logs["server"]: send_once("detach-survivor", "client", "DETACH_SURVIVOR")
+                if "PREPARE_LOCAL_SURVIVOR_DETACHED\n" in logs["client"]: send_once("survivor-detached", "server", "SURVIVOR_DETACHED")
+                if "PREPARE_LOCAL_EMPTY_READY\n" in logs["server"]: send_once("empty-catalog-request", "client", "EMPTY_CATALOG")
+                if "PREPARE_LOCAL_EMPTY_CATALOG\n" in logs["client"]: send_once("empty-catalog-confirmed", "server", "EMPTY_CATALOG")
+                if "PREPARE_LOCAL_JOB_CLOSED\n" in logs["server"]: send_once("local-job-closed", "client", "LOCAL_JOB_CLOSED")
+                if "PREPARE_LOCAL_SURVIVOR_CLOSED\n" in logs["client"]: send_once("survivor-closed", "server", "SURVIVOR_CLOSED")
                 if "PREPARE_REUSE_READY\n" in logs["server"]: send_once("start-reuse", "client", "START_REUSE")
                 while select.select([ftdi], [], [], 0)[0]:
                     chunk = ftdi.recv(4096)
@@ -223,7 +241,8 @@ def main():
                 (evidence / "ftdi-host-rx.bin").write_bytes(tx)
                 (evidence / "qmp-events.json").write_text(json.dumps(qmp.events, indent=2) + "\n")
             summary["guest_artifacts"] = artifacts(evidence)
-            summary["facts"] = verification.verify(evidence, args, summary)
+            verifier = load("prepare_local_verifier", OWN / "verify_local.py") if args.stop == "session" else verification
+            summary["facts"] = verifier.verify(evidence, args, summary)
             if summary["facts"]["failures"]: raise RuntimeError("; ".join(summary["facts"]["failures"]))
             summary["result"] = "PASS"
     except Exception as error:
