@@ -1,6 +1,6 @@
 # USBFS checked release：错误传播与 QEMU 验证
 
-2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。产品修复已合入 `4e81a11`；首轮 clean 候选矩阵为 10 PASS、1 FAIL，物理输出隔离后的完整冻结验收尚待进行。实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
+2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。产品修复已合入 `4e81a11`；首轮 clean 候选矩阵为 10 PASS、1 FAIL；第二轮在第六项启动阶段失败，后五项未运行，完整冻结验收仍待完成。实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
 
 ## 测试路径与来源
 
@@ -60,3 +60,16 @@ dev02 的 [server 串口](../evidence/qemu-checked-release-old-product-eof-dev02
 只修改物理QEMU runner与guest init：ttyS0继续收集完整kernel console，ttyS1记录程序输出；host在两通道持续检查原FAIL及四类内核完整性错误，来宾退出后再次检查晚到日志。每角色须有唯一精确通道beacon，所有旧marker、USB断言、字节匹配和超时保持。
 
 [双UART开发索引](../evidence/physical-dual-serial-development-20261023.json)的 dirty `4e81a11` 热拔测试完整 PASS（15项probe、140B精确输出、两guest exit0），是开发验证，不能替代接下来的clean十一项最终矩阵。[独立开发复核](../evidence/physical-dual-serial-dev01-independent-review-20261023.json)113/113通过；首轮FAIL保持原样，本修订不修改生产Rust代码。
+
+
+## 第二轮 clean 候选矩阵与启动诊断
+
+物理证据通道修订和前述全部证据已提交并push `ab44a8445d35d9c738f6441c9a42c924c35b0107`。在该clean提交预捕全部12脚本，串行v2矩阵前5项PASS（release两项、configuration两项、alternate UNLINK；41项wire检查）；第6项alternate/EOF在 `discovery_import` 以EAGAIN11失败、cases0、elapsed3.540519493秒。[v2索引](../evidence/checked-release-candidate-v2-20261023.json)和[原sequence](../evidence/checked-release-candidate-v2-sequence-20261023.json)保留FAIL/5 PASS/1 FAIL/5 NOT_RUN，剩余clear两项、ECM、normal、hot没有运行，不补造证据。
+
+[独立失败诊断](../evidence/checked-release-alternate-eof-candidate-v2-independent-diagnosis-20261023.json)38项事实/来源检查通过，运行裁决仍FAIL。原stage同时覆盖DEVLIST与IMPORT多个I/O，不能确定哪次调用失败。READY已收到，ARM/A尚未发送；server末尾cdc_ether unregister不能证明IMPORT完成。原runner仅等0.5秒便收尾，缺完整server trace和after guard，均不补填。
+
+[两次诊断开发索引](../evidence/host-state-diagnostic-development-20261023.json)保留32份产物。随后只改测试诊断：独立probe为各次DEVLIST/IMPORT I/O记录START/终态/耗时/真实errno，原Result直接返回，不重试、不输出payload，仍共用原frame2秒。host首次看到FAIL后锁定失败，最多30秒且受原overall期限约束地等待peer现有trap输出；不会重新进入PASS验证。4项实际runner轮询AST模拟检查和2项Rust诊断包装测试通过。
+
+有诊断的dirty单项dev01（仍固定nanosleep1ms）完整PASS；IMPORT header等待1.519263924秒。tracer现将fork之后的parent独立阻塞SIGCHLD，空闲时用 `sigtimedwait` 等待通知、上限仍1毫秒，保留全部waitpid状态、原signal转发、控制轮询、256事件batch与门8秒。child不继承新mask，信号只负责唤醒，不代替真实stop/exit。语义依据为Linux man-pages的 [sigtimedwait](https://man7.org/linux/man-pages/man2/sigwaitinfo.2.html) 和 [ptrace](https://man7.org/linux/man-pages/man2/ptrace.2.html)。
+
+该优化后的dirty单项dev02也完整PASS，IMPORT header等待9.122247毫秒。两次各7项probe、两guest exit0、恢复和source/binary guards通过；这只是两个观察值，**不是性能基准，也不能倒推旧v2失败的准确调用或唯一根因**。产品源码与clean4e81a11软件gate一致，未修改任何wire2/RPC3/gate8通过期限。[独立开发复核](../evidence/host-state-diagnostic-dev01-dev02-independent-review-20261023.json)208/208通过，包含真实trace配对和三文件源码审查。准备提交冻结后再执行distinct v3完整矩阵。

@@ -36,3 +36,13 @@ Linux6.8 [devio.c](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/
 只修改物理测试的`run-physical-qemu.py`和`guest-physical-init.sh`：QEMU保留第一串口ttyS0记录完整kernel console，另加第二ISA串口ttyS1作为guest程序stdout/stderr；来宾挂载devtmpfs后确认字符节点并重定向，打印独立channel beacon。host实时协调、断言和JSON解析读独立evidence log；Kernel panic/BUG/一致性检查继续读取原kernel serial及程序输出，两个文件均归档。保持全部I/O、热拔/新代际、权限、资源、超时断言；不抑制kernel日志，不延长等待或在parser中忽略插入内容。
 
 该修订只隔离测试输出，不改变产品或协议。先保全首轮11项candidate原bytes/固定Git来源及严格FAIL；另行提交后在同一clean提交运行十一项最终矩阵。原软件输入未变时不因纯测试输出修改重复完整Cargo gate，但更新Python/BusyBox语法及实际新串口运行验证；若发现代码或新的问题则执行相应检查。
+
+
+## v2启动阶段失败的诊断约束
+
+clean `ab44a84` 的第二轮最终矩阵在第六项 alternate/EOF 的 `discovery_import` 以EAGAIN11失败（cases0），其余后五项未运行；前五项PASS保留。该阶段同时覆盖DEVLIST与IMPORT的多次I/O，现有日志无法判定准确失败调用；客户端尚未发送ARM/A，server串口的cdc_ether unregister也不证明IMPORT已成功。旧原始裁决与缺失trace不补造。
+
+下一轮先仅增加独立probe各启动I/O的开始/终态/真实errno/耗时记录，细分list与import阶段；不修改WIRE2秒、RPC3秒、门8秒和任何USB断言。host发现guest FAIL后立即粘住FAIL裁决，最多保留30秒仅供原server ARM25秒超时进入现有trap并输出trace，再按原有终止/reap收尾。该grace不允许失败转成功、不延长任何通过期限、不重试请求。先做有诊断的单项开发运行，获得可用证据后才决定是否需要产品或harness修正。
+
+
+诊断dev01（dirty ab44a84）实际PASS，IMPORT header等待1.519263924秒，DEVLIST header约12ms；原失败准确调用依旧未知。源码可确认tracer全syscall轮询在暂时无waitpid事件时固定sleep1ms，连续entry/exit停顿可能累计额外延迟。下一步仅将tracer parent在fork之后、SEIZE之前阻塞SIGCHLD，空闲时以sigtimedwait等待该信号、上限仍1ms；子进程不继承新mask。保留waitpid的真实status处理、256事件batch、公用单调时钟、控制轮询、8秒门和所有wire/RPC期限。SIGCHLD仅作唤醒，仍必须waitpid核状态，不伪造completion；EAGAIN或EINTR只是重新检查，其他错误FAIL。通过单项guest前后观察耗时与真实stop/trace，不把该优化归因为旧失败的已证根因。

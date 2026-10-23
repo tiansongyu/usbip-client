@@ -1,0 +1,356 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-23T03:12:05.737683+00:00",
+  "scope": "Independent read-only diagnosis of preserved clean-ab44 alternate/eof final-v2 FAIL; no claim of gate coverage or product innocence",
+  "runtime_result": "FAIL",
+  "review_integrity_result": "PASS",
+  "source_commit": "ab44a8445d35d9c738f6441c9a42c924c35b0107",
+  "directory": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023",
+  "actual_primary_failure": {
+    "event": "host_state_probe_result",
+    "operation": "alternate",
+    "mode": "eof",
+    "nonce": "cr-v2-alternate-eof",
+    "result": "FAIL",
+    "stage": "discovery_import",
+    "error": "Resource temporarily unavailable (os error 11)",
+    "cases": 0,
+    "elapsed_ns": 3540519493
+  },
+  "assertions": [
+    {
+      "assertion": "original_run_terminal_FAIL_preserved",
+      "pass": true
+    },
+    {
+      "assertion": "clean_frozen_ab44_run_start",
+      "pass": true
+    },
+    {
+      "assertion": "one_primary_failure_not_trap_duplicate",
+      "pass": true
+    },
+    {
+      "assertion": "actual_coarse_failure_stage_errno_zero_cases",
+      "pass": true
+    },
+    {
+      "assertion": "operation_mode_nonce_exact",
+      "pass": true
+    },
+    {
+      "assertion": "both_management_carriers_observed",
+      "pass": true
+    },
+    {
+      "assertion": "actual_original_ecm_precondition_and_node0600",
+      "pass": true
+    },
+    {
+      "assertion": "tracee_UID_and_ready_assertions_reached",
+      "pass": true
+    },
+    {
+      "assertion": "client_no_import_identity_case",
+      "pass": true
+    },
+    {
+      "assertion": "server_no_ARM_HELD_or_terminal_success",
+      "pass": true
+    },
+    {
+      "assertion": "trace_and_beacon_blocks_absent_no_invented_values",
+      "pass": true
+    },
+    {
+      "assertion": "server_kernel_unregister_real_but_not_import_success_proof",
+      "pass": true
+    },
+    {
+      "assertion": "runner_SIGTERM_early_server_diagnostic_cutoff",
+      "pass": true
+    },
+    {
+      "assertion": "guest_exit_zero_does_not_override_FAIL",
+      "pass": true
+    },
+    {
+      "assertion": "server_actual_four_ELF_hashes_equal_build",
+      "pass": true
+    },
+    {
+      "assertion": "client_actual_four_ELF_hashes_equal_build",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:run-host-state-qemu.py",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:guest-host-state-init.sh",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:host-state-wire-probe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:usbfs-syscall-gate.c",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:run-composite-qemu.py",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:guest-composite-init.sh",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:composite-wire-probe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:run-physical-qemu.py",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:guest-physical-init.sh",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:physical-wire-probe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:run-native-qemu.py",
+      "pass": true
+    },
+    {
+      "assertion": "pre_run_source_snapshot_and_frozen_Git:guest-init.sh",
+      "pass": true
+    },
+    {
+      "assertion": "run_used_exact_pre_snapshot:run-host-state-qemu.py",
+      "pass": true
+    },
+    {
+      "assertion": "run_used_exact_pre_snapshot:guest-host-state-init.sh",
+      "pass": true
+    },
+    {
+      "assertion": "run_used_exact_pre_snapshot:host-state-wire-probe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "run_used_exact_pre_snapshot:usbfs-syscall-gate.c",
+      "pass": true
+    },
+    {
+      "assertion": "run_used_exact_pre_snapshot:run-native-qemu.py",
+      "pass": true
+    },
+    {
+      "assertion": "run_used_exact_pre_snapshot:guest-init.sh",
+      "pass": true
+    },
+    {
+      "assertion": "original_wire2_RPC3_25_8_120_budget_values",
+      "pass": true
+    },
+    {
+      "assertion": "original_runner_half_second_early_failure_stop",
+      "pass": true
+    },
+    {
+      "assertion": "toolchain_std_confirms_Unix_WouldBlock_on_read_write_timeout",
+      "pass": true
+    },
+    {
+      "assertion": "all_original_artifact_lengths_and_SHA_unchanged",
+      "pass": true,
+      "detail": 20
+    }
+  ],
+  "passed": 38,
+  "total": 38,
+  "facts": [
+    {
+      "kind": "raw",
+      "finding": "Probe failed at coarse discovery_import with cases0 after3540519493ns; diagnostic trap repeats the same result and is not a second run."
+    },
+    {
+      "kind": "source_control_flow",
+      "reference": "host-state-wire-probe.rs:518-535",
+      "finding": "Coordinator connect and exact READY receipt returned successfully before this stage. The stage contains both DEVLIST and IMPORT; original logs cannot identify the specific connect/write/read/EOF that failed."
+    },
+    {
+      "kind": "source_control_flow",
+      "reference": "host-state-wire-probe.rs:532-536",
+      "finding": "No validated successful IMPORT/import_identity case occurred. ARM and Special A are after that success; cases0 rules out reaching the tested armed window. This does not prove an IMPORT request or a partial claim never reached the server."
+    },
+    {
+      "kind": "raw_plus_source",
+      "reference": "server-serial.log:479; guest-host-state-init.sh:177-199",
+      "finding": "The real server UID marker implies its gate ready.json, server JSON ready event, PID/starttime and UID/GID1000 zero-cap assertions passed inside the guest. Exact ready timestamp/PID/stops were not persisted in this failed raw artifact."
+    },
+    {
+      "kind": "raw",
+      "reference": "server-serial.log:480",
+      "finding": "Kernel recorded cdc_ether unregister at server uptime5.306495. This is compatible with physical IMPORT claim detaching its original driver, but lacks the corresponding raw ioctl trace and therefore is not proof of successful IMPORT or a measured claim duration."
+    },
+    {
+      "kind": "raw",
+      "reference": "server-qemu.stderr",
+      "finding": "Python runner sent SIGTERM after client FAIL and half-second wait; server log ends before its normal ARM25 timeout trap. No final trace/snapshots/cleanup result can be reconstructed."
+    }
+  ],
+  "budget_analysis": {
+    "coordinator_startup_connect": "up to15s, only retries unopened connection before protocol bytes; READY then has separateRPC3s read",
+    "wire_connect": "each connect3240 has2s timeout; no retry",
+    "DEVLIST": "after connect, one shared absolute2s deadline covers request write/header/device/interfaces/EOF",
+    "IMPORT": "after connect, one shared absolute2s deadline covers request write/header312B identity reply",
+    "coordinator_ARM25": "server waits for first ARM after actual baseline/READY preparation; this idle timeout does not extend client wire2s or server claim deadline",
+    "production_claim": "server.rs:237 awaits backend claim with wire::FRAME_DEADLINE5s, a different budget from probe IMPORT2s",
+    "ptrace": "C traces all syscalls/all threads from exec; waitpid WNOHANG batchmax256; if no activity nanosleep1ms. Cumulative tracing overhead on claim/sysfs calls is a plausible candidate, not measured here without persisted events/stops.",
+    "error11": "Unix socket read/write timeout can report WouldBlock/EAGAIN, as the toolchain std source and official TcpStream docs state. Exact failing socket operation and its elapsed time are absent here.",
+    "elapsed3_54s": "Whole probe elapsed includes coordinator startup and multiple independent I/O steps; it is not an IMPORT or gate-duration measurement."
+  },
+  "minimal_diagnostic_proposal": {
+    "status": "parent implemented two-file diagnostics after this failure; read-only diff reviewed, no must-fix",
+    "probe": "fixed DEVLIST/IMPORT substep START+OK/ERROR and elapsed/rawerrno; invoke operationFnOnce and return originalResult. Do not retry protocol operations or reset shared frame2s deadline; do not log payload.",
+    "runner": "first seenFAIL latches failure and original reason; bounded30s diagnostic wait clamped by original overall deadline lets peer ARM25 timeout/trap preserve existing gate/server files. Always fail before PASS verification, even if peers later exit0. This is diagnostic retention, not an extended success window.",
+    "diff_review": "observe_io preserves originalResult/rawerrno; WIRE2/RPC3/gate8/ARM25 unchanged; failed_at sticky prevents PASS after seenFAIL. Expected additional diagnostic logging has overhead and cannot prove old root cause.",
+    "reviewed_diff_sha256": "06fda6224f9c4a57304ab5688cd63d20411ea31ec6ad7c001e835bcd38c51a7a",
+    "future_validation": "New source snapshot and separate dirty diagnostic run only; original v2 FAIL remains unchanged. Check actual ERROR substep and raw event timestamps before choosing any timing or product fix."
+  },
+  "missing_evidence": [
+    "Exact DEVLIST versus IMPORT failing substep and partial-byte count",
+    "Client per-phase start/end times and budgets remaining at error",
+    "Raw tracer ready/armed/ioctl/event stream/stops and TID/FD identities",
+    "Direct server snapshot after client error, state of partial interface claim and eventual cleanup",
+    "Final same-generation configuration/alternate/original-driver restoration",
+    "Any Special A entry/release/exit or EOF cleanup active-window evidence"
+  ],
+  "external_sources": [
+    {
+      "url": "https://doc.rust-lang.org/std/net/struct.TcpStream.html#method.set_read_timeout",
+      "scope": "Official current documentation confirms Unix timeout may be WouldBlock; not cited as the tested compiler version."
+    },
+    {
+      "local_primary_std_source": {
+        "path": "/home/ubuntu/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/net/tcp.rs",
+        "bytes": 39534,
+        "sha256": "6facc60928de960fa41d69a4f8fb616515441f5df4c3b90813fdcdecab306a0f"
+      },
+      "scope": "Installed toolchain own source includes corresponding read/write timeout platform behavior; actual tested compiler string is in original summary."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023/client-serial.log",
+      "bytes": 36644,
+      "sha256": "bd44bc406dddc2e030798de5490b7bd1e7023ccb85822f29e7aaf8efab8590f1"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023/server-qemu.stderr",
+      "bytes": 154,
+      "sha256": "5b6ca3c555b43bb97a9bcd9788e7a95c7a5d886b4627cc0abf92661957e7df9a"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023/server-serial.log",
+      "bytes": 33363,
+      "sha256": "13bc8e1a1948525367c9462dfed672e30ac83446ce775bbe1f1e25e09436dee9"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023/summary.json",
+      "bytes": 8121,
+      "sha256": "35b6d745ed4e75f73dc551f51d9fcbc3e72a8cde3fcfbe35bc063f6fc0e7ea8d"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-alternate-eof-final-v2-20261023-runner.log",
+      "bytes": 502,
+      "sha256": "b7e47a0f94ac79d9ce43f6af53c982dc2027eb05ef51a3872c3dfc6dbfeaccdf"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/composite-wire-probe.rs",
+      "bytes": 29860,
+      "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/guest-composite-init.sh",
+      "bytes": 20780,
+      "sha256": "6b9e08c26f67250fc0bfaa960919f6ad81873e021f9df5818853e4712ceed527"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/guest-host-state-init.sh",
+      "bytes": 21679,
+      "sha256": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/guest-physical-init.sh",
+      "bytes": 28064,
+      "sha256": "e62da0544782a411f8ff95c02be3f9865865dc09e03c1d713599b1871cb39226"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/host-state-wire-probe.rs",
+      "bytes": 26443,
+      "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/run-composite-qemu.py",
+      "bytes": 22328,
+      "sha256": "5b3b070d8adf29e07f19a67e62df265bc62a1549ae5f756817581a72ab6c6048"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/run-host-state-qemu.py",
+      "bytes": 30192,
+      "sha256": "1fa77f98900cf567cb759e611d61900fada9dacc55d1ab32e5d9d26bb97ce56c"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/source.json",
+      "bytes": 1569,
+      "sha256": "4804848966711b13e0725ead405a3a8400beda933ba798dbe619d4472c35385a"
+    },
+    {
+      "path": "/tmp/rustusb-checked-release-final-v2-source-20261023/usbfs-syscall-gate.c",
+      "bytes": 34406,
+      "sha256": "f38c4a81dc895e741e03f534f7c68fd7b33626e40e04633899bea68a5dfc444c"
+    }
+  ],
+  "limits": [
+    "Preserved run and incomplete v2 sequence remain FAIL; the first five PASS do not make this sixth scenario pass.",
+    "No raw stdout/serial/summary was edited, ANSI-stripped or reconstructed; no missing guest trace was fabricated.",
+    "No repository writes, builds, Cargo, QEMU, USB, ptrace or host-network/module actions performed."
+  ]
+}

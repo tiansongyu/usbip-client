@@ -228,3 +228,9 @@
 
 - 首轮候选106份原始归档完成，独立913项复核完整性PASS但runtime仍10PASS/1FAIL；全部85输入SHA未变。双UART只改物理两脚本，34项静态/20负向通道检查和独立源码审查通过；dirty4e81a11热拔dev01实际PASS，15probe、140B精确FTDI、两guest0、完整重插marker及双channel beacon。准备提交冻结后新v2十一项，不覆盖首轮失败。
 - 双UART开发原始/source/static共20份归档SHA逐项通过；第二独立raw复核113/113，完整marker、双通道guard/实际QEMU argv/source与二进制均相符。仅开发证据，准备clean v2；.gitignore同步允许保留新的evidence串口原始.log。
+
+- 双UART修订及软件/CI/候选证据提交ab44a8445d35d9c738f6441c9a42c924c35b0107并普通push，远端一致；126份indexed Gitblob逐SHA/长度一致，工作树clean。root预捕全部12harness输入后启动distinct final-v2矩阵，严格串行且无repo写/并行build。
+- v2实际在第六项alternate/EOF停止exit1：前5PASS，第6discovery_import EAGAIN11/cases0/elapsed3.540519493s，remaining5 NOT_RUN。两guest0不覆盖FAIL；未发ARM/A、缺最终trace/afterguard，不能断定准确I/O或产品无故障。旧候选FAIL与v2FAIL都保留。下一步仅细化启动I/O诊断及FAIL-only bounded收尾采集，WIRE2/RPC3/gate8和通过断言不变。
+- 保持原wire2/RPC3/gate8的诊断dev01 alternate/EOF实际PASS（7case、两guest0），新增记录显示IMPORT header1.519263924秒、DEVLIST约12ms；不是旧FAIL根因证明。独立两文件诊断审查无mustfix。下一步减少tracer固定1ms轮询引入的观察开销，parent-only SIGCHLD有界等待设计先记录，仍不放宽成功期限。
+- parent-only SIGCHLD有界唤醒替换测试tracer固定idle sleep，cc -Werror和独立signal竞态审查无mustfix；dev02实际PASS（7case、两guest0、IMPORT header9.122247ms）。这是两开发观察非benchmark，原v2失败准确调用仍未知。实际runner AST四项粘住失败/grace/原overall/正常完成检查及observe_io两项原errno/单次执行测试通过。生产96软件输入保持不变。
+- v2部分矩阵63份原始/源码/sequence/清单产物及两诊断开发32份按原字节归档，root逐长度/SHA核对；独立开发复核208/208及三文件源码审查无mustfix。准备提交冻结v3，原两个FAIL均保持。

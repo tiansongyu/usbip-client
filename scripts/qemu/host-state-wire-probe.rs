@@ -35,6 +35,33 @@ fn remaining(deadline: Instant) -> io::Result<Duration> {
         .ok_or_else(|| io::Error::new(io::ErrorKind::TimedOut, "probe operation deadline elapsed"))
 }
 
+// Diagnostic output belongs only to this independent guest probe. Preserve the
+// original Result, OS error and shared per-frame deadline; never retry I/O.
+fn observe_io<T>(phase: &str, operation: impl FnOnce() -> io::Result<T>) -> io::Result<T> {
+    eprintln!(
+        "{{\"event\":\"host_state_probe_io\",\"phase\":{},\"result\":\"START\"}}",
+        json_string(phase)
+    );
+    let started = Instant::now();
+    let result = operation();
+    let (status, error, errno) = match &result {
+        Ok(_) => ("OK", "null".to_owned(), "null".to_owned()),
+        Err(error) => (
+            "ERROR",
+            json_string(&error.to_string()),
+            error
+                .raw_os_error()
+                .map_or_else(|| "null".to_owned(), |code| code.to_string()),
+        ),
+    };
+    eprintln!(
+        "{{\"event\":\"host_state_probe_io\",\"phase\":{},\"result\":\"{status}\",\"elapsed_ns\":{},\"error\":{error},\"raw_os_error\":{errno}}}",
+        json_string(phase),
+        started.elapsed().as_nanos()
+    );
+    result
+}
+
 fn read_exact_until(
     stream: &mut TcpStream,
     mut bytes: &mut [u8],
@@ -154,11 +181,15 @@ fn remote(bytes: &[u8; 312]) -> io::Result<Remote> {
 }
 
 fn list() -> io::Result<Vec<Remote>> {
-    let mut stream = connect(3240)?;
+    let mut stream = observe_io("devlist_connect", || connect(3240))?;
     let deadline = Instant::now() + WIRE_DEADLINE;
-    write_all_until(&mut stream, &[1, 0x11, 0x80, 5, 0, 0, 0, 0], deadline)?;
+    observe_io("devlist_write", || {
+        write_all_until(&mut stream, &[1, 0x11, 0x80, 5, 0, 0, 0, 0], deadline)
+    })?;
     let mut header = [0; 12];
-    read_exact_until(&mut stream, &mut header, deadline)?;
+    observe_io("devlist_header", || {
+        read_exact_until(&mut stream, &mut header, deadline)
+    })?;
     require(
         header[..8] == [1, 0x11, 0, 5, 0, 0, 0, 0],
         "DEVLIST response header differs",
@@ -171,17 +202,21 @@ fn list() -> io::Result<Vec<Remote>> {
     let mut devices = Vec::new();
     for _ in 0..count {
         let mut bytes = [0; 312];
-        read_exact_until(&mut stream, &mut bytes, deadline)?;
+        observe_io("devlist_device", || {
+            read_exact_until(&mut stream, &mut bytes, deadline)
+        })?;
         let device = remote(&bytes)?;
         let mut interfaces = [0; 8];
-        read_exact_until(&mut stream, &mut interfaces, deadline)?;
+        observe_io("devlist_interfaces", || {
+            read_exact_until(&mut stream, &mut interfaces, deadline)
+        })?;
         require(
             interfaces[3] == 0 && interfaces[7] == 0,
             "DEVLIST interface reserved fields differ",
         )?;
         devices.push(device);
     }
-    require_eof(&mut stream, deadline)?;
+    observe_io("devlist_eof", || require_eof(&mut stream, deadline))?;
     Ok(devices)
 }
 
@@ -200,17 +235,23 @@ struct Session {
 
 impl Session {
     fn import(expected: Remote) -> io::Result<Self> {
-        let mut stream = connect(3240)?;
+        let mut stream = observe_io("import_connect", || connect(3240))?;
         let deadline = Instant::now() + WIRE_DEADLINE;
-        write_all_until(&mut stream, &import_request(&expected), deadline)?;
+        observe_io("import_write", || {
+            write_all_until(&mut stream, &import_request(&expected), deadline)
+        })?;
         let mut header = [0; 8];
-        read_exact_until(&mut stream, &mut header, deadline)?;
+        observe_io("import_header", || {
+            read_exact_until(&mut stream, &mut header, deadline)
+        })?;
         require(
             header == [1, 0x11, 0, 3, 0, 0, 0, 0],
             "IMPORT did not succeed",
         )?;
         let mut bytes = [0; 312];
-        read_exact_until(&mut stream, &mut bytes, deadline)?;
+        observe_io("import_device", || {
+            read_exact_until(&mut stream, &mut bytes, deadline)
+        })?;
         let actual = remote(&bytes)?;
         require(
             actual == expected,
@@ -520,7 +561,7 @@ impl Probe {
         ordinary_identity()?;
         self.stage = "coordinator_ready";
         let mut coordinator = Coordinator::connect(&self.nonce)?;
-        self.stage = "discovery_import";
+        self.stage = "discovery_list";
         let mut devices = list()?;
         require(
             devices.len() == 1,
@@ -529,6 +570,7 @@ impl Probe {
         let expected = devices
             .pop()
             .ok_or_else(|| invalid("ECM discovery was empty"))?;
+        self.stage = "discovery_import";
         let mut session = Session::import(expected.clone())?;
         self.passed("import_identity");
         self.stage = "arm";

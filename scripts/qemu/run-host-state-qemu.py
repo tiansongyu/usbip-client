@@ -307,6 +307,7 @@ def main():
                             "private_socketpairs": 2, "server_peer_nic_down": True, "host_network_listener": False,
                             "host_ptrace": False, "host_usb": False, "ip_forward": False},
                "startup_arm_idle_deadline_seconds": 25,
+               "failure_diagnostic_grace_seconds": 30,
                "gate_deadline_seconds": 8, "rpc_deadline_seconds": 3, "tracer_deadline_seconds": 120}
     processes, handles, links = {}, [], []
     try:
@@ -363,16 +364,24 @@ def main():
             for link in links:
                 link.close()
             deadline = time.monotonic() + args.timeout
+            failed_at = None
             while time.monotonic() < deadline:
                 logs = {role: (evidence / f"{role}-serial.log").read_text(errors="replace") for role in processes}
                 if any("RUSTUSB_HOST_STATE_RESULT: FAIL" in log for log in logs.values()):
-                    time.sleep(0.5)
-                    raise RuntimeError("a host-state guest reported failure")
+                    if failed_at is None:
+                        failed_at = time.monotonic()
+                        summary["guest_failure_observed"] = True
+                # Failure is sticky. This is only time for the peer's existing
+                # timeout/trap to preserve diagnostics, never a new PASS window.
+                if failed_at is not None and time.monotonic() - failed_at >= 30:
+                    raise RuntimeError("a host-state guest reported failure; diagnostic grace expired")
                 if all(process.poll() is not None for process in processes.values()):
                     break
                 time.sleep(0.05)
             else:
                 raise RuntimeError("host-state guests exceeded the overall deadline")
+            if failed_at is not None:
+                raise RuntimeError("a host-state guest reported failure")
             for role, process in processes.items():
                 if process.wait(timeout=5) != 0:
                     raise RuntimeError(f"{role} QEMU exited nonzero")

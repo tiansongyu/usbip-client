@@ -816,6 +816,14 @@ int main(int argc, char **argv)
         _exit(126);
     }
     (void)close(handshake[0]);
+    /* Only the tracer blocks SIGCHLD: the already-forked child keeps its
+     * original mask. Wait for stop notifications instead of imposing a full
+     * 1ms sleep between syscall stops; waitpid remains the status authority. */
+    sigset_t child_notifications;
+    if (sigemptyset(&child_notifications) != 0 ||
+        sigaddset(&child_notifications, SIGCHLD) != 0 ||
+        sigprocmask(SIG_BLOCK, &child_notifications, NULL) != 0)
+        return fail(&gate, "child_notification_setup");
     if (find_thread(&gate, gate.child, true) == NULL || starttime(gate.child, &gate.starttime) != 0)
         return fail(&gate, "initial_identity");
     char pidfile[64];
@@ -896,7 +904,9 @@ int main(int argc, char **argv)
         }
         if (!activity) {
             struct timespec delay = { .tv_sec = 0, .tv_nsec = 1000000 };
-            (void)nanosleep(&delay, NULL);
+            if (sigtimedwait(&child_notifications, NULL, &delay) < 0 &&
+                errno != EAGAIN && errno != EINTR)
+                return fail(&gate, "child_notification_wait");
         }
     }
 }
