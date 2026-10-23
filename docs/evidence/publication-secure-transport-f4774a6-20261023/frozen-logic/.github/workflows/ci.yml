@@ -1,0 +1,57 @@
+name: RustUSB software checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-24.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: aarch64
+          - os: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node.js 24
+        with:
+          persist-credentials: false
+      - name: Install the pinned stable toolchain
+        run: rustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy
+      - name: Verify native architecture and record the software environment
+        run: |
+          test "$(uname -m)" = "${{ matrix.arch }}"
+          uname -a
+          cat /etc/os-release
+          rustc -vV
+          cargo -V
+      - name: Formatting, lint, tests, release and documentation
+        run: scripts/check.sh
+      - name: Read-only CLI smoke checks
+        run: |
+          target/release/rustusb --help
+          target/release/rustusb doctor --json
+          target/release/rustusb devices --json
+      - name: Unprivileged virtual-server lifecycle smoke (all-features binary)
+        run: |
+          printf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin
+          python3 scripts/test-virtual-backpressure.py
+      - name: Unprivileged server signal lifecycle (four cases)
+        run: |
+          status=0
+          python3 scripts/test-server-signals.py --skip-build --evidence "$RUNNER_TEMP/server-signals" || status=$?
+          if test -f "$RUNNER_TEMP/server-signals/summary.json"; then
+            cat "$RUNNER_TEMP/server-signals/summary.json" || true
+          fi
+          exit "$status"

@@ -1,6 +1,6 @@
 # Phase3 实际 USB 数据通道安全设计
 
-2026-10-23，起点clean `a7406d7`；状态 **proposed / 实施研究**，尚未实现或验收TLS。上一goal turn为实际进展：clean4565f7a三项恢复边界PASS/6guest及四平台268次软件验证已交付。完整原始目标、G1/G2/Phase2未完成项保留；本设计推进后续必须提供的真实USB/IP认证与加密，不把硬件或通用恢复标通过。
+2026-10-23，起点clean `a7406d7`；状态 **proposed / 实施研究**，尚未完成或验收USB/IP全数据通道TLS集成。上一goal turn为实际进展：clean4565f7a三项恢复边界PASS/6guest及四平台268次软件验证已交付。完整原始目标、G1/G2/Phase2未完成项保留；本设计推进后续必须提供的真实USB/IP认证与加密，不把硬件或通用恢复标通过。
 
 沿用现有docs/research、固定源码审计及项目skill，不为技术选型另建无关逐组件skills。正式架构选择保持proposed；本轮先核证关键内核能力与实际依赖，再形成可实施接口，不以通用TLS echo或管理API的安全代替USB数据通路。
 
