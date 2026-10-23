@@ -1,0 +1,31 @@
+{
+  "result": "PASS",
+  "checked_at_utc": "2026-10-23T08:34:32.246159+00:00",
+  "scope": "Strict C compilation and ordinary-host-UID denial at the first guard; no USB node opened or USB ioctl executed by this host denial, no guest test yet",
+  "source_sha256": "1728c209d8b389245cbf4e449ea3b2a123ecc6459ca3d6b02168fbaf882bf1d6",
+  "command": [
+    "gcc",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "scripts/qemu/usbfs-external-claim-probe.c",
+    "-o",
+    "/tmp/rustusb-external-claim-static-20261023/usbfs-external-claim-probe"
+  ],
+  "compile_exit_code": 0,
+  "binary_sha256": "24234a98ea415de490e6342d60f55c129d4e938c7791e2ad7ff414b9dad9ad28",
+  "host_uid": 1000,
+  "host_exit_code": 1,
+  "host_denial": {
+    "event": "fatal",
+    "reason": "guest-root-only",
+    "errno": 22
+  },
+  "ioctl_tokens": [
+    "USBDEVFS_CLAIMINTERFACE",
+    "USBDEVFS_RELEASEINTERFACE"
+  ],
+  "source_guard": true
+}

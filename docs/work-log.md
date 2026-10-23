@@ -361,3 +361,5 @@
 - 旧producer在独立detached933e720和独立target目录实际locked/all-features构建成功，109源码输入/head/clean前后guard真；3769624B helper SHA2ce89408…0819b（实际新构建，不要求等于历史不同路径ELF）。当前产物未覆盖。只读预审确认C可先被ensure_eligible拒绝、P空恢复名单不启动scheduler、L保留disk1旧IPC形状；正式设计修正C释放必须在同一仍运行helper下观察不重试。744d9be的后续软件/Pages CI均已实际success，本轮不重新解析那份日志的测试计数。
 
 - 当前产品完整scripts/check.sh再次实际exit0，111输入前后SHA保持，default90/allfeatures158/vendor20共268次、31result、0失败/忽略，fmt/Clippy/release/严格rustdoc通过；与此前产品输入相同。旧producer与准备/预审原件分开归档，尚未把新增C源码或构造校验当成QEMU运行。
+
+- 新三个negative测试文件已作者冻结：C只CLAIM/RELEASE/close，严格编译（含runner的pedantic选项）及普通宿主UID首guard拒绝通过，没有宿主USB操作。三模式生成脚本/sh-n、80种jq实际编译、ANSI日志解析和旧producer来源核对共87静态项通过；明确标识的verifier构造fixtures为180/170/187项及wait0负例拒绝，均非guest运行。预审在运行前修复C日志创建竞态，补ready→pending原记录/owner不变及实际C执行SHA/FIFO事实；旧positive/journal文件仍逐字节等于2ab9976。pure primary只早于pending API/新grant，启动doctor/Status仍先调用。

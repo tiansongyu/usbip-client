@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "scope": "Short read-only next-slice prioritization after the three current recovery negative scenarios; no repository change, test, build, QEMU, browsing or new dependency/skill",
+  "git_head": "67f5b9d15807f2dba69bee503ff2d442d347f821",
+  "reviewed_utc": "2026-10-23T08:35:57.991691+00:00",
+  "current_state": "三负向L/P/C尚未运行，本报告不预判通过；本轮不实施TLS、不添加依赖。G1/G2及Phase2仍未完成。",
+  "recommendation": "完成当前三负向的实际裁决后，优先开展Phase3真实USB/IP全数据通道认证/加密的窄设计，再落实可运行切片；保留全部未通过门槛，不以此改写严格分阶段完成规则。",
+  "priority_order": [
+    {
+      "priority": 0,
+      "task": "完成正在写的L/P/C产品负向",
+      "reason": "确认旧producer不被追授、当前策略撤销与外部claim确实阻止自动恢复；保持手动/自动及各epoch区别，不增加无目的排列。"
+    },
+    {
+      "priority": 1,
+      "task": "Phase3：认证身份、设备授权与真实USB数据加密",
+      "reason": "这是原需求4.4/Phase3与R11仍明确缺失的实质能力。可先在既有非存储模型/双guest执行，不被真实硬件缺失阻塞。",
+      "design_first": [
+        "区分认证逻辑远端与本地代理地址，保留helper peer策略及Native endpoint/receipt语义。",
+        "每次DEVLIST连接和继续承载URB的IMPORT连接都认证、加密；仅管理API/TLS echo不算。",
+        "认证principal绑定允许的整设备/会话；禁止任意目的地转发；本地loopback不等于本地UID认证，凭据和入口权限要明确。",
+        "阻断IPv4/IPv6直连3240绕过；明确凭据验证/轮换/撤销、超时/限额、隧道断开与现有reap/恢复语义。成熟TLS库需下一设计时固定版本/官方源码审计，本次不选版本或新依赖。"
+      ],
+      "first_runtime_gate": "两隔离guest中的实际Linux USB/IP/VHCI与真实HID/FTDI或ECM功能I/O，经外部链路捕获核DEVLIST和URB都走TLS；无/错误/过期身份、非法设备及直连绕过均拒绝，断链清理仍真实完成。此切片不等于完整G3。"
+    },
+    {
+      "priority": 2,
+      "task": "保留Phase2真实功能缺口为独立实现设计",
+      "items": [
+        "ISO逐packet/frame/status及物理执行目前未实现；拒绝ISO不是支持。未来audio/UVC要新wire/adapter/内存取消设计和正向模型，勿混入TLS切片。",
+        "原driver=None且非零alternate的通用释放恢复、崩溃跨配置恢复仍未解决；现CONNECT-only不覆盖。不能以plain claim/set/release或笼统拒绝设备冒充修复。"
+      ]
+    },
+    {
+      "priority": 3,
+      "task": "有选择地补模型/覆盖，按具体问题触发",
+      "items": [
+        "成功CLEAR_HALT后真实数据、实际错误partial语义均仍需适合模型；现UHCI -32/opaque1B不是有意义硬件partial证明。",
+        "必要时补同时首次IMPORT竞争；不要重复hold-and-busy、已覆盖ECM官方互操作或syscall-entry ptrace排列。",
+        "真正kernel内部hard-block不是再暂停syscall-entry即可覆盖。"
+      ]
+    }
+  ],
+  "hardware_blockers": [
+    "G1：两台真实Ubuntu与管理员选定非存储USB，客户端真实枚举/功能/重连/释放；QEMU与CI不能代替。",
+    "G2：真实USBFS型号/固件与官方Linux互操作；HID/serial/JTAG/storage/UVC/audio仍逐设备验收，存储继续拒绝直到独立安全设计。",
+    "Ubuntu24.04/aarch64内核USB及真实设备性能/长期可靠性仍缺；四平台软件CI和QEMU时长不是相关证据。"
+  ],
+  "do_not_repeat": [
+    "ECM cycle2已直接官方usbip attach/port/detach且实际UDP/ownership/cleanup通过；rev2明确纠正过这一遗漏。",
+    "SIGTERM与E27受限恢复不是未实现；其未覆盖范围仍保留，不能再以旧缺口重复启动。",
+    "无具体源码影响/问题不重跑全部矩阵；不要把更多测试排列等同新产品能力。"
+  ],
+  "evidence": {
+    "original_phase_requirements": "docs/requirements.md:232,696,710",
+    "phase_gates": "docs/roadmap.md:41,63,71",
+    "remote_security_already_planned": "docs/security.md:83-93；docs/research/rust-backend-audit.md:70 R11",
+    "explicit_prior_scope_correction": "docs/evidence/phase2-scope-review-rev2-20261023.json correction",
+    "plain_connection_integration_points": "crates/rustusb-protocol/src/lib.rs:144 plainTcpStream；crates/rustusb-native/src/lib.rs:233 discover+fixedusbip attach",
+    "unsupported_ISO": "crates/rustusb-rust-backend/src/wire.rs:146；physical/worker.rs:327-349",
+    "current_recovery_scope_and_open_gates": "crates/rustusb-daemon/src/physical_recovery.rs:108；docs/research/physical-driver-autorestore.md:71"
+  },
+  "inputs_sha256": {
+    "docs/requirements.md": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c",
+    "docs/roadmap.md": "097402f47be22e809988e14319a0b13cefb1ceed74b9da1213e216e049051a1e",
+    "docs/acceptance.md": "a24013bd0abf8fe37fda7333a41073f0c8d77edb84c6dc824be15ff2c76939a9",
+    "docs/research/physical-driver-autorestore.md": "4950e5a1f21dd6cf058b7109abe86810f705e53c03f2628899c68df1f4bb2d98",
+    "docs/evidence/phase2-scope-review-rev2-20261023.json": "b51a61c97236d052e6bcd6630be2af39e7b3eefb15beef9c09299126cb6aaf55",
+    "docs/research/rust-backend-audit.md": "601a3cbe9634d578d7b513e7603ea081ce7208575da147099d785041f8d863db",
+    "docs/security.md": "247d345170823874b217b7cb6ebe717fb3b85554b98b6eaf31cc3a669c9178c8",
+    "crates/rustusb-native/src/lib.rs": "b6465ddde887ce698a9c20232ab03df73df61505a5f4bcf9e25d2273a5735876",
+    "crates/rustusb-protocol/src/lib.rs": "0f39a11540d1f940d8605680a75b5ced684005d40f02c505e6343de52057b7bb",
+    "crates/rustusb-rust-backend/src/wire.rs": "e34c8c9d2662d677ff4ba51fefcec1f087e61b8fd800c0caf31b4326b8119374",
+    "crates/rustusb-rust-backend/src/physical/worker.rs": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f",
+    "crates/rustusb-daemon/src/physical_recovery.rs": "2c8ab21f797de5d5de6d1d4f146096db04a7f012f7759b7517c02d38a156a576",
+    "Cargo.toml": "9b06bd0a1e9ef4aa2eadfad02dc9f5e67ef0613be574d118c8388a0763e2c552"
+  },
+  "activity_boundaries": "Only local fixed docs/code read and /tmp reports. No repository mutation, browse, Cargo/tests/QEMU/USB/modules/network changes, dependency/skill creation. No stage or test result changed."
+}

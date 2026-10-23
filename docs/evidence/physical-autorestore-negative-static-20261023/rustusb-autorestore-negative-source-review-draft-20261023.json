@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "review_status": "SOURCE_REVIEW_COMPLETE_AWAITING_AUTHOR_FREEZE",
+  "at_utc": "2026-10-23T08:45:46.244680+00:00",
+  "head": "67f5b9d15807f2dba69bee503ff2d442d347f821",
+  "files_at_read": {
+    "scripts/qemu/run-autorestore-negative-qemu.py": {
+      "bytes": 34901,
+      "sha256": "72f9b91a39c5b35bf7b7f999b5d2668b10ca20ec643bf68d075bea10d5c9b71a"
+    },
+    "scripts/qemu/guest-autorestore-negative-fragments.sh": {
+      "bytes": 17569,
+      "sha256": "42fe87b079584d626c9e0d161f8cf03cfe2ba6af33f962d40aefbab3d54c4676"
+    },
+    "scripts/qemu/usbfs-external-claim-probe.c": {
+      "bytes": 8266,
+      "sha256": "1728c209d8b389245cbf4e449ea3b2a123ecc6459ca3d6b02168fbaf882bf1d6"
+    }
+  },
+  "scope": [
+    "C probe root+guest guards precede USB node operations, fixed fixtures/node/FD/generation, bounded one-command control, only plain CLAIM/RELEASE/close",
+    "legacy actual 933e720 producer path/ELF/109 input provenance and clean current source guards",
+    "guest helper stop/reap before service death, strict legacy/policy/C boundaries and exact separate tail contracts",
+    "specialized negative verdict, raw disk/sysfs before diagnostic API, helper epochs and events, owner/baseline/real I/O evidence"
+  ],
+  "findings": [
+    {
+      "id": "c-log-startup-race",
+      "severity": "mustfix-harness",
+      "status": "fixed_in_current_source",
+      "detail": "Parent could read log before child redirection created it. Author added explicit empty file before spawn."
+    },
+    {
+      "id": "ready-to-pending-immutability",
+      "severity": "evidence-gap",
+      "status": "sent_to_author_awaiting_confirmation",
+      "detail": "Compare journal and live OS/FD identity at each ready and corresponding pending epoch; otherwise immutable grant precursor is not directly checked."
+    }
+  ],
+  "already_checked": [
+    "L requires separate exact old ELF and strict old policy without new field; current helper later reads same untouched schema1 and has opt-in policy. No oldrecord auto-recovery; tail administrator bind followed by read-only reconcile is distinct.",
+    "P actual opt-in disk2 record persists across stopped-helper policy removal; scheduler disabled under empty restoration allowlist. Product tail requires explicit new helper with permission restored.",
+    "C starts after helper wait0 and owner wait137; fixed two CLAIM success and original receipts precede current helper. Waits for two old-lease attempt/failed events; no CONNECT/EBUSY claim. Keeps C claims for20s, releases/close/wait0, same helper5s without retry, only then restarts for product tail.",
+    "Guest helper and C executable bytes compared to payload metadata; FIFO root0700/0600, child-only persistent control open and known FDs3/9 closed.",
+    "No product or frozen positive/journal harness edits; new host runner binds only its dedicated negative verifier and reuses real-I/O utility checks.",
+    "All USB errors retain actual rc/errno before fatal; no successful done after failed explicit release/close. Guest-only actor not packaged in L/P modes."
+  ],
+  "boundaries": {
+    "repo_edits": false,
+    "build_Cargo_QEMU": false,
+    "runner_verifier_called": false,
+    "tests_executed_by_reviewer": [
+      "Two minimal BusyBox sed text fixtures for line-count parsing; no project code or USB action."
+    ],
+    "runtime_acceptance": false
+  }
+}

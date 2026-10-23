@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "review_status": "PASS_SOURCE_REVIEW_NO_OUTSTANDING_MUSTFIX",
+  "at_utc": "2026-10-23T08:52:17.882573+00:00",
+  "head": "67f5b9d15807f2dba69bee503ff2d442d347f821",
+  "files_at_read": {
+    "scripts/qemu/run-autorestore-negative-qemu.py": {
+      "bytes": 34901,
+      "sha256": "72f9b91a39c5b35bf7b7f999b5d2668b10ca20ec643bf68d075bea10d5c9b71a"
+    },
+    "scripts/qemu/guest-autorestore-negative-fragments.sh": {
+      "bytes": 17569,
+      "sha256": "42fe87b079584d626c9e0d161f8cf03cfe2ba6af33f962d40aefbab3d54c4676"
+    },
+    "scripts/qemu/usbfs-external-claim-probe.c": {
+      "bytes": 8266,
+      "sha256": "1728c209d8b389245cbf4e449ea3b2a123ecc6459ca3d6b02168fbaf882bf1d6"
+    }
+  },
+  "scope": [
+    "C probe root+guest guards precede USB node operations, fixed fixtures/node/FD/generation, bounded one-command control, only plain CLAIM/RELEASE/close",
+    "legacy actual 933e720 producer path/ELF/109 input provenance and clean current source guards",
+    "guest helper stop/reap before service death, strict legacy/policy/C boundaries and exact separate tail contracts",
+    "specialized negative verdict, raw disk/sysfs before diagnostic API, helper epochs and events, owner/baseline/real I/O evidence"
+  ],
+  "findings": [
+    {
+      "id": "c-log-startup-race",
+      "severity": "mustfix-harness",
+      "status": "resolved_before_runtime_and_confirmed_in_frozen_source",
+      "detail": "Parent could read log before child redirection created it. Author added explicit empty file before spawn.",
+      "source": "guest-autorestore-negative-fragments.sh:151-152"
+    },
+    {
+      "id": "ready-to-pending-immutability",
+      "severity": "evidence-gap",
+      "status": "resolved_before_runtime_and_confirmed_in_frozen_source",
+      "detail": "All three pending epochs now require exact ready journal equality and exact ready OS/FD identity; frozen source confirms the original grants cannot silently be replaced in the negative precursor.",
+      "source": "run-autorestore-negative-qemu.py:190-195; all normal/killed/recovered epochs"
+    }
+  ],
+  "already_checked": [
+    "L requires separate exact old ELF and strict old policy without new field; current helper later reads same untouched schema1 and has opt-in policy. No oldrecord auto-recovery; tail administrator bind followed by read-only reconcile is distinct.",
+    "P actual opt-in disk2 record persists across stopped-helper policy removal; scheduler disabled under empty restoration allowlist. Product tail requires explicit new helper with permission restored.",
+    "C starts after helper wait0 and owner wait137; fixed two CLAIM success and original receipts precede current helper. Waits for two old-lease attempt/failed events; no CONNECT/EBUSY claim. Keeps C claims for20s, releases/close/wait0, same helper5s without retry, only then restarts for product tail.",
+    "Guest helper and C executable bytes compared to payload metadata; FIFO root0700/0600, child-only persistent control open and known FDs3/9 closed.",
+    "No product or frozen positive/journal harness edits; new host runner binds only its dedicated negative verifier and reuses real-I/O utility checks.",
+    "All USB errors retain actual rc/errno before fatal; no successful done after failed explicit release/close. Guest-only actor not packaged in L/P modes."
+  ],
+  "boundaries": {
+    "repo_edits": false,
+    "build_Cargo_QEMU": false,
+    "runner_verifier_called": false,
+    "tests_executed_by_reviewer": [
+      "Two minimal BusyBox sed text fixtures for line-count parsing; no project code or USB action."
+    ],
+    "runtime_acceptance": false,
+    "project_tests_executed_by_reviewer": false
+  },
+  "head_at_final_read": "67f5b9d15807f2dba69bee503ff2d442d347f821",
+  "author_frozen": true,
+  "final_files": {
+    "scripts/qemu/run-autorestore-negative-qemu.py": {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu/run-autorestore-negative-qemu.py",
+      "bytes": 36492,
+      "sha256": "7885f965c454ccffe82ef0fd0f620d6dfb7f877ba9ce0eaa955160f835438b83"
+    },
+    "scripts/qemu/guest-autorestore-negative-fragments.sh": {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu/guest-autorestore-negative-fragments.sh",
+      "bytes": 17569,
+      "sha256": "42fe87b079584d626c9e0d161f8cf03cfe2ba6af33f962d40aefbab3d54c4676"
+    },
+    "scripts/qemu/usbfs-external-claim-probe.c": {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu/usbfs-external-claim-probe.c",
+      "bytes": 8266,
+      "sha256": "1728c209d8b389245cbf4e449ea3b2a123ecc6459ca3d6b02168fbaf882bf1d6"
+    }
+  },
+  "final_delta_checked": [
+    "Actual C /proc exe SHA matches packaged metadata; private root directory/FIFO checks emitted and judged.",
+    "Host C original receipt now includes filesystem node_dev plus node_inode/rdev and full sysfs/configuration/interface scope.",
+    "Only the negative-new-grant STDERR block can supply the exact unresolved-grant rejection message.",
+    "Pure killed-with-helper-stopped snapshot requires helper/external absent, original journal preserved and current drivers null.",
+    "Legacy binary/library copying cannot change existing current payload libraries; actual guest old ELF still matches legacy manifest.",
+    "Explicit readonly_primary_scope distinguishes helper-startup doctor/Status from later pure disk/sysfs primary before pending/new-grant."
+  ],
+  "nonblocking_boundaries": [
+    "No new negative QEMU run has been evaluated by this review; source/static/constructed fixtures do not establish actual USB acceptance.",
+    "L tail administrator bind+read-only reconcile is intentionally manual recovery, followed by new disk2 opt-in grants and real third-cycle acceptance to be observed. P/C tails are product recovery only after explicit helper restart.",
+    "C refusal usually occurs at ensure_eligible before scope/CONNECT; runtime events/state can prove refusal while absence of CONNECT relies on frozen control flow, not syscall tracing.",
+    "P empty restore list disables scheduler at startup; it does not test hot reload or capability revocation.",
+    "All no-retry/rejection claims are bounded observation windows. Source constraints are not global FD revocation, cross-config/alternate or hardware proof."
+  ],
+  "draft_preserved": {
+    "path": "/tmp/rustusb-autorestore-negative-source-review-draft-20261023.json",
+    "bytes": 3386,
+    "sha256": "d0040ec9ab3f4da4c7b9071172658516a6fb6bf38fd094eb661711b69386d348"
+  },
+  "prior_design_and_legacy_review": {
+    "path": "/tmp/rustusb-autorestore-negative-design-delta-review-20261023.json",
+    "bytes": 12112,
+    "sha256": "747cfe7c4d6b5dd945ace38e9d2c5dfb026a461a71a75d1c42c18ea24786e6b2"
+  },
+  "external_static_evidence": [
+    {
+      "path": "/tmp/rustusb-autorestore-negative-static-20261023.json",
+      "bytes": 18540,
+      "sha256": "505e30bb24697a9bc2ce15398beff5faebbdde552596c4926d0a1f18520c5f29",
+      "reported_result": "PASS",
+      "reported_scope": "Static syntax/actual jq compilation and ANSI fixture plus read-only manifest verification. No Cargo, C compilation, QEMU or helper/device execution by this checker.",
+      "reported_check_count": 87,
+      "reviewer_executed_checker": false,
+      "reported_unique_jq_programs": 80
+    },
+    {
+      "path": "/tmp/rustusb-autorestore-negative-verifier-fixtures-20261023.json",
+      "bytes": 1230,
+      "sha256": "a0356a1f9d678e6975ab65450fea244606f960714b88880aad25294bb8958b95",
+      "reported_result": "PASS",
+      "reported_scope": "Constructed parser fixtures using archived I/O objects, not new USB/recovery runtime evidence.",
+      "reported_check_count": 6,
+      "reviewer_executed_checker": false
+    }
+  ],
+  "authorship": "Reviewer independently read source and provenance; did not author these test files or call their verifier. Reviewer authored the earlier journal storage implementation, not the recovery executor or this QEMU harness."
+}
