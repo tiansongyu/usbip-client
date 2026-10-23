@@ -12,6 +12,8 @@ SIGKILL与首次重启的独立负向见 `docs/research/physical-crash-recovery.
 
 ## 每次交付
 
+独立恢复句柄机制在clean da764d0双QEMU通过237项检查（原journal184+新增53）、两guest0和恢复后第三轮真实HID/FTDI I/O，见`docs/research/usbfs-guardian-mechanism.md`。guest-only probe证明独立B与dupA/C的占用差异和CONNECT恢复，未修改产品或实现自动恢复；首43d6d43的jq测试脚本FAIL保留。后续优先明确opt-in的同配置/alternate原基线恢复契约，不把机制PASS当成跨配置、FD撤销或硬件验收。
+
 英文README为产品入口，中文README保留详细概览，Native操作/诊断见`docs/native-guide.md`。静态项目展示站在`website/`，维护和GitHub Pages发布见`docs/website.md`；它不是Phase5 GUI，也不扩大设备/平台/安全验收范围。README与展示站任务可使用用户全局`readme-site` skill。
 
 - 先检查当前文件、Git 状态与 `docs/work-log.md`，不覆盖其他贡献者工作。

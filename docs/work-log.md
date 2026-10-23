@@ -328,3 +328,7 @@
 - 三个新测试文件组合复用旧 journal：六个唯一替换锚包含失败采证，保留原184检查和20秒观察。独立预审发现数字全空白可能误当0，编译前修正并以13个合法/非法输入实际验证；root严格C编译、生成init与片段sh-n、旧SHA漂移拒绝和宿主普通UID运行拒绝均通过。probe只在guest root及固定启动标记下打开两指定字符节点，FIFO只由root probe持有，不向普通CLI继承。静态证据已归档；当前尚无QEMU运行结论。
 - 测试/设计提交43d6d43后从clean冻结149输入，首轮QEMU实际exit1/FAIL，source/head/ELF/clean guards全通过。新probe已独立打开B并ready，随后guardian_record内jq保留变量`label`导致编译错误；原第一轮真实I/O及normal/reopen关闭已记录，但第二epoch尚未启动，KILL/dup/C/恢复均未执行。后续client wait超时不是首因，两guest退出0不覆盖FAIL。26份原件已按bytes归档；只修变量名并补实际jq表达式检查，原断言、时限和产品不变。
 - 独立首FAIL复核213项核验原来源与已完成/缺失范围；未保存的第一轮client evdev/RX hex不从路径成功推造。修复仅将jq变量改mark，JSON字段仍label；24处/19种filter的60次实际编译与正反fixture及附加静态检查共64项通过，含旧错误的真实复现。原失败和复核、修复检查一起保存，下一次仍从新clean提交执行。
+- 修复/失败证据提交da764d0，root再次从clean冻结149输入串行执行唯一新QEMU，实际exit0/两guest0，237检查全PASS（原184+新53），source/head/clean/ELF guards全部通过。真实wait137后D仍持占用、两组共8EBUSY、B/C各自claim/release及B两次CONNECT返回1；完整原driver/config/alt恢复后probe wait0、只读退休和第三轮HID/FTDI通过，每方向105字节。产品ELF与933e720相同，26份最终原件/编排源码已归档，原首FAIL不改判。
+- 两个测试提交已正常push到指定SSH origin，远端更新da764d0；CI39916267084和Pages39916267217已触发，暂未将未完成job标通过。当前补齐机制报告及验收E26，产品自动恢复仍未实现。
+- 最终独立raw复核596/596通过，未调用runner.verify：逐149 Git输入、生成init、真实kcmp/18 ioctl/全部close/wait、完整基线和三轮KEY/RX/TX原件核验；交付文档另一agent审查无mustfix。root逐69份归档原件长度/SHA和144本地文档链接核对通过，另追加文档审查原件。现有产品/旧harness保持不变，不重复整套旧QEMU来替代本轮单项实测。
+- 精确da764d0的CI39916267084已四原生job completed/success，Pages39916267217亦completed/success；连接器与官方API最终job身份/结论一致。五份发布原件及索引`publication-guardian-da764d0-20261023.json`已归档。本次未重新解析各Rust测试计数，旧250项仍归属933e720；站点源码未变。准备最后文档/证据提交，保持完整目标未完成，后续为受限产品自动恢复契约。

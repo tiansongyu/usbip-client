@@ -62,6 +62,8 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 **G2 gate：** 每个上游局限形成回归项，逐项验证 Control、Bulk、Interrupt、Isochronous、Composite、alternate settings、错误传播、长度上限、panic 路径、hotplug、claim / release 和阻塞 Tokio worker。分别运行 Rust Server → Linux `usbip attach`、Linux `usbipd` → Rust Client、Rust Server → Rust Client。QEMU HID 和 CDC ACM 完成描述符枚举、实际输入 / 串口传输、断开 / 重连和异常包。物理后端至少一类真实设备完成双机功能测试；缺陷未解决的类型明确保持不支持 / 实验状态。
 
+自动恢复的前置[独立句柄机制实验](research/usbfs-guardian-mechanism.md)已在clean da764d0通过：237检查、两guest0、实际旧副本/另一OFD占用拒绝、B恢复原driver及第三轮I/O；产品未改，初次jq脚本FAIL保留。下一切片优先明确opt-in的同配置/alternate基线恢复与旧schema1迁移，跨配置再补可信变更事务；不把本实验当成G2完成。
+
 ## 6. Phase 3：安全远程连接和恢复
 
 增加身份认证、设备级授权、安全隧道、会话状态机、超时 / 心跳、错误分类、可取消操作、启动协调和审计。支持 IPv4、IPv6、主机名、局域网及 VPN；RTT、字节计数和带宽只在可观测时提供。安全通道与原生数据平面明确分离；内置 TLS 使用成熟库和本地转发代理，处理列表及长连接。

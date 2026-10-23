@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "review_result": "PASS",
+  "mustfix": [],
+  "reviewer": "/root/journal_integration_review",
+  "reviewed_at_utc": "2026-10-23T07:19:14.675298+00:00",
+  "head": "da764d0b7fb156e76844918698e8edc14d7e9b79",
+  "method": "Read-only delivery documentation review against archived run/sequence/failure/jq records, independent raw review results and targeted Git product diff. No rerun or independent reproduction claimed.",
+  "documents": [
+    {
+      "path": "docs/research/usbfs-guardian-mechanism.md",
+      "bytes": 6486,
+      "sha256": "19398c75d802245cbefda2bf77e9dde3bb12d348c22646af36686e64de4cad6a"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 4379,
+      "sha256": "a47edb78a2119e9cd13834d9a4136fe3f60c4b65f477c29e2867228240becd3d"
+    },
+    {
+      "path": "docs/testing.md",
+      "bytes": 28038,
+      "sha256": "24c7f8033a66010dc2acc084ba2b74f16b3812433cacb0aa86b72691d0a1bea0"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 22070,
+      "sha256": "831165e061064b9035036afe5a21857edf7ffaf674a91458c2192b5c81a757ba"
+    },
+    {
+      "path": "docs/roadmap.md",
+      "bytes": 15418,
+      "sha256": "edae530edd6e331e99e3f038ec8601a5bd7acbe5c533a4245227c35d97a8e7dc"
+    },
+    {
+      "path": "docs/acceptance.md",
+      "bytes": 41671,
+      "sha256": "fef155ace235353a2043a4b836f930bdd5b3cfca0e75cdcaa96d2fb6676c9344"
+    },
+    {
+      "path": "docs/work-log.md",
+      "bytes": 94435,
+      "sha256": "c45be20a5220a19457ddb796c0038909d90f1051579458b2e79d9fc3ee1cde28"
+    },
+    {
+      "path": "docs/research/physical-crash-recovery-design.md",
+      "bytes": 15886,
+      "sha256": "12306222a85c8afd07ce3e0be4472366ea89934e1355b7dfc4c10cdd907c48ab"
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/evidence/physical-guardian-final-da764d0-20261023/manifest.json",
+      "bytes": 8856,
+      "sha256": "edefee65f9fcbef1f7256047bcdbcc8f66434eb754020fc0d4b0b5801480d342"
+    },
+    {
+      "path": "docs/evidence/physical-guardian-final-da764d0-20261023/run/summary.json",
+      "bytes": 460884,
+      "sha256": "d2083e752e72f1ab08e36e9845a87864e106321768091194f19b26e110e312ee"
+    },
+    {
+      "path": "docs/evidence/physical-guardian-final-da764d0-20261023/sequence.json",
+      "bytes": 415,
+      "sha256": "2eb2f85c4e6edc55f38ba593fbdcd873595b36c31058ec6d9b862dafafd0ac7c"
+    },
+    {
+      "path": "docs/evidence/physical-guardian-first-failure-43d6d43-20261023/manifest.json",
+      "bytes": 9458,
+      "sha256": "ecc97ed270cbf352cef93544038158f25bf469307f535b67f33a83e4cb52e6c2"
+    },
+    {
+      "path": "docs/evidence/physical-guardian-first-failure-43d6d43-20261023/jq-fix-checks.json",
+      "bytes": 11290,
+      "sha256": "6815aaa5ae31ef2dd00c3216b30dfd4a251a79b8f154b7b1741a8846b6926a60"
+    },
+    {
+      "path": "/tmp/rustusb-guardian-second-independent-review-20261023.json",
+      "bytes": 86219,
+      "sha256": "3d30103bbb602ad3489a7b12d1bed7e35f16d0665c3608fa104c5fe957a25432"
+    }
+  ],
+  "findings": [
+    {
+      "topic": "Scope and version",
+      "result": "PASS",
+      "detail": "Mechanism PASS belongs to clean da764d0b7fb156e76844918698e8edc14d7e9b79; guest-only harness, unchanged original journal scripts/product/dependencies, no production automatic recovery or schema1 write contract."
+    },
+    {
+      "topic": "Counts and actual outcome",
+      "result": "PASS",
+      "detail": "Archived summary/sequence agree on237 PASS=184 original+53 new, both guest exits0, runner0 in40.61s,149 frozen inputs and source/HEAD/ELF/clean guards. Independent raw review is596/596 PASS; it is a separate review count, not Rust tests or an extra runtime."
+    },
+    {
+      "topic": "Mechanism facts",
+      "result": "PASS",
+      "detail": "Documented killed PID1182/start562 wait137 and probe PID1080/start550 wait0 match actual recorded values.18 actual ioctls comprise8 EBUSY,8 successful claim/release rc0,2 CONNECT rc1. C is explicitly another OFD in the same probe, not another process; full original baseline, probe close before reconcile, third actual I/O and105B per direction are correctly stated."
+    },
+    {
+      "topic": "First failure and narrow fix",
+      "result": "PASS",
+      "detail": "43d6d43 remains FAIL before second epoch/KILL/dup/C/recovery. Immediate jq reserved-variable cause distinguished from later wait timeout; two guest0 do not override FAIL. Missing first-run client evdev/RX raw data are not invented. Git delta is only --arg label/$label -> mark/$mark; JSON label field remains. Jq record verifies24 occurrences,19 unique filters,60 executions and64 combined checks; static source/shell checks are not runtime evidence."
+    },
+    {
+      "topic": "Historical software attribution",
+      "result": "PASS",
+      "detail": "Targeted git ls-files gives109 Cargo/crates/vendor inputs; git diff933e720..da764d0 for those paths is empty. Recorded CLI/helper SHA match documented hashes. Old250 software checks and four-platform results remain attributed to933e720 original report; new mechanism checks are not relabeled unit tests."
+    },
+    {
+      "topic": "Unsupported conclusions and future design",
+      "result": "PASS",
+      "detail": "No arbitrary FD revocation, known terminal killed resources, C data I/O, guardian restart, nonzero-alt/configuration/composite/hotplug recovery, power-loss durability or hardware completion claimed. CONNECT selection and external-admin race boundaries are explicit. Future opt-in same-config/alt restoration and later cross-config transaction work stay proposals."
+    },
+    {
+      "topic": "Cross-document consistency and table",
+      "result": "PASS",
+      "detail": "AGENTS/testing/architecture/roadmap/design/work-log/E26 consistently use mechanism-only result and preserve first FAIL. E26 is now contiguous with evidence table after parent formatting fix."
+    }
+  ],
+  "limits": [
+    "This is a scoped document/fact consistency review, not another independent raw596-check reconstruction.",
+    "Runtime facts are from archived originals, root sequence and separately authored raw review. Executable/initramfs bytes were not retained; ELF claims refer to recorded actual build/payload/after identity guards, not rehashing absent files."
+  ],
+  "reviewer_actions": {
+    "build": false,
+    "cargo": false,
+    "qemu": false,
+    "runner_or_verifier_execution": false,
+    "repository_edit": false,
+    "network_write": false,
+    "temporary_report_only": true
+  }
+}

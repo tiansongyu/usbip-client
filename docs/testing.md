@@ -229,3 +229,9 @@ Ubuntu 22.04 / 24.04 × x86_64 / aarch64 的组合各有状态；HWE、OEM 或�
 独立 `python3 scripts/qemu/run-journal-qemu.py --evidence /tmp/rustusb-journal-observation` 使用两台隔离 guest、QEMU HID/FTDI，不操作宿主 USB。新目录必须不存在。它检查真实 I/O 后正常结束退休、正常再次启动、真实 I/O 后 SIGKILL/wait137、跨 helper 重启保留原基线并明确拒绝新服务、普通 UID 管理拒绝、原驱动未恢复时 root 协调拒绝、guest 管理员显式恢复原驱动后核验退休和再启动。管理员协调后再启动执行第三轮真实 HID/FTDI I/O、活动请求及正常关闭；中间的正常重开仍是无 IMPORT 对照。本场景不覆盖 ECM、重插或断电，因此另跑原相应回归。
 
 原 `run-crash-qemu.py` 保持不变，旧 clean1342a6a 的恢复 FAIL 不因新 guard 改判。新 runner 的绿色只证明 guard/正常退休/显式协调，不证明 SIGKILL 后自动恢复驱动。每次实际版本、命令、失败和来源以工作日志及证据索引为准。
+
+## 独立 USBFS 恢复句柄机制
+
+`python3 scripts/qemu/run-guardian-qemu.py --evidence /tmp/rustusb-guardian-observation` 在相同两guest中增加仅guest root可用的C probe。它验证独立open B、pidfd_getfd的A副本、kcmp身份、wait137后副本延长占用、另一OFD C占用时拒绝抢占、B恢复原驱动、关闭后只读协调及第三轮真实I/O。原journal两脚本不改，生成guest的6个唯一锚和完整来源单独保存；需要C编译器、Linux UAPI headers及guest pidfd_getfd/KCMP支持。
+
+clean da764d0的237项检查/两guest0通过；首43d6d43因jq变量名错误在KILL前失败，原件保留。详见[报告与限制](research/usbfs-guardian-mechanism.md)。这是恢复句柄机制实验，不是产品自动恢复、任意外部进程/FD撤销、多配置或真实硬件验收。

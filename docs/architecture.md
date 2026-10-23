@@ -132,6 +132,8 @@ FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策�
 
 持久记录不是 FD 撤销或自动崩溃恢复：helper 不保留旧 USBFS OFD 来冒充独立恢复 open，原会话实际修改范围仍由后端内存管理。自动恢复的监督、可信变更范围与可安全执行的恢复操作仍在后续设计中，不能仅凭 PID 消失清记录。软件和 QEMU 证据分别记账，旧负向结果保持。
 
+[独立句柄机制实验](research/usbfs-guardian-mechanism.md)在clean da764d0验证了独立B、A副本延长占用、另一OFD C的非抢占拒绝和B恢复后真实复用；实现位于guest-only测试工具，未改变上述产品架构或schema1权限契约。
+
 ## 技术依据
 
 完整内核与 Rust 审计将写入 `research/`。Rust 2024 起点为 [1.85](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)，当前构建使用安装的稳定 1.97.1；最终依赖版本以 Cargo.lock 为准。
