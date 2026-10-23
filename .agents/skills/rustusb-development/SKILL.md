@@ -29,6 +29,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - 使用类型化 Result，不能吞 USB I/O 错误或把未知状态当空列表；核心代码禁止 unwrap/expect/panic/unimplemented 和 unsafe。
 - 阻塞 sysfs/进程/USB 调用不能长期占 Tokio worker。`spawn_blocking` 取消不终止底层调用；进程超时需 kill + reap，并重新协调设备状态。
 - 每台物理设备独占；串行化冲突变更。清理幂等，从内核/sysfs 恢复现实状态，不仅相信内存记录。存储断线默认人工确认。
+- 应用job/session/managed IMPORT修改前读`docs/research/application-service-design.md`。持久admission后才claim，停止只发合作请求、真实owner总await；softdeadline不是terminal。server Connected只证明IMPORT flush，client须VHCI receipt。Root proof全核kind/correlation/key/UID/resource，不能用新进程资源0或PID死亡恢复旧session；保留operation/cleanup独立结果，raw-v1不编造heartbeat/RTT。
 
 ## 验证与文档
 

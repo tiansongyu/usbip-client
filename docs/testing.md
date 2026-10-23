@@ -253,6 +253,14 @@ clean2ab9976两个正向161/205 host检查和原默认off journal184、正常/�
 clean4565f7a首次三项全部PASS/6guest0，318/293/313项host检查。L尾部人工恢复和只读reconcile单列；P/C尾部只有明确新helper实例才能自主恢复、退休并第三轮真实I/O。C程序仅该场景打包，只plain CLAIM/RELEASE/close；20秒持有/拒绝后关闭C、同helper至少5秒不重试。纯primary早于pending API/新grant，启动doctor/Status仍先调用。具体命令、原件、软件/静态检查范围及其余未完成场景见[报告](research/physical-driver-autorestore-negatives.md)。
 
 
+## 托管应用服务的 Native 双栈场景
+
+`python3 scripts/qemu/run-agent-qemu.py --backend native --family ipv4 --evidence /tmp/rustusb-agent-test-v4`，另用新的目录和`--family ipv6`。它要求clean已提交源、默认locked/all-features release构建，沿用安全矩阵的QEMU/BusyBox/cpio/jq/setpriv及匹配kernel/modules前提。仅两个一次性guest操作模拟HID/FTDI，不直通宿主USB；kernel复制可能使用既有`sudo -n`只读权限。
+
+实际验证operator RPC进程退出后I/O、定向停HID而原serial继续、client SIGKILL/wait137后的NULL/Gone与精确Rootterminal、保留旧instance/session/attempt及新attempt真实I/O、server TERM完整driverbaseline。SIGKILL时只证明Connected/持能力，不外推pending URB。collector每epoch就绪后采实际TLS JSON/public DER/pin/policy及权限，私钥仅metadata不归档内容。host核完整原件/base64、ELF/UID及source/HEAD/clean/二进制guards，失败亦完整收集。
+
+这是Native agent场景；旧virtual/USBFS/Native安全六矩阵仍是前台入口。managed Rust两路有软件覆盖但未作agent双QEMU验收。软件495、版本分开的两Native及六前台运行、独立raw审计及保留限制见[应用服务验收](research/application-service-validation.md)。不以仿真或有界audit宣告完整G3/硬件。
+
 ## 安全 USB/IP 双栈矩阵
 
 [最新验收报告](research/secure-usbip-validation.md)记录 clean `b83c931` 的六次实际 PASS、12guest0，以及四次原 FAIL。入口是新 [runner](../scripts/qemu/run-secure-qemu.py) 和 [guest脚本](../scripts/qemu/guest-secure-init.sh)，不修改或复用旧明文场景的裁决冒充TLS通过。

@@ -1,0 +1,35 @@
+[package]
+name = "rustusb-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "rustusb"
+path = "src/main.rs"
+
+[features]
+default = []
+secure-transport = ["dep:rustusb-transport", "dep:rustusb-service"]
+rust-backend = ["dep:rustusb-rust-backend", "secure-transport", "rustusb-service/rust-backend"]
+physical-nusb = ["rust-backend", "rustusb-rust-backend/physical-nusb", "rustusb-daemon/physical-usb", "rustusb-service/physical-nusb"]
+
+[dependencies]
+rustusb-core.workspace = true
+rustusb-linux.workspace = true
+rustusb-protocol.workspace = true
+rustusb-daemon.workspace = true
+rustusb-native.workspace = true
+rustusb-rust-backend = { workspace = true, optional = true }
+rustusb-transport = { workspace = true, optional = true }
+rustusb-service = { workspace = true, optional = true }
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[lints]
+workspace = true

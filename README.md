@@ -89,8 +89,8 @@ Choose `--backend native` for approved kernel exports or `--backend usbfs` for t
 For supervised jobs independent of the requesting CLI, see the experimental
 [application service guide](docs/application-service-guide.md). Its nonroot agent
 provides fixed profiles, OS-UID action authorization, per-connection stop and
-bounded durable session/audit history. New agent QEMU acceptance is recorded
-separately from the encrypted foreground-path results below.
+bounded durable session/audit history. Native agent QEMU acceptance is recorded
+separately from the foreground paths in the [service validation report](docs/research/application-service-validation.md).
 
 ## Choose a backend
 
@@ -122,13 +122,13 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The latest [secure-path validation report](docs/research/secure-usbip-validation.md) records:
+The latest [application-service validation report](docs/research/application-service-validation.md) records:
 
-- **412 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
-- **Six paired QEMU scenarios, twelve successful guest exits**: virtual HID/CDC, USBFS HID/FTDI and Native HID/FTDI, each over actual IPv4 and IPv6 TLS connections, with two I/O/cleanup/reuse cycles and external packet capture.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 412 test executions, signal and output-backpressure checks on the recorded software revision.
+- **495 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
+- **Eight paired QEMU scenarios, sixteen successful guest exits**: six foreground virtual/USBFS/Native paths across IPv4/IPv6, plus two Native agent scenarios for independent task ownership, targeted stop, SIGKILL/root-proof coordination and real I/O after restart. Tested revisions and collection scopes are recorded separately.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 495 test executions, signal and output-backpressure checks on the recorded software revision.
 
-Earlier [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence. The secure-path report also preserves the failed development runs and their fixes.
+Earlier [secure-path tests](docs/research/secure-usbip-validation.md), [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence, including failed development runs and their fixes.
 
 The report links the tested revision and raw evidence. [Native interoperability](docs/research/native-qemu-matrix.md) and [virtual device tests](docs/research/userspace-qemu.md) have their own recorded baselines. These results establish the stated simulated-device behavior; real-device compatibility and two-machine hardware acceptance remain unverified.
 
@@ -147,6 +147,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 | Start here | Details |
 | --- | --- |
 | [Secure broker setup](docs/secure-guide.md) | Mutual TLS, dedicated broker roles, exact device authorization and supervised cleanup |
+| [Shared application service](docs/application-service-guide.md) | Nonroot jobs, authorized profiles, per-connection stop, durable sessions and bounded audit |
 | [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
 | [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
 | [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |

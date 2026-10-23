@@ -18,6 +18,8 @@ Phase3前置基线见`docs/research/secure-transport-foundation.md`：当时18�
 
 显式opt-in原driver恢复已实现于e34e309，clean2ab9976两个产品正向和五个原QEMU回归通过，14guest0、软件90/158/20共268次及本地四信号/两背压通过，CI39921583807四原生平台每格268次/信号/背压通过，见`docs/research/physical-driver-autorestore.md`。默认空许可、旧record manual、私有disk1/2与IPC1分开；仅sameboot/原owner ended/完整同cfg+IF+alt/独立B CONNECT，实际blocking任务持变更锁到核验退休，停止须join真实任务。旧producer迁移、许可撤销、外部C占用已在clean4565f7a三QEMU首次PASS/6guest0（318/293/313 host检查），见`docs/research/physical-driver-autorestore-negatives.md`。L始终manual并人工尾部；P/C在明确重启后产品恢复，C释放后同实例不重试。CI39928383971四原生平台每格268次/两背压/四信号通过，精确归属4565f7a。产品111输入/ELF保持；通用恢复/FD撤销、ISO/跨cfg/alt及完整Phase2仍未完成，该历史交付后的安全设计与产品接入结果见上方Phase3新基线。
 
+共享非root应用服务见`docs/research/application-service-design.md`、`docs/application-service-guide.md`与`docs/research/application-service-validation.md`：产品在2a0f8d7，eaa1936软件495/四原生平台CI及六前台/两Native agent QEMU通过；cb08672只增强actual TLS配置/public DER/pin/权限采证，两Native双栈新clean通过，产品150源/ELF仍等eaa。helper tracked Native disk2/physical disk3保留精确terminal；managed IMPORT须持久admission后claim，stop请求不等于cleanup、softdeadline不得退休实际owner。原前台统一提取、无独立helper proof的Rust崩溃session协调、raw-v1 heartbeat/RTT与日志轮转仍未完成，不宣告完整Phase3。修改这些路径先读上述契约，保留operation/cleanup分离及Root kind/correlation/key/UID/resource全匹配。
+
 英文README为产品入口，中文README保留详细概览，Native操作/诊断见`docs/native-guide.md`。静态项目展示站在`website/`，维护和GitHub Pages发布见`docs/website.md`；它不是Phase5 GUI，也不扩大设备/平台/安全验收范围。README与展示站任务可使用用户全局`readme-site` skill。
 
 - 先检查当前文件、Git 状态与 `docs/work-log.md`，不覆盖其他贡献者工作。

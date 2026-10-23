@@ -1,6 +1,6 @@
 # Application service: implementation and validation
 
-2026-10-23. The nonroot application service owns actual USB/IP jobs, independent
+2026-10-23–24. The nonroot application service owns actual USB/IP jobs, independent
 of the CLI connection requesting them. **This is an incremental Phase 3 result,
 not completion of Phase 3 or the full project.** Real hardware G1/G2, the TUI,
 GUI, packaging, performance qualification and Windows remain unfinished.
@@ -8,6 +8,10 @@ GUI, packaging, performance qualification and Windows remain unfinished.
 Use the [English service guide](../application-service-guide.md) for setup and
 commands, and the [implementation contract](application-service-design.md) for
 ownership, persistence, trust and recovery rules.
+
+The headline eight scenarios select the six foreground runs at `eaa1936` and
+the enhanced Native agent pair at `cb08672`. The original Native agent pair at
+`eaa1936` is retained separately with its original collection limitations.
 
 ## Delivered implementation
 
@@ -34,7 +38,9 @@ ownership, persistence, trust and recovery rules.
 - Helper tracked APIs retain an exact broker-scoped terminal proof in the same
   transaction that retires the original record. Native disk 1 migrates to 2;
   physical disk 1/2 migrates to 3 without granting old recovery authorization.
-  Untracked legacy operations keep disk 1 until a tracked admission upgrades it.
+  A fresh untracked Native store retains disk 1. Untracked physical stores retain
+  their existing disk 1 or recovery-authorized disk 2. Tracked admission upgrades
+  Native to 2 and physical to 3; an already upgraded store never downgrades.
 - Startup and ended-owner recovery query exact kind/correlation/key/UID/resource
   proofs. Missing history, legacy records and out-of-pool records remain unknown.
   No FD adoption, PID-death inference, automatic storage resume or new root
@@ -136,8 +142,46 @@ TLS 1.3 ServerHello, ALPN offer/SNI, stream equivalence and matching dual-stack
 The original agent collection lacks the actual TLS JSON/pin files and permission
 snapshots: its configuration proof is limited to the executed init, manifest,
 public DER and actual authorized receipts. That limitation is retained, not
-filled with reconstructed deployment files. A narrow collector enhancement
-requires fresh clean Native runs before stronger claims are made.
+filled with reconstructed deployment files. The following fresh runs provide
+the enhanced evidence separately.
+
+## Enhanced Native collection at cb08672
+
+Clean `cb08672366561281d3fe45453a37b2985284d8ca` changes only the agent evidence
+collector and documentation. Its **150 software inputs and both actual release
+ELFs equal `eaa1936`**; the software/CI and original six foreground results remain
+at their recorded revision. No software test result is reassigned to a different
+execution. Fresh Native agent IPv4 and IPv6 runs both passed, with four guest
+exits zero and all 154-input/source/ELF/HEAD/clean guards true.
+
+After each epoch is actually ready, the collector saves the runtime TLS JSON,
+manifest, helper policy, public CA/server/client DER and public pin file. It
+records complete fixed-path ancestry and file metadata: 17 server and 18 client
+entries per epoch. Root ownership/protected ancestors, public `0644`/single-link
+files and broker `0600` private-key metadata are checked. **The collector neither
+reads nor archives private-key contents or hashes.** The fixture explicitly
+normalizes the public pin's mode before packaging, preserving the old shared
+secure runner. The actual pin equals the raw public client DER SHA-256 followed
+by a newline; all configuration references, pools and principal rules match the
+actual profiles and helper policy. Both epochs retain the same configuration
+bytes.
+
+Independent lifecycle parsing passed 1,420 comparisons per family, including
+386 immutable artifacts and 206 decoded guest files per run. A separate security
+parser passed 101 grouped predicates across both runs, including complete TCP/TLS
+reassembly on both capture sides, the actual configuration bytes and permissions.
+These are audit comparisons, not USB test cases. The old two Native agent PASS
+runs and their collection limits remain intact. The principal eight-scenario
+result uses these two enhanced Native runs plus the six foreground runs at
+`eaa1936`; the earlier two agent runs are additional retained executions of the
+same scenarios, not new compatibility coverage.
+
+All new originals, parsers and first-pass reviewer output are indexed in the
+[enhanced collection manifest](../evidence/application-agent-config-final-cb08672-20261024/manifest.json).
+ALPN selection and handshake certificates remain encrypted in PCAP; configuration,
+strict handshake code and successful authenticated I/O support them, without
+claiming packet decryption. Current warnings, old HID operation error and the
+SIGKILL/no-pending-URB scope remain unchanged.
 
 ## Retained limitations
 

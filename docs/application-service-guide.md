@@ -2,7 +2,7 @@
 
 The experimental Linux `rustusb agent` owns USB/IP jobs independently of the CLI that starts or observes them. Operators select administrator-defined profiles; they cannot replace a profile's endpoint, TLS identity, device pool or helper policy. The library runs the actual client/server tasks in its process and retains their cleanup owners. This is the service entry point for future TUI and GUI clients.
 
-Implementation is under validation. See the [implementation contract](research/application-service-design.md) and [work log](work-log.md) for exact software/QEMU evidence. Existing foreground `secure-attach` and `secure-server` commands remain separate adapters in this revision; consolidating their implementations is unfinished.
+Native agent ownership, targeted stop and root-proof/restart scenarios have software and paired IPv4/IPv6 QEMU evidence; the optional managed Rust runners currently have software coverage. See the [validation report](research/application-service-validation.md), [implementation contract](research/application-service-design.md) and [work log](work-log.md) for exact scope. Existing foreground `secure-attach` and `secure-server` commands remain separate adapters in this revision; consolidating their implementations is unfinished.
 
 ## Prerequisites
 

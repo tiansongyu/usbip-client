@@ -4,6 +4,10 @@
 
 ## 1. 资产、前提和边界
 
+新增应用服务的权限、状态与恢复切片见[契约](research/application-service-design.md)及[E31验收](research/application-service-validation.md)。非root agent直接持有实际job；本机RPC按SO_PEERCRED逐profile/action授权，不接受端点/路径/凭据/FD或任意helper请求。broker UID仍是整个helper池的信任域，profile ACL不隔离同UID任意进程。Root proof须kind/correlation/key/UID/resource全匹配，活owner不能被只读observer提前退休；新进程资源0和PID死亡均非旧释放证明。
+
+Native agent双栈仿真已有定向停止、KILL137协调与新attempt实际I/O；actual TLS JSON/public DER/pin/权限与PCAP分别采证。审计为有界最小字段ring，私钥内容不采集；不等于永久归档/轮转。raw-v1无同数据链heartbeat/RTT，Rust无独立proof的崩溃session仍未决，证书负向/轮换等完整gate继续未完成。
+
 保护资产包括 USB 设备控制权、存储数据一致性、客户端内核、主机 root 权限、设备访问策略、认证凭据、设备序列号和审计记录。合法用途要求设备所有者和两端管理员授权，并服从组织 USB 安全策略。网络对端、USB 描述符、USB 数据、CLI 参数、配置和本机普通用户均不能视为可信输入。
 
 默认不信任公网、局域网其他成员或远端 USB 设备固件。可信 VPN 只保护传输及网络成员身份，不保证接入设备或对端主机无恶意。远端设备进入客户端 USB 驱动后仍扩大内核攻击面；设备级授权不能替代内核补丁和组织设备准入。root、内核或设备固件完全失陷超出本工具能够自保的范围，必须在部署风险中明确记录。

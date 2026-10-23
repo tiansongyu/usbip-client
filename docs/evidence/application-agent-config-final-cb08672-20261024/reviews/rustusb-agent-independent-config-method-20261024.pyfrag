@@ -1,0 +1,53 @@
+ def configurations(self):
+  host_der={name:(self.root/f'{name}-public.der').read_bytes() for name in ['ca','server','client']}
+  fingerprints={name:sha(content) for name,content in host_der.items()}
+  device_keys=self.obj('server','keys.json');family=self.summary['family'];records=[]
+  for role in ['server','client']:
+   original_manifest=self.obj(role,'agent-manifest.json');original_policy=self.obj(role,'helper-policy.json')
+   names=['server'] if role=='server' else ['hid','serial']
+   definitions=[{'id':name,'backend':'native' if role=='server' else 'client','config':'/etc/rustusb/'+('server.json' if role=='server' else 'client-'+name+'.json')} for name in names]
+   required_manifest={'schema_version':1,'broker_uid':2000,'helper_socket':'/run/rustusb/control.sock','control_directory':'/run/agent','data_directory':'/var/lib/rustusb/agent','profiles':definitions,'operators':[{'uid':1000,'profiles':names,'actions':['read','start','stop','discover','audit']}]}
+   self.check('actual_config',role+' actual manifest exact endpoint/profile/OS ACL',original_manifest==required_manifest)
+   self.check('actual_config',role+' original helper broker policy exact role',original_policy['secure_broker_uid']==2000 and original_policy['allowed_uids']==[1000] and original_policy['export_device_ids']==original_policy['peers']==[] and original_policy['trusted_network'] is False)
+   if role=='server':self.check('actual_config','actual helper Native pool equals published TLS keys',original_policy['secure_native_device_ids']==[key.split(':',1)[1] for key in device_keys])
+   else:self.check('actual_config','actual helper import policy equals TLS logical server/device pair',original_policy['secure_imports']==[{'server_id':'qemu-server','device_keys':device_keys}])
+   dirs={'/','/etc','/etc/rustusb','/run','/run/agent','/var','/var/lib','/var/lib/rustusb','/var/lib/rustusb/agent'}
+   public_names={'agent.json','policy.json','ca.der','server.der','client.der','client-pin.txt'}|({ 'server.json'} if role=='server' else {'client-hid.json','client-serial.json'})
+   private_path=f'/etc/rustusb/{role}-key.der';paths=dirs|{'/etc/rustusb/'+name for name in public_names}|{private_path};previous=None
+   for epoch in [1,2]:
+    prefix=f'actual-config-{epoch}-';m=self.obj(role,f'config-metadata-{epoch}.json');lines=[json.loads(line) for line in self.text(role,f'config-metadata-{epoch}.jsonl').splitlines()]
+    self.check('config_metadata',f'{role} epoch{epoch} raw JSONL/full JSON identical',m==sorted(lines,key=lambda x:x['path']))
+    table={entry['path']:entry for entry in m};self.check('config_metadata',f'{role} epoch{epoch} full fixed path coverage',len(m)==len(table)==len(paths) and set(table)==paths)
+    self.check('actual_config',f'{role} epoch{epoch} actual manifest/policy byte identity',self.read(role,prefix+'agent.json')==self.read(role,'agent-manifest.json') and self.read(role,prefix+'policy.json')==self.read(role,'helper-policy.json'))
+    for cert in ['ca','server','client']:
+     captured=self.read(role,prefix+cert+'.der');self.check('actual_config',f'{role} epoch{epoch} actual {cert} DER bytes/SHA',captured==host_der[cert] and sha(captured)==fingerprints[cert])
+    self.check('actual_config',f'{role} epoch{epoch} actual public pin raw exact bytes',self.read(role,prefix+'client-pin.txt')==(fingerprints['client']+'\n').encode())
+    if role=='server':
+     document=self.obj(role,prefix+'server.json')
+     needed={'schema_version':1,'broker_uid':2000,'listen':'192.0.2.1:3241' if family=='ipv4' else '[fd42:7275:7374::1]:3241','devices':device_keys,'principals':[{'id':'qemu-client','pins':[fingerprints['client']],'devices':device_keys}],'ca_certificates':['/etc/rustusb/ca.der'],'certificate_chain':['/etc/rustusb/server.der'],'private_key':private_path}
+     self.check('actual_config',f'server epoch{epoch} actual TLS complete JSON mapping',document==needed)
+     application=self.obj('server',f'agent-held-{1 if epoch==1 else 3}.json');incoming=[s for s in application['sessions'] if s['role']=='incoming' and not s['terminal']]
+     self.check('actual_config',f'server epoch{epoch} actual admitted principal/device matches captured config',len(incoming)==2 and {s['device_key'] for s in incoming}==set(document['devices']) and all(s['principal']==document['principals'][0]['id'] for s in incoming))
+    else:
+     for profile,key in zip(['hid','serial'],device_keys):
+      document=self.obj(role,prefix+'client-'+profile+'.json');needed={'schema_version':1,'broker_uid':2000,'server_id':'qemu-server','endpoint':{'host':'192.0.2.1' if family=='ipv4' else 'fd42:7275:7374::1','port':3241},'server_name':'rustusb-qemu.test','device':key,'ca_certificates':['/etc/rustusb/ca.der'],'certificate_chain':['/etc/rustusb/client.der'],'private_key':private_path}
+      self.check('actual_config',f'client epoch{epoch} actual {profile} full TLS JSON mapping',document==needed)
+      observed=self.obj(role,f'client-{profile}-connected-{epoch}.json')['response']['sessions'];active=[s for s in observed if not s['terminal']]
+      self.check('actual_config',f'client epoch{epoch} actual {profile} import uses captured device',len(active)==1 and active[0]['device_key']==document['device'] and active[0]['profile']==profile)
+    for path,entry in table.items():
+     self.check('config_metadata',f'{role} epoch{epoch} {path} exact observed path/identity',entry['canonical']==path and entry['inode']>0 and entry['device']>=0)
+     if path in dirs:
+      broker=path in ['/run/agent','/var/lib/rustusb/agent'];mode=int(entry['mode'],8)
+      self.check('config_metadata',f'{role} epoch{epoch} {path} ancestor owner/mode',entry['kind']=='directory' and entry['captured_file'] is None and entry['uid']==entry['gid']==(2000 if broker else 0) and (mode==(0o711 if path=='/run/agent' else 0o700) if broker else mode&0o022==0))
+     elif path==private_path:
+      self.check('config_metadata',f'{role} epoch{epoch} own private key metadata only',entry['kind']=='private_key_metadata_only' and entry['uid']==entry['gid']==2000 and int(entry['mode'],8)==0o600 and entry['links']==1 and entry['bytes']>0 and entry['captured_file'] is None)
+     else:
+      capture=prefix+path.rsplit('/',1)[1];self.check('config_metadata',f'{role} epoch{epoch} {path} actual public file mode/size',entry['kind']=='public_file' and entry['uid']==entry['gid']==0 and int(entry['mode'],8)==0o644 and entry['links']==1 and entry['captured_file']==capture and entry['bytes']==len(self.read(role,capture)))
+     if previous:
+      self.check('config_metadata',f'{role} {path} actual same object/permissions across restart',all(entry[k]==previous[path][k] for k in ['canonical','kind','uid','gid','mode','links','device','inode']))
+    if epoch==2:
+     self.check('actual_config',role+' all actual public bytes retained across restart',all(self.read(role,prefix+name)==self.read(role,'actual-config-1-'+name) for name in public_names))
+    previous=table
+    records.append({'role':role,'epoch':epoch,'metadata_entries':len(m),'actual_public_files':{name:{'bytes':len(self.read(role,prefix+name)),'sha256':sha(self.read(role,prefix+name))} for name in sorted(public_names)},'private_key_metadata':table[private_path]})
+   self.check('actual_config',role+' no private-key artifact captured',not any(name.endswith('-key.der') for name in self.raw[role]))
+  self.facts['actual_configuration']={'captures':records,'public_certificate_der_sha256':fingerprints,'scope':'Actual post-startup guest public JSON/DER/pin bytes and path ownership metadata are captured in both epochs; private key content was neither exported nor independently hashed. This does not independently decrypt PCAP or attest private-key bytes.'}

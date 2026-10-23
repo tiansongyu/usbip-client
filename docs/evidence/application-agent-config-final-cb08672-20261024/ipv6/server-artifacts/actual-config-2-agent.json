@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "broker_uid": 2000,
+  "helper_socket": "/run/rustusb/control.sock",
+  "control_directory": "/run/agent",
+  "data_directory": "/var/lib/rustusb/agent",
+  "profiles": [
+    {
+      "id": "server",
+      "backend": "native",
+      "config": "/etc/rustusb/server.json"
+    }
+  ],
+  "operators": [
+    {
+      "uid": 1000,
+      "profiles": [
+        "server"
+      ],
+      "actions": [
+        "read",
+        "start",
+        "stop",
+        "discover",
+        "audit"
+      ]
+    }
+  ]
+}
