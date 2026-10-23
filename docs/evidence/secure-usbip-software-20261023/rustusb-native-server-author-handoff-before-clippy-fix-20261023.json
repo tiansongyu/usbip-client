@@ -1,0 +1,110 @@
+{
+  "scope": "Author static parser/format/whitespace checks only; no Cargo/rustc/build/QEMU/probe/device execution. Prior client test PASS belongs to earlier locked bytes and is not reassigned to these new server changes.",
+  "result": "STATIC_PASS_BUILD_PENDING",
+  "checks": [
+    {
+      "name": "owned Rust format/parser",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "owned diff whitespace",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "new product sources forbid unsafe/unwrap/expect/panic/unimplemented",
+      "passed": true,
+      "matches": []
+    }
+  ],
+  "files": [
+    {
+      "path": "crates/rustusb-daemon/Cargo.toml",
+      "length": 777,
+      "sha256": "6ffee80994175215dab640f3b42729ab96d5a91f4ea3b16bd3a881901bb7a75e"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/ancillary.rs",
+      "length": 4238,
+      "sha256": "8ff2ea31eb1e9cd20339a50c5412060384e2e9a622cd1aae18c1aa8331cdef7d"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "length": 35032,
+      "sha256": "ae7cc2fc0d9dadc47badf7a63f318213ab2a68d62381fad33e90ca392b33e429"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "length": 79398,
+      "sha256": "c185480ed5eefc204405e9c43ebcd444c13fd60a7dcd6ef2a37d97a8a957937d"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/main.rs",
+      "length": 1468,
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_channel.rs",
+      "length": 28088,
+      "sha256": "933a747798c66e325fae442b4cb1853a4400c169d5dc4182f686a030b2cd87ad"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_export.rs",
+      "length": 31556,
+      "sha256": "98e64183c582cb113fe2578d71c0a86d8983df74a24d8027f82a8a313c3d524c"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_state.rs",
+      "length": 37435,
+      "sha256": "d3577b46eda8b1efd7f7695f7686229d13899a7d14d0f4a72e096b39a06359bc"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "length": 10190,
+      "sha256": "2dca1afad3917b56238ae070df59af4469e951bf8e640f39056dfd7d4b214cd8"
+    },
+    {
+      "path": "crates/rustusb-native/src/channel.rs",
+      "length": 26215,
+      "sha256": "dc46c36b87c813c8c7fa95aa34cddd22ee454db465d6603feb7e8b3ea454ff2c"
+    },
+    {
+      "path": "crates/rustusb-native/src/export_channel.rs",
+      "length": 25954,
+      "sha256": "0a10318ba872120b8be224f1654283f6b7e7c726e42fb227e49fde6c6bc967f6"
+    },
+    {
+      "path": "crates/rustusb-native/src/lib.rs",
+      "length": 80860,
+      "sha256": "23891cef2654955b1e8a193a7c0294538522f43fb9ae9571dae5ce55a794af2e"
+    }
+  ],
+  "public_api": [
+    "prepare_native_export(Path, String) -> NativeExportHandle",
+    "NativeExportHandle: device_key, published_device (preexport registration snapshot), open_stub, close, invalidated",
+    "NativeStubHandle: take_relay once, commit -> NativeStubReceipt, close, invalidated",
+    "NativePending { after: Option<String> }: schema_version1, <=8 compact records, next_after; ReconcileNative channel_id accepts import channel or export lease"
+  ],
+  "new_unexecuted_tests": [
+    "cancelled_stub_commit_consumes_reply_before_close",
+    "dropped_export_handle_closes_control_without_claiming_cleanup",
+    "export_registration_survives_restart_and_blocks_adoption_without_usb",
+    "pending_pages_are_small_stable_summaries_and_validate_cursors",
+    "published_registration_and_actual_export_phases_remain_distinct",
+    "native_secure_commands_have_strict_bounded_wire_shapes"
+  ],
+  "boundaries": [
+    "Native schema1 is an unpublished new schema: strict exports collection added to same protected atomic store; no USBFS schema reinterpretation.",
+    "Actual exported None/[] and configured interfaces are phase state distinct from immutable hardware generation.",
+    "Only owned original K shutdown; helper drops R immediately after send_fd; original attr retained/cloned and single full write, no stub -1.",
+    "Server commit stops at USED, before remote enumeration; caller must flush standard IMPORT success before raw relay pump.",
+    "Unknown bind/commit/cleanup persists unresolved; restart has no live registry and cannot adopt old export. Root reconciliation is read-only after owner ended and complete original baseline restored or old generation/boot gone.",
+    "Native bind/unbind uses existing audited tool and generation checks; external administrator/hotplug TOCTOU is not represented as atomic exclusion or hardware validation.",
+    "Configured registration and audited speed values only; unconfigured publication, cross-configuration/alternate deviations retain uncertainty rather than invent descriptors or restoration."
+  ]
+}

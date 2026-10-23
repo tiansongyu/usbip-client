@@ -1,0 +1,220 @@
+{
+  "result": "SOURCE_REVIEW_NO_MUSTFIX",
+  "source_head": "056341c30d15157d941566c90193c9d384b51d45",
+  "workspace": "expected active uncommitted integration; source hashes below, not attributed to HEAD commit contents",
+  "review_scope": "Independent read-only shared key/protocol/client lifecycle review. Native owned sources remained frozen except parent-authorized four equivalent Clippy fixes, which are separately recorded in native server author handoff. No changes to reviewed files.",
+  "checks_count": 22,
+  "checks": [
+    {
+      "id": "C01",
+      "name": "key construction",
+      "result": "source-inspected",
+      "evidence": "Canonical private string and FromStr/serde validation preserve native/physical/virtual namespace separation, exact usb- lowercase64 fingerprint and fixed profiles."
+    },
+    {
+      "id": "C02",
+      "name": "metadata frame bounds",
+      "result": "source-inspected",
+      "evidence": "4B BE length is checked before allocation; request<=4096 and mapping<=8192; zero/oversized frames rejected."
+    },
+    {
+      "id": "C03",
+      "name": "metadata schemas",
+      "result": "source-inspected",
+      "evidence": "Prelude and mapping use strict serde, explicit schema1, known operations and bounded device key/BusId types."
+    },
+    {
+      "id": "C04",
+      "name": "mapping cardinality",
+      "result": "source-inspected",
+      "evidence": "Custom mapping visitor stops at16; duplicate stable keys and duplicate current BusIDs rejected."
+    },
+    {
+      "id": "C05",
+      "name": "mapping descriptor correlation",
+      "result": "source-inspected",
+      "evidence": "discover requires equal mapping/DEVLIST lengths and consumes mapping entries by BusID, rejecting unmatched addresses; list order is not authorization."
+    },
+    {
+      "id": "C06",
+      "name": "discovery response bounds",
+      "result": "source-inspected",
+      "evidence": "Standard read_devlist bounds devices/interfaces and rejects duplicate BusIDs, malformed strings/version/opcode/status; shared management total deadline remains5s."
+    },
+    {
+      "id": "C07",
+      "name": "selected configuration key",
+      "result": "source-inspected",
+      "evidence": "select_and_import selects config.device by equality from authenticated catalog and creates a new authenticated import connection; no CLI endpoint/key/certificate override."
+    },
+    {
+      "id": "C08",
+      "name": "IMPORT prelude address binding",
+      "result": "source-inspected",
+      "evidence": "import_device writes selected stable key plus selected BusID standard frame, and checks every fixed descriptor field and interface count against selected metadata."
+    },
+    {
+      "id": "C09",
+      "name": "IMPORT exact stream boundary",
+      "result": "source-inspected",
+      "evidence": "Reads exactly8B reply header plus312B successful device header with AsyncReadExt.read_exact; no BufReader/lookahead; returns same owned generic stream. TLS internal pending application bytes stay owned by same ClientStream."
+    },
+    {
+      "id": "C10",
+      "name": "interface provenance",
+      "result": "source-inspected",
+      "evidence": "IMPORT wire carries count, not tuples: actual.interfaces is explicitly copied from authenticated catalog; later native helper enumeration contract separately checks actual imported interface classes. No claim IMPORT authenticates absent tuple bytes."
+    },
+    {
+      "id": "C11",
+      "name": "server exact request parsing",
+      "result": "source-inspected",
+      "evidence": "server::read_management reads exact8/32 fixed fields, checks version/status/opcode, NUL termination and every remaining IMPORT BusID padding byte."
+    },
+    {
+      "id": "C12",
+      "name": "server response layout",
+      "result": "source-inspected",
+      "evidence": "Shared devlist/import encoding bounds16 devices and interface counts; successful IMPORT requires metadata and emits fixed device header without interface tuple tail; flush is explicitly caller-owned."
+    },
+    {
+      "id": "C13",
+      "name": "client network deadlines",
+      "result": "source-inspected",
+      "evidence": "Outer configured1..120s timeout covers DNS/TCP/TLS/catalog/import; nested5s management deadlines do not remove outer bound."
+    },
+    {
+      "id": "C14",
+      "name": "signal registration",
+      "result": "source-inspected",
+      "evidence": "ShutdownSignals installed before config loading/network/helper resources and both Unix SIGINT/SIGTERM tracked; main does not race secure commands against an outer cancellation branch."
+    },
+    {
+      "id": "C15",
+      "name": "config work lifetime",
+      "result": "source-inspected",
+      "evidence": "Signal during synchronous trusted config load still awaits actual spawn_blocking task; it owns no USB resource."
+    },
+    {
+      "id": "C16",
+      "name": "prehandle cancellation",
+      "result": "source-inspected",
+      "evidence": "Cancelled selection/import drops owned TLS connection; no local kernel attach is committed before helper handle is obtained."
+    },
+    {
+      "id": "C17",
+      "name": "accepted handle ownership",
+      "result": "source-inspected",
+      "evidence": "prepare_native_import is awaited outside cancellation select; pending signal is selected before commit operations after handle receipt, so no returned handle is lost by select cancellation."
+    },
+    {
+      "id": "C18",
+      "name": "relay ordering",
+      "result": "source-inspected",
+      "evidence": "Take R once, launch TLS-to-R copy task, then commit K; this avoids waiting for kernel enumeration before relay startup."
+    },
+    {
+      "id": "C19",
+      "name": "cleanup convergence",
+      "result": "source-inspected",
+      "evidence": "After handle receipt, take_relay error explicitly closes; signal/helper invalidation/commit error/stdout error/relay completion converge to abort+await unfinished copying then handle.close().await. Close failure is propagated and does not emit cleanup_verified."
+    },
+    {
+      "id": "C20",
+      "name": "commit cancellation dependency",
+      "result": "source-inspected",
+      "evidence": "Client dropping commit wait relies on the private daemon control actor completing its framed exchange before close; this is the established helper API contract, not cancellation of a kernel syscall."
+    },
+    {
+      "id": "C21",
+      "name": "bounded stdout",
+      "result": "source-inspected",
+      "evidence": "EventOutput limits event encoding<65536 and queue2; dedicated std thread owns only stdout/bytes; send/write receipt deadline5s; canceled/inflight output prevents final extra event. Main secure failures avoid synchronous JSON stdout fallback."
+    },
+    {
+      "id": "C22",
+      "name": "completion evidence",
+      "result": "source-inspected",
+      "evidence": "disconnected cleanup_verified is emitted only after close success and successful prior operation; branch with uncertain cleanup returns error. Failed/aborted relay is joined instead of merely dropping JoinHandle."
+    }
+  ],
+  "mustfix": [],
+  "notes": [
+    {
+      "classification": "scope boundary, not mustfix",
+      "path": "crates/rustusb-protocol/src/secure.rs",
+      "detail": "Generic secure parser accepts devnum1..255 and speed1..6, while audited Linux native import accepts actual USB address1..127 and kernel speed1..5. An unsupported discovered entry can therefore be rejected later by helper; this is safe rejection, not evidence of Native SUPER_PLUS or address>127 support."
+    },
+    {
+      "classification": "existing parser scope, not mustfix",
+      "path": "crates/rustusb-protocol/src/lib.rs",
+      "detail": "Legacy response wire_string validates first NUL/string but does not require all response padding after NUL to be zero; read_devlist ignores interface reserved byte. New server request parser is stricter. No claim all response reserved/padding bytes are canonicalized."
+    },
+    {
+      "classification": "validation boundary",
+      "detail": "No Cargo/rustc/QEMU/socket/USB actions run for this review. Observed source-level tests were read, not executed. No independent assertion of TLS certificate/revocation implementation or real kernel cleanup/pcap/hardware/Phase3 completion."
+    },
+    {
+      "classification": "external cancellation boundary",
+      "detail": "CLI main owns orderly signals; abrupt process/runtime destruction cannot await close and relies on control EOF plus durable helper state. This review does not call SIGKILL a cooperative cleanup receipt."
+    }
+  ],
+  "files": [
+    {
+      "path": "crates/rustusb-core/src/device_key.rs",
+      "length": 6347,
+      "sha256": "636cdde09e253d9a04850fa575289a5edaabff8a6108cd1a7c51e8c5218b949f"
+    },
+    {
+      "path": "crates/rustusb-core/src/lib.rs",
+      "length": 13162,
+      "sha256": "6066a12ec52fab89119519a2b2d1a8d68309b705715a31b23afb6829b948425a"
+    },
+    {
+      "path": "crates/rustusb-protocol/src/secure.rs",
+      "length": 21650,
+      "sha256": "cfbd961da0522696a642dd3586834e3a77e189a5fea7e41b6b80230a78853f5c"
+    },
+    {
+      "path": "crates/rustusb-protocol/src/server.rs",
+      "length": 4935,
+      "sha256": "9995ba76047a63b44325852e189a0ce046bdad29d82e3def180bde73c96f191d"
+    },
+    {
+      "path": "crates/rustusb-protocol/src/lib.rs",
+      "length": 10902,
+      "sha256": "e60a7e79e7c62ef74b5b5d876013ecafc9c061c9867ff8a98e25a7aa2229be78"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_client.rs",
+      "length": 6816,
+      "sha256": "43882ff769a0c0fe9ea021803a1888d2f45f3933fbcf6bed5e8cdea9fc1874e4"
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "length": 24214,
+      "sha256": "88350b176c71076504a4f1b4d4a8a20813a83af873965453d62971332e266f0c"
+    },
+    {
+      "path": "crates/rustusb-cli/src/event_output.rs",
+      "length": 2400,
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    },
+    {
+      "path": "crates/rustusb-cli/src/shutdown_signals.rs",
+      "length": 1346,
+      "sha256": "6624e3c3751e79296e282ef9fd870378998e8032581fe7117d5e024de1223ad6"
+    },
+    {
+      "path": "crates/rustusb-cli/Cargo.toml",
+      "length": 896,
+      "sha256": "1b8e37c2c91639aa190bf154ea00822409166782f36df2d5d1bd25cdbea2b3f7"
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls.rs",
+      "length": 13397,
+      "sha256": "0048c9f2f76ce64cf135f6c430cd996b80e249fe152a70440d99dee8ee38f716"
+    }
+  ],
+  "inputs_unchanged_during_report_capture": true
+}

@@ -1,0 +1,78 @@
+{
+  "status": "PASS_SOURCE_REVIEW_NO_MUSTFIX",
+  "date_utc": "2026-10-23T11:04:45.844528+00:00",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "files": [
+    {
+      "path": "crates/rustusb-core/src/device_key.rs",
+      "length": 6347,
+      "sha256": "636cdde09e253d9a04850fa575289a5edaabff8a6108cd1a7c51e8c5218b949f"
+    },
+    {
+      "path": "crates/rustusb-core/src/lib.rs",
+      "length": 13162,
+      "sha256": "6066a12ec52fab89119519a2b2d1a8d68309b705715a31b23afb6829b948425a"
+    },
+    {
+      "path": "crates/rustusb-protocol/src/lib.rs",
+      "length": 10767,
+      "sha256": "948b22768419f3b261f0ec70d71c2bef2964bd39dc7d4f8cca08ba34406e1549"
+    },
+    {
+      "path": "crates/rustusb-protocol/src/secure.rs",
+      "length": 21650,
+      "sha256": "cfbd961da0522696a642dd3586834e3a77e189a5fea7e41b6b80230a78853f5c"
+    },
+    {
+      "path": "crates/rustusb-transport/src/acl.rs",
+      "length": 6510,
+      "sha256": "6318a42913fe077830f29c6cef9a0529bbb9fa388d88ac58181b9870937cd902"
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls/tests.rs",
+      "length": 20540,
+      "sha256": "39a08db753c2778e2e0652213ba7c34819868217534c12acceab34f381fd1b7b"
+    },
+    {
+      "path": "crates/rustusb-transport/Cargo.toml",
+      "length": 508,
+      "sha256": "1a509a8e2c169436b98dcb5e30239644be8618cf3e5801af8cdda285e748cf08"
+    },
+    {
+      "path": "crates/rustusb-transport/src/lib.rs",
+      "length": 3405,
+      "sha256": "34fe904c4a6c7f5c899d8ec9db7b28b8c829489a31c1017071b7e00631c89d70"
+    },
+    {
+      "path": "crates/rustusb-transport/src/config.rs",
+      "length": 17109,
+      "sha256": "692962a36f7acb5a74fd4c8e17b9e861b031dc983be959862dd6e19ecc3e68b4"
+    },
+    {
+      "path": "crates/rustusb-transport/src/config/platform/tests.rs",
+      "length": 14085,
+      "sha256": "f229e8937cade5dc149c1b9e4a70abbea033738c0ca017de30859bfe9dbb322a"
+    }
+  ],
+  "must_fix": [],
+  "reviewed_facts": [
+    "core DeviceKey private canonical String; exact virtual names or physical/native usb-64lowerhex, backend namespaces distinct; typed serde and FromStr validate; no raw BusID authorizer.",
+    "Constructor errors intentionally now core::Error; transport public type paths reexport same shared types; existing mixed-error TLS test functions use boxed error and key-list collect was explicitly changed to rustusb_core::Result.",
+    "secure PreludeWire/MappingWire/DeviceMapping strict serde fields, mandatory schema 1, 4-byte BE length before allocation, prelude4096/catalog8192, explicit 16-entry mapping visitor and unique key plus BusID.",
+    "Catalog client reads one mapping and standard DEVLIST; unique BusIDs from standard parser plus equal length and remove-from-map establish one-to-one key/address relation; no VIDPID/first-device inference.",
+    "IMPORT writes exactly standard40 bytes after selected stablekey prelude; BusId typed length<32 bounds copy. It reads exactly8+312 successful reply bytes, validates opcode/version/status and all returned header fields/count against selection; copies known interface tuples because standard IMPORT reply has no interface records. No BufReader or read_to_end consumes trailing URBs.",
+    "Each codec write_all+flush inside one five-second timeout; higher-level discover/import additionally have whole management timeout. Errors retain static contexts, not input/credential bytes.",
+    "Extracted device_header preserves old DEVLIST field parsing and MAX_INTERFACES checks; failure evaluation order is earlier header/path validation but accepted metadata semantics unchanged.",
+    "Config validates real nonzero broker euid, all root-owned non-group/other-writable parents, non-symlink regular nlink1 files, root public ownership, private root-or-broker0600, NOFOLLOW/CLOEXEC/NONBLOCK plus bounded max+1 reads and same dev/inode/mode/uid/gid/nlink/size/mtime/ctime before/open/after/path checks.",
+    "Config policy1..16 unique typed pool, principal rules subset pool, finite certificate paths/bytes and pin syntax; strict client Peer validates DNS/IP and nonzero port, separate validated PKI server_name. Configuration APIs do not confer helper role.",
+    "Config fixture-only Context changes trusted fixture root and owner only in private cfg(test) paths; public production system context still root-parent rules and actual UID. Production path tests do not treat /tmp as root trusted."
+  ],
+  "limitations": [
+    "No Cargo/test/QEMU or repository edits by reviewer; new tests are source only until root runs them.",
+    "Standalone DeviceKey serde allocates its input String; actual protocol/config entry points cap enclosing bytes first. This review does not claim an independent parser allocation limit for arbitrary external serde use.",
+    "Config file identity comparison is not atomic multi-file credential reload or defense against malicious root/same broker UID. Root parents are the ordinary-UID replacement boundary.",
+    "Config fixtures test predicates and real regular-file I/O, not actual root-managed positive hierarchy, synchronous kernel I/O deadlines, or adversarial root TOCTOU.",
+    "Generic secure codec requires caller-supplied authenticated stream; it intentionally cannot itself prove TLS, broker OS role, Native lifecycle or full secure USB acceptance.",
+    "Constructor error type is an intentional core API migration, not a promise of source compatibility for code explicitly requiring rustusb_transport::Error."
+  ]
+}

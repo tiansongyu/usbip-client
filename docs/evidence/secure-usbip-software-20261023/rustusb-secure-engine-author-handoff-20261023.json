@@ -1,0 +1,94 @@
+{
+  "status": "SOURCE_FROZEN_PENDING_ROOT_BUILD",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "design": "docs/research/secure-usbip-integration.md",
+  "owned_files": [
+    {
+      "path": "crates/rustusb-rust-backend/Cargo.toml",
+      "length": 790,
+      "sha256": "4ca147163bb39fe7c4599dc9bec0303fd68acd04b9c82dd062fe1be4a4b553aa"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/lib.rs",
+      "length": 763,
+      "sha256": "3bc2bbfa7c1aae804ba9bd9c4226be23fc3fb9288baf9c6ac51eb72decf887ea"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/session.rs",
+      "length": 9266,
+      "sha256": "4b5f9e70d597e98df943fada3f7fccfc480b532d14ea6151a09956f474357c4a"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/device.rs",
+      "length": 47332,
+      "sha256": "6e7d502fe15edb448322907d8aba09e1d3b8cade087c82da05205c02dbf05dd0"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "length": 29962,
+      "sha256": "a0d80cf937e512bdbe16a6aeb237dd6623a0765d1bf6629f15e8c8774254ec6f"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "length": 31203,
+      "sha256": "a5c249f3e4789bf46b17c87554297f27c436390765328b6a71eb28c645cfff42"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server.rs",
+      "length": 58654,
+      "sha256": "e7c3a40ce782b89cf8850e06969b4f0a92f4bd5adc0de63437b12fbe32b915d4"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "length": 24824,
+      "sha256": "83fdc628571dff803676266e7570c9602304c1cfb7aebcbd41398816221dc4cb"
+    }
+  ],
+  "public_api": [
+    "SecureServerConfig { listen: SocketAddr } default 127.0.0.1:3241",
+    "ServerHandle::bind_tls(SecureServerConfig, VirtualBackend, TlsServer)",
+    "ServerHandle::bind_physical_tls(SecureServerConfig, PhysicalBackend, TlsServer) feature physical-nusb/Linux"
+  ],
+  "implemented": [
+    "TLS-only direct listener feeding original generic USB/IP actor; explicit legacy API remains network-policy gated",
+    "TLS prelude catalog/import match standard operation; same authorized snapshot mapping+DEVLIST; same IMPORT stream carries URBs",
+    "Private ConnectionAccess with actual VerifiedPeer; Virtual locked profile key / Physical fixed Slot cached key checked with requested key and BusID before lease transition/supervisor",
+    "Physical registry duplicate keys and BusIDs rejected before initialization; strict key parsed before descriptor initialization",
+    "Single write+flush deadline for every USB/IP reply and retirement after success",
+    "Split halves retain authenticated stream permit; outer task permit spans connection cleanup",
+    "IMPORT response encoding/write/flush failure now hands acquired lease to connection cleanup rather than ending after Drop only"
+  ],
+  "new_test_names": [
+    "real_tls_catalog_import_control_hid_and_cdc_share_the_authenticated_engine",
+    "denied_direct_import_does_not_reveal_busy_or_change_the_existing_owner",
+    "selected_key_must_match_bus_even_when_principal_allows_both_devices",
+    "backend_qualified_keys_do_not_authorize_virtual_bus_ids",
+    "mismatched_missing_or_malformed_secure_preludes_never_claim",
+    "plaintext_and_unmapped_certificate_cannot_reach_the_usbip_engine",
+    "tls_fragmentation_unlink_eof_and_third_import_keep_actor_cleanup",
+    "tls_shutdown_owns_pending_handshakes_management_and_imported_reader",
+    "authenticated_idle_and_imported_streams_keep_the_connection_budget_until_close",
+    "response_write_and_flush_share_one_deadline",
+    "production_secure_client_codecs_preserve_the_imported_tls_stream"
+  ],
+  "new_test_count": 11,
+  "tests_execution": "NOT RUN by author; root owns Cargo and QEMU",
+  "static_checks": [
+    "rustfmt on owned Rust files completed",
+    "git diff --check -- crates/rustusb-rust-backend completed exit 0",
+    "Reviewed actual core/protocol codec signatures now present; no verifier imports or fake VerifiedPeer constructor"
+  ],
+  "dev_dependency_changes": [
+    "rcgen workspace dev-only",
+    "tokio workspace dev-only adds test-util for deterministic shared write/flush deadline test"
+  ],
+  "production_dependency_changes": [
+    "rustusb-transport.workspace = true"
+  ],
+  "boundaries": [
+    "No TLS client/helper FD/Native implementation or CLI/config changes in this owned slice",
+    "No real USB/QEMU or external capture result inferred from TLS virtual USB/IP tests",
+    "Claim cancellation before receiving a lease still delegates actual physical completion/cleanup to existing supervisor; it is not syscall cancellation",
+    "No repository commit, Cargo.lock edit, full-workspace format, build, Cargo test or QEMU by author"
+  ]
+}

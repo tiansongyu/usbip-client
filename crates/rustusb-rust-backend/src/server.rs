@@ -2,10 +2,12 @@
 
 use crate::{
     device::VirtualBackend,
-    session::{ServingBackend, SessionLease, Started, TransferEvent, TransferId},
+    session::{ConnectionAccess, ServingBackend, SessionLease, Started, TransferEvent, TransferId},
     wire::{self, DataCommand, Management, ReplyContext},
 };
 use rustusb_core::{Error, Result};
+use rustusb_protocol::secure::{self, DeviceMapping, SecureOperation};
+use rustusb_transport::TlsServer;
 use std::{
     collections::VecDeque,
     future::poll_fn,
@@ -97,6 +99,37 @@ impl ServerConfig {
     }
 }
 
+/// Listener settings for mandatory mutual TLS and stable device authorization.
+/// This mode never creates a plaintext USB/IP listener or falls back to one.
+#[derive(Debug, Clone)]
+pub struct SecureServerConfig {
+    /// Explicit TLS listen address; the default is loopback port 3241.
+    pub listen: SocketAddr,
+}
+
+impl Default for SecureServerConfig {
+    fn default() -> Self {
+        Self {
+            listen: SocketAddr::from((Ipv4Addr::LOCALHOST, 3241)),
+        }
+    }
+}
+
+#[derive(Clone)]
+enum ListenerMode {
+    Legacy(ServerConfig),
+    Tls(TlsServer),
+}
+
+impl ListenerMode {
+    fn permits(&self, peer: IpAddr) -> bool {
+        match self {
+            Self::Legacy(config) => config.permits(peer),
+            Self::Tls(_) => true,
+        }
+    }
+}
+
 /// Owns the listening task and its entire connection/reader task tree.
 /// Dropping this handle aborts that tree; `shutdown` additionally awaits cleanup.
 #[derive(Debug)]
@@ -121,12 +154,49 @@ impl ServerHandle {
         Self::bind_backend(config, backend).await
     }
 
+    /// Serve virtual profiles over mandatory mTLS, filtered by certificate device ACLs.
+    /// Catalog and IMPORT use the secure prelude; IMPORT and all URBs share one TLS stream.
+    pub async fn bind_tls(
+        config: SecureServerConfig,
+        backend: VirtualBackend,
+        tls: TlsServer,
+    ) -> Result<Self> {
+        Self::bind_tls_backend(config, backend, tls).await
+    }
+
+    /// Serve explicitly granted USBFS generations through the same authenticated engine.
+    /// The helper capability pool does not replace each connection's pre-claim device ACL.
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    pub async fn bind_physical_tls(
+        config: SecureServerConfig,
+        backend: crate::physical::PhysicalBackend,
+        tls: TlsServer,
+    ) -> Result<Self> {
+        Self::bind_tls_backend(config, backend, tls).await
+    }
+
     async fn bind_backend<B: ServingBackend>(config: ServerConfig, backend: B) -> Result<Self> {
         config.validate()?;
-        let listener = TcpListener::bind(config.listen).await?;
+        Self::bind_listener(config.listen, ListenerMode::Legacy(config), backend).await
+    }
+
+    async fn bind_tls_backend<B: ServingBackend>(
+        config: SecureServerConfig,
+        backend: B,
+        tls: TlsServer,
+    ) -> Result<Self> {
+        Self::bind_listener(config.listen, ListenerMode::Tls(tls), backend).await
+    }
+
+    async fn bind_listener<B: ServingBackend>(
+        address: SocketAddr,
+        mode: ListenerMode,
+        backend: B,
+    ) -> Result<Self> {
+        let listener = TcpListener::bind(address).await?;
         let address = listener.local_addr()?;
         let (stop, receiver) = oneshot::channel();
-        let task = tokio::spawn(listen(listener, config, backend, receiver));
+        let task = tokio::spawn(listen(listener, mode, backend, receiver));
         Ok(Self {
             address,
             stop: Some(stop),
@@ -167,7 +237,7 @@ impl Drop for ServerHandle {
 
 async fn listen<B: ServingBackend>(
     listener: TcpListener,
-    config: ServerConfig,
+    mode: ListenerMode,
     backend: B,
     mut stop: oneshot::Receiver<()>,
 ) -> Result<()> {
@@ -181,14 +251,17 @@ async fn listen<B: ServingBackend>(
                     Ok(connection) => connection,
                     Err(error) => break Err(Error::Io(error)),
                 };
-                if !config.permits(peer.ip()) {
+                if !mode.permits(peer.ip()) {
                     continue;
                 }
                 let Ok(permit) = limit.clone().try_acquire_owned() else { continue };
                 let backend = backend.clone();
+                let mode = mode.clone();
                 connections.spawn(async move {
+                    // This outer permit includes the session's supervised cleanup.
+                    // The TLS stream separately retains its own permit until Drop.
                     let _permit = permit;
-                    let result = connection(stream, backend).await;
+                    let result = accepted_connection(stream, backend, mode).await;
                     tracing::debug!(success = result.is_ok(), "USB/IP connection finished");
                 });
             }
@@ -213,9 +286,13 @@ async fn listen<B: ServingBackend>(
 }
 
 async fn write_frame(writer: &mut (impl AsyncWrite + Unpin), frame: &[u8]) -> Result<()> {
-    tokio::time::timeout(wire::FRAME_DEADLINE, writer.write_all(frame))
-        .await
-        .map_err(|_| Error::Timeout("USB/IP response write".into()))??;
+    tokio::time::timeout(wire::FRAME_DEADLINE, async {
+        writer.write_all(frame).await?;
+        writer.flush().await?;
+        Ok::<_, std::io::Error>(())
+    })
+    .await
+    .map_err(|_| Error::Timeout("USB/IP response write/flush".into()))??;
     Ok(())
 }
 
@@ -223,48 +300,139 @@ async fn handshake<B: ServingBackend>(
     reader: &mut (impl AsyncRead + Unpin),
     writer: &mut (impl AsyncWrite + Unpin),
     backend: &B,
-) -> Result<Option<CloseOnDrop<B::Lease>>> {
+    access: &ConnectionAccess,
+    claimed: &mut Option<CloseOnDrop<B::Lease>>,
+) -> Result<()> {
+    let prelude = match access {
+        ConnectionAccess::Legacy => None,
+        ConnectionAccess::Authenticated(_) => Some(secure::read_prelude(reader).await?),
+    };
     match wire::read_management(reader).await? {
         Management::Devlist => {
-            write_frame(
-                writer,
-                &wire::devlist_reply(&backend.remote_devices(true)?)?,
-            )
-            .await?;
-            Ok(None)
+            if !matches!(prelude, None | Some(SecureOperation::Catalog)) {
+                return Err(Error::Protocol(
+                    "secure prelude does not match DEVLIST".into(),
+                ));
+            }
+            // Both encodings derive from this one authorized registry snapshot.
+            let snapshot = backend.catalog(true, access)?;
+            let mappings: Vec<_> = snapshot
+                .iter()
+                .map(|entry| DeviceMapping {
+                    device_key: entry.key.clone(),
+                    bus_id: entry.metadata.bus_id.clone(),
+                })
+                .collect();
+            let devices: Vec<_> = snapshot.into_iter().map(|entry| entry.metadata).collect();
+            let reply = wire::devlist_reply(&devices)?;
+            if prelude.is_some() {
+                secure::write_catalog_mapping(writer, &mappings).await?;
+            }
+            write_frame(writer, &reply).await?;
+            Ok(())
         }
         Management::Import(bus_id) => {
-            let lease = match tokio::time::timeout(wire::FRAME_DEADLINE, backend.claim(&bus_id))
-                .await
-                .map_err(|_| {
-                    Error::Timeout(
-                        "USB/IP device claim; unfinished cleanup remains quarantined".into(),
-                    )
-                })? {
+            let expected = match prelude {
+                Some(SecureOperation::Import { device_key }) => Some(device_key),
+                None => None,
+                Some(SecureOperation::Catalog) => {
+                    return Err(Error::Protocol(
+                        "secure prelude does not match IMPORT".into(),
+                    ));
+                }
+            };
+            let lease = match tokio::time::timeout(
+                wire::FRAME_DEADLINE,
+                backend.claim(&bus_id, expected.as_ref(), access),
+            )
+            .await
+            .map_err(|_| {
+                Error::Timeout("USB/IP device claim; unfinished cleanup remains quarantined".into())
+            })? {
                 Ok(lease) => lease,
                 Err(Error::State(_)) => {
                     write_frame(writer, &wire::import_reply(2, None)?).await?;
-                    return Ok(None);
+                    return Ok(());
                 }
-                Err(Error::InvalidInput(_)) => {
+                Err(Error::InvalidInput(_) | Error::Permission(_)) => {
                     write_frame(writer, &wire::import_reply(4, None)?).await?;
-                    return Ok(None);
+                    return Ok(());
                 }
                 Err(error) => return Err(error),
             };
-            let lease = CloseOnDrop(lease);
-            write_frame(writer, &wire::import_reply(0, Some(&lease.device()))?).await?;
-            Ok(Some(lease))
+            let metadata = lease.device();
+            // Give the connection owner the lease before any response encoding/write.
+            // Even a failed TLS flush then follows its supervised cleanup path.
+            *claimed = Some(CloseOnDrop(lease));
+            write_frame(writer, &wire::import_reply(0, Some(&metadata))?).await
         }
     }
 }
 
-async fn connection<B: ServingBackend>(stream: TcpStream, backend: B) -> Result<()> {
+async fn accepted_connection<B: ServingBackend>(
+    stream: TcpStream,
+    backend: B,
+    mode: ListenerMode,
+) -> Result<()> {
     stream.set_nodelay(true)?;
-    let (mut reader, mut writer) = stream.into_split();
-    let Some(mut lease) = handshake(&mut reader, &mut writer, &backend).await? else {
-        return Ok(());
+    match mode {
+        ListenerMode::Legacy(_) => connection(stream, backend, ConnectionAccess::Legacy).await,
+        ListenerMode::Tls(tls) => {
+            let stream = tls.accept(stream).await.map_err(|error| match error {
+                rustusb_transport::Error::Timeout => Error::Timeout("mutual TLS handshake".into()),
+                rustusb_transport::Error::ConnectionLimit => {
+                    Error::State("TLS connection budget exhausted".into())
+                }
+                _ => Error::Permission(
+                    "mutual TLS authentication or application protocol rejected".into(),
+                ),
+            })?;
+            // Only the verified stream can introduce an authenticated context.
+            let access = ConnectionAccess::Authenticated(stream.peer().clone());
+            connection(stream, backend, access).await
+        }
+    }
+}
+
+async fn connection<B, S>(stream: S, backend: B, access: ConnectionAccess) -> Result<()>
+where
+    B: ServingBackend,
+    S: AsyncRead + AsyncWrite + Unpin + Send,
+{
+    // Both halves retain the entire authenticated stream, including its permit.
+    let (mut reader, mut writer) = tokio::io::split(stream);
+    let mut claimed = None;
+    let handshake_result =
+        handshake(&mut reader, &mut writer, &backend, &access, &mut claimed).await;
+    let Some(mut lease) = claimed else {
+        return handshake_result;
     };
+    let result = match handshake_result {
+        Ok(()) => imported_connection(&mut *lease, reader, &mut writer).await,
+        Err(error) => {
+            drop(reader);
+            Err(error)
+        }
+    };
+    // Network teardown precedes the supervised hardware wait, including an
+    // IMPORT reply that failed to write/flush after the lease was acquired.
+    drop(writer);
+    lease.begin_close();
+    tokio::time::timeout(CLEANUP_DEADLINE, poll_fn(|cx| lease.poll_cleanup(cx)))
+        .await
+        .map_err(|_| {
+            Error::Timeout(
+                "USB/IP session cleanup is incomplete; device remains quarantined".into(),
+            )
+        })??;
+    result
+}
+
+async fn imported_connection<L: SessionLease, R: AsyncRead + Unpin>(
+    lease: &mut L,
+    mut reader: R,
+    writer: &mut (impl AsyncWrite + Unpin),
+) -> Result<()> {
     let metadata = lease.device();
     let devid = metadata
         .bus_number
@@ -290,26 +458,14 @@ async fn connection<B: ServingBackend>(stream: TcpStream, backend: B) -> Result<
     // The reader future retains its partial frame across every actor wake.
     // Both futures live inside this connection task, so aborting/joining that
     // task also drops its reader synchronously, without a detached child.
-    let result = {
-        let actor = imported(&mut *lease, &mut writer, &mut receiver);
+    {
+        let actor = imported(lease, writer, &mut receiver);
         tokio::pin!(read_frames, actor);
         tokio::select! {
             _ = &mut read_frames => actor.await,
             result = &mut actor => result,
         }
-    };
-    // Protocol/transport teardown must close TCP promptly even when USB cleanup
-    // needs a longer supervised reap. The backend continues owning its URBs.
-    drop(writer);
-    lease.begin_close();
-    tokio::time::timeout(CLEANUP_DEADLINE, poll_fn(|cx| lease.poll_cleanup(cx)))
-        .await
-        .map_err(|_| {
-            Error::Timeout(
-                "USB/IP session cleanup is incomplete; device remains quarantined".into(),
-            )
-        })??;
-    result
+    }
 }
 
 struct Active {
@@ -722,8 +878,11 @@ mod tests {
         let (mut client, io) = tokio::io::duplex(512);
         client.write_all(&import_frame("1-1")).await?;
         drop(client);
-        let (mut reader, mut writer) = tokio::io::split(io);
-        assert!(handshake(&mut reader, &mut writer, &backend).await.is_err());
+        assert!(
+            connection(io, backend.clone(), ConnectionAccess::Legacy)
+                .await
+                .is_err()
+        );
         released(&backend).await?;
         let server = ServerHandle::bind(
             ServerConfig {
@@ -914,24 +1073,41 @@ mod tests {
     }
     impl ServingBackend for AsyncBackend {
         type Lease = AsyncLease;
-        fn remote_devices(
+        fn catalog(
             &self,
             available_only: bool,
-        ) -> Result<Vec<rustusb_protocol::RemoteDevice>> {
+            access: &ConnectionAccess,
+        ) -> Result<Vec<crate::session::RegisteredDevice>> {
             let state = self.state()?;
+            let key = rustusb_core::DeviceKey::virtual_profile(rustusb_core::VirtualProfile::Hid);
             Ok(
-                if state.disconnected || available_only && (state.leased || state.closing) {
+                if !access.allows(&key)
+                    || state.disconnected
+                    || available_only && (state.leased || state.closing)
+                {
                     vec![]
                 } else {
-                    vec![state.metadata.clone()]
+                    vec![crate::session::RegisteredDevice {
+                        key,
+                        metadata: state.metadata.clone(),
+                    }]
                 },
             )
         }
-        async fn claim(&self, bus_id: &str) -> Result<Self::Lease> {
+        async fn claim(
+            &self,
+            bus_id: &str,
+            expected: Option<&rustusb_core::DeviceKey>,
+            access: &ConnectionAccess,
+        ) -> Result<Self::Lease> {
             let mut state = self.state()?;
             if bus_id != state.metadata.bus_id.as_str() {
                 return Err(Error::InvalidInput("fixture unknown device".into()));
             }
+            access.require(
+                &rustusb_core::DeviceKey::virtual_profile(rustusb_core::VirtualProfile::Hid),
+                expected,
+            )?;
             if state.leased || state.closing {
                 return Err(Error::State("fixture device busy or quarantined".into()));
             }
@@ -1272,7 +1448,8 @@ mod tests {
     #[tokio::test(flavor = "current_thread")]
     async fn response_budget_is_retained_until_the_complete_frame_is_written() -> Result<()> {
         let backend = AsyncBackend::new()?;
-        let mut lease = ServingBackend::claim(&backend, "1-1").await?;
+        let mut lease =
+            ServingBackend::claim(&backend, "1-1", None, &ConnectionAccess::Legacy).await?;
         let (mut writer, mut reader) = tokio::io::duplex(1);
         let (sender, mut receiver) = mpsc::channel(2);
         let frame = submit(1, 0x10001, 0, 0, 0, [0x40, 0x7e, 0, 0, 0, 0, 0, 0]);
@@ -1331,7 +1508,7 @@ mod tests {
         assert!(backend.state()?.held.contains(&id));
         assert!(backend.remote_devices(true)?.is_empty());
         assert!(matches!(
-            ServingBackend::claim(&backend, "1-1").await,
+            ServingBackend::claim(&backend, "1-1", None, &ConnectionAccess::Legacy).await,
             Err(Error::State(_))
         ));
         backend.reap_closed()?;
@@ -1360,9 +1537,13 @@ mod tests {
         // Cleanup completion for a removed generation must not advertise it.
         assert!(backend.remote_devices(true)?.is_empty());
         assert!(matches!(
-            ServingBackend::claim(&backend, "1-1").await,
+            ServingBackend::claim(&backend, "1-1", None, &ConnectionAccess::Legacy).await,
             Err(Error::InvalidInput(_))
         ));
         server.shutdown().await
     }
 }
+
+#[cfg(test)]
+#[path = "server_tls_tests.rs"]
+mod tls_tests;

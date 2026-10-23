@@ -2,10 +2,12 @@
 
 use crate::{
     descriptors::{self, Profile},
+    session::{ConnectionAccess, RegisteredDevice},
     wire::{Completion, Submit},
 };
 use rustusb_core::{
-    BusId, Device, DeviceDiscovery, Endpoint, Error, ExportBackend, Interface, Result,
+    BusId, Device, DeviceDiscovery, DeviceKey, Endpoint, Error, ExportBackend, Interface, Result,
+    VirtualProfile,
 };
 use rustusb_protocol::{RemoteDevice, RemoteInterface};
 use serde::Serialize;
@@ -380,11 +382,27 @@ impl VirtualBackend {
 
     /// Return registered metadata; `available_only` hides exclusively imported devices.
     pub fn remote_devices(&self, available_only: bool) -> Result<Vec<RemoteDevice>> {
+        Ok(self
+            .catalog_with_access(available_only, &ConnectionAccess::Legacy)?
+            .into_iter()
+            .map(|entry| entry.metadata)
+            .collect())
+    }
+
+    pub(crate) fn catalog_with_access(
+        &self,
+        available_only: bool,
+        access: &ConnectionAccess,
+    ) -> Result<Vec<RegisteredDevice>> {
         let mut result = Vec::new();
         for shared in self.devices.iter() {
             let state = shared.lock()?;
-            if state.exported && (!available_only || !state.leased) {
-                result.push(state.metadata.clone());
+            let key = profile_key(state.profile);
+            if access.allows(&key) && state.exported && (!available_only || !state.leased) {
+                result.push(RegisteredDevice {
+                    key,
+                    metadata: state.metadata.clone(),
+                });
             }
         }
         Ok(result)
@@ -393,11 +411,21 @@ impl VirtualBackend {
     /// Atomically claim a registered device, returning its exclusive session lease.
     /// Unknown/unregistered IDs are InvalidInput; an existing lease is State.
     pub fn claim(&self, bus_id: &str) -> Result<DeviceLease> {
+        self.claim_with_access(bus_id, None, &ConnectionAccess::Legacy)
+    }
+
+    pub(crate) fn claim_with_access(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+    ) -> Result<DeviceLease> {
         for shared in self.devices.iter() {
             let mut state = shared.lock()?;
             if state.metadata.bus_id.as_str() != bus_id {
                 continue;
             }
+            access.require(&profile_key(state.profile), expected)?;
             if !state.exported {
                 return Err(Error::InvalidInput(
                     "virtual device is not registered".into(),
@@ -423,6 +451,13 @@ impl VirtualBackend {
         }
         Err(Error::InvalidInput("unknown virtual bus ID".into()))
     }
+}
+
+fn profile_key(profile: Profile) -> DeviceKey {
+    DeviceKey::virtual_profile(match profile {
+        Profile::Hid => VirtualProfile::Hid,
+        Profile::Cdc => VirtualProfile::CdcAcm,
+    })
 }
 
 impl DeviceDiscovery for VirtualBackend {

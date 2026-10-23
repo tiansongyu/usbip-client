@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_FROZEN_UNBUILT",
+  "created_utc": "2026-10-23T11:01:22.925425+00:00",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "files": [
+    {
+      "path": "crates/rustusb-transport/Cargo.toml",
+      "length": 508,
+      "sha256": "1a509a8e2c169436b98dcb5e30239644be8618cf3e5801af8cdda285e748cf08"
+    },
+    {
+      "path": "crates/rustusb-transport/src/lib.rs",
+      "length": 3405,
+      "sha256": "34fe904c4a6c7f5c899d8ec9db7b28b8c829489a31c1017071b7e00631c89d70"
+    },
+    {
+      "path": "crates/rustusb-transport/src/config.rs",
+      "length": 17109,
+      "sha256": "692962a36f7acb5a74fd4c8e17b9e861b031dc983be959862dd6e19ecc3e68b4"
+    },
+    {
+      "path": "crates/rustusb-transport/src/config/platform/tests.rs",
+      "length": 14085,
+      "sha256": "f229e8937cade5dc149c1b9e4a70abbea033738c0ca017de30859bfe9dbb322a"
+    }
+  ],
+  "design": {
+    "path": "docs/research/secure-usbip-integration.md",
+    "sha256": "15c53414fd8c3851f6d3a3928a3b53d23838a3b697250b590c5afb434f1b6ff3"
+  },
+  "public_api": [
+    "config::load_server(&Path) -> Result<LoadedServerConfig>",
+    "config::load_client(&Path) -> Result<LoadedClientConfig>",
+    "Top-level reexports retain config module as canonical path.",
+    "Server fields: broker_uid,listen,devices,tls; Client fields: broker_uid,server_id,endpoint,server_name,device,tls.",
+    "Redacted ConfigurationIo{field,kind}; UnsupportedConfigurationPlatform on non-Linux."
+  ],
+  "implemented": [
+    "Strict schema1 JSON, nonzero current broker UID, fixed endpoint/PKI name/server alias/device key.",
+    "1..16 distinct typed server pool and principal allowlists constrained to pool; existing bounded pin policy reused.",
+    "Root-owned public config/DER and all protected parents, private root-or-broker0600 key, regular/nlink1/size/path bounds.",
+    "Pre-open metadata and NOFOLLOW/CLOEXEC/NONBLOCK, fstat identity, max+1 reads, post-read FD/path/parent rechecks; static context/error kind only.",
+    "Synchronous bounded-input file/crypto loading; root CLI must offload through owned spawn_blocking. No listener, USB/helper action or override API.",
+    "Nine meaningful file/policy tests authored; fixture owner and fixture trust root are explicitly injected only through private cfg(test) context. Production validates actual root chain and UID."
+  ],
+  "authored_test_count": 9,
+  "static_checks": [
+    "Explicit single-file rustfmt2024 with skip_children=true passed; no formatting of other agents files.",
+    "git diff --check on owned tracked files passed.",
+    "No unsafe blocks, unwrap(), expect() or panic! in owned production/config test source."
+  ],
+  "new_dependency_edges": [
+    "rustusb-core",
+    "serde",
+    "serde_json",
+    "rustix on Linux only"
+  ],
+  "no_new_packages": true,
+  "not_run": [
+    "No Cargo/clippy/test/build/lockfile update",
+    "No QEMU/hostUSB/module/network/device mutations",
+    "No credential-file positive test with actual root-owned production hierarchy; fixture tests await root execution",
+    "No end-to-end TLS USB or helper role evidence from this module"
+  ],
+  "remaining_integration_boundaries": [
+    "Root must execute compiler/tests and update lock/inventory; backend namespace check remains CLI responsibility.",
+    "Helper dedicated broker/secure pool versus legacy pool isolation is a separate authoritative OS role check, not conferred by LoadedConfig fields.",
+    "Same service UID is one trusted domain; no claimed same-UID executable isolation or FD revocation.",
+    "Multiple credential files are not atomically reloaded; controlled stop/restart required.",
+    "Filesystem/crypto calls can block in kernel/synchronous code despite input bounds; no hard wall-clock guarantee.",
+    "Native and Rust authenticated catalog/import/long-URB and actual IPv4/IPv6/PCAP acceptance still require integration tests."
+  ]
+}

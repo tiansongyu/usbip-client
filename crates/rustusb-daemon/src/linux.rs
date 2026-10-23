@@ -27,7 +27,7 @@ const RESPONSE_TIMEOUT: Duration = Duration::from_secs(120);
 const CLEANUP_TIMEOUT: Duration = Duration::from_secs(10);
 
 #[derive(Default)]
-struct ManagedState {
+pub(crate) struct ManagedState {
     exports: HashMap<String, Device>,
     ports: HashMap<VhciPort, NativeSession>,
     released_ports: HashSet<VhciPort>,
@@ -69,12 +69,15 @@ impl ManagedState {
     }
 }
 
-struct App {
-    policy: Policy,
-    backend: NativeBackend,
+pub(crate) struct App {
+    pub(crate) policy: Policy,
+    pub(crate) backend: NativeBackend,
     // Serializes all mutations from this helper. It does not lock out an
     // administrator running usbip independently; identity checks still matter.
-    state: Arc<Mutex<ManagedState>>,
+    pub(crate) state: Arc<Mutex<ManagedState>>,
+    pub(crate) native_state: Option<Arc<std::sync::Mutex<super::native_state::Store>>>,
+    pub(crate) native_exports: super::native_export::Registry,
+    pub(crate) native_stop: tokio::sync::watch::Sender<bool>,
     #[cfg(feature = "physical-usb")]
     journal: Option<Arc<std::sync::Mutex<super::journal::Store>>>,
     #[cfg(feature = "physical-usb")]
@@ -122,9 +125,19 @@ impl App {
     }
 
     #[cfg(feature = "physical-usb")]
-    async fn open_physical(&self, uid: u32, pid: Option<i32>, id: String) -> Result<Handoff> {
-        self.policy.authorize_uid(uid)?;
-        self.policy.authorize_physical(&id)?;
+    async fn open_physical(
+        &self,
+        uid: u32,
+        pid: Option<i32>,
+        id: String,
+        secure: bool,
+    ) -> Result<Handoff> {
+        if secure {
+            self.policy.authorize_secure_physical(uid, &id)?;
+        } else {
+            self.policy.authorize_uid(uid)?;
+            self.policy.authorize_physical(&id)?;
+        }
         let _state = timeout(QUEUE_TIMEOUT, self.state.lock())
             .await
             .map_err(|_| Error::Timeout("physical capability authorization queue".into()))?;
@@ -195,8 +208,8 @@ impl App {
                 "physical reconciliation requires root".into(),
             ));
         }
-        if admin_gone.is_none() {
-            self.policy.authorize_uid(uid)?;
+        if admin_gone.is_none() && self.policy.authorize_uid(uid).is_err() {
+            self.policy.authorize_broker(uid)?;
         }
         let _state = timeout(QUEUE_TIMEOUT, self.state.lock())
             .await
@@ -267,7 +280,11 @@ impl App {
     }
 
     async fn handle(&self, uid: u32, req: Request) -> Result<serde_json::Value> {
-        self.policy.authorize_uid(uid)?;
+        if !matches!(req, Request::Status | Request::Sessions)
+            || self.policy.authorize_broker(uid).is_err()
+        {
+            self.policy.authorize_uid(uid)?;
+        }
         if let Request::Status = req {
             let kernel = match self.backend.sessions().await {
                 Ok(sessions) => serde_json::json!({ "available": true, "sessions": sessions }),
@@ -285,6 +302,9 @@ impl App {
                 "physical_connect_restore_supported": cfg!(feature = "physical-usb"),
                 "physical_connect_restore_allowlist_count": self.policy.physical_connect_restore_device_ids.len(),
                 "physical_journal_storage_versions": if cfg!(feature = "physical-usb") { vec![1_u32, 2] } else { vec![] },
+                "secure_broker_configured": self.policy.secure_broker_uid.is_some(),
+                "secure_native_import_supported": true,
+                "secure_physical_device_allowlist_count": self.policy.secure_physical_device_ids.len(),
                 "native_data_encryption": false,
                 "external_trusted_network_confirmed": self.policy.trusted_network,
                 "kernel": kernel,
@@ -300,8 +320,16 @@ impl App {
             })?;
         let export = matches!(&req, Request::Export { .. });
         match req {
+            Request::PrepareNativeImport { .. }
+            | Request::PrepareNativeExport { .. }
+            | Request::OpenNativeStub { .. }
+            | Request::NativePending { .. }
+            | Request::ReconcileNative { .. } => Err(Error::InvalidInput(
+                "secure native requests require dedicated transaction dispatch".into(),
+            )),
             #[cfg(feature = "physical-usb")]
-            Request::FinishPhysical { .. }
+            Request::OpenSecurePhysical { .. }
+            | Request::FinishPhysical { .. }
             | Request::PhysicalPending { .. }
             | Request::ReconcilePhysical { .. }
             | Request::OpenPhysical { .. } => Err(Error::InvalidInput(
@@ -487,10 +515,13 @@ enum RecoveryAttempt {
 #[cfg(feature = "physical-usb")]
 fn recovery_permitted(policy: &Policy, record: &super::journal::Record) -> bool {
     record.recovery == super::journal::RecoveryAuthorization::ConnectOriginalDrivers
-        && policy.authorize_uid(record.owner.uid).is_ok()
-        && policy
-            .authorize_physical(&record.baseline.device_id)
-            .is_ok()
+        && ((policy.authorize_uid(record.owner.uid).is_ok()
+            && policy
+                .authorize_physical(&record.baseline.device_id)
+                .is_ok())
+            || policy
+                .authorize_secure_physical(record.owner.uid, &record.baseline.device_id)
+                .is_ok())
         && policy
             .physical_connect_restore_device_ids
             .contains(&record.baseline.device_id)
@@ -693,7 +724,7 @@ fn pending_page(
     Ok(result)
 }
 
-fn same_device_generation(before: &Device, after: &Device) -> bool {
+pub(crate) fn same_device_generation(before: &Device, after: &Device) -> bool {
     before.id == after.id
         && before.bus_id == after.bus_id
         && before.device_address == after.device_address
@@ -718,7 +749,7 @@ fn same_session(before: &NativeSession, after: &NativeSession) -> bool {
         && before.local_device_generation == after.local_device_generation
 }
 
-async fn current_device(id: &str) -> Result<Device> {
+pub(crate) async fn current_device(id: &str) -> Result<Device> {
     let id = id.to_owned();
     tokio::task::spawn_blocking(move || {
         let devices = SysfsDiscovery::default().scan()?;
@@ -808,7 +839,10 @@ fn read_policy(config: &Path) -> Result<Policy> {
     Ok(policy)
 }
 
-async fn read_frame<R: AsyncRead + Unpin>(reader: &mut R, deadline: Duration) -> Result<Vec<u8>> {
+pub(crate) async fn read_frame<R: AsyncRead + Unpin>(
+    reader: &mut R,
+    deadline: Duration,
+) -> Result<Vec<u8>> {
     let limited = reader.take((MAX_FRAME_BYTES + 1) as u64);
     let mut buffered = BufReader::new(limited);
     let mut frame = Vec::new();
@@ -823,7 +857,10 @@ async fn read_frame<R: AsyncRead + Unpin>(reader: &mut R, deadline: Duration) ->
     Ok(frame)
 }
 
-async fn write_frame<W: AsyncWrite + Unpin, T: Serialize>(writer: &mut W, value: &T) -> Result<()> {
+pub(crate) async fn write_frame<W: AsyncWrite + Unpin, T: Serialize>(
+    writer: &mut W,
+    value: &T,
+) -> Result<()> {
     let mut frame = serde_json::to_vec(value).map_err(json_error)?;
     frame.push(b'\n');
     if frame.len() > MAX_FRAME_BYTES {
@@ -843,7 +880,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
     let mut operation = "unauthorized_or_invalid";
     #[cfg(feature = "physical-usb")]
     let mut physical_grant = None;
-    let response = match if uid == 0 {
+    let response = match if uid == 0 || app.policy.authorize_broker(uid).is_ok() {
         Ok(())
     } else {
         app.policy.authorize_uid(uid)
@@ -855,6 +892,13 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                     operation = match &req {
                         #[cfg(feature = "physical-usb")]
                         Request::OpenPhysical { .. } => "open_physical",
+                        #[cfg(feature = "physical-usb")]
+                        Request::OpenSecurePhysical { .. } => "open_secure_physical",
+                        Request::PrepareNativeExport { .. } => "prepare_native_export",
+                        Request::OpenNativeStub { .. } => "open_native_stub",
+                        Request::PrepareNativeImport { .. } => "prepare_native_import",
+                        Request::NativePending { .. } => "native_pending",
+                        Request::ReconcileNative { .. } => "reconcile_native",
                         #[cfg(feature = "physical-usb")]
                         Request::FinishPhysical { .. } => "finish_physical",
                         #[cfg(feature = "physical-usb")]
@@ -868,17 +912,60 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                         Request::Sessions => "sessions",
                         Request::Status => "status",
                     };
+                    if let Request::PrepareNativeExport { device_id } = req {
+                        return super::native_export::serve_export(
+                            stream,
+                            app,
+                            uid,
+                            credentials.pid(),
+                            device_id,
+                        )
+                        .await;
+                    }
+                    if let Request::OpenNativeStub { lease_id } = req {
+                        return super::native_export::serve_stub(
+                            stream,
+                            app,
+                            uid,
+                            credentials.pid(),
+                            lease_id,
+                        )
+                        .await;
+                    }
+                    if let Request::PrepareNativeImport { target } = req {
+                        return super::native_channel::serve_import(
+                            stream,
+                            app,
+                            uid,
+                            credentials.pid(),
+                            target,
+                        )
+                        .await;
+                    }
+                    if matches!(
+                        req,
+                        Request::NativePending { .. } | Request::ReconcileNative { .. }
+                    ) {
+                        return super::native_channel::serve_admin(stream, app, uid, req).await;
+                    }
                     #[cfg(feature = "physical-usb")]
                     {
+                        let secure = matches!(req, Request::OpenSecurePhysical { .. });
                         let result = match req {
                             Request::OpenPhysical {
+                                device_id,
+                                journal_schema_version,
+                            }
+                            | Request::OpenSecurePhysical {
                                 device_id,
                                 journal_schema_version,
                             } => {
                                 if journal_schema_version != 1 {
                                     Err(Error::Protocol("physical journal schema 1 required; upgrade the physical client and helper together".into()))
                                 } else {
-                                    match app.open_physical(uid, credentials.pid(), device_id).await
+                                    match app
+                                        .open_physical(uid, credentials.pid(), device_id, secure)
+                                        .await
                                     {
                                         Ok(handoff) => {
                                             let description = super::physical::GrantDescription {
@@ -966,7 +1053,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
     Ok(())
 }
 
-async fn connect_trusted(socket: &Path) -> Result<UnixStream> {
+pub(crate) async fn connect_trusted(socket: &Path) -> Result<UnixStream> {
     let parent = socket
         .parent()
         .ok_or_else(|| Error::InvalidInput("socket parent directory required".into()))?;
@@ -994,7 +1081,7 @@ pub(super) async fn request(socket: &Path, req: Request) -> Result<Response> {
 // A helper can reject SO_PEERCRED and close before the caller writes anything.
 // Preserve that already-buffered refusal instead of replacing it with EPIPE.
 // This is used only on the same socket after connect_trusted; never retry work.
-async fn exchange(stream: &mut UnixStream, req: &Request) -> Result<Response> {
+pub(crate) async fn exchange(stream: &mut UnixStream, req: &Request) -> Result<Response> {
     if let Err(write_error) = write_frame(stream, req).await {
         if matches!(write_error, Error::Io(_) | Error::Timeout(_))
             && let Ok(frame) = read_frame(stream, READ_TIMEOUT).await
@@ -1018,14 +1105,22 @@ async fn exchange(stream: &mut UnixStream, req: &Request) -> Result<Response> {
 pub(super) async fn open_physical(
     socket: &Path,
     device_id: String,
+    secure: bool,
 ) -> Result<super::PhysicalGrant> {
     super::validate_device_id(&device_id)?;
     let mut stream = connect_trusted(socket).await?;
     let response = exchange(
         &mut stream,
-        &Request::OpenPhysical {
-            device_id,
-            journal_schema_version: 1,
+        &if secure {
+            Request::OpenSecurePhysical {
+                device_id,
+                journal_schema_version: 1,
+            }
+        } else {
+            Request::OpenPhysical {
+                device_id,
+                journal_schema_version: 1,
+            }
         },
     )
     .await?;
@@ -1048,13 +1143,37 @@ pub(super) async fn open_physical(
     super::physical::validate_received(fd, description)
 }
 
-pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -> Result<()> {
+pub(super) async fn serve(
+    config: &Path,
+    socket: &Path,
+    physical_state: &Path,
+    native_state: &Path,
+) -> Result<()> {
     if !rustix::process::geteuid().is_root() {
         return Err(Error::Permission(
             "only the restricted helper, installed by an administrator, may run as root".into(),
         ));
     }
     let policy = read_policy(config)?;
+    let native_exists = match fs::symlink_metadata(native_state) {
+        Ok(_) => true,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
+        Err(error) => return Err(error.into()),
+    };
+    let native_state = if !policy.secure_imports.is_empty()
+        || !policy.secure_native_device_ids.is_empty()
+        || native_exists
+    {
+        let path = native_state.to_owned();
+        Some(Arc::new(std::sync::Mutex::new(
+            tokio::task::spawn_blocking(move || super::native_state::Store::open(&path))
+                .await
+                .map_err(|_| Error::State("Native journal initialization task failed".into()))??,
+        )))
+    } else {
+        None
+    };
+    let (native_stop, _) = tokio::sync::watch::channel(false);
     #[cfg(feature = "physical-usb")]
     let journal = {
         // Even an empty policy must reload existing unresolved state. First-time
@@ -1064,7 +1183,10 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
             Err(error) => return Err(error.into()),
         };
-        if !policy.physical_device_ids.is_empty() || exists {
+        if !policy.physical_device_ids.is_empty()
+            || !policy.secure_physical_device_ids.is_empty()
+            || exists
+        {
             let path = physical_state.to_owned();
             Some(Arc::new(std::sync::Mutex::new(
                 tokio::task::spawn_blocking(move || super::journal::Store::open(&path))
@@ -1101,6 +1223,9 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
         policy,
         backend: NativeBackend::default(),
         state: Arc::new(Mutex::new(ManagedState::default())),
+        native_state,
+        native_exports: Default::default(),
+        native_stop,
         #[cfg(feature = "physical-usb")]
         journal,
         #[cfg(feature = "physical-usb")]
@@ -1161,6 +1286,7 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
     Ok(())
     }.await;
     drop(listener);
+    app.native_stop.send_replace(true);
     #[cfg(feature = "physical-usb")]
     let _ = recovery_stop.send(true);
     // Stop accepting work, but allow bounded in-flight native operations to
@@ -1320,6 +1446,10 @@ mod tests {
     fn app(allowed_uids: Vec<u32>) -> Arc<App> {
         Arc::new(App {
             policy: Policy {
+                secure_broker_uid: None,
+                secure_imports: vec![],
+                secure_physical_device_ids: vec![],
+                secure_native_device_ids: vec![],
                 allowed_uids,
                 physical_device_ids: vec![],
                 physical_connect_restore_device_ids: vec![],
@@ -1329,6 +1459,9 @@ mod tests {
             },
             backend: NativeBackend::default(),
             state: Arc::new(Mutex::new(ManagedState::default())),
+            native_state: None,
+            native_exports: Default::default(),
+            native_stop: tokio::sync::watch::channel(false).0,
             #[cfg(feature = "physical-usb")]
             journal: None,
             #[cfg(feature = "physical-usb")]
@@ -1678,6 +1811,10 @@ mod tests {
             let id = format!("usb-{}", "b".repeat(64));
             let service = Arc::new(App {
                 policy: Policy {
+                    secure_broker_uid: None,
+                    secure_imports: vec![],
+                    secure_physical_device_ids: vec![],
+                    secure_native_device_ids: vec![],
                     allowed_uids: if allow_uid { vec![uid] } else { vec![] },
                     physical_connect_restore_device_ids: vec![],
                     physical_device_ids: if allow_device {
@@ -1691,6 +1828,9 @@ mod tests {
                 },
                 backend: NativeBackend::default(),
                 state: Arc::new(Mutex::new(ManagedState::default())),
+                native_state: None,
+                native_exports: Default::default(),
+                native_stop: tokio::sync::watch::channel(false).0,
                 journal: None,
                 handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),
             });

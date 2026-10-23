@@ -5,8 +5,14 @@
 //! Dropping an operation future kills an active child, but cannot undo a kernel write;
 //! callers must reconcile kernel state after cancellation. No method guesses a rollback.
 
+/// Anonymous kernel channels for a separately authorized secure broker.
+#[cfg(target_os = "linux")]
+pub mod channel;
 /// Read-only Linux tools, modules, and kernel-interface diagnosis.
 pub mod diagnostics;
+/// Strong original-attribute Native server channels for an authorized broker.
+#[cfg(target_os = "linux")]
+pub mod export_channel;
 
 use rustusb_core::{BusId, Error, ExportBackend, ImportBackend, Peer, Result, VhciPort};
 use rustusb_protocol::RemoteDevice;
@@ -594,11 +600,21 @@ impl NativeBackend {
     }
 }
 
-impl ExportBackend for NativeBackend {
-    async fn export(&self, bus_id: BusId) -> Result<()> {
+impl NativeBackend {
+    /// Bind only a genuinely fresh unexported device. Existing bindings are never adopted.
+    /// The caller separately authorizes and verifies the strong original hardware generation.
+    pub async fn export_fresh(&self, bus_id: BusId) -> Result<()> {
         let _lock = self.mutation.lock().await;
+        self.export_locked(bus_id, false).await
+    }
+    async fn export_locked(&self, bus_id: BusId, allow_existing: bool) -> Result<()> {
         let before = self.device_binding(&bus_id).await?;
         if before.driver.as_deref() == Some("usbip-host") {
+            if !allow_existing {
+                return Err(Error::Permission(
+                    "fresh Native export cannot adopt an existing binding".into(),
+                ));
+            }
             return match before.status {
                 Some(1) => Ok(()),
                 Some(2) => Err(Error::State(
@@ -636,6 +652,13 @@ impl ExportBackend for NativeBackend {
             }
             sleep(self.configuration.poll_interval).await;
         }
+    }
+}
+
+impl ExportBackend for NativeBackend {
+    async fn export(&self, bus_id: BusId) -> Result<()> {
+        let _lock = self.mutation.lock().await;
+        self.export_locked(bus_id, true).await
     }
 
     async fn unexport(&self, bus_id: BusId) -> Result<()> {

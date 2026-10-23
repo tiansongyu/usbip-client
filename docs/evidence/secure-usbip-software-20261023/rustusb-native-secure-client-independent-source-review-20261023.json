@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "result": "NO_REMAINING_MUST_FIX_SOURCE_REVIEW",
+  "created_utc": "2026-10-23T11:26:54.918654+00:00",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "scope": "Independent read-only review of Native client/helper channel, persistentstate, Linuxdispatch/policy and securePhysical authorization. No source writes, Cargo/build/tests/QEMU/USB, or runtime claim.",
+  "files": [
+    {
+      "path": "crates/rustusb-daemon/Cargo.toml",
+      "length": 777,
+      "sha256": "6ffee80994175215dab640f3b42729ab96d5a91f4ea3b16bd3a881901bb7a75e",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "length": 32125,
+      "sha256": "90e5a16b27e7bc40c1b3e930e3df7694ead172581c213a3db9affe3b3254400e",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "length": 78003,
+      "sha256": "2af75f5bd02b6a1bf1ad44f371ec8ad3d8665df0b71a76ffe3c5d5be0e56b2d0",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/main.rs",
+      "length": 1468,
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "length": 10190,
+      "sha256": "2dca1afad3917b56238ae070df59af4469e951bf8e640f39056dfd7d4b214cd8",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/ancillary.rs",
+      "length": 4238,
+      "sha256": "8ff2ea31eb1e9cd20339a50c5412060384e2e9a622cd1aae18c1aa8331cdef7d",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_channel.rs",
+      "length": 28369,
+      "sha256": "434d46be4486a4e3a3a9826447b4b86246649d1d038e619aaa764c67060c3836",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_state.rs",
+      "length": 22978,
+      "sha256": "2adfd1b652d1075508fb2c6ff0c5fa7c3d67a1f1205deb14c4a04c93f13434fb",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-native/src/lib.rs",
+      "length": 80012,
+      "sha256": "9a08b1087b0f76450ab7622e4f7843133ccb21fcb05efebf14cfba3ed6bc7a5f",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-native/src/channel.rs",
+      "length": 26215,
+      "sha256": "dc46c36b87c813c8c7fa95aa34cddd22ee454db465d6603feb7e8b3ea454ff2c",
+      "matches_author_freeze": true
+    }
+  ],
+  "freeze_matches": true,
+  "author_manifest": {
+    "path": "/tmp/rustusb-native-client-author-handoff-20261023.json",
+    "sha256": "d8eb8f9bf340aa550dea0752f1461a0e50b2a4c89ce82962c44231de21eab394"
+  },
+  "resolved_must_fix": {
+    "source": "daemon/native_channel.rs:282-329,389-405",
+    "before": "Commit awaited mutation lock alone for30s, so a controlEOF/helperstop already present during queueing could be observed only after spawning actualcommit.",
+    "after": "mutation_guard biases stop/controlread ahead of lock, rechecks stop/cancel and ready control before spawn; an active blockingtask still owns K+OwnedMutexGuard and is actuallyjoined.",
+    "regression_source": "Authored pureUDS fixtures assert queuedEOF cancels while another holder stillownslock, and stopalreadytrue refuses evenfree lock. Reviewed source only; root owns execution."
+  },
+  "key_findings": [
+    {
+      "source": "daemon/native_channel.rs:344-415;ancillary.rs",
+      "finding": "RelayR is sent as oneCLOEXEC-validated SCM_RIGHTS capability and helperdrops its reference immediately aftersend attempt; only retainedK canbecommitted/shutdown. Clientactor serializes fullresponse consumption evenif callercommitwaiter iscancelled."
+    },
+    {
+      "source": "native/channel.rs:417-559;daemon/native_channel.rs:391-440",
+      "finding": "Helpercreates its own anonymouspair and fixedcontroller/attributeFD; durableintent precedes oneFile.write. Actualcommit/cleanup closures own mutationguard until terminal. No callerprovidedFD/path/localhost officialrecord."
+    },
+    {
+      "source": "native/channel.rs:337-404,560-628",
+      "finding": "Cleanup onlySHUT_RDWR retainedownK, never detach/-1 guessedport. CompleteNULL+oldlocalgenerationgone required; missinginitialreceipt or changedidentity remainspending. Restartreconciliation onlyreads fixedreceipts; incompleteintent requires whollyemptycontroller/downstream."
+    },
+    {
+      "source": "daemon/native_state.rs:20-103,249-509",
+      "finding": "Independent root0700/0600 singlelink/flocked journal retains ownerUID/PID/start/boot and Prepared/Intent/Observed. Existingmissing/replaced/truncatedsameinode bytes poison ratherthan initializeempty. Restart records unresolvedblocknewNative; root-onlyreconcile requires ownerended and independentrelease oroldboot."
+    },
+    {
+      "source": "daemon/lib.rs:293-454;linux.rs:125-200,280-335,875-1000,1258-1283",
+      "finding": "Dedicated nonzero broker UID disjointfrom legacyallowedUIDs; secure/legacyNative/USBFS devicepools disjoint. Securephysical grant hasownrole+poolcheckwithout trusted_network fallback, anduses existingjournal/Finish/autorestore validation. Gracefulhelperstop signals Native actors thenjoins trackedjobs ratherthan abandoningblockingwork."
+    }
+  ],
+  "must_fix": [],
+  "limitations": [
+    "Source review establishes intended ownership/order, not actual kernel attach or encryptedUSB behavior. Root compiler failures and eventual testresults remain separatelyrecorded.",
+    "SamebrokerUID is a trustedOSdomain; no per-executableidentity or USBFSFDrevocation claimed.",
+    "An unexpected process/runtimecrash may retain unresolvedintent; never interpret missingmemoryrecord or PIDdeath as cleanup.",
+    "Blockingfilesystem/kernelwork can delay shutdown while actualownedwork/guard is awaited; cooperative cancellation doesnot interruptsyscall.",
+    "Native server export/stub route remains unimplemented in this owned slice; this is not finalNative remoteTLS acceptance."
+  ]
+}

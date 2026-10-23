@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_FROZEN_PENDING_ROOT_COMPILATION",
+  "created_utc": "2026-10-23T11:13:04.578365+00:00",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "files": [
+    {
+      "path": "crates/rustusb-cli/src/server_binding.rs",
+      "length": 1577,
+      "sha256": "f87d02f656ccd119b2ac3e167939f83342556cc9ce9573cb54294e50c686f597"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_server.rs",
+      "length": 4051,
+      "sha256": "25aa50dc10b3132f9486062aaf179a7982eff55481e2e2ac628eaf135b06dcce"
+    },
+    {
+      "path": "crates/rustusb-cli/src/event_output.rs",
+      "length": 2400,
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs",
+      "length": 8194,
+      "sha256": "f96f30458f8b9bbd5b4d7c22b483014a92678861c9452c040907ce34d7686793"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "length": 10648,
+      "sha256": "68a4f7c6470a0594b71a4c60b0562719913751b4a96a0f1fd5042cf1bc0242dc"
+    }
+  ],
+  "entrypoint": "secure_server::run(socket:&Path,config_path:PathBuf,backend:Backend,control_stdin:bool)->core::Result<()>",
+  "backend_options": [
+    "Virtual",
+    "Usbfs only when physical-nusb and Linux; no unimplemented Native variant exposed"
+  ],
+  "implemented": [
+    "Only root-trusted config supplies brokerUID/listen/TLS/devicepool; no endpoint/credential/ALPN/device overrides.",
+    "All device namespaces checked before helper/backend/bind; stable physical fingerprints extracted only after exactPhysical key check.",
+    "One ShutdownSignals registered before spawn_blocking credentialload, actual blocking task joined on signal, then same handler instance passed through shared server lifecycle.",
+    "Typed Binding::Legacy/Tls chooses existingplain bind or real bind_tls/bind_physical_tls; no trusted_network=true workaround.",
+    "Legacy virtual/physical run signatures retained; physical legacyStatus/open_physical stays unchanged, TLSphysical uses open_secure_physical directly with its authoritative role/journal checks.",
+    "Once binding may own listener, no cancellation race: shared lifecycle always awaits server shutdown; physical closes backend and attempts every Finish before reporting stopped.",
+    "EventOutput extracted without backend import, old virtual_server pub(super) reexport retained; queue2/5s/stdthread/size/ack/cancel/backpressure semantics byte-identical.",
+    "Secure ready event adds transport=mutual_tls; legacy event fields remain unchanged.",
+    "One pure namespace regression test authored, existing controls/Finish/invalid-selection tests retained."
+  ],
+  "event_output_body_equal_to_head": true,
+  "event_output_body_sha256": "ee6d6cca0aa858ca44770751924fcf13e62b6a3f68830fabfab7a1b880a20812",
+  "static_checks": [
+    "Single-file rustfmt2024 --check with skip_children=true passed for5ownedfiles.",
+    "git diff --check of owned tracked frontend files passed.",
+    "Source comparison proves complete EventOutput struct+impl body unchanged from HEAD."
+  ],
+  "not_run": [
+    "No Cargo/clippy/build/tests/QEMU or executable subprocess by author",
+    "No repo files outside assigned frontend5 edited in this slice",
+    "No Native serverstub implementation claimed; client/helper code owned by H and root integration pending",
+    "No encrypted physical USB/IPv4/IPv6/PCAP acceptance implied"
+  ],
+  "root_wiring": [
+    "main module cfg for event_output/shutdown_signals must include secure-client feature without requiring backend.",
+    "Root main error path for secure-server/client must not synchronously retry JSON stdout after EventOutput failure.",
+    "Root owns actual compiler/tests, Cargo/features/lock and all runtime verification."
+  ]
+}

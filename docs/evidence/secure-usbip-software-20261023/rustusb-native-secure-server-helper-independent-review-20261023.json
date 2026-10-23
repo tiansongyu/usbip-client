@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "kind": "independent source review of another author",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "result": "NO_SPECIFIC_MUSTFIX_FOUND_SOURCE_ONLY",
+  "scope": "Native secure server helper delta and shared state/policy/dispatch; prior client source review remains a separate historical cut.",
+  "author_manifest": {
+    "path": "/tmp/rustusb-native-server-author-handoff-20261023.json",
+    "sha256": "465ede1b13f369111e4592cf8e591ee32a68005e73b5dd189569137d6e1d1701"
+  },
+  "sources": [
+    {
+      "path": "crates/rustusb-daemon/src/native_export.rs",
+      "length": 31556,
+      "sha256": "98e64183c582cb113fe2578d71c0a86d8983df74a24d8027f82a8a313c3d524c",
+      "matches_author_handoff": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_state.rs",
+      "length": 37359,
+      "sha256": "1eeba4b975023771010d5225bd432bbfa6ae44e76d95125055680bba4db40e63",
+      "matches_author_handoff": true
+    },
+    {
+      "path": "crates/rustusb-native/src/export_channel.rs",
+      "length": 25954,
+      "sha256": "0a10318ba872120b8be224f1654283f6b7e7c726e42fb227e49fde6c6bc967f6",
+      "matches_author_handoff": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "length": 79370,
+      "sha256": "16652574770d88dc321fa15abc4b964deff034bec4a150aa8899956c79bb3039",
+      "matches_author_handoff": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "length": 35032,
+      "sha256": "ae7cc2fc0d9dadc47badf7a63f318213ab2a68d62381fad33e90ca392b33e429",
+      "matches_author_handoff": true
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_channel.rs",
+      "length": 28076,
+      "sha256": "b3bb6230ef52355031821fc5f3239b94c977b46cffa46b5047d1c9bae2b3a2e4",
+      "matches_author_handoff": true
+    }
+  ],
+  "findings": [
+    {
+      "name": "Initial owner/generation/authorization before mutation",
+      "result": "PASS_SOURCE",
+      "details": "Separate broker role; original device fingerprint rescanned around capture, strong hardware identity+preexport baseline, durable export record before binding. Accepted initial operation is joined on EOF/stop; ambiguous bind leaves record unresolved."
+    },
+    {
+      "name": "Original attribute and phase state",
+      "result": "PASS_SOURCE",
+      "details": "Pinned original kernfs attribute cloned per stub; same hardware/attribute/status checks; None/empty IF and original configured/null-driver IF are distinct live phases. Single FD write is preceded by durable Intent; USED is not called enumeration."
+    },
+    {
+      "name": "Stub ownership and handoff",
+      "result": "PASS_SOURCE",
+      "details": "Same UID/PID/starttime/boot owner required; state mutex makes one durable slot; helper sends only R and immediately drops its R copy, retaining K. Client rejects wrong socket type/domain/listener/named endpoints."
+    },
+    {
+      "name": "Cancellation and operation ownership",
+      "result": "PASS_SOURCE",
+      "details": "Queued global mutation guard acquisition watches stop/EOF; actual commit and cleanup blocking workers hold owning guard until terminal; frame actor consumes commit response even when caller waiter drops."
+    },
+    {
+      "name": "Cleanup and retirement",
+      "result": "PASS_SOURCE",
+      "details": "Only retained owned K is shut down. Stub shutdown waits AVAILABLE or original generation gone; slot clears only after verified cleanup+durable update. Export closes active stubs first without holding mutation guard, verifies availability, unexports, then independently checks complete baseline/gone before record retirement. Failures stay blocked/unresolved."
+    },
+    {
+      "name": "Persistent state and roles",
+      "result": "PASS_SOURCE",
+      "details": "Protected atomic store validates bounded new export records, restart blocks unowned old registrations; read-only root reconciliation requires ended owner and original baseline/gone/old boot. Secure pools disjoint from legacy and each other. Persistent channels fit bounded 32 helper connection limit."
+    }
+  ],
+  "limitations": [
+    "No compilation/test/QEMU or device execution by this reviewer.",
+    "Source review cannot establish real enumeration, live cleanup timings, driver restoration or external administrator/hotplug exclusion.",
+    "Native binding/unbinding retains existing tool+sysfs TOCTOU limits; old attr capability does not make legacy tool unexport atomic with hotplug.",
+    "No statement that per-connection helper errors authorize automatic retry, re-export or replacement generation adoption."
+  ]
+}

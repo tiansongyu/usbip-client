@@ -1,8 +1,18 @@
 //! Unprivileged RustUSB frontend. Mutations use the common authenticated local service.
 
+#[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
+mod event_output;
+#[cfg(all(feature = "secure-transport", target_os = "linux"))]
+mod native_server;
 #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
 mod physical_server;
+#[cfg(all(feature = "secure-transport", target_os = "linux"))]
+mod secure_client;
+#[cfg(feature = "secure-transport")]
+mod secure_server;
 #[cfg(feature = "rust-backend")]
+mod server_binding;
+#[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod shutdown_signals;
 #[cfg(feature = "rust-backend")]
 mod virtual_server;
@@ -47,6 +57,41 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Serve configured devices with mandatory mutual TLS and per-device authorization.
+    #[cfg(feature = "secure-transport")]
+    SecureServer {
+        /// Root-managed startup configuration; endpoints and credentials cannot be overridden.
+        #[arg(long)]
+        config: PathBuf,
+        /// Device engine; every configured key must belong to this backend.
+        #[arg(long, value_enum)]
+        backend: secure_server::Backend,
+        /// Accept bounded local test controls; EOF also stops the service.
+        #[arg(long)]
+        control_stdin: bool,
+    },
+    /// Read the stable-key device catalog over the configured mutually authenticated TLS endpoint.
+    #[cfg(feature = "secure-transport")]
+    SecureDiscover {
+        /// Root-managed configuration for this dedicated nonroot broker UID.
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Import the configured stable device key and own its encrypted VHCI relay until stopped.
+    #[cfg(feature = "secure-transport")]
+    SecureAttach {
+        /// Fixed trusted endpoint, identity and device key; no insecure overrides.
+        #[arg(long)]
+        config: PathBuf,
+    },
+    /// Inspect unresolved secure Native channels through the root helper (root only).
+    NativePending {
+        /// Continue a previous bounded page using its next_after value.
+        #[arg(long)]
+        after: Option<String>,
+    },
+    /// Verify a stopped Native channel and retire its record (root only; no USB writes).
+    NativeReconcile { channel_id: String },
     /// Inspect unresolved physical grants through the root helper (root only).
     #[cfg(feature = "physical-nusb")]
     PhysicalPending {
@@ -134,6 +179,7 @@ struct Doctor {
     required_for_export: [&'static str; 3],
     required_for_import: [&'static str; 3],
     built_in_encryption: bool,
+    secure_broker_commands_available: bool,
     network_security_verified: bool,
     hardware_test_performed: bool,
     note: &'static str,
@@ -215,6 +261,63 @@ async fn invoke(cli: &Cli, req: Request) -> Result<()> {
 
 async fn run(cli: Cli) -> Result<()> {
     match &cli.command {
+        #[cfg(feature = "secure-transport")]
+        Command::SecureServer {
+            config,
+            backend,
+            control_stdin,
+        } => secure_server::run(&cli.socket, config.clone(), *backend, *control_stdin).await,
+        Command::NativePending { after } => {
+            invoke(
+                &cli,
+                Request::NativePending {
+                    after: after.clone(),
+                },
+            )
+            .await
+        }
+        Command::NativeReconcile { channel_id } => {
+            invoke(
+                &cli,
+                Request::ReconcileNative {
+                    channel_id: channel_id.clone(),
+                },
+            )
+            .await
+        }
+        #[cfg(feature = "secure-transport")]
+        Command::SecureDiscover { config } => {
+            #[cfg(target_os = "linux")]
+            {
+                secure_client::discover(config.clone(), Duration::from_secs(cli.timeout)).await
+            }
+            #[cfg(not(target_os = "linux"))]
+            {
+                let _ = config;
+                Err(Error::Unsupported(
+                    "trusted secure broker configuration requires Linux".into(),
+                ))
+            }
+        }
+        #[cfg(feature = "secure-transport")]
+        Command::SecureAttach { config } => {
+            #[cfg(target_os = "linux")]
+            {
+                secure_client::attach(
+                    &cli.socket,
+                    config.clone(),
+                    Duration::from_secs(cli.timeout),
+                )
+                .await
+            }
+            #[cfg(not(target_os = "linux"))]
+            {
+                let _ = config;
+                Err(Error::Unsupported(
+                    "secure VHCI import requires Linux".into(),
+                ))
+            }
+        }
         #[cfg(feature = "physical-nusb")]
         Command::PhysicalServer {
             device_ids,
@@ -307,6 +410,7 @@ async fn run(cli: Cli) -> Result<()> {
                 required_for_export: ["native.usbip", "native.usbip_host.sysfs", "helper"],
                 required_for_import: ["native.usbip", "native.vhci_hcd.sysfs", "helper"],
                 built_in_encryption: false,
+                secure_broker_commands_available: cfg!(feature = "secure-transport"),
                 network_security_verified: false,
                 hardware_test_performed: false,
                 note: "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported.",
@@ -439,13 +543,17 @@ async fn main() -> ExitCode {
         eprintln!("logging initialization failed: {error}");
         return ExitCode::FAILURE;
     }
-    #[cfg(feature = "rust-backend")]
-    let owns_signal_cleanup = matches!(&cli.command, Command::VirtualServer { .. });
-    #[cfg(feature = "physical-nusb")]
-    let owns_signal_cleanup =
-        owns_signal_cleanup || matches!(&cli.command, Command::PhysicalServer { .. });
-    #[cfg(not(feature = "rust-backend"))]
-    let owns_signal_cleanup = false;
+    let owns_signal_cleanup = match &cli.command {
+        #[cfg(feature = "rust-backend")]
+        Command::VirtualServer { .. } => true,
+        #[cfg(feature = "physical-nusb")]
+        Command::PhysicalServer { .. } => true,
+        #[cfg(feature = "secure-transport")]
+        Command::SecureServer { .. }
+        | Command::SecureDiscover { .. }
+        | Command::SecureAttach { .. } => true,
+        _ => false,
+    };
     let result = if owns_signal_cleanup {
         // The server must await its connection/lease tree on shutdown signals.
         // Racing it with the helper-client cancellation branch would drop that
@@ -480,6 +588,23 @@ mod tests {
         use clap::CommandFactory;
         Cli::command().debug_assert();
         assert!(Cli::try_parse_from(["rustusb", "devices", "--json"]).is_ok());
+        assert!(
+            Cli::try_parse_from([
+                "rustusb",
+                "native-pending",
+                "--after",
+                "00000000-0000-0000-0000-000000000001"
+            ])
+            .is_ok()
+        );
+        assert!(
+            Cli::try_parse_from([
+                "rustusb",
+                "native-reconcile",
+                "00000000-0000-0000-0000-000000000001"
+            ])
+            .is_ok()
+        );
         assert!(Cli::try_parse_from(["rustusb", "attach", "::1", "1-2", "--port", "3241"]).is_ok());
         for args in [
             vec!["rustusb", "detach", "256"],
@@ -488,6 +613,97 @@ mod tests {
             vec!["rustusb", "--timeout", "0", "devices"],
         ] {
             assert!(Cli::try_parse_from(args).is_err());
+        }
+        #[cfg(feature = "secure-transport")]
+        {
+            assert!(
+                Cli::try_parse_from([
+                    "rustusb",
+                    "secure-server",
+                    "--config",
+                    "/etc/rustusb/server.json",
+                    "--backend",
+                    "native"
+                ])
+                .is_ok()
+            );
+            assert!(
+                Cli::try_parse_from([
+                    "rustusb",
+                    "secure-server",
+                    "--config",
+                    "/etc/rustusb/server.json",
+                    "--backend",
+                    "native",
+                    "--listen",
+                    "0.0.0.0:3240"
+                ])
+                .is_err()
+            );
+            assert!(
+                Cli::try_parse_from([
+                    "rustusb",
+                    "secure-discover",
+                    "--config",
+                    "/etc/rustusb/client.json"
+                ])
+                .is_ok()
+            );
+            assert!(
+                Cli::try_parse_from([
+                    "rustusb",
+                    "secure-attach",
+                    "--config",
+                    "/etc/rustusb/client.json"
+                ])
+                .is_ok()
+            );
+            for override_flag in [
+                "--host",
+                "--port",
+                "--insecure",
+                "--device-id",
+                "--private-key",
+            ] {
+                assert!(
+                    Cli::try_parse_from([
+                        "rustusb",
+                        "secure-attach",
+                        "--config",
+                        "/etc/rustusb/client.json",
+                        override_flag,
+                        "ignored"
+                    ])
+                    .is_err()
+                );
+            }
+        }
+        #[cfg(feature = "rust-backend")]
+        {
+            assert!(
+                Cli::try_parse_from([
+                    "rustusb",
+                    "secure-server",
+                    "--config",
+                    "/etc/rustusb/server.json",
+                    "--backend",
+                    "virtual"
+                ])
+                .is_ok()
+            );
+            assert!(
+                Cli::try_parse_from([
+                    "rustusb",
+                    "secure-server",
+                    "--config",
+                    "/etc/rustusb/server.json",
+                    "--backend",
+                    "virtual",
+                    "--listen",
+                    "0.0.0.0:3240"
+                ])
+                .is_err()
+            );
         }
     }
 }

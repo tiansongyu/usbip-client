@@ -1,0 +1,88 @@
+{
+  "scope": "Author static parser/format/whitespace checks only; no Cargo/rustc/build/QEMU/probe/device execution",
+  "result": "STATIC_PASS_BUILD_PENDING",
+  "checks": [
+    {
+      "name": "owned Rust formatting/parser",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "diff whitespace",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "new product source has no unsafe/unwrap()/expect()/panic!",
+      "passed": true
+    }
+  ],
+  "files": [
+    {
+      "path": "crates/rustusb-daemon/Cargo.toml",
+      "length": 777,
+      "sha256": "6ffee80994175215dab640f3b42729ab96d5a91f4ea3b16bd3a881901bb7a75e"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "length": 32125,
+      "sha256": "90e5a16b27e7bc40c1b3e930e3df7694ead172581c213a3db9affe3b3254400e"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "length": 78003,
+      "sha256": "2af75f5bd02b6a1bf1ad44f371ec8ad3d8665df0b71a76ffe3c5d5be0e56b2d0"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/main.rs",
+      "length": 1468,
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "length": 10190,
+      "sha256": "2dca1afad3917b56238ae070df59af4469e951bf8e640f39056dfd7d4b214cd8"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/ancillary.rs",
+      "length": 4238,
+      "sha256": "8ff2ea31eb1e9cd20339a50c5412060384e2e9a622cd1aae18c1aa8331cdef7d"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_channel.rs",
+      "length": 25076,
+      "sha256": "f276a22451cd638dd45865dc258db3f558c2c8abec840bf04c1c825611ba2963"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_state.rs",
+      "length": 22978,
+      "sha256": "2adfd1b652d1075508fb2c6ff0c5fa7c3d67a1f1205deb14c4a04c93f13434fb"
+    },
+    {
+      "path": "crates/rustusb-native/src/lib.rs",
+      "length": 80012,
+      "sha256": "9a08b1087b0f76450ab7622e4f7843133ccb21fcb05efebf14cfba3ed6bc7a5f"
+    },
+    {
+      "path": "crates/rustusb-native/src/channel.rs",
+      "length": 25527,
+      "sha256": "13c13355ba3702e4b7a51b90f3a7286aa9cd5bf67022e5971fcae1fb51883caf"
+    }
+  ],
+  "new_tests_not_executed": [
+    "remote_bounds_reject_before_any_sysfs_access",
+    "cancelled_commit_waiter_cannot_consume_close_response",
+    "dropped_handle_commands_close_control_and_invalidate",
+    "journal_lock_and_same_bytes_identity_are_enforced_without_usb",
+    "persisted_prepared_channel_blocks_new_grants_after_restart",
+    "secure_role_is_separate_and_pools_cannot_bypass_it",
+    "secure_usbfs_does_not_assert_trusted_network (physical-usb)"
+  ],
+  "phase": "secure broker role/secure USBFS grant and Native client; Native server export/stub remains next implementation, no success placeholder",
+  "public_api": "SecureImportTarget{server_id,device_key,remote}; prepare_native_import; NativeImportHandle take_relay/commit/close/invalidated; open_secure_physical; serve_with_state + --native-state-dir",
+  "pending_contract": "distinct root0700/0600 Native journal, same-broker logical duplicate and restart-unresolved block; explicit root read-only reconciliation requires owner ended plus prepared(no write), complete receipt released, wholly empty controller for incomplete intent, or old boot. No automatic driver recovery claim."
+}

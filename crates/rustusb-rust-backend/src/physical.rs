@@ -5,10 +5,13 @@ mod safety;
 mod worker;
 
 use crate::{
-    session::{ServingBackend, SessionLease, Started, TransferEvent, TransferId},
+    session::{
+        ConnectionAccess, RegisteredDevice, ServingBackend, SessionLease, Started, TransferEvent,
+        TransferId,
+    },
     wire::{Completion, Submit},
 };
-use rustusb_core::{Device, Error, PhysicalDeviceReceipt, Result};
+use rustusb_core::{Device, DeviceKey, Error, PhysicalDeviceReceipt, Result};
 use rustusb_protocol::RemoteDevice;
 use serde::Serialize;
 use std::{
@@ -122,6 +125,7 @@ pub struct PhysicalSnapshot {
 }
 
 struct Slot {
+    key: DeviceKey,
     usb: nusb::Device,
     metadata: RemoteDevice,
     source: Device,
@@ -198,11 +202,17 @@ impl PhysicalBackend {
             ));
         }
         let mut ids = BTreeSet::new();
+        let mut keys = BTreeSet::new();
+        for source in &sources {
+            let key = DeviceKey::physical(&source.device.id)?;
+            if !ids.insert(source.device.bus_id.to_string()) || !keys.insert(key) {
+                return Err(Error::InvalidInput(
+                    "duplicate physical source identity".into(),
+                ));
+            }
+        }
         let mut slots = Vec::new();
         for source in sources {
-            if !ids.insert(source.device.bus_id.to_string()) {
-                return Err(Error::InvalidInput("duplicate physical source".into()));
-            }
             slots.push(Arc::new(observe::initialize(source).await?));
         }
         // Do not leave monitors behind when a later source fails initialization.
@@ -325,13 +335,31 @@ impl PhysicalBackend {
     /// Return registered metadata, always excluding gone generations.
     /// With `available_only`, also exclude claiming, leased, closing and quarantined devices.
     pub fn remote_devices(&self, available_only: bool) -> Result<Vec<RemoteDevice>> {
+        Ok(self
+            .catalog_with_access(available_only, &ConnectionAccess::Legacy)?
+            .into_iter()
+            .map(|entry| entry.metadata)
+            .collect())
+    }
+
+    fn catalog_with_access(
+        &self,
+        available_only: bool,
+        access: &ConnectionAccess,
+    ) -> Result<Vec<RegisteredDevice>> {
         let mut devices = Vec::new();
         for slot in self.slots.iter() {
             let state = slot.lock()?;
-            if state.state != "gone" && (!available_only || state.state == "available") {
+            if access.allows(&slot.key)
+                && state.state != "gone"
+                && (!available_only || state.state == "available")
+            {
                 let mut metadata = slot.metadata.clone();
                 metadata.configuration = state.configuration;
-                devices.push(metadata);
+                devices.push(RegisteredDevice {
+                    key: slot.key.clone(),
+                    metadata,
+                });
             }
         }
         Ok(devices)
@@ -383,10 +411,19 @@ pub(crate) struct PhysicalLease {
 
 impl ServingBackend for PhysicalBackend {
     type Lease = PhysicalLease;
-    fn remote_devices(&self, available_only: bool) -> Result<Vec<RemoteDevice>> {
-        self.remote_devices(available_only)
+    fn catalog(
+        &self,
+        available_only: bool,
+        access: &ConnectionAccess,
+    ) -> Result<Vec<RegisteredDevice>> {
+        self.catalog_with_access(available_only, access)
     }
-    async fn claim(&self, bus_id: &str) -> Result<Self::Lease> {
+    async fn claim(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+    ) -> Result<Self::Lease> {
         let slot = self
             .slots
             .iter()
@@ -398,8 +435,9 @@ impl ServingBackend for PhysicalBackend {
             let mut tasks = self.tasks.lock().map_err(|_| {
                 Error::State("physical task lock is poisoned; device is quarantined".into())
             })?;
-            tasks.check_supervisors()?;
             let mut state = slot.lock()?;
+            access.require(&slot.key, expected)?;
+            tasks.check_supervisors()?;
             if state.state == "gone" {
                 return Err(Error::InvalidInput(
                     "physical generation is gone; request a new explicit grant".into(),
@@ -746,7 +784,7 @@ mod tests {
         let source = PhysicalSource {
             fd: file.into(),
             device: Device {
-                id: "fixture".into(),
+                id: format!("usb-{}", "0".repeat(64)),
                 bus_id: rustusb_core::BusId::new("1-1")?,
                 vendor_id: 0x1234,
                 product_id: 1,
@@ -775,6 +813,20 @@ mod tests {
                 bus_number: 1,
             },
         };
+        // The invalid identity is rejected by registration before an FD or
+        // sysfs operation; a valid identity must still hit the regular-FD guard.
+        let invalid_identity = PhysicalSource {
+            fd: source.fd.try_clone()?,
+            device: Device {
+                id: "fixture".into(),
+                ..source.device.clone()
+            },
+            receipt: source.receipt.clone(),
+        };
+        assert!(matches!(
+            PhysicalBackend::from_sources(vec![invalid_identity]).await,
+            Err(Error::InvalidInput(_))
+        ));
         assert!(matches!(
             PhysicalBackend::from_sources(vec![source]).await,
             Err(Error::UnsafeDevice(_))

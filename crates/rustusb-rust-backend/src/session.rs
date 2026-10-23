@@ -4,8 +4,9 @@ use crate::{
     device::{DeviceLease, VirtualBackend},
     wire::{Completion, Submit},
 };
-use rustusb_core::{Error, Result};
+use rustusb_core::{DeviceKey, Error, Result};
 use rustusb_protocol::RemoteDevice;
+use rustusb_transport::VerifiedPeer;
 use std::{
     collections::VecDeque,
     future::Future,
@@ -34,10 +35,64 @@ pub(crate) enum TransferEvent {
     },
 }
 
+/// The authenticated stream is the only network source of this private context.
+#[derive(Clone)]
+pub(crate) enum ConnectionAccess {
+    Legacy,
+    Authenticated(VerifiedPeer),
+}
+
+impl ConnectionAccess {
+    pub(crate) fn allows(&self, key: &DeviceKey) -> bool {
+        match self {
+            Self::Legacy => true,
+            Self::Authenticated(peer) => peer.allows(key),
+        }
+    }
+
+    /// The requested stable key, current registry key and ACL must all agree.
+    /// Legacy requests never carry a secure key and cannot authorize TLS fallback.
+    pub(crate) fn require(&self, key: &DeviceKey, expected: Option<&DeviceKey>) -> Result<()> {
+        let permitted = match self {
+            Self::Legacy => expected.is_none(),
+            Self::Authenticated(peer) => expected == Some(key) && peer.allows(key),
+        };
+        if permitted {
+            Ok(())
+        } else {
+            Err(Error::Permission(
+                "device is not permitted for this connection".into(),
+            ))
+        }
+    }
+}
+
+pub(crate) struct RegisteredDevice {
+    pub(crate) key: DeviceKey,
+    pub(crate) metadata: RemoteDevice,
+}
+
 pub(crate) trait ServingBackend: Clone + Send + Sync + 'static {
     type Lease: SessionLease;
-    fn remote_devices(&self, available_only: bool) -> Result<Vec<RemoteDevice>>;
-    fn claim(&self, bus_id: &str) -> impl Future<Output = Result<Self::Lease>> + Send;
+    fn catalog(
+        &self,
+        available_only: bool,
+        access: &ConnectionAccess,
+    ) -> Result<Vec<RegisteredDevice>>;
+    #[cfg(test)]
+    fn remote_devices(&self, available_only: bool) -> Result<Vec<RemoteDevice>> {
+        Ok(self
+            .catalog(available_only, &ConnectionAccess::Legacy)?
+            .into_iter()
+            .map(|entry| entry.metadata)
+            .collect())
+    }
+    fn claim(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+    ) -> impl Future<Output = Result<Self::Lease>> + Send;
     /// Await all sessions already closing, never treating a deadline as release.
     fn settle_closed(&self) -> impl Future<Output = Result<()>> + Send;
 }
@@ -74,11 +129,20 @@ pub(crate) struct VirtualLease {
 
 impl ServingBackend for VirtualBackend {
     type Lease = VirtualLease;
-    fn remote_devices(&self, available_only: bool) -> Result<Vec<RemoteDevice>> {
-        VirtualBackend::remote_devices(self, available_only)
+    fn catalog(
+        &self,
+        available_only: bool,
+        access: &ConnectionAccess,
+    ) -> Result<Vec<RegisteredDevice>> {
+        self.catalog_with_access(available_only, access)
     }
-    async fn claim(&self, bus_id: &str) -> Result<Self::Lease> {
-        let lease = Arc::new(VirtualBackend::claim(self, bus_id)?);
+    async fn claim(
+        &self,
+        bus_id: &str,
+        expected: Option<&DeviceKey>,
+        access: &ConnectionAccess,
+    ) -> Result<Self::Lease> {
+        let lease = Arc::new(self.claim_with_access(bus_id, expected, access)?);
         Ok(VirtualLease {
             metadata: lease.device(),
             lease: Some(lease),

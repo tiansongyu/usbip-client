@@ -1,0 +1,102 @@
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+error: this `if` statement can be collapsed
+   --> crates/rustusb-daemon/src/native_channel.rs:444:9
+    |
+444 | /         if result.is_err() {
+445 | |             if let Ok(mut store) = store.lock() {
+446 | |                 store.unresolved(&id);
+447 | |             }
+448 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+444 ~         if result.is_err()
+445 ~             && let Ok(mut store) = store.lock() {
+446 |                 store.unresolved(&id);
+447 ~             }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/rustusb-daemon/src/native_state.rs:354:17
+    |
+354 | /                 if let Phase::Observed { receipt } = &record.state {
+355 | |                     if receipt.session.port != receipt.intent.port
+356 | |                         || receipt.session.status != 6
+357 | |                         || receipt.session.local_bus_id.is_none()
+...   |
+372 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+354 ~                 if let Phase::Observed { receipt } = &record.state
+355 ~                     && (receipt.session.port != receipt.intent.port
+356 |                         || receipt.session.status != 6
+...
+365 |                                     | record.target.remote.device_number,
+366 ~                             ))
+367 |                     {
+...
+370 |                         ));
+371 ~                     }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/rustusb-daemon/src/native_state.rs:393:17
+    |
+393 | /                 if let Some(bound) = &record.bound {
+394 | |                     if bound.generation != record.registration.generation
+395 | |                         || bound.attribute_device == 0
+396 | |                         || bound.attribute_inode == 0
+...   |
+404 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+393 ~                 if let Some(bound) = &record.bound
+394 ~                     && (bound.generation != record.registration.generation
+395 |                         || bound.attribute_device == 0
+396 |                         || bound.attribute_inode == 0
+397 |                         || bound.bound_profile.configuration.is_some()
+398 ~                         || !bound.bound_profile.interfaces.is_empty())
+399 |                     {
+...
+402 |                         ));
+403 ~                     }
+    |
+
+error: this `if` has identical blocks
+   --> crates/rustusb-daemon/src/linux.rs:883:38
+    |
+883 |       let response = match if uid == 0 {
+    |  ______________________________________^
+884 | |         Ok(())
+885 | |     } else if app.policy.authorize_broker(uid).is_ok() {
+    | |_____^
+    |
+note: same as this
+   --> crates/rustusb-daemon/src/linux.rs:885:56
+    |
+885 |       } else if app.policy.authorize_broker(uid).is_ok() {
+    |  ________________________________________________________^
+886 | |         Ok(())
+887 | |     } else {
+    | |_____^
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#if_same_then_else
+    = note: `-D clippy::if-same-then-else` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::if_same_then_else)]`
+
+error: could not compile `rustusb-daemon` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-daemon` (lib test) due to 4 previous errors

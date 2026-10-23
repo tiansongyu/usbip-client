@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T10:49:24.523452+00:00",
+  "result": "PROPOSED_MINIMAL_CONFIG_INTERFACE_REVIEW",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "scope": "Read-only source/design study; no builds/Cargo/QEMU/USB or repo changes by reviewer. Subsequent implementation requires root design authorization. No final architecture accepted on user behalf.",
+  "source_files": [
+    {
+      "path": "AGENTS.md",
+      "length": 5951,
+      "sha256": "abc09c8455825dcc9d2c5b57015c50e61f626b52234a26d5dfabbdae3151b79d"
+    },
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "length": 3719,
+      "sha256": "10ef52f9f77ca2da0eca60f9fee0f7b7082a6eb4bf0f658cf0e887f581ba2380"
+    },
+    {
+      "path": "docs/architecture.md",
+      "length": 23560,
+      "sha256": "4de5e58bfadcf29b35f88620189ff35bb415cf3034431b4906a146e608175ecd"
+    },
+    {
+      "path": "docs/security.md",
+      "length": 25700,
+      "sha256": "247d345170823874b217b7cb6ebe717fb3b85554b98b6eaf31cc3a669c9178c8"
+    },
+    {
+      "path": "docs/research/secure-transport-design.md",
+      "length": 12449,
+      "sha256": "ce25adea6a943052acc1b42bdf172fb570f751e4b4a8616483b0fe38709d8f61"
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "length": 17095,
+      "sha256": "3611c0dd1a121b91306344a3e69178ce4a270997612717bfadcfda7959742d44"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "length": 9876,
+      "sha256": "c3b4e917b67a297ff321239b71ae26be28efd8c41cbe231574acb78ab67d2d7f"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "length": 21491,
+      "sha256": "ab28cb8419f5bb2a07c855688bc9d1789d33edc1364b2a06b6be84051938f599"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "length": 73445,
+      "sha256": "373aace67ecb6f63d891005c2e20f777832d128461cb6e0bf2172e99f21b7c35"
+    },
+    {
+      "path": "crates/rustusb-transport/src/lib.rs",
+      "length": 2588,
+      "sha256": "df63a60e6fe75b569af0f12e2d022dca912b07107f723816ca47153c18920d58"
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls.rs",
+      "length": 13397,
+      "sha256": "0048c9f2f76ce64cf135f6c430cd996b80e249fe152a70440d99dee8ee38f716"
+    },
+    {
+      "path": "crates/rustusb-transport/src/acl.rs",
+      "length": 8198,
+      "sha256": "f02ebecc37fc37f6e16c9d1c834c79063e7bd0339592d68f904cd337985e2b81"
+    },
+    {
+      "path": "crates/rustusb-core/src/lib.rs",
+      "length": 13081,
+      "sha256": "bcebf74dd1aed8b99d8536935c48015a2a3af0bcca545cc9cdba27c74ba108db"
+    }
+  ],
+  "current_facts": [
+    {
+      "source": "daemon/lib.rs:219-327;linux.rs:840-852",
+      "fact": "Allowed legacy UIDs share all approved legacy device pools. There is no broker role or per-user device ownership boundary yet."
+    },
+    {
+      "source": "daemon/linux.rs:744-808,969-985",
+      "fact": "Existing root config/helper socket checks validate protected ancestors, NOFOLLOW/NONBLOCK open and fstat, bounded64KiB JSON, SO_PEERCRED root identity. Reuse the pattern, not its assumption that every server peer UID is root."
+    },
+    {
+      "source": "transport/tls.rs:55-99;lib.rs:1-9",
+      "fact": "Low-level TLS accepts memory DER, intentionally does not load trusted credential files or open listeners/devices. Preserve those APIs."
+    },
+    {
+      "source": "cli/physical_server.rs:36-134",
+      "fact": "Existing ordinary server obtains helper whole-device FDs then owns cleanup/Finish; SIGINT/SIGTERM preparation and output cleanup must remain intact."
+    },
+    {
+      "source": "rust-backend/server.rs:49-91",
+      "fact": "Plain listener ServerConfig requires trusted_network for nonloopback; TLS setup must not pretend that declaration is proof of TLS."
+    }
+  ],
+  "minimal_api": {
+    "module": "rustusb_transport::config",
+    "sync_functions": [
+      "load_server(path: &Path) -> Result<LoadedServerConfig>",
+      "load_client(path: &Path) -> Result<LoadedClientConfig>"
+    ],
+    "server_fields": {
+      "broker_uid": "nonzero u32, exact actual service UID",
+      "listen": "SocketAddr literal from root config",
+      "devices": "1..16 distinct core::DeviceKey values",
+      "tls": "TlsServer with root-defined principals; every principal device must belong to devices pool"
+    },
+    "client_fields": {
+      "broker_uid": "nonzero u32, exact actual service UID",
+      "server_id": "1..64 ASCII alias matching helper secure_imports root policy",
+      "endpoint": "core::Peer (validated Host and nonzero port), preserves DNS/IPv4/IPv6",
+      "server_name": "explicit bounded DNS/IP PKI name independent of resolved endpoint",
+      "device": "one exact core::DeviceKey for attach",
+      "tls": "TlsClient"
+    },
+    "private_json": {
+      "common": [
+        "schema_version=1",
+        "broker_uid",
+        "ca_certificates:1..32 absolute DER paths",
+        "certificate_chain:1..4 absolute DER paths",
+        "private_key:absolute DER path"
+      ],
+      "server": [
+        "listen",
+        "devices",
+        "principals:[{id,pins:[64lowerhex],devices:[qualified key]}]"
+      ],
+      "client": [
+        "server_id",
+        "endpoint",
+        "server_name",
+        "device"
+      ]
+    },
+    "parsing": "deny_unknown_fields, schema exactly1, fixed bounds, duplicates rejected; core key errors mapped to fixed transport context. No PEM/environment/CLI credential override or generic config framework.",
+    "call_boundary": "Synchronous loader in root CLI spawn_blocking; load and verify identity before listener or helper/USB actions. Return immutable loaded TLS objects, no private DER or raw config Debug.",
+    "namespace": "Loader may carry typed mixed pool; current CLI must require every key matches chosen backend before helper actions, never silently filter."
+  },
+  "os_roles": {
+    "required": [
+      "Dedicated nonroot broker UID must differ from interactive allowed_uids. New helper secure action checks the real UDS peer role.",
+      "Secure device pool and IDs obtainable through legacy Export/OpenPhysical must be disjoint or corresponding legacy actions denied.",
+      "Do not set trusted_network=true to pass old helper or listener checks; new typed secure action applies its own root role policy.",
+      "Same broker UID is one trusted OS domain. A subcommand name or executable hash cannot prove another process with that UID cannot act. Use dedicated nonlogin service account and root-managed config/ancestors; root remains trusted.",
+      "Client private keys belong to broker service, not interactive CLI. An interactive frontend must use peer-credential-authenticated local broker IPC with fixed remote/operation inputs, not self-reported principal/key paths."
+    ]
+  },
+  "trusted_file_rules": [
+    "Absolute paths, no parent traversal/symlink ancestors; root-owned and no group/other writable parent chain.",
+    "Config and public DER root-owned regular single-link files, no group/other write; config<=64KiB, certificate<=16KiB each and existing total/count caps.",
+    "Key owner root or exact broker UID, private0600 (or stricter owner-readable permissions as agreed), no group/other bits; root-protected parents, regular single-link, <=16KiB. root0600 unreadable to broker fails without chown/elevation.",
+    "Precheck regular type/metadata, NOFOLLOW|CLOEXEC|NONBLOCK open, compare fstat dev/inode/type/owner/mode; bounded max+1 read and error if oversized/changed. No FIFO/device reads.",
+    "Static credential/config stage+IO kind errors; do not log raw JSON, DER/key, unknown-field values, secret content or loaded object Debug. Startup snapshots only; rotation by controlled restart."
+  ],
+  "protocol_and_auth_risk": [
+    "Standard DEVLIST RemoteDevice does not contain stable DeviceKey. Authenticated bounded metadata must bind key to the selected BusID/current server slot; do not choose first device or infer from VIDPID. Root/I/H subsequently chose4B length+<=4KiB catalog/import prefix for this purpose.",
+    "DEVLIST filtering and IMPORT authorization need the same exact predicate, with the latter checked atomically in fixed backend slot.",
+    "Native exported state has dynamic cfg/IF; helper generation must retain strong fixed receipt and handle actual kernel ownership, not blindly trust BusID or config snapshot.",
+    "Legacy reachable usbipd/plain listeners remain bypass risks; disabling/isolation and actual IPv4/IPv6 evidence are required. Root can intentionally undermine service policy and remains trusted."
+  ],
+  "necessary_tests": [
+    "Actual file fixtures: unknown schema/fields, UID mismatch/zero, pool duplicates/subset errors, malformed key/DER, oversized and growing regular files.",
+    "Symlink/hardlink/FIFO/nonregular/groupwrite-parent/wrongowner/public-key-mode refusal; use test-only fixture trust root without weakening production ancestors.",
+    "Static error/Debug secret marker checks and ordinary nonbroker refusal before listener/helper action.",
+    "Helper role negatives: interactive UID denied secure FD, broker UID denied inappropriate legacy bypass, secure IDs inaccessible through old paths.",
+    "Keep actual TLS negative/flush/permit tests; end-to-end encrypted USB and PCAP/IPv4/IPv6 require separate acceptance."
+  ],
+  "implementation_edges": [
+    "Transport existing core/serde/serde_json/rustix dependency edges only; no new package or empty crate.",
+    "Root moves DeviceKey/VirtualProfile to core with serde/FromStr; transport reexports preserve public paths.",
+    "Owned implementation later: transport config.rs/tests/lib.rs/Cargo.toml; root owns CLI and workspace; H owns helper/FD roles."
+  ]
+}

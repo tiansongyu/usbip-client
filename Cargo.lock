@@ -710,6 +710,7 @@ dependencies = [
  "rustusb-native",
  "rustusb-protocol",
  "rustusb-rust-backend",
+ "rustusb-transport",
  "serde",
  "serde_json",
  "tokio",
@@ -736,6 +737,7 @@ dependencies = [
  "rustusb-core",
  "rustusb-linux",
  "rustusb-native",
+ "rustusb-protocol",
  "serde",
  "serde_json",
  "tempfile",
@@ -772,6 +774,7 @@ version = "0.1.0"
 dependencies = [
  "rustusb-core",
  "serde",
+ "serde_json",
  "tokio",
 ]
 
@@ -780,10 +783,12 @@ name = "rustusb-rust-backend"
 version = "0.1.0"
 dependencies = [
  "nusb",
+ "rcgen",
  "rustix",
  "rustusb-core",
  "rustusb-linux",
  "rustusb-protocol",
+ "rustusb-transport",
  "serde",
  "serde_json",
  "sha2",
@@ -796,7 +801,11 @@ name = "rustusb-transport"
 version = "0.1.0"
 dependencies = [
  "rcgen",
+ "rustix",
  "rustls",
+ "rustusb-core",
+ "serde",
+ "serde_json",
  "sha2",
  "thiserror",
  "tokio",

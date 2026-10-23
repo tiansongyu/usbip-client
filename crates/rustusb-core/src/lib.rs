@@ -1,5 +1,8 @@
 //! Shared domain types and backend contracts. This crate performs no privileged I/O.
 
+mod device_key;
+pub use device_key::{DeviceBackend, DeviceKey, VirtualProfile};
+
 use serde::{Deserialize, Serialize};
 use std::{fmt, future::Future, net::IpAddr, num::NonZeroU16, str::FromStr};
 

@@ -11,7 +11,8 @@ path = "src/main.rs"
 
 [features]
 default = []
-rust-backend = ["dep:rustusb-rust-backend"]
+secure-transport = ["dep:rustusb-transport"]
+rust-backend = ["dep:rustusb-rust-backend", "secure-transport"]
 physical-nusb = ["rust-backend", "rustusb-rust-backend/physical-nusb", "rustusb-daemon/physical-usb"]
 
 [dependencies]
@@ -21,6 +22,7 @@ rustusb-protocol.workspace = true
 rustusb-daemon.workspace = true
 rustusb-native.workspace = true
 rustusb-rust-backend = { workspace = true, optional = true }
+rustusb-transport = { workspace = true, optional = true }
 clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true

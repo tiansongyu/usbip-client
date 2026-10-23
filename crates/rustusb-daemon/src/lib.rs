@@ -4,7 +4,7 @@
 //! starts usbipd or configures a firewall. Native USB/IP traffic requires an
 //! independently administered trusted VPN or tunnel.
 
-use rustusb_core::{BusId, Error, Peer, Result, VhciPort};
+use rustusb_core::{BusId, DeviceKey, Error, Peer, Result, VhciPort};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
@@ -21,6 +21,23 @@ mod physical_recovery;
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
 pub use physical::PhysicalGrant;
 
+#[cfg(target_os = "linux")]
+mod ancillary;
+#[cfg(target_os = "linux")]
+mod native_channel;
+#[cfg(target_os = "linux")]
+mod native_export;
+#[cfg(target_os = "linux")]
+mod native_state;
+#[cfg(target_os = "linux")]
+pub use native_channel::{
+    NativeImportHandle, NativeImportReceipt, SecureImportTarget, prepare_native_import,
+};
+#[cfg(target_os = "linux")]
+pub use native_export::{
+    NativeExportHandle, NativeStubHandle, NativeStubReceipt, prepare_native_export,
+};
+
 /// Maximum line size, including the terminating newline, for local IPC.
 pub const MAX_FRAME_BYTES: usize = 64 * 1024;
 /// Maximum simultaneous local connections; rejected connections receive no work.
@@ -33,6 +50,42 @@ pub const STATUS_SCHEMA_VERSION: u32 = 1;
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
+    /// Prepare an anonymous kernel channel for the configured TLS broker.
+    #[cfg(target_os = "linux")]
+    PrepareNativeImport {
+        /// Typed logical peer and authenticated remote metadata supplied by the trusted broker.
+        target: SecureImportTarget,
+    },
+    /// Read unresolved secure Native channel records (root only).
+    NativePending {
+        /// Exclusive UUID cursor returned by the preceding page.
+        after: Option<String>,
+    },
+    /// Register a separately authorized Native device and retain its original attribute.
+    #[cfg(target_os = "linux")]
+    PrepareNativeExport {
+        /// Fingerprint in the administrator's dedicated secure Native pool.
+        device_id: String,
+    },
+    /// Reserve one anonymous stub channel on an existing same-process export lease.
+    #[cfg(target_os = "linux")]
+    OpenNativeStub {
+        /// Helper-issued live export lease; never a bearer credential.
+        lease_id: String,
+    },
+    /// Retire a demonstrably released original channel, without writing USB state (root only).
+    ReconcileNative {
+        /// Helper-issued channel identifier.
+        channel_id: String,
+    },
+    /// Delegate a device only to the separate secure broker role.
+    #[cfg(feature = "physical-usb")]
+    OpenSecurePhysical {
+        /// Durable lifecycle protocol version, currently 1.
+        journal_schema_version: u32,
+        /// Exact device fingerprint from the separate secure pool.
+        device_id: String,
+    },
     /// Complete an original owner's cooperative physical capability lifecycle.
     #[cfg(feature = "physical-usb")]
     FinishPhysical {
@@ -95,6 +148,30 @@ pub enum Request {
 #[derive(Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 enum RequestWire {
+    #[cfg(target_os = "linux")]
+    PrepareNativeImport {
+        target: SecureImportTarget,
+    },
+    NativePending {
+        #[serde(default)]
+        after: Option<String>,
+    },
+    #[cfg(target_os = "linux")]
+    PrepareNativeExport {
+        device_id: String,
+    },
+    #[cfg(target_os = "linux")]
+    OpenNativeStub {
+        lease_id: String,
+    },
+    ReconcileNative {
+        channel_id: String,
+    },
+    #[cfg(feature = "physical-usb")]
+    OpenSecurePhysical {
+        journal_schema_version: u32,
+        device_id: String,
+    },
     #[cfg(feature = "physical-usb")]
     FinishPhysical {
         lease_id: String,
@@ -136,6 +213,24 @@ impl<'de> Deserialize<'de> for Request {
         deserializer: D,
     ) -> std::result::Result<Self, D::Error> {
         Ok(match RequestWire::deserialize(deserializer)? {
+            #[cfg(target_os = "linux")]
+            RequestWire::PrepareNativeImport { target } => Self::PrepareNativeImport { target },
+            RequestWire::NativePending { after } => Self::NativePending { after },
+            #[cfg(target_os = "linux")]
+            RequestWire::PrepareNativeExport { device_id } => {
+                Self::PrepareNativeExport { device_id }
+            }
+            #[cfg(target_os = "linux")]
+            RequestWire::OpenNativeStub { lease_id } => Self::OpenNativeStub { lease_id },
+            RequestWire::ReconcileNative { channel_id } => Self::ReconcileNative { channel_id },
+            #[cfg(feature = "physical-usb")]
+            RequestWire::OpenSecurePhysical {
+                journal_schema_version,
+                device_id,
+            } => Self::OpenSecurePhysical {
+                journal_schema_version,
+                device_id,
+            },
             #[cfg(feature = "physical-usb")]
             RequestWire::FinishPhysical { lease_id } => Self::FinishPhysical { lease_id },
             #[cfg(feature = "physical-usb")]
@@ -218,11 +313,33 @@ impl Response {
     }
 }
 
+/// One root-configured logical server and its exact secure import key set.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SecureImportRule {
+    /// Nonsecret configured server identity; never an arbitrary filesystem path.
+    pub server_id: String,
+    /// Explicit stable backend-qualified device keys permitted through this broker.
+    pub device_keys: Vec<DeviceKey>,
+}
+
 /// Root-managed Phase 1 authorization. All listed UIDs share management of
 /// approved devices and ports created by this running helper instance.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Policy {
+    /// Dedicated non-root TLS broker UID, disjoint from interactive allowed UIDs.
+    #[serde(default)]
+    pub secure_broker_uid: Option<u32>,
+    /// Secure client logical server/device pool; empty disables secure imports.
+    #[serde(default)]
+    pub secure_imports: Vec<SecureImportRule>,
+    /// Secure USBFS pool, disjoint from every legacy/native pool.
+    #[serde(default)]
+    pub secure_physical_device_ids: Vec<String>,
+    /// Secure Native server pool, disjoint from every legacy/USBFS pool.
+    #[serde(default)]
+    pub secure_native_device_ids: Vec<String>,
     /// Explicit Linux UIDs; an empty list denies all requests.
     pub allowed_uids: Vec<u32>,
     /// Exact candidate device IDs approved for both export and unexport.
@@ -254,6 +371,58 @@ impl Policy {
         {
             return Err(Error::InvalidInput("policy entry limit exceeded".into()));
         }
+        if self.secure_imports.len() > 64
+            || self.secure_physical_device_ids.len() > 16
+            || self.secure_native_device_ids.len() > 16
+        {
+            return Err(Error::InvalidInput(
+                "secure broker policy limit exceeded".into(),
+            ));
+        }
+        if self
+            .secure_broker_uid
+            .is_some_and(|uid| uid == 0 || uid == u32::MAX || self.allowed_uids.contains(&uid))
+            || (self.secure_broker_uid.is_none()
+                && (!self.secure_imports.is_empty()
+                    || !self.secure_physical_device_ids.is_empty()
+                    || !self.secure_native_device_ids.is_empty()))
+        {
+            return Err(Error::InvalidInput(
+                "secure broker requires a separate non-root UID".into(),
+            ));
+        }
+        let mut secure_ids = std::collections::HashSet::new();
+        for id in self
+            .secure_physical_device_ids
+            .iter()
+            .chain(&self.secure_native_device_ids)
+        {
+            validate_device_id(id)?;
+            if !secure_ids.insert(id)
+                || self.export_device_ids.contains(id)
+                || self.physical_device_ids.contains(id)
+            {
+                return Err(Error::InvalidInput(
+                    "secure and legacy device pools must be disjoint".into(),
+                ));
+            }
+        }
+        let mut servers = std::collections::HashSet::new();
+        for rule in &self.secure_imports {
+            validate_server_id(&rule.server_id)?;
+            if !servers.insert(&rule.server_id)
+                || rule.device_keys.is_empty()
+                || rule.device_keys.len() > 16
+                || rule
+                    .device_keys
+                    .iter()
+                    .collect::<std::collections::HashSet<_>>()
+                    .len()
+                    != rule.device_keys.len()
+            {
+                return Err(Error::InvalidInput("invalid secure import pool".into()));
+            }
+        }
         for id in &self.export_device_ids {
             validate_device_id(id)?;
         }
@@ -268,13 +437,76 @@ impl Policy {
         let mut recovery_ids = std::collections::HashSet::new();
         for id in &self.physical_connect_restore_device_ids {
             validate_device_id(id)?;
-            if !self.physical_device_ids.contains(id) || !recovery_ids.insert(id) {
+            if (!self.physical_device_ids.contains(id)
+                && !self.secure_physical_device_ids.contains(id))
+                || !recovery_ids.insert(id)
+            {
                 return Err(Error::InvalidInput(
-                    "physical recovery IDs must be a unique subset of physical_device_ids".into(),
+                    "physical recovery IDs must be a unique subset of an authorized USBFS pool"
+                        .into(),
                 ));
             }
         }
         Ok(())
+    }
+
+    fn authorize_broker(&self, uid: u32) -> Result<()> {
+        if uid != 0 && self.secure_broker_uid == Some(uid) {
+            Ok(())
+        } else {
+            Err(Error::Permission(
+                "caller is not the configured secure broker".into(),
+            ))
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    fn authorize_import(&self, uid: u32, target: &SecureImportTarget) -> Result<()> {
+        self.authorize_broker(uid)?;
+        target.validate()?;
+        if self.secure_imports.iter().any(|rule| {
+            rule.server_id == target.server_id && rule.device_keys.contains(&target.device_key)
+        }) {
+            Ok(())
+        } else {
+            Err(Error::Permission(
+                "secure logical server/device is not approved".into(),
+            ))
+        }
+    }
+
+    #[cfg(feature = "physical-usb")]
+    fn authorize_secure_physical(&self, uid: u32, id: &str) -> Result<()> {
+        self.authorize_broker(uid)?;
+        validate_device_id(id)?;
+        if self
+            .secure_physical_device_ids
+            .iter()
+            .any(|value| value == id)
+        {
+            Ok(())
+        } else {
+            Err(Error::Permission(
+                "secure physical device is not approved".into(),
+            ))
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    fn authorize_secure_native(&self, uid: u32, id: &str) -> Result<()> {
+        self.authorize_broker(uid)?;
+        validate_device_id(id)?;
+        if self
+            .secure_native_device_ids
+            .iter()
+            .any(|value| value == id)
+        {
+            Ok(())
+        } else {
+            Err(Error::Permission(
+                "secure Native device is not approved".into(),
+            ))
+        }
     }
 
     fn authorize_uid(&self, uid: u32) -> Result<()> {
@@ -328,6 +560,18 @@ impl Policy {
     }
 }
 
+fn validate_server_id(id: &str) -> Result<()> {
+    if id.is_empty()
+        || id.len() > 64
+        || !id
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b"_.-".contains(&b))
+    {
+        return Err(Error::InvalidInput("invalid configured server ID".into()));
+    }
+    Ok(())
+}
+
 fn validate_device_id(id: &str) -> Result<()> {
     let Some(hex) = id.strip_prefix("usb-") else {
         return Err(Error::InvalidInput(
@@ -352,8 +596,22 @@ mod linux;
 /// Send one bounded request to a root-owned local socket and verify the server's
 /// kernel UID. The ordinary CLI never falls back to executing privileged tools.
 pub async fn request(socket: &Path, req: Request) -> Result<Response> {
+    #[cfg(target_os = "linux")]
+    if matches!(
+        req,
+        Request::PrepareNativeImport { .. }
+            | Request::PrepareNativeExport { .. }
+            | Request::OpenNativeStub { .. }
+    ) {
+        return Err(Error::InvalidInput(
+            "use the typed Native handle API for persistent descriptor transactions".into(),
+        ));
+    }
     #[cfg(feature = "physical-usb")]
-    if matches!(req, Request::OpenPhysical { .. }) {
+    if matches!(
+        req,
+        Request::OpenPhysical { .. } | Request::OpenSecurePhysical { .. }
+    ) {
         return Err(Error::InvalidInput(
             "use open_physical to receive the required file descriptor".into(),
         ));
@@ -375,7 +633,14 @@ pub async fn request(socket: &Path, req: Request) -> Result<Response> {
 /// helper. This is Linux-only and never falls back to opening a caller path.
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
 pub async fn open_physical(socket: &Path, device_id: String) -> Result<PhysicalGrant> {
-    linux::open_physical(socket, device_id).await
+    linux::open_physical(socket, device_id, false).await
+}
+
+/// Receive a USBFS capability solely under the configured secure broker role.
+/// Reuses the physical journal and FinishPhysical; no trusted-network declaration is inferred.
+#[cfg(all(feature = "physical-usb", target_os = "linux"))]
+pub async fn open_secure_physical(socket: &Path, device_id: String) -> Result<PhysicalGrant> {
+    linux::open_physical(socket, device_id, true).await
 }
 
 /// Run the root helper using a root-owned policy and protected socket directory.
@@ -384,7 +649,13 @@ pub async fn open_physical(socket: &Path, device_id: String) -> Result<PhysicalG
 pub async fn serve(config: &Path, socket: &Path) -> Result<()> {
     #[cfg(target_os = "linux")]
     {
-        linux::serve(config, socket, Path::new("/var/lib/rustusb/physical")).await
+        linux::serve(
+            config,
+            socket,
+            Path::new("/var/lib/rustusb/physical"),
+            Path::new("/var/lib/rustusb/native"),
+        )
+        .await
     }
     #[cfg(not(target_os = "linux"))]
     {
@@ -399,7 +670,7 @@ pub async fn serve(config: &Path, socket: &Path) -> Result<()> {
 pub async fn serve_with_physical_state(config: &Path, socket: &Path, state: &Path) -> Result<()> {
     #[cfg(target_os = "linux")]
     {
-        linux::serve(config, socket, state).await
+        linux::serve(config, socket, state, Path::new("/var/lib/rustusb/native")).await
     }
     #[cfg(not(target_os = "linux"))]
     {
@@ -415,6 +686,10 @@ mod tests {
 
     fn policy() -> Result<Policy> {
         Ok(Policy {
+            secure_broker_uid: None,
+            secure_imports: vec![],
+            secure_physical_device_ids: vec![],
+            secure_native_device_ids: vec![],
             allowed_uids: vec![1000],
             physical_device_ids: vec![],
             physical_connect_restore_device_ids: vec![],
@@ -428,6 +703,27 @@ mod tests {
         })
     }
 
+    #[test]
+    fn native_secure_commands_have_strict_bounded_wire_shapes() -> Result<()> {
+        let pending: Request = serde_json::from_str(r#"{"op":"native_pending","after":null}"#)
+            .map_err(|_| Error::Protocol("test request".into()))?;
+        assert!(matches!(pending, Request::NativePending { after: None }));
+        for invalid in [
+            r#"{"op":"native_pending","after":42}"#,
+            r#"{"op":"native_pending","extra":true}"#,
+            r#"{"op":"reconcile_native","channel_id":"id","acknowledge":true}"#,
+        ] {
+            assert!(serde_json::from_str::<Request>(invalid).is_err());
+        }
+        #[cfg(target_os = "linux")]
+        for invalid in [
+            r#"{"op":"prepare_native_export","device_id":"id","path":"/sys/other"}"#,
+            r#"{"op":"open_native_stub","lease_id":"id","fd":1}"#,
+        ] {
+            assert!(serde_json::from_str::<Request>(invalid).is_err());
+        }
+        Ok(())
+    }
     #[test]
     fn policy_is_default_deny_and_bounds_external_ids() -> Result<()> {
         let p = policy()?;
@@ -563,5 +859,86 @@ mod tests {
                 .error
                 .is_some_and(|message| message.contains("SERIAL_SECRET"))
         );
+    }
+}
+
+/// Run the helper with independently selected root-controlled physical and Native journals.
+/// Existing missing/corrupt state fails closed; client RPCs cannot select these paths.
+pub async fn serve_with_state(
+    config: &Path,
+    socket: &Path,
+    physical: &Path,
+    native: &Path,
+) -> Result<()> {
+    #[cfg(target_os = "linux")]
+    {
+        linux::serve(config, socket, physical, native).await
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = (config, socket, physical, native);
+        Err(Error::Unsupported("Linux root helper required".into()))
+    }
+}
+
+#[cfg(test)]
+mod secure_policy_tests {
+    use super::*;
+    fn policy() -> Policy {
+        Policy {
+            allowed_uids: vec![1000],
+            export_device_ids: vec![],
+            physical_device_ids: vec![],
+            physical_connect_restore_device_ids: vec![],
+            peers: vec![],
+            trusted_network: false,
+            secure_broker_uid: Some(2000),
+            secure_imports: vec![SecureImportRule {
+                server_id: "example".into(),
+                device_keys: vec![DeviceKey::virtual_profile(
+                    rustusb_core::VirtualProfile::Hid,
+                )],
+            }],
+            secure_physical_device_ids: vec![],
+            secure_native_device_ids: vec![],
+        }
+    }
+    #[test]
+    fn secure_role_is_separate_and_pools_cannot_bypass_it() -> Result<()> {
+        let mut p = policy();
+        p.validate()?;
+        assert!(p.authorize_uid(2000).is_err());
+        p.authorize_broker(2000)?;
+        assert!(p.authorize_broker(1000).is_err());
+        p.secure_broker_uid = Some(1000);
+        assert!(p.validate().is_err());
+        p.secure_broker_uid = Some(0);
+        assert!(p.validate().is_err());
+        p.secure_broker_uid = None;
+        assert!(p.validate().is_err());
+        p = policy();
+        let id = format!("usb-{}", "a".repeat(64));
+        p.secure_physical_device_ids.push(id.clone());
+        p.export_device_ids.push(id.clone());
+        assert!(p.validate().is_err());
+        p.export_device_ids.clear();
+        p.physical_connect_restore_device_ids.push(id.clone());
+        p.validate()?;
+        p.secure_native_device_ids.push(id);
+        assert!(p.validate().is_err());
+        Ok(())
+    }
+    #[cfg(feature = "physical-usb")]
+    #[test]
+    fn secure_usbfs_does_not_assert_trusted_network() -> Result<()> {
+        let mut p = policy();
+        let id = format!("usb-{}", "b".repeat(64));
+        p.secure_physical_device_ids.push(id.clone());
+        p.validate()?;
+        p.authorize_secure_physical(2000, &id)?;
+        assert!(!p.trusted_network);
+        assert!(p.authorize_physical(&id).is_err());
+        assert!(p.authorize_secure_physical(1000, &id).is_err());
+        Ok(())
     }
 }

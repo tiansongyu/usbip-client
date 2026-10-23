@@ -1,7 +1,8 @@
 //! Opt-in, bounded USB/IP service with virtual profiles and a Linux USBFS adapter.
 //!
 //! Physical access requires the `physical-nusb` feature and explicitly delegated
-//! device descriptors. This service does not provide authentication or TLS.
+//! device descriptors. Explicit TLS entry points authenticate peers and apply
+//! stable device-key authorization to discovery and pre-claim IMPORT.
 //! The Linux Native VHCI client remains responsible for kernel import operations.
 
 mod descriptors;
@@ -17,4 +18,4 @@ pub use device::*;
 pub use physical::*;
 #[doc(hidden)]
 pub use server::validate_server_frame;
-pub use server::{ServerConfig, ServerHandle};
+pub use server::{SecureServerConfig, ServerConfig, ServerHandle};

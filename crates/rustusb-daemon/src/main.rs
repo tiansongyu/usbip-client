@@ -18,6 +18,9 @@ struct Args {
     /// Root-only persistent physical grant journal, kept across helper restarts.
     #[arg(long, default_value = "/var/lib/rustusb/physical")]
     physical_state_dir: PathBuf,
+    /// Separate root-only secure Native channel intents, retained across restarts.
+    #[arg(long, default_value = "/var/lib/rustusb/native")]
+    native_state_dir: PathBuf,
 }
 
 #[tokio::main]
@@ -26,10 +29,11 @@ async fn main() -> std::process::ExitCode {
     tracing_subscriber::fmt()
         .with_writer(std::io::stderr)
         .init();
-    match rustusb_daemon::serve_with_physical_state(
+    match rustusb_daemon::serve_with_state(
         &args.config,
         &args.socket,
         &args.physical_state_dir,
+        &args.native_state_dir,
     )
     .await
     {

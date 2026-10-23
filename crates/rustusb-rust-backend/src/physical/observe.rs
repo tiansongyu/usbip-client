@@ -355,6 +355,7 @@ pub(super) async fn initialize(source: PhysicalSource) -> Result<Slot> {
         device,
         receipt,
     } = source;
+    let key = DeviceKey::physical(&device.id)?;
     if receipt.bus_number == 0
         || !(1..=127).contains(&receipt.usb_device_number)
         || receipt.usb_device_number != device.device_address
@@ -580,6 +581,7 @@ pub(super) async fn initialize(source: PhysicalSource) -> Result<Slot> {
         counters: PhysicalCounters::default(),
     };
     let slot = Slot {
+        key,
         usb,
         metadata,
         source: device,

@@ -1,0 +1,68 @@
+{
+  "status": "FRESH_SOURCE_FREEZE_PENDING_ROOT_RETEST",
+  "date_utc": "2026-10-23T11:09:23.710114+00:00",
+  "initial_handoff": {
+    "path": "/tmp/rustusb-secure-engine-author-handoff-20261023.json",
+    "sha256": "382ff96b961240773b340ffd979155c3236a4772d1d06197babf4836038e84cf"
+  },
+  "root_first_actual_test": {
+    "path": "/tmp/rustusb-secure-engine-config-first-20261023.log",
+    "sha256": "44e656f29f120bd7fd158b76a11bc12a58590425474c4f80a09784081fa31fbf",
+    "result": "FAIL: backend55passed/1failed, including11newTLS tests passed; initial result preserved"
+  },
+  "cause": "Old regular-file safety fixture device.id=fixture is not a valid stable physical fingerprint. New from_sources validates keys before FD/node validation, so old fixture was correctly rejected InvalidInput before its intended UnsafeDevice assertion.",
+  "revision": "Only physical.rs fixture: valid usb-64lowerhex identity restores original regular-file UnsafeDevice path; separately clone same regular FD with invalid identity and assert InvalidInput. Retains empty-source InvalidInput assertion. No production validation weakened and no real USB/sysfs fixture introduced.",
+  "files": [
+    {
+      "path": "crates/rustusb-rust-backend/Cargo.toml",
+      "length": 790,
+      "sha256": "4ca147163bb39fe7c4599dc9bec0303fd68acd04b9c82dd062fe1be4a4b553aa"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/lib.rs",
+      "length": 763,
+      "sha256": "3bc2bbfa7c1aae804ba9bd9c4226be23fc3fb9288baf9c6ac51eb72decf887ea"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/session.rs",
+      "length": 9266,
+      "sha256": "4b5f9e70d597e98df943fada3f7fccfc480b532d14ea6151a09956f474357c4a"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/device.rs",
+      "length": 47332,
+      "sha256": "6e7d502fe15edb448322907d8aba09e1d3b8cade087c82da05205c02dbf05dd0"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "length": 30554,
+      "sha256": "9032ea4cabff370a8be0f7d1b790b4f5ffa1e39e2a3fcbfb77706bcbe652bce6"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "length": 31203,
+      "sha256": "a5c249f3e4789bf46b17c87554297f27c436390765328b6a71eb28c645cfff42"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server.rs",
+      "length": 58654,
+      "sha256": "e7c3a40ce782b89cf8850e06969b4f0a92f4bd5adc0de63437b12fbe32b915d4"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "length": 24824,
+      "sha256": "83fdc628571dff803676266e7570c9602304c1cfb7aebcbd41398816221dc4cb"
+    }
+  ],
+  "static_checks": [
+    "single-file rustfmt skip_children=true",
+    "git diff --check on physical.rs"
+  ],
+  "author_not_executed": [
+    "Cargo",
+    "tests",
+    "build",
+    "QEMU"
+  ],
+  "notes": "Source has frozen again; root performs serial actual retest."
+}

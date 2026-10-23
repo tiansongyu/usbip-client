@@ -12,6 +12,7 @@ physical-nusb = ["dep:nusb", "dep:rustix", "dep:rustusb-linux"]
 [dependencies]
 rustusb-core.workspace = true
 rustusb-protocol.workspace = true
+rustusb-transport.workspace = true
 serde.workspace = true
 tokio.workspace = true
 tracing.workspace = true
@@ -24,6 +25,8 @@ rustusb-linux = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde_json.workspace = true
+rcgen.workspace = true
+tokio = { workspace = true, features = ["test-util"] }
 
 [lints]
 workspace = true

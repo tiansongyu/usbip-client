@@ -1,5 +1,8 @@
 //! Bounded Linux USB/IP DEVLIST client. URB transport remains in the native kernel backend.
 
+pub mod secure;
+pub mod server;
+
 use rustusb_core::{BusId, Error, Peer, Result};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, time::Duration};
@@ -19,6 +22,7 @@ pub const DEVLIST_REQUEST: [u8; 8] = [0x01, 0x11, 0x80, 0x05, 0, 0, 0, 0];
 
 /// Remote interface class tuple advertised by DEVLIST, without endpoint descriptors.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RemoteInterface {
     /// Interface class.
     pub class: u8,
@@ -30,6 +34,7 @@ pub struct RemoteInterface {
 
 /// Remote device metadata, not a claim of tested compatibility or access permission.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RemoteDevice {
     /// Validated remote bus ID.
     pub bus_id: BusId,
@@ -53,7 +58,7 @@ pub struct RemoteDevice {
     pub subclass: u8,
     /// Device protocol.
     pub protocol: u8,
-    /// Current configuration value.
+    /// Configuration in the peer's published descriptor snapshot, not live local kernel state.
     pub configuration: u8,
     /// Number of advertised configurations.
     pub num_configurations: u8,
@@ -80,6 +85,34 @@ fn wire_string(bytes: &[u8]) -> Result<String> {
     Ok(s.to_owned())
 }
 
+fn device_header(data: &[u8; 312]) -> Result<(RemoteDevice, usize)> {
+    let bus_id = BusId::new(wire_string(&data[256..288])?)
+        .map_err(|_| Error::Protocol("invalid remote bus ID".into()))?;
+    let count = usize::from(data[311]);
+    if count > MAX_INTERFACES {
+        return Err(Error::Protocol("interface count exceeds limit".into()));
+    }
+    Ok((
+        RemoteDevice {
+            bus_id,
+            path: wire_string(&data[..256])?,
+            bus_number: u32be(&data[288..292]),
+            device_number: u32be(&data[292..296]),
+            speed: u32be(&data[296..300]),
+            vendor_id: u16be(&data[300..302]),
+            product_id: u16be(&data[302..304]),
+            device_version: u16be(&data[304..306]),
+            class: data[306],
+            subclass: data[307],
+            protocol: data[308],
+            configuration: data[309],
+            num_configurations: data[310],
+            interfaces: Vec::with_capacity(count),
+        },
+        count,
+    ))
+}
+
 /// Parse one response with bounded allocations. Caller provides a deadline and closes on error.
 pub async fn read_devlist(reader: &mut (impl AsyncRead + Unpin)) -> Result<Vec<RemoteDevice>> {
     let mut header = [0; 12];
@@ -100,41 +133,20 @@ pub async fn read_devlist(reader: &mut (impl AsyncRead + Unpin)) -> Result<Vec<R
     for _ in 0..count {
         let mut d = [0; 312];
         reader.read_exact(&mut d).await?;
-        let bus_id = BusId::new(wire_string(&d[256..288])?)
-            .map_err(|_| Error::Protocol("invalid remote bus ID".into()))?;
-        if !seen.insert(bus_id.clone()) {
+        let (mut device, n) = device_header(&d)?;
+        if !seen.insert(device.bus_id.clone()) {
             return Err(Error::Protocol("duplicate remote bus ID".into()));
         }
-        let n = usize::from(d[311]);
-        if n > MAX_INTERFACES {
-            return Err(Error::Protocol("interface count exceeds limit".into()));
-        }
-        let mut interfaces = Vec::with_capacity(n);
         for _ in 0..n {
             let mut intf = [0; 4];
             reader.read_exact(&mut intf).await?;
-            interfaces.push(RemoteInterface {
+            device.interfaces.push(RemoteInterface {
                 class: intf[0],
                 subclass: intf[1],
                 protocol: intf[2],
             });
         }
-        result.push(RemoteDevice {
-            bus_id,
-            path: wire_string(&d[..256])?,
-            bus_number: u32be(&d[288..292]),
-            device_number: u32be(&d[292..296]),
-            speed: u32be(&d[296..300]),
-            vendor_id: u16be(&d[300..302]),
-            product_id: u16be(&d[302..304]),
-            device_version: u16be(&d[304..306]),
-            class: d[306],
-            subclass: d[307],
-            protocol: d[308],
-            configuration: d[309],
-            num_configurations: d[310],
-            interfaces,
-        });
+        result.push(device);
     }
     Ok(result)
 }

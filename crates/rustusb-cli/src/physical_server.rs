@@ -1,14 +1,13 @@
 //! Ordinary-user physical service: helper-issued descriptors, no arbitrary paths.
 
 use super::{
+    server_binding::Binding,
     shutdown_signals::ShutdownSignals,
     virtual_server::{Control, EventOutput, controls, parse},
 };
 use rustusb_core::{Error, Result};
-use rustusb_daemon::{Request, open_physical, request};
-use rustusb_rust_backend::{
-    PhysicalBackend, PhysicalSnapshot, PhysicalSource, ServerConfig, ServerHandle,
-};
+use rustusb_daemon::{Request, open_physical, open_secure_physical, request};
+use rustusb_rust_backend::{PhysicalBackend, PhysicalSnapshot, PhysicalSource, ServerConfig};
 use serde_json::json;
 use std::{
     collections::HashSet,
@@ -25,6 +24,27 @@ pub(super) async fn run(
     allowed_peers: Vec<IpAddr>,
     control_stdin: bool,
 ) -> Result<()> {
+    run_with_binding(
+        socket,
+        device_ids,
+        Binding::Legacy(ServerConfig {
+            listen,
+            trusted_network,
+            allowed_peers,
+        }),
+        control_stdin,
+        ShutdownSignals::new()?,
+    )
+    .await
+}
+
+pub(super) async fn run_with_binding(
+    socket: &Path,
+    device_ids: Vec<String>,
+    binding: Binding,
+    control_stdin: bool,
+    mut signals: ShutdownSignals,
+) -> Result<()> {
     if device_ids.is_empty()
         || device_ids.len() > 16
         || device_ids.iter().collect::<HashSet<_>>().len() != device_ids.len()
@@ -33,13 +53,8 @@ pub(super) async fn run(
             "select 1..16 distinct approved physical device fingerprints".into(),
         ));
     }
-    let config = ServerConfig {
-        listen,
-        trusted_network,
-        allowed_peers,
-    };
-    config.validate()?;
-    let mut signals = ShutdownSignals::new()?;
+    binding.validate()?;
+    let secure = binding.is_secure();
     let mut output = EventOutput::new()?;
     let mut lease_ids = Vec::with_capacity(device_ids.len());
     let mut initializing = false;
@@ -47,33 +62,40 @@ pub(super) async fn run(
         // Preparation cannot accept IMPORT or claim interfaces. Cancelling it
         // does not terminate any already-running blocking initialization call.
         let prepare = async {
-            let status = request(socket, Request::Status).await?;
-            if !status.ok {
-                return Err(Error::State(status.error.unwrap_or_else(|| {
-                    "helper rejected physical service caller".into()
-                })));
-            }
-            if status
-                .data
-                .get("physical_usb_capability_enabled")
-                .and_then(|value| value.as_bool())
-                != Some(true)
-            {
-                return Err(Error::Unsupported("install a matching helper built with physical-usb and configure its physical_device_ids allowlist".into()));
-            }
-            if status
-                .data
-                .get("physical_journal_schema_version")
-                .and_then(|value| value.as_u64())
-                != Some(1)
-            {
-                return Err(Error::Unsupported(
-                    "install a matching helper with physical delegation journal schema 1".into(),
-                ));
+            if !secure {
+                let status = request(socket, Request::Status).await?;
+                if !status.ok {
+                    return Err(Error::State(status.error.unwrap_or_else(|| {
+                        "helper rejected physical service caller".into()
+                    })));
+                }
+                if status
+                    .data
+                    .get("physical_usb_capability_enabled")
+                    .and_then(|value| value.as_bool())
+                    != Some(true)
+                {
+                    return Err(Error::Unsupported("install a matching helper built with physical-usb and configure its physical_device_ids allowlist".into()));
+                }
+                if status
+                    .data
+                    .get("physical_journal_schema_version")
+                    .and_then(|value| value.as_u64())
+                    != Some(1)
+                {
+                    return Err(Error::Unsupported(
+                        "install a matching helper with physical delegation journal schema 1"
+                            .into(),
+                    ));
+                }
             }
             let mut sources = Vec::with_capacity(device_ids.len());
             for device_id in device_ids {
-                let grant = open_physical(socket, device_id).await?;
+                let grant = if secure {
+                    open_secure_physical(socket, device_id).await?
+                } else {
+                    open_physical(socket, device_id).await?
+                };
                 // Keep received identities outside the cancelable preparation
                 // future; dropping its sources cannot lose the finish list.
                 lease_ids.push(grant.lease_id);
@@ -111,7 +133,7 @@ pub(super) async fn run(
         }
     };
     // Do not race bind: its returned handle may already own a listener task.
-    let server = match ServerHandle::bind_physical(config, backend.clone()).await {
+    let server = match binding.bind_physical(backend.clone()).await {
         Ok(server) => server,
         Err(error) => {
             close_and_finish(socket, backend, &lease_ids).await?;
@@ -119,7 +141,11 @@ pub(super) async fn run(
         }
     };
     let operations = async {
-        output.event(json!({"schema_version":1,"event":"ready","address":server.local_addr(),"snapshot":backend.snapshot()?})).await?;
+        let mut ready = json!({"schema_version":1,"event":"ready","address":server.local_addr(),"snapshot":backend.snapshot()?});
+        if secure {
+            ready["transport"] = json!("mutual_tls");
+        }
+        output.event(ready).await?;
         if !control_stdin {
             std::future::pending::<()>().await;
         }

@@ -1,4 +1,5 @@
 use crate::{Error, Result};
+pub use rustusb_core::{DeviceKey, VirtualProfile};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -10,60 +11,6 @@ const MAX_PRINCIPALS: usize = 64;
 const MAX_PINS: usize = 2;
 const MAX_DEVICES: usize = 16;
 pub(crate) const MAX_CERT_BYTES: usize = 16 * 1024;
-
-/// Fixed virtual profiles; these names cannot authorize a physical device.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum VirtualProfile {
-    /// The built-in virtual HID profile.
-    Hid,
-    /// The built-in virtual CDC ACM profile.
-    CdcAcm,
-}
-
-/// A validated stable device key, distinct from a temporary USB bus ID.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct DeviceKey(String);
-
-impl DeviceKey {
-    /// Construct a USBFS key from an existing `usb-` plus 64-lowercase-hex fingerprint.
-    pub fn physical(fingerprint: &str) -> Result<Self> {
-        Self::fingerprint("physical", fingerprint)
-    }
-
-    /// Construct a Native export key from an existing candidate fingerprint.
-    pub fn native(fingerprint: &str) -> Result<Self> {
-        Self::fingerprint("native", fingerprint)
-    }
-
-    /// Construct a key for a fixed built-in virtual profile.
-    pub fn virtual_profile(profile: VirtualProfile) -> Self {
-        Self(
-            match profile {
-                VirtualProfile::Hid => "virtual:hid",
-                VirtualProfile::CdcAcm => "virtual:cdc-acm",
-            }
-            .into(),
-        )
-    }
-
-    /// Borrow the canonical, backend-qualified key.
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-
-    fn fingerprint(namespace: &str, value: &str) -> Result<Self> {
-        let valid = value.strip_prefix("usb-").is_some_and(|hex| {
-            hex.len() == 64
-                && hex
-                    .bytes()
-                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-        });
-        if !valid {
-            return Err(Error::InvalidInput("device fingerprint"));
-        }
-        Ok(Self(format!("{namespace}:{value}")))
-    }
-}
 
 /// SHA-256 of a complete DER leaf certificate; a pin never replaces PKI validation.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

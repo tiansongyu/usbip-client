@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "author source handoff",
+  "time_utc": "2026-10-23T11:56:13.794432+00:00",
+  "head": "056341c30d15157d941566c90193c9d384b51d45",
+  "result": "SOURCE_FROZEN_BUILD_PENDING",
+  "files": [
+    {
+      "path": "crates/rustusb-cli/src/native_server.rs",
+      "length": 24668,
+      "sha256": "038867e74e04d3939749cc45a0152be875dc1c269df834a28512e8486a9dfbb3"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_server.rs",
+      "length": 5465,
+      "sha256": "5a151350ead3a405a2050a89f5842865b99dbf2e08cd6baaf8de4709af1a9a99"
+    },
+    {
+      "path": "crates/rustusb-cli/src/server_binding.rs",
+      "length": 1577,
+      "sha256": "f87d02f656ccd119b2ac3e167939f83342556cc9ce9573cb54294e50c686f597"
+    },
+    {
+      "path": "crates/rustusb-cli/src/event_output.rs",
+      "length": 2400,
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs",
+      "length": 8194,
+      "sha256": "f96f30458f8b9bbd5b4d7c22b483014a92678861c9452c040907ce34d7686793"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "length": 10648,
+      "sha256": "68a4f7c6470a0594b71a4c60b0562719913751b4a96a0f1fd5042cf1bc0242dc"
+    }
+  ],
+  "changes": [
+    "Native CLI uses real NativeExportHandle and NativeStubHandle, no plaintext backend listener or Rust engine dependency in native-only feature.",
+    "Trusted config namespace is validated before helper actions; exact DeviceKey, BusID and actual TLS peer ACL checked before helper stub open.",
+    "Published metadata is explicitly preexport registration snapshot, not live configuration/IF state.",
+    "Helper prepare/open/commit calls are not dropped midway on cooperative stop; every known stub closes before export cleanup.",
+    "IMPORT success is written and flushed before any raw kernel relay bytes.",
+    "16 owned connection permits cover handshake, relay and actual stub cleanup; accepted connections and per-export watcher tasks are joined, never detached or aborted during helper transactions.",
+    "Bounded inherited EventOutput handles signal and blocked stdout; Native controls support snapshot/shutdown only.",
+    "Added four private in-memory/control tests, plus Native namespace cases in existing namespace test."
+  ],
+  "validation": {
+    "executed": [
+      "rustfmt --edition 2024 crates/rustusb-cli/src/native_server.rs crates/rustusb-cli/src/secure_server.rs"
+    ],
+    "not_executed": [
+      "Cargo",
+      "rustc",
+      "Clippy",
+      "unit tests",
+      "QEMU",
+      "USB operations"
+    ],
+    "new_tests": [
+      "relay_copies_both_directions_and_first_eof_releases_other_half",
+      "shutdown_releases_both_streams_even_without_peer_eof",
+      "export_invalidation_ends_idle_relay_with_error",
+      "local_controls_are_strict_and_do_not_accept_device_mutations"
+    ],
+    "test_scope": "Memory I/O/control branches only; no claim of helper/kernel/driver or physical validation."
+  },
+  "limits": [
+    "Actual full-workspace/Native-only compilation is root-owned and pending for these source bytes.",
+    "Native helper can retain uncertainty and unresolved records; no generic hotplug or cross-configuration restoration guarantee.",
+    "Kernel hardblocking can delay cooperative cleanup; no fake abort or fixed total cleanup assertion.",
+    "Dedicated broker UID is a trust domain, not per-executable isolation."
+  ]
+}

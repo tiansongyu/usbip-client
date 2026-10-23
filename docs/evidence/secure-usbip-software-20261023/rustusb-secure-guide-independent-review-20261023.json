@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "result": "NO_PRODUCT_OR_EXAMPLE_BLOCKER_FOUND_TWO_WORDING_CLARIFICATIONS",
+  "kind": "read-only documentation/source review",
+  "head": "db2d4c8719e6dcdfc10d9ffb636070712e91212b",
+  "sources": [
+    {
+      "path": "docs/secure-guide.md",
+      "length": 7684,
+      "sha256": "a3c968d6045b44d52d7366b75799f3a8909d766dcd5c0de60d3f1336b167b3b9"
+    },
+    {
+      "path": "crates/rustusb-cli/Cargo.toml",
+      "length": 896,
+      "sha256": "1b8e37c2c91639aa190bf154ea00822409166782f36df2d5d1bd25cdbea2b3f7"
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "length": 24214,
+      "sha256": "88350b176c71076504a4f1b4d4a8a20813a83af873965453d62971332e266f0c"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_server.rs",
+      "length": 5465,
+      "sha256": "5a151350ead3a405a2050a89f5842865b99dbf2e08cd6baaf8de4709af1a9a99"
+    },
+    {
+      "path": "crates/rustusb-cli/src/native_server.rs",
+      "length": 24668,
+      "sha256": "038867e74e04d3939749cc45a0152be875dc1c269df834a28512e8486a9dfbb3"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_client.rs",
+      "length": 6816,
+      "sha256": "43882ff769a0c0fe9ea021803a1888d2f45f3933fbcf6bed5e8cdea9fc1874e4"
+    },
+    {
+      "path": "crates/rustusb-core/src/device_key.rs",
+      "length": 6347,
+      "sha256": "636cdde09e253d9a04850fa575289a5edaabff8a6108cd1a7c51e8c5218b949f"
+    },
+    {
+      "path": "crates/rustusb-transport/src/config.rs",
+      "length": 17109,
+      "sha256": "692962a36f7acb5a74fd4c8e17b9e861b031dc983be959862dd6e19ecc3e68b4"
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls.rs",
+      "length": 13397,
+      "sha256": "0048c9f2f76ce64cf135f6c430cd996b80e249fe152a70440d99dee8ee38f716"
+    },
+    {
+      "path": "crates/rustusb-transport/src/acl.rs",
+      "length": 6510,
+      "sha256": "6318a42913fe077830f29c6cef9a0529bbb9fa388d88ac58181b9870937cd902"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "length": 35032,
+      "sha256": "ae7cc2fc0d9dadc47badf7a63f318213ab2a68d62381fad33e90ca392b33e429"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/main.rs",
+      "length": 1468,
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_export.rs",
+      "length": 31556,
+      "sha256": "98e64183c582cb113fe2578d71c0a86d8983df74a24d8027f82a8a313c3d524c"
+    }
+  ],
+  "checks": [
+    {
+      "name": "JSON examples syntactically valid",
+      "passed": true,
+      "scope": "Python JSON syntax only; deliberate digest placeholder must be replaced, not a claim Rust/crypto accepted this literal."
+    },
+    {
+      "name": "exact canonical keys",
+      "passed": true
+    },
+    {
+      "name": "relative documentation links exist",
+      "passed": true,
+      "links": [
+        {
+          "label": "integration contract",
+          "target": "research/secure-usbip-integration.md",
+          "exists": true
+        },
+        {
+          "label": "Native guide",
+          "target": "native-guide.md",
+          "exists": true
+        }
+      ]
+    }
+  ],
+  "verified_by_source": [
+    "Server/client flat schema_version1 JSON, broker actual nonzero UID equality, client logical server_id and Peer shape.",
+    "Dedicated UID disjoint from interactive UIDs, secure Native/USBFS pools disjoint from legacy pools and each other; logical import rule uses exact stable key.",
+    "DER CA/chain public root-owned/nonwritable parents, secret root-or-broker0600 regular/single-link protected read, no automatic permissions bypass. PKCS8 is a valid recommended subset of accepted DER key formats.",
+    "Mandatory TLS1.3+mTLS+ALPN, leaf pin adds per-device authority after standard chain verification.",
+    "Secure-server backend options and Native-only secure-transport build do not require Rust device engine; full all-features build provides virtual/usbfs/native.",
+    "Actual secure-discover/attach, native-pending --after and native-reconcile spellings; helper defaults Native journal /var/lib/rustusb/native.",
+    "Actual connected/disconnected schema and cleanup_verified emitted only after real handle.close response, output backpressure may prevent final event; source does not treat OS EOF as cleanup receipt.",
+    "Documentation explicitly leaves new end-to-end QEMU acceptance pending and retains hardware/ISO/general recovery/Phase3 gates."
+  ],
+  "clarifications": [
+    {
+      "path": "docs/secure-guide.md",
+      "phrase": "64 hexadecimal digits ... pins",
+      "recommendation": "Say 64 lowercase hexadecimal digits, matching CertificatePin::from_hex. The supplied openssl command already emits lowercase so the documented command works.",
+      "source": "crates/rustusb-transport/src/acl.rs:21",
+      "severity": "wording precision"
+    },
+    {
+      "path": "docs/secure-guide.md",
+      "phrase": "Native publishes the actual pre-export descriptor snapshot; it reports current configuration and driver state separately.",
+      "recommendation": "State current CLI snapshot is published registration metadata plus accepting_imports, not a current configuration/driver report; current phase is retained in helper receipts and should be independently observed via sysfs/device inspection.",
+      "source": "crates/rustusb-cli/src/native_server.rs:published_snapshot and crates/rustusb-daemon/src/native_export.rs:NativeStubReceipt",
+      "severity": "avoid false field/API expectation"
+    }
+  ],
+  "not_executed": [
+    "No Cargo/rustc/tests/QEMU/USB operations.",
+    "No server/helper/CLI command execution.",
+    "No certificate deployment or filesystem ownership proof."
+  ],
+  "repository_changes": "None by this reviewer; reports only /tmp."
+}

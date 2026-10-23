@@ -454,7 +454,7 @@ fn principal_policy_rejects_ambiguous_empty_and_excessive_fields() -> TestResult
     assert!(PrincipalRule::new("a", vec![pin], vec![hid(), hid()]).is_err());
     let devices = (0..17)
         .map(|i| DeviceKey::physical(&format!("usb-{i:064x}")))
-        .collect::<Result<Vec<_>>>()?;
+        .collect::<rustusb_core::Result<Vec<_>>>()?;
     assert!(PrincipalRule::new("a", vec![pin], devices).is_err());
     let rule = PrincipalRule::new("a", vec![pin], vec![hid()])?;
     assert!(AccessPolicy::new(vec![rule.clone(), rule]).is_err());
