@@ -1,0 +1,159 @@
+{
+  "builds_or_runtime_tests_executed": false,
+  "candidate": "1762d6534cc1ef2bf588d8242dc1947f11b4e15d",
+  "checks": [
+    {
+      "finding": "SIGINT and SIGTERM register synchronously; registration errors propagate; no unsafe/custom handler or added dependency.",
+      "name": "unix_synchronous_handlers",
+      "passed": true,
+      "source": "shutdown_signals.rs:16-22"
+    },
+    {
+      "finding": "Either signal wakes recv; None maps to BrokenPipe, never successful termination.",
+      "name": "stream_closure_error",
+      "passed": true,
+      "source": "shutdown_signals.rs:26-38"
+    },
+    {
+      "finding": "Handlers precede output thread, backend and listener.",
+      "name": "virtual_before_resources",
+      "passed": true,
+      "source": "virtual_server.rs:177-180"
+    },
+    {
+      "finding": "Pure selection/policy validation precedes handlers; helper I/O and FD acquisition follow handlers.",
+      "name": "physical_before_io",
+      "passed": true,
+      "source": "physical_server.rs:39-42"
+    },
+    {
+      "finding": "Only prepare competes with signal. Accepted helper operations or already-running spawn_blocking initialization may continue; no IMPORT/driver claims occur during from_sources.",
+      "name": "cancel_prepare_without_listener",
+      "passed": true,
+      "source": "physical_server.rs:42-78"
+    },
+    {
+      "finding": "Bind is directly awaited, so a ready ServerHandle is not dropped by an outer signal select. Pending registered signals are then consumed before operations via biased select.",
+      "name": "no_bind_cancellation_race",
+      "passed": true,
+      "source": "physical_server.rs:80-81; virtual_server.rs:180-188"
+    },
+    {
+      "finding": "Failure to create output thread occurs before a listener exists.",
+      "name": "output_creation_before_bind",
+      "passed": true,
+      "source": "physical_server.rs:40; virtual_server.rs:178"
+    },
+    {
+      "finding": "Result is captured rather than propagated out of the operation select; shutdown is awaited before propagating operation errors.",
+      "name": "operations_always_cleanup",
+      "passed": true,
+      "source": "physical_server.rs:112-124; virtual_server.rs:234-245"
+    },
+    {
+      "finding": "cleanup/shutdown ? precedes result ?, preserving cleanup failure over a simultaneous output/control/signal error.",
+      "name": "cleanup_error_priority",
+      "passed": true,
+      "source": "physical_server.rs:123-125; virtual_server.rs:243-245"
+    },
+    {
+      "finding": "Signal object remains in scope while shutdown awaits; shutdown is not raced with a repeated signal. Notifications may coalesce.",
+      "name": "repeated_signal_keeps_cleanup_alive",
+      "passed": true,
+      "source": "physical_server.rs:123; virtual_server.rs:243"
+    },
+    {
+      "finding": "Cancelled EventOutput future leaves in_flight true; after cleanup the same blocked sink is not written again.",
+      "name": "blocked_stdout_no_second_write",
+      "passed": true,
+      "source": "physical_server.rs:126-128; virtual_server.rs:246-250"
+    },
+    {
+      "finding": "A final stopped event is raced against the same still-live signal object, after cleanup only.",
+      "name": "stopped_output_signal_cancellable",
+      "passed": true,
+      "source": "physical_server.rs:129-134; virtual_server.rs:251-255"
+    },
+    {
+      "finding": "Virtual/physical commands call run directly; generic outer Ctrl-C select and stdout JSON fallback do not apply to server commands.",
+      "name": "main_does_not_cancel_server_tree",
+      "passed": true,
+      "source": "main.rs:403-414"
+    },
+    {
+      "finding": "Unix types/fields/recv are cfg-gated; non-Unix keeps ctrl_c branch and an empty valid signal object. Source review only; no cross-platform compile was performed.",
+      "name": "nonunix_source_cfg",
+      "passed": true,
+      "source": "shutdown_signals.rs:4-12,40-43; main.rs:3-8"
+    },
+    {
+      "finding": "Existing shutdown sends stop, joins listener; listener aborts+joins network tree then awaits settle_closed with existing cleanup deadline. This patch does not replace cleanup with process/socket close.",
+      "name": "backend_cleanup_dependency",
+      "passed": true,
+      "source": "server.rs:139-154,199-211"
+    },
+    {
+      "finding": "Server errors still log stderr, without JSON stdout fallback. No promise is made that arbitrary blocked stderr exits within a bound.",
+      "name": "logging_scope_unchanged",
+      "passed": true,
+      "source": "main.rs:424-435; virtual_server.rs:79-127"
+    }
+  ],
+  "independent_product_review": true,
+  "limitations": [
+    "Runtime subprocess and guest physical validation remain required; this source review is not runtime acceptance.",
+    "Prepare cancellation does not terminate already-running blocking work or roll back an accepted helper action.",
+    "SIGKILL/abort/panic and cross-process recovery remain outside this change.",
+    "Existing physical cleanup timeout/quarantine and hard-blocking ioctl limits remain; arbitrary stderr sink backpressure is not solved.",
+    "Non-Unix compatibility is a source-level cfg assessment only."
+  ],
+  "must_fix": [],
+  "repository_writes": false,
+  "result": "PASS_SOURCE_REVIEW",
+  "reviewer_is_local_harness_author": true,
+  "schema_version": 1,
+  "scope": "Read-only independent review of another agent product implementation; not an independent review of my own harness. No builds, child tests, signals, USB, ptrace or QEMU executed.",
+  "source_artifacts": [
+    {
+      "length": 15809,
+      "path": "crates/rustusb-cli/src/main.rs",
+      "sha256": "c21ee5b940b50e238d51c17a54a6af03ca52fada7f5f16e80c89940945498703"
+    },
+    {
+      "length": 5852,
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "sha256": "a35b88aa74376bbc22dbf755e1c421e0ec8002af7521094f7c824504e142915b"
+    },
+    {
+      "length": 1346,
+      "path": "crates/rustusb-cli/src/shutdown_signals.rs",
+      "sha256": "6624e3c3751e79296e282ef9fd870378998e8032581fe7117d5e024de1223ad6"
+    },
+    {
+      "length": 10010,
+      "path": "crates/rustusb-cli/src/virtual_server.rs",
+      "sha256": "dfcdf4c2ace5449807aee1b44f589e281cfa5daa22b0428b19f7d7be8594a5cb"
+    },
+    {
+      "length": 773,
+      "path": "crates/rustusb-cli/Cargo.toml",
+      "sha256": "d20988d27ddb4c798315fe465545ab027a029473cc22c23808d4fcb3ecddf880"
+    },
+    {
+      "length": 52043,
+      "path": "crates/rustusb-rust-backend/src/server.rs",
+      "sha256": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532"
+    },
+    {
+      "length": 20028,
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2"
+    },
+    {
+      "length": 31142,
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d"
+    }
+  ],
+  "worktree": "/tmp/rustusb-sigterm-implementation-20261023"
+}

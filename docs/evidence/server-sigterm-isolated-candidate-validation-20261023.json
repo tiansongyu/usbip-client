@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "at_utc": "2026-10-23T03:58:35.818333+00:00",
+  "worktree": "/tmp/rustusb-sigterm-implementation-20261023",
+  "base_commit": "cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd",
+  "commit": "1762d6534cc1ef2bf588d8242dc1947f11b4e15d",
+  "pushed": false,
+  "working_tree_clean": true,
+  "scope": "Only four CLI product files. Main repository, docs, harness, vendor, Cargo files and shared target untouched.",
+  "target_dir": "/tmp/rustusb-sigterm-target-20261023",
+  "all_builds_terminal": true,
+  "source_sha256": {
+    "crates/rustusb-cli/src/main.rs": "c21ee5b940b50e238d51c17a54a6af03ca52fada7f5f16e80c89940945498703",
+    "crates/rustusb-cli/src/physical_server.rs": "a35b88aa74376bbc22dbf755e1c421e0ec8002af7521094f7c824504e142915b",
+    "crates/rustusb-cli/src/shutdown_signals.rs": "6624e3c3751e79296e282ef9fd870378998e8032581fe7117d5e024de1223ad6",
+    "crates/rustusb-cli/src/virtual_server.rs": "dfcdf4c2ace5449807aee1b44f589e281cfa5daa22b0428b19f7d7be8594a5cb"
+  },
+  "checks": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0,
+      "stdout": "",
+      "raw_log": "Tool response only, no dedicated raw log captured"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "stdout": ""
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/tmp/rustusb-sigterm-target-20261023 cargo test -p rustusb-cli --all-features",
+      "exit_code": 0,
+      "tests_passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "raw_log": "/tmp/rustusb-sigterm-cli-targeted-tests-20261023.log"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/tmp/rustusb-sigterm-target-20261023 cargo clippy -p rustusb-cli --all-features --all-targets -- -D warnings",
+      "exit_code": 0,
+      "raw_log": "/tmp/rustusb-sigterm-cli-targeted-clippy-20261023.log"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/tmp/rustusb-sigterm-target-20261023 cargo build -p rustusb-cli --all-features",
+      "exit_code": 0,
+      "profile": "dev",
+      "raw_log": "/tmp/rustusb-sigterm-cli-targeted-build-20261023.log"
+    }
+  ],
+  "check_provenance": "Source bytes were unchanged after implementation throughout these checks and at commit. No per-command pre-run manifest was captured; root full frozen gates remain separate.",
+  "binary": {
+    "path": "/tmp/rustusb-sigterm-target-20261023/debug/rustusb",
+    "sha256": "83f62d798c7609eb653e5c3c31ae56fa67677e968697bef4dab702e7c82554ea"
+  },
+  "artifacts": {
+    "cli_all_features_test": {
+      "path": "/tmp/rustusb-sigterm-cli-targeted-tests-20261023.log",
+      "bytes": 3405,
+      "sha256": "d15b9c54b8dfc99b64517adba3ac6cafddd101b68c53a3751299aebdb01b87dd"
+    },
+    "cli_all_features_clippy": {
+      "path": "/tmp/rustusb-sigterm-cli-targeted-clippy-20261023.log",
+      "bytes": 2561,
+      "sha256": "1e1415c6fc66997704b27f5e346e765b6113e7bfd5bbe193abdc6f2414d51d82"
+    },
+    "cli_all_features_debug_build": {
+      "path": "/tmp/rustusb-sigterm-cli-targeted-build-20261023.log",
+      "bytes": 170,
+      "sha256": "9c92656470ef92fc0b1da89fe7f25ecd9f2ad8cc11f86b4260a92ba62c22e047"
+    },
+    "patch": {
+      "path": "/tmp/rustusb-sigterm-implementation-1762d65-20261023.patch",
+      "bytes": 9777,
+      "sha256": "9e3275044b7cc3dd48c4ccd6e98b79caac49ecb96cdaed6098192ebed848d0a6"
+    }
+  },
+  "implementation_boundaries": [
+    "Unix signal pair created synchronously before first await/helper IO; object remains live through cleanup/final output.",
+    "Only listener-free physical prepare is cancelled, signal-first biased. Bind is not raced.",
+    "EventOutput created before bind. Every post-bind operation result passes through awaited server.shutdown; cleanup error takes precedence.",
+    "Repeated signals cannot discard cleanup; pending new signal can skip/cancel final stopped output after cleanup.",
+    "Non-Unix ctrl_c retained. No SIGKILL, abort or durable restart recovery claim. Cancelling prepare does not stop already-running blocking syscalls."
+  ],
+  "runtime_validation": "No child signal/backpressure or QEMU run by implementation agent; root owns official new child harness and old-product/QEMU reproduction.",
+  "unused_temporary_harness_draft": {
+    "path": "/tmp/rustusb-sigterm-targeted-backpressure-20261023.py",
+    "executed": false,
+    "reason": "Prepared from existing script before root requested centralized harness validation; not used as acceptance evidence."
+  }
+}

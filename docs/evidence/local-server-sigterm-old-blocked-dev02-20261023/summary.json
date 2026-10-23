@@ -1,0 +1,2226 @@
+{
+  "artifacts": [
+    {
+      "length": 390,
+      "path": "blocked-sigterm/after.json",
+      "sha256": "ea20d7741f9c94a10f0f6a7dd029b14f175b7b286f84956cdeba5fec3c4c629d"
+    },
+    {
+      "length": 2118,
+      "path": "blocked-sigterm/before.json",
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+    },
+    {
+      "length": 2971,
+      "path": "blocked-sigterm/protocol.json",
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+    },
+    {
+      "length": 10599,
+      "path": "blocked-sigterm/result.json",
+      "sha256": "4d38e19f9a25feb02d01a05a8c9c3091f4f2e54f9130453afea042140ac4fbb9"
+    },
+    {
+      "length": 0,
+      "path": "blocked-sigterm/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "length": 2693,
+      "path": "blocked-sigterm/stdout-consumed.bin",
+      "sha256": "a3ab1181d26f92ea88712cb14726911a1a3daa7a2dd64280db17b9576318811c"
+    },
+    {
+      "length": 4373,
+      "path": "blocked-sigterm/stdout-events.json",
+      "sha256": "f8189ddb93140a273f3ebfe6bffdd3dfa23812cf75d7902012ae3f1315036c8c"
+    },
+    {
+      "length": 4096,
+      "path": "blocked-sigterm/synthetic-padding.bin",
+      "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994"
+    },
+    {
+      "length": 62,
+      "path": "build.log",
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    {
+      "length": 32295,
+      "path": "source-after.json",
+      "sha256": "e92bb1d7f138984245392b0d25731b3b5ed5cee1af3c6f57d92714d663ce413a"
+    },
+    {
+      "length": 32295,
+      "path": "source-before.json",
+      "sha256": "e92bb1d7f138984245392b0d25731b3b5ed5cee1af3c6f57d92714d663ce413a"
+    }
+  ],
+  "binary_after_sha256": "eabb5e9134b733a11dd97fea3520c1c95f1dde7b7e5bb8eeef6fc4ec567f2ba0",
+  "binary_before": {
+    "device": 66306,
+    "inode": 79594775,
+    "length": 6272112,
+    "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+    "sha256": "eabb5e9134b733a11dd97fea3520c1c95f1dde7b7e5bb8eeef6fc4ec567f2ba0"
+  },
+  "binary_unchanged": true,
+  "build": {
+    "command": [
+      "cargo",
+      "build",
+      "--workspace",
+      "--release",
+      "--locked",
+      "--all-features"
+    ],
+    "features": "workspace all-features release locked",
+    "returncode": 0,
+    "skipped": false
+  },
+  "cases": [
+    {
+      "after": {
+        "backend_cleanup_observed": false,
+        "data_sockets": {
+          "1-1": {
+            "eof": true,
+            "unexpected_hex": ""
+          },
+          "1-2": {
+            "eof": true,
+            "unexpected_hex": ""
+          }
+        },
+        "returncode": -15,
+        "signal_exit_seconds": 0.001074305,
+        "stdout_eof": false,
+        "stdout_read_after_fill": false,
+        "stdout_unread_bytes": 4096,
+        "stopped_events": [],
+        "wait_error": null
+      },
+      "argv": [
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--json",
+        "virtual-server",
+        "--listen",
+        "127.0.0.1:0",
+        "--control-stdin"
+      ],
+      "artifacts": [
+        {
+          "length": 390,
+          "path": "after.json",
+          "sha256": "ea20d7741f9c94a10f0f6a7dd029b14f175b7b286f84956cdeba5fec3c4c629d"
+        },
+        {
+          "length": 2118,
+          "path": "before.json",
+          "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+        },
+        {
+          "length": 2971,
+          "path": "protocol.json",
+          "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+        },
+        {
+          "length": 0,
+          "path": "stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "length": 2693,
+          "path": "stdout-consumed.bin",
+          "sha256": "a3ab1181d26f92ea88712cb14726911a1a3daa7a2dd64280db17b9576318811c"
+        },
+        {
+          "length": 4373,
+          "path": "stdout-events.json",
+          "sha256": "f8189ddb93140a273f3ebfe6bffdd3dfa23812cf75d7902012ae3f1315036c8c"
+        },
+        {
+          "length": 4096,
+          "path": "synthetic-padding.bin",
+          "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994"
+        }
+      ],
+      "assertions": [
+        {
+          "detail": 4096,
+          "name": "stdout pipe capacity is exactly 4096",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "child has ordinary caller UID",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "owned child executes the selected binary inode and bytes",
+          "passed": true
+        },
+        {
+          "detail": {
+            "address": "127.0.0.1:41757",
+            "devices": [
+              {
+                "break_active": false,
+                "bus_id": "1-1",
+                "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "cdc_loopback": true,
+                "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "cdc_queued_bytes": 0,
+                "configuration": 0,
+                "counters": {
+                  "bulk_in": 0,
+                  "bulk_out": 0,
+                  "cdc_in_bytes": 0,
+                  "cdc_injected_bytes": 0,
+                  "cdc_out_bytes": 0,
+                  "control": 0,
+                  "hid_taps": 0,
+                  "interrupt": 0,
+                  "sessions_started": 0,
+                  "unlink": 0,
+                  "unlink_cancelled": 0
+                },
+                "exported": true,
+                "hid_queued_reports": 0,
+                "leased": false,
+                "line_coding": {
+                  "data_bits": 8,
+                  "parity": 0,
+                  "rate": 115200,
+                  "stop_bits": 0
+                },
+                "line_state": 0,
+                "pending_urbs": 0,
+                "profile": "hid_keyboard"
+              },
+              {
+                "break_active": false,
+                "bus_id": "1-2",
+                "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "cdc_loopback": true,
+                "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "cdc_queued_bytes": 0,
+                "configuration": 0,
+                "counters": {
+                  "bulk_in": 0,
+                  "bulk_out": 0,
+                  "cdc_in_bytes": 0,
+                  "cdc_injected_bytes": 0,
+                  "cdc_out_bytes": 0,
+                  "control": 0,
+                  "hid_taps": 0,
+                  "interrupt": 0,
+                  "sessions_started": 0,
+                  "unlink": 0,
+                  "unlink_cancelled": 0
+                },
+                "exported": true,
+                "hid_queued_reports": 0,
+                "leased": false,
+                "line_coding": {
+                  "data_bits": 8,
+                  "parity": 0,
+                  "rate": 115200,
+                  "stop_bits": 0
+                },
+                "line_state": 0,
+                "pending_urbs": 0,
+                "profile": "cdc_acm"
+              }
+            ],
+            "event": "ready",
+            "schema_version": 1
+          },
+          "name": "first event is ready",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "listener is IPv4 loopback",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "snapshot response matches request",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "both configured profiles have one pending IN",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "pending data sockets have no completion bytes",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "all stdout observed before fill",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "independent writer reached EAGAIN at exact capacity",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "only independent OFD has O_NONBLOCK",
+          "passed": true
+        },
+        {
+          "detail": {
+            "comm": "virtual-test-st",
+            "monotonic_ns": 229636278734237,
+            "tid": 1112840,
+            "wchan": "pipe_write"
+          },
+          "name": "actual child writer is blocked in pipe_write",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "pipe remains full immediately before signal",
+          "passed": true
+        },
+        {
+          "detail": null,
+          "name": "child exited without forced cleanup",
+          "passed": true
+        },
+        {
+          "detail": {
+            "actual": -15,
+            "old_SIGTERM_minus15_is_failure": true
+          },
+          "name": "cooperative exit status is zero",
+          "passed": false
+        },
+        {
+          "detail": 0.001074305,
+          "name": "signal exit is within eight seconds",
+          "passed": true
+        },
+        {
+          "detail": {
+            "eof": true,
+            "unexpected_hex": ""
+          },
+          "name": "1-1 data socket reached actual EOF",
+          "passed": true
+        },
+        {
+          "detail": {
+            "eof": true,
+            "unexpected_hex": ""
+          },
+          "name": "1-2 data socket reached actual EOF",
+          "passed": true
+        },
+        {
+          "detail": {
+            "bytes": 4096,
+            "read_after_fill": false
+          },
+          "name": "stdout remained full and was never drained",
+          "passed": true
+        },
+        {
+          "detail": 1,
+          "name": "blocked child stdout flags stayed blocking until signal",
+          "passed": true
+        }
+      ],
+      "before": {
+        "event": "snapshot",
+        "id": "before-1",
+        "schema_version": 1,
+        "snapshot": {
+          "devices": [
+            {
+              "break_active": false,
+              "bus_id": "1-1",
+              "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cdc_loopback": true,
+              "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cdc_queued_bytes": 0,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "cdc_in_bytes": 0,
+                "cdc_injected_bytes": 0,
+                "cdc_out_bytes": 0,
+                "control": 1,
+                "hid_taps": 0,
+                "interrupt": 0,
+                "sessions_started": 1,
+                "unlink": 0,
+                "unlink_cancelled": 0
+              },
+              "exported": true,
+              "hid_queued_reports": 0,
+              "leased": true,
+              "line_coding": {
+                "data_bits": 8,
+                "parity": 0,
+                "rate": 115200,
+                "stop_bits": 0
+              },
+              "line_state": 0,
+              "pending_urbs": 1,
+              "profile": "hid_keyboard"
+            },
+            {
+              "break_active": false,
+              "bus_id": "1-2",
+              "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cdc_loopback": true,
+              "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cdc_queued_bytes": 0,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "cdc_in_bytes": 0,
+                "cdc_injected_bytes": 0,
+                "cdc_out_bytes": 0,
+                "control": 1,
+                "hid_taps": 0,
+                "interrupt": 0,
+                "sessions_started": 1,
+                "unlink": 0,
+                "unlink_cancelled": 0
+              },
+              "exported": true,
+              "hid_queued_reports": 0,
+              "leased": true,
+              "line_coding": {
+                "data_bits": 8,
+                "parity": 0,
+                "rate": 115200,
+                "stop_bits": 0
+              },
+              "line_state": 0,
+              "pending_urbs": 1,
+              "profile": "cdc_acm"
+            }
+          ],
+          "schema_version": 1
+        }
+      },
+      "child": {
+        "pid": 1112807,
+        "starttime": 22963627,
+        "uids": [
+          1000,
+          1000,
+          1000,
+          1000
+        ]
+      },
+      "cleanup_scope": "exit and two socket EOF observations; no stopped snapshot or backend resource claim while stdout remains unread",
+      "executed_binary": {
+        "device": 66306,
+        "inode": 79594775,
+        "proc_exe": "/proc/1112807/exe",
+        "resolved": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "sha256": "eabb5e9134b733a11dd97fea3520c1c95f1dde7b7e5bb8eeef6fc4ec567f2ba0"
+      },
+      "final_returncode": -15,
+      "forced_cleanup": false,
+      "mode": "blocked",
+      "pipe": {
+        "blocked_writer": {
+          "comm": "virtual-test-st",
+          "monotonic_ns": 229636278734237,
+          "tid": 1112840,
+          "wchan": "pipe_write"
+        },
+        "bytes_after_fill": 4096,
+        "bytes_before": 0,
+        "capacity": 4096,
+        "child_stdout_flags_after": 1,
+        "child_stdout_flags_before": 1,
+        "independent_writer_eagain": true,
+        "independent_writer_flags": 34817,
+        "original_writer_flags_after": 1,
+        "original_writer_flags_before": 1,
+        "synthetic_padding_bytes": 4096
+      },
+      "result": "FAIL",
+      "sent": {
+        "identity": {
+          "pid": 1112807,
+          "starttime": 22963627,
+          "uids": [
+            1000,
+            1000,
+            1000,
+            1000
+          ]
+        },
+        "monotonic_ns": 229636278796355,
+        "pid": 1112807,
+        "signal": 15
+      },
+      "signal": "sigterm",
+      "stdout_consumed_bytes": 2693,
+      "stdout_drained_after_fill": false,
+      "stdout_raw_scope": "verbatim consumed prefix only; blocked mode never reads the synthetic padding or later child output"
+    }
+  ],
+  "command": [
+    "scripts/test-server-signals.py",
+    "--signal",
+    "sigterm",
+    "--mode",
+    "blocked",
+    "--evidence",
+    "/tmp/rustusb-server-sigterm-old-blocked-dev02-20261023"
+  ],
+  "evidence": "/tmp/rustusb-server-sigterm-old-blocked-dev02-20261023",
+  "host": [
+    "Linux",
+    "ubun",
+    "6.8.0-106-generic",
+    "#106~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar  6 08:44:59 UTC ",
+    "x86_64"
+  ],
+  "host_uid": 1000,
+  "limits_seconds": {
+    "control": 3.0,
+    "signal_exit": 8.0,
+    "startup": 5,
+    "wire_frame": 3.0,
+    "writer_wait": 2
+  },
+  "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]",
+  "result": "FAIL",
+  "schema_version": 1,
+  "scope": "ordinary-user loopback virtual profiles only; no physical USB, modules, ptrace, or network configuration",
+  "source_after": {
+    "dirty": true,
+    "files": [
+      {
+        "length": 22870,
+        "path": "Cargo.lock",
+        "sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a"
+      },
+      {
+        "length": 1239,
+        "path": "Cargo.toml",
+        "sha256": "9b06bd0a1e9ef4aa2eadfad02dc9f5e67ef0613be574d118c8388a0763e2c552"
+      },
+      {
+        "length": 773,
+        "path": "crates/rustusb-cli/Cargo.toml",
+        "sha256": "d20988d27ddb4c798315fe465545ab027a029473cc22c23808d4fcb3ecddf880"
+      },
+      {
+        "length": 15753,
+        "path": "crates/rustusb-cli/src/main.rs",
+        "sha256": "5927b8ae2b378a6568887cc48e21a3b69756f2862b7cb4e1fd196bbb65c0e6e7"
+      },
+      {
+        "length": 5011,
+        "path": "crates/rustusb-cli/src/physical_server.rs",
+        "sha256": "be92e432a5e485b55ec9551f464f658999fd934b3355df745201639763ad0922"
+      },
+      {
+        "length": 9837,
+        "path": "crates/rustusb-cli/src/virtual_server.rs",
+        "sha256": "969c66a45b70781600b1c958fd486fbd01ea81dbda0e14a69233303acc255218"
+      },
+      {
+        "length": 277,
+        "path": "crates/rustusb-core/Cargo.toml",
+        "sha256": "f453abb66ef2bb0d7fda890176ad9b334acb1d61b1bd6b7079630c0a9cdd5c53"
+      },
+      {
+        "length": 13081,
+        "path": "crates/rustusb-core/src/lib.rs",
+        "sha256": "bcebf74dd1aed8b99d8536935c48015a2a3af0bcca545cc9cdba27c74ba108db"
+      },
+      {
+        "length": 610,
+        "path": "crates/rustusb-daemon/Cargo.toml",
+        "sha256": "b25e178afbce16a7ee97744552d7874da430d2062ec2e89db441b180abb886c3"
+      },
+      {
+        "length": 13557,
+        "path": "crates/rustusb-daemon/src/diagnostics.rs",
+        "sha256": "d42c145ff152ac0724d810db1f95fe368def10c03852de631f17d68b67d67a72"
+      },
+      {
+        "length": 15504,
+        "path": "crates/rustusb-daemon/src/lib.rs",
+        "sha256": "7171430c1eba68bd9a2afddac9ff364289f244f1a2c695077bcec9aa0296b153"
+      },
+      {
+        "length": 46342,
+        "path": "crates/rustusb-daemon/src/linux.rs",
+        "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301"
+      },
+      {
+        "length": 1007,
+        "path": "crates/rustusb-daemon/src/main.rs",
+        "sha256": "0c03422f8b2bdf582c1900dcefd3bc1d7cc6c56b2df711456b979b66494a981b"
+      },
+      {
+        "length": 13737,
+        "path": "crates/rustusb-daemon/src/physical.rs",
+        "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48"
+      },
+      {
+        "length": 278,
+        "path": "crates/rustusb-linux/Cargo.toml",
+        "sha256": "22f997eacf622c643966a35d6894582434573006b2e186ca8d2af7209cf1907e"
+      },
+      {
+        "length": 19082,
+        "path": "crates/rustusb-linux/src/lib.rs",
+        "sha256": "e552b1e9d40f33ab65f89f0644271e8f34343ed5497b7cac8e0cd210c9c56c06"
+      },
+      {
+        "length": 9854,
+        "path": "crates/rustusb-linux/tests/discovery.rs",
+        "sha256": "73a7c7324f5dc7d363e1cedaa85974f352dd8e7134068b83e6d266e736f5a4c5"
+      },
+      {
+        "length": 386,
+        "path": "crates/rustusb-native/Cargo.toml",
+        "sha256": "0c38fc1616cc92bb4b3440093eb7b395f21a32e0561bad2ded09572be1bda210"
+      },
+      {
+        "length": 43702,
+        "path": "crates/rustusb-native/src/diagnostics.rs",
+        "sha256": "04d29734bd2164fc3cf3eef9e7a1e451fd6b935eedd00687d30f490b34c3113d"
+      },
+      {
+        "length": 79894,
+        "path": "crates/rustusb-native/src/lib.rs",
+        "sha256": "b6465ddde887ce698a9c20232ab03df73df61505a5f4bcf9e25d2273a5735876"
+      },
+      {
+        "length": 259,
+        "path": "crates/rustusb-protocol/Cargo.toml",
+        "sha256": "19c98beffaad9566692560106f24b6f56b9b278f95144c64c08c051b48492e10"
+      },
+      {
+        "length": 10565,
+        "path": "crates/rustusb-protocol/src/lib.rs",
+        "sha256": "0f39a11540d1f940d8605680a75b5ced684005d40f02c505e6343de52057b7bb"
+      },
+      {
+        "length": 677,
+        "path": "crates/rustusb-rust-backend/Cargo.toml",
+        "sha256": "23a386c9dd4b477f8005bfd7adee9c971ad944508e4f53f8db9f07a27402fcd4"
+      },
+      {
+        "length": 4809,
+        "path": "crates/rustusb-rust-backend/src/descriptors.rs",
+        "sha256": "41d86b04037bc77fb5b5b5eecb5a1c13a4f9b61564cd9db2d8176faa4d0a9719"
+      },
+      {
+        "length": 46211,
+        "path": "crates/rustusb-rust-backend/src/device.rs",
+        "sha256": "28d794af0311c8e2214ab127d9458ec6ec4a07e9bd7b6531d02b550967f5b82e"
+      },
+      {
+        "length": 670,
+        "path": "crates/rustusb-rust-backend/src/lib.rs",
+        "sha256": "054f9718dbd9689795e910882ee4a52269682047988db72557114cd4c5b07d3e"
+      },
+      {
+        "length": 20028,
+        "path": "crates/rustusb-rust-backend/src/physical.rs",
+        "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2"
+      },
+      {
+        "length": 31142,
+        "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+        "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d"
+      },
+      {
+        "length": 11175,
+        "path": "crates/rustusb-rust-backend/src/physical/safety.rs",
+        "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2"
+      },
+      {
+        "length": 55625,
+        "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+        "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+      },
+      {
+        "length": 52043,
+        "path": "crates/rustusb-rust-backend/src/server.rs",
+        "sha256": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532"
+      },
+      {
+        "length": 7489,
+        "path": "crates/rustusb-rust-backend/src/session.rs",
+        "sha256": "d7fe7367f6a1f870268eea22f51bd665b2e4eb90b653ee0499e9bc8d4caa578a"
+      },
+      {
+        "length": 14164,
+        "path": "crates/rustusb-rust-backend/src/wire.rs",
+        "sha256": "e34c8c9d2662d677ff4ba51fefcec1f087e61b8fd800c0caf31b4326b8119374"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-candidate-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 26443,
+        "path": "docs/evidence/qemu-checked-release-candidate-source-20261023/host-state-wire-probe.rs",
+        "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-candidate-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-candidate-v2-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 26443,
+        "path": "docs/evidence/qemu-checked-release-candidate-v2-source-20261023/host-state-wire-probe.rs",
+        "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-candidate-v2-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-candidate-v3-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-checked-release-candidate-v3-source-20261023/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-candidate-v3-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-final-v4-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-checked-release-final-v4-source-20261023/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-final-v4-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 26443,
+        "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/host-state-wire-probe.rs",
+        "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev01-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev02-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev03-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev04-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev05-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29252,
+        "path": "docs/evidence/qemu-composite-dev06-20261022/source/composite-wire-probe.rs",
+        "sha256": "042840278ffdf7888192082663d563d6e1a5d912b67a2c46169365039f9c2223"
+      },
+      {
+        "length": 29252,
+        "path": "docs/evidence/qemu-composite-dev07-20261022/source/composite-wire-probe.rs",
+        "sha256": "042840278ffdf7888192082663d563d6e1a5d912b67a2c46169365039f9c2223"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-composite-dev08-20261022/source/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-composite-final-20261022/source/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-eof-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-unlink-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-eof-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-unlink-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-eof-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-host-state-diagnostic-alternate-eof-dev01-20261023/source/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 28453,
+        "path": "docs/evidence/qemu-host-state-diagnostic-static-20261023/rustusb-host-state-diagnostic-contract-20261023.rs",
+        "sha256": "6de106c1f34210a816845dd8bc4a3a4e505eb8fa3af77b02698bcf6cb19e4e98"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-host-state-notification-alternate-eof-dev02-20261023/source/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-hot-dev01-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-hot-final-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 19930,
+        "path": "docs/evidence/qemu-physical-normal-dev01-20261022/source/physical-wire-probe.rs",
+        "sha256": "ca5154874b97e41725366aca682b6b2ddda40c70c4b8798ace82ef98d84d548e"
+      },
+      {
+        "length": 20308,
+        "path": "docs/evidence/qemu-physical-normal-dev02-20261022/source/physical-wire-probe.rs",
+        "sha256": "200be59f818ee15d938c6e61b15a6325ffa4a5e1a3ef31d898f51145b37ea5f9"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-normal-dev03-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-normal-final-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-normal-final-f42d-fail-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-startup-hot-dev03-20261023/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 17029,
+        "path": "docs/evidence/qemu-physical-static-source-01-20261022/physical-wire-probe.rs",
+        "sha256": "3303caa8b90d27d484e1d07199bfe378cdc4c362e748a42ae4a12adc8bef2dc3"
+      },
+      {
+        "length": 13706,
+        "path": "docs/evidence/qemu-userspace-dev-01-20261022/userspace-wire-probe.rs",
+        "sha256": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1"
+      },
+      {
+        "length": 13706,
+        "path": "docs/evidence/qemu-userspace-dev-02-20261022/userspace-wire-probe.rs",
+        "sha256": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1"
+      },
+      {
+        "length": 13706,
+        "path": "docs/evidence/qemu-userspace-dev-03-20261022/userspace-wire-probe.rs",
+        "sha256": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1"
+      },
+      {
+        "length": 15355,
+        "path": "docs/evidence/qemu-userspace-dev-04-20261022/userspace-wire-probe.rs",
+        "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2"
+      },
+      {
+        "length": 15355,
+        "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/source/userspace-wire-probe.rs",
+        "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2"
+      },
+      {
+        "length": 557,
+        "path": "fuzz/Cargo.toml",
+        "sha256": "52f5548fcd6145923f0af0dd4e5c0c4e5a18f538020c73cbff9a9207746b0620"
+      },
+      {
+        "length": 500,
+        "path": "fuzz/fuzz_targets/devlist.rs",
+        "sha256": "f7eab0a185d6bc1fc089ad6ec09fd57fba613d9d2d7075f09ee4f826038ce815"
+      },
+      {
+        "length": 791,
+        "path": "fuzz/fuzz_targets/server_frame.rs",
+        "sha256": "6595f39abd425d4677de9d317da6e3388fab62b3c84b87eef56a1ff3319ecc2a"
+      },
+      {
+        "length": 86,
+        "path": "rust-toolchain.toml",
+        "sha256": "559f488c181e0e9e77cf17c29de663977f036ec7ff2e2060585714bf53c52d62"
+      },
+      {
+        "length": 29860,
+        "path": "scripts/qemu/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 28001,
+        "path": "scripts/qemu/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "scripts/qemu/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 15355,
+        "path": "scripts/qemu/userspace-wire-probe.rs",
+        "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2"
+      },
+      {
+        "length": 29123,
+        "path": "scripts/test-server-signals.py",
+        "sha256": "bd8d3c40f174aea0a1dee208a81c0234f01c161e66500766c21b11b328b8fce9"
+      },
+      {
+        "length": 76,
+        "path": "vendor/nusb/.cargo/config.toml",
+        "sha256": "f5b1b851f34df8f243d1c29a91631e10bfd3e69ffb238d036af8053a5b8c7112"
+      },
+      {
+        "length": 94,
+        "path": "vendor/nusb/.cargo_vcs_info.json",
+        "sha256": "89794bdfff78f264d27f63ccbd8f0226665e0c6a7a5934c7b588c7f6204996be"
+      },
+      {
+        "length": 379,
+        "path": "vendor/nusb/.github/workflows/release.yml",
+        "sha256": "ad9ea3934695992edd2530210add7f65600d3e06acec56a83378f543a896e60e"
+      },
+      {
+        "length": 2530,
+        "path": "vendor/nusb/.github/workflows/rust.yml",
+        "sha256": "36954cb2eff77a21c1fa677db9b1d4fe0dafbe4d0596e6f7ec16636ab912e650"
+      },
+      {
+        "length": 19,
+        "path": "vendor/nusb/.gitignore",
+        "sha256": "2ebe6cb6f5289849dce5a8a6cdd77e06b1385302c862982f8e181c4782d19214"
+      },
+      {
+        "length": 18599,
+        "path": "vendor/nusb/Cargo.lock",
+        "sha256": "60849bf7a37ffcfb4e10fbe9b8e43d3cc2165edd76365ae73fdd78757dd7496b"
+      },
+      {
+        "length": 4583,
+        "path": "vendor/nusb/Cargo.toml",
+        "sha256": "f2af75b4007e76200009ac103e5981339495108751b8aad19eca0617a89ed255"
+      },
+      {
+        "length": 2766,
+        "path": "vendor/nusb/Cargo.toml.orig",
+        "sha256": "63e1f6228b22bc965009415dda0aa1a85b62f1912b8f2344cf319fa87bcc6855"
+      },
+      {
+        "length": 10847,
+        "path": "vendor/nusb/LICENSE-APACHE",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "length": 1023,
+        "path": "vendor/nusb/LICENSE-MIT",
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      {
+        "length": 1023,
+        "path": "vendor/nusb/README.md",
+        "sha256": "66263c7c324845390d2fa6e1c5c543a96e6a1576e0573aed9e8d23d88485d05f"
+      },
+      {
+        "length": 18409,
+        "path": "vendor/nusb/RUSTUSB-PROVENANCE.json",
+        "sha256": "ce9db7b1a06ca38da3dd39d6e105a38e6dba5158f598dd091ac09e72198a9593"
+      },
+      {
+        "length": 4903,
+        "path": "vendor/nusb/RUSTUSB.md",
+        "sha256": "711ca550bed5a9b8856e00a285b56ea57c8b1ce21f051a85df34519fac032f83"
+      },
+      {
+        "length": 29273,
+        "path": "vendor/nusb/RUSTUSB.patch",
+        "sha256": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623"
+      },
+      {
+        "length": 1154,
+        "path": "vendor/nusb/examples/bulk.rs",
+        "sha256": "e4ea05b7d65a9e2c926463165d04a631c3d30e8edbe915c8b023d2765510a556"
+      },
+      {
+        "length": 2561,
+        "path": "vendor/nusb/examples/bulk_io.rs",
+        "sha256": "108b631d729eea7125895c890e20e0524b65769b1c66fb1c70745b9057c49924"
+      },
+      {
+        "length": 2893,
+        "path": "vendor/nusb/examples/bulk_io_smol.rs",
+        "sha256": "5b035fd8930f5de293744bd095ac2900d136af7c9169893e8f2069ec41f1d929"
+      },
+      {
+        "length": 2586,
+        "path": "vendor/nusb/examples/bulk_io_tokio.rs",
+        "sha256": "7ba2889e22d358139e978efcea93e6f9e63ac3e6c51124b455355778fe43b76d"
+      },
+      {
+        "length": 152,
+        "path": "vendor/nusb/examples/buses.rs",
+        "sha256": "9b332b0b95f08f731b92cda8c5549402652a09562665a477acd7427a4c653805"
+      },
+      {
+        "length": 2447,
+        "path": "vendor/nusb/examples/control.rs",
+        "sha256": "d1539fd9fd4f0ae29bdd4016d7a8eed40c01f2c231707540c5430fa72eadf504"
+      },
+      {
+        "length": 1053,
+        "path": "vendor/nusb/examples/descriptors.rs",
+        "sha256": "b9b365c2cddd03a539fde1e9735e03884f83b5005f05eee9122e3fa073ce6d33"
+      },
+      {
+        "length": 531,
+        "path": "vendor/nusb/examples/detach.rs",
+        "sha256": "57453d05019f9713f91738f8b37eeee71587d1a7ef58b5cc342fbfbdfba2999a"
+      },
+      {
+        "length": 565,
+        "path": "vendor/nusb/examples/detach_claim.rs",
+        "sha256": "3671f8008ac161794d4bfa34172094e324830cbb65f682081d1ce65f631b814e"
+      },
+      {
+        "length": 173,
+        "path": "vendor/nusb/examples/hotplug.rs",
+        "sha256": "4953ed2ecfcaa8457be4014f197af6e7acb76a5bc05a4800bee77f1e0b30b541"
+      },
+      {
+        "length": 154,
+        "path": "vendor/nusb/examples/list.rs",
+        "sha256": "b493a0ebca72f8647ae165cfaa17a2ef1c63d43edc30d0e4f8da6728ea391423"
+      },
+      {
+        "length": 3218,
+        "path": "vendor/nusb/examples/string_descriptors.rs",
+        "sha256": "2d9f1394a3b5da789016851ec5b2508430098db2ea4f2633bf1104e5befae052"
+      },
+      {
+        "length": 565,
+        "path": "vendor/nusb/src/bitset.rs",
+        "sha256": "c2e653f425bc186e6a0beffb971d7359e16b3d1b2380bc68812f3238f3db32c3"
+      },
+      {
+        "length": 37550,
+        "path": "vendor/nusb/src/descriptors.rs",
+        "sha256": "ee215896f2434a8cdd7c752cb3d8de731d24c42063641a24466f34d5ce8bd6ac"
+      },
+      {
+        "length": 40877,
+        "path": "vendor/nusb/src/device.rs",
+        "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289"
+      },
+      {
+        "length": 30495,
+        "path": "vendor/nusb/src/enumeration.rs",
+        "sha256": "6acc0021cfcf90b643904eeb13e4c6816e3b15a64ff0f3ce7c4c91783a3d9662"
+      },
+      {
+        "length": 4845,
+        "path": "vendor/nusb/src/error.rs",
+        "sha256": "23072fc2b1b6e2695629577fc60570d27e8c5acddf5f4b9031e613d89c2c685f"
+      },
+      {
+        "length": 1139,
+        "path": "vendor/nusb/src/hotplug.rs",
+        "sha256": "3705d6b683eabd5c78873ac5f4cebb677b81dad905035b493246a214e143d539"
+      },
+      {
+        "length": 1346,
+        "path": "vendor/nusb/src/io/mod.rs",
+        "sha256": "822eeb8a278adb29bc208a6919423e3a240b24b4f08ebe4bd12346e279353724"
+      },
+      {
+        "length": 18301,
+        "path": "vendor/nusb/src/io/read.rs",
+        "sha256": "9d4e2734b32d3cd11c84380f778d8ea384e18dcb82b705646ba0495dc9552bf9"
+      },
+      {
+        "length": 12340,
+        "path": "vendor/nusb/src/io/write.rs",
+        "sha256": "5277f2ea5b4363ab0f1b13aeb5531ce26fe7fbe45e87966572656194cdaf4141"
+      },
+      {
+        "length": 15010,
+        "path": "vendor/nusb/src/lib.rs",
+        "sha256": "2c733626ee5a31e47503a8476492b4bb1dd645a43b467039f5e349e63471d779"
+      },
+      {
+        "length": 8277,
+        "path": "vendor/nusb/src/maybe_future.rs",
+        "sha256": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e"
+      },
+      {
+        "length": 46376,
+        "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+        "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+      },
+      {
+        "length": 9367,
+        "path": "vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+        "sha256": "378e3f422a2e8e462c9bc2e7809a4c49dc12db29cb0803a178f627839485a98c"
+      },
+      {
+        "length": 4631,
+        "path": "vendor/nusb/src/platform/linux_usbfs/events.rs",
+        "sha256": "41bb15c95986744c66d8c14863c16a8266d144818306e55fe4b41f86365efa46"
+      },
+      {
+        "length": 4941,
+        "path": "vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+        "sha256": "4fb3b2d2c62935c79aa3bc0a566ec50a2c72434c421dc5a05dd33f8a5d48a7f2"
+      },
+      {
+        "length": 1981,
+        "path": "vendor/nusb/src/platform/linux_usbfs/mod.rs",
+        "sha256": "21d82a7ad9853031c998d7c7a32baf7cc275d9ea077e8b8e5e7e30f59271e5b1"
+      },
+      {
+        "length": 5696,
+        "path": "vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+        "sha256": "e86a87ef5202f18798a607bff6de4f1521838d0de475df74938872770dfaf00c"
+      },
+      {
+        "length": 7670,
+        "path": "vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+        "sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011"
+      },
+      {
+        "length": 23236,
+        "path": "vendor/nusb/src/platform/macos_iokit/device.rs",
+        "sha256": "0e3da8e10f830b967c509f02294c6aebcc57812fb44ffd6be15c4b8926566781"
+      },
+      {
+        "length": 12317,
+        "path": "vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+        "sha256": "83756d12a4d6a4d489411faa482c3c47d4c6f086a2c055bb7c84ef13ef69e384"
+      },
+      {
+        "length": 2321,
+        "path": "vendor/nusb/src/platform/macos_iokit/events.rs",
+        "sha256": "3504d9bb500cb16694c2e9ca802b362cab75f8e10a7f81e5124cfa75f9222fa9"
+      },
+      {
+        "length": 5481,
+        "path": "vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+        "sha256": "0ee322f9f96bca1883a52ace10764714181e4c64c64bb76b32e45e54d479608c"
+      },
+      {
+        "length": 3354,
+        "path": "vendor/nusb/src/platform/macos_iokit/iokit.rs",
+        "sha256": "1ce59fd235e72422ddb0438d3cc1baf85c2ff2e50d86922e14037a42fbfbbc40"
+      },
+      {
+        "length": 41091,
+        "path": "vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+        "sha256": "5e135448f66e3a4fddd401b9a3af601806fdda914e00f48e48c633665e5e3f39"
+      },
+      {
+        "length": 12466,
+        "path": "vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+        "sha256": "900df5766f774f7171065432d3e8285160b1b1c96f46c5642bf66e068e9a8a1c"
+      },
+      {
+        "length": 1669,
+        "path": "vendor/nusb/src/platform/macos_iokit/mod.rs",
+        "sha256": "74b150fd46f984313142c2d85929e98a60ff61efd65f91e90648a8d7e12346c9"
+      },
+      {
+        "length": 2395,
+        "path": "vendor/nusb/src/platform/macos_iokit/transfer.rs",
+        "sha256": "30e95c949b4c48a19a4680ddfbb7b7d6a071ecb073dcdf3f024f493f93c41e6b"
+      },
+      {
+        "length": 917,
+        "path": "vendor/nusb/src/platform/mod.rs",
+        "sha256": "33ff54e027f3bbca69beca75028dbea748a5fcf3f91c8855acb941e9c5b10471"
+      },
+      {
+        "length": 19603,
+        "path": "vendor/nusb/src/platform/webusb/device.rs",
+        "sha256": "c4c338f4fc49129cf5b6ef217a7ea9c2979e1ac5a70b9e971a592f5ef509dafc"
+      },
+      {
+        "length": 4482,
+        "path": "vendor/nusb/src/platform/webusb/enumeration.rs",
+        "sha256": "5e331b677188dab89a6c67d7ffcf36131140b27dea2673766dbe1ffb19f5f443"
+      },
+      {
+        "length": 2893,
+        "path": "vendor/nusb/src/platform/webusb/hotplug.rs",
+        "sha256": "08c4b2f926b20dd37def7630fe484a4d4b301b6b7f8d98d1b8cb940c0247dcf1"
+      },
+      {
+        "length": 3722,
+        "path": "vendor/nusb/src/platform/webusb/mod.rs",
+        "sha256": "3abe26f3cd8500c43c55de3d6e78a7f722ab02b68ddac96067cf86c2d1a767d2"
+      },
+      {
+        "length": 7638,
+        "path": "vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+        "sha256": "319a163c6233bcea1606995447eb31e4cbd6b14f356741c5b862b7986b4b15b1"
+      },
+      {
+        "length": 31445,
+        "path": "vendor/nusb/src/platform/windows_winusb/device.rs",
+        "sha256": "4e96b7da7a055d6c4d9581c36c9c7f43e8e922fe2c182c879d98b5f06a2b9c97"
+      },
+      {
+        "length": 14867,
+        "path": "vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+        "sha256": "b0a596f3a97b4815d9ec4f03d088748fbf738f96ffde45d8424174c3ec1cbeb1"
+      },
+      {
+        "length": 5658,
+        "path": "vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+        "sha256": "b7a7fd868088cc288f65cd9cf635d9061c072fe8d78e09b04a1905b59bb18c4b"
+      },
+      {
+        "length": 526,
+        "path": "vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+        "sha256": "d0a7e791add8a3a44c3772c40cab6bde8b75dedf360d46c58474b85b5c392b04"
+      },
+      {
+        "length": 9957,
+        "path": "vendor/nusb/src/platform/windows_winusb/hub.rs",
+        "sha256": "e3da370b594c97801a3f5fd7bdf814c5b47a845a7789f4f2d7cb00a552e1ac25"
+      },
+      {
+        "length": 1011,
+        "path": "vendor/nusb/src/platform/windows_winusb/mod.rs",
+        "sha256": "6c1d403e150c1615f85aeb9266b86776fda05eddcee9b0b9dc2589ecc14c9df2"
+      },
+      {
+        "length": 2404,
+        "path": "vendor/nusb/src/platform/windows_winusb/registry.rs",
+        "sha256": "59ad436a255bf63ab8485b414d22640c9924f1c4995097ba64a775f8208ae30e"
+      },
+      {
+        "length": 2011,
+        "path": "vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+        "sha256": "5878d09f04fc69e12c2bbf8727de60b4f8de499c6f91b2adcbb9225fde62e101"
+      },
+      {
+        "length": 3559,
+        "path": "vendor/nusb/src/platform/windows_winusb/transfer.rs",
+        "sha256": "edc9936990cdd3be01506fe3444b9ca3e09e2fbee7bfeebfddce6baf25ba95c6"
+      },
+      {
+        "length": 4404,
+        "path": "vendor/nusb/src/platform/windows_winusb/util.rs",
+        "sha256": "d81c10a0a2d15f45f4ea8f1d4b0ccb21956476ad21444b746dc4386fd73f39ca"
+      },
+      {
+        "length": 9626,
+        "path": "vendor/nusb/src/transfer/buffer.rs",
+        "sha256": "032d73a85281115aada917dd8ab046dc47b86593d4ace33248d074abdbc15e1a"
+      },
+      {
+        "length": 4744,
+        "path": "vendor/nusb/src/transfer/control.rs",
+        "sha256": "c897832b372c69962b2b984423bb59ee217ef3c5b888c46dafaf45b4a080ca0e"
+      },
+      {
+        "length": 9803,
+        "path": "vendor/nusb/src/transfer/internal.rs",
+        "sha256": "32495a2f7971513d6da152395bf0ab1d140477f5f346cd9b89613a73dddf792d"
+      },
+      {
+        "length": 5070,
+        "path": "vendor/nusb/src/transfer/mod.rs",
+        "sha256": "4cd09ea81c16f75de0f785d7f85108814b8489bf37a71e0136fb055c84727963"
+      }
+    ],
+    "git_status": "?? scripts/qemu/guest-sigterm-init.sh\n?? scripts/qemu/run-sigterm-qemu.py\n?? scripts/test-server-signals.py\n",
+    "head": "177c7b4e7841472981abadc4dcf0ecf9f3edecda",
+    "source_sha256": "67b002abafe10eaf479ab9ee2513b803d518b1fb3db8672ea78f760c6ac848bf"
+  },
+  "source_before": {
+    "dirty": true,
+    "files": [
+      {
+        "length": 22870,
+        "path": "Cargo.lock",
+        "sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a"
+      },
+      {
+        "length": 1239,
+        "path": "Cargo.toml",
+        "sha256": "9b06bd0a1e9ef4aa2eadfad02dc9f5e67ef0613be574d118c8388a0763e2c552"
+      },
+      {
+        "length": 773,
+        "path": "crates/rustusb-cli/Cargo.toml",
+        "sha256": "d20988d27ddb4c798315fe465545ab027a029473cc22c23808d4fcb3ecddf880"
+      },
+      {
+        "length": 15753,
+        "path": "crates/rustusb-cli/src/main.rs",
+        "sha256": "5927b8ae2b378a6568887cc48e21a3b69756f2862b7cb4e1fd196bbb65c0e6e7"
+      },
+      {
+        "length": 5011,
+        "path": "crates/rustusb-cli/src/physical_server.rs",
+        "sha256": "be92e432a5e485b55ec9551f464f658999fd934b3355df745201639763ad0922"
+      },
+      {
+        "length": 9837,
+        "path": "crates/rustusb-cli/src/virtual_server.rs",
+        "sha256": "969c66a45b70781600b1c958fd486fbd01ea81dbda0e14a69233303acc255218"
+      },
+      {
+        "length": 277,
+        "path": "crates/rustusb-core/Cargo.toml",
+        "sha256": "f453abb66ef2bb0d7fda890176ad9b334acb1d61b1bd6b7079630c0a9cdd5c53"
+      },
+      {
+        "length": 13081,
+        "path": "crates/rustusb-core/src/lib.rs",
+        "sha256": "bcebf74dd1aed8b99d8536935c48015a2a3af0bcca545cc9cdba27c74ba108db"
+      },
+      {
+        "length": 610,
+        "path": "crates/rustusb-daemon/Cargo.toml",
+        "sha256": "b25e178afbce16a7ee97744552d7874da430d2062ec2e89db441b180abb886c3"
+      },
+      {
+        "length": 13557,
+        "path": "crates/rustusb-daemon/src/diagnostics.rs",
+        "sha256": "d42c145ff152ac0724d810db1f95fe368def10c03852de631f17d68b67d67a72"
+      },
+      {
+        "length": 15504,
+        "path": "crates/rustusb-daemon/src/lib.rs",
+        "sha256": "7171430c1eba68bd9a2afddac9ff364289f244f1a2c695077bcec9aa0296b153"
+      },
+      {
+        "length": 46342,
+        "path": "crates/rustusb-daemon/src/linux.rs",
+        "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301"
+      },
+      {
+        "length": 1007,
+        "path": "crates/rustusb-daemon/src/main.rs",
+        "sha256": "0c03422f8b2bdf582c1900dcefd3bc1d7cc6c56b2df711456b979b66494a981b"
+      },
+      {
+        "length": 13737,
+        "path": "crates/rustusb-daemon/src/physical.rs",
+        "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48"
+      },
+      {
+        "length": 278,
+        "path": "crates/rustusb-linux/Cargo.toml",
+        "sha256": "22f997eacf622c643966a35d6894582434573006b2e186ca8d2af7209cf1907e"
+      },
+      {
+        "length": 19082,
+        "path": "crates/rustusb-linux/src/lib.rs",
+        "sha256": "e552b1e9d40f33ab65f89f0644271e8f34343ed5497b7cac8e0cd210c9c56c06"
+      },
+      {
+        "length": 9854,
+        "path": "crates/rustusb-linux/tests/discovery.rs",
+        "sha256": "73a7c7324f5dc7d363e1cedaa85974f352dd8e7134068b83e6d266e736f5a4c5"
+      },
+      {
+        "length": 386,
+        "path": "crates/rustusb-native/Cargo.toml",
+        "sha256": "0c38fc1616cc92bb4b3440093eb7b395f21a32e0561bad2ded09572be1bda210"
+      },
+      {
+        "length": 43702,
+        "path": "crates/rustusb-native/src/diagnostics.rs",
+        "sha256": "04d29734bd2164fc3cf3eef9e7a1e451fd6b935eedd00687d30f490b34c3113d"
+      },
+      {
+        "length": 79894,
+        "path": "crates/rustusb-native/src/lib.rs",
+        "sha256": "b6465ddde887ce698a9c20232ab03df73df61505a5f4bcf9e25d2273a5735876"
+      },
+      {
+        "length": 259,
+        "path": "crates/rustusb-protocol/Cargo.toml",
+        "sha256": "19c98beffaad9566692560106f24b6f56b9b278f95144c64c08c051b48492e10"
+      },
+      {
+        "length": 10565,
+        "path": "crates/rustusb-protocol/src/lib.rs",
+        "sha256": "0f39a11540d1f940d8605680a75b5ced684005d40f02c505e6343de52057b7bb"
+      },
+      {
+        "length": 677,
+        "path": "crates/rustusb-rust-backend/Cargo.toml",
+        "sha256": "23a386c9dd4b477f8005bfd7adee9c971ad944508e4f53f8db9f07a27402fcd4"
+      },
+      {
+        "length": 4809,
+        "path": "crates/rustusb-rust-backend/src/descriptors.rs",
+        "sha256": "41d86b04037bc77fb5b5b5eecb5a1c13a4f9b61564cd9db2d8176faa4d0a9719"
+      },
+      {
+        "length": 46211,
+        "path": "crates/rustusb-rust-backend/src/device.rs",
+        "sha256": "28d794af0311c8e2214ab127d9458ec6ec4a07e9bd7b6531d02b550967f5b82e"
+      },
+      {
+        "length": 670,
+        "path": "crates/rustusb-rust-backend/src/lib.rs",
+        "sha256": "054f9718dbd9689795e910882ee4a52269682047988db72557114cd4c5b07d3e"
+      },
+      {
+        "length": 20028,
+        "path": "crates/rustusb-rust-backend/src/physical.rs",
+        "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2"
+      },
+      {
+        "length": 31142,
+        "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+        "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d"
+      },
+      {
+        "length": 11175,
+        "path": "crates/rustusb-rust-backend/src/physical/safety.rs",
+        "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2"
+      },
+      {
+        "length": 55625,
+        "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+        "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+      },
+      {
+        "length": 52043,
+        "path": "crates/rustusb-rust-backend/src/server.rs",
+        "sha256": "4fc5491fff5e952ed1b808e9293489925d9db3b279384703d4fa941026f3c532"
+      },
+      {
+        "length": 7489,
+        "path": "crates/rustusb-rust-backend/src/session.rs",
+        "sha256": "d7fe7367f6a1f870268eea22f51bd665b2e4eb90b653ee0499e9bc8d4caa578a"
+      },
+      {
+        "length": 14164,
+        "path": "crates/rustusb-rust-backend/src/wire.rs",
+        "sha256": "e34c8c9d2662d677ff4ba51fefcec1f087e61b8fd800c0caf31b4326b8119374"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-candidate-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 26443,
+        "path": "docs/evidence/qemu-checked-release-candidate-source-20261023/host-state-wire-probe.rs",
+        "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-candidate-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-candidate-v2-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 26443,
+        "path": "docs/evidence/qemu-checked-release-candidate-v2-source-20261023/host-state-wire-probe.rs",
+        "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-candidate-v2-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-candidate-v3-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-checked-release-candidate-v3-source-20261023/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-candidate-v3-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-checked-release-final-v4-source-20261023/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-checked-release-final-v4-source-20261023/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-checked-release-final-v4-source-20261023/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 26443,
+        "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/host-state-wire-probe.rs",
+        "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev01-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev02-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev03-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev04-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29026,
+        "path": "docs/evidence/qemu-composite-dev05-20261022/source/composite-wire-probe.rs",
+        "sha256": "02ccaaf8a72fc89313a152ba3b5526c70c68e6ca241f4a32b1a7f4ad842e8104"
+      },
+      {
+        "length": 29252,
+        "path": "docs/evidence/qemu-composite-dev06-20261022/source/composite-wire-probe.rs",
+        "sha256": "042840278ffdf7888192082663d563d6e1a5d912b67a2c46169365039f9c2223"
+      },
+      {
+        "length": 29252,
+        "path": "docs/evidence/qemu-composite-dev07-20261022/source/composite-wire-probe.rs",
+        "sha256": "042840278ffdf7888192082663d563d6e1a5d912b67a2c46169365039f9c2223"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-composite-dev08-20261022/source/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 29860,
+        "path": "docs/evidence/qemu-composite-final-20261022/source/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-eof-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-alternate-unlink-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-eof-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-clear-unlink-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-eof-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 25999,
+        "path": "docs/evidence/qemu-host-state-configuration-unlink-final-20261023/source/host-state-wire-probe.rs",
+        "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-host-state-diagnostic-alternate-eof-dev01-20261023/source/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 28453,
+        "path": "docs/evidence/qemu-host-state-diagnostic-static-20261023/rustusb-host-state-diagnostic-contract-20261023.rs",
+        "sha256": "6de106c1f34210a816845dd8bc4a3a4e505eb8fa3af77b02698bcf6cb19e4e98"
+      },
+      {
+        "length": 28001,
+        "path": "docs/evidence/qemu-host-state-notification-alternate-eof-dev02-20261023/source/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-hot-dev01-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-hot-final-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 19930,
+        "path": "docs/evidence/qemu-physical-normal-dev01-20261022/source/physical-wire-probe.rs",
+        "sha256": "ca5154874b97e41725366aca682b6b2ddda40c70c4b8798ace82ef98d84d548e"
+      },
+      {
+        "length": 20308,
+        "path": "docs/evidence/qemu-physical-normal-dev02-20261022/source/physical-wire-probe.rs",
+        "sha256": "200be59f818ee15d938c6e61b15a6325ffa4a5e1a3ef31d898f51145b37ea5f9"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-normal-dev03-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-normal-final-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-normal-final-f42d-fail-20261022/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 20786,
+        "path": "docs/evidence/qemu-physical-startup-hot-dev03-20261023/source/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 17029,
+        "path": "docs/evidence/qemu-physical-static-source-01-20261022/physical-wire-probe.rs",
+        "sha256": "3303caa8b90d27d484e1d07199bfe378cdc4c362e748a42ae4a12adc8bef2dc3"
+      },
+      {
+        "length": 13706,
+        "path": "docs/evidence/qemu-userspace-dev-01-20261022/userspace-wire-probe.rs",
+        "sha256": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1"
+      },
+      {
+        "length": 13706,
+        "path": "docs/evidence/qemu-userspace-dev-02-20261022/userspace-wire-probe.rs",
+        "sha256": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1"
+      },
+      {
+        "length": 13706,
+        "path": "docs/evidence/qemu-userspace-dev-03-20261022/userspace-wire-probe.rs",
+        "sha256": "92c10fc835da65a21816d705279f2d0326b4513519f921fb9540619b38d07cf1"
+      },
+      {
+        "length": 15355,
+        "path": "docs/evidence/qemu-userspace-dev-04-20261022/userspace-wire-probe.rs",
+        "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2"
+      },
+      {
+        "length": 15355,
+        "path": "docs/evidence/qemu-userspace-physical-regression-final-20261022/source/userspace-wire-probe.rs",
+        "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2"
+      },
+      {
+        "length": 557,
+        "path": "fuzz/Cargo.toml",
+        "sha256": "52f5548fcd6145923f0af0dd4e5c0c4e5a18f538020c73cbff9a9207746b0620"
+      },
+      {
+        "length": 500,
+        "path": "fuzz/fuzz_targets/devlist.rs",
+        "sha256": "f7eab0a185d6bc1fc089ad6ec09fd57fba613d9d2d7075f09ee4f826038ce815"
+      },
+      {
+        "length": 791,
+        "path": "fuzz/fuzz_targets/server_frame.rs",
+        "sha256": "6595f39abd425d4677de9d317da6e3388fab62b3c84b87eef56a1ff3319ecc2a"
+      },
+      {
+        "length": 86,
+        "path": "rust-toolchain.toml",
+        "sha256": "559f488c181e0e9e77cf17c29de663977f036ec7ff2e2060585714bf53c52d62"
+      },
+      {
+        "length": 29860,
+        "path": "scripts/qemu/composite-wire-probe.rs",
+        "sha256": "a98dfee077217632e0abd81c4e1148625c71cdd867a2053311d271868a1d7dd2"
+      },
+      {
+        "length": 28001,
+        "path": "scripts/qemu/host-state-wire-probe.rs",
+        "sha256": "4ad6437153f12c8c38167ff0d9f764d5c060f2f4b0cd4f8cd90c30835811e408"
+      },
+      {
+        "length": 20786,
+        "path": "scripts/qemu/physical-wire-probe.rs",
+        "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3"
+      },
+      {
+        "length": 15355,
+        "path": "scripts/qemu/userspace-wire-probe.rs",
+        "sha256": "f6f6ab26ea944ea2a1d585a5cad4ef354bd06826bb2f04938796aaa712cf8fa2"
+      },
+      {
+        "length": 29123,
+        "path": "scripts/test-server-signals.py",
+        "sha256": "bd8d3c40f174aea0a1dee208a81c0234f01c161e66500766c21b11b328b8fce9"
+      },
+      {
+        "length": 76,
+        "path": "vendor/nusb/.cargo/config.toml",
+        "sha256": "f5b1b851f34df8f243d1c29a91631e10bfd3e69ffb238d036af8053a5b8c7112"
+      },
+      {
+        "length": 94,
+        "path": "vendor/nusb/.cargo_vcs_info.json",
+        "sha256": "89794bdfff78f264d27f63ccbd8f0226665e0c6a7a5934c7b588c7f6204996be"
+      },
+      {
+        "length": 379,
+        "path": "vendor/nusb/.github/workflows/release.yml",
+        "sha256": "ad9ea3934695992edd2530210add7f65600d3e06acec56a83378f543a896e60e"
+      },
+      {
+        "length": 2530,
+        "path": "vendor/nusb/.github/workflows/rust.yml",
+        "sha256": "36954cb2eff77a21c1fa677db9b1d4fe0dafbe4d0596e6f7ec16636ab912e650"
+      },
+      {
+        "length": 19,
+        "path": "vendor/nusb/.gitignore",
+        "sha256": "2ebe6cb6f5289849dce5a8a6cdd77e06b1385302c862982f8e181c4782d19214"
+      },
+      {
+        "length": 18599,
+        "path": "vendor/nusb/Cargo.lock",
+        "sha256": "60849bf7a37ffcfb4e10fbe9b8e43d3cc2165edd76365ae73fdd78757dd7496b"
+      },
+      {
+        "length": 4583,
+        "path": "vendor/nusb/Cargo.toml",
+        "sha256": "f2af75b4007e76200009ac103e5981339495108751b8aad19eca0617a89ed255"
+      },
+      {
+        "length": 2766,
+        "path": "vendor/nusb/Cargo.toml.orig",
+        "sha256": "63e1f6228b22bc965009415dda0aa1a85b62f1912b8f2344cf319fa87bcc6855"
+      },
+      {
+        "length": 10847,
+        "path": "vendor/nusb/LICENSE-APACHE",
+        "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+      },
+      {
+        "length": 1023,
+        "path": "vendor/nusb/LICENSE-MIT",
+        "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+      },
+      {
+        "length": 1023,
+        "path": "vendor/nusb/README.md",
+        "sha256": "66263c7c324845390d2fa6e1c5c543a96e6a1576e0573aed9e8d23d88485d05f"
+      },
+      {
+        "length": 18409,
+        "path": "vendor/nusb/RUSTUSB-PROVENANCE.json",
+        "sha256": "ce9db7b1a06ca38da3dd39d6e105a38e6dba5158f598dd091ac09e72198a9593"
+      },
+      {
+        "length": 4903,
+        "path": "vendor/nusb/RUSTUSB.md",
+        "sha256": "711ca550bed5a9b8856e00a285b56ea57c8b1ce21f051a85df34519fac032f83"
+      },
+      {
+        "length": 29273,
+        "path": "vendor/nusb/RUSTUSB.patch",
+        "sha256": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623"
+      },
+      {
+        "length": 1154,
+        "path": "vendor/nusb/examples/bulk.rs",
+        "sha256": "e4ea05b7d65a9e2c926463165d04a631c3d30e8edbe915c8b023d2765510a556"
+      },
+      {
+        "length": 2561,
+        "path": "vendor/nusb/examples/bulk_io.rs",
+        "sha256": "108b631d729eea7125895c890e20e0524b65769b1c66fb1c70745b9057c49924"
+      },
+      {
+        "length": 2893,
+        "path": "vendor/nusb/examples/bulk_io_smol.rs",
+        "sha256": "5b035fd8930f5de293744bd095ac2900d136af7c9169893e8f2069ec41f1d929"
+      },
+      {
+        "length": 2586,
+        "path": "vendor/nusb/examples/bulk_io_tokio.rs",
+        "sha256": "7ba2889e22d358139e978efcea93e6f9e63ac3e6c51124b455355778fe43b76d"
+      },
+      {
+        "length": 152,
+        "path": "vendor/nusb/examples/buses.rs",
+        "sha256": "9b332b0b95f08f731b92cda8c5549402652a09562665a477acd7427a4c653805"
+      },
+      {
+        "length": 2447,
+        "path": "vendor/nusb/examples/control.rs",
+        "sha256": "d1539fd9fd4f0ae29bdd4016d7a8eed40c01f2c231707540c5430fa72eadf504"
+      },
+      {
+        "length": 1053,
+        "path": "vendor/nusb/examples/descriptors.rs",
+        "sha256": "b9b365c2cddd03a539fde1e9735e03884f83b5005f05eee9122e3fa073ce6d33"
+      },
+      {
+        "length": 531,
+        "path": "vendor/nusb/examples/detach.rs",
+        "sha256": "57453d05019f9713f91738f8b37eeee71587d1a7ef58b5cc342fbfbdfba2999a"
+      },
+      {
+        "length": 565,
+        "path": "vendor/nusb/examples/detach_claim.rs",
+        "sha256": "3671f8008ac161794d4bfa34172094e324830cbb65f682081d1ce65f631b814e"
+      },
+      {
+        "length": 173,
+        "path": "vendor/nusb/examples/hotplug.rs",
+        "sha256": "4953ed2ecfcaa8457be4014f197af6e7acb76a5bc05a4800bee77f1e0b30b541"
+      },
+      {
+        "length": 154,
+        "path": "vendor/nusb/examples/list.rs",
+        "sha256": "b493a0ebca72f8647ae165cfaa17a2ef1c63d43edc30d0e4f8da6728ea391423"
+      },
+      {
+        "length": 3218,
+        "path": "vendor/nusb/examples/string_descriptors.rs",
+        "sha256": "2d9f1394a3b5da789016851ec5b2508430098db2ea4f2633bf1104e5befae052"
+      },
+      {
+        "length": 565,
+        "path": "vendor/nusb/src/bitset.rs",
+        "sha256": "c2e653f425bc186e6a0beffb971d7359e16b3d1b2380bc68812f3238f3db32c3"
+      },
+      {
+        "length": 37550,
+        "path": "vendor/nusb/src/descriptors.rs",
+        "sha256": "ee215896f2434a8cdd7c752cb3d8de731d24c42063641a24466f34d5ce8bd6ac"
+      },
+      {
+        "length": 40877,
+        "path": "vendor/nusb/src/device.rs",
+        "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289"
+      },
+      {
+        "length": 30495,
+        "path": "vendor/nusb/src/enumeration.rs",
+        "sha256": "6acc0021cfcf90b643904eeb13e4c6816e3b15a64ff0f3ce7c4c91783a3d9662"
+      },
+      {
+        "length": 4845,
+        "path": "vendor/nusb/src/error.rs",
+        "sha256": "23072fc2b1b6e2695629577fc60570d27e8c5acddf5f4b9031e613d89c2c685f"
+      },
+      {
+        "length": 1139,
+        "path": "vendor/nusb/src/hotplug.rs",
+        "sha256": "3705d6b683eabd5c78873ac5f4cebb677b81dad905035b493246a214e143d539"
+      },
+      {
+        "length": 1346,
+        "path": "vendor/nusb/src/io/mod.rs",
+        "sha256": "822eeb8a278adb29bc208a6919423e3a240b24b4f08ebe4bd12346e279353724"
+      },
+      {
+        "length": 18301,
+        "path": "vendor/nusb/src/io/read.rs",
+        "sha256": "9d4e2734b32d3cd11c84380f778d8ea384e18dcb82b705646ba0495dc9552bf9"
+      },
+      {
+        "length": 12340,
+        "path": "vendor/nusb/src/io/write.rs",
+        "sha256": "5277f2ea5b4363ab0f1b13aeb5531ce26fe7fbe45e87966572656194cdaf4141"
+      },
+      {
+        "length": 15010,
+        "path": "vendor/nusb/src/lib.rs",
+        "sha256": "2c733626ee5a31e47503a8476492b4bb1dd645a43b467039f5e349e63471d779"
+      },
+      {
+        "length": 8277,
+        "path": "vendor/nusb/src/maybe_future.rs",
+        "sha256": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e"
+      },
+      {
+        "length": 46376,
+        "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+        "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+      },
+      {
+        "length": 9367,
+        "path": "vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+        "sha256": "378e3f422a2e8e462c9bc2e7809a4c49dc12db29cb0803a178f627839485a98c"
+      },
+      {
+        "length": 4631,
+        "path": "vendor/nusb/src/platform/linux_usbfs/events.rs",
+        "sha256": "41bb15c95986744c66d8c14863c16a8266d144818306e55fe4b41f86365efa46"
+      },
+      {
+        "length": 4941,
+        "path": "vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+        "sha256": "4fb3b2d2c62935c79aa3bc0a566ec50a2c72434c421dc5a05dd33f8a5d48a7f2"
+      },
+      {
+        "length": 1981,
+        "path": "vendor/nusb/src/platform/linux_usbfs/mod.rs",
+        "sha256": "21d82a7ad9853031c998d7c7a32baf7cc275d9ea077e8b8e5e7e30f59271e5b1"
+      },
+      {
+        "length": 5696,
+        "path": "vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+        "sha256": "e86a87ef5202f18798a607bff6de4f1521838d0de475df74938872770dfaf00c"
+      },
+      {
+        "length": 7670,
+        "path": "vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+        "sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011"
+      },
+      {
+        "length": 23236,
+        "path": "vendor/nusb/src/platform/macos_iokit/device.rs",
+        "sha256": "0e3da8e10f830b967c509f02294c6aebcc57812fb44ffd6be15c4b8926566781"
+      },
+      {
+        "length": 12317,
+        "path": "vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+        "sha256": "83756d12a4d6a4d489411faa482c3c47d4c6f086a2c055bb7c84ef13ef69e384"
+      },
+      {
+        "length": 2321,
+        "path": "vendor/nusb/src/platform/macos_iokit/events.rs",
+        "sha256": "3504d9bb500cb16694c2e9ca802b362cab75f8e10a7f81e5124cfa75f9222fa9"
+      },
+      {
+        "length": 5481,
+        "path": "vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+        "sha256": "0ee322f9f96bca1883a52ace10764714181e4c64c64bb76b32e45e54d479608c"
+      },
+      {
+        "length": 3354,
+        "path": "vendor/nusb/src/platform/macos_iokit/iokit.rs",
+        "sha256": "1ce59fd235e72422ddb0438d3cc1baf85c2ff2e50d86922e14037a42fbfbbc40"
+      },
+      {
+        "length": 41091,
+        "path": "vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+        "sha256": "5e135448f66e3a4fddd401b9a3af601806fdda914e00f48e48c633665e5e3f39"
+      },
+      {
+        "length": 12466,
+        "path": "vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+        "sha256": "900df5766f774f7171065432d3e8285160b1b1c96f46c5642bf66e068e9a8a1c"
+      },
+      {
+        "length": 1669,
+        "path": "vendor/nusb/src/platform/macos_iokit/mod.rs",
+        "sha256": "74b150fd46f984313142c2d85929e98a60ff61efd65f91e90648a8d7e12346c9"
+      },
+      {
+        "length": 2395,
+        "path": "vendor/nusb/src/platform/macos_iokit/transfer.rs",
+        "sha256": "30e95c949b4c48a19a4680ddfbb7b7d6a071ecb073dcdf3f024f493f93c41e6b"
+      },
+      {
+        "length": 917,
+        "path": "vendor/nusb/src/platform/mod.rs",
+        "sha256": "33ff54e027f3bbca69beca75028dbea748a5fcf3f91c8855acb941e9c5b10471"
+      },
+      {
+        "length": 19603,
+        "path": "vendor/nusb/src/platform/webusb/device.rs",
+        "sha256": "c4c338f4fc49129cf5b6ef217a7ea9c2979e1ac5a70b9e971a592f5ef509dafc"
+      },
+      {
+        "length": 4482,
+        "path": "vendor/nusb/src/platform/webusb/enumeration.rs",
+        "sha256": "5e331b677188dab89a6c67d7ffcf36131140b27dea2673766dbe1ffb19f5f443"
+      },
+      {
+        "length": 2893,
+        "path": "vendor/nusb/src/platform/webusb/hotplug.rs",
+        "sha256": "08c4b2f926b20dd37def7630fe484a4d4b301b6b7f8d98d1b8cb940c0247dcf1"
+      },
+      {
+        "length": 3722,
+        "path": "vendor/nusb/src/platform/webusb/mod.rs",
+        "sha256": "3abe26f3cd8500c43c55de3d6e78a7f722ab02b68ddac96067cf86c2d1a767d2"
+      },
+      {
+        "length": 7638,
+        "path": "vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+        "sha256": "319a163c6233bcea1606995447eb31e4cbd6b14f356741c5b862b7986b4b15b1"
+      },
+      {
+        "length": 31445,
+        "path": "vendor/nusb/src/platform/windows_winusb/device.rs",
+        "sha256": "4e96b7da7a055d6c4d9581c36c9c7f43e8e922fe2c182c879d98b5f06a2b9c97"
+      },
+      {
+        "length": 14867,
+        "path": "vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+        "sha256": "b0a596f3a97b4815d9ec4f03d088748fbf738f96ffde45d8424174c3ec1cbeb1"
+      },
+      {
+        "length": 5658,
+        "path": "vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+        "sha256": "b7a7fd868088cc288f65cd9cf635d9061c072fe8d78e09b04a1905b59bb18c4b"
+      },
+      {
+        "length": 526,
+        "path": "vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+        "sha256": "d0a7e791add8a3a44c3772c40cab6bde8b75dedf360d46c58474b85b5c392b04"
+      },
+      {
+        "length": 9957,
+        "path": "vendor/nusb/src/platform/windows_winusb/hub.rs",
+        "sha256": "e3da370b594c97801a3f5fd7bdf814c5b47a845a7789f4f2d7cb00a552e1ac25"
+      },
+      {
+        "length": 1011,
+        "path": "vendor/nusb/src/platform/windows_winusb/mod.rs",
+        "sha256": "6c1d403e150c1615f85aeb9266b86776fda05eddcee9b0b9dc2589ecc14c9df2"
+      },
+      {
+        "length": 2404,
+        "path": "vendor/nusb/src/platform/windows_winusb/registry.rs",
+        "sha256": "59ad436a255bf63ab8485b414d22640c9924f1c4995097ba64a775f8208ae30e"
+      },
+      {
+        "length": 2011,
+        "path": "vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+        "sha256": "5878d09f04fc69e12c2bbf8727de60b4f8de499c6f91b2adcbb9225fde62e101"
+      },
+      {
+        "length": 3559,
+        "path": "vendor/nusb/src/platform/windows_winusb/transfer.rs",
+        "sha256": "edc9936990cdd3be01506fe3444b9ca3e09e2fbee7bfeebfddce6baf25ba95c6"
+      },
+      {
+        "length": 4404,
+        "path": "vendor/nusb/src/platform/windows_winusb/util.rs",
+        "sha256": "d81c10a0a2d15f45f4ea8f1d4b0ccb21956476ad21444b746dc4386fd73f39ca"
+      },
+      {
+        "length": 9626,
+        "path": "vendor/nusb/src/transfer/buffer.rs",
+        "sha256": "032d73a85281115aada917dd8ab046dc47b86593d4ace33248d074abdbc15e1a"
+      },
+      {
+        "length": 4744,
+        "path": "vendor/nusb/src/transfer/control.rs",
+        "sha256": "c897832b372c69962b2b984423bb59ee217ef3c5b888c46dafaf45b4a080ca0e"
+      },
+      {
+        "length": 9803,
+        "path": "vendor/nusb/src/transfer/internal.rs",
+        "sha256": "32495a2f7971513d6da152395bf0ab1d140477f5f346cd9b89613a73dddf792d"
+      },
+      {
+        "length": 5070,
+        "path": "vendor/nusb/src/transfer/mod.rs",
+        "sha256": "4cd09ea81c16f75de0f785d7f85108814b8489bf37a71e0136fb055c84727963"
+      }
+    ],
+    "git_status": "?? scripts/qemu/guest-sigterm-init.sh\n?? scripts/qemu/run-sigterm-qemu.py\n?? scripts/test-server-signals.py\n",
+    "head": "177c7b4e7841472981abadc4dcf0ecf9f3edecda",
+    "source_sha256": "67b002abafe10eaf479ab9ee2513b803d518b1fb3db8672ea78f760c6ac848bf"
+  },
+  "source_unchanged": true
+}

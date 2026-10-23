@@ -254,3 +254,8 @@
 - 上一goal turn有实际进展：修复、验收及Native测试夹具修订均已提交。root重新读取完整原始需求/AGENTS/项目skill，核main cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd和SSH远端同SHA，开始时工作树clean。完整目标仍active，未缩为现有测试。
 - 源码确认两个Rust服务只select ctrl_c，main让服务拥有清理。并行只读设计产品signal入口、QEMU旧负向和本地child验收，未修改生产代码或执行新测试；方案见research/server-signal-shutdown-design.md，明确setup取消/提前注册、总await cleanup和SIGKILL能力边界。
 - 固定Tokio1.54.1线上三个docs页面工具访问失败，registry也无.cargo-checksum.json；改用实际缓存crate archive SHA核Cargo.lock package checksum，再逐bytes核两signal源码。未用其他版本代替、未复制上游实现或添加依赖。
+- 新local child工具先在root旧产品实际跑两项：ready dev01与blocked dev02都严格FAIL，实际Popen -15，无强制清理或重试；先有两profile真实IMPORT/cfg1/各pending1，两个data socket均EOF。ready实际无stopped；blocked独立OFD填满4096B/FIONREAD4096、child flags保持blocking、真实writer pipe_write后TERM且不drain。两次source/binary afterguard均通过，默认locked allfeatures构建，原bytes已归档。
+- local源码仅一份在ready前捕获、blocked明确复用，包含106份与cf9fd3d Gitblob完全相同的产品输入身份；未虚构blocked独立pre-capture。新增stderr.log精确evidence ignore例外以保留空stderr和失败原日志。物理QEMU负向仍待新harness冻结，root未应用候选产品1762d65。
+
+- 新QEMU两文件68项静态/synthetic与另一agent源码审查通过，先修main-ready同步barrier再冻结；未改旧harness/产品。root在177c7b4 dirty测试工具状态前置捕获7脚本+106产品Gitblob，默认locked allfeatures实跑old-dev01：startup真实helper backlog（排除Tokio selfpipe）下TERM wait143、原sysfs未变；主服务真实KEY1和35B双向、两lease各pending/inflight后TERM也wait143。完整20.04秒后同代际cfg1/alt0/root0600仍保留，但两driver实际null、无stopped；client0.19秒自主NULL/旧receipt消失后才清缓存。host整体52断言8FAIL保持，两个guest0不覆盖FAIL，source/binary afterguards与实际TXsink35B相符。
+- 旧local负向31份索引原bytes经125项独立parser/归档复核通过（复核者为harness作者，非独立harness实现审查）；QEMU32份源码/raw/static/候选review索引亦已逐bytes归档。无stopped不支持末资源/reap结论，20秒观察不支持永久泄漏；产品候选仍未应用。

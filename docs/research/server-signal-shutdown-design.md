@@ -1,6 +1,6 @@
 # Rust服务SIGTERM合作停止设计
 
-2026-10-23，基线cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd。状态：设计与旧产品复现准备，尚无本轮实现或运行结果。完整范围、真实硬件G1/G2和后续阶段不变。
+2026-10-23，基线cf9fd3d22588958486cbbbd771d2f29c2d1b7bcd。状态：旧产品本地与QEMU负向已复现，修复候选仅在独立worktree，尚未应用或验收。完整范围、真实硬件G1/G2和后续阶段不变。
 
 ## 当前源码与保证
 
@@ -31,7 +31,9 @@ signal()同步注册、Signal::recv支持select取消，通知可能合并，han
 2. 物理普通UID1000经root helper取得授权FD。真实HID/FTDI内容I/O后保持两个lease和真实pending/inflight/预算，独立确认usbfs claim；仅guest发一次SIGTERM。先保存真实waitcode、client旧节点/receipt终态、同generation的driver/config/alternate与FD观察，再判定。旧wait143不允许提早跳过观察，旧无stopped则记缺失，不伪造资源0。
 3. 修复后相同条件要求exit0、原driver/config/alternate恢复、节点权限与代际、全部pending/queued/inflight/budget0和清理证据。socket EOF/进程退出不能代替backend恢复。
 4. 虚拟服务独立child测试覆盖ready与stdout4096B满不drain时的SIGINT/SIGTERM：先实际IMPORT/SET_CONFIG1/HID IN8及snapshot leased/pending，再仅signal自身Popen child。正常stdout须stopped资源0；满stdout只做其可证明的exit/EOF，不冒充物理恢复。旧TERM真实-15（shell143）保持FAIL，原INT/deadline回归保留。
-5. 开发后默认/全部feature的fmt/Clippy/tests/release/严格Rustdoc，随后同clean冻结QEMU与必要回归。记录每次失败、前置精确源码、真实日志及SHA，适当commit并普通push。当前尚无本轮信号运行通过结论。
+5. 开发后默认/全部feature的fmt/Clippy/tests/release/严格Rustdoc，随后同clean冻结QEMU与必要回归。记录每次失败、前置精确源码、真实日志及SHA，适当commit并普通push。当前尚无修复后信号运行通过结论。
+
+旧产品[本地两项负向](../evidence/server-sigterm-old-local-development-20261023.json)均实际Popen -15；[QEMU负向](../evidence/server-sigterm-old-qemu-development-20261023.json)的startup与两lease主服务均实际wait143。主服务退出后完整20.04秒观察中，同代际cfg1/alt0仍在，但原usbhid/ftdi_sio均未恢复，实际driver为null。客户端自主断连不代表服务端恢复；无stopped也不能推导末reap/资源数，更不推导永久泄漏。
 
 
 [产品入口设计复核](../evidence/server-sigterm-design-review-20261023.json)与[独立生命周期/本地验收复核](../evidence/server-sigterm-lifecycle-independent-design-review-20261023.json)保留各自源码事实与测试边界。实现候选仅在独立worktree进行，root仍保持旧产品以先执行负向复现。

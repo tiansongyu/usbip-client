@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "review_kind": "independent_source_review_only",
+  "reviewer_task": "/root/phase2_scope_review",
+  "at_utc": "2026-10-23T04:16:56.629352+00:00",
+  "git_head": "177c7b4e7841472981abadc4dcf0ecf9f3edecda",
+  "review_result": "PASS_NO_MUST_FIX",
+  "must_fix": [],
+  "scope": "Read both complete new QEMU producer/runner scripts and relevant existing Rust server, physical worker, Native/helper lifecycle code. No build, QEMU, signal delivery, host networking or module operation performed by reviewer. Only this /tmp report was written.",
+  "source_sha256": {
+    "scripts/qemu/guest-sigterm-init.sh": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+    "scripts/qemu/run-sigterm-qemu.py": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16"
+  },
+  "final_source_unchanged_during_review": true,
+  "resolved_review_findings": [
+    {
+      "item": "Explicit main-ready barrier",
+      "source": "guest-sigterm-init.sh:294 and :365",
+      "finding": "Server finishes startup child experiment and obtains main ready snapshot before sending main-ready; client waits for it after doctor and before any discover. Avoids the former effective ~7.5-second fast-refusal discover budget racing the longer startup experiment. Existing attached/io/term-sent/server-observed/client-observed/finished sequence remains acyclic."
+    },
+    {
+      "item": "Real helper backlog association excludes signal self-pipes",
+      "finding": "Before signalling startup child, guest verifies helper PID/starttime/root executable identity and stopped state. It associates a specific ordinary child FD/inode with the named helper listener path/PID peers backlog, then checks that inode in /proc/net/unix. Merely having a socket is not accepted. helper_acceptance_observed remains false."
+    },
+    {
+      "item": "Startup diagnostic prerequisites",
+      "finding": "Runner copies actual ss and records its binary SHA; checks/configures the matching guest UNIX_DIAG module when modular. Cached exact iproute2 v5.15 ss source supports the expected -e UDIAG_SHOW_ICONS peers output. Actual module loading, ss row layout and backlog observations remain integration-test questions."
+    },
+    {
+      "item": "Startup old wait143 retained",
+      "finding": "Actual startup wait status is captured through an if-wait branch. It becomes a separate STARTUP_PASS flag while the main experiment proceeds when the child is gone and original sysfs is unchanged. No fabricated accepted helper request or restored backend counters are inserted."
+    },
+    {
+      "item": "Main old wait143 and missing stopped retained",
+      "finding": "Main wait143 is data and does not cause set-e to skip post-term observations. Both guests print original outcomes and collection completion before final judgement. Missing stopped is FAIL rather than a substituted zero-resource snapshot."
+    },
+    {
+      "item": "Cancellation winner semantics",
+      "finding": "Runner now requires actual per-device reaped growth and nondecreasing cancelled counters, not cancellation always winning or cancelled equalling a cached pending count. Final resources, independent same-generation driver/config/alternate/node restoration and process/FD disappearance remain required."
+    },
+    {
+      "item": "Final sysfs observation consistency",
+      "finding": "RESTORED is recomputed from the final captured sysfs. Failed numeric reads retain the two device identities with null numeric fields rather than silently suppressing complete device objects."
+    },
+    {
+      "item": "Client spontaneous disconnect precedes detach",
+      "finding": "Client observes sessions empty, old local generations absent and raw VHCI status NULL before any explicit detach. This agrees with existing Native transport-abort semantics; capturing transient ERROR is not required. Subsequent test-owned cache detach operations are guarded so errors do not skip the final peer handshake."
+    },
+    {
+      "item": "Single main TERM and final stopped expectation",
+      "finding": "Main experiment signals its verified ordinary-user server exactly once, holds stdin open, sends no shutdown control, and writes events to an ordinary file. Requiring one final stopped plus verified zero resources is appropriate for this scenario. This does not cover repeated TERM cancelling final output."
+    },
+    {
+      "item": "Actual device I/O versus user write",
+      "finding": "Client validates exact injected RX bytes and HID down/up events. A client TTY write alone is not the sole OUT oracle: runner drains the actual QEMU FTDI host socket through EOF and requires exact TX content/length/digest before PASS."
+    },
+    {
+      "item": "Strict output and runtime failure handling",
+      "finding": "Separate program ttyS1 and kernel ttyS0 channels are retained and both checked for integrity failures. Exact markers/JSON are parsed without ANSI stripping or marker repair. Sticky failure does not become PASS; guest exit0 alone cannot override failed checks."
+    },
+    {
+      "item": "Source, binary and isolation boundaries",
+      "finding": "Default locked all-feature release build, copied binary/module/source metadata and post-run source/binary/commit guards are present. Only disposable guest USB devices, helper and validated child PIDs are affected; host USB/module/ptrace/network configuration is not used."
+    }
+  ],
+  "runtime_limitations": [
+    "This PASS is a source-review verdict, not a successful QEMU or SIGTERM acceptance result.",
+    "Author static report declares 68 synthetic/syntax checks; reviewer did not rerun them or relabel them as actual helper/USB/kernel evidence.",
+    "The first real old-product execution must establish actual ss backlog output and preserve any fixture failure separately from a product failure.",
+    "SIGKILL, abort/panic, repeated signals during cleanup, kernel-internal hard blocking, physical hardware G1/G2 and full Phase3 recovery are outside these two scenarios.",
+    "The 3-second startup and 20-second main observation limits are fixture acceptance bounds, not promises that arbitrary kernel-blocked initialization is forcibly terminated."
+  ],
+  "author_static_report": {
+    "path": "/tmp/rustusb-sigterm-harness-static-20261023.json",
+    "sha256": "b79569628bdf39ee87fd0fadbff6abf2b3f6e2262c1902639462f4aa31a089a6",
+    "scope": "Author syntax/synthetic contract evidence only"
+  },
+  "related_implementation_candidate": "1762d6534cc1ef2bf588d8242dc1947f11b4e15d; not applied or executed by this review"
+}
