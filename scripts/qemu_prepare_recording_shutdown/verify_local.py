@@ -1,7 +1,35 @@
 """Local Native stop verdict: one original owner closes, the sibling must survive."""
+import copy
+from decimal import Decimal
 import hashlib
 import json
 import struct
+
+
+def detach_root_complete(root, original_export, target_proof, actual_stub):
+    """Exact pre-export-stop retirement of the stub observed during real I/O."""
+    stub_proof = {"resource_id": actual_stub["channel_id"], "kind": "native_stub",
+                  "device_key": original_export["registration"]["device_key"],
+                  "owner_uid": original_export["owner"]["uid"],
+                  "correlation": actual_stub["correlation"], "proof": "native_stub_available"}
+    expected = [{"terminal": target_proof, "server_id": None},
+                {"terminal": stub_proof, "server_id": None}]
+    return (root["schema_version"] == 2 and root["records"] == [] and
+            root["exports"] == [original_export] and len(root["terminals"]) == 2 and
+            sorted(root["terminals"], key=lambda row: row["terminal"]["resource_id"]) ==
+            sorted(expected, key=lambda row: row["terminal"]["resource_id"]))
+
+
+def detach_host_expected(baseline, hid_bus):
+    """Full original profiles except the still-bound HID export's driver state."""
+    expected = copy.deepcopy(baseline)
+    for row in expected:
+        if row["bus"] == hid_bus:
+            row["device_driver"] = "usbip-host"
+            row["usbip_status"] = 1
+            for interface in row["interfaces"]:
+                interface["driver"] = ""
+    return expected
 
 
 def verify(evidence, args, summary):
@@ -102,8 +130,37 @@ def verify(evidence, args, summary):
     imported_session = obj("client", "local-survivor-sessions.json")["response"]["sessions"][0]
     check(detached["records"] == detached["exports"] == [] and terms(detached) == [proof(imported_session, imported_session["attempts"][0])], "original HID import normally detaches with exact root proof before last export stop")
     check(obj("client", "local-stop-import.json")["response"] == {"result":"stop_accepted","owner_present":True}, "actual authorized original import stop response")
+    saved_stub = server("local-detach-stub.json")
+    check(saved_stub == during["exports"][0]["stub"] and saved_stub["state"]["phase"] == "observed", "detachment barrier pins the exact stub actually used for original HID I/O")
+    detach_rows = rows("local-detach-observations.jsonl")
+    barrier = server("local-detach-barrier.json")
+    check(bool(detach_rows) and len(detach_rows) == barrier["observations"] <= 500 and [r["observation"] for r in detach_rows] == list(range(1,len(detach_rows)+1)), "bounded contiguous actual server retirement read samples")
+    check(barrier["limit_seconds"] == 15 and barrier["maximum_observations"] == 500 and barrier["retired"] is True and barrier["read_only"] is True and barrier["last_export_stop_sent"] is False, "completion barrier succeeds read-only before last-export stop")
+    started = Decimal(barrier["started_uptime"])
+    previous_time = started
+    hid_bus = survivor_record["registration"]["generation"]["bus_id"]
+    expected_available_host = detach_host_expected(baseline,hid_bus)
+    for row in detach_rows:
+        index = row["observation"]
+        poll_root = server(f"root-local-detach-poll-{index}.json")
+        poll_host = server(f"host-local-detach-poll-{index}.json")
+        poll_app = server(f"agent-local-detach-poll-{index}.json")
+        root_complete = detach_root_complete(poll_root,survivor_record,target_proof,saved_stub)
+        host_complete = poll_host == expected_available_host
+        now = Decimal(row["uptime"])
+        within = started <= now <= started + 15
+        check(row["started_uptime"] == barrier["started_uptime"] and previous_time <= now and row["within_bound"] == within, f"server detach sample {index} actual bounded monotonic uptime")
+        check(row["root_retired_exact"] == root_complete and row["host_available_original"] == host_complete and row["read_only"] is True and row["last_export_stop_sent"] is False, f"server detach sample {index} exact original stub/root and full sysfs predicate")
+        check(not any(event["action"] == "stop" and event["session_id"] == survivor["id"] for event in poll_app["audit"]), f"server detach sample {index} contains no last-export StopSession audit")
+        previous_time = now
+    check(detach_rows[-1]["root_retired_exact"] is True and detach_rows[-1]["host_available_original"] is True and detach_rows[-1]["within_bound"] is True and Decimal(barrier["completed_uptime"]) == previous_time, "last accepted sample actually completes exact root and sysfs retirement within bound")
+    accepted_index = detach_rows[-1]["observation"]
+    check(raw("server","root-local-after-detach.json") == raw("server",f"root-local-detach-poll-{accepted_index}.json") and raw("server","host-local-after-detach.json") == raw("server",f"host-local-detach-poll-{accepted_index}.json"), "accepted pre-export-stop originals preserved byte-for-byte without later proof backfill")
     after_detach = server("root-local-after-detach.json")
-    check(len(after_detach["exports"]) == 1 and after_detach["exports"][0] == survivor_record and target_proof in terms(after_detach) and len(terms(after_detach)) == 2, "original HID export still active and exact stub already retired after detach")
+    check(detach_root_complete(after_detach,survivor_record,target_proof,saved_stub) and server("host-local-after-detach.json") == expected_available_host, "original HID export remains exact and original stub retirement completes before last-export stop")
+    check(Decimal(raw("server","local-last-export-stop-uptime.txt").decode().strip()) >= previous_time, "last-export stop request follows observed server completion")
+    server_log = (evidence/"server-evidence.log").read_text()
+    check(server_log.count("PREPARE_LOCAL_STUB_RETIRED\n") == server_log.count("PREPARE_LOCAL_LAST_EXPORT_STOP_REQUEST\n") == 1 and server_log.index("PREPARE_LOCAL_STUB_RETIRED\n") < server_log.index("PREPARE_LOCAL_LAST_EXPORT_STOP_REQUEST\n"), "actual guest completion marker precedes last-export stop request")
     empty = server("root-local-empty.json")
     check(empty["records"] == empty["exports"] == [] and len(terms(empty)) == 3 and all(proof(s,s["attempts"][0]) in terms(empty) for s in sessions) and server("host-local-empty.json") == baseline, "both exports individually cancelled with complete actual baselines and exact retained proof")
     empty_jobs = server("local-empty-jobs.json")["response"]["jobs"]
