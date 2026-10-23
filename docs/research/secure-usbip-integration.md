@@ -43,6 +43,8 @@ listener先取得16任务permit再spawn，真实TLS stream另保留同server实�
 
 一个持续受保护控制UDS监督prepare/handoff/commit/finish；断开或Drop触发helper自己的K shutdown和实际内核清理，不能按猜测port detach，更不能清理外部替换会话。实际blocking写任务持有FD、强receipt和全局mutation guard到真实结束，取消future不是终止syscall。未确认的副作用保留未决状态；重启不认领来源不明资源。持久记录、只读协调与故障策略须在对应接口启用前固定，不能凭PID死亡/内存清空宣称恢复。
 
+客户端在operation失败后仍须await cleanup，同时保留operation和cleanup各自的错误上下文；cleanup错误不能掩盖原导入错误，也不能把operation成功当成cleanup已验证。固定v6.8的VHCI USED在SET_ADDRESS阶段出现，早于device_add；不是sysfs完整可读或驱动已就绪的证明。初始化等待必须区分尚未创建的属性、合法未配置阶段与真正的权限/格式/身份错误，固定首次已观察代际，完成前后复核同row/代际；不能通过一概重试I/O错误或替换旧receipt来掩盖设备变化。此项源事实见对应调查，第二QEMU仅确认I/O错误，尚未取得原始errno上下文。
+
 Native服务端还必须提供授权export lease及stub channel：导出前读取真实wire元数据与原基线，导出后预开原kernfs attr并强核代际；commit只确认stub USED，不等待远端VHCI枚举。先写并flush IMPORT成功帧，再开启kernel raw泵，URB不能抢在管理回复前。结束先核AVAILABLE、再按export所有权恢复完整原driver；cfg/IF按已验证Native阶段变化，不与硬件代际混为恒等字段。现单guest机制只支持这些候选，不替代产品两端的生命周期验收。
 
 具体候选API：`prepare_native_export(socket, device_id) -> NativeExportHandle`，handle提供device_key、published_device、open_stub、close和invalidated；`NativeStubHandle`与import handle同样提供一次take_relay、commit、close及失效通知。发布元数据是**导出前真实注册描述符快照**，不是实时actconfig；导出后的实际空配置/空interface及后续USED/AVAILABLE状态独立记录。无法匹配已发布配置或确认完整原driver恢复时保持未决，不猜造描述符或虚构恢复。完整跨配置兼容性仍需单独验收。

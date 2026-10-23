@@ -166,8 +166,10 @@ pub(super) async fn attach(socket: &Path, path: PathBuf, timeout: Duration) -> R
         tokio::select! {
             biased;
             signal = signals.recv() => signal,
-            _ = &mut loss => Err(Error::State("secure helper channel became invalid".into())),
+            // The actor sends its final RPC error before invalidation. Preserve
+            // that completed response when both observations are ready.
             result = &mut operations => result,
+            _ = &mut loss => Err(Error::State("secure helper channel became invalid".into())),
         }
     };
     // Stop admitting network/USB bytes before asking the helper to verify
@@ -176,8 +178,15 @@ pub(super) async fn attach(socket: &Path, path: PathBuf, timeout: Duration) -> R
         copying.abort();
         let _ = copying.await;
     }
-    handle.close().await?;
-    result?;
+    match (result, handle.close().await) {
+        (Err(operation), Err(cleanup)) => {
+            return Err(Error::State(format!(
+                "secure device operation failed ({operation}); cleanup unconfirmed ({cleanup})"
+            )));
+        }
+        (Err(error), Ok(())) | (Ok(()), Err(error)) => return Err(error),
+        (Ok(()), Ok(())) => {}
+    }
     if output.in_flight {
         return Ok(());
     }

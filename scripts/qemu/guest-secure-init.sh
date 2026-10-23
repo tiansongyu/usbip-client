@@ -58,6 +58,36 @@ dump_artifacts() {
     done
     return "$artifact_failed"
 }
+failure_journal() {
+    # These are fixed diagnostic paths supplied below, never helper operations.
+    # Each file is an independent read snapshot, not a joint transaction.
+    journal_label=$1
+    journal_source=$2
+    journal_prefix="/tmp/failure-$journal_label"
+    printf 'source=%s\nlimit_bytes=1048576\n' "$journal_source" > "$journal_prefix.status.txt"
+    if [ -L "$journal_source" ]; then
+        printf 'status=nonregular\n' >> "$journal_prefix.status.txt"
+    elif [ ! -e "$journal_source" ]; then
+        printf 'status=absent\n' >> "$journal_prefix.status.txt"
+    elif [ ! -f "$journal_source" ]; then
+        printf 'status=nonregular\n' >> "$journal_prefix.status.txt"
+    elif timeout 2 head -c 1048577 "$journal_source" > "$journal_prefix.capture" 2> "$journal_prefix.read.log"; then
+        journal_bytes=$(wc -c < "$journal_prefix.capture")
+        if [ "$journal_bytes" -gt 1048576 ]; then
+            head -c 1048576 "$journal_prefix.capture" > "$journal_prefix.prefix.bin"
+            printf 'status=over_limit\ncomplete=false\n' >> "$journal_prefix.status.txt"
+        elif cp "$journal_prefix.capture" "$journal_prefix.json" 2>> "$journal_prefix.read.log"; then
+            printf 'status=copied\ncomplete=true\nbytes=%s\n' "$journal_bytes" >> "$journal_prefix.status.txt"
+        else
+            journal_copy_status=$?
+            printf 'status=copy_failed\ncopy_exit=%s\n' "$journal_copy_status" >> "$journal_prefix.status.txt"
+        fi
+    else
+        journal_read_status=$?
+        printf 'status=unreadable\nread_exit=%s\n' "$journal_read_status" >> "$journal_prefix.status.txt"
+    fi
+    rm -f "$journal_prefix.capture"
+}
 cleanup() {
     status=$?
     trap - EXIT
@@ -66,6 +96,8 @@ cleanup() {
     set +e
     if [ "$status" != 0 ]; then
         echo "RUSTUSB_SECURE_RESULT: FAIL role=$ROLE stage=$STAGE exit=$status"
+        failure_journal native-channels /var/lib/rustusb/native/channels.json
+        failure_journal physical-journal /var/lib/rustusb/physical/journal.json
         dmesg > /tmp/failure-dmesg.log
         cat /proc/net/tcp /proc/net/tcp6 > /tmp/failure-tcp.log
     fi

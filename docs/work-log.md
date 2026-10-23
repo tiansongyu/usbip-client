@@ -407,3 +407,5 @@
 - 完整门禁第二轮发现root新增Native管理CLI误调用不存在的helper函数，改用原invoke后第三轮scripts/check.sh exit0：default151/allfeatures225/vendor20共396次、35result、0失败忽略，121选定软件输入前后SHA保持；全部fmt/Clippy/release/严格rustdoc通过。另Native-only secure-transport CLI六项通过，feature tree无Rust engine。helper与共享协议/客户端两个独立源码审查无mustfix，新增英文secure-guide先标实际QEMU待验收，未改硬件或整体Phase完成状态。
 
 - 设计db2d4c8、产品80a21f1及六模式harness41e2c67已正常push。首clean41e2c67 virtual/IPv4实际QEMU FAIL：HID已枚举，第二个serial attach进程提前结束，原因待完整诊断；trap缺少base64导致原始guest文件导出中断并退出PID1，产生真实kernel panic，不能称采集完整或设备运行通过。source/head/clean/binary guard与FAIL分别记账，142份已有原件归档保留；先修采证依赖再定位，不以guest退出或重跑覆盖首FAIL。精确41e2c67软件CI39950528568与Pages39950528577已触发，尚不标运行中job通过。
+
+- 采证修复clean5f1e25b第二次virtual/IPv4仍FAIL，182份原件归档；两guest0、四guards真且全部已输出文件可提取，不能覆盖实际FAIL。日志确认serial helper I/O失败，但客户端cleanup错误掩盖原operation。先在设计固定两错误都保留，再修CLI结果合并与完成RPC优先于失效通知，actual close仍总await；第四轮完整软件gate再次396/35result零失败忽略，121输入前后保持。新failure trap只读采有界Native/physical持久文件，准备第三次诊断。独立固定v6.8确认USED早于device_add的窗口，但未仅凭相关性改判首因；Native代码仍未改。41e2c67四平台CI已独立169项复核通过，每格396及本地信号/背压原范围，原QEMU失败保持。
