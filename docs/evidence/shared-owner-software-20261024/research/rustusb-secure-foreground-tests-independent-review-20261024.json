@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "status": "NO_MUST_FIX",
+  "review_kind": "independent source-only review of H-authored secure foreground tests",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "worktree": "dirty candidate; exact reviewed source hashes recorded, no runtime attribution",
+  "sources": [
+    {
+      "path": "crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "bytes": 24748,
+      "sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+    },
+    {
+      "path": "crates/rustusb-cli/src/foreground.rs",
+      "bytes": 6074,
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82"
+    },
+    {
+      "path": "crates/rustusb-service/src/foreground.rs",
+      "bytes": 14747,
+      "sha256": "c565ebe5fa7671c1bdd8641e468c30b6feb9d492d18fdc55dc14ef08b4eb8a8b"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "bytes": 50710,
+      "sha256": "ea6ed4c2633a3c04d256554c9caf071e9af4f3a8d8f367e2c0b4559d6d86e140"
+    },
+    {
+      "path": "crates/rustusb-protocol/src/secure.rs",
+      "bytes": 21700,
+      "sha256": "e87361de1bccd1a91b0927a31cb71556e25a05fdb2608d87e8a5ff9eb88d706c"
+    },
+    {
+      "path": "crates/rustusb-cli/src/event_output.rs",
+      "bytes": 2400,
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    }
+  ],
+  "checks": [
+    {
+      "id": "actual_adapter",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "cfg(test) exact libtest child invokes the actual CLI foreground::run and shared LoadedJob::VirtualServer, not a reimplemented echo loop."
+    },
+    {
+      "id": "tls",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Fresh CA and independent server/client leaf keys, proper EKUs, server DNS SAN, client leaf pin ACL for the two exact profiles; actual TLS catalog/import peers retained until after child termination."
+    },
+    {
+      "id": "nonvacuous_preconditions",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Catalog exactly 2 expected stable keys; each standard IMPORT then successful actual SET_CONFIGURATION1; each pending IN submitted; snapshot exactly 2 expected bus/profile entries, leased=true/configuration1/pending1/queues0; each real TLS data stream remains pending for40ms."
+    },
+    {
+      "id": "real_pipe_block",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "4096-byte pipe; parent read side only nonblocking; child stdout inherits shared blocking writer OFD; padding reopens the parent-owned writer through /proc/self/fd as independent NONBLOCK OFD, writes one byte until EAGAIN and FIONREAD4096; flags independently checked; actual child task pipe_write observed."
+    },
+    {
+      "id": "no_drain",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Output.frozen forbids any read after fill; wait(false) retains no-drain condition; final FIONREAD remains4096, no blocked terminal snapshot fabricated."
+    },
+    {
+      "id": "signals_and_deadline",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Only unreaped direct child PID is signalled; ready/blocked INT+TERM demand code0, no-signal blocked timeout demands code1 plus stdout deadline diagnostic; no automatic retry, per-case failure immediately terminates matrix."
+    },
+    {
+      "id": "cleanup_scope",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Ready cases require exactly one actual stopped snapshot with both leases/pending/configuration/queues zero. Blocked cases deliberately prove cooperative process exit and TLS closure only, not backend cleanup snapshot, helper or USB restoration."
+    },
+    {
+      "id": "failure_preservation",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Consumed stdout and parsed events plus stderr and FAIL summary retained; failed Owner Drop kills/waits only as cleanup and never changes FAIL to PASS."
+    },
+    {
+      "id": "secret_boundary",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Server/client private DER exists only in private TempDir files created0600 and memory; evidence directory receives no key file, private DER hash or credential JSON. Child errors are fixed/typed adapter errors; stdout captures only safe real backend snapshots/events."
+    },
+    {
+      "id": "honest_scope",
+      "result": "SOURCE_CONFIRMED",
+      "detail": "Memory-DER loaded config is explicitly test-only and bypasses trusted root file loader. No root policy/driver/module/USB/QEMU coverage claimed. Effective UID nonzero checked, capabilities not measured by these test fixtures."
+    }
+  ],
+  "limitations": [
+    "No tests, Cargo, CLI, QEMU or child processes were run by reviewer. Parent integrated execution is separate evidence.",
+    "The parent test contains five lifecycle scenarios; the exact child fixture is another libtest item that normally performs no work without its marker. Do not equate scenarios with USB hardware cases.",
+    "On failure actual_child_status is based on ExitStatus::code(): null alone cannot distinguish a signal exit from a still-running process. This affects diagnostics, not strict success codes.",
+    "The no-signal4..7-second assertion starts before synthetic pipe fill; it includes setup/scheduling overhead and is a bounded observation of the actual5-second output policy, not a precise independent event-call start/end measurement."
+  ],
+  "must_fix": [],
+  "boundaries": {
+    "repository_writes": false,
+    "cargo_or_build": false,
+    "qemu_or_usb": false,
+    "new_test_execution": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "status": "source frozen; awaiting root build and runtime validation",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "files": [
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "sha256": "642dda20262c8a1698b865b0a4a674da37da2c658a81c9fef4b2fbc251b52a0b"
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs",
+      "sha256": "aac9e558283233bd36d46d3cc7eb710df8f31fa5da23a94a8460e22e832a6b98"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "sha256": "f1f2bf301727793ed00a9f187a628698832699012232eeebe79c3c6f28d16db4"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_server.rs",
+      "sha256": "b4d419722df9f21e12ae3540896e9558929659c31e1fc525017eeb1101b8ecf1"
+    }
+  ],
+  "deleted": [
+    "crates/rustusb-cli/src/server_binding.rs"
+  ],
+  "implemented": [
+    "one Rust owner prepare/bind/serve/shutdown/close/Finish pipeline for managed, secure foreground and legacy foreground",
+    "managed RunSession durable admission and tracked grants; foreground uses actual untracked grants and nonmanaged bind",
+    "typed foreground Ready/Snapshot/Ack/Error and cleanup-only final Event, no stdin/signals/stdout in runner",
+    "accepted helper preparation and physical initialization retained; stop checked before listener bind",
+    "all physical Finish requests attempted before application recording acknowledgements; monitor consumer retained through actual cleanup",
+    "CLI wrappers dispatch LoadedJob to root foreground adapter; existing secure loader/signals/pool validation retained"
+  ],
+  "source_test_cases": [
+    "blocked_output_receipt_does_not_block_real_foreground_cleanup (real TCP IMPORT, no TLS)",
+    "failed_ready_delivery_keeps_actual_cleanup_and_no_success_event (real TCP IMPORT, no TLS)",
+    "typed_controls_preserve_ack_error_and_ordered_shutdown",
+    "cdc_payload_bounds_and_control_errors_remain_redacted",
+    "finish_attempts_all_received_grants_before_any_recording_and_retains_errors",
+    "invalid_physical_selection_and_network_policy_precede_helper_io",
+    "soft_cleanup_deadline_is_not_finished_until_real_terminal (existing managed regression retained)"
+  ],
+  "checks_performed": [
+    "rustfmt --edition 2024 on the four owned surviving files",
+    "git diff --check",
+    "read-only feature/lifetime and shared owner review"
+  ],
+  "not_performed": [
+    "Cargo or compilation",
+    "tests execution",
+    "USB operations",
+    "QEMU",
+    "commit or push"
+  ],
+  "integration_notes": [
+    "root main removes server_binding and native_server modules",
+    "root foreground adapter must retain original read_line 4096B and stdout 5s/in_flight/signal regressions",
+    "tests here prove actual legacy loopback TCP lifecycle, not the unexecuted secure/QEMU acceptance",
+    "no standalone observed per-attempt monitor is fabricated for foreground; its backend shutdown retains original unmanaged semantics"
+  ]
+}

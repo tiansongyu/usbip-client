@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "task": "Shared foreground/managed client and Native resource owners",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "status": "SOURCE_FROZEN_NOT_COMPILED_BY_AUTHOR",
+  "sources": [
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "bytes": 10693,
+      "sha256": "21d321aa433420fd1e76229d42489dab17133052e2b999f32a525e6d152c17b0"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 30136,
+      "sha256": "bd0caf36871e76d378ae3965546a503c2064aaf650b8e957db58b04d4bdf5688"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_client.rs",
+      "bytes": 2585,
+      "sha256": "0573f7f664f7366779de335d0a80bc5d44b1aef6d8e6ed03ce66f3f21727f100"
+    }
+  ],
+  "removed": [
+    "crates/rustusb-cli/src/native_server.rs"
+  ],
+  "changes": [
+    "One RunContext client pipeline: exact tracked/untracked helper selection; full real NativeImportReceipt delivery; foreground copy_bidirectional drain versus managed first-EOF relay retained explicitly.",
+    "One Native export/stub tree: typed ready/snapshot/shutdown events; no library stdin/signals/stdout; same TLS ACL and management parser; foreground helper IMPORT failures preserve status 2/4.",
+    "Actual relay tasks and stub/export close operations are retained/joined; final event returned after cleanup, never queued behind output consumer.",
+    "Operation, cleanup and durable recording failures returned independently, with multiple recording failures retained.",
+    "CLI secure_client retains trusted blocking load ownership and signal registration, delegates attach to root foreground adapter and catalog to actual service discovery."
+  ],
+  "authored_tests": {
+    "new": [
+      "foreground half-close drains real reverse stream after first EOF",
+      "managed mode closes both halves at first EOF",
+      "all three recording errors retained"
+    ],
+    "moved_from_cli": [
+      "real bidirectional relay and first EOF",
+      "stop closes backpressured relay without peer EOF",
+      "export invalidation closes idle relay with error"
+    ],
+    "scope": "Tokio in-memory duplex and mode/error behavior only; no helper, USB, kernel or hardware validation."
+  },
+  "validation": {
+    "single_file_rustfmt": "PASS for three owned Rust files",
+    "cargo": "NOT_RUN; parent owns integrated builds",
+    "qemu": "NOT_RUN; parent owns all runs",
+    "source_freeze": "Author stopped repository writes before parent compile."
+  },
+  "boundaries": [
+    "No fake JobContext, application IDs, durable acknowledgement, principal or receipt; foreground RunSession is explicitly untracked.",
+    "No changes to root public APIs, Cargo, main or I-owned Rust runner/frontend files.",
+    "Managed metrics remain actual io::relay counters; foreground client emits no new fabricated metrics fields.",
+    "Expected peer connection operation errors do not shut down Native listener; actual cleanup or recording errors propagate and stop it."
+  ]
+}

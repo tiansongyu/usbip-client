@@ -1,0 +1,58 @@
+   Compiling rustix v1.1.5
+    Checking nusb v0.2.8 (/home/ubuntu/github/usbip-client/vendor/nusb)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking tempfile v3.27.0
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+error: unused import: `self`
+ --> crates/rustusb-service/src/run_context.rs:5:18
+  |
+5 |     foreground::{self, Control, Delivery, Event, ForegroundOptions},
+  |                  ^^^^
+  |
+  = note: `-D unused-imports` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[allow(unused_imports)]`
+
+error: large size difference between variants
+   --> crates/rustusb-service/src/foreground.rs:140:1
+    |
+140 | /   pub enum Event {
+141 | |       /// Actual VHCI receipt after commit; never reconstructed from a state enum.
+142 | |       #[cfg(target_os = "linux")]
+143 | | /     Connected {
+144 | | |         /// Configured server alias.
+145 | | |         server_id: String,
+146 | | |         /// Exact remote key.
+...   | |
+149 | | |         receipt: rustusb_daemon::NativeImportReceipt,
+150 | | |     },
+    | | |_____- the largest variant contains at least 400 bytes
+...   |
+154 | | /     Ready {
+155 | | |         /// Bound socket address.
+156 | | |         address: SocketAddr,
+157 | | |         /// Whether mutual TLS is enabled.
+...   | |
+160 | | |         snapshot: Snapshot,
+161 | | |     },
+    | | |_____- the second-largest variant contains at least 81 bytes
+...   |
+190 | |       },
+191 | |   }
+    | |___^ the entire enum is at least 400 bytes
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#large_enum_variant
+    = note: `-D clippy::large-enum-variant` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::large_enum_variant)]`
+help: consider boxing the large fields or introducing indirection in some other way to reduce the total size of the enum
+    |
+149 -         receipt: rustusb_daemon::NativeImportReceipt,
+149 +         receipt: Box<rustusb_daemon::NativeImportReceipt>,
+    |
+
+error: could not compile `rustusb-service` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-service` (lib test) due to 1 previous error

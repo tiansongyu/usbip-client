@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "review": "shared owner narrow fix closure and minimum regression plan",
+  "created_utc": "2026-10-23T17:26:26.155431+00:00",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "worktree": "authorized uncommitted shared-owner implementation; source snapshots below are not a clean runtime revision",
+  "mode": "read-only source and existing evidence review; no Cargo, QEMU, USB, runner verification or repository changes",
+  "sources": [
+    {
+      "path": "crates/rustusb-cli/src/foreground.rs",
+      "bytes": 6074,
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "bytes": 51164,
+      "sha256": "c03fca3081f6b566e032da80e1cb7f43e8806357bc2b44890df25215f9e91f8e"
+    },
+    {
+      "path": "crates/rustusb-service/src/run_context.rs",
+      "bytes": 10597,
+      "sha256": "9bc22e96a0a31ef204be57cc6f128bfeb34091b55c9463efd18b56fc3d9f18f1"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "bytes": 32134,
+      "sha256": "235465a9d0b5be42b19ce8bbcbb7ebe19237b545b48fc9af98dca03bb79a8ee3"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "bytes": 31203,
+      "sha256": "a5c249f3e4789bf46b17c87554297f27c436390765328b6a71eb28c645cfff42"
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "bytes": 46376,
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+    },
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38"
+    },
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 45120,
+      "sha256": "3f9d1ab41078f0de9b00442fd117f3398382badc08a7d0b369cd1dbd2d1983d6"
+    },
+    {
+      "path": "scripts/qemu/run-sigterm-qemu.py",
+      "bytes": 28330,
+      "sha256": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16"
+    },
+    {
+      "path": "scripts/qemu/guest-sigterm-init.sh",
+      "bytes": 30969,
+      "sha256": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447"
+    },
+    {
+      "path": "scripts/qemu/run-host-state-qemu.py",
+      "bytes": 30779,
+      "sha256": "606fca92944bbb6a54644e664912e39eed36b7aa69f4f15755e1b3b049d5ca91"
+    },
+    {
+      "path": "scripts/qemu/guest-host-state-init.sh",
+      "bytes": 21679,
+      "sha256": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31"
+    },
+    {
+      "path": "scripts/qemu/usbfs-syscall-gate.c",
+      "bytes": 35043,
+      "sha256": "7443e276651dabd7d311486c4b2cafbc1a1a24e562869192c055311835dc5ff2"
+    },
+    {
+      "path": "docs/research/shared-owner-design.md",
+      "bytes": 5705,
+      "sha256": "7a31f2b372bdf960c1820acb39f597b10a7d67984e3d0df660d457fb3859c9a0"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "bytes": 24748,
+      "sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+    }
+  ],
+  "fixes": [
+    {
+      "id": "native-malformed-eof",
+      "state": "closed-by-source-review",
+      "path": "crates/rustusb-cli/src/foreground.rs",
+      "lines": [
+        25,
+        57,
+        72
+      ],
+      "finding": "Native malformed/control-unsupported input emits Invalid followed by Eof and terminates stdin reader; virtual/physical valid-length malformed input retains continuation behavior. Reader starts only after Ready delivery ACK."
+    },
+    {
+      "id": "recording-error-classification",
+      "state": "closed-by-source-review",
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "lines": [
+        20,
+        31,
+        468,
+        488,
+        559,
+        637,
+        671,
+        809,
+        852,
+        881
+      ],
+      "finding": "Begin/Attempt/Resource/Available receipt errors are Recording; backend/helper/output errors remain Operation. Observer error wakes stop without synthesizing Operation; joined observer returns original recording error after real server/registry cleanup and helper Finish."
+    },
+    {
+      "id": "legacy-read-only-status-cancellation",
+      "state": "closed-by-source-review-runtime-pending",
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "lines": [
+        590,
+        594,
+        597,
+        650,
+        678
+      ],
+      "finding": "Root follow-up adds biased sticky-stop selection only around read-only Status. Sent capability requests and actual PhysicalBackend::from_sources stay directly awaited. Original three-second startup criterion must remain unchanged."
+    }
+  ],
+  "historical_evidence": {
+    "path": "docs/evidence/physical-autorestore-final-2ab9976-20261023/physical-sigterm/summary.json",
+    "bytes": 57234,
+    "sha256": "27840ad55682168bc7a86f5f53cfd3e2f1304ac0321cda95cf9153ec5452e08a",
+    "git_commit": "2ab997673a5894099f8df770707a060da3735154",
+    "result": "PASS",
+    "startup_outcome": {
+      "schema_version": 1,
+      "event": "startup_term_outcome",
+      "pid": 309,
+      "starttime": 294,
+      "uid": 1000,
+      "signal": 15,
+      "signal_count": 1,
+      "sender_uid": 1000,
+      "helper_pid": 270,
+      "helper_starttime": 286,
+      "helper_stopped_before_signal": true,
+      "connected_unix_inode": "1450",
+      "connected_unix_fd": 9,
+      "unix_observation": "Num       RefCount Protocol Flags    Type St Inode Path\n00000000f72eecd4: 00000003 00000000 00000000 0001 03   815\n0000000009d4cc7c: 00000002 00000000 00010000 0001 01   817 /run/rustusb/control.sock\n000000002c5e4ec6: 00000003 00000000 00000000 0001 03   816\n000000009d569627: 00000003 00000000 00000000 0001 02     0 /run/rustusb/control.sock\n00000000b7ee8af4: 00000003 00000000 00000000 0001 03  1450\n000000006b5d0e60: 00000003 00000000 00000000 0001 03  1448\n00000000104556d8: 00000003 00000000 00000000 0001 03  1449\n",
+      "unix_ss_observation": "u_str ESTAB  0      0                              * 815  * 816  users:((\"rustusb-helper\",pid=270,fd=8),(\"rustusb-helper\",pid=270,fd=6)) <->\nu_str LISTEN 1      4096   /run/rustusb/control.sock 817  * 0    users:((\"rustusb-helper\",pid=270,fd=11)) <-> ino:4 dev:0/24 peers: 1450    \nu_str ESTAB  0      0                              * 816  * 815  users:((\"rustusb-helper\",pid=270,fd=7)) <->                                \nu_str ESTAB  0      768                            * 1450 * 0    users:((\"rustusb\",pid=309,fd=9)) <->                                       \nu_str ESTAB  0      0                              * 1448 * 1449 users:((\"rustusb\",pid=309,fd=8),(\"rustusb\",pid=309,fd=6)) <->              \nu_str ESTAB  0      0                              * 1449 * 1448 users:((\"rustusb\",pid=309,fd=7)) <->                                       \n",
+      "tcp_observation": "  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     \n",
+      "tcp6_observation": "  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode\n",
+      "ready_before_signal": false,
+      "listener_before_signal": false,
+      "helper_acceptance_observed": false,
+      "wait_code": 0,
+      "process_exit_observed": true,
+      "observation_centiseconds": 0,
+      "observation_limit_seconds": 3,
+      "helper_continued": true,
+      "sysfs_unchanged": true,
+      "sysfs": [
+        {
+          "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+          "bus_id": "1-1",
+          "node": "/dev/bus/usb/001/002",
+          "generation": "23:25310",
+          "node_identity": "5:161:bd:1",
+          "node_owner_mode": "0:600",
+          "devnum": 2,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "usbhid"
+            }
+          ]
+        },
+        {
+          "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+          "bus_id": "1-2",
+          "node": "/dev/bus/usb/001/003",
+          "generation": "23:25544",
+          "node_identity": "5:164:bd:2",
+          "node_owner_mode": "0:600",
+          "devnum": 3,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "ftdi_sio"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "matrix": {
+    "existing_qemu_runs": 9,
+    "expected_guests": 18,
+    "groups": [
+      {
+        "runner": "scripts/qemu/run-secure-qemu.py",
+        "backends": [
+          "virtual",
+          "usbfs",
+          "native"
+        ],
+        "families": [
+          "ipv4",
+          "ipv6"
+        ],
+        "runs": 6
+      },
+      {
+        "runner": "scripts/qemu/run-agent-qemu.py",
+        "backends": [
+          "native"
+        ],
+        "families": [
+          "ipv4",
+          "ipv6"
+        ],
+        "runs": 2
+      },
+      {
+        "runner": "scripts/qemu/run-sigterm-qemu.py",
+        "runs": 1
+      }
+    ],
+    "counts_are_planned_not_executed": true
+  },
+  "mustfix_remaining_in_reviewed_source": [],
+  "coverage_gaps": [
+    "Old startup SIGTERM is deliberately helper_acceptance_observed=false and cannot prove accepted-grant or active initializer await.",
+    "Old host-state syscall gates are armed after Ready and cover mutation ioctl entry, not initial descriptor read.",
+    "No new initializer gate is implemented or executed in this task; total-await is a source safety constraint. Arbitrary in-kernel hard blocking remains unverified.",
+    "Existing agent runner accepts native only: two Native managed runs do not establish Rust virtual/USBFS managed QEMU or managed physical disk3 coverage.",
+    "No runtime PASS, new USB case count, hardware G1/G2 or complete Phase3 claim follows from this review."
+  ],
+  "scope_counts": {
+    "source_files_hashed": 15,
+    "original_fix_closures": 2,
+    "additional_status_source_recheck": 1,
+    "historical_summary_sampled": 1,
+    "tests_executed_by_reviewer": 0,
+    "qemu_runs_executed_by_reviewer": 0
+  }
+}

@@ -1,0 +1,29 @@
++ set -euo pipefail
+++ dirname scripts/check.sh
++ cd scripts/..
++ cargo fmt --all -- --check
++ cargo clippy --workspace --all-targets --locked -- -D warnings
+   Compiling rustix v1.1.5
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking tempfile v3.27.0
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+error: method `is_managed` is never used
+  --> crates/rustusb-service/src/run_context.rs:62:12
+   |
+41 | impl RunContext {
+   | --------------- method in this implementation
+...
+62 |     pub fn is_managed(&self) -> bool {
+   |            ^^^^^^^^^^
+   |
+   = note: `-D dead-code` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: could not compile `rustusb-service` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-service` (lib test) due to 1 previous error

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "status": "AUTHOR_SOURCE_FROZEN_UNEXECUTED_TESTS",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "source": {
+    "path": "crates/rustusb-service/src/jobs/native.rs",
+    "bytes": 43041,
+    "sha256": "6692c0dd370557981a76c2e6e4ba3fdf9653b14c22693a5163e7a67c9041dee5"
+  },
+  "changes": [
+    "Incoming Begin/Intent/Attempt durable acknowledgements run outside export.use_lock. Lock acquired only before real stub request; original export/stop state rechecked after acquisition.",
+    "After stub acquisition, Resource/Prepared/Connected and periodic sample use an exact owned boxed recording future that captures reporter/actual IDs/metrics only. On stop/invalidation the same future is retained, not replaced by an ACK.",
+    "Network ownership ends before actual stub.close; cleanup result marks failed before releasing use_lock; only afterward original pending recording is awaited, then Closing and Finish, preserving phase order.",
+    "Export.close likewise releases actual resource lock after helper close before recording. close_all starts every owned close task before joining any result; no abort and independent errors retained.",
+    "Native synchronous stop checks recognize closed watch sender even when its last value is false, honoring caller-disappearance contract."
+  ],
+  "new_tests": [
+    {
+      "name": "stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock",
+      "scope": "actual production record_or_stop and cleanup_then_unlock helpers driven by oneshot gates; the original recording future is proved polled and retained; lock stays held until modeled cleanup result, failure flag precedes unlock, original rejection and cleanup error remain separate."
+    },
+    {
+      "name": "all_close_tasks_start_while_a_sibling_record_ack_is_delayed",
+      "scope": "actual join_closes consumes owned JoinSet tasks; sibling start and failure observable before first recording ACK; no abort or fail-as-success."
+    },
+    {
+      "name": "vanished_foreground_stop_sender_skips_the_real_helper",
+      "scope": "actual prepare owner with dropped false-valued sender and guaranteed missing helper socket must return Ok(None)."
+    }
+  ],
+  "validation": {
+    "single_file_rustfmt": "PASS",
+    "cargo": "NOT_RUN by author; root centralized",
+    "qemu_usb": "NOT_RUN",
+    "test_results": "Authored only, not claimed passed."
+  },
+  "limitations": [
+    "Software gates model helper completion. They do not prove real helper, kernel, syscall-active, USB or hardware behavior.",
+    "Preparation-stage Native export Resource acknowledgement unbounded delay remains outside this narrow fix, as does arbitrary persistence actor hard blockage. No all-WAL-stall timely-cleanup claim.",
+    "True already-sent helper prepare/commit/close futures remain noncancelled and retained until their real results. No relaxation of root proof or generation checks."
+  ],
+  "review": "I independent source-delta review requested; result separate."
+}

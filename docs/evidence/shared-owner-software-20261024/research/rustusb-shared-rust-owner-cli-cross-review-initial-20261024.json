@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T17:11:35.959631+00:00",
+  "phase": "initial source review before authors final freeze",
+  "result": "TWO_SPECIFIC_CONTRACT_FINDINGS_SENT_TO_AUTHORS",
+  "method": "Read-only source review; no Cargo, compilation, QEMU, product execution or source edit. SHA fixes the reviewed bytes, not an execution claim.",
+  "sources": [
+    {
+      "path": "docs/research/shared-owner-design.md",
+      "bytes": 5322,
+      "sha256": "c9c88fbf5c695e12f57227b92ac63a2bcceac386749fa3f2b2694863004d5840"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "bytes": 46991,
+      "sha256": "642dda20262c8a1698b865b0a4a674da37da2c658a81c9fef4b2fbc251b52a0b"
+    },
+    {
+      "path": "crates/rustusb-service/src/run_context.rs",
+      "bytes": 4569,
+      "sha256": "f2ae994b925723a8f6607cc8baa95376ba3cb8ae54651e47383b37d02ef4493b"
+    },
+    {
+      "path": "crates/rustusb-service/src/foreground.rs",
+      "bytes": 11345,
+      "sha256": "b7814fbd1f83b7164c7b3bfeb58b210fe668161070f9d06a0bc45d2b29c7f324"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "bytes": 6303,
+      "sha256": "461cf058d76f5f4bf4bc49a66e9d2fa9fcc996c4840cfa90f6854ea1ccf9b0cb"
+    },
+    {
+      "path": "crates/rustusb-cli/src/foreground.rs",
+      "bytes": 4773,
+      "sha256": "49403fbe0afff652a4ed5cf353ca3e5bc5f56a35fe579e0c79970f88be0631c8"
+    },
+    {
+      "path": "crates/rustusb-cli/src/virtual_server.rs",
+      "bytes": 780,
+      "sha256": "aac9e558283233bd36d46d3cc7eb710df8f31fa5da23a94a8460e22e832a6b98"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "bytes": 831,
+      "sha256": "f1f2bf301727793ed00a9f187a628698832699012232eeebe79c3c6f28d16db4"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_server.rs",
+      "bytes": 4028,
+      "sha256": "b4d419722df9f21e12ae3540896e9558929659c31e1fc525017eeb1101b8ecf1"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_client.rs",
+      "bytes": 2585,
+      "sha256": "0573f7f664f7366779de335d0a80bc5d44b1aef6d8e6ed03ce66f3f21727f100"
+    }
+  ],
+  "findings": [
+    {
+      "id": "native-stdin-invalid-eof",
+      "severity": "compatibility mustfix before unchanged-contract claim",
+      "source": "crates/rustusb-cli/src/foreground.rs start_input",
+      "finding": "The shared reader continues after malformed/Native-unsupported operations. Previous Native reader sent invalid_control then ended and induced cooperative EOF; Virtual/Physical continued after bounded malformed JSON.",
+      "action": "Mode-specific parser/end-on-invalid for Native foreground only; no production agent RPC exposure.",
+      "status": "sent to root; not yet rechecked"
+    },
+    {
+      "id": "durable-ack-outcome-attribution",
+      "severity": "public JobOutcome contract mustfix",
+      "source": "crates/rustusb-service/src/jobs/rust_server.rs prepare and serving",
+      "finding": "attempt/resource and export readiness observe errors are propagated into operation; recording can remain Ok despite failed durable ACK. Actual close/Finish still runs, so this is outcome attribution rather than a demonstrated leak.",
+      "action": "Keep durable recording errors in JobOutcome.recording independently; retain acquired handles and continue all cleanup/Finish. Output delivery errors stay operation.",
+      "status": "sent to root and I; not yet rechecked"
+    }
+  ],
+  "reviewed_invariants": [
+    "One common Rust run/prepare/bind/serving/close/Finish pipeline, mode variation only where necessary.",
+    "Managed legacy rejected before device access; secure pool validation remains in dispatcher; no fake trusted_network.",
+    "Foreground RunSession returns None correlation and calls legacy or secure untracked helper; Managed true durable context returns Some tracked.",
+    "Only managed bind installs ServerMonitor; admission still before claim, unacknowledged actual terminal not discarded as capacity relief.",
+    "Physical grant identities stored before subsequent recording; initializer is directly awaited and stop prevents later bind.",
+    "Network server shutdown then actual physical close occurs before all received grant Finish attempts; errors retained and remaining grants attempted.",
+    "All helper Finish requests occur before application finish/observe awaits; observer task retained and joined after actual close/Finish.",
+    "Cleanup vector is per grant, not equated with output success or persistence ACK; unconfirmed owners prevent fake Finish.",
+    "Foreground output delivery queue bounded, sticky stop interrupts receipt without dropping actual runner; terminal event returned in JobOutcome.",
+    "No-input CLI keeps control sender alive; enabled real EOF sends explicit Eof; bounded 4096 parser and queue2 do not own leases.",
+    "CLI signal branch retains owner join, output deadline delivered to owner, final output skipped for in-flight canceled stdout.",
+    "Rust ready/control/stopped shapes and safe control categories map from actual backend snapshots."
+  ],
+  "limits": [
+    "Active editing may produce later bytes; this is not final source freeze approval.",
+    "No runtime results or test count asserted.",
+    "Native full owner review is separately assigned; only adjacent stdin/adapter contract checked here.",
+    "Opaque core/kernel release invariants relied on unchanged implementations, not re-executed."
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "status": "PASS: final bounded source review; no remaining must-fix in reviewed slice; runtime validation owned by root",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "files": [
+    {
+      "path": "crates/rustusb-cli/src/foreground.rs",
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82"
+    },
+    {
+      "path": "crates/rustusb-cli/src/event_output.rs",
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    },
+    {
+      "path": "crates/rustusb-service/src/foreground.rs",
+      "sha256": "9bcb5d683e3750405e776ec45cc0094a1cb31fef9ad6684f31b7185ee7e760f9"
+    },
+    {
+      "path": "crates/rustusb-service/src/run_context.rs",
+      "sha256": "931590192ee6465727f0fd5b8ae52b79b62168e85e75361b5f488c0a3e0382ee"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "sha256": "a8d414d569b542e32428e42b0d53eb54b235bd740603cef75e2e78ded47b0da2"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "sha256": "87014cbc559650f1f9ae10280ed30f16a5361a8cea0f8013af146552669f88ed"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "sha256": "6e193185bb10b2811bdc3f063c16df066157e9e5d02de9cb437b4d4d7e3aa7b5"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "sha256": "c03fca3081f6b566e032da80e1cb7f43e8806357bc2b44890df25215f9e91f8e"
+    }
+  ],
+  "closed_findings": [
+    {
+      "id": "NATIVE-ACK-LOCK",
+      "problem": "Connection held export use_lock through application Closing/Finish acknowledgements after actual stub close, blocking real export cleanup.",
+      "resolution": "Begin/Intent/Attempt occur outside resource lock; original export and stops are rechecked after acquisition. Owned-stub recording waiters are retained exactly on stop. Actual stub close sets failed on error and releases use guard before waiting for retained ACK, then Closing and Finish in order."
+    },
+    {
+      "id": "NATIVE-ACK-BATCH",
+      "problem": "Sequential close_all waited for the first export recording acknowledgement before initiating cleanup of later exports.",
+      "resolution": "Every bounded export close is spawned first; join_closes joins all actual owner tasks and aggregates errors without aborting siblings."
+    },
+    {
+      "id": "NATIVE-CALLER-GONE",
+      "problem": "False watch value with dropped sender was not treated as startup stop.",
+      "resolution": "Native stop_requested checks the current value and sender disappearance; stopped foreground preparation skips actual helper I/O and creates no export."
+    },
+    {
+      "id": "NATIVE-TEST-KEY",
+      "problem": "Two new stopped/caller-gone source fixtures omitted mandatory usb- fingerprint prefix and would fail before reaching preparation.",
+      "resolution": "Root corrected both to format!(\"usb-{}\", \"a\".repeat(64)); source independently checked. These fixtures were not executed by this reviewer; original author handoff remains distinct."
+    },
+    {
+      "id": "LEGACY-STATUS-STOP",
+      "problem": "Legacy physical startup could await read-only helper Status despite stop, regressing existing startup TERM boundary.",
+      "resolution": "Root uses biased stop-select only around read-only Status; real helper grant requests and initialized owners remain retained and awaited."
+    },
+    {
+      "id": "FG-SIGNAL-1",
+      "problem": "Continuous ready signals could starve collection of a completed owner under biased select.",
+      "resolution": "Root adapter polls owner result first; no owner task is cancelled by signal/output branch."
+    },
+    {
+      "id": "RUST-RECORDING-STAGE",
+      "problem": "Managed Begin/Attempt/Resource/Available acknowledgement failures could be classified as operation.",
+      "resolution": "Private StageError keeps actual persistence failures in recording; helper/network/output remain operation and actual cleanup remains independent."
+    }
+  ],
+  "confirmed": [
+    "Foreground RunContext has no durable actor/session identity; None correlation chooses real untracked APIs and cannot fall back from managed WAL failure.",
+    "Managed controls remain pending and production RPC does not expose HID/CDC test input.",
+    "CLI owns only bounded stdin/output and signal handling; actual job task is retained through stop, lost output receiver, failed receipt, and final owner join.",
+    "Final output is emitted only after actual cleanup and successful independent outcomes; in_flight output cancellation suppresses reblocking final output.",
+    "Typed JSON field shapes retain real receipt/snapshot data, not fabricated SessionState-derived receipts.",
+    "Rust all received grant Finish attempts happen after actual shutdown/close and before application export recording acknowledgements.",
+    "Native accepted helper prepare/commit owner remains retained; admission still precedes actual helper mutation.",
+    "Delayed native recording future carries reporter/IDs/metrics, not device handle or use lock; its original phase completes before later Closing/Finish, preserving ordering.",
+    "Native close_all remains bounded by configured pool size and joins real tasks; no abort-all is introduced."
+  ],
+  "explicit_remaining_boundary": "As agreed by root, this slice does not guarantee timely cleanup for an indefinitely stalled preparation-stage Resource acknowledgement after a Native export handle or USBFS grant has already been received. Those owners remain retained and unresolved; actual acknowledgement errors that return still run cleanup. This must not be described as arbitrary-WAL-stall recovery or bounded completion. A later independently designed slice is required.",
+  "validation_scope": {
+    "performed": [
+      "read-only source/delta inspection",
+      "exact final SHA256 calculation",
+      "source check of corrected test fingerprints"
+    ],
+    "not_performed": [
+      "Cargo or compiler",
+      "test execution",
+      "QEMU",
+      "USB operations",
+      "repository edits in this review",
+      "commit or push"
+    ]
+  },
+  "provenance_notes": [
+    "Root owns second full gate, not yet adjudicated by this review.",
+    "First-gate source preserved by root under /tmp/rustusb-shared-owner-first-gate-source-20261024.",
+    "Native author freeze 6692c0dd370557981a76c2e6e4ba3fdf9653b14c22693a5163e7a67c9041dee5 predates root fingerprint-fixture correction; do not relabel it tested.",
+    "Predicate or fixture counts are not USB cases, hardware acceptance, or full Phase3 completion."
+  ]
+}

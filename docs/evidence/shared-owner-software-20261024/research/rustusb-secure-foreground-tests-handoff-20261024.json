@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T17:07:07.879378+00:00",
+  "source": {
+    "path": "crates/rustusb-cli/src/secure_foreground_tests.rs",
+    "bytes": 24748,
+    "sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+  },
+  "status": "SOURCE_FROZEN_NOT_COMPILED_OR_EXECUTED",
+  "static_checks": {
+    "rustfmt_check": true,
+    "test_only_module_guard": true,
+    "actual_cli_adapter_call": true,
+    "no_unsafe_or_unwrap_expect": true,
+    "no_global_environment_mutation": true,
+    "five_declared_scenarios": true
+  },
+  "test_interface": "root adds cfg(test,linux,rust-backend) mod secure_foreground_tests; child calls super::foreground::run(LoadedJob::VirtualServer(Arc<LoadedServerConfig>), PathBuf, true, ShutdownSignals)",
+  "required_dev_dependencies": [
+    "rcgen.workspace",
+    "tempfile.workspace",
+    "rustix workspace with pipe feature"
+  ],
+  "actual_runtime_results": null,
+  "planned_scenarios": [
+    "ready SIGINT",
+    "ready SIGTERM",
+    "4096-byte blocked stdout SIGINT",
+    "4096-byte blocked stdout SIGTERM",
+    "4096-byte blocked stdout 5-second output deadline"
+  ],
+  "evidence_scope": [
+    "One parent test runs five subprocess scenarios serially; normal child test invocation is a no-op without cfg(test)-only env marker.",
+    "Programmatic loaded TLS server config from temporary public-memory-DER API; no trusted loader or production file-permission acceptance claimed.",
+    "Real mTLS Catalog and two IMPORTs, successful config1 control replies, one pending IN each independently confirmed by backend snapshot.",
+    "Blocking pipe is exactly4096; independent reopened OFD fills it without changing child stdout blocking flag; procfs observes actual pipe_write.",
+    "After signals expected wait code0<=8s; output deadline expected code1 in4..7s and original blocked-consumer diagnostic.",
+    "Ready scenarios require actual stopped snapshot proving both profiles released/config0/pending0/queues0. Blocked scenarios never drain and prove process/data-connection closure only.",
+    "TLS closure accepts actual EOF or recorded rustls/OS UnexpectedEof/ConnectionReset/BrokenPipe/ConnectionAborted, never labels all of these orderly TLS close_notify.",
+    "Temporary private keys are not copied to retained diagnostics. Evidence directory stores consumed stdout, stderr, snapshots, actual wait/closure summaries; failed scenarios stay FAIL and owned child is killed/reaped as cleanup only."
+  ],
+  "not_run": [
+    "Cargo",
+    "rustc",
+    "product executable",
+    "QEMU",
+    "USB",
+    "kernel modules",
+    "network configuration"
+  ],
+  "repository_edits": [
+    "crates/rustusb-cli/src/secure_foreground_tests.rs"
+  ]
+}

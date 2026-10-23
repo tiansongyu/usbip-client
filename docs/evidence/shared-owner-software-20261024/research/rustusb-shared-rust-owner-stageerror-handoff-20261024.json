@@ -1,0 +1,32 @@
+{
+  "status": "narrow source correction frozen; no runtime tests executed",
+  "parent_handoff": "/tmp/rustusb-shared-rust-owner-author-handoff-20261024.json",
+  "file": "crates/rustusb-service/src/jobs/rust_server.rs",
+  "sha256": "ea6ed4c2633a3c04d256554c9caf071e9af4f3a8d8f367e2c0b4559d6d86e140",
+  "changes": [
+    "private StageError separates Operation and Recording",
+    "exports Begin and partial-export final recording failures preserved in recording",
+    "physical Attempt/Resource receipt failures classified as recording",
+    "Available observation failure classified as recording",
+    "monitor failure wakeup does not fabricate a duplicate operation error; original observer error joined into recording",
+    "new rejected_begin_receipt_is_recording_failure_before_any_owner negative acknowledgement fixture"
+  ],
+  "unchanged": [
+    "actual helper/USB/network/output failures are operation",
+    "actual shutdown/close/all-grant-Finish order",
+    "managed admission and tracked/untracked mode boundaries",
+    "foreground CLI wrappers and JSON",
+    "cleanup remains independent and final event success-gated"
+  ],
+  "checks": [
+    "single-file rustfmt",
+    "git diff --check"
+  ],
+  "not_performed": [
+    "Cargo",
+    "test execution",
+    "QEMU",
+    "USB",
+    "commit"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "status": "read-only preflight completed; one concrete signal-selection finding reported to root",
+  "head": "9314aa08c41d84672467b06df8d0cf51e5d7ecf2",
+  "files": [
+    {
+      "path": "crates/rustusb-cli/src/foreground.rs",
+      "sha256": "49403fbe0afff652a4ed5cf353ca3e5bc5f56a35fe579e0c79970f88be0631c8"
+    },
+    {
+      "path": "crates/rustusb-cli/src/event_output.rs",
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    },
+    {
+      "path": "crates/rustusb-service/src/foreground.rs",
+      "sha256": "b7814fbd1f83b7164c7b3bfeb58b210fe668161070f9d06a0bc45d2b29c7f324"
+    },
+    {
+      "path": "crates/rustusb-service/src/run_context.rs",
+      "sha256": "f2ae994b925723a8f6607cc8baa95376ba3cb8ae54651e47383b37d02ef4493b"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "sha256": "461cf058d76f5f4bf4bc49a66e9d2fa9fcc996c4840cfa90f6854ea1ccf9b0cb"
+    }
+  ],
+  "mustfix": [
+    {
+      "id": "FG-SIGNAL-1",
+      "file": "crates/rustusb-cli/src/foreground.rs",
+      "lines": "38-44 in reviewed pre-format source",
+      "finding": "biased select polls signals before the completed owner; continuously ready repeated INT/TERM can starve collection of the terminal owner result even after actual cleanup completed",
+      "recommendation": "prioritize the owner JoinHandle branch; keep signal registration and sticky stop, and retain final output behavior",
+      "state": "reported; root owns patch"
+    }
+  ],
+  "confirmed_source_constraints": [
+    "owner task is retained independently; signal cancels only adapter delivery and sets sticky stop",
+    "actual cleanup is joined before final event; output.in_flight suppresses a second blocked final write",
+    "EventOutput original queue capacity 2, <65536 byte event, one 5-second send/write/flush deadline retained",
+    "stdin reader detached std thread retains no resources; 4096-byte line bound includes newline; disabled stdin sender remains live",
+    "ready event output acknowledged before starting stdin thread",
+    "RunContext Foreground has no JobContext or persistence sender; managed Begin/Attempt/Resource/Observe/Finish remain actual calls",
+    "correlation Some/None mismatch rejected rather than falling back from failed WAL to untracked",
+    "managed next_control never consumes foreground commands; production RPC shape unchanged",
+    "typed ready/snapshot/ack/error/stopped and Native connected/disconnected JSON match previous source field shapes",
+    "foreground delivery acknowledgement represents output only, never admission; terminal JobOutcome owns independent operation/cleanup/recording results"
+  ],
+  "boundaries": [
+    "no compilation or test execution",
+    "no Cargo/QEMU/USB",
+    "no repository edits",
+    "no pixel/UI review",
+    "checked source behavior, not continuous-signal runtime observation",
+    "public Control payloads are local trusted library inputs; CLI ingress has a 4096-byte bound and CDC decode has its own bound",
+    "Native malformed-control EOF compatibility separately reported by H, not independently adjudicated in this narrow review"
+  ],
+  "followups": [
+    "run actual secure stdout backpressure/signal fixture",
+    "retain existing managed admission/terminal tests",
+    "verify new source after root patch and formatting"
+  ]
+}
