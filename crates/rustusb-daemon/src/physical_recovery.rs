@@ -341,6 +341,7 @@ mod tests {
     #[test]
     fn legacy_manual_authorization_fails_before_any_os_device_observation() -> Result<()> {
         let record = Record {
+            correlation: None,
             lease_id: "00000000-0000-0000-0000-000000000001".into(),
             owner: Owner {
                 uid: 1000,

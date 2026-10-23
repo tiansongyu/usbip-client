@@ -5,7 +5,13 @@
 //! excludes other helpers. An uncertain write poisons both reads and mutations.
 
 use rustix::fs::{AtFlags, FlockOperation, Mode, OFlags};
-use rustusb_core::{BusId, Error, PhysicalDeviceReceipt, Result};
+use rustusb_core::{
+    BusId, DeviceBackend, DeviceKey, Error, PhysicalDeviceReceipt, Result,
+    application::{
+        BrokerCleanupProof, BrokerCorrelation, BrokerOperationPhase, BrokerOperationState,
+        BrokerResourceKind, BrokerTerminal, ResourceId,
+    },
+};
 use serde::{Deserialize, Deserializer, Serialize, de};
 use std::{
     cell::Cell,
@@ -20,6 +26,8 @@ use std::{
 
 const LEGACY_SCHEMA_VERSION: u32 = 1;
 const RECOVERY_SCHEMA_VERSION: u32 = 2;
+const TRACKED_SCHEMA_VERSION: u32 = 3;
+const MAX_TRACKED: usize = 128;
 const MAX_RECORDS: usize = 256;
 const MAX_INTERFACES: usize = 256;
 const MAX_BYTES: usize = 16 * 1024 * 1024;
@@ -120,6 +128,9 @@ pub(crate) struct Record {
     pub baseline: Baseline,
     /// Explicit authorization, required in schema 2 and never inferred on reload.
     pub recovery: RecoveryAuthorization,
+    /// Exact application attempt; required nullable field only in disk schema 3.
+    #[serde(deserialize_with = "required_correlation")]
+    pub correlation: Option<BrokerCorrelation>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -137,6 +148,28 @@ impl From<RecordV1> for Record {
             owner: record.owner,
             baseline: record.baseline,
             recovery: RecoveryAuthorization::ManualOnly,
+            correlation: None,
+        }
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RecordV2 {
+    lease_id: String,
+    owner: Owner,
+    baseline: Baseline,
+    recovery: RecoveryAuthorization,
+}
+
+impl From<RecordV2> for Record {
+    fn from(record: RecordV2) -> Self {
+        Self {
+            lease_id: record.lease_id,
+            owner: record.owner,
+            baseline: record.baseline,
+            recovery: record.recovery,
+            correlation: None,
         }
     }
 }
@@ -149,6 +182,8 @@ struct JournalHeader {
     schema_version: u32,
     #[serde(rename = "records")]
     _records: de::IgnoredAny,
+    #[serde(rename = "terminals", default)]
+    _terminals: Option<de::IgnoredAny>,
 }
 
 #[derive(Deserialize)]
@@ -163,14 +198,64 @@ struct JournalV1 {
 #[serde(deny_unknown_fields)]
 struct JournalV2 {
     schema_version: u32,
+    #[serde(
+        deserialize_with = "recovery_records",
+        serialize_with = "serialize_recovery_records"
+    )]
+    records: Vec<Record>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct JournalV3 {
+    schema_version: u32,
     #[serde(deserialize_with = "records")]
     records: Vec<Record>,
+    #[serde(deserialize_with = "terminals")]
+    terminals: Vec<BrokerTerminal>,
 }
 
 #[derive(Serialize)]
 struct JournalRef<'a> {
     schema_version: u32,
     records: Vec<&'a Record>,
+    terminals: &'a [BrokerTerminal],
+}
+
+#[derive(Serialize)]
+struct RecordV2Ref<'a> {
+    lease_id: &'a str,
+    owner: &'a Owner,
+    baseline: &'a Baseline,
+    recovery: RecoveryAuthorization,
+}
+
+impl<'a> From<&'a Record> for RecordV2Ref<'a> {
+    fn from(record: &'a Record) -> Self {
+        Self {
+            lease_id: &record.lease_id,
+            owner: &record.owner,
+            baseline: &record.baseline,
+            recovery: record.recovery,
+        }
+    }
+}
+
+fn serialize_recovery_records<S: serde::Serializer>(
+    records: &[Record],
+    serializer: S,
+) -> std::result::Result<S::Ok, S::Error> {
+    records
+        .iter()
+        .map(RecordV2Ref::from)
+        .collect::<Vec<_>>()
+        .serialize(serializer)
+}
+
+#[derive(Serialize)]
+struct JournalV2Ref<'a> {
+    schema_version: u32,
+    records: Vec<RecordV2Ref<'a>>,
 }
 
 #[derive(Serialize)]
@@ -247,6 +332,25 @@ fn required_driver<'de, D: Deserializer<'de>>(
     Option::<String>::deserialize(deserializer)
 }
 
+fn required_correlation<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Option<BrokerCorrelation>, D::Error> {
+    Option::<BrokerCorrelation>::deserialize(deserializer)
+}
+
+fn recovery_records<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Vec<Record>, D::Error> {
+    bounded_vec::<D, RecordV2, MAX_RECORDS>(deserializer)
+        .map(|records| records.into_iter().map(Record::from).collect())
+}
+
+fn terminals<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Vec<BrokerTerminal>, D::Error> {
+    bounded_vec::<D, BrokerTerminal, MAX_TRACKED>(deserializer)
+}
+
 fn records<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> std::result::Result<Vec<Record>, D::Error> {
@@ -285,6 +389,14 @@ pub(crate) fn validate_lease_id(value: &str) -> Result<()> {
 
 fn validate_record(record: &Record) -> Result<()> {
     validate_lease_id(&record.lease_id)?;
+    if let Some(correlation) = &record.correlation {
+        correlation.validate()?;
+        if record.owner.uid == 0 {
+            return Err(Error::InvalidInput(
+                "tracked physical owner must be a nonroot broker".into(),
+            ));
+        }
+    }
     validate_lease_id(&record.owner.boot_id)
         .map_err(|_| Error::InvalidInput("physical owner boot ID is invalid".into()))?;
     if record.owner.uid == u32::MAX
@@ -342,6 +454,57 @@ fn validate_record(record: &Record) -> Result<()> {
                 "physical baseline interface/driver is invalid".into(),
             ));
         }
+    }
+    Ok(())
+}
+
+fn validate_proof(proof: BrokerCleanupProof) -> Result<()> {
+    if !matches!(
+        proof,
+        BrokerCleanupProof::NotStarted
+            | BrokerCleanupProof::PhysicalBaselineRestored
+            | BrokerCleanupProof::OriginalGenerationGone
+            | BrokerCleanupProof::PreviousBoot
+    ) {
+        return Err(Error::InvalidInput(
+            "cleanup proof does not apply to a physical grant".into(),
+        ));
+    }
+    Ok(())
+}
+
+fn validate_tracking(
+    records: &BTreeMap<String, Record>,
+    terminals: &[BrokerTerminal],
+) -> Result<()> {
+    let mut correlations = BTreeSet::new();
+    let mut identities: BTreeSet<&str> = records.keys().map(String::as_str).collect();
+    for record in records.values() {
+        if let Some(correlation) = &record.correlation
+            && !correlations.insert((record.owner.uid, correlation))
+        {
+            return Err(Error::State("duplicate physical tracked attempt".into()));
+        }
+    }
+    for terminal in terminals {
+        terminal.correlation.validate()?;
+        validate_proof(terminal.proof)?;
+        if terminal.kind != BrokerResourceKind::UsbfsGrant
+            || terminal.device_key.backend() != DeviceBackend::Physical
+            || terminal.owner_uid == 0
+            || terminal.owner_uid == u32::MAX
+            || !identities.insert(terminal.resource_id.as_str())
+            || !correlations.insert((terminal.owner_uid, &terminal.correlation))
+        {
+            return Err(Error::State(
+                "invalid or duplicate physical terminal".into(),
+            ));
+        }
+    }
+    if correlations.len() > MAX_TRACKED {
+        return Err(Error::State(
+            "physical tracked journal exceeds slot limit".into(),
+        ));
     }
     Ok(())
 }
@@ -484,6 +647,9 @@ pub(crate) struct Store {
     journal_identity: Option<(u64, u64)>,
     schema_version: u32,
     records: BTreeMap<String, Record>,
+    // Oldest retirement first. Slots are reserved by tracked admission so
+    // cleanup never needs to discard a different active authorization.
+    terminals: Vec<BrokerTerminal>,
     poisoned: Cell<bool>,
     journal_bytes: Option<Vec<u8>>,
     #[cfg(test)]
@@ -521,6 +687,7 @@ impl Store {
             journal_identity,
             schema_version: LEGACY_SCHEMA_VERSION,
             records: BTreeMap::new(),
+            terminals: Vec::new(),
             poisoned: Cell::new(false),
             journal_bytes: None,
             #[cfg(test)]
@@ -533,7 +700,7 @@ impl Store {
                         .into(),
                 ));
             }
-            store.commit(&BTreeMap::new())?;
+            store.commit(&BTreeMap::new(), &[])?;
         } else {
             store.load()?;
         }
@@ -601,7 +768,7 @@ impl Store {
         }
         let header: JournalHeader = serde_json::from_slice(&bytes)
             .map_err(|_| Error::State("physical journal schema or JSON is invalid".into()))?;
-        let (schema_version, records) = match header.schema_version {
+        let (schema_version, records, terminals) = match header.schema_version {
             LEGACY_SCHEMA_VERSION => {
                 let journal: JournalV1 = serde_json::from_slice(&bytes).map_err(|_| {
                     Error::State("physical journal schema or JSON is invalid".into())
@@ -609,13 +776,20 @@ impl Store {
                 (
                     journal.schema_version,
                     journal.records.into_iter().map(Record::from).collect(),
+                    Vec::new(),
                 )
             }
             RECOVERY_SCHEMA_VERSION => {
                 let journal: JournalV2 = serde_json::from_slice(&bytes).map_err(|_| {
                     Error::State("physical journal schema or JSON is invalid".into())
                 })?;
-                (journal.schema_version, journal.records)
+                (journal.schema_version, journal.records, Vec::new())
+            }
+            TRACKED_SCHEMA_VERSION => {
+                let journal: JournalV3 = serde_json::from_slice(&bytes).map_err(|_| {
+                    Error::State("physical journal schema or JSON is invalid".into())
+                })?;
+                (journal.schema_version, journal.records, journal.terminals)
             }
             _ => {
                 return Err(Error::State("unsupported physical journal version".into()));
@@ -633,8 +807,10 @@ impl Store {
                 ));
             }
         }
+        validate_tracking(&table, &terminals)?;
         self.schema_version = schema_version;
         self.records = table;
+        self.terminals = terminals;
         self.journal_bytes = Some(bytes);
         Ok(())
     }
@@ -646,6 +822,10 @@ impl Store {
         if self.records.len() >= MAX_RECORDS
             || self.records.contains_key(&record.lease_id)
             || self
+                .terminals
+                .iter()
+                .any(|terminal| terminal.resource_id.as_str() == record.lease_id)
+            || self
                 .records
                 .values()
                 .any(|old| old.baseline.device_id == record.baseline.device_id)
@@ -654,11 +834,64 @@ impl Store {
                 "physical journal is full or authorization is unresolved".into(),
             ));
         }
+        let mut terminals = self.terminals.clone();
+        if let Some(correlation) = &record.correlation {
+            if self.records.values().any(|old| {
+                old.owner.uid == record.owner.uid && old.correlation.as_ref() == Some(correlation)
+            }) || terminals
+                .iter()
+                .any(|old| old.owner_uid == record.owner.uid && old.correlation == *correlation)
+            {
+                return Err(Error::State(
+                    "physical tracked attempt already exists; query its exact status".into(),
+                ));
+            }
+            let active = self
+                .records
+                .values()
+                .filter(|old| old.correlation.is_some())
+                .count();
+            if active >= MAX_TRACKED {
+                return Err(Error::State(
+                    "physical tracked journal has no free slots".into(),
+                ));
+            }
+            if active + terminals.len() >= MAX_TRACKED {
+                terminals.remove(0);
+            }
+        }
         let mut next = self.records.clone();
         next.insert(record.lease_id.clone(), record);
-        self.commit(&next)?;
+        self.commit(&next, &terminals)?;
         self.records = next;
+        self.terminals = terminals;
         Ok(())
+    }
+
+    /// Inspect one owner's exact attempt without granting any resource ownership.
+    /// The caller must filter the returned device key against the current pool.
+    pub(crate) fn tracked_status(
+        &self,
+        uid: u32,
+        correlation: &BrokerCorrelation,
+    ) -> Result<Option<BrokerOperationState>> {
+        self.healthy()?;
+        correlation.validate()?;
+        if let Some(record) = self.records.values().find(|record| {
+            record.owner.uid == uid && record.correlation.as_ref() == Some(correlation)
+        }) {
+            return Ok(Some(BrokerOperationState::Active {
+                resource_id: ResourceId::new(record.lease_id.clone())?,
+                device_key: DeviceKey::physical(&record.baseline.device_id)?,
+                phase: BrokerOperationPhase::Granted,
+            }));
+        }
+        Ok(self
+            .terminals
+            .iter()
+            .find(|terminal| terminal.owner_uid == uid && terminal.correlation == *correlation)
+            .cloned()
+            .map(|terminal| BrokerOperationState::Terminal { terminal }))
     }
 
     /// Return a copy of an unresolved authorization; poisoned stores refuse reads.
@@ -695,22 +928,60 @@ impl Store {
 
     /// Durably remove a separately verified authorization; absence is idempotent.
     /// This storage operation performs no USB verification or capability revocation.
+    #[cfg(test)]
     pub(crate) fn retire(&mut self, lease_id: &str) -> Result<bool> {
         self.healthy()?;
         validate_lease_id(lease_id)?;
-        if !self.records.contains_key(lease_id) {
+        let Some(record) = self.records.get(lease_id) else {
             return Ok(false);
+        };
+        if record.correlation.is_some() {
+            return Err(Error::State(
+                "tracked physical retirement requires cleanup proof".into(),
+            ));
+        }
+        self.retire_verified(lease_id, BrokerCleanupProof::PhysicalBaselineRestored)
+    }
+
+    /// Atomically retire a verified grant and retain its exact tracked proof.
+    /// The caller supplies actual independent evidence; this performs no USB I/O.
+    pub(crate) fn retire_verified(
+        &mut self,
+        lease_id: &str,
+        proof: BrokerCleanupProof,
+    ) -> Result<bool> {
+        self.healthy()?;
+        validate_lease_id(lease_id)?;
+        validate_proof(proof)?;
+        let Some(record) = self.records.get(lease_id) else {
+            return Ok(false);
+        };
+        let mut terminals = self.terminals.clone();
+        if let Some(correlation) = &record.correlation {
+            terminals.push(BrokerTerminal {
+                resource_id: ResourceId::new(record.lease_id.clone())?,
+                kind: BrokerResourceKind::UsbfsGrant,
+                device_key: DeviceKey::physical(&record.baseline.device_id)?,
+                owner_uid: record.owner.uid,
+                correlation: correlation.clone(),
+                proof,
+            });
         }
         let mut next = self.records.clone();
         next.remove(lease_id);
-        self.commit(&next)?;
+        self.commit(&next, &terminals)?;
         self.records = next;
+        self.terminals = terminals;
         Ok(true)
     }
 
-    fn commit(&mut self, next: &BTreeMap<String, Record>) -> Result<()> {
+    fn commit(
+        &mut self,
+        next: &BTreeMap<String, Record>,
+        terminals: &[BrokerTerminal],
+    ) -> Result<()> {
         self.healthy()?;
-        let result = self.write_atomic(next);
+        let result = self.write_atomic(next, terminals);
         if result.is_err() {
             // Even rename/fsync errors can leave a new on-disk table. Keep the
             // old cache and prohibit all further use until an explicit reopen.
@@ -719,7 +990,11 @@ impl Store {
         result
     }
 
-    fn write_atomic(&mut self, next: &BTreeMap<String, Record>) -> Result<()> {
+    fn write_atomic(
+        &mut self,
+        next: &BTreeMap<String, Record>,
+        terminals: &[BrokerTerminal],
+    ) -> Result<()> {
         validate_directory(&self.directory, self.uid)?;
         let lock = self.lock.metadata()?;
         validate_file(&lock, self.uid)?;
@@ -731,6 +1006,12 @@ impl Store {
             ));
         }
         let schema_version = match self.schema_version {
+            LEGACY_SCHEMA_VERSION | RECOVERY_SCHEMA_VERSION
+                if next.values().any(|record| record.correlation.is_some())
+                    || !terminals.is_empty() =>
+            {
+                TRACKED_SCHEMA_VERSION
+            }
             LEGACY_SCHEMA_VERSION
                 if next
                     .values()
@@ -739,6 +1020,7 @@ impl Store {
                 LEGACY_SCHEMA_VERSION
             }
             LEGACY_SCHEMA_VERSION | RECOVERY_SCHEMA_VERSION => RECOVERY_SCHEMA_VERSION,
+            TRACKED_SCHEMA_VERSION => TRACKED_SCHEMA_VERSION,
             _ => {
                 return Err(Error::State(
                     "invalid physical journal storage version".into(),
@@ -750,17 +1032,26 @@ impl Store {
                 schema_version,
                 records: next.values().map(RecordV1Ref::from).collect(),
             })
+        } else if schema_version == RECOVERY_SCHEMA_VERSION {
+            serde_json::to_vec(&JournalV2Ref {
+                schema_version,
+                records: next.values().map(RecordV2Ref::from).collect(),
+            })
         } else {
             serde_json::to_vec(&JournalRef {
                 schema_version,
                 records: next.values().collect(),
+                terminals,
             })
         };
         let mut bytes =
             encoded.map_err(|_| Error::State("cannot serialize physical journal".into()))?;
         bytes.push(b'\n');
-        if bytes.len() > MAX_BYTES {
-            return Err(Error::State("physical journal exceeds byte limit".into()));
+        let reserved = next.values().filter(|r| r.correlation.is_some()).count() * 1024;
+        if bytes.len().saturating_add(reserved) > MAX_BYTES {
+            return Err(Error::State(
+                "physical journal exceeds reserved terminal byte limit".into(),
+            ));
         }
         // A crashed prior writer may have left this fixed private name. Never
         // unlink a symlink, hardlink, foreign owner or permissive file here.
@@ -855,6 +1146,7 @@ mod tests {
                 }],
             },
             recovery: RecoveryAuthorization::ManualOnly,
+            correlation: None,
         })
     }
 
@@ -991,7 +1283,8 @@ mod tests {
             serde_json::json!({"connect_original_drivers": null}),
             serde_json::json!({"manual_only": null}),
         ] {
-            let mut value = serde_json::to_value(record(1)?).map_err(std::io::Error::other)?;
+            let mut value = serde_json::to_value(RecordV2Ref::from(&record(1)?))
+                .map_err(std::io::Error::other)?;
             value["recovery"] = recovery;
             fixture.replace(
                 &serde_json::to_vec(&serde_json::json!({"schema_version":2,"records":[value]}))
@@ -999,7 +1292,8 @@ mod tests {
             )?;
             assert!(fixture.open().is_err());
         }
-        let mut missing = serde_json::to_value(record(1)?).map_err(std::io::Error::other)?;
+        let mut missing =
+            serde_json::to_value(RecordV2Ref::from(&record(1)?)).map_err(std::io::Error::other)?;
         missing
             .as_object_mut()
             .ok_or_else(|| Error::State("fixture record".into()))?
@@ -1443,4 +1737,6 @@ mod tests {
         assert!(fixture.open()?.records()?.is_empty());
         Ok(())
     }
+
+    include!("journal_tracked_tests.rs");
 }

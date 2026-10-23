@@ -1,7 +1,10 @@
 //! Separate durable secure Native intents. Never reinterprets USBFS journal schemas.
 use crate::native_channel::SecureImportTarget;
 use rustix::fs::{AtFlags, FlockOperation, Mode, OFlags};
+use rustusb_core::application::{BrokerCleanupProof, BrokerCorrelation};
 use rustusb_core::{Error, Result};
+#[path = "native_tracking.rs"]
+mod tracking;
 use rustusb_native::channel::{ImportIntent, ImportReceipt};
 use rustusb_native::export_channel::{ExportReceipt, RegistrationSnapshot, StubReceipt};
 use serde::{Deserialize, Serialize};
@@ -12,6 +15,7 @@ use std::{
     os::unix::fs::MetadataExt,
     path::{Component, Path},
 };
+use tracking::{TerminalEntry, decode_disk, encode_disk};
 const LIMIT: usize = 1024 * 1024;
 const DATA: &str = "channels.json";
 const TEMP: &str = ".channels.tmp";
@@ -91,6 +95,8 @@ pub(crate) enum Phase {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Record {
+    #[serde(deserialize_with = "tracking::required_correlation")]
+    pub correlation: Option<BrokerCorrelation>,
     pub channel_id: String,
     pub owner: Owner,
     pub target: SecureImportTarget,
@@ -106,25 +112,23 @@ pub(crate) enum StubPhase {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct StubRecord {
+    #[serde(deserialize_with = "tracking::required_correlation")]
+    pub correlation: Option<BrokerCorrelation>,
     pub channel_id: String,
     pub state: StubPhase,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct ExportRecord {
+    #[serde(deserialize_with = "tracking::required_correlation")]
+    pub correlation: Option<BrokerCorrelation>,
     pub lease_id: String,
     pub owner: Owner,
     pub registration: RegistrationSnapshot,
     pub bound: Option<ExportReceipt>,
     pub stub: Option<StubRecord>,
 }
-#[derive(Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Disk {
-    schema_version: u32,
-    records: Vec<Record>,
-    exports: Vec<ExportRecord>,
-}
+
 fn validate_directory(directory: &File, uid: u32) -> Result<()> {
     let metadata = directory.metadata()?;
     if !metadata.is_dir() || metadata.uid() != uid || metadata.mode() & 0o022 != 0 {
@@ -269,6 +273,12 @@ pub(crate) struct Store {
     live: BTreeSet<String>,
     unresolved: BTreeSet<String>,
     poisoned: bool,
+    schema_version: u32,
+    terminals: Vec<TerminalEntry>,
+    #[cfg(test)]
+    fail_before_rename: bool,
+    #[cfg(test)]
+    fail_after_rename: bool,
 }
 impl Store {
     pub(crate) fn open(path: &Path) -> Result<Self> {
@@ -304,6 +314,12 @@ impl Store {
             live: BTreeSet::new(),
             unresolved: BTreeSet::new(),
             poisoned: false,
+            schema_version: 1,
+            terminals: Vec::new(),
+            #[cfg(test)]
+            fail_before_rename: false,
+            #[cfg(test)]
+            fail_after_rename: false,
         };
         if identity.is_none() {
             if !created {
@@ -314,9 +330,10 @@ impl Store {
             store.commit(BTreeMap::new())?;
         } else {
             store.bytes = store.read_bytes()?;
-            let disk: Disk = serde_json::from_slice(&store.bytes)
-                .map_err(|_| Error::State("invalid Native channel journal".into()))?;
-            if disk.schema_version != 1 || disk.records.len() + disk.exports.len() > 32 {
+            let disk = decode_disk(&store.bytes)?;
+            store.schema_version = disk.schema_version;
+            store.terminals = disk.terminals;
+            if disk.records.len() + disk.exports.len() > 32 {
                 return Err(Error::State("unsupported Native channel journal".into()));
             }
             for record in disk.records {
@@ -428,6 +445,7 @@ impl Store {
                     return Err(Error::State("duplicate Native export lease".into()));
                 }
             }
+            store.validate_tracking()?;
             store.unresolved = store
                 .records
                 .keys()
@@ -476,14 +494,17 @@ impl Store {
         records: BTreeMap<String, Record>,
         exports: BTreeMap<String, ExportRecord>,
     ) -> Result<()> {
+        self.commit_full(records, exports, self.terminals.clone())
+    }
+    fn commit_full(
+        &mut self,
+        records: BTreeMap<String, Record>,
+        exports: BTreeMap<String, ExportRecord>,
+        terminals: Vec<TerminalEntry>,
+    ) -> Result<()> {
         self.healthy()?;
+        let (version, bytes) = encode_disk(self.schema_version, &records, &exports, &terminals)?;
         let result = (|| -> Result<(Vec<u8>, (u64, u64))> {
-            let bytes = serde_json::to_vec(&Disk {
-                schema_version: 1,
-                records: records.values().cloned().collect(),
-                exports: exports.values().cloned().collect(),
-            })
-            .map_err(|_| Error::State("cannot encode Native journal".into()))?;
             if bytes.len() > LIMIT || records.len() + exports.len() > 32 {
                 return Err(Error::State("Native journal capacity exceeded".into()));
             }
@@ -495,8 +516,20 @@ impl Store {
             file.write_all(&bytes)?;
             file.sync_all()?;
             let identity = (file.metadata()?.dev(), file.metadata()?.ino());
+            #[cfg(test)]
+            if self.fail_before_rename {
+                return Err(Error::State(
+                    "injected Native commit failure before rename".into(),
+                ));
+            }
             rustix::fs::renameat(&self.directory, TEMP, &self.directory, DATA)
                 .map_err(std::io::Error::from)?;
+            #[cfg(test)]
+            if self.fail_after_rename {
+                return Err(Error::State(
+                    "injected Native commit failure after rename".into(),
+                ));
+            }
             self.directory.sync_all()?;
             if identity_at(&self.directory, DATA, self.uid)? != Some(identity) {
                 return Err(Error::State("Native journal changed during commit".into()));
@@ -509,6 +542,8 @@ impl Store {
                 self.identity = Some(identity);
                 self.records = records;
                 self.exports = exports;
+                self.schema_version = version;
+                self.terminals = terminals;
                 Ok(())
             }
             Err(error) => {
@@ -535,7 +570,8 @@ impl Store {
         if records.insert(id.clone(), record).is_some() {
             return Err(Error::State("duplicate Native channel".into()));
         }
-        self.commit(records)?;
+        let terminals = self.admit_tracking(&records, &self.exports)?;
+        self.commit_full(records, self.exports.clone(), terminals)?;
         self.live.insert(id);
         Ok(())
     }
@@ -546,14 +582,6 @@ impl Store {
             .ok_or_else(|| Error::State("missing Native intent".into()))?;
         record.state = phase;
         self.commit(records)
-    }
-    pub(crate) fn retire(&mut self, id: &str) -> Result<()> {
-        let mut records = self.records.clone();
-        records.remove(id);
-        self.commit(records)?;
-        self.live.remove(id);
-        self.unresolved.remove(id);
-        Ok(())
     }
     pub(crate) fn unresolved(&mut self, id: &str) {
         self.live.remove(id);
@@ -586,7 +614,8 @@ impl Store {
         if exports.insert(id.clone(), record).is_some() {
             return Err(Error::State("duplicate Native export".into()));
         }
-        self.commit_all(self.records.clone(), exports)?;
+        let terminals = self.admit_tracking(&self.records, &exports)?;
+        self.commit_full(self.records.clone(), exports, terminals)?;
         self.live.insert(id);
         Ok(())
     }
@@ -602,14 +631,6 @@ impl Store {
                 .ok_or_else(|| Error::State("missing Native export".into()))?,
         )?;
         self.commit_all(self.records.clone(), exports)
-    }
-    pub(crate) fn retire_export(&mut self, id: &str) -> Result<()> {
-        let mut exports = self.exports.clone();
-        exports.remove(id);
-        self.commit_all(self.records.clone(), exports)?;
-        self.live.remove(id);
-        self.unresolved.remove(id);
-        Ok(())
     }
     pub(crate) fn pending(&mut self, after: Option<&str>) -> Result<serde_json::Value> {
         self.healthy()?;
@@ -660,12 +681,18 @@ impl Store {
                 return Err(Error::State("Native owner has not ended".into()));
             }
             let old_boot = record.owner.boot != uuid("/proc/sys/kernel/random/boot_id")?;
-            if !(old_boot || record.registration.gone()? || record.registration.restored()?) {
+            let proof = if old_boot {
+                BrokerCleanupProof::PreviousBoot
+            } else if record.registration.gone()? {
+                BrokerCleanupProof::OriginalGenerationGone
+            } else if record.registration.restored()? {
+                BrokerCleanupProof::NativeExportRestored
+            } else {
                 return Err(Error::State(
                     "original Native drivers/configuration are not restored; lease retained".into(),
                 ));
-            }
-            return self.retire_export(id);
+            };
+            return self.retire_export_verified(id, proof);
         }
         let record = self
             .records
@@ -675,18 +702,21 @@ impl Store {
             return Err(Error::State("Native owner has not ended".into()));
         }
         let old_boot = record.owner.boot != uuid("/proc/sys/kernel/random/boot_id")?;
-        let safe = old_boot
-            || match &record.state {
-                Phase::Prepared {} => true,
-                Phase::Observed { receipt } => rustusb_native::channel::released(receipt)?,
-                Phase::Intent { intent } => rustusb_native::channel::unidentified_released(intent)?,
-            };
-        if !safe {
-            return Err(Error::State(
-                "Native release cannot be proven; pending record retained".into(),
-            ));
+        let proof = if old_boot {
+            Some(BrokerCleanupProof::PreviousBoot)
+        } else {
+            match &record.state {
+                Phase::Prepared {} => Some(BrokerCleanupProof::NotStarted),
+                Phase::Observed { receipt } => rustusb_native::channel::released(receipt)?
+                    .then_some(BrokerCleanupProof::NativeImportReleased),
+                Phase::Intent { intent } => rustusb_native::channel::unidentified_released(intent)?
+                    .then_some(BrokerCleanupProof::NativeImportIntentReleased),
+            }
         }
-        self.retire(id)
+        .ok_or_else(|| {
+            Error::State("Native release cannot be proven; pending record retained".into())
+        })?;
+        self.retire_verified(id, proof)
     }
 }
 
@@ -694,7 +724,7 @@ impl Store {
 mod tests {
     use super::*;
     use std::{fs, os::unix::fs::PermissionsExt};
-    fn export_fixture(id: &str) -> Result<ExportRecord> {
+    pub(super) fn export_fixture(id: &str) -> Result<ExportRecord> {
         use rustusb_native::export_channel::{ExportInterface, ExportProfile, HardwareGeneration};
         let bus = rustusb_core::BusId::new("1-1")?;
         let generation = HardwareGeneration {
@@ -714,6 +744,7 @@ mod tests {
             num_configurations: 1,
         };
         Ok(ExportRecord {
+            correlation: None,
             lease_id: id.into(),
             owner: Owner {
                 uid: 1000,
@@ -904,6 +935,7 @@ mod tests {
         let id = "00000000-0000-4000-8000-000000000001".to_owned();
         let mut first = Store::open_anchored(&path, root.path(), uid)?;
         let record = Record {
+            correlation: None,
             channel_id: id.clone(),
             owner: Owner {
                 uid: 1000,
@@ -925,3 +957,7 @@ mod tests {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "native_tracking_tests.rs"]
+mod tracking_tests;

@@ -3,6 +3,7 @@ use crate::{
     Request, Response, ancillary, linux,
     native_state::{self, Phase, Record, Store},
 };
+use rustusb_core::application::BrokerCorrelation;
 use rustusb_core::{DeviceKey, Error, Result};
 use rustusb_native::channel::{ImportChannel, ImportReceipt};
 use rustusb_protocol::RemoteDevice;
@@ -70,11 +71,16 @@ enum Command {
 /// An owned local helper transaction. Drop closes control asynchronously and invalidates the channel.
 /// Only `close().await` confirms successful cleanup; dropping this value is not a cleanup receipt.
 pub struct NativeImportHandle {
+    channel_id: String,
     relay: Option<UnixStream>,
     commands: mpsc::Sender<Command>,
     invalidated: watch::Receiver<bool>,
 }
 impl NativeImportHandle {
+    /// Helper-issued identity for read-only correlation; not a bearer capability.
+    pub fn channel_id(&self) -> &str {
+        &self.channel_id
+    }
     /// Take the anonymous relay endpoint exactly once, before starting the TLS pump and committing.
     pub fn take_relay(&mut self) -> Result<UnixStream> {
         self.relay
@@ -119,9 +125,32 @@ pub async fn prepare_native_import(
     socket: &Path,
     target: SecureImportTarget,
 ) -> Result<NativeImportHandle> {
+    prepare_import(socket, target, None).await
+}
+/// Prepare a channel with durable application correlation and retained terminal evidence.
+pub async fn prepare_native_import_tracked(
+    socket: &Path,
+    target: SecureImportTarget,
+    correlation: BrokerCorrelation,
+) -> Result<NativeImportHandle> {
+    correlation.validate()?;
+    prepare_import(socket, target, Some(correlation)).await
+}
+async fn prepare_import(
+    socket: &Path,
+    target: SecureImportTarget,
+    correlation: Option<BrokerCorrelation>,
+) -> Result<NativeImportHandle> {
     target.validate()?;
     let mut stream = linux::connect_trusted(socket).await?;
-    let response = linux::exchange(&mut stream, &Request::PrepareNativeImport { target }).await?;
+    let request = match correlation {
+        Some(correlation) => Request::PrepareNativeImportTracked {
+            target,
+            correlation,
+        },
+        None => Request::PrepareNativeImport { target },
+    };
+    let response = linux::exchange(&mut stream, &request).await?;
     let description: Description = decode(response)?;
     if description.schema_version != 1 {
         return Err(Error::Protocol("unsupported Native channel schema".into()));
@@ -151,11 +180,12 @@ pub async fn prepare_native_import(
     let (invalidated, watch) = watch::channel(false);
     tokio::spawn(client_actor(
         stream,
-        description.channel_id,
+        description.channel_id.clone(),
         receive,
         invalidated,
     ));
     Ok(NativeImportHandle {
+        channel_id: description.channel_id,
         relay: Some(relay),
         commands,
         invalidated: watch,
@@ -334,8 +364,13 @@ pub(crate) async fn serve_import(
     uid: u32,
     pid: Option<i32>,
     target: SecureImportTarget,
+    correlation: Option<BrokerCorrelation>,
 ) -> Result<()> {
-    if let Err(error) = app.policy.authorize_import(uid, &target) {
+    if let Err(error) = correlation
+        .as_ref()
+        .map_or(Ok(()), BrokerCorrelation::validate)
+        .and_then(|()| app.policy.authorize_import(uid, &target))
+    {
         linux::write_frame(&mut stream, &Response::failure(error)).await?;
         return Ok(());
     }
@@ -354,6 +389,7 @@ pub(crate) async fn serve_import(
         let (channel, relay) = ImportChannel::prepare(initial_target.remote.clone())?;
         with_store(&initial_store, |s| {
             s.reserve(Record {
+                correlation,
                 channel_id: id.clone(),
                 owner,
                 target: initial_target,
@@ -434,12 +470,12 @@ pub(crate) async fn serve_import(
             let mut channel = channel
                 .lock()
                 .map_err(|_| Error::State("Native cleanup mutex poisoned".into()))?;
-            let cleaned = channel.shutdown();
+            let cleaned = channel.shutdown_proven();
             if let Some(receipt) = channel.observed_receipt() {
                 with_store(&store, |s| s.update(&id, Phase::Observed { receipt }))?;
             }
-            cleaned?;
-            with_store(&store, |s| s.retire(&id))
+            let proof = cleaned?;
+            with_store(&store, |s| s.retire_verified(&id, proof))
         })();
         if result.is_err()
             && let Ok(mut store) = store.lock()

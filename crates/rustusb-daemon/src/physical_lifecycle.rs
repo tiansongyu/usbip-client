@@ -328,6 +328,7 @@ mod tests {
             Some(std::process::id() as i32),
         )?;
         let record = Record {
+            correlation: None,
             lease_id: "00000000-0000-0000-0000-000000000001".into(),
             owner: caller.clone(),
             baseline: baseline()?,
@@ -385,6 +386,7 @@ mod tests {
         let process = processes.join("42");
         fs::create_dir_all(&process)?;
         let mut record = Record {
+            correlation: None,
             lease_id: "00000000-0000-0000-0000-000000000001".into(),
             owner: Owner {
                 uid: 1000,

@@ -828,9 +828,15 @@ impl ImportChannel {
     /// Explicitly shut down this retained socket, then verify actual asynchronous cleanup.
     /// Unknown pre-enumeration effects remain unresolved instead of guessing a port owner.
     pub fn shutdown(&mut self) -> Result<()> {
+        self.shutdown_proven().map(|_| ())
+    }
+    /// Stop the retained K and return the exact existing cleanup criterion.
+    /// This observation grants no authority to another process or future generation.
+    pub fn shutdown_proven(&mut self) -> Result<rustusb_core::application::BrokerCleanupProof> {
+        use rustusb_core::application::BrokerCleanupProof;
         self.kernel.shutdown(Shutdown::Both)?;
         if !self.write_started {
-            return Ok(());
+            return Ok(BrokerCleanupProof::NotStarted);
         }
         let intent = self
             .intent
@@ -868,7 +874,7 @@ impl ImportChannel {
             if row.session.status == 4 {
                 let local = self.local.as_ref().ok_or_else(|| Error::State("attach ended without a complete local generation receipt; retain pending intent".into()) )?;
                 if old_local_gone(local)? {
-                    return Ok(());
+                    return Ok(BrokerCleanupProof::NativeImportReleased);
                 }
             }
             require(

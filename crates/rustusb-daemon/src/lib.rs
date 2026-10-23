@@ -4,7 +4,12 @@
 //! starts usbipd or configures a firewall. Native USB/IP traffic requires an
 //! independently administered trusted VPN or tunnel.
 
+use rustusb_core::application::{BrokerCorrelation, BrokerResourceKind, ResourceId};
 use rustusb_core::{BusId, DeviceKey, Error, Peer, Result, VhciPort};
+mod broker;
+pub use broker::{
+    BrokerPendingPage, BrokerPendingRecord, broker_pending, inspect_broker_operation,
+};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
@@ -32,10 +37,12 @@ mod native_state;
 #[cfg(target_os = "linux")]
 pub use native_channel::{
     NativeImportHandle, NativeImportReceipt, SecureImportTarget, prepare_native_import,
+    prepare_native_import_tracked,
 };
 #[cfg(target_os = "linux")]
 pub use native_export::{
     NativeExportHandle, NativeStubHandle, NativeStubReceipt, prepare_native_export,
+    prepare_native_export_tracked,
 };
 
 /// Maximum line size, including the terminating newline, for local IPC.
@@ -50,6 +57,55 @@ pub const STATUS_SCHEMA_VERSION: u32 = 1;
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
+    /// Observe one exact broker-owned recorded operation; does not transfer ownership.
+    InspectBrokerOperation {
+        /// Concrete capability namespace.
+        kind: BrokerResourceKind,
+        /// Original application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Page broker-owned pending records visible under current policy.
+    BrokerPending {
+        /// Concrete capability namespace.
+        kind: BrokerResourceKind,
+        /// Exclusive helper resource cursor.
+        after: Option<ResourceId>,
+    },
+    /// Prepare a tracked anonymous import channel.
+    #[cfg(target_os = "linux")]
+    PrepareNativeImportTracked {
+        /// Authorized remote selection.
+        target: SecureImportTarget,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Register a tracked Native export.
+    #[cfg(target_os = "linux")]
+    PrepareNativeExportTracked {
+        /// Approved fingerprint.
+        device_id: String,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Reserve a tracked stub on the same process's live export.
+    #[cfg(target_os = "linux")]
+    OpenNativeStubTracked {
+        /// Original helper registration.
+        lease_id: String,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Delegate a tracked whole-device capability to the secure broker.
+    #[cfg(feature = "physical-usb")]
+    OpenSecurePhysicalTracked {
+        /// Existing lifecycle protocol, still version 1.
+        journal_schema_version: u32,
+        /// Approved fingerprint.
+        device_id: String,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+
     /// Prepare an anonymous kernel channel for the configured TLS broker.
     #[cfg(target_os = "linux")]
     PrepareNativeImport {
@@ -148,6 +204,55 @@ pub enum Request {
 #[derive(Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 enum RequestWire {
+    /// Observe one exact broker-owned recorded operation; does not transfer ownership.
+    InspectBrokerOperation {
+        /// Concrete capability namespace.
+        kind: BrokerResourceKind,
+        /// Original application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Page broker-owned pending records visible under current policy.
+    BrokerPending {
+        /// Concrete capability namespace.
+        kind: BrokerResourceKind,
+        /// Exclusive helper resource cursor.
+        after: Option<ResourceId>,
+    },
+    /// Prepare a tracked anonymous import channel.
+    #[cfg(target_os = "linux")]
+    PrepareNativeImportTracked {
+        /// Authorized remote selection.
+        target: SecureImportTarget,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Register a tracked Native export.
+    #[cfg(target_os = "linux")]
+    PrepareNativeExportTracked {
+        /// Approved fingerprint.
+        device_id: String,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Reserve a tracked stub on the same process's live export.
+    #[cfg(target_os = "linux")]
+    OpenNativeStubTracked {
+        /// Original helper registration.
+        lease_id: String,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+    /// Delegate a tracked whole-device capability to the secure broker.
+    #[cfg(feature = "physical-usb")]
+    OpenSecurePhysicalTracked {
+        /// Existing lifecycle protocol, still version 1.
+        journal_schema_version: u32,
+        /// Approved fingerprint.
+        device_id: String,
+        /// Independent application attempt.
+        correlation: BrokerCorrelation,
+    },
+
     #[cfg(target_os = "linux")]
     PrepareNativeImport {
         target: SecureImportTarget,
@@ -213,6 +318,45 @@ impl<'de> Deserialize<'de> for Request {
         deserializer: D,
     ) -> std::result::Result<Self, D::Error> {
         Ok(match RequestWire::deserialize(deserializer)? {
+            RequestWire::InspectBrokerOperation { kind, correlation } => {
+                Self::InspectBrokerOperation { kind, correlation }
+            }
+            RequestWire::BrokerPending { kind, after } => Self::BrokerPending { kind, after },
+            #[cfg(target_os = "linux")]
+            RequestWire::PrepareNativeImportTracked {
+                target,
+                correlation,
+            } => Self::PrepareNativeImportTracked {
+                target,
+                correlation,
+            },
+            #[cfg(target_os = "linux")]
+            RequestWire::PrepareNativeExportTracked {
+                device_id,
+                correlation,
+            } => Self::PrepareNativeExportTracked {
+                device_id,
+                correlation,
+            },
+            #[cfg(target_os = "linux")]
+            RequestWire::OpenNativeStubTracked {
+                lease_id,
+                correlation,
+            } => Self::OpenNativeStubTracked {
+                lease_id,
+                correlation,
+            },
+            #[cfg(feature = "physical-usb")]
+            RequestWire::OpenSecurePhysicalTracked {
+                device_id,
+                journal_schema_version,
+                correlation,
+            } => Self::OpenSecurePhysicalTracked {
+                device_id,
+                journal_schema_version,
+                correlation,
+            },
+
             #[cfg(target_os = "linux")]
             RequestWire::PrepareNativeImport { target } => Self::PrepareNativeImport { target },
             RequestWire::NativePending { after } => Self::NativePending { after },
@@ -633,14 +777,25 @@ pub async fn request(socket: &Path, req: Request) -> Result<Response> {
 /// helper. This is Linux-only and never falls back to opening a caller path.
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
 pub async fn open_physical(socket: &Path, device_id: String) -> Result<PhysicalGrant> {
-    linux::open_physical(socket, device_id, false).await
+    linux::open_physical(socket, device_id, false, None).await
 }
 
 /// Receive a USBFS capability solely under the configured secure broker role.
 /// Reuses the physical journal and FinishPhysical; no trusted-network declaration is inferred.
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
 pub async fn open_secure_physical(socket: &Path, device_id: String) -> Result<PhysicalGrant> {
-    linux::open_physical(socket, device_id, true).await
+    linux::open_physical(socket, device_id, true, None).await
+}
+
+/// Receive a broker capability with durable correlation and terminal evidence.
+#[cfg(all(feature = "physical-usb", target_os = "linux"))]
+pub async fn open_secure_physical_tracked(
+    socket: &Path,
+    device_id: String,
+    correlation: BrokerCorrelation,
+) -> Result<PhysicalGrant> {
+    correlation.validate()?;
+    linux::open_physical(socket, device_id, true, Some(correlation)).await
 }
 
 /// Run the root helper using a root-owned policy and protected socket directory.

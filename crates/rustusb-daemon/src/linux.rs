@@ -1,4 +1,6 @@
 use super::{MAX_CONNECTIONS, MAX_FRAME_BYTES, Policy, Request, Response};
+#[cfg(feature = "physical-usb")]
+use rustusb_core::application::{BrokerCleanupProof, BrokerCorrelation};
 use rustusb_core::{Device, DeviceDiscovery, Error, ExportBackend, Result, VhciPort};
 use rustusb_linux::SysfsDiscovery;
 use rustusb_native::{NativeBackend, NativeSession};
@@ -79,7 +81,7 @@ pub(crate) struct App {
     pub(crate) native_exports: super::native_export::Registry,
     pub(crate) native_stop: tokio::sync::watch::Sender<bool>,
     #[cfg(feature = "physical-usb")]
-    journal: Option<Arc<std::sync::Mutex<super::journal::Store>>>,
+    pub(crate) journal: Option<Arc<std::sync::Mutex<super::journal::Store>>>,
     #[cfg(feature = "physical-usb")]
     handoffs: Arc<std::sync::Mutex<HashSet<String>>>,
 }
@@ -131,7 +133,11 @@ impl App {
         pid: Option<i32>,
         id: String,
         secure: bool,
+        correlation: Option<BrokerCorrelation>,
     ) -> Result<Handoff> {
+        if let Some(c) = &correlation {
+            c.validate()?;
+        }
         if secure {
             self.policy.authorize_secure_physical(uid, &id)?;
         } else {
@@ -168,6 +174,7 @@ impl App {
             Ok::<_, Error>((
                 grant,
                 super::journal::Record {
+                    correlation,
                     lease_id,
                     owner,
                     baseline,
@@ -248,13 +255,25 @@ impl App {
         .map_err(|_| {
             Error::Timeout("physical descriptor handoff still active; record retained".into())
         })??;
-        let observation = tokio::task::spawn_blocking(move || {
-            super::physical_lifecycle::verify(&record, admin_gone.unwrap_or(true))
+        let (observation, proof) = tokio::task::spawn_blocking(move || {
+            let observation =
+                super::physical_lifecycle::verify(&record, admin_gone.unwrap_or(true))?;
+            let proof = if observation == "restored" {
+                BrokerCleanupProof::PhysicalBaselineRestored
+            } else if record.owner.boot_id
+                != super::native_state::uuid("/proc/sys/kernel/random/boot_id")?
+            {
+                BrokerCleanupProof::PreviousBoot
+            } else {
+                BrokerCleanupProof::OriginalGenerationGone
+            };
+            Ok::<_, Error>((observation, proof))
         })
         .await
         .map_err(|_| Error::State("physical restoration observation task failed".into()))??;
         let retiring = lease_id.clone();
-        self.journal(move |store| store.retire(&retiring)).await?;
+        self.journal(move |store| store.retire_verified(&retiring, proof))
+            .await?;
         Ok(serde_json::json!({"status":"retired","lease_id":lease_id,"observation":observation}))
     }
 
@@ -301,9 +320,12 @@ impl App {
                 "physical_device_allowlist_count": self.policy.physical_device_ids.len(),
                 "physical_connect_restore_supported": cfg!(feature = "physical-usb"),
                 "physical_connect_restore_allowlist_count": self.policy.physical_connect_restore_device_ids.len(),
-                "physical_journal_storage_versions": if cfg!(feature = "physical-usb") { vec![1_u32, 2] } else { vec![] },
+                "physical_journal_storage_versions": if cfg!(feature = "physical-usb") { vec![1_u32, 2, 3] } else { vec![] },
                 "secure_broker_configured": self.policy.secure_broker_uid.is_some(),
                 "secure_native_import_supported": true,
+                "broker_tracking_schema_version": 1,
+                "broker_terminal_capacity": 128,
+                "native_journal_storage_versions": [1,2],
                 "secure_physical_device_allowlist_count": self.policy.secure_physical_device_ids.len(),
                 "native_data_encryption": false,
                 "external_trusted_network_confirmed": self.policy.trusted_network,
@@ -320,7 +342,12 @@ impl App {
             })?;
         let export = matches!(&req, Request::Export { .. });
         match req {
-            Request::PrepareNativeImport { .. }
+            Request::InspectBrokerOperation { .. }
+            | Request::BrokerPending { .. }
+            | Request::PrepareNativeImportTracked { .. }
+            | Request::PrepareNativeExportTracked { .. }
+            | Request::OpenNativeStubTracked { .. }
+            | Request::PrepareNativeImport { .. }
             | Request::PrepareNativeExport { .. }
             | Request::OpenNativeStub { .. }
             | Request::NativePending { .. }
@@ -329,6 +356,7 @@ impl App {
             )),
             #[cfg(feature = "physical-usb")]
             Request::OpenSecurePhysical { .. }
+            | Request::OpenSecurePhysicalTracked { .. }
             | Request::FinishPhysical { .. }
             | Request::PhysicalPending { .. }
             | Request::ReconcilePhysical { .. }
@@ -565,7 +593,7 @@ impl App {
         journal
             .lock()
             .map_err(|_| Error::State("physical journal lock poisoned".into()))?
-            .retire(lease_id)?;
+            .retire_verified(lease_id, BrokerCleanupProof::PhysicalBaselineRestored)?;
         tracing::info!(
             operation = "physical_auto_restore",
             lease_id,
@@ -690,7 +718,7 @@ fn pending_page(
             baseline: record.baseline,
         };
         let mut size = serde_json::to_vec(&entry).map_err(json_error)?.len() + 1;
-        if snapshot.schema_version == 2 {
+        if snapshot.schema_version >= 2 {
             size += serde_json::to_vec(&authorization)
                 .map_err(json_error)?
                 .len()
@@ -702,7 +730,7 @@ fn pending_page(
         }
         bytes += size;
         page.push(entry);
-        if snapshot.schema_version == 2 {
+        if snapshot.schema_version >= 2 {
             authorizations.push(authorization);
         }
     }
@@ -717,8 +745,8 @@ fn pending_page(
         None
     };
     let mut result = serde_json::json!({"schema_version":1,"records":page,"next_after":next_after});
-    if snapshot.schema_version == 2 {
-        result["storage_schema_version"] = serde_json::json!(2);
+    if snapshot.schema_version >= 2 {
+        result["storage_schema_version"] = serde_json::json!(snapshot.schema_version);
         result["recovery_authorizations"] = serde_json::json!(authorizations);
     }
     Ok(result)
@@ -890,6 +918,17 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
             Ok(frame) => match serde_json::from_slice::<Request>(&frame).map_err(json_error) {
                 Ok(req) => {
                     operation = match &req {
+                        Request::InspectBrokerOperation { .. } => "inspect_broker_operation",
+                        Request::BrokerPending { .. } => "broker_pending",
+                        Request::PrepareNativeImportTracked { .. } => {
+                            "prepare_native_import_tracked"
+                        }
+                        Request::PrepareNativeExportTracked { .. } => {
+                            "prepare_native_export_tracked"
+                        }
+                        Request::OpenNativeStubTracked { .. } => "open_native_stub_tracked",
+                        #[cfg(feature = "physical-usb")]
+                        Request::OpenSecurePhysicalTracked { .. } => "open_secure_physical_tracked",
                         #[cfg(feature = "physical-usb")]
                         Request::OpenPhysical { .. } => "open_physical",
                         #[cfg(feature = "physical-usb")]
@@ -912,6 +951,62 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                         Request::Sessions => "sessions",
                         Request::Status => "status",
                     };
+                    if matches!(
+                        req,
+                        Request::InspectBrokerOperation { .. } | Request::BrokerPending { .. }
+                    ) {
+                        let result = super::broker::serve(&app, uid, req).await;
+                        let response = match result {
+                            Ok(data) => Response::success(data),
+                            Err(e) => Response::failure(e),
+                        };
+                        return write_frame(&mut stream, &response).await;
+                    }
+                    if let Request::PrepareNativeImportTracked {
+                        target,
+                        correlation,
+                    } = req
+                    {
+                        return super::native_channel::serve_import(
+                            stream,
+                            app,
+                            uid,
+                            credentials.pid(),
+                            target,
+                            Some(correlation),
+                        )
+                        .await;
+                    }
+                    if let Request::PrepareNativeExportTracked {
+                        device_id,
+                        correlation,
+                    } = req
+                    {
+                        return super::native_export::serve_export(
+                            stream,
+                            app,
+                            uid,
+                            credentials.pid(),
+                            device_id,
+                            Some(correlation),
+                        )
+                        .await;
+                    }
+                    if let Request::OpenNativeStubTracked {
+                        lease_id,
+                        correlation,
+                    } = req
+                    {
+                        return super::native_export::serve_stub(
+                            stream,
+                            app,
+                            uid,
+                            credentials.pid(),
+                            lease_id,
+                            Some(correlation),
+                        )
+                        .await;
+                    }
                     if let Request::PrepareNativeExport { device_id } = req {
                         return super::native_export::serve_export(
                             stream,
@@ -919,6 +1014,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                             uid,
                             credentials.pid(),
                             device_id,
+                            None,
                         )
                         .await;
                     }
@@ -929,6 +1025,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                             uid,
                             credentials.pid(),
                             lease_id,
+                            None,
                         )
                         .await;
                     }
@@ -939,6 +1036,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                             uid,
                             credentials.pid(),
                             target,
+                            None,
                         )
                         .await;
                     }
@@ -950,6 +1048,20 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                     }
                     #[cfg(feature = "physical-usb")]
                     {
+                        let (req, correlation) = match req {
+                            Request::OpenSecurePhysicalTracked {
+                                device_id,
+                                journal_schema_version,
+                                correlation,
+                            } => (
+                                Request::OpenSecurePhysical {
+                                    device_id,
+                                    journal_schema_version,
+                                },
+                                Some(correlation),
+                            ),
+                            request => (request, None),
+                        };
                         let secure = matches!(req, Request::OpenSecurePhysical { .. });
                         let result = match req {
                             Request::OpenPhysical {
@@ -964,7 +1076,13 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                                     Err(Error::Protocol("physical journal schema 1 required; upgrade the physical client and helper together".into()))
                                 } else {
                                     match app
-                                        .open_physical(uid, credentials.pid(), device_id, secure)
+                                        .open_physical(
+                                            uid,
+                                            credentials.pid(),
+                                            device_id,
+                                            secure,
+                                            correlation,
+                                        )
                                         .await
                                     {
                                         Ok(handoff) => {
@@ -1106,12 +1224,22 @@ pub(super) async fn open_physical(
     socket: &Path,
     device_id: String,
     secure: bool,
+    correlation: Option<BrokerCorrelation>,
 ) -> Result<super::PhysicalGrant> {
     super::validate_device_id(&device_id)?;
+    if let Some(c) = &correlation {
+        c.validate()?;
+    }
     let mut stream = connect_trusted(socket).await?;
     let response = exchange(
         &mut stream,
-        &if secure {
+        &if let Some(correlation) = correlation {
+            Request::OpenSecurePhysicalTracked {
+                device_id,
+                journal_schema_version: 1,
+                correlation,
+            }
+        } else if secure {
             Request::OpenSecurePhysical {
                 device_id,
                 journal_schema_version: 1,
@@ -1554,6 +1682,7 @@ mod tests {
         let bus_id = rustusb_core::BusId::new("1-1")?;
         let records: Vec<_> = (0..6)
             .map(|number| Record {
+                correlation: None,
                 recovery: super::super::journal::RecoveryAuthorization::ConnectOriginalDrivers,
                 lease_id: format!("00000000-0000-0000-0000-{number:012x}"),
                 owner: Owner {

@@ -4,6 +4,7 @@ use crate::{
     native_channel::{command_frame, decode, mutation_guard, store, with_store},
     native_state::{self, ExportRecord, Owner, StubPhase, StubRecord},
 };
+use rustusb_core::application::BrokerCorrelation;
 use rustusb_core::{DeviceKey, Error, ExportBackend, Result};
 use rustusb_native::export_channel::{ExportCapability, RegistrationSnapshot, StubReceipt};
 use rustusb_protocol::RemoteDevice;
@@ -142,6 +143,10 @@ pub struct NativeExportHandle {
     control: Control,
 }
 impl NativeExportHandle {
+    /// Helper-issued registration identity, not a transferable capability.
+    pub fn lease_id(&self) -> &str {
+        &self.lease_id
+    }
     /// Stable backend-qualified approved device identity.
     pub fn device_key(&self) -> &DeviceKey {
         &self.registration.device_key
@@ -152,19 +157,34 @@ impl NativeExportHandle {
     }
     /// Atomically reserve one anonymous stub channel; a concurrent or unresolved channel is rejected.
     pub async fn open_stub(&self) -> Result<NativeStubHandle> {
+        self.open_stub_inner(None).await
+    }
+    /// Reserve one stub with an independent durable application attempt.
+    pub async fn open_stub_tracked(
+        &self,
+        correlation: BrokerCorrelation,
+    ) -> Result<NativeStubHandle> {
+        correlation.validate()?;
+        self.open_stub_inner(Some(correlation)).await
+    }
+    async fn open_stub_inner(
+        &self,
+        correlation: Option<BrokerCorrelation>,
+    ) -> Result<NativeStubHandle> {
         if *self.control.invalidated.borrow() {
             return Err(Error::State("Native registration has ended".into()));
         }
         let mut stream = linux::connect_trusted(&self.socket).await?;
-        let description: StubDescription = decode(
-            linux::exchange(
-                &mut stream,
-                &Request::OpenNativeStub {
-                    lease_id: self.lease_id.clone(),
-                },
-            )
-            .await?,
-        )?;
+        let request = match correlation {
+            Some(correlation) => Request::OpenNativeStubTracked {
+                lease_id: self.lease_id.clone(),
+                correlation,
+            },
+            None => Request::OpenNativeStub {
+                lease_id: self.lease_id.clone(),
+            },
+        };
+        let description: StubDescription = decode(linux::exchange(&mut stream, &request).await?)?;
         if description.schema_version != 1 || description.lease_id != self.lease_id {
             return Err(Error::Protocol("invalid Native stub description".into()));
         }
@@ -225,6 +245,14 @@ pub struct NativeStubHandle {
     lease_id: String,
 }
 impl NativeStubHandle {
+    /// Unique helper-issued stub identity, not a bearer capability.
+    pub fn channel_id(&self) -> &str {
+        &self.channel_id
+    }
+    /// Original helper registration to which this stub belongs.
+    pub fn lease_id(&self) -> &str {
+        &self.lease_id
+    }
     /// Take R once. Keep it idle until `commit` and the real IMPORT response have both succeeded.
     pub fn take_relay(&mut self) -> Result<UnixStream> {
         self.relay
@@ -269,11 +297,33 @@ impl NativeStubHandle {
 /// Register one root-policy-approved device for the dedicated non-root broker.
 /// The helper captures real configured descriptors before binding and retains the original kernfs attribute.
 pub async fn prepare_native_export(socket: &Path, device_id: String) -> Result<NativeExportHandle> {
+    prepare_export(socket, device_id, None).await
+}
+/// Register an export with durable application correlation and terminal evidence.
+pub async fn prepare_native_export_tracked(
+    socket: &Path,
+    device_id: String,
+    correlation: BrokerCorrelation,
+) -> Result<NativeExportHandle> {
+    correlation.validate()?;
+    prepare_export(socket, device_id, Some(correlation)).await
+}
+async fn prepare_export(
+    socket: &Path,
+    device_id: String,
+    correlation: Option<BrokerCorrelation>,
+) -> Result<NativeExportHandle> {
     crate::validate_device_id(&device_id)?;
     let expected = DeviceKey::native(&device_id)?;
     let mut stream = linux::connect_trusted(socket).await?;
-    let description: ExportDescription =
-        decode(linux::exchange(&mut stream, &Request::PrepareNativeExport { device_id }).await?)?;
+    let request = match correlation {
+        Some(correlation) => Request::PrepareNativeExportTracked {
+            device_id,
+            correlation,
+        },
+        None => Request::PrepareNativeExport { device_id },
+    };
+    let description: ExportDescription = decode(linux::exchange(&mut stream, &request).await?)?;
     native_state::validate_id(&description.lease_id)?;
     description.registration.validate()?;
     if description.schema_version != 1 || description.registration.device_key != expected {
@@ -323,6 +373,7 @@ async fn initial(
     device_id: String,
     guard: tokio::sync::OwnedMutexGuard<linux::ManagedState>,
     cancel: Arc<AtomicBool>,
+    correlation: Option<BrokerCorrelation>,
 ) -> Result<Arc<Live>> {
     let _guard = guard;
     let store = store(&app)?;
@@ -354,6 +405,7 @@ async fn initial(
         }
         let initial_store = store.clone();
         let record = ExportRecord {
+            correlation,
             lease_id: id.clone(),
             owner: owner.clone(),
             registration: registration.clone(),
@@ -421,8 +473,13 @@ pub(crate) async fn serve_export(
     uid: u32,
     pid: Option<i32>,
     device_id: String,
+    correlation: Option<BrokerCorrelation>,
 ) -> Result<()> {
-    if let Err(error) = app.policy.authorize_secure_native(uid, &device_id) {
+    if let Err(error) = correlation
+        .as_ref()
+        .map_or(Ok(()), BrokerCorrelation::validate)
+        .and_then(|()| app.policy.authorize_secure_native(uid, &device_id))
+    {
         return respond(&mut stream, Err(error)).await;
     }
     let cancel = Arc::new(AtomicBool::new(false));
@@ -438,6 +495,7 @@ pub(crate) async fn serve_export(
         device_id,
         guard,
         cancel.clone(),
+        correlation,
     ));
     let mut unexpected = [0u8; 1];
     let result = tokio::select! { biased;
@@ -522,8 +580,8 @@ async fn cleanup_export(app: Arc<linux::App>, live: Arc<Live>) -> Result<()> {
         let verified = live.clone();
         let verified_store = store.clone();
         tokio::task::spawn_blocking(move || {
-            verified.registration.wait_restored()?;
-            with_store(&verified_store, |s| s.retire_export(&verified.id))?;
+            let proof=verified.registration.wait_restored_proven()?;
+            with_store(&verified_store, |s| s.retire_export_verified(&verified.id,proof))?;
             tracing::info!(operation="native_secure_export", lease_id=%verified.id, phase="retired", "original Native baseline restored or original generation gone");
             Ok(())
         })
@@ -544,8 +602,12 @@ pub(crate) async fn serve_stub(
     uid: u32,
     pid: Option<i32>,
     lease_id: String,
+    correlation: Option<BrokerCorrelation>,
 ) -> Result<()> {
     let prepared = async {
+        if let Some(c) = &correlation {
+            c.validate()?;
+        }
         app.policy.authorize_broker(uid)?;
         native_state::validate_id(&lease_id)?;
         let live = lock(&app.native_exports.0)?
@@ -570,18 +632,14 @@ pub(crate) async fn serve_stub(
             let (channel, relay) = state.capability.prepare_stub()?;
             let id = native_state::uuid("/proc/sys/kernel/random/uuid")?;
             with_store(&prepare_store, |s| {
-                s.update_export(&prepare_live.id, |r| {
-                    if r.stub.is_some() {
-                        return Err(Error::State(
-                            "Native persisted stub is already occupied".into(),
-                        ));
-                    }
-                    r.stub = Some(StubRecord {
+                s.reserve_stub(
+                    &prepare_live.id,
+                    StubRecord {
+                        correlation,
                         channel_id: id.clone(),
                         state: StubPhase::Prepared {},
-                    });
-                    Ok(())
-                })
+                    },
+                )
             })?;
             state.slot = Some(id.clone());
             Ok::<_, Error>((id, channel, relay))
@@ -638,17 +696,9 @@ pub(crate) async fn serve_stub(
     let cleanup = tokio::task::spawn_blocking(move || {
         let _guard = guard;
         let result = (|| {
-            lock(&channel)?.shutdown()?;
+            let proof = lock(&channel)?.shutdown_proven()?;
             with_store(&store, |s| {
-                s.update_export(&cleanup_live.id, |r| {
-                    if r.stub.as_ref().map(|s| s.channel_id.as_str()) != Some(cleanup_id.as_str()) {
-                        return Err(Error::State(
-                            "Native stub identity changed during cleanup".into(),
-                        ));
-                    }
-                    r.stub = None;
-                    Ok(())
-                })
+                s.retire_stub_verified(&cleanup_live.id, &cleanup_id, proof)
             })
         })();
         if result.is_err()

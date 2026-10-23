@@ -374,10 +374,18 @@ impl RegistrationSnapshot {
     }
     /// Await complete original driver/configuration restoration; read errors remain failures.
     pub fn wait_restored(&self) -> Result<()> {
+        self.wait_restored_proven().map(|_| ())
+    }
+    /// Return the actual restoration or original-generation-gone criterion.
+    pub fn wait_restored_proven(&self) -> Result<rustusb_core::application::BrokerCleanupProof> {
+        use rustusb_core::application::BrokerCleanupProof;
         let deadline = Instant::now() + Duration::from_secs(10);
         loop {
-            if self.gone()? || self.restored()? {
-                return Ok(());
+            if self.gone()? {
+                return Ok(BrokerCleanupProof::OriginalGenerationGone);
+            }
+            if self.restored()? {
+                return Ok(BrokerCleanupProof::NativeExportRestored);
             }
             require(
                 Instant::now() < deadline,
@@ -614,20 +622,25 @@ impl StubChannel {
     }
     /// Explicitly stop this socket and independently await AVAILABLE or disappearance of the old generation.
     pub fn shutdown(&mut self) -> Result<()> {
+        self.shutdown_proven().map(|_| ())
+    }
+    /// Stop the retained K and return the exact existing cleanup criterion.
+    pub fn shutdown_proven(&mut self) -> Result<rustusb_core::application::BrokerCleanupProof> {
+        use rustusb_core::application::BrokerCleanupProof;
         self.kernel.shutdown(Shutdown::Both)?;
         if !self.started {
-            return Ok(());
+            return Ok(BrokerCleanupProof::NotStarted);
         }
         let deadline = Instant::now() + Duration::from_secs(10);
         loop {
             if self.capability.registration.gone()? {
-                return Ok(());
+                return Ok(BrokerCleanupProof::OriginalGenerationGone);
             }
             let path = &self.capability.receipt.generation.sysfs_path;
             let status = number(&path.join("usbip_status"), 10)?;
             if status == 1 {
                 self.capability.available()?;
-                return Ok(());
+                return Ok(BrokerCleanupProof::NativeStubAvailable);
             }
             require(status == 2, "Native stub cleanup entered an unknown state")?;
             require(

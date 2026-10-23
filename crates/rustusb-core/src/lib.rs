@@ -1,6 +1,8 @@
 //! Shared domain types and backend contracts. This crate performs no privileged I/O.
 
+pub mod application;
 mod device_key;
+pub mod server_session;
 pub use device_key::{DeviceBackend, DeviceKey, VirtualProfile};
 
 use serde::{Deserialize, Serialize};
@@ -275,7 +277,9 @@ pub enum SessionState {
     Exporting,
     /// Remote import in progress.
     Connecting,
-    /// Kernel reports an enumerated connected device.
+    /// Client kernel enumerated the device, or the server flushed IMPORT.
+    /// The role-specific supporting receipt must accompany this state; server
+    /// acceptance alone does not prove remote kernel enumeration.
     Connected,
     /// Release in progress.
     Disconnecting,
@@ -295,8 +299,8 @@ impl SessionState {
             || matches!(
                 (self, next),
                 (Discovered, Available)
-                    | (Available, Exporting | Connecting)
-                    | (Exporting, Available | Connecting)
+                    | (Available, Exporting | Connecting | Disconnecting)
+                    | (Exporting, Available | Connecting | Disconnecting)
                     | (Connecting, Connected | Disconnecting)
                     | (Connected, Disconnecting)
                     | (Disconnecting, Disconnected)
