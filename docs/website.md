@@ -24,7 +24,7 @@ Check narrow and wide layouts, keyboard tab selection, direct `?backend=virtual#
 
 [The Pages workflow](../.github/workflows/pages.yml) checks pull requests and deploys only from `main`. It uploads only `website/`; research logs and the rest of the repository are not part of the website artifact. Actions are pinned to verified upstream commit IDs. The deployment job alone has Pages/OIDC write permissions.
 
-The public site is [RustUSB](https://tiansongyu.github.io/usbip-client/). The first deployment and live verification are recorded in [the publication evidence](evidence/readme-site-publication-f87b3ad-20261023.json). A successful source commit is not proof of deployment: inspect the workflow conclusion and retrieve the live HTML and assets. Repository Pages settings must use GitHub Actions. The setup follows [GitHub's custom-workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The public site is [RustUSB](https://tiansongyu.github.io/usbip-client/). The first deployment and live verification are recorded in [the original publication evidence](evidence/readme-site-publication-f87b3ad-20261023.json); the current data-link update has [separate publication receipts](evidence/data-link-publication-f095ff5-20261024/manifest.json). A successful source commit is not proof of deployment: inspect the workflow conclusion and retrieve the live HTML and assets. Repository Pages settings must use GitHub Actions. The setup follows [GitHub's custom-workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ## Reusable global skill
 
@@ -42,6 +42,6 @@ Its README-only mode does not add a website. Publishing, commits and pushes stil
 
 ## Current evidence updates
 
-README/site counts link to the [data-link report](research/data-link-health-validation.md):626 executions and fifteen QEMU runs at clean531e0c3, with their actual software-input provenance. Preserve the earlier530/shared-owner record and both development failures instead of replacing their source labels. Native CI links are updated only after the corresponding published run is observed.
+README/site counts link to the [data-link report](research/data-link-health-validation.md): 626 executions and fifteen QEMU runs at clean `531e0c3`, with their actual software-input provenance. Preserve the earlier 530/shared-owner record and both development failures instead of replacing their source labels. Native CI links are updated only after the corresponding published run is observed.
 
 The tab URL/history, selected indicator and inline link cues are verified separately from USB behavior. A local CSP `script-src 'none'` response exercises initial-HTML readability; a temporary `Permissions-Policy: clipboard-write=()` response exercises the real copy-denial fallback. Those test policies are not published site settings. Record unavailable browser capabilities accurately; a DOM/layout check is not a pixel screenshot or reduced-motion emulation.
