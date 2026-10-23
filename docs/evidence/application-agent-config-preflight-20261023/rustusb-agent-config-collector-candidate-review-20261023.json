@@ -1,0 +1,69 @@
+{
+  "scope": "unapplied /tmp candidate only, no repository modifications/product execution/QEMU/build",
+  "checks": [
+    {
+      "argv": [
+        "dash",
+        "-n",
+        "/tmp/candidate-agent-complete-init.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "shellcheck",
+        "-s",
+        "sh",
+        "/tmp/candidate-agent-complete-init.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "actual collector jq compile",
+      "exit_code": 0,
+      "stdout": "true\n",
+      "stderr": ""
+    }
+  ],
+  "all_pass": true,
+  "python_ast_pass": true,
+  "current_git_status": "",
+  "files": [
+    {
+      "path": "/tmp/rustusb-agent-config-collector-candidate-20261023.patch",
+      "bytes": 9422,
+      "sha256": "d8d935e94f01eeac6b6a175814ad63c31cb10b476ab36de466a4df27272bbbc3"
+    },
+    {
+      "path": "/tmp/candidate-guest-agent-init.sh",
+      "bytes": 21610,
+      "sha256": "ca3c9ef3ecb099162bbc070693cf5cf63b9cb90c3c5c7e0b45284d87acd2ec87"
+    },
+    {
+      "path": "/tmp/candidate-run-agent-qemu.py",
+      "bytes": 43850,
+      "sha256": "6a4fb036a5fd5ca463a784f9196b2b44f57e86a378c44a14770dadc0aadf3dd7"
+    },
+    {
+      "path": "/tmp/candidate-agent-complete-init.sh",
+      "bytes": 34379,
+      "sha256": "981147401228eabec2e7c42f2d7aafb5d314ff96f705358ef6e9cd60148ff586"
+    },
+    {
+      "path": "/tmp/rustusb-agent-config-collector-fragment-20261023.sh",
+      "bytes": 2312,
+      "sha256": "16ec216d0b5011baa9ef02eeda7f2abdbee596a34361b3f03290f5e22b87d2b1"
+    },
+    {
+      "path": "/tmp/rustusb-agent-config-collector-verifier-20261023.py",
+      "bytes": 4707,
+      "sha256": "eca5b2d038b8bab76066d5b315084ff505be2463d7475ca553cd755dba29fe61"
+    }
+  ],
+  "collection": "after each actual agent startup; copy fixed public TLS JSON, public agent manifest and three public DERs; capture fixed parent/file ownership/mode/identity including own private-key metadata only; never read/hash/copy key bytes",
+  "runtime_status": "candidate not applied; original eaa1936 eight-run results retain original scope; fresh clean runs needed for added evidence"
+}

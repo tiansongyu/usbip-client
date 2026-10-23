@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "revision": 3,
+  "created_utc": "2026-10-23T15:55:01.695591+00:00",
+  "head_before_new_clean_commit": "eaa19366486b8b99412efbfce1f13d49f73fe0cc",
+  "files": [
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 45120,
+      "sha256": "3f9d1ab41078f0de9b00442fd117f3398382badc08a7d0b369cd1dbd2d1983d6",
+      "mode": "0o755"
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 21660,
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a",
+      "mode": "0o755"
+    }
+  ],
+  "prior_handoff": {
+    "path": "/tmp/rustusb-agent-harness-author-handoff-revision2-20261023.json",
+    "sha256": "96630f4efe621b846fdc8d2dce96743e797c301b70986e9b66d8945306f661bf"
+  },
+  "prior_source_directory": "/tmp/rustusb-agent-harness-revision2-source-20261023",
+  "static_artifacts": [
+    {
+      "path": "/tmp/rustusb-agent-harness-static-revision3-20261023.py",
+      "bytes": 6268,
+      "sha256": "65f4a6da5c703ba5e1e0cf72d958ecaf1601a735487a936fcc714f72b939721d"
+    },
+    {
+      "path": "/tmp/rustusb-agent-harness-static-revision3-20261023.json",
+      "bytes": 17538,
+      "sha256": "c4f47feb8446f32cb139bb57b5d6fd61e3d97d579116361a7d8632d35a2fc8f1"
+    },
+    {
+      "path": "/tmp/rustusb-agent-generated-init-revision3.sh",
+      "bytes": 34429,
+      "sha256": "eb85be110d184bb2510c8342cfc6b45e6c915777882bc364559cbe3d67546aef"
+    },
+    {
+      "path": "/tmp/rustusb-agent-config-fixtures-20261023.py",
+      "bytes": 5923,
+      "sha256": "0af605b1bd7f714f0ac5ba0682021d93688d279d2e45dca51d40a62f84d03cc4"
+    },
+    {
+      "path": "/tmp/rustusb-agent-config-fixtures-20261023.json",
+      "bytes": 2540,
+      "sha256": "153a4044e00aadd3773e379a5adc48ad70ecf391a3d1eb536994f46fb8b0f34f"
+    }
+  ],
+  "static_summary": {
+    "base_static_checks": 64,
+    "actual_jq_compile_checks": 46,
+    "history_and_predicate_constructed_fixtures_in_base": 12,
+    "configuration_verifier_constructed_fixtures": 8,
+    "total_static_checks": 72,
+    "all_pass": true,
+    "execution": "Only AST/shell syntax/ShellCheck/help/jq/static assertion fixtures; no product, Cargo, rustc, USB or QEMU execution"
+  },
+  "changes": [
+    "After each actual agent startup, capture fixed actual agent manifest, helper policy, relevant server/client TLS JSON, three public DER certificates and public client pin text.",
+    "Capture fixed path/ancestor UID/GID/mode/nlink/device/inode/canonical path, with own private key metadata only; never read/hash/copy private key content.",
+    "Verifier links exact public configuration values/profile/key/principal/pin/CA/chain/key paths to captured helper policy and raw public DER; both epochs retain exact JSON bytes.",
+    "Verify root/broker ownership, protected parents, public0644/singlelink and broker-private0600/singlelink without weakening standards.",
+    "New agent payload normalizes only public client-pin.txt mode to0644 after shared payload returns and before repacking, preventing host umask0002 fixture drift; bytes unchanged. Original secure builder unchanged."
+  ],
+  "fixture_cases": [
+    "IPv4 positive",
+    "IPv6 positive",
+    "writable root ancestor rejected",
+    "wrong raw public pin rejected",
+    "private-key path override rejected",
+    "public file hardlink rejected",
+    "accidental private-key artifact rejected",
+    "helper Native pool mismatch rejected"
+  ],
+  "runtime_scope": "Original eaa1936 two Native agent runs and six original foreground secure runs retain PASS with their original evidence scope. This collector enhancement has not run; requires new clean-source Native IPv4/IPv6 runs.",
+  "unchanged_product_diff": []
+}

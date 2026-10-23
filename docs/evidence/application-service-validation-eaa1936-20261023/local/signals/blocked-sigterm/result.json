@@ -1,0 +1,397 @@
+{
+  "after": {
+    "backend_cleanup_observed": false,
+    "data_sockets": {
+      "1-1": {
+        "eof": true,
+        "unexpected_hex": ""
+      },
+      "1-2": {
+        "eof": true,
+        "unexpected_hex": ""
+      }
+    },
+    "returncode": 0,
+    "signal_exit_seconds": 0.001071504,
+    "stdout_eof": false,
+    "stdout_read_after_fill": false,
+    "stdout_unread_bytes": 4096,
+    "stopped_events": [],
+    "wait_error": null
+  },
+  "argv": [
+    "/home/ubuntu/github/usbip-client/target/release/rustusb",
+    "--json",
+    "virtual-server",
+    "--listen",
+    "127.0.0.1:0",
+    "--control-stdin"
+  ],
+  "artifacts": [
+    {
+      "length": 388,
+      "path": "after.json",
+      "sha256": "5f9b0e611d3ccd6e81848b78cc466e6550c5656654a2e7e734c74443d5db8489"
+    },
+    {
+      "length": 2118,
+      "path": "before.json",
+      "sha256": "aa498209a250283ca6b3ad528cc6f80abad3226c5a355b807c34d3b3959a22f3"
+    },
+    {
+      "length": 2971,
+      "path": "protocol.json",
+      "sha256": "efa9ed48ddf1cc258019e1c6e39251033e9db2655092d5b0d0d3687931a9c831"
+    },
+    {
+      "length": 0,
+      "path": "stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "length": 2693,
+      "path": "stdout-consumed.bin",
+      "sha256": "6551da0ff7740bbb0785734e76625b9154a51a8c85bbc1cf6ce52948f0350bae"
+    },
+    {
+      "length": 4373,
+      "path": "stdout-events.json",
+      "sha256": "c6764f19f0ebe3b9b1dfef5939ec8c41c4fa1f5d994b255a45129cf0b79fada7"
+    },
+    {
+      "length": 4096,
+      "path": "synthetic-padding.bin",
+      "sha256": "350984915d0b69e30ea9825331429b4167fee47cbc15463e7d1bcd9c6ca19994"
+    }
+  ],
+  "assertions": [
+    {
+      "detail": 4096,
+      "name": "stdout pipe capacity is exactly 4096",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "child has ordinary caller UID",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "owned child executes the selected binary inode and bytes",
+      "passed": true
+    },
+    {
+      "detail": {
+        "address": "127.0.0.1:41555",
+        "devices": [
+          {
+            "break_active": false,
+            "bus_id": "1-1",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 0,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 0,
+              "unlink": 0,
+              "unlink_cancelled": 0
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "hid_keyboard"
+          },
+          {
+            "break_active": false,
+            "bus_id": "1-2",
+            "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_loopback": true,
+            "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cdc_queued_bytes": 0,
+            "configuration": 0,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "cdc_in_bytes": 0,
+              "cdc_injected_bytes": 0,
+              "cdc_out_bytes": 0,
+              "control": 0,
+              "hid_taps": 0,
+              "interrupt": 0,
+              "sessions_started": 0,
+              "unlink": 0,
+              "unlink_cancelled": 0
+            },
+            "exported": true,
+            "hid_queued_reports": 0,
+            "leased": false,
+            "line_coding": {
+              "data_bits": 8,
+              "parity": 0,
+              "rate": 115200,
+              "stop_bits": 0
+            },
+            "line_state": 0,
+            "pending_urbs": 0,
+            "profile": "cdc_acm"
+          }
+        ],
+        "event": "ready",
+        "schema_version": 1
+      },
+      "name": "first event is ready",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "listener is IPv4 loopback",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "snapshot response matches request",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "both configured profiles have one pending IN",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "pending data sockets have no completion bytes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all stdout observed before fill",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "independent writer reached EAGAIN at exact capacity",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "only independent OFD has O_NONBLOCK",
+      "passed": true
+    },
+    {
+      "detail": {
+        "comm": "virtual-test-st",
+        "monotonic_ns": 271468499848635,
+        "tid": 2052019,
+        "wchan": "pipe_write"
+      },
+      "name": "actual child writer is blocked in pipe_write",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "pipe remains full immediately before signal",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "child exited without forced cleanup",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": 0,
+        "old_SIGTERM_minus15_is_failure": true
+      },
+      "name": "cooperative exit status is zero",
+      "passed": true
+    },
+    {
+      "detail": 0.001071504,
+      "name": "signal exit is within eight seconds",
+      "passed": true
+    },
+    {
+      "detail": {
+        "eof": true,
+        "unexpected_hex": ""
+      },
+      "name": "1-1 data socket reached actual EOF",
+      "passed": true
+    },
+    {
+      "detail": {
+        "eof": true,
+        "unexpected_hex": ""
+      },
+      "name": "1-2 data socket reached actual EOF",
+      "passed": true
+    },
+    {
+      "detail": {
+        "bytes": 4096,
+        "read_after_fill": false
+      },
+      "name": "stdout remained full and was never drained",
+      "passed": true
+    },
+    {
+      "detail": 1,
+      "name": "blocked child stdout flags stayed blocking until signal",
+      "passed": true
+    }
+  ],
+  "before": {
+    "event": "snapshot",
+    "id": "before-1",
+    "schema_version": 1,
+    "snapshot": {
+      "devices": [
+        {
+          "break_active": false,
+          "bus_id": "1-1",
+          "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_loopback": true,
+          "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_queued_bytes": 0,
+          "configuration": 1,
+          "counters": {
+            "bulk_in": 0,
+            "bulk_out": 0,
+            "cdc_in_bytes": 0,
+            "cdc_injected_bytes": 0,
+            "cdc_out_bytes": 0,
+            "control": 1,
+            "hid_taps": 0,
+            "interrupt": 0,
+            "sessions_started": 1,
+            "unlink": 0,
+            "unlink_cancelled": 0
+          },
+          "exported": true,
+          "hid_queued_reports": 0,
+          "leased": true,
+          "line_coding": {
+            "data_bits": 8,
+            "parity": 0,
+            "rate": 115200,
+            "stop_bits": 0
+          },
+          "line_state": 0,
+          "pending_urbs": 1,
+          "profile": "hid_keyboard"
+        },
+        {
+          "break_active": false,
+          "bus_id": "1-2",
+          "cdc_in_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_loopback": true,
+          "cdc_out_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cdc_queued_bytes": 0,
+          "configuration": 1,
+          "counters": {
+            "bulk_in": 0,
+            "bulk_out": 0,
+            "cdc_in_bytes": 0,
+            "cdc_injected_bytes": 0,
+            "cdc_out_bytes": 0,
+            "control": 1,
+            "hid_taps": 0,
+            "interrupt": 0,
+            "sessions_started": 1,
+            "unlink": 0,
+            "unlink_cancelled": 0
+          },
+          "exported": true,
+          "hid_queued_reports": 0,
+          "leased": true,
+          "line_coding": {
+            "data_bits": 8,
+            "parity": 0,
+            "rate": 115200,
+            "stop_bits": 0
+          },
+          "line_state": 0,
+          "pending_urbs": 1,
+          "profile": "cdc_acm"
+        }
+      ],
+      "schema_version": 1
+    }
+  },
+  "child": {
+    "pid": 2051986,
+    "starttime": 27146848,
+    "uids": [
+      1000,
+      1000,
+      1000,
+      1000
+    ]
+  },
+  "cleanup_scope": "exit and two socket EOF observations; no stopped snapshot or backend resource claim while stdout remains unread",
+  "executed_binary": {
+    "device": 66306,
+    "inode": 79617058,
+    "proc_exe": "/proc/2051986/exe",
+    "resolved": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+    "sha256": "7a7f07caa8d65d880a01b873a64e1c9b4fa267da97e90586f182066db143b79f"
+  },
+  "final_returncode": 0,
+  "forced_cleanup": false,
+  "mode": "blocked",
+  "pipe": {
+    "blocked_writer": {
+      "comm": "virtual-test-st",
+      "monotonic_ns": 271468499848635,
+      "tid": 2052019,
+      "wchan": "pipe_write"
+    },
+    "bytes_after_fill": 4096,
+    "bytes_before": 0,
+    "capacity": 4096,
+    "child_stdout_flags_after": 1,
+    "child_stdout_flags_before": 1,
+    "independent_writer_eagain": true,
+    "independent_writer_flags": 34817,
+    "original_writer_flags_after": 1,
+    "original_writer_flags_before": 1,
+    "synthetic_padding_bytes": 4096
+  },
+  "result": "PASS",
+  "sent": {
+    "identity": {
+      "pid": 2051986,
+      "starttime": 27146848,
+      "uids": [
+        1000,
+        1000,
+        1000,
+        1000
+      ]
+    },
+    "monotonic_ns": 271468499885466,
+    "pid": 2051986,
+    "signal": 15
+  },
+  "signal": "sigterm",
+  "stdout_consumed_bytes": 2693,
+  "stdout_drained_after_fill": false,
+  "stdout_raw_scope": "verbatim consumed prefix only; blocked mode never reads the synthetic padding or later child output"
+}

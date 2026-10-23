@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "result": "NO_REMAINING_SPECIFIC_MUST_FIX_REVISION3",
+  "baseline_head": "eaa19366486b8b99412efbfce1f13d49f73fe0cc",
+  "files": [
+    {
+      "path": "scripts/qemu/run-agent-qemu.py",
+      "bytes": 45120,
+      "sha256": "3f9d1ab41078f0de9b00442fd117f3398382badc08a7d0b369cd1dbd2d1983d6"
+    },
+    {
+      "path": "scripts/qemu/guest-agent-init.sh",
+      "bytes": 21660,
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a"
+    }
+  ],
+  "original_candidate": {
+    "path": "/tmp/rustusb-agent-config-collector-candidate-20261023.patch",
+    "sha256": "d8d935e94f01eeac6b6a175814ad63c31cb10b476ab36de466a4df27272bbbc3"
+  },
+  "checks": [
+    {
+      "name": "Private key collection is metadata only",
+      "observation": "Fixed own-role key branch tests regular file and invokes stat/readlink only; cp is in a separate public_file branch. No cat/read/hash/copy of key bytes is added."
+    },
+    {
+      "name": "Capture follows actual successful startup",
+      "observation": "agent_start successfully reads profiles from the UID-verified IPC server after LoadedConfig fully loaded all credential profiles, records actual process identity, then calls config_evidence for each epoch before any new Start."
+    },
+    {
+      "name": "Exact public material and fixed config",
+      "observation": "Copies agent/policy/TLS JSON, three public DERs and public client-pin text. Fixed path coverage, exact JSON backend/device/endpoint/name/operator fields, DER equality, pin==SHA256(client DER)+newline and unchanged public JSON across restart are required."
+    },
+    {
+      "name": "Metadata boundary",
+      "observation": "Fixed root ancestor and public files UID/GID, nonwritable modes, canonical/nonsymlink paths, regular files and nlink1; broker leaves0711/0700; own private-key UID/GID2000 mode0600 nlink1 and captured_file null."
+    },
+    {
+      "name": "Pin umask regression closed",
+      "observation": "An ordinary temporary write_text fixture reproduced0664 under host umask0002. Only new run-agent.payload now normalizes public pin to0644 before packaging; value, old secure harness and product source stay unchanged. Collector does not fix up observed permissions."
+    },
+    {
+      "name": "Independent static check",
+      "observation": "Python -B import/AST and generated complete guest dash -n passed; generated34429B SHAeb85be110d184bb2510c8342cfc6b45e6c915777882bc364559cbe3d67546aef. No payload build, product or guest execution."
+    }
+  ],
+  "author_results_separate": "Author revision3 reports72 static/constructed checks. These are not independently promoted to real device execution or USB case counts.",
+  "preserved_scope": [
+    "Original eaa1936 two agent PASS and six old secure results keep original source/ELF and missing-config collection limitations; new collector results require fresh clean runs.",
+    "Snapshots are taken after successful config load, rather than syscall tracing of the exact loader FD or a joint atomic file transaction. Fixed root-owned fixtures have no concurrent authorized configuration writer in this test.",
+    "Private-key metadata does not prove key content by reading or hashing it; actual TLS identity association remains loader/PKI plus connection behavior.",
+    "TLS1.3 encrypted ALPN selection and certificate handshake remain opaque in PCAP."
+  ],
+  "execution": {
+    "repo_edits": false,
+    "cargo": false,
+    "qemu": false,
+    "product_cli": false,
+    "private_key_read_copy_hash": false,
+    "host_usb_network_modules_mutation": false
+  }
+}

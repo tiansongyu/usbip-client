@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "scope": "Independent read-only collector candidate/source review; only temporary public fixture and syntax check executed",
+  "candidate_patch": {
+    "path": "/tmp/rustusb-agent-config-collector-candidate-20261023.patch",
+    "sha256": "d8d935e94f01eeac6b6a175814ad63c31cb10b476ab36de466a4df27272bbbc3"
+  },
+  "checks": {
+    "python_ast": true,
+    "fragment_dash_n_exit": 0,
+    "private_key_branch": "fixed ROLE key path only regular-file test, stat and readlink; cp/read/hash only in separate public_file branch",
+    "capture_timing": "agent_start profiles returns only after LoadedConfig has fully loaded all immutable TLS configs and IPC endpoint is ready; identity precedes collector",
+    "path_and_metadata": "fixed paths, nonsymlink/canonical/regular/nlink1 file checks, root/nonwritable ancestors, broker leaf0711/0700, key broker0600",
+    "public_identity": "all public DER bytes match independently archived public DER; server leaf pin must equal SHA256(actual public client DER), actual endpoint/server_name/device pool/operator profiles checked exactly",
+    "epoch_scope": "both startup epochs capture actual public file bytes and metadata; JSON bytes compared unchanged across restart; snapshots do not prove adversarial-root atomicity"
+  },
+  "found_must_fix": {
+    "pin_umask": "new client-pin.txt capture expected0644 but shared secure payload write_text uses caller umask; ordinary tmp-only reproduction observed 0o664",
+    "requested_fix": "only new run-agent payload normalize public pin to0644 before repack, not inside read-only collector and not by weakening verifier"
+  },
+  "reported_improvement": "actual public client-pin.txt and policy.json now added to final owned source candidate; original patch omits them",
+  "executed": {
+    "cargo": false,
+    "qemu": false,
+    "repo_writes": false,
+    "private_key_read_copy_hash": false
+  },
+  "status": "awaiting producer pin-mode fix/final source freeze"
+}
