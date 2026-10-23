@@ -50,10 +50,21 @@ previously used by the new raw API.
   owner can release all interfaces before restoring only the drivers it owned.
   Release/attach success still requires independent generation and driver
   verification; no Drop log is considered proof of restoration.
+- Linux-only `Interface::release_checked` reports the real RELEASEINTERFACE
+  errno, including disconnection, and any selected automatic CONNECT error.
+  It requires the last interface/endpoint/transfer reference. The release is
+  marked attempted before the syscall, so consuming the handle never causes
+  Drop to retry either call after success or failure. Failed release never
+  attempts CONNECT. Original portable `release` and Drop remain best effort.
+  A successful ioctl does not certify original configuration, alternates,
+  generation or driver restoration; the caller must observe those separately.
 
 Compile-only prototype work is not USB interoperability evidence. The three
 new raw control tests use initialized memory only; upstream's other eleven
-library tests also do not open USB. Run them without creating vendor artifacts:
+library tests also do not open USB. Five additional lifecycle tests use only
+callbacks and owned Arc fixtures: real errno mapping, no retry from Drop,
+release/CONNECT order and errors, and Busy while references remain. They do
+not open USB or construct fake device descriptors. Run them without creating vendor artifacts:
 
 ```sh
 cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio \

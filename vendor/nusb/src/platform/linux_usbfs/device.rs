@@ -424,7 +424,7 @@ impl LinuxDevice {
         Ok(Arc::new(LinuxInterface {
             device: self,
             interface_number,
-            reattach,
+            release: InterfaceRelease::new(reattach),
             state: Mutex::new(Default::default()),
         }))
     }
@@ -639,8 +639,82 @@ impl Drop for LinuxDevice {
 pub(crate) struct LinuxInterface {
     pub(crate) interface_number: u8,
     pub(crate) device: Arc<LinuxDevice>,
-    reattach: bool,
+    release: InterfaceRelease,
     state: Mutex<InterfaceState>,
+}
+
+/// One-shot cleanup shared by checked release and best-effort destruction.
+/// The callbacks keep lifecycle tests independent of USB descriptors and FDs.
+struct InterfaceRelease {
+    pending: bool,
+    reattach: bool,
+}
+
+#[derive(Debug)]
+struct InterfaceReleaseError {
+    reattach: bool,
+    errno: Errno,
+}
+
+impl InterfaceReleaseError {
+    fn into_error(self) -> Error {
+        let kind = match self.errno {
+            Errno::NODEV => ErrorKind::Disconnected,
+            Errno::BUSY => ErrorKind::Busy,
+            Errno::PERM | Errno::ACCESS => ErrorKind::PermissionDenied,
+            _ => ErrorKind::Other,
+        };
+        Error::new_os(
+            kind,
+            if self.reattach {
+                "failed to reattach kernel driver after interface release"
+            } else {
+                "failed to release interface"
+            },
+            self.errno,
+        )
+    }
+}
+
+impl InterfaceRelease {
+    fn new(reattach: bool) -> Self {
+        Self {
+            pending: true,
+            reattach,
+        }
+    }
+
+    fn run(
+        &mut self,
+        release: impl FnOnce() -> Result<(), Errno>,
+        reattach: impl FnOnce() -> Result<(), Errno>,
+    ) -> Result<(), InterfaceReleaseError> {
+        if !std::mem::replace(&mut self.pending, false) {
+            return Ok(());
+        }
+        release().map_err(|errno| InterfaceReleaseError {
+            reattach: false,
+            errno,
+        })?;
+        if self.reattach {
+            reattach().map_err(|errno| InterfaceReleaseError {
+                reattach: true,
+                errno,
+            })?;
+        }
+        Ok(())
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn consume_unique_interface<T>(
+    interface: Arc<T>,
+    release: impl FnOnce(T) -> Result<(), Error>,
+) -> Result<(), Error> {
+    match Arc::into_inner(interface) {
+        Some(interface) => release(interface),
+        None => Err(Error::new(ErrorKind::Busy, "interface is still in use")),
+    }
 }
 
 #[derive(Default)]
@@ -733,7 +807,8 @@ impl LinuxInterface {
     pub fn release(self: Arc<Self>) -> impl MaybeFuture<Output = Result<(), Error>> {
         Blocking::new(move || {
             if let Some(this) = Arc::into_inner(self) {
-                // USBDEVFS_RELEASEINTERFACE only fails on invalid argument, so no need to get a result out of drop.
+                // Preserve the portable best-effort contract. Call
+                // release_checked when the actual Linux result is required.
                 drop(this);
                 Ok(())
             } else {
@@ -741,23 +816,179 @@ impl LinuxInterface {
             }
         })
     }
+
+    #[cfg(target_os = "linux")]
+    pub fn release_checked(self: Arc<Self>) -> impl MaybeFuture<Output = Result<(), Error>> {
+        Blocking::new(move || {
+            consume_unique_interface(self, |mut this| {
+                this.release_inner()
+                    .map_err(InterfaceReleaseError::into_error)
+            })
+        })
+    }
+
+    fn release_inner(&mut self) -> Result<(), InterfaceReleaseError> {
+        let device = &self.device;
+        let number = self.interface_number;
+        self.release.run(
+            || {
+                let result = usbfs::release_interface(&device.fd, number);
+                debug!(
+                    "Released interface {number} on device {}: {result:?}",
+                    device.events_id
+                );
+                result
+            },
+            || {
+                let result = usbfs::attach_kernel_driver(&device.fd, number);
+                debug!(
+                    "Reattached kernel drivers for interface {number} on device {}: {result:?}",
+                    device.events_id
+                );
+                result
+            },
+        )
+    }
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod interface_release_tests {
+    use super::*;
+
+    struct Fixture {
+        release: InterfaceRelease,
+        calls: Arc<Mutex<Vec<&'static str>>>,
+        release_result: Result<(), Errno>,
+        reattach_result: Result<(), Errno>,
+    }
+
+    impl Fixture {
+        fn new(
+            reattach: bool,
+            release_result: Result<(), Errno>,
+            reattach_result: Result<(), Errno>,
+        ) -> (Self, Arc<Mutex<Vec<&'static str>>>) {
+            let calls = Arc::new(Mutex::new(Vec::new()));
+            (
+                Self {
+                    release: InterfaceRelease::new(reattach),
+                    calls: calls.clone(),
+                    release_result,
+                    reattach_result,
+                },
+                calls,
+            )
+        }
+
+        fn run(&mut self) -> Result<(), Error> {
+            let calls = &self.calls;
+            self.release
+                .run(
+                    || {
+                        calls.lock().map_err(|_| Errno::IO)?.push("release");
+                        self.release_result
+                    },
+                    || {
+                        calls.lock().map_err(|_| Errno::IO)?.push("connect");
+                        self.reattach_result
+                    },
+                )
+                .map_err(InterfaceReleaseError::into_error)
+        }
+    }
+
+    impl Drop for Fixture {
+        fn drop(&mut self) {
+            let _ = self.run();
+        }
+    }
+
+    #[test]
+    fn checked_release_errors_survive_without_drop_retry_or_connect() {
+        for error in [Errno::INVAL, Errno::NODEV, Errno::IO, Errno::INTR] {
+            let (fixture, calls) = Fixture::new(true, Err(error), Ok(()));
+            let result = consume_unique_interface(Arc::new(fixture), |mut fixture| fixture.run());
+            assert_eq!(
+                result.as_ref().err().and_then(Error::os_error),
+                Some(error.raw_os_error() as u32)
+            );
+            assert!(calls.lock().is_ok_and(|calls| *calls == ["release"]));
+        }
+    }
+
+    #[test]
+    fn checked_success_runs_release_and_selected_reattach_exactly_once() {
+        for reattach in [false, true] {
+            let (fixture, calls) = Fixture::new(reattach, Ok(()), Ok(()));
+            let result = consume_unique_interface(Arc::new(fixture), |mut fixture| fixture.run());
+            assert!(result.is_ok());
+            assert!(calls.lock().is_ok_and(|calls| {
+                *calls
+                    == if reattach {
+                        vec!["release", "connect"]
+                    } else {
+                        vec!["release"]
+                    }
+            }));
+        }
+    }
+
+    #[test]
+    fn checked_connect_error_keeps_errno_and_does_not_repeat_either_call() {
+        let (fixture, calls) = Fixture::new(true, Ok(()), Err(Errno::BUSY));
+        let result = consume_unique_interface(Arc::new(fixture), |mut fixture| fixture.run());
+        assert_eq!(
+            result.as_ref().err().map(Error::kind),
+            Some(ErrorKind::Busy)
+        );
+        assert_eq!(
+            result.as_ref().err().and_then(Error::os_error),
+            Some(Errno::BUSY.raw_os_error() as u32)
+        );
+        assert!(result.as_ref().err().is_some_and(|error| error
+            .to_string()
+            .contains("reattach kernel driver after interface release")));
+        assert!(calls
+            .lock()
+            .is_ok_and(|calls| *calls == ["release", "connect"]));
+    }
+
+    #[test]
+    fn shared_arc_is_busy_without_release_until_the_last_owner_drops() {
+        let (fixture, calls) = Fixture::new(false, Ok(()), Ok(()));
+        let interface = Arc::new(fixture);
+        let endpoint_reference = interface.clone();
+        let result = consume_unique_interface(interface, |mut fixture| fixture.run());
+        assert_eq!(
+            result.as_ref().err().map(Error::kind),
+            Some(ErrorKind::Busy)
+        );
+        assert!(calls.lock().is_ok_and(|calls| calls.is_empty()));
+        drop(endpoint_reference);
+        assert!(calls.lock().is_ok_and(|calls| *calls == ["release"]));
+    }
+
+    #[test]
+    fn legacy_drop_remains_best_effort_on_release_and_connect_failure() {
+        for (release, connect, expected) in [
+            (Err(Errno::NODEV), Ok(()), vec!["release"]),
+            (Ok(()), Err(Errno::BUSY), vec!["release", "connect"]),
+        ] {
+            let (fixture, calls) = Fixture::new(true, release, connect);
+            // This is the existing portable release's last-owner Drop path.
+            let result = consume_unique_interface(Arc::new(fixture), |fixture| {
+                drop(fixture);
+                Ok(())
+            });
+            assert!(result.is_ok());
+            assert!(calls.lock().is_ok_and(|calls| *calls == expected));
+        }
+    }
 }
 
 impl Drop for LinuxInterface {
     fn drop(&mut self) {
-        let res = usbfs::release_interface(&self.device.fd, self.interface_number);
-        debug!(
-            "Released interface {} on device {}: {res:?}",
-            self.interface_number, self.device.events_id
-        );
-
-        if res.is_ok() && self.reattach {
-            let res = usbfs::attach_kernel_driver(&self.device.fd, self.interface_number);
-            debug!(
-                "Reattached kernel drivers for interface {} on device {}: {res:?}",
-                self.interface_number, self.device.events_id
-            );
-        }
+        let _ = self.release_inner();
     }
 }
 

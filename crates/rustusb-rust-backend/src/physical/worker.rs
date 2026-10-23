@@ -177,22 +177,37 @@ fn host_state_intent(setup: &[u8; 8]) -> bool {
     matches!((setup[0], setup[1]), (0, 9) | (1, 11) | (2, 1))
 }
 
-async fn release_all(interfaces: BTreeMap<u8, Interface>) -> Result<()> {
-    let mut failed = false;
+async fn await_releases<F>(releases: impl IntoIterator<Item = (u8, F)>) -> Result<()>
+where
+    F: Future<Output = Result<()>>,
+{
+    let mut first_error = None;
     // Every release is offloaded by nusb's Blocking wrapper and awaited. Do not
     // early-return and drop the remaining interfaces on a Tokio worker.
-    for interface in interfaces.into_values() {
-        if interface.release().await.is_err() {
-            failed = true;
+    for (number, release) in releases {
+        if let Err(error) = release.await {
+            tracing::warn!(interface = number, error = %error, "checked physical interface release failed");
+            if first_error.is_none() {
+                first_error = Some(error);
+            }
         }
     }
-    if failed {
-        Err(Error::State(
-            "one or more physical interfaces were not released".into(),
-        ))
-    } else {
-        Ok(())
+    match first_error {
+        Some(error) => Err(error),
+        None => Ok(()),
     }
+}
+
+async fn release_all(interfaces: BTreeMap<u8, Interface>) -> Result<()> {
+    await_releases(interfaces.into_iter().map(|(number, interface)| {
+        (number, async move {
+            interface
+                .release_checked()
+                .await
+                .map_err(|error| Error::Io(std::io::Error::from_raw_os_error(-errno(&error))))
+        })
+    }))
+    .await
 }
 
 async fn acquire(slot: &Arc<Slot>, config: u8, original_alternates: bool) -> Configured {
@@ -1071,13 +1086,25 @@ async fn restore(worker: &mut Worker) -> Result<()> {
                 .usb
                 .claim_interface(original.number)
                 .await
-                .map_err(|_| Error::State("could not reclaim original alternate setting".into()))?;
-            let selected = interface.set_alt_setting(original.alternate_setting).await;
-            let released = interface.release().await;
-            selected
-                .map_err(|_| Error::State("could not restore original alternate setting".into()))?;
-            released
-                .map_err(|_| Error::State("could not release restored alternate setting".into()))?;
+                .map_err(|error| {
+                    tracing::warn!(interface = original.number, error = %error, "original alternate reclaim failed");
+                    Error::Io(std::io::Error::from_raw_os_error(-errno(&error)))
+                })?;
+            let selected = interface
+                .set_alt_setting(original.alternate_setting)
+                .await
+                .map_err(|error| {
+                    tracing::warn!(interface = original.number, error = %error, "original alternate selection failed");
+                    Error::Io(std::io::Error::from_raw_os_error(-errno(&error)))
+                });
+            // Always await and report release, even when selecting the alternate
+            // failed. The first failure wins without concealing a second one.
+            let released = interface.release_checked().await.map_err(|error| {
+                tracing::warn!(interface = original.number, error = %error, "checked release after alternate restoration failed");
+                Error::Io(std::io::Error::from_raw_os_error(-errno(&error)))
+            });
+            selected?;
+            released?;
         }
     }
     let originals = worker.slot.lock()?.original_drivers.clone();
@@ -1400,6 +1427,33 @@ pub(super) async fn supervise(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn checked_release_loop_awaits_all_in_order_and_preserves_first_errno() {
+        for (errors, expected) in [
+            ([22, 0, 5], Some(-22)),
+            ([0, 13, 19], Some(-13)),
+            ([0, 0, 0], None),
+        ] {
+            let events = std::cell::RefCell::new(Vec::new());
+            let releases = errors.into_iter().enumerate().map(|(number, error)| {
+                let events = &events;
+                (number as u8, async move {
+                    events.borrow_mut().push(number);
+                    tokio::task::yield_now().await;
+                    events.borrow_mut().push(number + 10);
+                    if error == 0 {
+                        Ok(())
+                    } else {
+                        Err(Error::Io(std::io::Error::from_raw_os_error(error)))
+                    }
+                })
+            });
+            let result = await_releases(releases).await;
+            assert_eq!(result.as_ref().err().map(core_errno), expected);
+            assert_eq!(*events.borrow(), [0, 10, 1, 11, 2, 12]);
+        }
+    }
 
     #[test]
     fn physical_errno_and_partial_bytes_survive_completion_mapping() {

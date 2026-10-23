@@ -649,6 +649,27 @@ impl Interface {
     pub fn release(self) -> impl MaybeFuture<Output = Result<(), Error>> {
         self.backend.release()
     }
+
+    /// Release a Linux interface and report the actual kernel result.
+    ///
+    /// Unlike [`release`][Self::release], errors from RELEASEINTERFACE,
+    /// including disconnection, are returned. If this handle was created with
+    /// automatic kernel-driver reattachment, its subsequent CONNECT error is
+    /// also returned. No reattachment is attempted after a failed release.
+    ///
+    /// Returns [`ErrorKind::Busy`] without releasing while other interface,
+    /// endpoint, or transfer references exist. Once the last owner attempts
+    /// release, its destructor does not retry the release or reattachment,
+    /// even when the attempt fails. Dropping an already-started asynchronous
+    /// operation does not cancel its blocking kernel call.
+    ///
+    /// Success reports these kernel calls only. The caller must independently
+    /// verify configuration, alternate settings, generation, and driver state
+    /// before reporting device restoration.
+    #[cfg(target_os = "linux")]
+    pub fn release_checked(self) -> impl MaybeFuture<Output = Result<(), Error>> {
+        self.backend.release_checked()
+    }
 }
 
 impl Debug for Interface {
