@@ -90,4 +90,4 @@ sudo rustusb --json physical-reconcile <lease-id>
 
 该命令只读设备状态并退休记录，不执行 bind、配置切换或强制清理；状态仍不匹配则失败并保留记录。旧代际已拔出或跨启动消失时，管理员可加 `--acknowledge-gone` 确认结束旧记录，命令不操作替代设备；随后重新启动仍需当前策略和新的完整扫描/FD receipt。这不是每次重插都自动要求修改 allowlist 的机制。
 
-不要删除 journal、lock 或整个目录来解除拒绝。已有目录缺 journal、损坏、不安全权限、重复 helper 或提交不确定都会拒绝授权；删除整个目录会破坏不可恢复的原始历史，程序无法区分管理员删除与首次安装。本轮不声称断电耐久已实测，也没有自动重新绑定驱动。实现与验收状态见[设计](research/physical-crash-recovery-design.md)。
+不要删除 journal、lock 或整个目录来解除拒绝。已有目录缺 journal、损坏、不安全权限、重复 helper 或提交不确定都会拒绝授权；删除整个目录会破坏不可恢复的原始历史，程序无法区分管理员删除与首次安装。本轮不声称断电耐久已实测，也没有自动重新绑定驱动。实现与验收状态见[报告](research/physical-journal-recovery.md)和[设计](research/physical-crash-recovery-design.md)。

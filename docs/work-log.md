@@ -299,3 +299,12 @@
 - 首次失败的独立raw复核进一步限定证据：正常/重开及两轮I/O、pending/disk原件存在；wait137由冻结guest严格断言后到达killed-post间接证明，但单独wait行及当前sysfs观察尚在guest临时文件，未到最终dump，不能冒充已持久读取。新harness补每次record/每个实际wait立即写独立串口行，避免后续协调失败丢掉已完成观察；这不回填旧run缺失数据。
 
 - 修订时同时补齐管理员协调后的第三轮真实 HID/FTDI I/O 与正常退休，保持中间无IMPORT重开的对照。设计先追加此验收目的；最终是否通过仍等实际运行，不以ready替代恢复后传输。
+
+- 同步/即时采证/第三周期修订与首FAIL证据提交933e720。root从clean前置冻结144输入，默认locked/allfeatures串行完成新journal、原物理正常/热拔、ECM、TERM五项QEMU全PASS/十guest0；各自184host、15probe、15probe、19probe、52host检查通过。本地ready/blocked×INT/TERM四项和原两背压亦PASS；七run每次source/head/clean guard通过。五项同CLI6c56ade7…/helper14f33dad…，未混淆feature来源。
+- 新journal完整真实wait137与同代际driver:null原件已即时保存；跨helper重启相同pending两次新server均exit1/明确guard拒绝，普通UID/root未恢复拒绝严格核原因，guestroot恢复原driver后两record实际retired，第三KEY3/FTDI35B双向与正常退场通过。三轮各105B、hostTX原bin及RX/evdev原hex保存；这不证明自动恢复。
+- 三个实现/测试提交已普通push到指定SSH origin，远端从a484d11更新933e720。四原生平台CI39908004666已实际启动，当前运行中；源码连接器只支持PR-triggered runs，push run由只读gh API定位，jobs用GitHub连接器观察。99份最终运行原件按bytes归档，独立raw审查继续，未将尚未完成的CI标通过。
+
+- 新journal另一agent独立raw解析418/418通过，包含144 Git输入、真实三轮字节/evdev、旧基线和每个wait/权限/退休事实；原四QEMU回归独立575/575通过，含两份PCAP协议校验。复核parser的初始WAIT分类与ECM stderr空值假设已纠正并保存，不改任何运行结论。旧回归无逐grant磁盘原件，其退休只按冻结成功路径与真实退出/末事件判定。
+- 精确933e720的CI39908004666四原生job均completed/success：22x86 120264284433、24x86 120264284710、22ARM120264284774、24ARM120264284822。每格250次/31result、0失败忽略、两背压和四信号通过；root对连接器解码日志和官方API做746项解析，核实际OS/arch/Rust host、checkout与所有signal输入Gitblob。11份CI产物已归档，未伪造工作流没有上传的per-case原件。
+
+- 最终文档独立审查582/582通过、0 mustfix；root首轮4索引166原件长度/SHA/原tmp bytes与144冻结输入及链接804项通过，归档两份审查后共168 indexed原件，再核所有staged Gitblob及144输入一致。软件98输入也分别等于产品b75f14b和测试933e720。仅文档/证据交付，不重归属测试版本；准备正常push。

@@ -1,0 +1,111 @@
+{
+  "head": "933e720531fd96b7a23616ed687d59b816e0ce09",
+  "base": "/tmp/rustusb-journal-final-933e720-20261023",
+  "result": "PASS",
+  "runs": [
+    {
+      "name": "journal",
+      "command": [
+        "python3",
+        "scripts/qemu/run-journal-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-journal-final-933e720-20261023/journal"
+      ],
+      "started_at": "2026-10-23T05:48:16.775393+00:00",
+      "finished_at": "2026-10-23T05:48:52.935844+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    },
+    {
+      "name": "physical-normal",
+      "command": [
+        "python3",
+        "scripts/qemu/run-physical-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-journal-final-933e720-20261023/physical-normal"
+      ],
+      "started_at": "2026-10-23T05:48:52.947741+00:00",
+      "finished_at": "2026-10-23T05:49:05.294143+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    },
+    {
+      "name": "physical-hot",
+      "command": [
+        "python3",
+        "scripts/qemu/run-physical-qemu.py",
+        "--hot-unplug",
+        "--evidence",
+        "/tmp/rustusb-journal-final-933e720-20261023/physical-hot"
+      ],
+      "started_at": "2026-10-23T05:49:05.307584+00:00",
+      "finished_at": "2026-10-23T05:49:19.966092+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    },
+    {
+      "name": "composite",
+      "command": [
+        "python3",
+        "scripts/qemu/run-composite-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-journal-final-933e720-20261023/composite"
+      ],
+      "started_at": "2026-10-23T05:49:19.980024+00:00",
+      "finished_at": "2026-10-23T05:49:31.951218+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    },
+    {
+      "name": "sigterm",
+      "command": [
+        "python3",
+        "scripts/qemu/run-sigterm-qemu.py",
+        "--evidence",
+        "/tmp/rustusb-journal-final-933e720-20261023/sigterm"
+      ],
+      "started_at": "2026-10-23T05:49:31.964197+00:00",
+      "finished_at": "2026-10-23T05:49:43.818914+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    },
+    {
+      "name": "local-signals",
+      "command": [
+        "python3",
+        "scripts/test-server-signals.py",
+        "--evidence",
+        "/tmp/rustusb-journal-final-933e720-20261023/local-signals"
+      ],
+      "started_at": "2026-10-23T05:49:43.831957+00:00",
+      "finished_at": "2026-10-23T05:49:43.989510+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    },
+    {
+      "name": "backpressure",
+      "command": [
+        "python3",
+        "scripts/test-virtual-backpressure.py"
+      ],
+      "started_at": "2026-10-23T05:49:44.000862+00:00",
+      "finished_at": "2026-10-23T05:49:49.250689+00:00",
+      "exit_code": 0,
+      "sources_unchanged": true,
+      "head_unchanged": true,
+      "worktree_clean": true
+    }
+  ]
+}

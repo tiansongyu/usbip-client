@@ -32,9 +32,10 @@
 | E22 | [Native测试夹具修订](research/native-test-fixture-readiness.md)、[完整软件gate](evidence/native-fixture-full-software-validation-20261023.json)、[四平台CI](evidence/publication-native-fixture-20261023.json) | 37c2d61仅cfg(test)修订，生产Native字节相同；本机及四原生CI各222项0失败/忽略、各两背压通过，6e809旧CI3/1原样保留；重建ELF哈希不同，QEMU结果继续锁6e809原输入/产物，未重归属 |
 | E23 | [Rust服务信号停止设计](research/server-signal-shutdown-design.md)、[报告](research/server-signal-shutdown.md)、[旧local负向](evidence/server-sigterm-old-local-development-20261023.json)、[旧QEMU负向](evidence/server-sigterm-old-qemu-development-20261023.json)、[修复后软件](evidence/server-signals-software-934358f-20261023/software.json)、[本地四项](evidence/local-server-signals-fixed-934358f-20261023/summary.json)、[QEMU四项](evidence/server-signals-fixed-validation-934358f-20261023.json) | 产品d39517b，clean934358f软件222项、本地4PASS、QEMU4PASS/8guest0；原虚拟与all-features的ELF各自归属，旧TERM -15/wait143及driver未恢复的FAIL保留；CI39899971271四原生平台每格222次测试及两背压/四信号场景通过。仅Unix合作SIGINT/SIGTERM，不证明重复信号、SIGKILL/崩溃、持久重启或硬件G1/G2 |
 | E24 | [SIGKILL/首次重启设计](research/physical-crash-recovery-design.md)、[实际报告](research/physical-crash-recovery.md)、[原始证据](evidence/physical-crash-negative-1342a6a-20261023.json) | clean1342a6a唯一QEMU：恢复FAIL/收集完整，runner1/两guest0；55host检查51PASS/4恢复FAIL。旧进程wait137且20.06秒后两driver null；新进程无IMPORT、ready/stopped原driver皆null且cleanup_verified=true，wait0不证明旧基线恢复。产品未改、无自动恢复实现 |
+| E25 | [持久授权报告](research/physical-journal-recovery.md)、[软件与源码审查](evidence/physical-journal-implementation-20261023/manifest.json)、[首轮FAIL](evidence/physical-journal-first-failure-e0ac478-20261023/manifest.json)、[最终运行](evidence/physical-journal-final-933e720-20261023/manifest.json) | 产品b75f14b；clean933e720新journal184host检查、原正常/热拔15+15probe、ECM19probe、TERM52host检查全部通过，十guest0、本地四信号和两背压通过。软件default89/allfeatures142/vendor19共250次及完整gate通过；[CI39908004666](evidence/publication-journal-933e720-20261023.json)四原生平台每格250次/两背压/四信号通过。验证未决基线跨helper重启/拒绝重授、正常退休、root只读协调及管理员恢复后第三轮实际I/O；不证明自动恢复/FD撤销/断电或硬件G1/G2 |
 
 
-当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订的软件/CI见E22；信号修复后的934358f软件、本地与QEMU见E23，CI39899971271已实际四平台通过；历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
+当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订的软件/CI见E22；信号修复后的934358f软件、本地与QEMU见E23，CI39899971271已实际四平台通过；SIGKILL旧负向见E24，持久授权的933e720仿真、250次软件测试及四平台CI39908004666见E25。历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
 ## 2. Phase 0 九项产物
 
@@ -197,3 +198,10 @@ E23保留两项旧虚拟child TERM实际-15，以及旧USBFS QEMU startup/main�
 产品d39517b仅修改4个CLI文件。clean934358f实际完整软件gate222项/31条result、138份冻结输入未变，本地四项信号与原两背压回归通过；TERM及原虚拟、物理正常/热拔四QEMU均PASS，8guest0。原虚拟的feature/ELF与另外三项不同，证据分别归属。CI39899971271四原生平台均通过，每格222次测试执行、原两背压及新增四信号场景通过；三项回归227项独立原始复核通过；原始证据及限制见E23报告。
 
 listener前异步prepare可取消不代表已经运行的blocking内核读取被终止；重复信号不丢cleanup目前仅有源码审查。SIGKILL/abort、跨进程监督、持久重启协调、Windows USB、真实硬件及完整Phase2/Phase3继续未完成。
+
+
+## 16. 持久物理授权与管理员协调子步骤
+
+E25保留首clean e0ac478的harness同步FAIL和缺失证据边界，修订仅改变新测试的保存后握手/失败采证并补第三轮I/O，产品不变。clean933e720的144输入在七项串行运行前后不变，五QEMU各自host验收通过、十guest0；所有五项为同一all-features产物。新journal中普通服务正常关闭可清空记录，KILL137后的原记录跨helper重启不变且两次新服务明确拒绝，root仅在人工恢复实际原基线后退休记录，第三次实际I/O和正常关闭通过。
+
+本轮只完成可信服务的持久授权生命周期子步骤。自动恢复所需的可信变更范围/独立监督、存储、完整会话/安全、UI与安装、性能和平台验证继续保持第10节原完整目标。

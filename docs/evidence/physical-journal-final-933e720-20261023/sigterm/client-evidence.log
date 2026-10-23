@@ -1,0 +1,20 @@
+RUSTUSB_SIGTERM_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0
+RUSTUSB_SIGTERM_BOOT role=client kernel=6.8.0-106-generic
+RUSTUSB_SIGTERM_ISOLATION: PASS role=client carrier=1 ip_forward=0
+RUSTUSB_SIGTERM_HELPER: PASS role=client allowed_uid=1000 denied_uid=1001
+{"event":"physical_probe_case","case":"both_real_devices_exclusive_busy","result":"PASS"}
+RUSTUSB_SIGTERM_WAIT_INPUT key=1
+RUSTUSB_SIGTERM_WAIT_SERIAL bytes=35
+RUSTUSB_SIGTERM_REAL_IO: PASS key_code=2 down=true up=true serial_in=35 serial_out=35 same_receipts=true readers_kept_open=true
+cat: read error: No such device
+RUSTUSB_SIGTERM_OUTCOME {"schema_version":1,"event":"sigterm_outcome","role":"client","spontaneous_disconnect":true,"hid_generation_gone":true,"ftdi_generation_gone":true,"helper_alive":true,"receipts":[{"local_bus_id":"1-1","local_device_address":2,"local_device_generation":{"filesystem_device":23,"inode":25433},"port":0,"product_id":1,"remote_device_id":65538,"status":6,"vendor_id":1575},{"local_bus_id":"1-2","local_device_address":3,"local_device_generation":{"filesystem_device":23,"inode":25667},"port":1,"product_id":24577,"remote_device_id":65539,"status":6,"vendor_id":1027}],"sessions":[],"vhci_status":"STATUS /sys/devices/platform/vhci_hcd.0/status\nhub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n","serial_in_bytes":35,"serial_out_bytes":35,"rx_sha256":"eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a","tx_sha256":"6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef","input_event_hex":"76f5da6a00000000857a040000000000040004001e00070076f5da6a00000000857a040000000000010002000100000076f5da6a00000000857a040000000000000000000000000076f5da6a00000000a0fd050000000000040004001e00070076f5da6a00000000a0fd050000000000010002000000000076f5da6a00000000a0fd0500000000000000000000000000","input_event_format":"linux_x86_64_24","observation_centiseconds":19,"observation_limit_seconds":20,"detach_before_observation":false}
+RUSTUSB_SIGTERM_COLLECTION_COMPLETE role=client
+{
+  "detached": true,
+  "port": 0
+}
+{
+  "detached": true,
+  "port": 1
+}
+RUSTUSB_SIGTERM_RESULT: PASS role=client

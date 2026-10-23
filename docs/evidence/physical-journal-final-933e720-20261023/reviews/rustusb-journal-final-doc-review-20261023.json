@@ -1,0 +1,2509 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/journal_harness_review",
+  "reviewed_at_utc": "2026-10-23T06:10:16.412957+00:00",
+  "result": "PASS",
+  "source_commit": "933e720531fd96b7a23616ed687d59b816e0ce09",
+  "method": "Read-only final document diff review plus archived evidence/byte/hash/source/link checks. No Cargo, QEMU, network queries, repo edits, or calls to existing runtime verification functions. Manual semantic scope review is identified explicitly.",
+  "authorship": "Reviewer previously authored narrow new journal-harness synchronization/diagnostic and third-cycle changes; this is an independent documentation/evidence correspondence review, not an independent review of that harness implementation.",
+  "reviewed_documents": {
+    "README.md": "7ffdddecaee3a5623e8d190c7140f531585b814a289d1c7842d39029f3de24a9",
+    "AGENTS.md": "b1116a4402c9b7333aa01b29057692d2908ec8a1d6c3715ec8777a735c4a5548",
+    "docs/acceptance.md": "78f5af27df00a2de98fd92e9dab034224bdc149c5c21e6979626c50619f3eb5d",
+    "docs/compatibility.md": "131e53bfde98fe593ab67a54f5231a3795262f000c31177e9370d055098a5653",
+    "docs/roadmap.md": "068201e8042b7deb1dd71935f1d4d72822ec943d7c3ecd78cbd42d95b3152bff",
+    "docs/rust-physical-server.md": "c067ec7cc8bb3d1378949ff04d187947970fbc2a2fa23026d517993d94495b45",
+    "docs/work-log.md": "143e6e65ee3437e04571fa762e252f899cf1283ffc05b7575c1e2558b45d6e6c",
+    "docs/research/physical-journal-recovery.md": "4a3103334d1a5dea090e9568162e129cf680db42c3368d5b211ed63b4414b02e"
+  },
+  "checks_count": 582,
+  "checks_passed": 582,
+  "checks": [
+    {
+      "name": "review_head_remains_runtime_source",
+      "result": "PASS"
+    },
+    {
+      "name": "only_documentation_and_evidence_changed_since_runtime",
+      "result": "PASS",
+      "detail": [
+        "AGENTS.md",
+        "README.md",
+        "docs/acceptance.md",
+        "docs/compatibility.md",
+        "docs/evidence/journal-ci-39908004666-20261023/connector-jobs.json",
+        "docs/evidence/journal-ci-39908004666-20261023/counts.json",
+        "docs/evidence/journal-ci-39908004666-20261023/job-120264284433.log",
+        "docs/evidence/journal-ci-39908004666-20261023/job-120264284710.log",
+        "docs/evidence/journal-ci-39908004666-20261023/job-120264284774.log",
+        "docs/evidence/journal-ci-39908004666-20261023/job-120264284822.log",
+        "docs/evidence/journal-ci-39908004666-20261023/jobs.json",
+        "docs/evidence/journal-ci-39908004666-20261023/run.json",
+        "docs/evidence/journal-ci-39908004666-20261023/rustusb-journal-ci-runs-initial-20261023.json",
+        "docs/evidence/journal-ci-39908004666-20261023/verification.json",
+        "docs/evidence/journal-ci-39908004666-20261023/verify.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/backpressure-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/build.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/client-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/client-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/data-peer.pcap",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/data-usb.pcap",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/server-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/server-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/composite/summary.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/freeze.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/build.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/client-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/client-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/client-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/ftdi-host-tx.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/server-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/server-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/server-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/guest-init.sh",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/guest-journal-init.sh",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/guest-physical-init.sh",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/physical-wire-probe.rs",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/run-journal-qemu.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/run-native-qemu.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/source/run-physical-qemu.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/journal/summary.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/after.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/before.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/protocol.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/result.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/stderr.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/stdout-consumed.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/stdout-events.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/synthetic-padding.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/after.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/before.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/protocol.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/result.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/stderr.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/stdout-consumed.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/stdout-events.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/synthetic-padding.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/build.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/after.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/before.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/protocol.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/result.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/stderr.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/stdout-consumed.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/stdout-events.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/after.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/before.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/protocol.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/result.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/stderr.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/stdout-consumed.bin",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/stdout-events.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/source-after.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/source-before.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/local-signals/summary.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/manifest.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/matrix.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/build.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/client-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/client-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/client-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/server-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/server-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/server-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-hot/summary.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/build.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/client-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/client-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/client-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/server-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/server-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/server-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/physical-normal/summary.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-final-archive-audit-20261023.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-final-independent-review-20261023.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023-initial.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023-initial.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-review-journal-final-20261023-dev01.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-review-journal-final-20261023.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/sequence.json",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm-runner.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/build.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/client-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/client-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/client-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/server-evidence.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/server-qemu.stderr",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/server-serial.log",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/guest-init.sh",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/guest-physical-init.sh",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/guest-sigterm-init.sh",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/physical-wire-probe.rs",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/run-native-qemu.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/run-physical-qemu.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/run-sigterm-qemu.py",
+        "docs/evidence/physical-journal-final-933e720-20261023/sigterm/summary.json",
+        "docs/evidence/publication-journal-933e720-20261023.json",
+        "docs/research/physical-journal-recovery.md",
+        "docs/roadmap.md",
+        "docs/rust-physical-server.md",
+        "docs/work-log.md"
+      ]
+    },
+    {
+      "name": "local_link:README.md:docs/work-log.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/roadmap.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/rust-virtual-server.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/rust-physical-server.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/evidence/publication-server-signals-934358f-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/physical-crash-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/physical-journal-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/evidence/publication-journal-933e720-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/acceptance.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/compatibility.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:examples/policy.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/testing.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/architecture.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/protocol.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/gap-analysis.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/linux-usbip-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/research/rust-backend-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/third-party.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:docs/requirements.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:README.md:AGENTS.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:requirements.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/linux-usbip-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/rust-backend-audit.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/rust-upstream-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/software-checks-phase1-runtime-2026-10-22.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../scripts/check.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/software-checks-final-2026-10-22.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/fuzz-devlist-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../fuzz/fuzz_targets/devlist.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../scripts/fuzz-smoke.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:work-log.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../scripts/qemu/run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../scripts/qemu/guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/qemu-native-20261022T101910Z/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/qemu-reconnect-old-20261022/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/ci-native-matrix-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/qemu-native-contention-transport-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/virtual-validation-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/software-checks-virtual-20261022.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/server-fuzz-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/server-fuzz-final-20261022.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/virtual-backpressure-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-virtual-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/physical-software-validation-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/physical-validation-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-physical-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/usbfs-composite-qemu-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/composite-software-validation-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-composite-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/composite-final-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/composite-capture-final-verification-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/usbfs-host-state-race-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/usbfs-host-state-races.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/host-state-final-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/host-state-software-validation-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-host-state-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/checked-release-software-validation-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/checked-release-final-v4-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-checked-release-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-checked-release-harness-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/native-test-fixture-readiness.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/native-fixture-full-software-validation-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/server-signal-shutdown-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/server-sigterm-old-local-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/server-sigterm-old-qemu-development-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/server-signals-software-934358f-20261023/software.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/local-server-signals-fixed-934358f-20261023/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/server-signals-fixed-validation-934358f-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/physical-crash-recovery-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/physical-crash-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/physical-crash-negative-1342a6a-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/physical-journal-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/physical-journal-implementation-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/physical-journal-first-failure-e0ac478-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/physical-journal-final-933e720-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-journal-933e720-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/gap-analysis.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:protocol.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:third-party.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:dependency-inventory.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../Cargo.lock",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:compatibility.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:architecture.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../crates/rustusb-core/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../crates/rustusb-daemon/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:roadmap.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:testing.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../AGENTS.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:../.agents/skills/rustusb-development/SKILL.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/software-checks-phase1-runtime-2026-10-22.txt",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/acceptance.md:evidence/publication-runtime-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:evidence/publication-virtual-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:evidence/ci-native-matrix-2026-10-22.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/native-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:evidence/qemu-native-20261022T101910Z/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/native-qemu-matrix.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/native-qemu-contention.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/native-qemu-transport-abort.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:evidence/publication-physical-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:research/physical-journal-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/compatibility.md:evidence/publication-journal-933e720-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/rust-virtual-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/userspace-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/physical-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/usbfs-composite-qemu-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:evidence/composite-software-validation-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:evidence/publication-composite-20261022.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/composite-qemu.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/usbfs-host-state-race-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/usbfs-checked-release.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:evidence/publication-native-fixture-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/physical-crash-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/physical-journal-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:evidence/publication-journal-933e720-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:research/physical-crash-recovery-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:evidence/phase2-scope-review-rev2-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/roadmap.md:security.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:research/rust-physical-backend-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:acceptance.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:../README.md#native-共享流程",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:../README.md#native-共享流程",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:research/server-signal-shutdown.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:research/physical-crash-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:research/physical-journal-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/rust-physical-server.md:research/physical-crash-recovery-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:physical-crash-recovery.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:../rust-physical-server.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:physical-crash-recovery-design.md",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:../evidence/physical-journal-implementation-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:../evidence/physical-journal-first-failure-e0ac478-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:../evidence/physical-journal-final-933e720-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:../evidence/publication-journal-933e720-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "local_link:docs/research/physical-journal-recovery.md:../evidence/physical-journal-final-933e720-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "manifest_source:docs/evidence/physical-journal-final-933e720-20261023/manifest.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/backpressure-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/data-peer.pcap",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/data-usb.pcap",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/composite-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/freeze.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/ftdi-host-tx.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/guest-journal-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/run-journal-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/source/run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/journal-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigint/synthetic-padding.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/blocked-sigterm/synthetic-padding.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigint/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/protocol.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/result.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/stderr.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/stdout-consumed.bin",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/ready-sigterm/stdout-events.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/source-after.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/source-before.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/local-signals-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-hot-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/physical-normal-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sequence.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/build.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/client-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/client-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/client-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/server-evidence.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/server-qemu.stderr",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/server-serial.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/guest-sigterm-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/source/run-sigterm-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm/summary.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/sigterm-runner.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/matrix.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-final-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023-initial.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023-initial.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-regression-independent-review-20261023.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-review-journal-final-20261023-dev01.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-review-journal-final-20261023.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/physical-journal-final-933e720-20261023/reviews/rustusb-journal-final-archive-audit-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "manifest_source:docs/evidence/publication-journal-933e720-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/job-120264284710.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/job-120264284774.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/job-120264284822.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/job-120264284433.log",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/run.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/jobs.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/connector-jobs.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/counts.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/verification.json",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/verify.py",
+      "result": "PASS"
+    },
+    {
+      "name": "archived_bytes:docs/evidence/journal-ci-39908004666-20261023/rustusb-journal-ci-runs-initial-20261023.json",
+      "result": "PASS"
+    },
+    {
+      "name": "freeze_144_clean_source",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:.github/workflows/ci.yml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:Cargo.lock",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-cli/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-cli/src/main.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-cli/src/physical_server.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-cli/src/shutdown_signals.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-cli/src/virtual_server.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-core/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-core/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/diagnostics.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/journal.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/linux.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/main.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/physical.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-linux/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-linux/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-linux/tests/discovery.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-native/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-native/src/diagnostics.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-native/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-protocol/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-protocol/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/physical.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/physical/observe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/physical/safety.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/physical/worker.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/server.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/session.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:crates/rustusb-rust-backend/src/wire.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/audit-linux-upstream.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/audit-rust-upstream.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/check.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/dependency-inventory.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/fuzz-smoke.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/.gitignore",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/composite-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-composite-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-contention-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-crash-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-fault-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-host-state-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-journal-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-physical-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-sigterm-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/guest-userspace-init.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/host-state-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/physical-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-composite-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-contention-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-crash-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-fault-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-host-state-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-journal-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-native-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-physical-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-sigterm-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/run-userspace-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/usbfs-syscall-gate.c",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/qemu/userspace-wire-probe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/seed-server-fuzz.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/test-server-signals.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:scripts/test-virtual-backpressure.py",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/.cargo/config.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/.cargo_vcs_info.json",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/.github/workflows/release.yml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/.github/workflows/rust.yml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/.gitignore",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/Cargo.lock",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/Cargo.toml.orig",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/LICENSE-APACHE",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/LICENSE-MIT",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/README.md",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/RUSTUSB-PROVENANCE.json",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/RUSTUSB.md",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/RUSTUSB.patch",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/bulk.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/bulk_io.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/bulk_io_smol.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/bulk_io_tokio.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/buses.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/control.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/detach.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/detach_claim.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/list.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/examples/string_descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/bitset.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/error.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/io/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/io/read.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/io/write.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/maybe_future.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/events.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/webusb/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/webusb/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/webusb/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/webusb/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/platform/windows_winusb/util.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/transfer/buffer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/transfer/control.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/transfer/internal.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen_input:vendor/nusb/src/transfer/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_candidate_provenance",
+      "result": "PASS"
+    },
+    {
+      "name": "software_source_count",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:Cargo.lock",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-cli/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-cli/src/main.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-cli/src/physical_server.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-cli/src/shutdown_signals.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-cli/src/virtual_server.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-core/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-core/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/diagnostics.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/journal.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/linux.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/main.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/physical.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-linux/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-linux/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-linux/tests/discovery.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-native/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-native/src/diagnostics.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-native/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-protocol/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-protocol/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/physical/observe.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/physical/safety.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/physical/worker.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/physical.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/server.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/session.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:crates/rustusb-rust-backend/src/wire.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:scripts/check.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/Cargo.lock",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/Cargo.toml",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/bulk.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/bulk_io.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/bulk_io_smol.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/bulk_io_tokio.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/buses.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/control.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/detach.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/detach_claim.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/list.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/examples/string_descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/bitset.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/descriptors.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/error.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/io/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/io/read.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/io/write.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/lib.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/maybe_future.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/events.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/webusb/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/webusb/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/webusb/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/webusb/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/device.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/platform/windows_winusb/util.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/transfer/buffer.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/transfer/control.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/transfer/internal.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "software_input_at_both_commits:vendor/nusb/src/transfer/mod.rs",
+      "result": "PASS"
+    },
+    {
+      "name": "local_software_250_31_groups_zero_fail_ignore",
+      "result": "PASS"
+    },
+    {
+      "name": "seven_serial_runs_source_guarded",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_result_scope:journal",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_identical_elf:journal",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_result_scope:physical-normal",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_identical_elf:physical-normal",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_result_scope:physical-hot",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_identical_elf:physical-hot",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_result_scope:composite",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_identical_elf:composite",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_result_scope:sigterm",
+      "result": "PASS"
+    },
+    {
+      "name": "runtime_identical_elf:sigterm",
+      "result": "PASS"
+    },
+    {
+      "name": "documented_host_and_probe_counts",
+      "result": "PASS"
+    },
+    {
+      "name": "raw_immediate_waits_match_summary",
+      "result": "PASS"
+    },
+    {
+      "name": "raw_immediate_records_match_summary",
+      "result": "PASS"
+    },
+    {
+      "name": "documented_kill_pid_start_wait137_unknown_final",
+      "result": "PASS"
+    },
+    {
+      "name": "documented_helper_restart_identity",
+      "result": "PASS"
+    },
+    {
+      "name": "kill_original_records_survive_restart_and_refusals",
+      "result": "PASS"
+    },
+    {
+      "name": "kill_does_not_automatically_restore_drivers",
+      "result": "PASS"
+    },
+    {
+      "name": "normal_and_admin_retirement_empty_records",
+      "result": "PASS"
+    },
+    {
+      "name": "three_cycles_and_autonomous_disconnect",
+      "result": "PASS"
+    },
+    {
+      "name": "cycle_actual_key_and_bidirectional_35_bytes:1",
+      "result": "PASS"
+    },
+    {
+      "name": "cycle_actual_key_and_bidirectional_35_bytes:2",
+      "result": "PASS"
+    },
+    {
+      "name": "cycle_actual_key_and_bidirectional_35_bytes:3",
+      "result": "PASS"
+    },
+    {
+      "name": "raw_ftdi_host_tx_three_cycles_105_bytes",
+      "result": "PASS"
+    },
+    {
+      "name": "four_local_signal_scenarios",
+      "result": "PASS"
+    },
+    {
+      "name": "two_original_backpressure_cases",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_official_run_source_and_success",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_four_native_platforms",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_official_job:120264284433",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_raw_250_tests_31_groups:120264284433",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_four_raw_signal_markers:120264284433",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_official_job:120264284710",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_raw_250_tests_31_groups:120264284710",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_four_raw_signal_markers:120264284710",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_official_job:120264284774",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_raw_250_tests_31_groups:120264284774",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_four_raw_signal_markers:120264284774",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_official_job:120264284822",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_raw_250_tests_31_groups:120264284822",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_four_raw_signal_markers:120264284822",
+      "result": "PASS"
+    },
+    {
+      "name": "ci_independent_parser_746_checks",
+      "result": "PASS"
+    },
+    {
+      "name": "independent_raw_journal_review_418",
+      "result": "PASS"
+    },
+    {
+      "name": "independent_regression_review_575",
+      "result": "PASS"
+    },
+    {
+      "name": "original_e0ac478_failure_not_overwritten",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:README and AGENTS distinguish old 1342a6a failure, b75f14b implementation, and final 933e720 validation.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:Acceptance preserves original whole-phase requirements and adds only a bounded E25 lifecycle substep.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:Compatibility and roadmap retain physical Ubuntu 24.04 / aarch64 USB, hardware G1/G2, automatic recovery, isolation and future phase boundaries.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:Physical server runbook distinguishes external administrator USB restoration from read-only journal reconciliation and does not recommend deleting unresolved records.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:Work log preserves development and first-runtime failures, later repair rationale, source SHA and final success chronology.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:Research report accurately separates disk evidence in journal from inferred retirement in legacy regressions and explains CI log/artifact limits.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:No reviewed text claims automatic SIGKILL restoration, arbitrary retained-FD revocation, reboot or power-loss validation, or completed hardware/whole Phase 2.",
+      "result": "PASS"
+    },
+    {
+      "name": "manual_scope_review:Documentation changes after 933e720 do not reattribute existing runtime or CI evidence to a later documentation commit.",
+      "result": "PASS"
+    },
+    {
+      "name": "reviewed_documents_unchanged_during_check",
+      "result": "PASS"
+    }
+  ],
+  "mustfix": [],
+  "counts": {
+    "documents": 8,
+    "local_link_occurrences": 161,
+    "manifest_artifacts": {
+      "docs/evidence/physical-journal-final-933e720-20261023/manifest.json": 107,
+      "docs/evidence/publication-journal-933e720-20261023.json": 11
+    },
+    "runtime_frozen_inputs": 144,
+    "software_inputs_matched_to_both_commits": 98,
+    "qemu_suites": 5,
+    "qemu_guest_exit_zero": 10,
+    "serial_run_groups": 7,
+    "ci_jobs": 4,
+    "software_executions_per_gate": 250,
+    "raw_journal_immediate_records": 18,
+    "raw_journal_immediate_waits": 7
+  },
+  "boundaries": [
+    "All runtime and CI evidence remains attributed to 933e720531fd96b7a23616ed687d59b816e0ce09; later documentation or archive commits do not acquire this runtime provenance.",
+    "This review does not rerun runtime verification or validate live external URLs; local Markdown file targets are checked, URL fragments are not independently re-rendered.",
+    "Automatic driver restoration after SIGKILL, arbitrary USBFS FD copies/revocation, power-loss/reboot durability, real hardware G1/G2, complete Phase 2, ISO, kernel internal hard blocks and Windows USB remain unverified or unfinished as documented.",
+    "QEMU journal directly records disk/API/sysfs; legacy regression retirement relies on immutable successful code paths and observed exits/stopped events rather than per-grant disk dumps.",
+    "CI archive is UTF-8 connector log text plus official REST state; workflow does not publish every local scenario raw artifact.",
+    "Source review, software tests, QEMU and CI each retain their respective evidence limits; no hardware or broad automatic-recovery conclusion is inferred."
+  ],
+  "mustfix_count": 0,
+  "repo_mutated_by_review": false
+}
