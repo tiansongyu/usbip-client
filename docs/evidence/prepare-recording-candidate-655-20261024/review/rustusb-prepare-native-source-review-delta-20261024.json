@@ -1,0 +1,34 @@
+{
+  "status": "N1_closed_by_source_delta; runtime_test_pending",
+  "date": "2026-10-24",
+  "initial_review": "/tmp/rustusb-prepare-native-source-review-initial-20261024.json",
+  "initial_review_sha256": "24c1e0becff45c9af3b556c2a170b2f0d4b94296d4d26dbf0d841a882edb64c6",
+  "sources": [
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "first_gate_sha256": "f7459b295ce4e728ce9c12117a7f613e207757a3ad1190e7f5f6cf3a0f66502e",
+      "revised_sha256": "2f0a1265d269d245f91ef845b2b6929c8906a757e67f318f21c4a48dd49a1918"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "first_gate_sha256": "515f37c5417ccc96776b7181060399ed2992afe7b9069d315aa1ca6f8c34e082",
+      "revised_sha256": "9484c45b6cb3a9fbfa1536c290825111735f5bc1c1eeb22d16cfd1f7387ed80c"
+    }
+  ],
+  "confirmed": [
+    "Only production semantic addition is retaining the identity mismatch Failure before returning the original StageError::Operation(Error::Protocol)",
+    "prior_failure first-write semantics also retain old recording errors; final session Finish receives the saved category independently from actual cleanup",
+    "Original JobOutcome operation remains Protocol, actual close remains independent, recording is not incorrectly changed to an operation error",
+    "New bounded 5s fixture drives actual production received-owner phase: Resource ACK success, ordinary Unix close receipt, Closing then Finish with Some(Failure::State)/Cleanup::Verified, overall Protocol and cleanup/recording Ok",
+    "Original first-gate source SHA f7459b29 and tests515f37c5 unchanged in archived snapshot; initial mustfix report not overwritten"
+  ],
+  "execution": {
+    "repo_edits": false,
+    "cargo": false,
+    "qemu": false,
+    "git": false,
+    "runtime_tests": false
+  },
+  "parent_reported_only": "First pre-N1-fix gate:default55/allfeatures64 and both Clippy gates passed; N1 correction is later and is not attributed to that PASS.",
+  "remaining_mustfix_in_reviewed_delta": []
+}

@@ -1,0 +1,6 @@
+
+          . as $root | ($sessions[0]|length)==2 and all($sessions[0][];
+          . as $s | .attempts[0] as $a |
+          all($root.records[];.lease_id!=$a.resource_id) and
+          any($root.terminals[];.resource_id==$a.resource_id and .kind=="usbfs_grant" and .owner_uid==2000 and .correlation==$a.correlation and .device_key==$s.device_key and .proof=="physical_baseline_restored"))
+null

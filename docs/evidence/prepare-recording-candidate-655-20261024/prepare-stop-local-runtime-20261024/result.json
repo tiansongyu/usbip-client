@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "scripts/test-server-signals.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--skip-build",
+        "--evidence",
+        "/tmp/rustusb-prepare-stop-local-runtime-20261024/signals"
+      ],
+      "exit_code": 0,
+      "log": "signals.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test-virtual-backpressure.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb"
+      ],
+      "exit_code": 0,
+      "log": "backpressure.log"
+    }
+  ],
+  "cli_sha256": "b7d610e002317d73c3603ebfb82866e0447f97dd5696236b81978b5998881554",
+  "binary_stable": true,
+  "inputs_stable": true,
+  "selected_inputs": 167,
+  "scope": "Same actual all-features release CLI as full655 software gate; ordinary-user original four signal/two stdout-backpressure regressions. No host USB/kernel mutation."
+}

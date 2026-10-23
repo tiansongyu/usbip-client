@@ -1,0 +1,265 @@
+{
+  "fixture": {
+    "fds": [
+      {
+        "fd": "20",
+        "target": "/dev/bus/usb/001/003",
+        "device": "123",
+        "inode": "164",
+        "rdev": "bd:2"
+      },
+      {
+        "fd": "21",
+        "target": "/dev/bus/usb/001/002",
+        "device": "123",
+        "inode": "161",
+        "rdev": "bd:1"
+      }
+    ],
+    "records": [
+      {
+        "lease_id": "0f2a3439-dabc-484a-b5ff-60599dfc6fb2",
+        "owner": {
+          "uid": 2000,
+          "pid": 580,
+          "start_time": 373,
+          "boot_id": "147c43f7-4186-45cb-9b96-746de5de98d9"
+        },
+        "baseline": {
+          "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+          "bus_id": "1-2",
+          "receipt": {
+            "sysfs_device": 23,
+            "sysfs_inode": 25696,
+            "node_device": 48386,
+            "node_inode": 164,
+            "usb_device_number": 3,
+            "bus_number": 1
+          },
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "ftdi_sio"
+            }
+          ]
+        },
+        "recovery": "manual_only",
+        "correlation": {
+          "instance_id": "a263c644-9825-41dd-8794-40b4fc6f20d2",
+          "session_id": "1a1a3607-ec72-457d-8235-5948e7acc520",
+          "attempt_id": "0c664547-8f7f-48cf-8507-4f0acfdc2b45"
+        }
+      },
+      {
+        "lease_id": "84d2e0ae-9c6b-4cda-8018-fbd5bdd70eb2",
+        "owner": {
+          "uid": 2000,
+          "pid": 580,
+          "start_time": 373,
+          "boot_id": "147c43f7-4186-45cb-9b96-746de5de98d9"
+        },
+        "baseline": {
+          "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+          "bus_id": "1-1",
+          "receipt": {
+            "sysfs_device": 23,
+            "sysfs_inode": 25462,
+            "node_device": 48385,
+            "node_inode": 161,
+            "usb_device_number": 2,
+            "bus_number": 1
+          },
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "usbhid"
+            }
+          ]
+        },
+        "recovery": "manual_only",
+        "correlation": {
+          "instance_id": "a263c644-9825-41dd-8794-40b4fc6f20d2",
+          "session_id": "00620a1e-99c3-40fb-a749-2f17657e9979",
+          "attempt_id": "24419092-cef6-4bd9-b029-0fc04c34fcda"
+        }
+      }
+    ],
+    "hosts": [
+      {
+        "bus": "1-1",
+        "generation": "23:25462",
+        "devnum": "2",
+        "path": "/sys/devices/pci0000:00/0000:00:04.0/usb1/1-1",
+        "busnum": "1",
+        "vendor": "0627",
+        "product": "0001",
+        "speed": "480",
+        "release": "0000",
+        "configuration": "1",
+        "num_interfaces": " 1",
+        "configuration_bytes": 2,
+        "count_bytes": 3,
+        "interfaces": [
+          {
+            "name": "1-1:1.0",
+            "number": "00",
+            "alt": " 0",
+            "class": "03",
+            "subclass": "01",
+            "protocol": "01",
+            "driver": "usbhid"
+          }
+        ],
+        "device_driver": "usb",
+        "usbip_status": null
+      },
+      {
+        "bus": "1-2",
+        "generation": "23:25696",
+        "devnum": "3",
+        "path": "/sys/devices/pci0000:00/0000:00:04.0/usb1/1-2",
+        "busnum": "1",
+        "vendor": "0403",
+        "product": "6001",
+        "speed": "12",
+        "release": "0400",
+        "configuration": "1",
+        "num_interfaces": " 1",
+        "configuration_bytes": 2,
+        "count_bytes": 3,
+        "interfaces": [
+          {
+            "name": "1-2:1.0",
+            "number": "00",
+            "alt": " 0",
+            "class": "ff",
+            "subclass": "ff",
+            "protocol": "ff",
+            "driver": "ftdi_sio"
+          }
+        ],
+        "device_driver": "usb",
+        "usbip_status": null
+      }
+    ],
+    "nodes": [
+      {
+        "bus": "1-2",
+        "node": "/dev/bus/usb/001/003",
+        "filesystem_device": "123",
+        "inode": "164",
+        "rdev": "bd:2",
+        "sysfs_dev": "189:2",
+        "generation": "23:25696",
+        "mode": "660",
+        "uid": 0,
+        "links": 1,
+        "character_device": true
+      },
+      {
+        "bus": "1-1",
+        "node": "/dev/bus/usb/001/002",
+        "filesystem_device": "123",
+        "inode": "161",
+        "rdev": "bd:1",
+        "sysfs_dev": "189:1",
+        "generation": "23:25462",
+        "mode": "600",
+        "uid": 0,
+        "links": 1,
+        "character_device": true
+      }
+    ]
+  },
+  "facts": [
+    [
+      true,
+      "exact two FD/receipt/host/node observations"
+    ],
+    [
+      true,
+      "distinct actual hardware buses"
+    ],
+    [
+      true,
+      "one original host/node for 1-2"
+    ],
+    [
+      true,
+      "one actual received node path 1-2"
+    ],
+    [
+      false,
+      "protected actual character node 1-2"
+    ],
+    [
+      true,
+      "FD actual filesystem identity matches original node inode 1-2"
+    ],
+    [
+      true,
+      "FD/node/sysfs actual major and minor 1-2"
+    ],
+    [
+      true,
+      "original receipt node_device is actual st_rdev 1-2"
+    ],
+    [
+      true,
+      "original bus and USB address 1-2"
+    ],
+    [
+      true,
+      "original full sysfs directory generation 1-2"
+    ],
+    [
+      true,
+      "original configuration and complete interface/driver baseline 1-2"
+    ],
+    [
+      true,
+      "one original host/node for 1-1"
+    ],
+    [
+      true,
+      "one actual received node path 1-1"
+    ],
+    [
+      true,
+      "protected actual character node 1-1"
+    ],
+    [
+      true,
+      "FD actual filesystem identity matches original node inode 1-1"
+    ],
+    [
+      true,
+      "FD/node/sysfs actual major and minor 1-1"
+    ],
+    [
+      true,
+      "original receipt node_device is actual st_rdev 1-1"
+    ],
+    [
+      true,
+      "original bus and USB address 1-1"
+    ],
+    [
+      true,
+      "original full sysfs directory generation 1-1"
+    ],
+    [
+      true,
+      "original configuration and complete interface/driver baseline 1-1"
+    ],
+    [
+      true,
+      "bijection of the two actual accepted character capabilities"
+    ]
+  ],
+  "expected_valid": false
+}

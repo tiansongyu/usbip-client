@@ -1,0 +1,265 @@
+{
+  "status": "PASS read-only independent-method evidence review",
+  "actual_start": {
+    "utc": "2026-10-23T22:54:32.894424+00:00",
+    "head": "21a96fa5a0ef21293b431f180752feaf75e7d15e",
+    "status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/native.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n?? crates/rustusb-service/src/jobs/native_prepare_tests.rs\n?? crates/rustusb-service/src/jobs/recording.rs\n",
+    "command": [
+      "bash",
+      "-x",
+      "scripts/check.sh"
+    ],
+    "scope": "Actual dirty primary run; later individual Git input mapping must not relabel this clean."
+  },
+  "test_counts": {
+    "default": 274,
+    "all_features": 361,
+    "vendor": 20
+  },
+  "test_execution_total": 655,
+  "test_result_rows": 39,
+  "unique_qualified_target_and_test_names": 381,
+  "actual_cargo_steps": [
+    "cargo fmt --all -- --check",
+    "cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "cargo test --workspace --locked",
+    "cargo build --workspace --release --locked",
+    "cargo doc --workspace --no-deps --locked",
+    "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+    "cargo test --workspace --all-features --locked",
+    "cargo build --workspace --all-features --release --locked",
+    "cargo doc --workspace --all-features --no-deps --locked",
+    "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests"
+  ],
+  "rustdoc_warnings_as_errors": 2,
+  "source_inputs": 167,
+  "source_copies_all_match": true,
+  "input_before_after_equal": true,
+  "artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "bytes": 15211536,
+      "sha256": "b7d610e002317d73c3603ebfb82866e0447f97dd5696236b81978b5998881554",
+      "dev": 66306,
+      "inode": 79633345,
+      "mtime_ns": 1792796156692107015
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "bytes": 5926600,
+      "sha256": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5",
+      "dev": 66306,
+      "inode": 79629147,
+      "mtime_ns": 1792788254566469717
+    }
+  ],
+  "native_only_normal_dependencies": [
+    "anstream",
+    "anstyle",
+    "anstyle-parse",
+    "anstyle-query",
+    "atomic-waker",
+    "bitflags",
+    "block-buffer",
+    "bytes",
+    "cfg-if",
+    "clap",
+    "clap_builder",
+    "clap_derive",
+    "clap_lex",
+    "colorchoice",
+    "cpufeatures",
+    "crypto-common",
+    "digest",
+    "equivalent",
+    "errno",
+    "fnv",
+    "futures-core",
+    "futures-sink",
+    "generic-array",
+    "getrandom",
+    "h2",
+    "hashbrown",
+    "heck",
+    "http",
+    "indexmap",
+    "is_terminal_polyfill",
+    "itoa",
+    "lazy_static",
+    "libc",
+    "linux-raw-sys",
+    "log",
+    "matchers",
+    "memchr",
+    "mio",
+    "nu-ansi-term",
+    "once_cell",
+    "pin-project-lite",
+    "proc-macro2",
+    "quote",
+    "regex-automata",
+    "regex-syntax",
+    "ring",
+    "rustix",
+    "rustls",
+    "rustls-pki-types",
+    "rustls-webpki",
+    "rustusb-cli",
+    "rustusb-core",
+    "rustusb-daemon",
+    "rustusb-linux",
+    "rustusb-native",
+    "rustusb-protocol",
+    "rustusb-service",
+    "rustusb-transport",
+    "serde",
+    "serde_core",
+    "serde_derive",
+    "serde_json",
+    "sha2",
+    "sharded-slab",
+    "signal-hook-registry",
+    "slab",
+    "smallvec",
+    "socket2",
+    "strsim",
+    "subtle",
+    "syn",
+    "thiserror",
+    "thiserror-impl",
+    "thread_local",
+    "tokio",
+    "tokio-macros",
+    "tokio-rustls",
+    "tokio-util",
+    "tracing",
+    "tracing-attributes",
+    "tracing-core",
+    "tracing-log",
+    "tracing-serde",
+    "tracing-subscriber",
+    "typenum",
+    "unicode-ident",
+    "untrusted",
+    "utf8parse",
+    "zeroize",
+    "zmij"
+  ],
+  "native_only_has_service_h2": true,
+  "native_only_has_rustengine_nusb_rusb": false,
+  "local_runtime": {
+    "terminal": true,
+    "signal_cases": [
+      {
+        "case": "ready-sigint",
+        "signal": 2,
+        "pid": 2623072,
+        "elapsed_seconds": 0.000877059,
+        "executed_binary": {
+          "device": 66306,
+          "inode": 79633345,
+          "proc_exe": "/proc/2623072/exe",
+          "resolved": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+          "sha256": "b7d610e002317d73c3603ebfb82866e0447f97dd5696236b81978b5998881554"
+        },
+        "actual_eofs": 2,
+        "backend_snapshot": true
+      },
+      {
+        "case": "ready-sigterm",
+        "signal": 15,
+        "pid": 2623107,
+        "elapsed_seconds": 0.000843135,
+        "executed_binary": {
+          "device": 66306,
+          "inode": 79633345,
+          "proc_exe": "/proc/2623107/exe",
+          "resolved": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+          "sha256": "b7d610e002317d73c3603ebfb82866e0447f97dd5696236b81978b5998881554"
+        },
+        "actual_eofs": 2,
+        "backend_snapshot": true
+      },
+      {
+        "case": "blocked-sigint",
+        "signal": 2,
+        "pid": 2623142,
+        "elapsed_seconds": 0.001075464,
+        "executed_binary": {
+          "device": 66306,
+          "inode": 79633345,
+          "proc_exe": "/proc/2623142/exe",
+          "resolved": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+          "sha256": "b7d610e002317d73c3603ebfb82866e0447f97dd5696236b81978b5998881554"
+        },
+        "actual_eofs": 2,
+        "backend_snapshot": false
+      },
+      {
+        "case": "blocked-sigterm",
+        "signal": 15,
+        "pid": 2623177,
+        "elapsed_seconds": 0.001074131,
+        "executed_binary": {
+          "device": 66306,
+          "inode": 79633345,
+          "proc_exe": "/proc/2623177/exe",
+          "resolved": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+          "sha256": "b7d610e002317d73c3603ebfb82866e0447f97dd5696236b81978b5998881554"
+        },
+        "actual_eofs": 2,
+        "backend_snapshot": false
+      }
+    ],
+    "backpressure": {
+      "result": "PASS",
+      "scope": "local CLI output backpressure; no physical USB or kernel changes",
+      "host_uid": 1000,
+      "checks": [
+        {
+          "mode": "sigint",
+          "exit": 0,
+          "elapsed_seconds": 0.003,
+          "stdout_capacity": 4096,
+          "stdout_drained_after_fill": false,
+          "lease_socket_closed": true
+        },
+        {
+          "mode": "deadline",
+          "exit": 1,
+          "elapsed_seconds": 4.82,
+          "stdout_capacity": 4096,
+          "stdout_drained_after_fill": false,
+          "lease_socket_closed": true
+        }
+      ]
+    },
+    "source_inventory_entries": 8875,
+    "selected_input_overlap_matches": 166,
+    "signal_inventory_omits": [
+      "scripts/check.sh"
+    ],
+    "omitted_script_verified_in_full_gate_source_snapshot": true
+  },
+  "raw_originals": 214,
+  "limits": [
+    "Actual software run was dirty21a96fa; no future commit or clean label inferred.",
+    "655 are executions across default/all-features/vendor; 39 result rows include zero-test/doc targets. Unique qualified names are not USB cases.",
+    "Software native/USBFS fixtures use controlled ordinary-user observations; no kernel/QEMU/hardware acceptance inferred.",
+    "Original local four signal/two backpressure tests exercise plaintext virtual foreground, not TLS/network blackhole or physical USB.",
+    "Four signal cases have actual child /proc executable SHA+inode and process identity receipts. Two old BP cases have wrapper same-binary guard and their existing JSON, not equivalent per-child raw artifacts.",
+    "Ready signal cases have stopped backend snapshots; blocked cases prove process exit/two sockets EOF with stdout unread, not a missing stopped snapshot.",
+    "Reviewer authored part of Rust/client/recording implementation: method cross-review, not independent implementation authorship.",
+    "This review does not invoke any original harness verifier or product executable."
+  ],
+  "execution": {
+    "cargo": false,
+    "qemu": false,
+    "git": false,
+    "repository_edits": false
+  },
+  "review_process_notes": [
+    "Initial inspection accidentally printed the large public source-hash inventory; subsequent reads select fields only. No original was modified.",
+    "Initial parser required all167 full-gate inputs in the signals selector and failed on scripts/check.sh. Original parser/error are preserved; final parser strictly requires this one exact selector omission, verifies166 shared inputs, and verifies check.sh in the full-gate copied source. No runtime assertion or product result was changed."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-24",
+  "status": "two_additional_source_defects_confirmed; no_edit",
+  "initiated_by": "root self-review; reviewer and Native author independently confirmed current paths",
+  "source_sha256": "2f0a1265d269d245f91ef845b2b6929c8906a757e67f318f21c4a48dd49a1918",
+  "preserve_reports": [
+    "/tmp/rustusb-prepare-native-source-review-initial-20261024.json",
+    "/tmp/rustusb-prepare-native-source-review-delta-20261024.json"
+  ],
+  "findings": [
+    {
+      "id": "A",
+      "description": "N1 fixes only Resource Ready(Ok). Interrupted preserves pending/reason but never checks already-known received_key mismatch, so simultaneous stop can suppress identity Protocol in both job outcome and session Finish.",
+      "minimum_repair": "Capture mismatch before Resource waiting, retain its failure category and request actual close of that export; preserve original Resource future regardless of stop; all Ready/Interrupted branches retain original operation Protocol and eventual Finish category."
+    },
+    {
+      "id": "B",
+      "description": "Preparation.stopping treats any local/session/internal export stop as group interruption, and finish_received_export local Interrupted returns Err(success). Top run calls close_all, so preparation-time StopSession closes already-prepared siblings. Active per-session behavior does not excuse this public-contract violation.",
+      "minimum_repair": "Distinguish local cancellation from job stop and real fault; local cancellation returns a skip result and top continues other configured devices. Skip cancelled Available observations; admission checks session stop directly. Preserve its pending record and actual-close task without waiting for healthy sibling closes. Track watcher lost/cleanup cause rather than raw invalidated/internal stop, since normal local close also changes those signals. Keep listener with surviving or empty catalog until explicit job stop unless a real error requires group failure.",
+      "minimum_regression": "Independent local sender, global false; target Resource/Available held, only target closes, sibling does not; release original ACK success and prove sibling usable; then global stop and all joins. A late original recording error is separately allowed to fail the job and cannot be used to conceal cancellation semantics."
+    }
+  ],
+  "relation_to_first_full_gate": "Actual 655/39 software gate remains observed PASS for this candidate; it did not cover A/B. No existing raw result is reclassified or future PASS inferred.",
+  "review_scope_correction": "Earlier delta review correctly closed Ready-branch N1 but did not establish interrupted identity or preparation-local-stop semantics; this addendum records that gap without overwriting prior sources or reports.",
+  "execution": {
+    "repository_edits": false,
+    "cargo": false,
+    "qemu": false,
+    "git": false
+  }
+}

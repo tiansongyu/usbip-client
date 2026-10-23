@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-24",
+  "status": "private_interface_recommendation_not_implementation",
+  "scope": "Native startup per-export cancellation after durable reservation but before helper RPC",
+  "sources": [
+    {
+      "path": "docs/research/prepare-recording-shutdown-design.md",
+      "sha256": "5811e48ad64b7242a85ba0bd1a6ddee21d246ba0ffe2f9aa691e366f01148433"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "sha256": "2f17f75fe7ac7276711c0bccb75617e76a43f1129433076d77bb4e6b119dbf2d"
+    },
+    {
+      "path": "crates/rustusb-service/src/model.rs",
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095"
+    },
+    {
+      "path": "crates/rustusb-service/src/foreground.rs",
+      "sha256": "9bcb5d683e3750405e776ec45cc0094a1cb31fef9ad6684f31b7185ee7e760f9"
+    }
+  ],
+  "existing_contract": [
+    "Runtime::finish rejects Cleanup::NotStarted when attempts is nonempty; do not alter this guard",
+    "Unconfirmed follows existing Error/evidenceUnconfirmed logical terminal representation, not a verified Released/root proof",
+    "Runtime::job_finished detects any retained Unconfirmed session and marks the job Recovering; preserve this behavior",
+    "Foreground None is not a reservation and no unsent helper request may be falsely recorded as attempted"
+  ],
+  "recommended_private_interface": {
+    "enum": "PrepareOutcome { Ready(Arc<Export>), LocalCancelled { unresolved: Option<Error> }, JobStopped } with real failures still Result::Err(JobOutcome)",
+    "local_reserved": "When local stop is observed after real Attempt ACK Some(correlation), before calling helper, emit actual session Finish with Cleanup::Unconfirmed and an existing fixed cancellation/failure category. Await the same recording response. Do not request helper just to manufacture a terminal proof.",
+    "local_unreserved": "If no attempt was reserved or sent, actual session Finish may use NotStarted, then LocalCancelled without unresolved metadata.",
+    "aggregation": "Keep local metadata-only unresolved results in a finite collection (at most configured16) or single bounded aggregate separate from the live-loop JobOutcome guard. At eventual genuine whole-job stop, after all actual close/records are joined, merge it into final JobOutcome.",
+    "real_errors": "Actual helper error, source invalidation/close failure, known identity error or a real original/Finish recording error remains a job failure. Never classify these as benign local cancellation.",
+    "stop_precedence": "Global stop remains global even when a local flag is also set. Once helper RPC is accepted, retain it to actual reply; this no-handle branch is no longer applicable."
+  },
+  "why_not_merge_immediately": "run checks operation/cleanup/recording errors to invoke close_all. Reusing a normal error outcome for intentionally conservative no-handle metadata would grant it unintended authority to close a safe sibling.",
+  "minimal_software_assertions": [
+    "Hold a real Attempt reply while an independent sibling endpoint is acquired; request only local stop, then return Some(correlation)",
+    "Assert no new helper connection/Resource occurs after that reply; exact session Finish is Unconfirmed, never NotStarted/Verified",
+    "Sibling endpoint remains owned and receives no close; successful late record permits preparation/serving of remaining pool",
+    "A later global stop closes the sibling exactly once and returns the conservative final outcome; Runtime still retains Unconfirmed/Recovering",
+    "Repeat without reserved attempt for truthful NotStarted and with a late recording error to prove that genuine journal failure still triggers the global-failure path"
+  ],
+  "execution": {
+    "repository_edits": false,
+    "cargo": false,
+    "qemu": false,
+    "git": false
+  },
+  "coordination": "Shared with Native author and root; final internal enum spelling may differ, semantics above are the frozen recommendation."
+}

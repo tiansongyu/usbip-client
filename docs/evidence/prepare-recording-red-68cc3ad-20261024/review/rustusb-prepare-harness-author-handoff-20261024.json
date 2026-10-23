@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "state": "source_frozen_for_root_review_build_and_QEMU",
+  "owned_files": {
+    "scripts/qemu_prepare_recording_shutdown/README.md": {
+      "sha256": "0081521f952835288e25ed5e82d6a962fcd72279be52dd7cd4b3c1b449b0946f",
+      "bytes": 3908
+    },
+    "scripts/qemu_prepare_recording_shutdown/guest-init.sh": {
+      "sha256": "81a4388d1b642a733f57a28bb852383c5ce742fb97fe0660944cd9307647ca5f",
+      "bytes": 19319
+    },
+    "scripts/qemu_prepare_recording_shutdown/prepare-gate.c": {
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909",
+      "bytes": 39221
+    },
+    "scripts/qemu_prepare_recording_shutdown/run.py": {
+      "sha256": "f51322b18aafba66428cf30019a97925e7e1ba27613eb90674df033ac0668606",
+      "bytes": 18513
+    },
+    "scripts/qemu_prepare_recording_shutdown/verify.py": {
+      "sha256": "9ffab15cbd279c5e43bf650780a61c38f67d1f8e85b74d0e21268a6daa407b7e",
+      "bytes": 16265
+    }
+  },
+  "static_report": "/tmp/rustusb-prepare-harness-static-revision2-20261024/report.json",
+  "static_parser": "/tmp/check-prepare-static.py",
+  "static_checks": 54,
+  "initial_static_parser_failure_preserved": "/tmp/rustusb-prepare-harness-static-20261024/jq-0.txt",
+  "initial_failure_scope": "checker accidentally selected stat %d as jq, not guest/production execution",
+  "c_compile_by_root": "/tmp/rustusb-prepare-gate-first-compile-20261024",
+  "author_executed_cargo": false,
+  "author_executed_qemu": false,
+  "author_executed_probe": false,
+  "commands": [
+    "python3 scripts/qemu_prepare_recording_shutdown/run.py --case native-resource --stop job --kernel KERNEL --evidence FRESH",
+    "same --stop term",
+    "same --case usbfs-resource",
+    "same --case usbfs-initializer"
+  ],
+  "scope": [
+    "same job two devices, second Resource state.next fsync ENTRY",
+    "accepted initializer GET_CONFIGURATION ENTRY and retained actual worker",
+    "actual StopJob background request vs actual SIGTERM",
+    "tracer held-before/after same syscall, raw roots/sysfs/FDs",
+    "fresh agent/job actual HID KEY1 plus FTDI 35B each way after original cleanup",
+    "first old-product RED remains FAIL despite completed cleanup/reuse"
+  ],
+  "limits": [
+    "no independent running sibling profile I/O during prepare",
+    "no reproduced in-kernel active stall",
+    "Native process FD tables preserved without claiming exact individual control UDS identity",
+    "no actual QEMU run performed by author yet"
+  ]
+}

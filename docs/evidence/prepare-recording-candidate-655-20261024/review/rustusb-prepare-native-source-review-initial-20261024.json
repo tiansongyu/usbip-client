@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-24",
+  "status": "source_review_with_one_operation_attribution_fix_requested",
+  "sources": [
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 69242,
+      "sha256": "f7459b295ce4e728ce9c12117a7f613e207757a3ad1190e7f5f6cf3a0f66502e"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "bytes": 17228,
+      "sha256": "515f37c5417ccc96776b7181060399ed2992afe7b9069d315aa1ca6f8c34e082"
+    }
+  ],
+  "confirmed_source_contracts": [
+    "Preparation.register is the sole production actual_close caller and registers before Resource awaits",
+    "Watcher has independent job/session/export/source stop receivers; a later Begin/Intent/Attempt wait owns no previous handle and cannot block those watcher tasks",
+    "Preparation Resource/Available original metadata futures are retained on Export and drained before that session Closing/Finish",
+    "Preparation.close_all requests every stop and joins actual close JoinSet before spawning metadata finalize tasks",
+    "Active per-session export close disables its own admission only; sibling remains until separate stop/failure; finalizers own no actual capability",
+    "Active shutdown drops listener/requests network stop, requests all export stop, collects actual close before awaiting remaining tasks; no JoinSet::shutdown or intentional abort of resource tasks introduced",
+    "Helper export prepare still directly awaited to actual result; stop after its return gets an immediate registered watcher",
+    "Native use_lock spans real stub/actual close, not pending lifecycle records",
+    "No new foreground WAL/correlation or changed raw-v1/v2 relay behavior",
+    "Normal new paths preserve all actual JoinSets through joins; abnormal task failure remains explicit cleanup-unconfirmed"
+  ],
+  "finding": {
+    "id": "N1",
+    "severity": "must_fix_session_error_attribution",
+    "source": "native.rs finish_received_export Ready(Ok) identity mismatch / Export::finalize",
+    "description": "Protocol identity mismatch is preserved in parent JobOutcome.operation but no failure category is saved on Export; finalization emits Finish(operation_error=None,cleanup=Verified) if actual close succeeded. Previous prepare failure path passed the operation error to the session Finish.",
+    "recommendation": "Retain the original pre-finalization operation Failure on the received Export, distinct from recording outcome, and include it in Finish. Preserve the original parent operation error and real cleanup independently. Add a received-key mismatch fixture with successful actual close and verify nonempty Finish error.",
+    "reported_to": [
+      "root",
+      "native_diagnostics"
+    ],
+    "implementation": "not_modified_by_reviewer"
+  },
+  "test_scope": [
+    "native_prepare_tests uses production owner phases, real JobMessage oneshots, ordinary Unix stream close/receipt and actual bound listener",
+    "No root credential validation bypass or real USB/helper/kernel receipt is claimed",
+    "Held Begin/Attempt has one prior actual software owner; Resource/Available use two; timeout is an assertion failure and original gate is later released for teardown",
+    "Sole per-session stop behavior verified here from source, not newly executed by this reviewer"
+  ],
+  "execution": {
+    "repository_edits": false,
+    "cargo": false,
+    "qemu": false,
+    "git": false,
+    "tests_run": false
+  },
+  "authorship": "Reviewer authored shared recording primitive/client/Rust implementation; Native implementation by another agent. Method cross-review, not blanket independent implementation claim."
+}

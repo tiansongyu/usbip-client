@@ -1,0 +1,53 @@
+{
+  "utc": "2026-10-23T22:49:46.638119+00:00",
+  "head": "c2372f04a9c1a6d5a366f77184628aecfc8bd592",
+  "status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/native.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n?? crates/rustusb-service/src/jobs/native_prepare_tests.rs\n?? crates/rustusb-service/src/jobs/recording.rs\n?? scripts/qemu_prepare_recording_shutdown/\n",
+  "commands": [
+    [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-service",
+      "--locked"
+    ],
+    [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-service",
+      "--all-features",
+      "--locked"
+    ],
+    [
+      "cargo",
+      "clippy",
+      "-p",
+      "rustusb-service",
+      "--all-targets",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    [
+      "cargo",
+      "clippy",
+      "-p",
+      "rustusb-service",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ]
+  ],
+  "scope": "First complete service default/all-features development gate; not whole workspace/release/QEMU acceptance."
+}

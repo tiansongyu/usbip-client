@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "result": "PASS_SOURCE_REVIEW_NO_REMAINING_MUSTFIX",
+  "recorded_utc": "2026-10-23T23:03:07.792618+00:00",
+  "scope": "Read-only source review of the five new prepare-recording QEMU harness files. Reviewer is also an author of Native product changes, not a wholly independent system implementer. No Cargo/C/probe build, QEMU, USB operation, Git or repository edit performed.",
+  "sources": [
+    {
+      "path": "scripts/qemu_prepare_recording_shutdown/README.md",
+      "bytes": 3909,
+      "sha256": "9305a196b850043e5538c781b27efa5c0e503749de867328c726c752a198a54b",
+      "matches_author_revision2": true
+    },
+    {
+      "path": "scripts/qemu_prepare_recording_shutdown/guest-init.sh",
+      "bytes": 21356,
+      "sha256": "440fd823708eaf8148ea388b8642d18e268f4e62c84d95481c954a0d93452358",
+      "matches_author_revision2": true
+    },
+    {
+      "path": "scripts/qemu_prepare_recording_shutdown/prepare-gate.c",
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909",
+      "matches_author_revision2": true
+    },
+    {
+      "path": "scripts/qemu_prepare_recording_shutdown/run.py",
+      "bytes": 18513,
+      "sha256": "f51322b18aafba66428cf30019a97925e7e1ba27613eb90674df033ac0668606",
+      "matches_author_revision2": true
+    },
+    {
+      "path": "scripts/qemu_prepare_recording_shutdown/verify.py",
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7",
+      "matches_author_revision2": true
+    }
+  ],
+  "initial_findings_resolved": [
+    {
+      "finding": "No actual armed event barrier before starting the only initializer/Resource run.",
+      "resolution": "guest-init.sh waits for exactly one complete tracer armed JSON event, matching nonce/operation/ready PID/starttime, then prints ARMED before start. verify.py requires exact unique event identity/time ordering. jq -es requires length1, so empty/duplicate/partial events cannot pass."
+    },
+    {
+      "finding": "USBFS capability counts alone did not bind actual FD identity to original root receipt.",
+      "resolution": "guest captures protected character-node st_dev/inode/st_rdev and sysfs dev/generation. verify.py maps two FD paths/st_dev/inodes/rdev through exact node to receipt and original bus/address/sysfs generation/configuration/full interface-driver profile. Receipt.node_device is correctly treated as st_rdev. Initializer samples preserve both original records and both mapped FDs, and bind the actual held fd to HID."
+    }
+  ],
+  "reviewed_invariants": [
+    {
+      "path": "guest-init.sh:78-113; verify.py:74-118",
+      "facts": "Same pool/job two received export attempts; selected Resource draft is unpublished seq+1 and exactly one prior received Resource is committed. Root records are independently checked with original correlation/UID/PID/starttime and live Native bound/no-stub state."
+    },
+    {
+      "path": "prepare-gate.c:483-659,779-935",
+      "facts": "Guest-root plus dedicated boot markers, fixed setprivUID2000 argv, close_range before exec, per-TID syscall-entry hold. fsync candidates pin protected state.next dev/inode; initializer reads only12 fixed GET_CONFIGURATION header bytes plus4 ABI padding, not its pointer/payload. No register/result mutation. Held-before/after/resume/exit recheck actual owner/fd identity. Bounds and failure EXITKILL/reap remain."
+    },
+    {
+      "path": "guest-init.sh:check_target_proof; verify.py:proof_for",
+      "facts": "Release observation recomputes full original baseline and exact Root terminal kind/correlation/device key/ownerUID/resource identity while held. Cleanup deadline/CLI exit does not substitute for release proof. Native arbitrary socket counts are explicitly not exact control-socket identity."
+    },
+    {
+      "path": "guest-init.sh:held-stop and reuse; run.py:175-269",
+      "facts": "StopJob executes fixed common agent wrapper as UID1000 in background; agent SIGTERM is UID2000 and traced signal delivery must occur within hold. Original failure remains latched through explicit same-syscall release, reaping and fresh reuse. Host premature failure sends ABORT and grants bounded collection grace before terminating only its own QEMU processes."
+    },
+    {
+      "path": "verify.py:fresh I/O and final checks",
+      "facts": "Fresh epoch has new resource identities, actual client VHCI receipts, exact KEY1 down/up and35-byte FTDI traffic each way/host sink, original final driver/configuration/generation baseline, exact terminal cardinality, actual process UIDs/caps/ELF/init receipts and full S0 kernel guard. Guest exit0 alone cannot pass."
+    },
+    {
+      "path": "run.py:inputs/payload/main/finally",
+      "facts": "Clean committed source required; current Rust/support/new harness inputs locked before build, full role payload and ELF source receipts retained, head/source/binary/clean checked after actual processes exit. Host network is private socketpair and USB devices are QEMU-created, with no passthrough or host module/network mutation."
+    }
+  ],
+  "known_scope_limits": [
+    "No QEMU run had occurred at this source handoff;57 static and29 constructed/jq checks are author-supplied software diagnostics, not runtime/USB evidence.",
+    "The gate is at syscall entry, not inside an active kernel USB ioctl. A blocked store or actual kernel cannot be forcibly cancelled by this harness/product.",
+    "No independent pre-listener sibling I/O exists: both devices belong to the same preparing pool; actual I/O is fresh reuse after gate release.",
+    "Native FD tables are retained but individual anonymous control UDS are not directly mapped; original Root proof and complete baseline carry release identity.",
+    "StopJob caller UID comes from fixed executed wrapper/source, not a separately sampled background command proc status. The agent/helper/tracer process identities have independent collected records.",
+    "Probe enforces x86_64 guest/root conditions and fixed node paths; this review does not establish ARM, physical hardware, universal recovery or fullPhase3."
+  ],
+  "author_static_reports": {
+    "handoff": "/tmp/rustusb-prepare-harness-author-handoff-revision2-20261024.json",
+    "static": "/tmp/rustusb-prepare-harness-static-revision4-20261024/report.json",
+    "constructed_fixtures": "/tmp/rustusb-prepare-harness-revision2-final-fixtures-20261024/report.json"
+  }
+}
