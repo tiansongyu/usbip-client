@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-23T06:24:59.827282+00:00",
+  "tester": "/root/journal_integration_review",
+  "input_request": "为这个 RustUSB 仓库只重做英文 README，借鉴 rstop 的结构，别扩展产品功能",
+  "method": "Followed the skill against the real repository, made scope/content choices, drafted an opening and outline, checked actual help and primary reference metadata, then judged the resulting behavior. Not a regex-only inspection.",
+  "result": "PASS_WITH_NONBLOCKING_RECOMMENDATION",
+  "selected_branch": "README only",
+  "actual_deliverables": [
+    "README-opening.md",
+    "outline-and-scope.md",
+    "cli-help.json",
+    "result.json"
+  ],
+  "intended_repository_changes": [
+    "README.md"
+  ],
+  "repository_files_written": [],
+  "head_observed": "b02b97cb6a904567c69652327485a0981d860274",
+  "working_tree_was_dirty": true,
+  "working_tree_note": "Parent is simultaneously implementing README/site work. This agent read existing dirty work and did not claim, edit or revert it.",
+  "skill_inputs": [
+    {
+      "path": "/home/ubuntu/.agents/skills/readme-site/SKILL.md",
+      "sha256": "bcc243a81e087536cf496d112892ce8817d6ef004a816021e182bb9a6181a5dc"
+    },
+    {
+      "path": "/home/ubuntu/.agents/skills/readme-site/references/readme.md",
+      "sha256": "995cb45f62c0ae8bcec45092267f67eec73633474bf59d0a8047c8a48b4b713b"
+    }
+  ],
+  "site_guidance_loaded": false,
+  "behavioral_observations": [
+    {
+      "dimension": "Scope routing",
+      "result": "PASS",
+      "observation": "Selected README-only guidance. Produced only Markdown/JSON test artifacts in /tmp; no site/framework/workflow/asset task was opened."
+    },
+    {
+      "dimension": "Fact discovery",
+      "result": "PASS",
+      "observation": "Read manifests/pin/help/evidence and checked current Releases; replaced the reference installer-first model with source build and read-only first actions."
+    },
+    {
+      "dimension": "Maturity and platform boundaries",
+      "result": "PASS",
+      "observation": "Opening says development preview and pending physical acceptance; outline separates Native, virtual, USBFS, software CI and QEMU. No Windows/TUI/TLS or automatic recovery promise."
+    },
+    {
+      "dimension": "Safety and useful brevity",
+      "result": "PASS",
+      "observation": "Ordinary CLI use and administrator-controlled prerequisites remain visible; full native deployment and security details are linked rather than deleted."
+    },
+    {
+      "dimension": "Reference use",
+      "result": "PASS",
+      "observation": "Borrowed hierarchy only. Did not copy rstop product claims, branding, installer commands, screenshot or code."
+    },
+    {
+      "dimension": "Self-contained execution",
+      "result": "PASS",
+      "observation": "SKILL.md supplied routing, fact checks, scope and handoff rules; the relative README guidance existed and was sufficient. No site guide, hidden template, mandatory framework, install tool or other skill was required."
+    },
+    {
+      "dimension": "Validation honesty",
+      "result": "PASS",
+      "observation": "Commands checked using actual existing help; source build only reviewed. Partial Markdown sample is not called a rendered website or full integration test."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "nonblocking",
+      "location": "SKILL.md / Establish the facts / reference project inspection",
+      "issue": "The unconditional request to inspect both the reference README and site source caused additional site-source lookup in a README-only task. It did not authorize or cause site creation, but adds avoidable research.",
+      "suggestion": "Make reference-site inspection conditional on a site request or a concrete README visual/claim that depends on it. For a README-structure request, inspect the reference README first.",
+      "observed_effect": "Additional read-only directory/site lookups, including a 404 for website/index.html before locating website/dist/index.html; the selected artifacts stayed README-only."
+    }
+  ],
+  "claim_map": [
+    {
+      "claim": "CLI and restricted helper for Linux USB/IP; ordinary-user commands and administrator-only setup are distinct",
+      "source": [
+        "crates/rustusb-cli/src/main.rs",
+        "docs/native-guide.md",
+        "docs/security.md"
+      ],
+      "verified_scope": "Current commands and documented privilege model",
+      "limitation": "No inferred remote authentication or hardware support"
+    },
+    {
+      "claim": "Source build with Rust 1.97.1 is the appropriate first path",
+      "source": [
+        "Cargo.toml",
+        "rust-toolchain.toml",
+        "https://api.github.com/repos/tiansongyu/usbip-client/releases"
+      ],
+      "verified_scope": "Pinned toolchain and current public Releases response []",
+      "limitation": "The sample build was not run; no prebuilt release or installation script promised"
+    },
+    {
+      "claim": "Native default, optional virtual, experimental USBFS",
+      "source": [
+        "crates/rustusb-cli/Cargo.toml",
+        "docs/research/physical-journal-recovery.md"
+      ],
+      "verified_scope": "default=[], rust-backend and physical-nusb feature declarations and documented implementations",
+      "limitation": "Virtual profiles and simulated USBFS devices are not general hardware compatibility"
+    },
+    {
+      "claim": "250 software test executions/five QEMU/ten guests/four native CI combinations can be cited through the report",
+      "source": [
+        "docs/research/physical-journal-recovery.md"
+      ],
+      "version": "933e720531fd96b7a23616ed687d59b816e0ce09",
+      "verified_scope": "Previously recorded software and simulated-device evidence",
+      "limitation": "Not rerun by this test; default and all-features executions can overlap; ARM CI is not ARM USB kernel evidence"
+    },
+    {
+      "claim": "Doctor exit0 means completed diagnosis, not successful USB I/O",
+      "source": [
+        "docs/native-guide.md",
+        "target/release/rustusb doctor --help"
+      ],
+      "verified_scope": "Documented result semantics and help",
+      "limitation": "No live doctor/device test executed"
+    },
+    {
+      "claim": "RustUSB own code MIT; real CI workflow",
+      "source": [
+        "LICENSE",
+        ".github/workflows/ci.yml"
+      ],
+      "verified_scope": "License text and workflow source",
+      "limitation": "Badge service rendering not tested; external dependencies keep their own licenses"
+    }
+  ],
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "b1116a4402c9b7333aa01b29057692d2908ec8a1d6c3715ec8777a735c4a5548",
+      "bytes": 3565
+    },
+    {
+      "path": "README.md",
+      "sha256": "20f2598f058570f01e70b196088804d0fb8fa40de8a8c22a59ab10590aae611e",
+      "bytes": 10229
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "9b06bd0a1e9ef4aa2eadfad02dc9f5e67ef0613be574d118c8388a0763e2c552",
+      "bytes": 1239
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "sha256": "559f488c181e0e9e77cf17c29de663977f036ec7ff2e2060585714bf53c52d62",
+      "bytes": 86
+    },
+    {
+      "path": "crates/rustusb-cli/Cargo.toml",
+      "sha256": "d20988d27ddb4c798315fe465545ab027a029473cc22c23808d4fcb3ecddf880",
+      "bytes": 773
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "sha256": "3611c0dd1a121b91306344a3e69178ce4a270997612717bfadcfda7959742d44",
+      "bytes": 17095
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "999f4b324821887d1f148d908100775be28a5c777ed9b73244f3afc0f570b975",
+      "bytes": 1977
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "35624d1be576b60685db4cf0298efccdef559fdcaacb591738911a9c38aadb55",
+      "bytes": 1077
+    },
+    {
+      "path": "docs/native-guide.md",
+      "sha256": "99b980808af0419d84193e683d5cd6d8869ec8e131a46cdc376f3737f2e9fc0f",
+      "bytes": 5635
+    },
+    {
+      "path": "docs/compatibility.md",
+      "sha256": "131e53bfde98fe593ab67a54f5231a3795262f000c31177e9370d055098a5653",
+      "bytes": 7841
+    },
+    {
+      "path": "docs/security.md",
+      "sha256": "247d345170823874b217b7cb6ebe717fb3b85554b98b6eaf31cc3a669c9178c8",
+      "bytes": 25700
+    },
+    {
+      "path": "docs/work-log.md",
+      "sha256": "f899039158ed71666c0a250787208464f42bf904a91fc10347ce1a500430856c",
+      "bytes": 87495
+    },
+    {
+      "path": "docs/research/physical-journal-recovery.md",
+      "sha256": "4a3103334d1a5dea090e9568162e129cf680db42c3368d5b211ed63b4414b02e",
+      "bytes": 8656
+    }
+  ],
+  "reference_sources": [
+    {
+      "url": "https://github.com/fan-ziqi/rstop/blob/main/README.md",
+      "blob_sha": "1551effb96790c89696669e175c25c34253e845f",
+      "read_scope": "lines 1-72",
+      "tool": "GitHub connector fetch_file"
+    },
+    {
+      "url": "https://api.github.com/repos/tiansongyu/usbip-client/releases",
+      "response": [],
+      "tool": "GitHub connector fetch"
+    },
+    {
+      "url": "https://github.com/fan-ziqi/rstop/blob/main/website/README.md",
+      "blob_sha": "0fe12b94d536717469e869ea92e02d6bfbf2c444",
+      "read_scope": "site provenance and authored-demo description"
+    },
+    {
+      "url": "https://github.com/fan-ziqi/rstop/blob/main/website/dist/index.html",
+      "blob_sha": "dbec5c4af9b38111a8cb348eabaf2b94a1b4d732",
+      "read_scope": "title/meta/navigation/hero/section headings, no copied code"
+    }
+  ],
+  "checks": {
+    "existing_help_commands": 3,
+    "help_all_exit_zero": true,
+    "sample_links": [
+      {
+        "target": "#build-from-source",
+        "valid": true
+      },
+      {
+        "target": "LICENSE",
+        "valid": true
+      },
+      {
+        "target": "README.zh-CN.md",
+        "valid": true
+      },
+      {
+        "target": "docs/compatibility.md",
+        "valid": true
+      },
+      {
+        "target": "docs/native-guide.md",
+        "valid": true
+      },
+      {
+        "target": "docs/security.md",
+        "valid": true
+      },
+      {
+        "target": "rust-toolchain.toml",
+        "valid": true
+      }
+    ],
+    "all_sample_local_links_valid": true,
+    "builds": 0,
+    "qemu_runs": 0,
+    "installations": 0,
+    "repository_writes": 0,
+    "network_writes": 0
+  },
+  "boundaries": [
+    "Author is independent of skill authorship but had earlier RustUSB README task context; this is a real forward authoring test, not a blind novice study.",
+    "No full new README integration or rendered-site test performed; only requested outline/opening sample.",
+    "Existing site work belongs to parent and was not treated as authorization for site changes in this request.",
+    "No repository clean-worktree claim because concurrent parent work was present."
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/readme-site-forward-test/README-opening.md",
+      "sha256": "5b0f19c4afdf63d2718316f1ac9e1ab93dcf9e02c449d100839cfd7d0462b520",
+      "bytes": 1828
+    },
+    {
+      "path": "/tmp/readme-site-forward-test/outline-and-scope.md",
+      "sha256": "bf0df4d1a537444576e5a991833bded791bdd8d5c5cd207971958af0c1fb7519",
+      "bytes": 3454
+    },
+    {
+      "path": "/tmp/readme-site-forward-test/cli-help.json",
+      "sha256": "0339cc699f6a57c593b7e6da5cd2d91b550f04a07434d49db58b32ba8f34588c",
+      "bytes": 3324
+    }
+  ]
+}

@@ -12,6 +12,8 @@ SIGKILL与首次重启的独立负向见 `docs/research/physical-crash-recovery.
 
 ## 每次交付
 
+英文README为产品入口，中文README保留详细概览，Native操作/诊断见`docs/native-guide.md`。静态项目展示站在`website/`，维护和GitHub Pages发布见`docs/website.md`；它不是Phase5 GUI，也不扩大设备/平台/安全验收范围。README与展示站任务可使用用户全局`readme-site` skill。
+
 - 先检查当前文件、Git 状态与 `docs/work-log.md`，不覆盖其他贡献者工作。
 - 设计和范围变化先更新文档，再修改代码。记录来源、验证命令、结果与未完成的硬件验证。
 - 稳定 Rust、2024 Edition；禁止核心路径 `unsafe`、`unwrap()`、`expect()`、`panic!()`。公共 API 写文档，错误保留上下文。

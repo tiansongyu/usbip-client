@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "updated_at_utc": "2026-10-23T06:26:46.740751+00:00",
+  "change": "Conditional reference-site inspection only.",
+  "current_SKILL_sha256": "83514d886ff1f1ff17585805a89508f35f60bb326a3dd9592f42fa52198a26f3",
+  "targeted_checks_count": 8,
+  "targeted_checks": [
+    {
+      "id": "exactly_one_requested_line_changed",
+      "result": "PASS"
+    },
+    {
+      "id": "three_other_skill_files_unchanged",
+      "result": "PASS"
+    },
+    {
+      "id": "README_reference_always_read",
+      "result": "PASS"
+    },
+    {
+      "id": "site_reference_conditional",
+      "result": "PASS"
+    },
+    {
+      "id": "progressive_disclosure_links_still_present",
+      "result": "PASS"
+    },
+    {
+      "id": "discovery_symlink_unchanged",
+      "result": "PASS"
+    },
+    {
+      "id": "new_quick_validate_exit0",
+      "result": "PASS"
+    },
+    {
+      "id": "forward_test_is_for_initial_SKILL",
+      "result": "PASS"
+    }
+  ],
+  "quick_validate": {
+    "command": [
+      "python3",
+      "/home/ubuntu/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "/home/ubuntu/.agents/skills/readme-site"
+    ],
+    "exit_code": 0,
+    "stdout": "Skill is valid!\n",
+    "stderr": ""
+  },
+  "initial_validation": {
+    "path": "/tmp/readme-site-skill-validation-initial.log",
+    "sha256": "9d5a20a86e572e2a5ee27ecfbe2cb9fdc851b0d9f42446afa9ee93762a46fa88",
+    "checks_count": 30,
+    "scope": "Original skill version; not rerun for this change."
+  },
+  "independent_forward_test": {
+    "path": "/tmp/readme-site-forward-test/result.json",
+    "bytes": 11278,
+    "sha256": "ddfb1ed5c70683aee5d0af7a87db0ed6af50eedb1dcc5c891dc1dce88524e1f0",
+    "result": "PASS_WITH_NONBLOCKING_RECOMMENDATION",
+    "tested_SKILL_sha256": "bcc243a81e087536cf496d112892ce8817d6ef004a816021e182bb9a6181a5dc",
+    "recommendation": "Reference site/source lookup should be conditional. Applied in the current single-line change.",
+    "rerun_after_change": false
+  },
+  "repository_writes": false,
+  "Cargo_QEMU_or_product_execution": false
+}

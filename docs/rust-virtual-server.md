@@ -9,7 +9,7 @@ cargo build -p rustusb-cli --features rust-backend --release --locked
 target/release/rustusb virtual-server --control-stdin
 ```
 
-默认监听 `127.0.0.1:3240`。普通用户运行，无需 root helper 或 usbip_host；导入端的 Native helper/VHCI 仍按[既有流程](../README.md#native-共享流程)由管理员配置。
+默认监听 `127.0.0.1:3240`。普通用户运行，无需 root helper 或 usbip_host；导入端的 Native helper/VHCI 仍按[既有流程](native-guide.md#native-共享流程)由管理员配置。
 
 仅在已授权的隔离测试网络，可显式指定监听和 peer：
 

@@ -1,0 +1,158 @@
+{
+  "created_at_utc": "2026-10-23T06:11:07.898432+00:00",
+  "commands": [
+    {
+      "argv": [
+        "target/release/rustusb",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Linux USB/IP device management (experimental preview)\n\nUsage: rustusb [OPTIONS] <COMMAND>\n\nCommands:\n  physical-pending    Inspect unresolved physical grants through the root helper (root only)\n  physical-reconcile  Verify restored physical state and retire its grant record (root only; no USB writes)\n  physical-server     Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS)\n  virtual-server      Serve two virtual test devices; this experimental mode provides no authentication or TLS\n  devices             Scan local devices without changing drivers. Discovery is not compatibility validation\n  doctor              Read installed tool, module and helper capabilities without loading modules\n  discover            Query a server's USB/IP device list over an administrator-managed trusted network\n  export              Export an administrator-allowlisted device fingerprint via the privileged helper\n  unexport            Release an allowlisted export and request local driver reattachment\n  attach              Import a remote bus ID through an allowlisted endpoint and Linux VHCI\n  detach              Disconnect an authorized local VHCI port (0..255)\n  sessions            Read authoritative native kernel session state through the helper\n  status              Query helper and kernel status\n  help                Print this message or the help of the given subcommand(s)\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n  -V, --version            Print version\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "devices",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Scan local devices without changing drivers. Discovery is not compatibility validation\n\nUsage: rustusb devices [OPTIONS]\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "doctor",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Read installed tool, module and helper capabilities without loading modules\n\nUsage: rustusb doctor [OPTIONS]\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "discover",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Query a server's USB/IP device list over an administrator-managed trusted network\n\nUsage: rustusb discover [OPTIONS] <HOST>\n\nArguments:\n  <HOST>  \n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --port <PORT>        [default: 3240]\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "export",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Export an administrator-allowlisted device fingerprint via the privileged helper\n\nUsage: rustusb export [OPTIONS] <DEVICE_ID>\n\nArguments:\n  <DEVICE_ID>  \n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "unexport",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Release an allowlisted export and request local driver reattachment\n\nUsage: rustusb unexport [OPTIONS] <DEVICE_ID>\n\nArguments:\n  <DEVICE_ID>  \n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "attach",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Import a remote bus ID through an allowlisted endpoint and Linux VHCI\n\nUsage: rustusb attach [OPTIONS] <HOST> <BUS_ID>\n\nArguments:\n  <HOST>    \n  <BUS_ID>  \n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --port <PORT>        [default: 3240]\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "detach",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Disconnect an authorized local VHCI port (0..255)\n\nUsage: rustusb detach [OPTIONS] <PORT>\n\nArguments:\n  <PORT>  \n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "sessions",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Read authoritative native kernel session state through the helper\n\nUsage: rustusb sessions [OPTIONS]\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "status",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Query helper and kernel status\n\nUsage: rustusb status [OPTIONS]\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "virtual-server",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Serve two virtual test devices; this experimental mode provides no authentication or TLS\n\nUsage: rustusb virtual-server [OPTIONS]\n\nOptions:\n      --json                         Emit machine-readable JSON to stdout; logs remain on stderr\n      --listen <LISTEN>              Bind a literal address. The default is loopback only [default: 127.0.0.1:3240]\n      --allow-insecure-test-network  Explicitly acknowledge an isolated administrator-managed test network\n      --socket <SOCKET>              Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --allow-peer <ALLOW_PEER>      Exact allowed peer IP; required together with the acknowledgement for non-loopback\n      --timeout <TIMEOUT>            Discovery timeout covering DNS, connect and response [default: 10]\n      --control-stdin                Accept bounded local JSONL test controls on stdin; EOF shuts the server down\n      --log-json                     Emit JSON tracing logs on stderr\n  -h, --help                         Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "physical-server",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS)\n\nUsage: rustusb physical-server [OPTIONS] --device-id <DEVICE_IDS>\n\nOptions:\n      --device-id <DEVICE_IDS>       Exact fingerprints in the helper's separate physical_device_ids allowlist\n      --json                         Emit machine-readable JSON to stdout; logs remain on stderr\n      --listen <LISTEN>              Bind a literal address; default loopback only [default: 127.0.0.1:3240]\n      --socket <SOCKET>              Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --allow-insecure-test-network  Acknowledge an isolated administrator-managed test network\n      --timeout <TIMEOUT>            Discovery timeout covering DNS, connect and response [default: 10]\n      --allow-peer <ALLOW_PEER>      Exact permitted source IP; required for a non-loopback listener\n      --log-json                     Emit JSON tracing logs on stderr\n      --control-stdin                Read local snapshot/shutdown JSONL controls; EOF also closes the server\n  -h, --help                         Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "physical-pending",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Inspect unresolved physical grants through the root helper (root only)\n\nUsage: rustusb physical-pending [OPTIONS]\n\nOptions:\n      --after <AFTER>      Continue a previous bounded page using its next_after value\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb",
+        "physical-reconcile",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Verify restored physical state and retire its grant record (root only; no USB writes)\n\nUsage: rustusb physical-reconcile [OPTIONS] <LEASE_ID>\n\nArguments:\n  <LEASE_ID>  \n\nOptions:\n      --acknowledge-gone   Acknowledge that the old generation is gone, without affecting its replacement\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "target/release/rustusb-helper",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Restricted local Linux USB/IP helper; never starts usbipd or creates encryption\n\nUsage: rustusb-helper [OPTIONS]\n\nOptions:\n      --config <CONFIG>\n          Root-owned, non-writable-by-others policy file [default: /etc/rustusb/policy.json]\n      --socket <SOCKET>\n          Socket in a root-owned, non-writable-by-others directory [default: /run/rustusb/control.sock]\n      --physical-state-dir <PHYSICAL_STATE_DIR>\n          Root-only persistent physical grant journal, kept across helper restarts [default: /var/lib/rustusb/physical]\n  -h, --help\n          Print help\n",
+      "stderr": ""
+    }
+  ],
+  "binary_sha256": {
+    "target/release/rustusb": "6c56ade7fd7f93fe8e331aa16197c3dee24d95d0eadc2be9a7e19c73dc70c0b6",
+    "target/release/rustusb-helper": "14f33dade1371d6227fa9dc74b5b76bae7d8dfa89b31c34dd133206f75eedf3f"
+  },
+  "scope": "Existing executable help only; no Cargo/QEMU, helper startup, device mutation or USB session."
+}

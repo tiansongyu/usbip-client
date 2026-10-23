@@ -1,0 +1,31 @@
+[
+  {
+    "command": [
+      "target/release/rustusb",
+      "--help"
+    ],
+    "exit_code": 0,
+    "stdout": "Linux USB/IP device management (experimental preview)\n\nUsage: rustusb [OPTIONS] <COMMAND>\n\nCommands:\n  physical-pending    Inspect unresolved physical grants through the root helper (root only)\n  physical-reconcile  Verify restored physical state and retire its grant record (root only; no USB writes)\n  physical-server     Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS)\n  virtual-server      Serve two virtual test devices; this experimental mode provides no authentication or TLS\n  devices             Scan local devices without changing drivers. Discovery is not compatibility validation\n  doctor              Read installed tool, module and helper capabilities without loading modules\n  discover            Query a server's USB/IP device list over an administrator-managed trusted network\n  export              Export an administrator-allowlisted device fingerprint via the privileged helper\n  unexport            Release an allowlisted export and request local driver reattachment\n  attach              Import a remote bus ID through an allowlisted endpoint and Linux VHCI\n  detach              Disconnect an authorized local VHCI port (0..255)\n  sessions            Read authoritative native kernel session state through the helper\n  status              Query helper and kernel status\n  help                Print this message or the help of the given subcommand(s)\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n  -V, --version            Print version\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "target/release/rustusb",
+      "devices",
+      "--help"
+    ],
+    "exit_code": 0,
+    "stdout": "Scan local devices without changing drivers. Discovery is not compatibility validation\n\nUsage: rustusb devices [OPTIONS]\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "target/release/rustusb",
+      "doctor",
+      "--help"
+    ],
+    "exit_code": 0,
+    "stdout": "Read installed tool, module and helper capabilities without loading modules\n\nUsage: rustusb doctor [OPTIONS]\n\nOptions:\n      --json               Emit machine-readable JSON to stdout; logs remain on stderr\n      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]\n      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]\n      --log-json           Emit JSON tracing logs on stderr\n  -h, --help               Print help\n",
+    "stderr": ""
+  }
+]

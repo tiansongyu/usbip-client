@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-23T06:14:41.163150+00:00",
+  "reviewer": "/root/journal_integration_review",
+  "task": "English README product-entry draft only; parent owns website, repository edits, deployment and commits",
+  "result": "DRAFT_REVIEW_PASS_WITH_INTEGRATION_DEPENDENCIES",
+  "draft": {
+    "path": "/tmp/rustusb-README.en.md",
+    "lines": 145,
+    "bytes": 10229,
+    "sha256": "20f2598f058570f01e70b196088804d0fb8fa40de8a8c22a59ab10590aae611e"
+  },
+  "repository_head_observed": "b02b97cb6a904567c69652327485a0981d860274",
+  "source_matches_validated_933e720": true,
+  "skill": {
+    "path": "/home/ubuntu/.agents/skills/technical-documentation/SKILL.md",
+    "applied": [
+      "Lead with user value and prerequisites",
+      "Use real commands with role and completion verification",
+      "Separate observed evidence from unimplemented scope",
+      "Keep detailed setup and diagnostics accessible through guides"
+    ]
+  },
+  "reference": {
+    "url": "https://github.com/fan-ziqi/rstop/blob/main/README.md",
+    "tool": "GitHub connector github_fetch_file",
+    "blob_sha": "1551effb96790c89696669e175c25c34253e845f",
+    "adopted_structure": [
+      "Title and genuine CI/toolchain/license/status badges",
+      "One-sentence value and navigation",
+      "Linked product-flow preview",
+      "Source build before practical usage",
+      "Capability table and documented limits",
+      "Contributing and license"
+    ],
+    "not_adopted": [
+      "Release badges or downloadable installers",
+      "Self-update commands",
+      "TUI screenshots or keyboard controls",
+      "Windows/macOS product claims"
+    ],
+    "copying": "No rstop prose, screenshot, logo or implementation was copied; headings are conventional documentation structure."
+  },
+  "claims": [
+    {
+      "claim": "Development preview; default Linux Native; Rust virtual and USBFS optional",
+      "sources": [
+        "crates/rustusb-cli/Cargo.toml",
+        "crates/rustusb-cli/src/main.rs",
+        "docs/roadmap.md"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "Pinned Rust 1.97.1, MIT own code, real ci.yml workflow",
+      "sources": [
+        "rust-toolchain.toml",
+        "Cargo.toml",
+        "LICENSE",
+        ".github/workflows/ci.yml"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "Native ordinary-user CLI and restricted root helper, authorized fingerprint/endpoint operations",
+      "sources": [
+        "README.md",
+        "docs/security.md",
+        "examples/policy.json",
+        "crates/rustusb-cli/src/main.rs"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "devices and doctor do not change drivers/load modules; doctor exit0 is diagnostic completion",
+      "sources": [
+        "README.md",
+        "crates/rustusb-cli/src/main.rs"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "Remote native path needs externally protected VPN/tunnel and IPv4+IPv6 filtering; no builtin TLS/authentication",
+      "sources": [
+        "docs/security.md",
+        "README.md"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "Fixed virtual HID/CDC service default loopback; JSONL shutdown; importing requires configured client",
+      "sources": [
+        "docs/rust-virtual-server.md",
+        "crates/rustusb-cli/src/main.rs"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "USBFS grant journal preserves original baseline, blocks unresolved regrant, reconcile does not restore USB state",
+      "sources": [
+        "docs/rust-physical-server.md",
+        "docs/research/physical-journal-recovery.md"
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "claim": "250 test executions, five QEMU scenarios and ten guest exits, four native CI combinations",
+      "sources": [
+        "docs/research/physical-journal-recovery.md",
+        "docs/evidence/publication-journal-933e720-20261023.json"
+      ],
+      "verdict": "PASS",
+      "scope": "Evidence locked to 933e720, not a claim of rerunning tests on documentation changes. 250 includes default/all-features/vendor executions rather than 250 distinct cases. Four native CI combinations do not prove ARM USB kernel integration."
+    },
+    {
+      "claim": "Storage/hub/unsafe metadata refusal, USBFS ISO unavailable, physical G1/G2/TLS/GUI/TUI/Windows unfinished",
+      "sources": [
+        "docs/security.md",
+        "docs/compatibility.md",
+        "docs/rust-physical-server.md",
+        "docs/roadmap.md"
+      ],
+      "verdict": "PASS"
+    }
+  ],
+  "command_checks": {
+    "artifact": "/tmp/rustusb-readme-cli-help.json",
+    "sha256": "3a382933d32ff698d975fa2204c051ae069034e9dac0936366b5baa30f90567a",
+    "count": 15,
+    "all_exit_zero": true,
+    "binary_sha256": {
+      "target/release/rustusb": "6c56ade7fd7f93fe8e331aa16197c3dee24d95d0eadc2be9a7e19c73dc70c0b6",
+      "target/release/rustusb-helper": "14f33dade1371d6227fa9dc74b5b76bae7d8dfa89b31c34dd133206f75eedf3f"
+    },
+    "build_commands": "Checked against manifests and documented commands; not executed.",
+    "mutation_commands": "Checked CLI argument grammar via --help and source; no export, attach, detach, unexport, physical or virtual service was started.",
+    "example_placeholders": "192.0.2.1, Bus ID 1-2, port 0 and usb-<64-lowercase-hex-fingerprint> are explicitly replaceable examples; no fictitious successful console output."
+  },
+  "local_links": [
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "AGENTS.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "LICENSE",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "README.zh-CN.md",
+      "exists_now": true,
+      "integration_dependency": true
+    },
+    {
+      "path": "docs/acceptance.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/architecture.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/compatibility.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/native-guide.md",
+      "exists_now": true,
+      "integration_dependency": true
+    },
+    {
+      "path": "docs/protocol.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/requirements.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/research/native-qemu-matrix.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/research/physical-journal-recovery.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/research/userspace-qemu.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/roadmap.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/rust-physical-server.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/rust-virtual-server.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/security.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/testing.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/third-party.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "docs/work-log.md",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "exists_now": true,
+      "integration_dependency": false
+    },
+    {
+      "path": "website/assets/usbip-flow.svg",
+      "exists_now": false,
+      "integration_dependency": true
+    }
+  ],
+  "unexpected_missing_links": [],
+  "integration_dependencies": [
+    {
+      "path": "README.zh-CN.md",
+      "action": "Preserve the current Chinese README in full before replacement, including historical evidence links and deep explanations."
+    },
+    {
+      "path": "docs/native-guide.md",
+      "action": "Extract from the current Chinese README beginning at ## 构建与检查 through EOF; prepend a descriptive title/introduction. This keeps all diagnostics, deployment, safety and QEMU/research details rather than truncating them at the workflow. Preserve exact content apart from local link rebasing.",
+      "safe_baseline": "git show b02b97cb6a904567c69652327485a0981d860274:README.md",
+      "rebase_links": [
+        "docs/... becomes ... from docs/native-guide.md",
+        "examples/... becomes ../examples/...",
+        "AGENTS.md becomes ../AGENTS.md"
+      ],
+      "anchor": "Keep ## Native 共享流程 if retaining the current Chinese section headings."
+    },
+    {
+      "path": "docs/rust-virtual-server.md",
+      "action": "Update the one ../README.md#native-共享流程 link to native-guide.md#native-共享流程."
+    },
+    {
+      "path": "docs/rust-physical-server.md",
+      "action": "Update both ../README.md#native-共享流程 links to native-guide.md#native-共享流程."
+    },
+    {
+      "path": "website/assets/usbip-flow.svg",
+      "action": "Parent-created original architecture/product-flow preview; must not imply a shipped GUI or encryption implemented by RustUSB."
+    },
+    {
+      "url": "https://tiansongyu.github.io/usbip-client/",
+      "action": "Expected website destination supplied by parent; publication must be verified before calling it live. Draft link is a deployment dependency, not a verified-live assertion."
+    }
+  ],
+  "sources_read": [
+    {
+      "path": "Cargo.toml",
+      "bytes": 1239,
+      "sha256": "9b06bd0a1e9ef4aa2eadfad02dc9f5e67ef0613be574d118c8388a0763e2c552"
+    },
+    {
+      "path": "Cargo.lock",
+      "bytes": 22870,
+      "sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "bytes": 86,
+      "sha256": "559f488c181e0e9e77cf17c29de663977f036ec7ff2e2060585714bf53c52d62"
+    },
+    {
+      "path": "crates/rustusb-cli/Cargo.toml",
+      "bytes": 773,
+      "sha256": "d20988d27ddb4c798315fe465545ab027a029473cc22c23808d4fcb3ecddf880"
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "bytes": 17095,
+      "sha256": "3611c0dd1a121b91306344a3e69178ce4a270997612717bfadcfda7959742d44"
+    },
+    {
+      "path": "crates/rustusb-daemon/Cargo.toml",
+      "bytes": 610,
+      "sha256": "b25e178afbce16a7ee97744552d7874da430d2062ec2e89db441b180abb886c3"
+    },
+    {
+      "path": "scripts/check.sh",
+      "bytes": 674,
+      "sha256": "f1b64bafbb48dda4597ad7f1c44c177b6d72db2f8fb0d83f6975e8545b308c76"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 1977,
+      "sha256": "999f4b324821887d1f148d908100775be28a5c777ed9b73244f3afc0f570b975"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1077,
+      "sha256": "35624d1be576b60685db4cf0298efccdef559fdcaacb591738911a9c38aadb55"
+    },
+    {
+      "path": "README.md",
+      "bytes": 11140,
+      "sha256": "7ffdddecaee3a5623e8d190c7140f531585b814a289d1c7842d39029f3de24a9"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 3565,
+      "sha256": "b1116a4402c9b7333aa01b29057692d2908ec8a1d6c3715ec8777a735c4a5548"
+    },
+    {
+      "path": "docs/rust-virtual-server.md",
+      "bytes": 3467,
+      "sha256": "1aa919ab4267076d4b4b0d1311c3af5f355910303ab0441c66d06ef39b9434d2"
+    },
+    {
+      "path": "docs/rust-physical-server.md",
+      "bytes": 8977,
+      "sha256": "b42267d78ffdcaf5b1dfeb4fb654d7fac11b82402307bf4a4e355e0339829b9b"
+    },
+    {
+      "path": "docs/security.md",
+      "bytes": 25700,
+      "sha256": "247d345170823874b217b7cb6ebe717fb3b85554b98b6eaf31cc3a669c9178c8"
+    },
+    {
+      "path": "docs/testing.md",
+      "bytes": 27206,
+      "sha256": "9520cc8c90e50db9ec7d82db1c9daacf972a4ddfd8270be2e9b5d7a97da5b60e"
+    },
+    {
+      "path": "docs/compatibility.md",
+      "bytes": 7841,
+      "sha256": "131e53bfde98fe593ab67a54f5231a3795262f000c31177e9370d055098a5653"
+    },
+    {
+      "path": "docs/roadmap.md",
+      "bytes": 15009,
+      "sha256": "068201e8042b7deb1dd71935f1d4d72822ec943d7c3ecd78cbd42d95b3152bff"
+    },
+    {
+      "path": "docs/work-log.md",
+      "bytes": 87495,
+      "sha256": "f899039158ed71666c0a250787208464f42bf904a91fc10347ce1a500430856c"
+    },
+    {
+      "path": "docs/research/physical-journal-recovery.md",
+      "bytes": 8656,
+      "sha256": "4a3103334d1a5dea090e9568162e129cf680db42c3368d5b211ed63b4414b02e"
+    },
+    {
+      "path": "docs/third-party.md",
+      "bytes": 2744,
+      "sha256": "aeda02f25bc39c58624c5df7337052db9366a4959b58ec94fbe32a2867617f56"
+    },
+    {
+      "path": "examples/policy.json",
+      "bytes": 99,
+      "sha256": "040c5318f42f5ac2220eae73ec80b8fc3bc059d62d18b572edd8c620cb058544"
+    }
+  ],
+  "validation_boundaries": [
+    "No Cargo/build/QEMU/runner.verify invocation in this README task.",
+    "No repository files, Git index, commit or remote were changed by this agent. All written artifacts are in /tmp.",
+    "No claim of new USB hardware testing, new release packages, TUI/GUI implementation or automatic crash recovery.",
+    "Static Shields badges encode manifest/license/status facts; CI badge points to existing workflow. External image render availability and website deployment are left to parent integration.",
+    "Do not describe the SVG as a screenshot or its route as built-in encrypted transport."
+  ]
+}

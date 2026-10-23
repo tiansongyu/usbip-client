@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/journal_harness_review",
+  "reviewed_at_utc": "2026-10-23T06:19:51.082972+00:00",
+  "result": "PASS_WITH_NONBLOCKING_NOTE",
+  "head": "b02b97cb6a904567c69652327485a0981d860274",
+  "guidelines_source": "https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md",
+  "skills": [
+    "web-design-guidelines",
+    "readme-site"
+  ],
+  "files": {
+    "README.md": "20f2598f058570f01e70b196088804d0fb8fa40de8a8c22a59ab10590aae611e",
+    "README.zh-CN.md": "be7856bc2e1459a4e5e9f8876bd40e4a96b8898bd043b0728c9594507f9f25ef",
+    "docs/native-guide.md": "99b980808af0419d84193e683d5cd6d8869ec8e131a46cdc376f3737f2e9fc0f",
+    "docs/rust-physical-server.md": "b42267d78ffdcaf5b1dfeb4fb654d7fac11b82402307bf4a4e355e0339829b9b",
+    "docs/rust-virtual-server.md": "1aa919ab4267076d4b4b0d1311c3af5f355910303ab0441c66d06ef39b9434d2",
+    "docs/research/readme-website-design.md": "259920fde3ba6578e29e90163a0284484cb50af2f259c033e5ebc2266a24c998",
+    "website/index.html": "f3548d59d2ec37f5d246fcb2be1c2f4ec1ec715201b92f424a9c327ef214fd51",
+    "website/app.js": "727d193314413dc2dd0569e6e5638af073a6b1a4d2c2c511d1a5c6dbbfe318e6",
+    "website/styles.css": "a90da2b657689c8f55b23afe9e7834681bd8f83c29a671da5d91d22092e5be30",
+    "website/assets/favicon.svg": "1d0a2204e9022341120b10c18d25da7e97d221f245160bdd134bdbe92b689b0e",
+    "website/assets/usbip-flow.svg": "8f6662acc5574b9fbfcbd79dc0dfb3ca130243823b1c029f83bfbb0c8b21aef3"
+  },
+  "verification_groups": 12,
+  "checks": [
+    {
+      "name": "local files and GitHub repository deep links",
+      "result": "PASS",
+      "detail": {
+        "occurrences": 100,
+        "problems": [],
+        "scope": "Local current files and heading/id targets; no live publishing assertion"
+      }
+    },
+    {
+      "name": "HTML structural accessibility",
+      "result": "PASS",
+      "detail": {
+        "unique_ids": 17,
+        "h1": 1,
+        "images": 2,
+        "manual": "English document language, native controls, landmarks, descriptive links, visible focus and polite copy-status; no form controls."
+      }
+    },
+    {
+      "name": "No-JavaScript content is present",
+      "result": "PASS",
+      "detail": {
+        "backend_panels": 3,
+        "scope": "HTML/CSS source inspection, not disabled-JS browser rendering; essential copy/commands/links do not depend on scripts"
+      }
+    },
+    {
+      "name": "Project-subpath assets",
+      "result": "PASS",
+      "detail": {
+        "assets": "Relative styles.css/app.js/assets SVG, external documentation uses explicit GitHub URLs"
+      }
+    },
+    {
+      "name": "Original README and Native guidance retained",
+      "result": "PASS",
+      "detail": {
+        "source_commit": "b02b97c",
+        "chinese_readme": "Original bytes except inserted language-navigation line",
+        "native_guide": "Three original sections with only local relative link adjustments",
+        "deep_links": "3 old Native anchors migrated in physical and virtual guides"
+      }
+    },
+    {
+      "name": "Commands and feature prerequisites correspond to source",
+      "result": "PASS",
+      "detail": {
+        "method": "Read CLI clap declarations, virtual control implementation, package features, workspace manifest and toolchain; did not execute cargo or mutate devices",
+        "examples": "Native arguments and global --json valid; virtual server defaults/--control-stdin shutdown correct; physical-pending requires installed all-features binary/helper and root; build instructions start from source checkout"
+      }
+    },
+    {
+      "name": "Claims and historical test attribution",
+      "result": "PASS",
+      "detail": {
+        "manual_review": "250 means executions across default/allfeatures/vendor, not new unique tests; five QEMU ten guests/four native software platforms correctly linked to prior 933e720 lifecycle report. Native and virtual separately link their own baselines. No new USB evidence claimed for the site change. Real hardware/aarch64 USB kernel/automatic KILL recovery/TLS/ISO and future UI limits retained."
+      }
+    },
+    {
+      "name": "Illustration accuracy and licensing",
+      "result": "PASS",
+      "detail": {
+        "manual_review": "SVG title/desc and visible caption label architecture illustration. usbip_host+usbipd on Native server, vhci_hcd and native driver on client, external managed secure network, RustUSB restricted helpers. No live output or shipped GUI implied; diagram is original, local assets and license paths preserved."
+      }
+    },
+    {
+      "name": "Responsive and interaction CSS source",
+      "result": "PASS",
+      "detail": {
+        "manual_review": "Stacked mobile grids, wrapping code, wrapped footer, responsive image, touch targets for tabs/navigation/copy, reduced-motion disables smooth scrolling/transitions. Static inspection only; desktop/mobile/zoom and actual pointer/focus rendering delegated to parent browser review."
+      }
+    },
+    {
+      "name": "Principal text contrast tokens",
+      "result": "PASS",
+      "detail": {
+        "pairs": [
+          {
+            "name": "body",
+            "ratio": 17.56
+          },
+          {
+            "name": "muted body",
+            "ratio": 8.61
+          },
+          {
+            "name": "muted panel",
+            "ratio": 7.75
+          },
+          {
+            "name": "selected tab",
+            "ratio": 9.42
+          },
+          {
+            "name": "dark CTA",
+            "ratio": 17.56
+          },
+          {
+            "name": "warm warning",
+            "ratio": 11.75
+          }
+        ],
+        "scope": "Specified flat color pairs only; not a screenshot-derived exhaustive color audit"
+      }
+    },
+    {
+      "name": "Optional tab and clipboard logic",
+      "result": "PASS",
+      "detail": {
+        "method": "Node VM with minimal DOM/clipboard stubs; not a browser test",
+        "cases": [
+          {
+            "name": "initial enhancement native selected and controls visible",
+            "result": "PASS"
+          },
+          {
+            "name": "panel role and labelledby",
+            "result": "PASS"
+          },
+          {
+            "name": "keyboard 0 ArrowLeft to 2",
+            "result": "PASS"
+          },
+          {
+            "name": "keyboard 2 ArrowRight to 0",
+            "result": "PASS"
+          },
+          {
+            "name": "keyboard 0 End to 2",
+            "result": "PASS"
+          },
+          {
+            "name": "keyboard 2 Home to 0",
+            "result": "PASS"
+          },
+          {
+            "name": "keyboard 0 ArrowRight to 1",
+            "result": "PASS"
+          },
+          {
+            "name": "keyboard 1 ArrowLeft to 0",
+            "result": "PASS"
+          },
+          {
+            "name": "click selects physical",
+            "result": "PASS"
+          },
+          {
+            "name": "unrelated keyboard does not prevent defaults",
+            "result": "PASS"
+          },
+          {
+            "name": "copy success uses exact code and polite status content",
+            "result": "PASS"
+          },
+          {
+            "name": "copy rejection gives manual fallback",
+            "result": "PASS"
+          },
+          {
+            "name": "missing clipboard gives manual fallback",
+            "result": "PASS"
+          }
+        ],
+        "limits": "Native browser activation/focus/clipboard policies still need parent browser checks"
+      }
+    },
+    {
+      "name": "Node JavaScript syntax",
+      "result": "PASS",
+      "detail": {
+        "command": "node --check website/app.js"
+      }
+    }
+  ],
+  "counts": {
+    "reviewed_files": 11,
+    "local_and_repo_link_occurrences": 100
+  },
+  "mustfix": [],
+  "nonblocking_findings": [
+    {
+      "location": "website/app.js:36",
+      "issue": "Backend tab state is not reflected in the URL; loading #panel-physical still selects Native and hides the target.",
+      "recommendation": "Optionally initialize from an allowlisted panel hash and preserve valid tab state with hashchange/history.replaceState. Existing public links target #explore, so the shipped documented navigation works."
+    }
+  ],
+  "scope_limits": [
+    "No browser or screenshots used; rendering, zoom, actual assistive technology and clipboard permission behavior are not proven by this static/stub review.",
+    "No Cargo/QEMU/device operation executed; this review does not add software/device test coverage.",
+    "Pages workflow and scripts/check-site.py not present at initial review, to be reviewed when parent adds them.",
+    "Website deployment and live link availability are separate from reviewed local file/anchor correctness."
+  ],
+  "repo_modified": false
+}

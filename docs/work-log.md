@@ -308,3 +308,13 @@
 - 精确933e720的CI39908004666四原生job均completed/success：22x86 120264284433、24x86 120264284710、22ARM120264284774、24ARM120264284822。每格250次/31result、0失败忽略、两背压和四信号通过；root对连接器解码日志和官方API做746项解析，核实际OS/arch/Rust host、checkout与所有signal输入Gitblob。11份CI产物已归档，未伪造工作流没有上传的per-case原件。
 
 - 最终文档独立审查582/582通过、0 mustfix；root首轮4索引166原件长度/SHA/原tmp bytes与144冻结输入及链接804项通过，归档两份审查后共168 indexed原件，再核所有staged Gitblob及144输入一致。软件98输入也分别等于产品b75f14b和测试933e720。仅文档/证据交付，不重归属测试版本；准备正常push。
+
+
+## 英文 README、项目展示网站与全局技能
+
+- 用户追加要求以 fan-ziqi/rstop 的 README 和 GitHub Pages 展示站为参考。本轮先完成旧验收文档b02b97c并正常push，随后固定参考tree f2abbaac3ea4b44c77a926195e5f847e3ce43a6e、README blob1551effb…并读取站点HTML/CSS/JS；只借鉴信息结构，没有复制上游文案、品牌、代码或图像。先记录readme-website-design，再实现英文入口、原中文全文保留和Native指南提取；三处旧中文锚迁移，历史实验/失败与安全说明均保留。
+- 新静态website使用原创横向/纵向USB/IP路径SVG、三后端说明切换、构建命令与复制反馈。明示开发预览和TLS/硬件/自动恢复未完成，不制作假的已实现GUI。独立审查16组、0 mustfix；13项Node VM交互逻辑检查不是浏览器/USB测试。现有ELF的15次CLI/help核对通过，未运行设备操作；软件/QEMU结论仍锁933e720。
+- CUA实际浏览器观察：1440px主页面与375px手机均无横向溢出；后端点击、方向键/Home/End/循环切换与复制成功反馈通过。手机使用324×493.94px纵向图且资源已加载。临时移除script标签的/usbip-client/子路径fixture实际显示全部三个panel、构建命令和已加载资产；这是无脚本fixture，不冒充浏览器设置切换。一次多尺寸设置只改变当前选中的另一tab，返回仍375px，未把320/768请求当作实际通过。截图接口不可用，未获得全页像素截图；原SVG单独渲染PNG并目视检查。用户暂停中断的调用不作验收证据，恢复后重新读取状态，未重启USB测试。
+- 新全局readme-site安装在~/.agents/skills/readme-site并由~/.codex/skills/readme-site符号链接发现，4文件；初版quick_validate和30项定向检查通过。另一agent进行真实README-only演练，范围正确；据其建议仅修1行，将参考站点源码调研改为按需，新quick_validate及8项定向检查通过，初版/演练记录均留档且不冒称重跑。技能已用于复核这次成对交付。
+- Pages workflow仅上传website，PR只检查、main才部署，write权限限部署job，action使用官方核定commit。GitHub连接器无Pages配置能力，使用gh官方REST创建workflow发布源（实际成功，HTTPS已启用）；未改域名/其他项目设置。增加维护说明后本地111项链接/资产/SVG、JS语法及diff检查通过。28份审查、CLI帮助、技能原件/演练、图示渲染和Pages设置回执已归档readme-site-20261023。此时尚未推送网站或验证线上部署。
+- 最后staged检查发现新Native指南多一个末尾空行；前一shell未以检查失败短路而已生成本地commit，尚未push。清理空行后重新核验整个staged差异，再amend本轮未发布提交；产品和所有原始证据不变。

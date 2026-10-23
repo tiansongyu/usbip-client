@@ -1,111 +1,145 @@
 # RustUSB
 
-基于 Linux USB/IP 的远程 **USB 设备级重定向**工具，Rust 管理设备、权限和连接，Linux 内核执行真实 USB 请求转发。
+[![Build](https://github.com/tiansongyu/usbip-client/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tiansongyu/usbip-client/actions/workflows/ci.yml)
+[![Rust](https://img.shields.io/badge/Rust-1.97.1-orange?logo=rust)](rust-toolchain.toml)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-development%20preview-yellow)](docs/roadmap.md)
 
-当前为 **Phase 1 开发预览**：已完成源码调研并实现 Native 路线；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、内建 TLS、TUI、GUI、存储安全共享仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
+**USB devices, across Linux machines.** RustUSB manages USB/IP discovery, device permissions and connections through a CLI and a restricted privileged helper.
 
-可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，见[虚拟服务指南](docs/rust-virtual-server.md)与干净cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)。
+[Website](https://tiansongyu.github.io/usbip-client/) · [Get started](#build-from-source) · [Native guide](docs/native-guide.md) · [Compatibility](docs/compatibility.md) · [中文](README.zh-CN.md)
 
-实验性 `physical-nusb` 后端通过受限 helper 的 FD 授权，在普通用户进程中使用 Linux USBFS，见[物理服务指南](docs/rust-physical-server.md)。最新[checked release 修复与验收](docs/research/usbfs-checked-release.md)保留真实释放错误，失败后不执行配置切换；同一干净 `6e809a1` 的 11 项 QEMU 全部通过，含 8 个取消/断线场景、ECM 与 HID/FTDI 正常/热拔回归，共113项协议检查、22个guest正常退出。完整软件检查及37c2d61的[四平台CI](docs/evidence/publication-native-fixture-20261023.json)每格222项通过。真实硬件、内核内部挂起、ISO、认证和TLS仍未验收，完整Phase2仍未完成。
+[![RustUSB device flow: a USB device on the server reaches a Linux client through USB/IP over an administrator-managed network](website/assets/usbip-flow.svg)](https://tiansongyu.github.io/usbip-client/)
 
-可选 `virtual-server` / `physical-server` 已加入 Unix `SIGINT` / `SIGTERM` 合作停止，见[信号停止报告](docs/research/server-signal-shutdown.md)。修复 `d39517b` 在干净 `934358f` 的222次软件测试、四项本地信号用例和四项QEMU回归通过，8个guest正常退出；各构建feature和ELF来源分别记录。四平台[CI39899971271](docs/evidence/publication-server-signals-934358f-20261023.json)已通过，每格222次测试执行、原两项背压及新增四种信号场景均通过。该改动不提供SIGKILL、崩溃或持久重启恢复；真实设备G1/G2仍未完成。
+RustUSB is a **development preview**. Linux Native is the default backend; optional Rust services provide fixed virtual test devices and an experimental USBFS adapter. QEMU tests exercise real Linux USB/IP paths with simulated devices. Physical hardware acceptance is still pending.
 
-新增 [SIGKILL/首次重启负向验收](docs/research/physical-crash-recovery.md)在 clean `1342a6a` 完整收集证据，恢复结果为 FAIL：进程退出和客户端断连后，服务端原驱动未恢复；重启会以空驱动建立新基线。新进程的 `cleanup_verified` 不能证明旧会话恢复。该历史失败保持；自动恢复驱动仍未实现。新增[持久授权基线与管理员协调](docs/research/physical-journal-recovery.md)已在 clean `933e720` 验证：未决记录跨 helper 重启保留并拒绝新授权，正常结束可退休，管理员恢复后第三轮真实 HID/FTDI I/O 通过。本轮完整软件250次测试、五项QEMU/十guest、本地四信号和两背压全部通过；四平台[CI39908004666](docs/evidence/publication-journal-933e720-20261023.json)每格250次测试及信号/背压通过。保护与显式协调不等于自动恢复。
+## Build from source
 
-历史Native基线：59项软件测试及当轮Cargo质量检查通过；干净提交b4cbfc3的七项双QEMU测试通过，覆盖HID、FTDI双向串口、官方Linux工具三方向互操作、外部释放后重连与新代际保护。见[逐项验收](docs/acceptance.md)与[矩阵报告](docs/research/native-qemu-matrix.md)。
+Use Linux with Git, native build tools and [Rust via rustup](https://rustup.rs/). The repository pins Rust 1.97.1. Ubuntu 22.04/24.04 on x86_64 and aarch64 have native software CI; USB kernel integration has been tested in x86_64 QEMU guests.
 
-另在干净b487144完成[三机争用与交接](docs/research/native-qemu-contention.md)、[主动TCP中止后清理/重连](docs/research/native-qemu-transport-abort.md)，五个guest均正常退出。Ubuntu22.04/24.04 × x86_64/aarch64四格原生软件CI全部通过；这不替代ARM USB内核路径或真实硬件测试。
-
-## 构建与检查
-
-目标系统 Ubuntu 22.04/24.04，x86_64/aarch64；当前验证环境和未测项见 [兼容性](docs/compatibility.md)。需要稳定 Rust ≥1.97（2024 Edition）和匹配运行内核的发行版 `usbip` / `usbipd`。Ubuntu 通常由 `linux-tools-common`、`linux-tools-$(uname -r)` 提供工具；模块由对应内核包提供。
-
-```bash
+```sh
+git clone https://github.com/tiansongyu/usbip-client.git
+cd usbip-client
 cargo build --workspace --release --locked
+./target/release/rustusb --help
+```
+
+This produces `rustusb` and `rustusb-helper` in `target/release/`. Start with read-only checks:
+
+```sh
+./target/release/rustusb devices
+./target/release/rustusb devices --json
+./target/release/rustusb doctor
+```
+
+`devices` lists local USB metadata without changing drivers. `doctor` reports installed tools, modules and helper availability; it does not load modules, start services or test remote USB I/O. Read its individual results: exit code 0 means the diagnostic completed, not that the machine is ready to share devices.
+
+For Native sharing, administrators must install the distribution's `usbip` / `usbipd` and matching kernel modules. On Ubuntu these tools are usually provided by `linux-tools-common` and `linux-tools-$(uname -r)`. The [Native setup guide](docs/native-guide.md) covers binary installation, helper policy, directory permissions and service setup.
+
+## Use
+
+Run the CLI as an ordinary user. The root helper performs only policy-approved privileged operations. Before sharing, configure both helpers and an administrator-managed VPN or secure tunnel with firewall rules for the permitted peers. USB/IP itself has no authentication or encryption.
+
+After completing the [Native setup](docs/native-guide.md), the basic workflow is:
+
+```sh
+# Server: use the approved fingerprint from `rustusb devices --json`.
+rustusb export 'usb-<64-lowercase-hex-fingerprint>'
+
+# Client: use the configured server and the Bus ID returned by discover.
+rustusb discover 192.0.2.1 --port 3240 --json
+rustusb attach 192.0.2.1 1-2 --port 3240
+rustusb sessions
+rustusb status
+```
+
+The address and Bus ID above are examples. Use your allowed endpoint and discovered device. Verify client-side USB enumeration and the device's actual function before treating the connection as working.
+
+Stop applications using the device, then release the connection:
+
+```sh
+# Client: replace 0 with the port reported by `rustusb sessions`.
+rustusb detach 0
+
+# Server: after confirming the client has released the device.
+rustusb unexport 'usb-<64-lowercase-hex-fingerprint>'
+```
+
+Each command has `--help`. Use `--json` for machine-readable output and `--log-json` for JSON tracing on stderr; `RUST_LOG` controls log verbosity. Device JSON may include serial numbers—redact it before sharing.
+
+A device fingerprint is a candidate identity derived from descriptors, serial number when available and physical topology. A Bus ID is a current address. Neither is hardware authentication; a replacement without a serial number may have the same fingerprint.
+
+## Choose a backend
+
+| Backend | Device source and data path | Status |
+| --- | --- | --- |
+| **Linux Native** | Local devices through Linux `usbip_host` / `usbipd`; imports through `vhci_hcd` | Default build; QEMU I/O and official Linux tool interoperability tested |
+| **Rust virtual** | Fixed virtual HID keyboard and CDC ACM echo serial profiles | Optional `rust-backend` feature; Linux client enumeration and I/O tested in QEMU |
+| **Rust USBFS** | Authorized whole-device file descriptors passed by the helper to a userspace service | Experimental `physical-nusb` feature; simulated HID, FTDI and ECM tested through Linux USBFS |
+
+All three paths use Linux VHCI on the importing side. The Rust services do not require `usbipd` or `usbip_host` on their server side. A physical device must use one export backend at a time.
+
+To try the virtual service locally:
+
+```sh
+cargo build -p rustusb-cli --features rust-backend --release --locked
+./target/release/rustusb virtual-server --control-stdin
+```
+
+It listens on `127.0.0.1:3240` by default and accepts JSONL controls on stdin. Enter `{"id":"done","op":"shutdown"}` to stop. Importing a device still requires a configured Linux client. See the [virtual server guide](docs/rust-virtual-server.md) for test input and network options.
+
+For USBFS, build both the service and helper with their optional features:
+
+```sh
+cargo build --workspace --release --all-features --locked
+./target/release/rustusb physical-server --help
+```
+
+Follow the [physical server guide](docs/rust-physical-server.md) to authorize exact device fingerprints. Its persistent grant journal preserves unresolved original state across helper restarts and blocks new grants until resolved. Root-only reconciliation verifies state that an administrator has restored; it does not restore drivers automatically.
+
+## What is verified
+
+The latest [validation report](docs/research/physical-journal-recovery.md) records:
+
+- **250 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
+- **Five QEMU scenarios, ten successful guest exits**, covering grant lifecycle, HID/FTDI normal operation and hot unplug, ECM interface restoration, and SIGTERM cleanup.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 250 test executions, signal and output-backpressure checks.
+
+The report links the tested revision and raw evidence. [Native interoperability](docs/research/native-qemu-matrix.md) and [virtual device tests](docs/research/userspace-qemu.md) have their own recorded baselines. These results establish the stated simulated-device behavior; real-device compatibility and two-machine hardware acceptance remain unverified.
+
+## Current boundaries
+
+- **Network protection is external.** There is no built-in TLS or remote identity authentication. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
+- **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
+- **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Automatic recovery after SIGKILL, arbitrary FD revocation and power-loss durability testing remain unfinished.
+- **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
+- **More product work remains.** TUI, GUI, packaged installers, Windows USB support and the full hardware/security acceptance gates are on the [roadmap](docs/roadmap.md).
+
+Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
+
+## Documentation
+
+| Start here | Details |
+| --- | --- |
+| [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
+| [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
+| [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |
+| [Testing](docs/testing.md) | Software checks, isolated QEMU runners and hardware procedures |
+| [Architecture](docs/architecture.md) / [protocol](docs/protocol.md) | Component boundaries and USB/IP behavior |
+| [Work log](docs/work-log.md) / [requirements](docs/requirements.md) | Development history and the full project scope |
+
+Detailed guides and research notes are currently primarily in Chinese.
+
+## Contributing
+
+Read [AGENTS.md](AGENTS.md) and the [development skill](.agents/skills/rustusb-development/SKILL.md) before changing USB/IP, device or privileged code. Keep changes focused, document behavior and limits, and preserve reproducible evidence for device-related fixes.
+
+```sh
 scripts/check.sh
-target/release/rustusb devices
-target/release/rustusb devices --json
-target/release/rustusb doctor
 ```
 
-设备 ID 使用 VID/PID、序列号（若有）和物理控制器/端口拓扑的 SHA256 候选指纹。Bus ID 只是当前地址。无序列号的同型号设备在同一物理端口替换无法可靠区分；指纹不是硬件身份认证。JSON 设备详情含序列号，分享前自行脱敏，默认日志不输出它。
+This runs default and all-features checks plus the vendored library tests. QEMU prerequisites and commands are in the [testing guide](docs/testing.md). Report the backend, OS, kernel, device model and reproduction steps in [an issue](https://github.com/tiansongyu/usbip-client/issues); remove serial numbers and private USB payloads from public logs.
 
-## 本机诊断
+## License
 
-普通用户运行 `rustusb doctor` 查看逐项结果和处理建议；`rustusb doctor --json` 输出供脚本读取的结构化报告，当前 `schema_version` 为 `1`。诊断完成时退出码为 `0`，其中仍可能包含 `missing`、`not_loaded`、`unknown` 或失败结果；退出码不表示整体已经就绪。
-
-各项观察独立报告：
-
-- `native.usbip_host` / `native.vhci_hcd` 分别包含 `loaded`（已加载模块）、`sysfs`（有效驱动接口/状态）和 `availability`（匹配运行内核的模块文件或配置证据）。模块已安装不表示已加载，读取不到也不推断为内核禁用。
-- `native.usbip` / `native.usbipd` 校验固定工具路径及其权限后，仅执行有截止和输出上限的 `/usr/bin/usbip version` / `/usr/bin/usbipd --version`。工具版本可用不表示导出/导入成功；某些发行版的 `usbipd` 会拒绝普通用户的版本请求，非零退出的 root 拒绝报告 `requires_root`。仅打印 root 提示但成功返回安全版本时仍为 `available`。
-- `helper` 校验受保护的 Unix socket 路径和对端 root 身份，再发送只读 `Status` 请求；socket 文件存在不代表 helper 正常。helper 可响应、VHCI 可读取和管理员的可信网络声明也分别报告。脚本可结合 `required_for_export` / `required_for_import` 查看各角色所需项。
-
-doctor 不加载模块、不启动服务、不绑定 USB，也不建立 USB/IP 会话；不会验证 VPN、TLS、远端可达性或真实 USB 枚举/I/O。完成诊断后仍需两端授权、设备/远端策略和单独的网络与设备测试。
-
-## Native 共享流程
-
-CLI 普通权限运行；只有受限的 `rustusb-helper` 作为系统管理员运行。helper 不启动 `usbipd`、不改防火墙、不加载模块。开始前，两端管理员建立受管 VPN/安全隧道和 IPv4/IPv6 防火墙，只让授权对端访问 USB/IP 端口。原生 USB/IP 自身没有认证或加密，`trusted_network: true` 只是管理员确认，不会创建安全通道。
-
-1. 管理员确认指定测试设备和双方授权，先运行 `rustusb devices --json` 获取 `usb-…` ID。不要选择生产设备、正在使用的输入设备或管理网络网卡。Phase 1 拒绝存储、Hub、不完整元数据及无法证明安全的设备；不会强制卸载。
-2. 两端管理员安装 `target/release/rustusb` 与 `target/release/rustusb-helper` 到 root 管理的目录（例如 `/usr/local/bin`），加载各端需要的 `usbip_host` / `vhci_hcd`。按 [策略示例](examples/policy.json) 建立 `/etc/rustusb/policy.json`，仅加入批准 UID、设备指纹和远端 host/port。
-3. 管理员创建 `/run/rustusb`（root 所有、0755）和 `/etc/rustusb`（root 所有、0755），策略文件 root 所有、0600。所有祖先目录不得允许组/其他用户写入。运行：
-
-   ```bash
-   sudo /usr/local/bin/rustusb-helper \
-     --config /etc/rustusb/policy.json \
-     --socket /run/rustusb/control.sock
-   ```
-
-4. 服务端管理员在确认网络隔离后启动发行版 `usbipd`。它默认监听全部地址，**没有监听地址参数**；仅加 `-4` 或改端口不构成隔离。不会由 RustUSB 自动启动。
-5. 普通用户在服务端和客户端分别执行：
-
-   ```bash
-   # 服务端：只允许root策略中批准的指纹
-   rustusb export 'usb-<64位小写指纹>'
-
-   # 客户端：host和port必须与其helper的策略完全匹配
-   rustusb discover 192.0.2.1 --port 3240 --json
-   rustusb attach 192.0.2.1 1-2 --port 3240
-   rustusb sessions
-   rustusb status
-   # 用sessions返回的端口替换0
-   rustusb detach 0
-
-   # 服务端确认对端已经释放后
-   rustusb unexport 'usb-<64位小写指纹>'
-   ```
-
-示例地址 `192.0.2.1` 仅用于文档/隔离仿真。请使用实际受管地址和扫描得到的Bus ID。所有命令支持 `--json`，日志写 stderr，`--log-json` 启用 JSON tracing，`RUST_LOG=info` 配置级别。普通用户不使用 `sudo rustusb` 代替 helper。
-
-helper 的所有允许 UID 共同管理已批准设备和本实例建立的连接；这不是多租户隔离。仅能自动断开本运行实例准确认领的端口、取消本实例成功创建并验证的导出绑定。重启后的未知端口和导出、外部工具建立的导出均拒绝自动接管，需管理员核对。设备操作失败、超时或取消不代表没有副作用，也不保证驱动或资源已经恢复；请检查 `devices/sessions/status` 和内核，避免盲目重试。失败后来源不明的绑定不会自动认领或撤销。卸载/重启不自动强制断开未知设备。详见 [安全边界](docs/security.md)。
-
-## 测试与研究
-
-```bash
-# 上游源码审计：固定commit，普通测试与对抗性probe
-scripts/audit-rust-upstream.sh
-# DEVLIST解析器短时ASan fuzz，需要单独安装nightly和cargo-fuzz
-scripts/fuzz-smoke.sh
-```
-
-QEMU 仿真用于验证本项目导出、发现、导入、Linux 枚举、实际输入、断开与重连；运行方法和结果见 [测试手册](docs/testing.md)。仿真与真实物理 USB 测试分别记录。
-
-```bash
-python3 scripts/qemu/run-native-qemu.py
-# 官方Linux客户端互操作，改用模拟FTDI串口
-python3 scripts/qemu/run-native-qemu.py --scenario linux-client --device ftdi-serial
-# 外部释放后直接重连，以及同端口新连接的所有权保护
-python3 scripts/qemu/run-native-qemu.py --scenario reconnect
-# 独立三guest争用与释放后交接
-python3 scripts/qemu/run-contention-qemu.py
-# 已建立USB/IP TCP被精确中止后的清理与再次导入
-python3 scripts/qemu/run-fault-qemu.py
-```
-
-该脚本创建两个一次性x86_64 Linux guest，以私有socketpair网络连接，使用QEMU模拟键盘或FTDI0403:6001串口（不是CDC ACM）。它不会直通宿主USB或在宿主加载USB/IP模块。需要QEMU、BusyBox、cpio、jq、setpriv、当前内核镜像/模块和匹配linux-tools；无法直接读取`/boot`时，仅复制测试内核到临时目录可能需要预先可用的`sudo -n`。完整日志保存在`docs/evidence/`，通过标记不代表真实硬件兼容或内建加密。
-
-- [架构与接口](docs/architecture.md)、[协议](docs/protocol.md)、[源码差距](docs/research/gap-analysis.md)
-- [Linux 官方实现审计](docs/research/linux-usbip-audit.md)、[jiegec Rust 实现审计](docs/research/rust-backend-audit.md)
-- [许可证与依赖](docs/third-party.md)、[完整需求](docs/requirements.md)、[项目开发规范](AGENTS.md)
-
-RustUSB 自有代码 MIT；外部 Linux 工具/驱动仍按各自 GPL 许可提供。没有把 GPL 实现复制为 MIT 源码。
+RustUSB's own code is [MIT licensed](LICENSE). External Linux tools and drivers retain their own GPL licenses; dependencies and borrowed material are documented in [third-party notices](docs/third-party.md).

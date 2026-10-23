@@ -1,0 +1,13 @@
+# RustUSB README and project website
+
+User request 2026-10-23: English README and a companion site inspired by fan-ziqi/rstop, plus a reusable global README/site skill. Previous USB lifecycle delivery is committed and pushed as b02b97c; its runtime evidence remains pinned to 933e720.
+
+Reference: rstop tree f2abbaac3ea4b44c77a926195e5f847e3ce43a6e; README blob 1551effb96790c89696669e175c25c34253e845f and website/dist/index.html, styles.css. Public live HTML was retrieved and browser accessibility verified. Reuse the information pattern, not wording, assets, branding, software claims or source. README: short purpose, genuine badges, navigation, visual, source build, use, coverage, docs/contribution/license. Site: restrained dark hero, large product visual, interactive exploration, practical source-build CTA.
+
+Audience: Linux developers and administrators evaluating USB/IP. Root README becomes English; retain the Chinese README and move the detailed Native how-to into a linked guide without dropping existing security/diagnostic detail. No release binaries/installers, Windows support, built-in TLS, TUI or GUI are implied.
+
+Design tokens: background #080d12; panel #101a24; text #edf4f9; secondary #9bafbe; signal cyan #83ddf2; warning copper #eec18d. System sans for editorial headings/body, local monospace for actual commands. Max content 1120px, generous section spacing, centered hero, left-aligned operational content. The memorable element is a readable two-host USB/IP connection diagram; no fabricated product dashboard or synthetic live output. Native, virtual and USBFS tabs explain actual alternate paths, with links to evidence. Illustrations are labelled, and a short copyable source-build block remains useful without JS.
+
+Implementation: dependency-free static website/ (HTML/CSS/JS/SVG), relative asset paths work at /usbip-client/. No telemetry, external fonts or dependencies. Progressive enhancement, native buttons with keyboard tab handling, explicit clipboard feedback, visible focus, reduced motion, responsive narrow layouts. Original SVG also used in README. GitHub Pages Actions artifact only website/, never docs/evidence or the repo root. CI verifies local assets/anchors and JS syntax. Publishing is normal authorized repository delivery; enable Pages only after a concrete reviewed site exists, and do not change broader permissions/settings.
+
+Validation: source command/help checks; links and anchors; desktop and mobile browser review; tabs keyboard/pointer; copy success/failure; no-JS content; GitHub Pages artifact and live page verification. No product/core changes, so existing Rust/QEMU results keep their prior commit; do not claim new runtime coverage.

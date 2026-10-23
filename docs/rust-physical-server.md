@@ -14,7 +14,7 @@ target/release/rustusb physical-server --help
 target/release/rustusb devices --json
 ```
 
-两端管理员按 [Native 安装步骤](../README.md#native-共享流程)保护 helper 二进制、配置和 Unix socket。服务端 helper 必须以 `physical-usb` feature 构建；上面的 all-features 命令包含它。仅将指定测试设备的精确 `usb-…` 指纹放进 root 管理的 `physical_device_ids`，不要将 Bus ID 当作指纹。旧策略省略此字段时等于空列表。
+两端管理员按 [Native 安装步骤](native-guide.md#native-共享流程)保护 helper 二进制、配置和 Unix socket。服务端 helper 必须以 `physical-usb` feature 构建；上面的 all-features 命令包含它。仅将指定测试设备的精确 `usb-…` 指纹放进 root 管理的 `physical_device_ids`，不要将 Bus ID 当作指纹。旧策略省略此字段时等于空列表。
 
 ```json
 {
@@ -44,7 +44,7 @@ rustusb --socket /run/rustusb/control.sock physical-server \
 
 地址为隔离测试网示例，须替换为实际受管地址。默认监听 `127.0.0.1:3240`。服务本身没有认证或 TLS，部署前需由管理员提供真实受控网络和访问限制；控制请求与 IMPORT 后 URB 长连接均需受保护。
 
-客户端由普通用户运行现有 `discover`、`attach`、`sessions` 和 `detach`，按 [CLI 帮助与 Native 流程](../README.md#native-共享流程)配置客户端 helper 的远端授权。设备只有在 IMPORT 时才独占 claim 全部接口；忙、清理中、隔离或旧代际不会作为可用设备发布。
+客户端由普通用户运行现有 `discover`、`attach`、`sessions` 和 `detach`，按 [CLI 帮助与 Native 流程](native-guide.md#native-共享流程)配置客户端 helper 的远端授权。设备只有在 IMPORT 时才独占 claim 全部接口；忙、清理中、隔离或旧代际不会作为可用设备发布。
 
 切换配置后，服务会在新的接口 claim 前重新检查当前配置，而不沿用旧配置的安全快照。存储驱动、块设备后代、外部占用或不完整观察会阻止继续绑定；恢复时发现这些状态也会保持隔离，不强制切回配置或解绑现有驱动。该检查不能撤销内核已经执行的配置变更。多接口驱动已恢复的原绑定会逐接口重新核对，不能单凭 CONNECT 返回 EBUSY 当作成功。
 
