@@ -1,0 +1,46 @@
+{
+  "head": "a7406d7080f6b3d9a73d1ea36a16d300eee0eb55",
+  "results": [
+    {
+      "name": "probe-build",
+      "command": [
+        "rustc",
+        "--edition=2024",
+        "-O",
+        "-D",
+        "warnings",
+        "scripts/qemu/kernel-socketpair-probe.rs",
+        "-o",
+        "/tmp/rustusb-secure-foundation-software-20261023/kernel-socketpair-probe"
+      ],
+      "started_at_utc": "2026-10-23T10:05:19.877463+00:00",
+      "finished_at_utc": "2026-10-23T10:05:20.449689+00:00",
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "name": "probe-host-guard",
+      "command": [
+        "/tmp/rustusb-secure-foundation-software-20261023/kernel-socketpair-probe"
+      ],
+      "started_at_utc": "2026-10-23T10:05:20.449737+00:00",
+      "finished_at_utc": "2026-10-23T10:05:20.450499+00:00",
+      "exit_code": 1,
+      "passed": true
+    },
+    {
+      "name": "check",
+      "command": [
+        "bash",
+        "scripts/check.sh"
+      ],
+      "started_at_utc": "2026-10-23T10:05:20.450514+00:00",
+      "finished_at_utc": "2026-10-23T10:05:56.254735+00:00",
+      "exit_code": 0,
+      "passed": true
+    }
+  ],
+  "source_guard_passed": true,
+  "input_count": 104,
+  "passed": true
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "scope": "Author static Python/shell checks and pure Python parser fixtures only; no Rust compile/probe execution/Cargo/QEMU/product test",
+  "result": "PASS",
+  "checks": [
+    {
+      "name": "runner ast syntax",
+      "passed": true
+    },
+    {
+      "name": "guest sh -n",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "opaque-display fixture 000000",
+      "passed": true
+    },
+    {
+      "name": "opaque-display fixture 000017",
+      "passed": true
+    },
+    {
+      "name": "opaque-display fixture ffffa123abcde000",
+      "passed": true
+    },
+    {
+      "name": "opaque-display fixture 0000000000000000",
+      "passed": true
+    },
+    {
+      "name": "invalid-display fixture z123",
+      "passed": true
+    },
+    {
+      "name": "invalid-display fixture -1",
+      "passed": true
+    },
+    {
+      "name": "invalid-display fixture 0123456789abcdef0",
+      "passed": true
+    },
+    {
+      "name": "forbid unsafe and no unwrap/expect/panic calls",
+      "passed": true
+    },
+    {
+      "name": "one-write sysfs and no stub negative command",
+      "passed": true
+    }
+  ],
+  "check_count": 11,
+  "files": [
+    {
+      "path": "scripts/qemu/run-kernel-socketpair-qemu.py",
+      "length": 26896,
+      "sha256": "1c6da88a4df0a74f0b0fdd3f83b6bcfa13f71edeabdcdd9f1f14aa5e2760bf1c",
+      "mode": "0o755"
+    },
+    {
+      "path": "scripts/qemu/guest-kernel-socketpair-init.sh",
+      "length": 13360,
+      "sha256": "cf96abc08e7b02bbec3536a3015d739434f4715ac46058e5df7c41bfba3cc4ac",
+      "mode": "0o755"
+    },
+    {
+      "path": "scripts/qemu/kernel-socketpair-probe.rs",
+      "length": 20251,
+      "sha256": "2e6f8d554556aca7f334f94007b7fab02aae6becb43a2c2953a45ccad1ae7cbf",
+      "mode": "0o644"
+    }
+  ],
+  "preflight_correction": "Root initially suggested v6.8 sockfd was %pK. Fixed v6.8 source actually prints %06u historical sockfd, matching current Native parser. This was a review correction, not a product or runtime failure. Probe preserves bounded opaque display without treating it as identity; hex fixtures are parser compatibility only.",
+  "review_fixes": [
+    "Create evdev capture file before background reader.",
+    "Reject extra status files; fixed experiment requires one complete controller status.",
+    "Only ENOENT proves old local sysfs disappearance.",
+    "Attempt all four owned socket shutdowns before any fallible diagnostic write."
+  ],
+  "limitations": [
+    "Rust compilation and guest execution remain pending root orchestration.",
+    "One guest, one KEY1 cycle and35B serial each direction only; no remote TCP/TLS/authentication/DEVLIST/IMPORT handshake.",
+    "The direct kernel imports are explicitly unmanaged by current helper; ordinary helper export/unexport remain existing product operations."
+  ]
+}

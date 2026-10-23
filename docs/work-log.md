@@ -379,3 +379,5 @@
 - 固定registry下载的rustls0.23.46/tokio-rustls0.26.6/rcgen0.14.10已逐checksum核官方crate，核7个API/资源限制源文件。先在设计补TLS基础模块候选契约，再准备新非空transport crate：强制mTLS/TLS1.3/ALPN、leaf-pin principal+device ACL、16连接/握手截止/stream持permit。采用显式内置ring provider、关闭TLS12/默认provider及resumption/0RTT；候选尚未编译验收，不宣称USB链已加密。内核AF_UNIX单VM真I/O实验与此独立实施，避免有意建立可抢占的loopback端口。
 
 - 新transport首次18项真实TLS/策略测试全通过；完整scripts/check.sh exit0，104个选定Rust/Cargo/check输入前后SHA相同，新增模块未接设备或CLI。独立冻结源审查28项无mustfix，显式补双方握手后ALPN检查，避免把配置ALPN误当强制协商；依赖清单实际148包。guest-only probe严格rustc及普通宿主UID首guard拒绝通过，尚未执行QEMU。预审中root误套旧%pK显示，作者核固定v6.8为%06u后纠正；这是审查纠正，不是产品或运行失败。
+
+- 完整软件计数为default108/allfeatures176/vendor20，共304次、35个result，0失败忽略；前面独立18项不重复加进304。软件命令、104选定输入、依赖features、作者和独立源审查及probe静态/首guard原件已归档secure-transport-foundation-20261023；不是USB链TLS或QEMU结果。设计研究提交2ade292后准备冻结实现与机制harness。

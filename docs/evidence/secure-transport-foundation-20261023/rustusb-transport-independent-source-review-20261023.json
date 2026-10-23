@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "result": "NO_MUST_FIX_SOURCE_REVIEW",
+  "created_utc": "2026-10-23T10:05:33.514540+00:00",
+  "head": "a7406d7080f6b3d9a73d1ea36a16d300eee0eb55",
+  "git_status_at_review": " M Cargo.lock\n M Cargo.toml\n M docs/dependency-inventory.json\n M docs/third-party.md\n M docs/work-log.md\n?? crates/rustusb-transport/\n?? docs/evidence/secure-transport-design-20261023/\n?? docs/research/secure-transport-design.md\n?? scripts/qemu/guest-kernel-socketpair-init.sh\n?? scripts/qemu/kernel-socketpair-probe.rs\n?? scripts/qemu/run-kernel-socketpair-qemu.py\n",
+  "scope": "Independent read-only review of exactly frozen transport Cargo +4 Rust sources; no Cargo/rustc/fmt/tests/QEMU/USB/network execution by reviewer. Root owns actual build/run results.",
+  "files": [
+    {
+      "path": "crates/rustusb-transport/Cargo.toml",
+      "length": 353,
+      "sha256": "b956495b71e9a67c0ee6c7c97353e0500c7fb450192c288f30e6acd64fb416a2",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-transport/src/acl.rs",
+      "length": 8198,
+      "sha256": "f02ebecc37fc37f6e16c9d1c834c79063e7bd0339592d68f904cd337985e2b81",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-transport/src/lib.rs",
+      "length": 2588,
+      "sha256": "df63a60e6fe75b569af0f12e2d022dca912b07107f723816ca47153c18920d58",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls/tests.rs",
+      "length": 20526,
+      "sha256": "93079a1e56fd00ed890dd45213ec8628138ddd5ddced5d907dc7ef67a5e35eb4",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "crates/rustusb-transport/src/tls.rs",
+      "length": 13397,
+      "sha256": "0048c9f2f76ce64cf135f6c430cd996b80e249fe152a70440d99dee8ee38f716",
+      "matches_author_freeze": true
+    }
+  ],
+  "freeze_matches": true,
+  "author_manifest": {
+    "path": "/tmp/rustusb-transport-author-handoff-20261023.json",
+    "sha256": "6da4d3576721fa1e60c461a14fc68cac1277a57ddbe30a3b53cc138ca48b0c6e"
+  },
+  "checks": [
+    {
+      "id": "tls13-explicit-provider",
+      "source": "tls.rs:125,218",
+      "finding": "Both builders choose ring explicitly and with_protocol_versions TLS13 only.",
+      "passed": true
+    },
+    {
+      "id": "mandatory-mutual-auth",
+      "source": "tls.rs:127-137",
+      "finding": "WebPkiClientVerifier default requires client authentication; no allow_unauthenticated or dangerous verifier.",
+      "passed": true
+    },
+    {
+      "id": "normal-server-validation",
+      "source": "tls.rs:218-246",
+      "finding": "Client uses explicit roots and validated ServerName, retaining normal chain/time/usage/name verification.",
+      "passed": true
+    },
+    {
+      "id": "pin-after-pki",
+      "source": "tls.rs:181-192",
+      "finding": "Only completed accepted TLS produces a policy-mapped leaf DER SHA256 peer; a configured pin cannot bypass PKI.",
+      "passed": true
+    },
+    {
+      "id": "alpn-enforced-after-handshake",
+      "source": "tls.rs:185,256,272",
+      "finding": "Both sides require negotiated TLS1.3 and exact ALPN after handshake; fixes missing-ALPN default behavior.",
+      "passed": true
+    },
+    {
+      "id": "server-resumption-disabled",
+      "source": "tls.rs:140-147",
+      "finding": "NoServerSessionStorage, tickets0, early_data0, half_rtt=false and default NeverProducesTickets retained behind private config.",
+      "passed": true
+    },
+    {
+      "id": "client-resumption-disabled",
+      "source": "tls.rs:227-231",
+      "finding": "Resumption disabled, early data false and immutable private connector.",
+      "passed": true
+    },
+    {
+      "id": "bounded-credentials",
+      "source": "tls.rs:21-106",
+      "finding": "4-chain/32-root/16KiB each/64KiB total and 16KiB key, duplicates and mismatch rejected; caller owns secure file loading.",
+      "passed": true
+    },
+    {
+      "id": "bounded-policy",
+      "source": "acl.rs:9-12,127-194",
+      "finding": "64 principals,2 pins,16 devices; duplicate IDs/shared pins/duplicate devices rejected; empty policy denies.",
+      "passed": true
+    },
+    {
+      "id": "typed-device-keys",
+      "source": "acl.rs:25-63",
+      "finding": "Backend-qualified physical/native fingerprints; fixed virtual enums cannot authorize physical devices.",
+      "passed": true
+    },
+    {
+      "id": "private-peer-construction",
+      "source": "acl.rs:197-221",
+      "finding": "VerifiedPeer fields private; verified_peer crate-private; external caller cannot invent principal string.",
+      "passed": true
+    },
+    {
+      "id": "immutable-policy",
+      "source": "acl.rs:168-221",
+      "finding": "Arc-backed startup policy; replacement policy intentionally does not revoke existing authenticated streams.",
+      "passed": true
+    },
+    {
+      "id": "exact-acl-predicate",
+      "source": "acl.rs:235",
+      "finding": "Allows uses exact typed allowlist membership; USB DEVLIST/IMPORT integration is explicitly future work.",
+      "passed": true
+    },
+    {
+      "id": "permit-before-handshake",
+      "source": "tls.rs:164-177",
+      "finding": "try_acquire_owned rejects overload before creating the handshake future; server clones share Arc Semaphore.",
+      "passed": true
+    },
+    {
+      "id": "permit-held-for-stream",
+      "source": "tls.rs:282-295",
+      "finding": "Private inner and permit owned by stream; no into_inner/get_mut/Deref escape; fields drop inner before permit.",
+      "passed": true
+    },
+    {
+      "id": "permit-cancel-error",
+      "source": "tls.rs:174-198",
+      "finding": "Timeout/error/cancel drops local handshake stream and acquired permit through ownership.",
+      "passed": true
+    },
+    {
+      "id": "bounded-handshake",
+      "source": "lib.rs:18-23,tls.rs:180,251",
+      "finding": "Production5s deadline, per-connection TLS buffer64KiB; not claimed as whole-process RSS limit.",
+      "passed": true
+    },
+    {
+      "id": "redacted-debug-errors",
+      "source": "lib.rs:25-55,acl.rs:111-115,tls.rs:85-89,107-111,203-208,266-269,296-319",
+      "finding": "No certificate/key/raw IO Debug exposure or raw errors interpolated into public setup failures.",
+      "passed": true
+    },
+    {
+      "id": "flush-contract",
+      "source": "lib.rs:7-9,tls.rs:280,323-353",
+      "finding": "AsyncWrite forwards flush/shutdown; callers must write_all+flush in same application deadline. No engine integration claimed.",
+      "passed": true
+    },
+    {
+      "id": "no-device-listener-privilege",
+      "source": "lib.rs:1-6",
+      "finding": "Crate does not open sockets/listeners, credential paths or USB devices and does not introduce helper RPC.",
+      "passed": true
+    },
+    {
+      "id": "positive-test-real-tls",
+      "source": "tls/tests.rs:120-167",
+      "finding": "Authored positive test performs real mTLS over bounded DuplexStream, validates pin/principal/ACL and24KiB+reply with explicit flush/backpressure.",
+      "passed": true
+    },
+    {
+      "id": "pki-negatives-authored",
+      "source": "tls/tests.rs:171-276",
+      "finding": "Authored wrong-name, unknown-CA, pinned-untrusted-CA, missing-client-cert, expiry and wrong-EKU tests preserve standard verification.",
+      "passed": true
+    },
+    {
+      "id": "policy-and-alpn-negatives-authored",
+      "source": "tls/tests.rs:279-326",
+      "finding": "Authored removed/unmapped pin and missing/wrong ALPN tests, including client success not being device authorization.",
+      "passed": true
+    },
+    {
+      "id": "resumption-test-authored",
+      "source": "tls/tests.rs:330-356",
+      "finding": "Authored repeated full handshake assertions and explicit disabled-storage/ticket/early-data/compression checks.",
+      "passed": true
+    },
+    {
+      "id": "permit-lifecycle-tests-authored",
+      "source": "tls/tests.rs:360-414",
+      "finding": "Authored16streams/clone/overload/drop, deterministic one-poll cancellation, and shortened test-only timeout checks.",
+      "passed": true
+    },
+    {
+      "id": "input-and-debug-tests-authored",
+      "source": "tls/tests.rs:418-544",
+      "finding": "Authored exact namespaces/hex/bounds/ambiguous policy/DER/key/name/Debug regressions.",
+      "passed": true
+    },
+    {
+      "id": "no-core-unsafe",
+      "source": "src/*.rs",
+      "finding": "Production source has no unsafe block, unwrap(), expect(), panic(), insecure verifier or raw inner escape.",
+      "passed": true
+    },
+    {
+      "id": "scope-honest",
+      "source": "lib.rs:1-9",
+      "finding": "Only foundation module; neither memory TLS tests nor this source review prove encrypted USB/IP, TCP, PCAP or physical hardware.",
+      "passed": true
+    }
+  ],
+  "check_count": 28,
+  "authored_test_count": 18,
+  "must_fix": [],
+  "upstream_crate_archives": [
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/rustls-0.23.46.crate",
+      "length": 386227,
+      "sha256": "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+    },
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/tokio-rustls-0.26.6.crate",
+      "length": 29259,
+      "sha256": "c9cc2678c2cdd569ef8215e2afd7954ada2ae20b4fdd2c5fe6139a3b02d105db"
+    },
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/rcgen-0.14.10.crate",
+      "length": 65329,
+      "sha256": "8774e05a7d0de114588e6a28fe7e71694b82614ed569d86d8b389dfbc98b8ad8"
+    }
+  ],
+  "fixed_source_evidence": [
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/source/rustls-0.23.46/src/server/hs.rs",
+      "length": 29399,
+      "sha256": "b1ed14e5e36ee46bfb843b86af58efda01cdaa71a7f25a2f647da21f52529f91",
+      "reviewed_lines": "99-121"
+    },
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/source/rustls-0.23.46/src/server/builder.rs",
+      "length": 5578,
+      "sha256": "4ec5532bbaaf9d60ae2fb577e8f463e2f3f6915aa80d0f11627829214fa7eb8c",
+      "reviewed_lines": "105-128"
+    },
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/source/rustls-0.23.46/src/webpki/client_verifier.rs",
+      "length": 26048,
+      "sha256": "c6051e79858a70ce746fb55208751a429c691c1bb76bcaca238be310ae11d652",
+      "reviewed_lines": "172-191,349-355"
+    },
+    {
+      "path": "/tmp/rustusb-phase3-tls-research-20261023/source/tokio-rustls-0.26.6/src/lib.rs",
+      "length": 6978,
+      "sha256": "6e434e1c2b43c12ce50cf1d296bbf924c21b47c84414b05b36bd558f11d0d7a1",
+      "reviewed_lines": "3-17"
+    }
+  ],
+  "resolved_review_finding": "Configured ALPN list alone permits missing ALPN for regular TLS in fixed rustls; candidate now checks negotiated ALPN and version on both sides, with authored missing/wrong-ALPN negative test.",
+  "limitations": [
+    "Tests are reviewed source only, not executed by this reviewer.",
+    "16 applies to one server/its clones; caller must bound accepted tasks/connections before invoking library.",
+    "The private verified peer is an authenticated policy context, not a hardware identity or lease; future integration must retain connection association.",
+    "Startup pin removal is tested for new handshakes; no active-session revocation/credential-file privilege or root RPC is implemented here.",
+    "USB DEVLIST/IMPORT/long-URB integration and encrypted network acceptance remain unimplemented; no Phase3 completion."
+  ]
+}
