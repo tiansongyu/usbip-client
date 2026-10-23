@@ -493,3 +493,6 @@
 
 - 服务owner/health/操作指南与旧agent disk2 verifier提交`e29cc11`。164项实际软件gate输入逐Gitblob映射该commit全部一致，保持原dirty031run身份；同样本的Native-only check/tree PASS且无Rust engine/nusb/rusb。软件/研究/原compile与Clippy失败/本地runtime共101份约5.13MB归档`docs/evidence/data-link-software-20261024`，逐original/bytes/SHA与staged blob核验后提交。
 - 在独立干净worktree锁e29cc11启动旧九QEMU矩阵，不受primary新harness并行编辑影响。当前六组virtual/USBFS/Native×双栈前台均PASS；两agent与原SIGTERM尚未报告完成。本项只记既有raw-v1兼容，新的v2/3方向定向blackhole与硬件未由此通过。
+
+- clean e29cc11旧九QEMU全部PASS/18guest0，204输入前后稳定，八新harness四guard与旧SIGTERM独立guard均真；同actual CLI76546440…/helperb4af4b5f…字节与软件gate一致。I独立raw复核3879个记录谓词与244个额外batch谓词（都非USBcase）、1030个guest base64原件、2579个原件SHA，204Gitblob/166secure/168agent选定源一致；两agent各16份private disk2严格关联。旧证据及原FAIL不改；仍保留SIGTERM startup helperAcceptance=false、非pending Native KILL与USBFS无中间grantjournal等原边界。
+- Native新v2定向blackhole harness七源冻结，H静态68项/55jq、AF_UNIX合成114观察与3边界/8phase正负fixtures通过，N源码交叉审查无具体阻断；这些不是QEMU。每方向fresh HID attempt、serial原连接持续I/O，双端health/tuple精确绑定，最后actualSIGTERM/Rootproof/完整baseline先于网络teardown。Native pending和独立procFD关联未由此证明。即将提交后以独立clean Native worktree首跑；primary另行实现virtual/USBFS四组，避免源guard并行竞态。
