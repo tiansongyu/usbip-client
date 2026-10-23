@@ -5,11 +5,11 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-development%20preview-yellow)](docs/roadmap.md)
 
-**USB devices, across Linux machines.** RustUSB manages USB/IP discovery, device permissions and connections through a CLI and a restricted privileged helper.
+**USB devices, across Linux machines.** RustUSB manages USB/IP discovery, device permissions and connections through a CLI, a restricted privileged helper and optional mutual-TLS brokers.
 
-[Website](https://tiansongyu.github.io/usbip-client/) · [Get started](#build-from-source) · [Native guide](docs/native-guide.md) · [Compatibility](docs/compatibility.md) · [中文](README.zh-CN.md)
+[Website](https://tiansongyu.github.io/usbip-client/) · [Get started](#build-from-source) · [Secure guide](docs/secure-guide.md) · [Native guide](docs/native-guide.md) · [Compatibility](docs/compatibility.md) · [中文](README.zh-CN.md)
 
-[![RustUSB device flow: a USB device on the server reaches a Linux client through USB/IP over an administrator-managed network](website/assets/usbip-flow.svg)](https://tiansongyu.github.io/usbip-client/)
+[![Legacy Native mode: a USB device on the server reaches a Linux client through USB/IP over an administrator-managed network](website/assets/usbip-flow.svg)](https://tiansongyu.github.io/usbip-client/)
 
 RustUSB is a **development preview**. Linux Native is the default backend; optional Rust services provide fixed virtual test devices and an experimental USBFS adapter. QEMU tests exercise real Linux USB/IP paths with simulated devices. Physical hardware acceptance is still pending.
 
@@ -38,7 +38,7 @@ For Native sharing, administrators must install the distribution's `usbip` / `us
 
 ## Use
 
-Run the CLI as an ordinary user. The root helper performs only policy-approved privileged operations. Before sharing, configure both helpers and an administrator-managed VPN or secure tunnel with firewall rules for the permitted peers. USB/IP itself has no authentication or encryption.
+Run the CLI as an ordinary user. The root helper performs only policy-approved privileged operations. The following legacy Native workflow requires both helpers and an administrator-managed VPN or secure tunnel with firewall rules for permitted peers. USB/IP itself has no authentication or encryption.
 
 After completing the [Native setup](docs/native-guide.md), the basic workflow is:
 
@@ -69,15 +69,32 @@ Each command has `--help`. Use `--json` for machine-readable output and `--log-j
 
 A device fingerprint is a candidate identity derived from descriptors, serial number when available and physical topology. A Bus ID is a current address. Neither is hardware authentication; a replacement without a serial number may have the same fingerprint.
 
+### Encrypted broker mode
+
+The optional `secure-*` commands carry the authenticated device catalog, import and subsequent URBs over mutual TLS 1.3. Follow the [secure setup guide](docs/secure-guide.md) to provision a dedicated nonroot broker account, trusted credentials and exact device rules on both endpoints, then run:
+
+```sh
+cargo build --workspace --release --all-features --locked
+
+# Server broker: this example uses the guide's virtual HID configuration.
+./target/release/rustusb secure-server --backend virtual --config /etc/rustusb/server.json
+
+# Client broker, on the importing machine.
+./target/release/rustusb secure-discover --config /etc/rustusb/client.json --json
+./target/release/rustusb secure-attach --config /etc/rustusb/client.json
+```
+
+Choose `--backend native` for approved kernel exports or `--backend usbfs` for the experimental physical adapter. A Native-only CLI can use the `secure-transport` feature. Keep `secure-attach` running while using the device; SIGINT or SIGTERM starts supervised cleanup. Unconfirmed operations remain pending for administrator verification.
+
 ## Choose a backend
 
 | Backend | Device source and data path | Status |
 | --- | --- | --- |
-| **Linux Native** | Local devices through Linux `usbip_host` / `usbipd`; imports through `vhci_hcd` | Default build; QEMU I/O and official Linux tool interoperability tested |
+| **Linux Native** | Linux `usbip_host` and `vhci_hcd`; legacy `usbipd` or an optional TLS broker using anonymous kernel channels | Default management build; legacy interoperability and secure QEMU I/O tested |
 | **Rust virtual** | Fixed virtual HID keyboard and CDC ACM echo serial profiles | Optional `rust-backend` feature; Linux client enumeration and I/O tested in QEMU |
 | **Rust USBFS** | Authorized whole-device file descriptors passed by the helper to a userspace service | Experimental `physical-nusb` feature; simulated HID, FTDI and ECM tested through Linux USBFS |
 
-All three paths use Linux VHCI on the importing side. The Rust services do not require `usbipd` or `usbip_host` on their server side. A physical device must use one export backend at a time.
+All three paths use Linux VHCI on the importing side. Virtual and USBFS servers do not require `usbipd` or `usbip_host`. The Native TLS broker uses `usbip_host` without starting `usbipd`. A physical device must use one export backend at a time.
 
 To try the virtual service locally:
 
@@ -99,21 +116,19 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The latest [validation report](docs/research/physical-driver-autorestore.md) records:
+The latest [secure-path validation report](docs/research/secure-usbip-validation.md) records:
 
-- **268 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
-- **Seven QEMU scenarios, fourteen successful guest exits**, covering opt-in recovery after service death and helper restart, the default manual lifecycle, HID/FTDI normal operation and hot unplug, ECM restoration, and SIGTERM cleanup.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 268 test executions, signal and output-backpressure checks.
+- **412 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
+- **Six paired QEMU scenarios, twelve successful guest exits**: virtual HID/CDC, USBFS HID/FTDI and Native HID/FTDI, each over actual IPv4 and IPv6 TLS connections, with two I/O/cleanup/reuse cycles and external packet capture.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 412 test executions, signal and output-backpressure checks on the recorded software revision.
 
-Three additional [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) passed on `4565f7a`, including real legacy-helper upgrade, revoked recovery policy and an external interface owner.
-
-The new [TLS foundation library](docs/research/secure-transport-foundation.md) passes 18 transport tests; the full software suite now runs 304 test executions. It has not yet been connected to the USB/IP commands or device data path.
+Earlier [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence. The secure-path report also preserves the failed development runs and their fixes.
 
 The report links the tested revision and raw evidence. [Native interoperability](docs/research/native-qemu-matrix.md) and [virtual device tests](docs/research/userspace-qemu.md) have their own recorded baselines. These results establish the stated simulated-device behavior; real-device compatibility and two-machine hardware acceptance remain unverified.
 
 ## Current boundaries
 
-- **Network protection is external.** The USB/IP commands have no built-in TLS or remote identity authentication. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
+- **Select the intended network mode.** `secure-*` commands require trusted mutual-TLS configuration and device rules. Legacy commands still need external network protection. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
@@ -125,6 +140,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 
 | Start here | Details |
 | --- | --- |
+| [Secure broker setup](docs/secure-guide.md) | Mutual TLS, dedicated broker roles, exact device authorization and supervised cleanup |
 | [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
 | [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
 | [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |

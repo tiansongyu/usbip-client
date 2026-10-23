@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+新增[安全broker验收](research/secure-usbip-validation.md)：clean b83c931在Linux6.8 x86_64双QEMU来宾完成Native HID/FTDI、virtual HID/CDC、USBFS HID/FTDI各自IPv4和IPv6的实际mTLS目录/IMPORT/URB，两周期I/O、SIGTERM清理和重用共六场景/12guest0。软件412次与四平台CI是独立软件证据；它不证明真实硬件、aarch64 USB内核、其他内核、ISO或任意跨配置兼容。
+
 2026-10-23：目标 Linux Ubuntu22.04/24.04 × x86_64/aarch64。37c2d61四格[原生软件CI](https://github.com/tiansongyu/usbip-client/actions/runs/39895914376)全部通过，各自native Rust host、默认89项/allfeatures114项及vendor19项（共222）、fmt/Clippy/release/Rustdoc、只读smoke及两项stdout背压回归均有[持久证据](evidence/publication-native-fixture-20261023.json)。历史虚拟服务75/76项和Native59项CI分别保留[记录](evidence/publication-virtual-20261022.json)与[Native记录](evidence/ci-native-matrix-2026-10-22.json)。USB内核互操作仍仅在22.04宿主/6.8 x86_64 guest的QEMU模拟设备上验证；真实硬件、24.04内核USB互操作、aarch64 USB内核路径均未验证，不能宣称完整设备兼容矩阵通过。Windows、macOS、TUI、GUI均为后续阶段。
 
 | 设备类型 | sysfs 可发现 | Linux Native 候选路径 | jiegec 后端审计边界 | RustUSB 真实设备验证 |

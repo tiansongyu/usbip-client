@@ -1,0 +1,37 @@
+Serve configured devices with mandatory mutual TLS and per-device authorization
+
+Usage: rustusb secure-server [OPTIONS] --config <CONFIG> --backend <BACKEND>
+
+Options:
+      --config <CONFIG>
+          Root-managed startup configuration; endpoints and credentials cannot be overridden
+
+      --json
+          Emit machine-readable JSON to stdout; logs remain on stderr
+
+      --backend <BACKEND>
+          Device engine; every configured key must belong to this backend
+
+          Possible values:
+          - virtual
+          - usbfs
+          - native:  Linux usbip-host through anonymous helper-owned kernel channels
+
+      --socket <SOCKET>
+          Root-owned local helper socket
+          
+          [default: /run/rustusb/control.sock]
+
+      --control-stdin
+          Accept bounded local test controls; EOF also stops the service
+
+      --timeout <TIMEOUT>
+          Discovery timeout covering DNS, connect and response
+          
+          [default: 10]
+
+      --log-json
+          Emit JSON tracing logs on stderr
+
+  -h, --help
+          Print help (see a summary with '-h')

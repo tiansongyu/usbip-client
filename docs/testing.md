@@ -33,7 +33,7 @@ cargo build --workspace --release
 
 每条命令分别保存退出码。`Cargo.lock` 必须纳入仓库，CI 可追加 `--locked` 固定解析。若尚无 workspace 或某阶段代码未落地，相应检查记录未执行 / 失败并说明原因，不创建空测试掩盖缺口。交叉 `cargo check --target` 只能验证该 target 的编译，不能证明 aarch64 实机运行或 USB 功能。
 
-TLS基础库的真实双向TLS/ACL测试由workspace测试执行，尚未接USB设备。匿名内核通道另用`python3 scripts/qemu/run-kernel-socketpair-qemu.py --evidence /tmp/rustusb-kernel-pair-new-run`：普通宿主UID、一台无NIC的guest、固定HID/FTDI、现helper导出/unexport和独立root probe，实际I/O后显式关闭四端再核内核释放。clean24a424b通过50项/guest0，首f4774a6脚本FAIL保留，见[报告](research/secure-transport-foundation.md)；它不测试远程TLS、产品attach接口、崩溃/热拔或硬件。
+TLS基础库、可信配置及实际安全USB/IP管理/URB软件测试由workspace执行；完整产品双guest数据链见下文“安全USB/IP双栈矩阵”。历史匿名机制实验仍单独归属：匿名内核通道另用`python3 scripts/qemu/run-kernel-socketpair-qemu.py --evidence /tmp/rustusb-kernel-pair-new-run`：普通宿主UID、一台无NIC的guest、固定HID/FTDI、现helper导出/unexport和独立root probe，实际I/O后显式关闭四端再核内核释放。clean24a424b通过50项/guest0，首f4774a6脚本FAIL保留，见[报告](research/secure-transport-foundation.md)；它不测试远程TLS、产品attach接口、崩溃/热拔或硬件。
 
 | 自动测试层 | 必须覆盖 | 成功证明范围 |
 | --- | --- | --- |
@@ -182,7 +182,7 @@ cargo fuzz run <实际协议解析target> -- -max_len=65536 -max_total_time=300
 
 `cargo-fuzz` 的工具链和 sanitizer 前提按所用版本官方说明确认；fuzz 通常需要独立 nightly，不因此把主项目稳定 Rust 要求改成 nightly。IPC、配置、设备描述符和 USB/IP 解析分别设目标，长度上限与生产实现一致；发现崩溃后保留最小样本并增加确定性单元测试。五分钟 smoke fuzz 只能证明该运行未发现问题，不能证明解析层安全。
 
-TLS 阶段增加错误 CA、错误主机身份、过期 / 吊销证书、无客户端证书、轮换、断开的 TLS、并发握手和认证限速。对外部接口捕获实际 DEVLIST 与 IMPORT / URB 流，检查只出现受管 VPN / TLS 数据；测试直接 TCP 3240 绕过、IPv6 与 DNS 多地址，不以管理 API 的 HTTPS 截图替代 USB 数据证据。抓包通过只能证明所测路径，仍须核对有效防火墙和监听策略。
+当前真实TLS软件测试覆盖错误CA/主机名、过期或缺失客户端证书、unmapped pin、设备ACL、超时与并发permit；六QEMU验证实际认证管理和URB数据链。证书吊销/热轮换、全面认证限速与故障矩阵继续待做，不把软件负向称为QEMU逐项复跑。对外部接口捕获实际 DEVLIST 与 IMPORT / URB 流，检查只出现受管 VPN / TLS 数据；测试直接 TCP 3240 绕过、IPv6 与 DNS 多地址，不以管理 API 的 HTTPS 截图替代 USB 数据证据。抓包通过只能证明所测路径，仍须核对有效防火墙和监听策略。
 
 ## 7. 真实设备兼容性矩阵
 
@@ -251,3 +251,29 @@ clean2ab9976两个正向161/205 host检查和原默认off journal184、正常/�
 新增 `run-autorestore-negative-qemu.py --scenario legacy-schema1|policy-revoked|external-claim --evidence <新目录>`。L还必须提供固定933e720实际构建的 `--legacy-helper` 与 `--legacy-manifest`，runner逐109个Git输入、ELF及干净隔离构建来源核验；不得用手改记录或新版default-off模拟旧producer。当前runner默认locked all-features构建，要求干净提交。
 
 clean4565f7a首次三项全部PASS/6guest0，318/293/313项host检查。L尾部人工恢复和只读reconcile单列；P/C尾部只有明确新helper实例才能自主恢复、退休并第三轮真实I/O。C程序仅该场景打包，只plain CLAIM/RELEASE/close；20秒持有/拒绝后关闭C、同helper至少5秒不重试。纯primary早于pending API/新grant，启动doctor/Status仍先调用。具体命令、原件、软件/静态检查范围及其余未完成场景见[报告](research/physical-driver-autorestore-negatives.md)。
+
+
+## 安全 USB/IP 双栈矩阵
+
+[最新验收报告](research/secure-usbip-validation.md)记录 clean `b83c931` 的六次实际 PASS、12guest0，以及四次原 FAIL。入口是新 [runner](../scripts/qemu/run-secure-qemu.py) 和 [guest脚本](../scripts/qemu/guest-secure-init.sh)，不修改或复用旧明文场景的裁决冒充TLS通过。
+
+在普通 x86_64 宿主用户、干净已提交工作树中执行。需要稳定Rust、QEMU、OpenSSL、BusyBox、cpio/gzip、jq、setpriv、nc-openbsd、独立base64及其动态库；宿主对应的可读内核image/config与guest USB/IP、HID、CDC、FTDI模块。无法读取内核image时runner使用固定的非交互sudo复制操作；宿主不加载USB模块、不导出或打开实际USB设备。runner对实际payload依赖先检查，并为两guest各建只含自身私钥的initramfs；证据目录必须尚不存在。
+
+```bash
+python3 scripts/qemu/run-secure-qemu.py --backend virtual --family ipv4 --evidence /tmp/rustusb-secure-virtual-ipv4-new
+python3 scripts/qemu/run-secure-qemu.py --backend virtual --family ipv6 --evidence /tmp/rustusb-secure-virtual-ipv6-new
+python3 scripts/qemu/run-secure-qemu.py --backend usbfs --family ipv4 --evidence /tmp/rustusb-secure-usbfs-ipv4-new
+python3 scripts/qemu/run-secure-qemu.py --backend usbfs --family ipv6 --evidence /tmp/rustusb-secure-usbfs-ipv6-new
+python3 scripts/qemu/run-secure-qemu.py --backend native --family ipv4 --evidence /tmp/rustusb-secure-native-ipv4-new
+python3 scripts/qemu/run-secure-qemu.py --backend native --family ipv6 --evidence /tmp/rustusb-secure-native-ipv6-new
+```
+
+逐项串行运行并保存每次退出码；默认每项locked all-features release构建，`--skip-build`仅供开发，正式证据不使用。`--kernel`指定匹配image/modules，`--timeout`为60..900秒（默认300秒）。六条命令分别生成独立证据，某条失败不能覆盖原目录或沿用旧PASS。
+
+server实际运行`secure-server --backend virtual|usbfs|native --config /etc/rustusb/server.json --control-stdin`；client使用`secure-discover --config ... --json`和长期运行的`secure-attach --config ...`。配置/公开凭据由root管理，本端private key为broker0600；broker UID2000、legacy UID1000分离，helper policy为`trusted_network:false`，client/server Native state独立。TLS仅经专用外链NIC；宿主控制、原件、内核日志分别走独立串口。
+
+每项必须取得两周期HID按下/释放与精确每向35字节serial：virtual为CDC并核echo，USBFS/Native为QEMU FTDI并核host字节。另核实际VHCI枚举、第二进程目录占用拒绝/资源不增、非broker helper拒绝、每周期SIGTERM/wait0、NULL/Gone、持久records/exports空、重新导入真实I/O和最终服务端TERM。Native须按exported/held/released读真实sysfs和journal，不能以发布描述符假充当前配置；USBFS/Native结束必须恢复完整原driver/config/interface/alt基线。
+
+完整外链PCAP必须覆盖实际选定IPv4或IPv6 TLS，另外两族直接3240均拒绝。TCP按sequence完整重组和TLS framing检查，明文管理/URB/公开fixture签名不得出现；ICMPv6控制需显式分类计数，扩展头后的TCP不可跳过，fragment/未知协议拒绝。没有TLS session-key日志或解密结果；抓包结论仅归所测路径。
+
+收集summary、clean/source/ELF guards、实际进程receipt、两guest终态、原始input/serial文件、每阶段sysfs/journal、双PCAP和失败原件，再进行独立raw复核。QEMU退出0不是guest成功，guest成功也不能覆盖host verifier失败；后验parser修复不得改原summary。证书负向与猜BusID等实际TLS软件测试单列，不扩写成本QEMU每项已覆盖。真实硬件、ISO、跨配置/崩溃恢复、生产网络/服务隔离与完整Phase3会话审计继续单独验收。

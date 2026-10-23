@@ -1,6 +1,6 @@
 # 安全模型与发布门槛
 
-本文面向实现者、部署管理员和安全审查者。它记录 RustUSB 的**已实现边界、设计约束和待验证控制**，不是安全认证或完整验收清单。实际实现、测试环境和遗留风险须在工作记录中逐项登记。首期范围是 Ubuntu 22.04 / 24.04、Linux x86_64 / aarch64。Native 与固定 Rust 虚拟 HID/CDC 已有隔离 QEMU 证据；实验性 Linux USBFS adapter 正在验证，物理硬件、Windows 和内置 TLS 隧道均须独立验收。
+本文面向实现者、部署管理员和安全审查者。它记录 RustUSB 的**已实现边界、设计约束和待验证控制**，不是安全认证或完整验收清单。实际实现、测试环境和遗留风险须在工作记录中逐项登记。首期范围是 Ubuntu 22.04 / 24.04、Linux x86_64 / aarch64。Native、固定虚拟 HID/CDC 和实验性 USBFS 已有隔离 QEMU 证据；新增安全broker的实际目录、IMPORT与URB通路通过IPv4/IPv6仿真，见[验收报告](research/secure-usbip-validation.md)。真实硬件、Windows及完整安全gate仍须独立验收。
 
 ## 1. 资产、前提和边界
 
@@ -82,13 +82,17 @@ USBFS adapter 仅在 IMPORT 时 claim 全部已验证接口；同一端点最多
 
 ## 5. 网络、认证和密钥
 
-Native 数据路径为 `vhci_hcd ↔ TCP ↔ usbip_host`，独立于管理 API。USB/IP 列表查询使用独立连接，导入成功后的连接继续承载 URB；因此只保护设备列表或管理 API 不能保护实际 USB 数据。[Linux USB/IP 协议](https://cdn.kernel.org/doc/html/latest/usb/usbip_protocol.html)
+旧Native数据路径为 `vhci_hcd ↔ TCP ↔ usbip_host`，独立于管理 API。USB/IP 列表查询使用独立连接，导入成功后的连接继续承载 URB；因此只保护设备列表或管理 API 不能保护实际 USB 数据。[Linux USB/IP 协议](https://cdn.kernel.org/doc/html/latest/usb/usbip_protocol.html)
 
 Phase 1 只在管理员已建立的可信 VPN / 受管隧道上使用，明确记录通道边界；不实现内置远端认证，不宣称原生 3240 已被 RustUSB 加密。`usbipd` 可能监听通配地址，部署必须先以防火墙限定 VPN 接口和允许的对端，再启动服务。IPv4 和 IPv6 都要验证；不能仅因 IPv4 规则正确就默认 IPv6 安全。`doctor` 仅查询本机组件和已验证身份的helper，不探测远端监听、路由、防火墙或 VPN。
 
-可选 Rust 服务默认仅监听 `127.0.0.1:3240`；非 loopback 须同时提供可信测试网声明和非空精确 peer IP allowlist，CLI 在请求设备 FD 前校验该条件。IP allowlist 和 helper 本机 UID 认证都不等于远端 USB/IP 身份认证或加密；DEVLIST 与 IMPORT 后 URB 长连接仍须由外部受管网络保护。
+旧可选Rust服务默认仅监听 `127.0.0.1:3240`；非loopback须同时提供可信测试网声明和非空精确peer IP allowlist，CLI在请求设备FD前校验该条件。IP allowlist和helper本机UID认证都不等于远端USB/IP身份认证或加密；旧命令的DEVLIST与IMPORT后URB仍须外部受管网络保护。
 
-Phase 3 如提供 TLS，使用成熟 TLS 实现和双向认证，客户端本地 TCP 代理只监听 loopback，将**列表连接和导入长连接**都送入认证 TLS 隧道，服务端代理仅连受控本地 USB/IP 端点。必须同时阻断绕过代理的直接 3240 路径。验证 hostname / 身份、证书链、有效期、用途和撤销 / 轮换策略；不允许跳过证书校验。对端认证后还要进行设备级授权，并绑定身份、会话和所选设备，避免通用转发隧道绕过策略。
+可选`secure-*`模式使用rustls/Tokio、TLS1.3、强制mTLS及ALPN，root可信配置固定PKI服务名/端点/设备池，leaf pin映射principal及设备ACL。目录在同一授权快照上返回稳定key↔BusID映射与标准DEVLIST；IMPORT在真实slot内同时核对key、BusID及ACL后才取得设备，成功回复flush后同一TLS stream承载URB。Native使用helper创建的匿名K/R，无可抢占的本地TCP入口；Rust engine直接接受TLS，不另开明文后端listener。六个实际QEMU外链均同时验证两族3240拒绝；这不代替生产网络部署检查。见[安全配置指南](secure-guide.md)与[实施契约](research/secure-usbip-integration.md)。
+
+专用非0 broker UID与旧allowed_uids分离，安全Native/USBFS池和旧池互斥；同broker UID属于同一信任域。helper依赖SO_PEERCRED，不信网络自报principal；Native export/stub进一步绑定同OS进程。仅交付R并立即关闭helper的R副本，helper保留自己的K用于精确shutdown；实际blocking任务持guard至真实结束。持久Intent/原代际未确认时保留并阻止接管，不凭PID死亡删除。信任授权服务合作结束不提供全局FD撤销，SIGKILL/异常退出的安全broker恢复仍须另验收。
+
+配置/CA/chain及祖先目录由root保护，私钥root或目标broker所有且0600、运行身份须实际可读。加载有界、拒绝symlink/hardlink/非regular及读取中变化；启动后不可变，轮换须合作停止/重启。成熟库提供链/有效期/用途/服务名验证，禁止跳过校验；证书撤销、完整轮换/认证限速矩阵及业务状态审计仍未全部验收，不将所测正向通路标成完整G3。
 
 密钥生成使用操作系统随机源，不自研密码协议。服务端私钥只允许服务身份读取，客户端凭据按账户隔离；不放入仓库、命令行、默认日志或诊断包。部署须有首次信任、吊销、过期、轮换、备份权限和丢失恢复流程。认证失败重试使用限速；重放或重复导入不能创建第二个所有者。TLS 不能消除恶意 USB 设备及内核漏洞风险。
 

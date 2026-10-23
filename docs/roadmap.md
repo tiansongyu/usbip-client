@@ -68,7 +68,7 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 增加身份认证、设备级授权、安全隧道、会话状态机、超时 / 心跳、错误分类、可取消操作、启动协调和审计。支持 IPv4、IPv6、主机名、局域网及 VPN；RTT、字节计数和带宽只在可观测时提供。安全通道与原生数据平面明确分离；内置 TLS 使用成熟库和本地转发代理，处理列表及长连接。
 
-第一项[TLS基础模块](research/secure-transport-foundation.md)已实现真实mTLS、TLS1.3/ALPN、leaf-pin principal与稳定device key及连接/握手限制，18项测试通过、完整软件304次。它尚未接listener、设备或特权FD接口；[安全通道设计](research/secure-transport-design.md)保持proposed，Native匿名kernel通道另做机制实验。不得据此把G3或USB数据加密标通过。
+安全broker已接入Native、virtual和USBFS的真实目录/IMPORT/URB路径，使用强制mTLS/TLS1.3/ALPN、leaf-pin principal、稳定device ACL及root可信配置。clean b83c931六项双guest IPv4/IPv6 QEMU全部通过，每项两个I/O/清理/重用周期；软件412次及精确f9558fc四平台CI另记，见[验收报告](research/secure-usbip-validation.md)。旧命令仍需外部安全网络，完整G3的会话状态、恢复、认证负向/轮换/审计等gate继续未完成，不以这些正向验收替代完整阶段。
 
 **G3 gate：** [安全模型](security.md) S1–S6 的适用项全部有证据；无认证、错误 / 过期 / 撤销凭据、非法设备、重放 / 重复连接和并发争用全部拒绝；外部抓包证明 DEVLIST 和 IMPORT 后的 URB 均走加密通道，直连 3240 在 IPv4 / IPv6 被阻断。状态机覆盖 Discovered / Available / Exporting / Connecting / Connected / Disconnecting / Disconnected / Error / Recovering，所有关键路径有超时、取消、幂等清理和重启恢复测试。不能在故障后无条件恢复存储写入。
 

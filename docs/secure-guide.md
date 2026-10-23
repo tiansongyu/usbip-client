@@ -1,6 +1,6 @@
 # Secure USB/IP broker guide
 
-This experimental Linux path runs device discovery, import and the following USB/IP data stream through mutual TLS. The unprivileged broker owns the network connection; a root helper owns the approved kernel or USBFS capability. Implementation and acceptance status are tracked in the [integration contract](research/secure-usbip-integration.md). New end-to-end QEMU acceptance is still pending.
+This experimental Linux path runs device discovery, import and the following USB/IP data stream through mutual TLS. The unprivileged broker owns the network connection; a root helper owns the approved kernel or USBFS capability. Six paired QEMU scenarios cover Native, virtual and USBFS over IPv4/IPv6; see the [validation report](research/secure-usbip-validation.md) and [integration contract](research/secure-usbip-integration.md). Physical hardware and the full Phase 3 acceptance remain pending.
 
 The existing `export`, `discover`, `attach`, `virtual-server` and `physical-server` commands keep their existing network contracts. Use the `secure-*` commands below for this path.
 

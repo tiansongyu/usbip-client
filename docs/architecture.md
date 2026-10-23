@@ -16,7 +16,7 @@ flowchart LR
   Helper --> Native[固定 usbip 操作]
   Native --> Host[usbip_host]
   Native --> VHCI[vhci_hcd]
-  Host <-->|USB/IP TCP 经受管 VPN 或后续 TLS 代理| VHCI
+  Host <-->|Legacy USB/IP TCP 经外部受管 VPN| VHCI
   Core --> Rust[可选 Rust 共享 USB/IP engine]
   Rust <-->|USB/IP TCP| VHCI
   Virtual[固定虚拟 HID / CDC] --> Rust
@@ -24,24 +24,24 @@ flowchart LR
   Physical --> Rust
 ```
 
-安全管理和 USB 数据通道分离。Phase 1 需要管理员预先建立可信 VPN/隧道与防火墙；没有声称内建加密。不得自动以默认全地址监听启动 usbipd。
+上图是旧管理模式：安全管理和 USB 数据通道分离，需要管理员预先建立可信 VPN/隧道与防火墙，不得自动以默认全地址监听启动 usbipd。新增安全模式的稳定key目录使用独立认证连接；IMPORT和其后的URB共享另一条TLS stream。Native两端helper以匿名K/R连接内核，Rust虚拟/USBFS直接在共享engine接受TLS，没有另开的明文listener。具体所有权、协议和范围见[实施契约](research/secure-usbip-integration.md)及[六项实际验收](research/secure-usbip-validation.md)。
 
 ## 工作区与依赖方向
 
 | crate | 职责 | 允许依赖 |
 | --- | --- | --- |
 | rustusb-core | 领域模型、输入类型、状态、错误与后端 trait | serde、thiserror；不含系统写操作 |
-| rustusb-protocol | 有界 DEVLIST 编解码、异步远端发现 | core、Tokio |
+| rustusb-protocol | 有界标准管理帧、稳定key前导/目录映射与安全客户端codec | core、serde、serde_json、Tokio |
 | rustusb-linux | sysfs 设备/接口/端点扫描、指纹、能力与存储检查 | core、sha2；阻塞读取在调用边界隔离 |
-| rustusb-native | 固定 usbip 命令、超时、内核状态读取 | core、linux、Tokio |
+| rustusb-native | 固定 usbip 命令、内核状态、强代际与匿名kernel通道 | core、protocol、serde、Tokio、tracing、rustix |
 | rustusb-daemon | root helper、root 管理的策略、OS 身份和 IPC；客户端库 | 前述 crate |
 | rustusb-cli | clap 命令与日志 | 前述公开服务接口，不直接写 sysfs |
-| rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
-| rustusb-transport | 有界mTLS stream、证书principal和稳定device ACL基础类型；尚未接USB/IP engine/CLI | rustls、tokio-rustls、Tokio、sha2、thiserror；rcgen仅测试 |
+| rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、transport、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
+| rustusb-transport | 有界mTLS stream、证书principal/device ACL、可信配置；接入安全broker及USB/IP engine | core、rustls、tokio-rustls、Tokio、sha2、serde、serde_json、rustix、thiserror；rcgen仅测试 |
 
 没有为未来 TUI/GUI 建立空壳 crate。CLI 的 `rust-backend` feature 选择虚拟服务；`physical-nusb` 另启用物理 adapter 和 daemon 的 `physical-usb` FD 授权接口。默认 Native 和纯虚拟构建不承担 nusb 依赖。设计分别见[虚拟服务端](research/rust-virtual-backend-design.md)与[物理 adapter](research/rust-physical-backend-design.md)；物理路径正在验证，完整 G2 尚未完成。
 
-TLS基础模块已有[18项实际测试与304次全软件验证](research/secure-transport-foundation.md)，不改变上图现有USB数据路径；[Native匿名内核通道及专用broker方案](research/secure-transport-design.md)仍需机制与集成验收。配置中的trusted_network声明、该库存在或doctor成功都不能证明当前USB链已加密。
+安全broker已接Native、虚拟及USBFS：`secure-transport`可单独构建Native CLI，`rust-backend`同时启用安全虚拟服务，`physical-nusb`启USBFS。clean b83c931六个双guest场景覆盖实际IPv4/IPv6及I/O/清理/复用，412次软件与精确f9558fc四平台CI另有版本记录；完整Phase3、真实硬件仍未完成。配置中的trusted_network声明、库存在或doctor成功都不能代替该路径的实际验收。
 
 ## 具体接口契约
 

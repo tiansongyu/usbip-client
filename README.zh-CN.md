@@ -4,13 +4,13 @@
 
 基于 Linux USB/IP 的远程 **USB 设备级重定向**工具，Rust 管理设备、权限和连接，Linux 内核执行真实 USB 请求转发。
 
-当前为 **Phase 1 开发预览**：已完成源码调研并实现 Native 路线；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、内建 TLS、TUI、GUI、存储安全共享仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
+当前为**分阶段开发预览**：Linux Native 管理、可选 Rust 服务和受限 helper 已实现；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、TUI、GUI、存储安全共享及完整安全验收仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
-新增[TLS基础库](docs/research/secure-transport-foundation.md)的18项传输测试通过，完整软件套件增至304次执行；尚未接入USB/IP命令或设备数据通路，实际连接仍需外部网络保护。
+新增可选[安全 broker 模式](docs/secure-guide.md)：`secure-*` 命令以双向 TLS 1.3 承载目录、IMPORT 及后续 URB。Native、virtual、USBFS × IPv4/IPv6 六项双来宾 QEMU 全通过，12 guest 正常退出；完整软件412次与所记版本四平台CI通过，见[实际验收与原失败记录](docs/research/secure-usbip-validation.md)。旧命令仍需外部网络保护；完整Phase3与真实硬件未完成。
 
 可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，见[虚拟服务指南](docs/rust-virtual-server.md)与干净cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)。
 
-实验性 `physical-nusb` 后端通过受限 helper 的 FD 授权，在普通用户进程中使用 Linux USBFS，见[物理服务指南](docs/rust-physical-server.md)。最新[checked release 修复与验收](docs/research/usbfs-checked-release.md)保留真实释放错误，失败后不执行配置切换；同一干净 `6e809a1` 的 11 项 QEMU 全部通过，含 8 个取消/断线场景、ECM 与 HID/FTDI 正常/热拔回归，共113项协议检查、22个guest正常退出。完整软件检查及37c2d61的[四平台CI](docs/evidence/publication-native-fixture-20261023.json)每格222项通过。真实硬件、内核内部挂起、ISO、认证和TLS仍未验收，完整Phase2仍未完成。
+实验性 `physical-nusb` 后端通过受限 helper 的 FD 授权，在普通用户进程中使用 Linux USBFS，见[物理服务指南](docs/rust-physical-server.md)。最新[checked release 修复与验收](docs/research/usbfs-checked-release.md)保留真实释放错误，失败后不执行配置切换；同一干净 `6e809a1` 的 11 项 QEMU 全部通过，含 8 个取消/断线场景、ECM 与 HID/FTDI 正常/热拔回归，共113项协议检查、22个guest正常退出。完整软件检查及37c2d61的[四平台CI](docs/evidence/publication-native-fixture-20261023.json)每格222项通过。该历史矩阵未覆盖认证/TLS；后续实际安全通路见上方新验收。真实硬件、内核内部挂起、ISO与完整Phase2仍未完成。
 
 可选 `virtual-server` / `physical-server` 已加入 Unix `SIGINT` / `SIGTERM` 合作停止，见[信号停止报告](docs/research/server-signal-shutdown.md)。修复 `d39517b` 在干净 `934358f` 的222次软件测试、四项本地信号用例和四项QEMU回归通过，8个guest正常退出；各构建feature和ELF来源分别记录。四平台[CI39899971271](docs/evidence/publication-server-signals-934358f-20261023.json)已通过，每格222次测试执行、原两项背压及新增四种信号场景均通过。该改动不提供SIGKILL、崩溃或持久重启恢复；真实设备G1/G2仍未完成。
 

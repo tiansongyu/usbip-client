@@ -415,3 +415,7 @@
 - Native私有InitialObserver修复已落：首次USED row及目录dev/ino固定，只对never-seen初始化属性缺失等待，已见属性消失/权限/格式/身份变化拒绝，完成后同row和local/profile复核；无publicAPI或helper角色扩张。8项真实tempdir夹具实际执行通过；第五轮完整软件gate exit0，default159/allfeatures233/vendor20共412次、35result零失败忽略，123选定输入前后SHA保持（本次纳入vendor测试lock及toolchain）。作者与独立源码审查原件归档，准备clean修复版QEMU，不把先前396/CI重归属新代码。
 
 - cleanf9558fc修复后virtual/IPv4两个guest真正PASS，两周期I/O、清理与复用均完成，但整体FAIL在pcap分类器未识别IPv6扩展头。238原件保留；独立raw生命周期86组和PCAP33组核实各自范围，125输入逐Gitblob一致，没有把分组数当USBcase或改判整轮。两原PCAP各有8个HBH→MLDv2，独立checksum有效；按官方RFC8200/3810/4861及实际子集修分类器，仍完整检查HBH后TCP、拒绝未知协议/分片/越界。38构造用例和14原静态回归通过、双原PCAP后验通过且哈希不变，待新clean六矩阵。精确f9558fc四平台CI39953971059亦独立169项核每格412/35result与本地信号/背压原范围，668采证筛选对象逐Gitblob核，不冒称其等于123软件或125QEMU选定输入。
+
+- clean b83c931串行六矩阵首次全PASS：virtual/USBFS/Native各IPv4/IPv6，12guest0、每组125输入/HEAD/clean/ELF四guards真，统一all-features CLI7dddc286…/helper72415f41…。12真实I/O周期、24客户端import、Native8个stub；每周期serial每向35B，合计每向420B，不当吞吐基准。1518份最终原件/独立脚本已归档。两独立解析各完成生命周期492/安全350个审计谓词，不调用runner verifier；逐原始base64/sysfs/journal/证书配置/UID/caps/实际ELF与全外链TCP/TLS重组核，限制随报告保留。USBFS只有最终journal原件，不假称中间immutable字段审计；四个原FAIL全部原判保留。
+
+- 英文README/中文入口、展示页及安全/架构/路线图/兼容性同步实测范围，旧Native图明确legacy；全局readme-site四文件仍等原安装且发现symlink有效。15份维护文件、303本地/GitHub映射链接、28表格及SVG经文档复核，修正五个历史措辞/目录独立连接等一致性点；站点128检查和JS语法通过。CUA本地1280/375的DOM无横向overflow、手机图切换及新版文案可读、console无warn/error；两截图接口不可用，不称本轮pixel/键盘/noJS/reduced-motion重验。精确b83c931软件CI39955861064四job及Pages39955860984均success，仅记后续status不重计f955的详细412。123软件输入仍保持；真实G1/G2、ISO/跨配置/崩溃与完整Phase3及后续阶段继续未完成，原完整goal保持active。
