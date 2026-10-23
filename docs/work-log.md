@@ -341,3 +341,5 @@
 - 候选实现新增严格磁盘1/2迁移、显式恢复策略、旧IPC投影、单后台任务和独立B受限CONNECT。首次定向daemon all-features测试64项通过；正在执行完整软件门禁，尚未运行新产品QEMU。设计/实现审查无mustfix不等于运行验收；CONNECT的driver probe可能改变状态，必须全scope复核，不能承诺其没有USB副作用。
 
 - 完整`bash scripts/check.sh`实际exit0：default90/all-features158/vendor20，共268次测试执行，31result、0失败/忽略；fmt、两组Clippy/release和严格rustdoc均通过，111个产品/vendor/check输入前后SHA相同。独立实现审查未发现mustfix；软件证据已归档，下一步从干净提交执行两个产品自动恢复QEMU正向及旧默认off回归，不能提前归属产品运行通过。
+
+- 产品提交e34e309。新增两个产品QEMU正向模式，仅复用旧journal传输/采证，使用独立正向verifier；旧184断言未改。作者67项静态（含54种jq实际编译）和明确标识的构造parser fixture通过，独立21项源码核验无mustfix；静态阶段修复新jq保留字`$end`并补完整receipt.bus_number检查，尚无QEMU失败/通过。成功先以纯磁盘/sysfs观察，再读pending API与新grant；20秒是wait137后控制握手完成起的观察窗，不是从SIGKILL起的SLA。

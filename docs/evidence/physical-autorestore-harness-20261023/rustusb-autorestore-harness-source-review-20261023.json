@@ -1,0 +1,113 @@
+{
+  "result": "PASS",
+  "scope": "Source-only independent audit and generated shell/parser fixture; no runner.verify, no Cargo, no QEMU, no USB or repository edits",
+  "checks": [
+    {
+      "name": "python_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "owner-death_generated_shell_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "owner-death_all_composition_anchors_unique",
+      "result": "PASS"
+    },
+    {
+      "name": "owner-death_pure_observation_before_new_grant",
+      "result": "PASS"
+    },
+    {
+      "name": "owner-death_no_manual_recovery_write_or_cli",
+      "result": "PASS"
+    },
+    {
+      "name": "owner-death_all_source_sysfs_observation_override_present",
+      "result": "PASS"
+    },
+    {
+      "name": "owner-death_fragment_source_once",
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart_generated_shell_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart_all_composition_anchors_unique",
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart_pure_observation_before_new_grant",
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart_no_manual_recovery_write_or_cli",
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart_all_source_sysfs_observation_override_present",
+      "result": "PASS"
+    },
+    {
+      "name": "helper-restart_fragment_source_once",
+      "result": "PASS"
+    },
+    {
+      "name": "fragment_shell_syntax",
+      "result": "PASS"
+    },
+    {
+      "name": "actual_log_parser_uuid_phase",
+      "result": "PASS"
+    },
+    {
+      "name": "malformed_operation_log_rejected_0",
+      "result": "PASS"
+    },
+    {
+      "name": "malformed_operation_log_rejected_1",
+      "result": "PASS"
+    },
+    {
+      "name": "final_frozen_sha_scripts/qemu/run-autorestore-qemu.py",
+      "result": "PASS"
+    },
+    {
+      "name": "final_frozen_sha_scripts/qemu/guest-autorestore-fragments.sh",
+      "result": "PASS"
+    },
+    {
+      "name": "receipt_bus_number_added",
+      "result": "PASS"
+    },
+    {
+      "name": "window_start_explicit_not_sigkill_sla",
+      "result": "PASS"
+    }
+  ],
+  "files": {
+    "scripts/qemu/run-autorestore-qemu.py": {
+      "bytes": 32632,
+      "sha256": "c7148dc070d71a570183a5a99060a70a38ba2449c0942710f8565a4d1a869ef1"
+    },
+    "scripts/qemu/guest-autorestore-fragments.sh": {
+      "bytes": 13519,
+      "sha256": "c6c1f0f52dda2033dc20b047fe6357ac0281707a83ec32b51aeb646aef8df830"
+    }
+  },
+  "facts": [
+    "Own positive verifier replaces journal.verify only for this runner; original baseline verifier unchanged",
+    "No administrator restore write, physical-reconcile or USBFS guardian actor in generated executable flow",
+    "Pure sysfs/disk primary precedes pending API and subsequent grant",
+    "Killed epoch has actual wait137 and intentionally no terminal backend snapshot",
+    "Disk schema2 with immutable per-record recovery is projected onto IPC lifecycle schema1",
+    "Helper live-owner scope uses independent sysfs/disk and source/log audit; not syscall-level absence-of-ioctl proof",
+    "20s is bounded post-wait coordination-complete read-only observation window, not a strict SIGKILL-to-restored latency SLA"
+  ],
+  "minor_recommendation": "Addressed before freeze: all six receipt fields compared; composition labels observation deadline after actual wait137 and control handshake.",
+  "mustfix": [],
+  "reviewed_source_head": "e34e309 (product already committed; two harness files frozen independently)",
+  "validation_note": "17 independent static checks ran on the pre-freeze draft; final additive bus-number and window wording change independently inspected with exact two-file frozen SHA and Python AST. Author fixture reports are separate, not counted as independently executed."
+}
