@@ -47,7 +47,7 @@ principal由TLS证书验证及root管理映射生成，不能由网络或CLI直�
 
 该实验只证明内核两端是否支持该socket family及实际数据，不能证明两机网络、认证、加密、产品FD RPC或Phase3已完成。它不是新的正式用户导入API。仅在机制确认后实现typed helper/broker路径。
 
-probe在任何USB/sysfs设备操作前检查guest root/两固定启动标记，限定两模拟VID/PID/bus/devnum、原配置/IF/alt及root节点/原sysfs代际；拒绝已有占用。选完整status中两个初始NULL的HS port，持有真实FD完成实际write，观察本地新代际/VIDPID和远端devid，不能写假的官方record。抓取两端/proc FD与sysfs原件和精确源码/ELF/内核。
+probe在任何USB/sysfs设备操作前检查guest root/两固定启动标记，限定两模拟VID/PID/bus/devnum及root节点/原sysfs代际；拒绝已有占用。导出前原cfg/IF/alt由guest采集，Native绑定可能去配置并移除当前interface，不能要求所有阶段cfg/IF恒等；必须按实际配置阶段验证，未配置的空sysfs属性应与缺失/损坏区分。硬件代际由原sysfs dev/inode/path、bus/address及VIDPID等固定字段约束，配置/接口则独立记录。选完整status中两个初始NULL的HS port，按各设备真实速度handoff（此QEMU keyboard480Mbps/kernel3、FTDI12Mbps/kernel2），观察本地新代际/VIDPID和远端devid，不能写假的官方record。抓取两端/proc FD与sysfs原件和精确源码/ELF/内核。
 
 单guest双kernel端都持FD reference，probe进程退出/Drop本身不保证连接终止；正常实验须显式shutdown(SHUT_RDWR)并等异步USBIP down/本地代际消失，随后由原helper普通unexport恢复完整原driver。不能把一次sysfs负数write返回当清理已完成。未来两机broker角色中每个pair只有一端交kernel，helper必须在成功handoff后释放自己relay副本，broker死亡才能产生相应EOF；这些是后续独立生命周期验收。
 
@@ -72,6 +72,8 @@ probe在任何USB/sysfs设备操作前检查guest root/两固定启动标记，�
 - 同一server实例最多16个在途/已认证连接，先取得permit再创建握手任务，返回stream整个生命周期保留permit，Drop才释放；不可暴露裸inner stream让caller提前丢permit。握手默认5秒、TLS写缓冲显式64KiB；不把此数字当成整个TLS进程RSS上限。原生Rustls握手重组源码上限65535，仍需实际资源测试。
 - 认证stream实现标准AsyncRead/AsyncWrite，字段和认证构造私有，提供只读身份/允许device集合；engine以后在DEVLIST及claim前使用相同predicate。它不是“任意caller附上自报principal”的通用转发授权。
 - 单元测试跑真实双向TLS与双向payload/flush，核协议/ALPN/主体映射/ACL，badCA、badDNS、missing-client-cert、expired、unmapped/revoked pin、重复/畸形策略、超时、连接permit直到Drop、公开Debug/错误不泄露私钥。构造I/O测试不替代TCP、USB或外链PCAP。
+
+资源限定：5秒是合作式Tokio握手截止，无法抢占单次同步crypto/RNG poll；ring首次获取系统随机数的同步调用可能阻塞。64KiB由rustls用于plaintext待发送与TLS待发送各自的buffer限制，不是两者总和或整个RSS上限；握手、证书和底层I/O另有内存成本。当前基础库未声称硬实时或进程级资源隔离。
 
 
 [研究原件索引](../evidence/secure-transport-design-20261023/manifest.json)保存Native FD/原属性语义、principal/ACL和完整QEMU候选方案，以及官方registry和精确crate checksum资料。Linux源正文只在临时研究目录，仓库保留精确固定源码引用/哈希，未复制GPL实现进入MIT代码。

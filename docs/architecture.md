@@ -37,8 +37,11 @@ flowchart LR
 | rustusb-daemon | root helper、root 管理的策略、OS 身份和 IPC；客户端库 | 前述 crate |
 | rustusb-cli | clap 命令与日志 | 前述公开服务接口，不直接写 sysfs |
 | rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
+| rustusb-transport | 有界mTLS stream、证书principal和稳定device ACL基础类型；尚未接USB/IP engine/CLI | rustls、tokio-rustls、Tokio、sha2、thiserror；rcgen仅测试 |
 
 没有为未来 TUI/GUI 建立空壳 crate。CLI 的 `rust-backend` feature 选择虚拟服务；`physical-nusb` 另启用物理 adapter 和 daemon 的 `physical-usb` FD 授权接口。默认 Native 和纯虚拟构建不承担 nusb 依赖。设计分别见[虚拟服务端](research/rust-virtual-backend-design.md)与[物理 adapter](research/rust-physical-backend-design.md)；物理路径正在验证，完整 G2 尚未完成。
+
+TLS基础模块已有[18项实际测试与304次全软件验证](research/secure-transport-foundation.md)，不改变上图现有USB数据路径；[Native匿名内核通道及专用broker方案](research/secure-transport-design.md)仍需机制与集成验收。配置中的trusted_network声明、该库存在或doctor成功都不能证明当前USB链已加密。
 
 ## 具体接口契约
 

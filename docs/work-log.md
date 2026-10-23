@@ -381,3 +381,5 @@
 - 新transport首次18项真实TLS/策略测试全通过；完整scripts/check.sh exit0，104个选定Rust/Cargo/check输入前后SHA相同，新增模块未接设备或CLI。独立冻结源审查28项无mustfix，显式补双方握手后ALPN检查，避免把配置ALPN误当强制协商；依赖清单实际148包。guest-only probe严格rustc及普通宿主UID首guard拒绝通过，尚未执行QEMU。预审中root误套旧%pK显示，作者核固定v6.8为%06u后纠正；这是审查纠正，不是产品或运行失败。
 
 - 完整软件计数为default108/allfeatures176/vendor20，共304次、35个result，0失败忽略；前面独立18项不重复加进304。软件命令、104选定输入、依赖features、作者和独立源审查及probe静态/首guard原件已归档secure-transport-foundation-20261023；不是USB链TLS或QEMU结果。设计研究提交2ade292后准备冻结实现与机制harness。
+
+- TLS基础库提交7bad8bf、机制harness f4774a6已正常push。首次clean f4774a6实际QEMU FAIL：两helper export成功，但导出后的snapshot退出，probe/匿名pair/真实I/O尚未执行，guest poweroff0不能覆盖FAIL；源码和ELF guards真、完整原件另存kernel-socketpair-first-failure-f4774a6-20261023。预审漏掉Native去配置移除接口及keyboard实际480Mbps两项假设，先修设计的phase metadata/speed契约，再修harness；不通过改超时或重跑掩盖。精确push软件CI39936932379仍进行，Pages39936932305已success。

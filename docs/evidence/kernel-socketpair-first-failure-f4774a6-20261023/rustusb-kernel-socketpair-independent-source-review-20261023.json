@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "result": "NO_MUST_FIX_SOURCE_REVIEW",
+  "created_utc": "2026-10-23T10:07:15.868026+00:00",
+  "head": "2ade29277a967107ee75e14448b7e413d9fd1378",
+  "git_status_at_review": " M Cargo.lock\n M Cargo.toml\n M docs/dependency-inventory.json\n M docs/third-party.md\n?? crates/rustusb-transport/\n?? scripts/qemu/guest-kernel-socketpair-init.sh\n?? scripts/qemu/kernel-socketpair-probe.rs\n?? scripts/qemu/run-kernel-socketpair-qemu.py\n",
+  "scope": "Independent read-only review of three frozen new mechanism files. No compiler/Cargo/fmt/shellprobe/QEMU/USB/network execution by reviewer; no runner.verify invocation.",
+  "files": [
+    {
+      "path": "scripts/qemu/run-kernel-socketpair-qemu.py",
+      "length": 26896,
+      "sha256": "1c6da88a4df0a74f0b0fdd3f83b6bcfa13f71edeabdcdd9f1f14aa5e2760bf1c",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "scripts/qemu/guest-kernel-socketpair-init.sh",
+      "length": 13360,
+      "sha256": "cf96abc08e7b02bbec3536a3015d739434f4715ac46058e5df7c41bfba3cc4ac",
+      "matches_author_freeze": true
+    },
+    {
+      "path": "scripts/qemu/kernel-socketpair-probe.rs",
+      "length": 20251,
+      "sha256": "2e6f8d554556aca7f334f94007b7fab02aae6becb43a2c2953a45ccad1ae7cbf",
+      "matches_author_freeze": true
+    }
+  ],
+  "freeze_matches": true,
+  "checks": [
+    {
+      "id": "guest-only-double-guard",
+      "source": "probe.rs:66-82;guest-init:1-25",
+      "finding": "Probe rejects non-root before USB/sysfs access and requires exact dedicated kernel markers/no args; guest init checks PID1 and marker.",
+      "passed": true
+    },
+    {
+      "id": "fixed-synthetic-devices",
+      "source": "probe.rs:17-18,219-227",
+      "finding": "Only fixed guest HID0627:0001/FTDI0403:6001 Bus1 addresses2/3, fullspeed config1 interface0 alt0, root0600 device nodes.",
+      "passed": true
+    },
+    {
+      "id": "no-host-device-passthrough",
+      "source": "runner.py:285-293",
+      "finding": "QEMU uses synthetic usb-kbd/usb-serial, -nic none and private chardev/QMP, no host USB/module/network mutation.",
+      "passed": true
+    },
+    {
+      "id": "ordinary-helper-boundary",
+      "source": "guest-init:89-120,201-214",
+      "finding": "Export/unexport run through existing allowlisted helper as UID1000; root probe is explicitly experimental guest kernel-FD operation, not a production API.",
+      "passed": true
+    },
+    {
+      "id": "old-attribute-open-before-handoff",
+      "source": "probe.rs:147-155,228-234;runner.py:124",
+      "finding": "Opens original attr File for both devices before writes, compares pre-open/fstat dev+inode, retains File in Channel.",
+      "passed": true
+    },
+    {
+      "id": "strong-generation-revalidation",
+      "source": "probe.rs:91-139,231,241,331",
+      "finding": "Captures real sysfs dev/inode, bus/address, VIDPID/config/speed/fullIF+alt; repeats before handoff and after cleanup, shell snapshots preserve original scope.",
+      "passed": true
+    },
+    {
+      "id": "one-write-owned-fd",
+      "source": "probe.rs:157-167,239-245",
+      "finding": "Single File.write per canonical command, exact returned byte count, no suffix retry; own current process UnixStream raw FD integers only.",
+      "passed": true
+    },
+    {
+      "id": "anonymous-pair-evidence",
+      "source": "probe.rs:195-201,230;guest-init:141-145",
+      "finding": "std UnixStream pair, unnamed local/peer addr, four distinct socket inodes/fds, independent /proc links/PID/starttime/exe evidence planned.",
+      "passed": true
+    },
+    {
+      "id": "initial-scope-free",
+      "source": "probe.rs:204-216",
+      "finding": "Fixed canonical VHCI controller, rejects extra status.* files, complete status initiallyNULL; chooses two HS ports and rechecks selectedNULL before write.",
+      "passed": true
+    },
+    {
+      "id": "actual-kernel-enumeration",
+      "source": "probe.rs:247-274",
+      "finding": "Waits actual status6/devid/speed, newVHCI sysfs generation and complete interface identity plus usbhid/ftdi_sio binding.",
+      "passed": true
+    },
+    {
+      "id": "no-fabricated-tool-record",
+      "source": "guest-init:150-153;runner.py:207-209",
+      "finding": "Sessions must be explicitly unmanaged imports; no fake localhost official usbip record or remote identity.",
+      "passed": true
+    },
+    {
+      "id": "reader-subscription-before-input",
+      "source": "guest-init:157-160",
+      "finding": "Foreground creates output and opens evdev subscription before background reader and WAIT marker, removing startup file/open race.",
+      "passed": true
+    },
+    {
+      "id": "actual-hid-assertions",
+      "source": "guest-init:175-185;runner.py:214-217",
+      "finding": "Guest records real evdev frames/down/up KEY1, host validates complete24B records and actual key tuples.",
+      "passed": true
+    },
+    {
+      "id": "actual-ftdi-both-directions",
+      "source": "guest-init:164-173,179-185;runner.py:218-220,312-330",
+      "finding": "Exact35B RX/TX, actual host injected and captured chardev bytes, no checksum-only or mock successful I/O claim.",
+      "passed": true
+    },
+    {
+      "id": "explicit-kernel-end-shutdown",
+      "source": "probe.rs:296-309",
+      "finding": "Both owned endpoints of both pairs SHUT_RDWR before any fallible diagnostic emit; no write -1 or unrelated-port detach.",
+      "passed": true
+    },
+    {
+      "id": "cleanup-after-partial-connect-failure",
+      "source": "probe.rs:347-356",
+      "finding": "connect/stop failure still runs disconnect on every prepared pair; shutdown errors retained, no false rollback success.",
+      "passed": true
+    },
+    {
+      "id": "bounded-cleanup-reality",
+      "source": "probe.rs:311-331",
+      "finding": "Waits15s for NULL+devid0+local0-0, specificallyENOENT old local, stubAVAILABLE and unchanged original generation; other observation error fails.",
+      "passed": true
+    },
+    {
+      "id": "not-drop-only-cleanup",
+      "source": "probe.rs:333-343;runner.py:199-205",
+      "finding": "Re-observes all retained socket FD/inodes while cleanup established; kernel refs require shutdown, no claim that parentFD Drop proves down.",
+      "passed": true
+    },
+    {
+      "id": "restore-after-kernel-cleanup",
+      "source": "guest-init:190-214",
+      "finding": "Probe wait0/complete, localgone/sessionsempty precede helper unexport, actual original driver/config/generation/interface snapshot exactcmp.",
+      "passed": true
+    },
+    {
+      "id": "stdout-and-kernel-channels",
+      "source": "guest-init:27-30;runner.py:280-288,303-309,345-347",
+      "finding": "Separate ttyS1 evidence and ttyS0 kernel, exact beacon, checks both channels for FAIL/kernel integrity and rereads terminal logs.",
+      "passed": true
+    },
+    {
+      "id": "failure-sticky-and-retained",
+      "source": "runner.py:304-309,334-347,357-383",
+      "finding": "Observed FAIL retained during bounded diagnostic grace; missingmarker/extraTX/badkernel/nonzeroQEMU/timeout/sourcechange remainsFAIL, raw artifacts saved.",
+      "passed": true
+    },
+    {
+      "id": "bounded-experiment",
+      "source": "probe.rs:252-267,275-293,311-328;runner.py:235-236,297",
+      "finding": "15s enumerate+15s cleanup,60s bounded5B control, hostoverall default180s validated60..1800 and terminate+kill emergencycleanup remainsFAIL.",
+      "passed": true
+    },
+    {
+      "id": "source-binary-module-provenance",
+      "source": "runner.py:45-56,68-81,242-278,374-383",
+      "finding": "Records clean Git input snapshot, reused direct dependencies, actual build commands/features, binary/module/config/kernel/guest hashes, pre/post source+binaries and artifact hashes.",
+      "passed": true
+    },
+    {
+      "id": "no-tcp-scope",
+      "source": "guest-init:75-87;runner.py:145-147,240-245,285-291",
+      "finding": "No guestNIC, six primary/proc TCP/TCP6 snapshots empty, probe path anonymouspair no usbipd launch; not a claim of remote encryption.",
+      "passed": true
+    },
+    {
+      "id": "scope-limit-explicit",
+      "source": "probe.rs:1;runner.py:1-5,240;guest-init:216",
+      "finding": "Single guest family mechanism only; noTLS/authenticated remote transport, full typed FD RPC, realhardware or completedPhase3 claim.",
+      "passed": true
+    },
+    {
+      "id": "safe-source",
+      "source": "probe.rs:2 and complete source",
+      "finding": "forbid unsafe_code; no unwrap/expect/panic; fixedpaths and no caller-provided sysfs actions.",
+      "passed": true
+    }
+  ],
+  "check_count": 26,
+  "must_fix": [],
+  "resolved_small_item": "Foreground input.bin creation added after reviewer request so background reader scheduling cannot cause wc ENOENT.",
+  "fixed_linux": {
+    "tag": "v6.8",
+    "commit": "e8f897f4afef0031fe618a8e94127a0934896aba",
+    "sockfd_correction": "Root initial %pK advice was corrected against fixed vhci_sysfs.c49-51: %06u is historical decimal fd. Candidate preserves a bounded opaque display, never considers it FD identity and does not require nonzero when attached.",
+    "source_manifests": [
+      "/tmp/rustusb-vhci-family-source-20261023/provenance.json",
+      "/tmp/rustusb-phase3-stub-fd-source-20261023/googlesource-provenance.json",
+      "/tmp/rustusb-sysfs-generation-audit-20261023.json"
+    ],
+    "source_evidence": [
+      {
+        "path": "/tmp/rustusb-vhci-family-source-20261023/drivers__usb__usbip__vhci_sysfs.c",
+        "length": 12450,
+        "sha256": "8c3a861a5a474f8688779fa1127c6b31a78a330c3918e0844feb1eda82886e34",
+        "lines": "49-51,308-437",
+        "claim": "v6.8 historical decimal %06u sockfd and current-process SOCKET_STREAM lookup"
+      },
+      {
+        "path": "/tmp/rustusb-phase3-stub-fd-source-20261023/drivers__usb__usbip__stub_dev.c",
+        "length": 12504,
+        "sha256": "646534a85036d9cf98a19d976dd8b65e95405f4d749a5d2688cc3ce8a456dcb3",
+        "lines": "42-143,153-241",
+        "claim": "stub stream sockfd acceptance, kernel reference, shutdown/reset lifecycle"
+      },
+      {
+        "path": "/tmp/rustusb-sysfs-generation-source-20261023/fs__kernfs__file.c",
+        "length": 27203,
+        "sha256": "a846c23a360710a84485f10207362ec09f550e9d0b697ffe51b0d808a5c4900d",
+        "lines": "293-339,590-704",
+        "claim": "per-write oldkernfs node active protection, preopen does not pin live device"
+      }
+    ]
+  },
+  "limitations": [
+    "This is source review, not a successful kernel experiment or test execution. Root must compile and run unchanged frozen inputs.",
+    "The positive path preopens and verifies attributes, but does not runtime-test old attr after hotplug removal/rebind. Fixed kernel source supports non-retargeting; no experimental oldattr negative claim.",
+    "Both socket endpoints held by one guest kernel make explicitSHUT_RDWR essential; twohost production broker ownership/EOF handoff is future work.",
+    "Hardblocked sysfs kernel call cannot be killed safely by a Rust deadline; overall disposableVM timeout is evidence failure, not product cleanup proof.",
+    "NoTLS, certificateauthentication, plaintextbypass resistance, realhardware G1/G2, or complete Phase3 implementation established."
+  ]
+}

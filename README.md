@@ -107,11 +107,13 @@ The latest [validation report](docs/research/physical-driver-autorestore.md) rec
 
 Three additional [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) passed on `4565f7a`, including real legacy-helper upgrade, revoked recovery policy and an external interface owner.
 
+The new [TLS foundation library](docs/research/secure-transport-foundation.md) passes 18 transport tests; the full software suite now runs 304 test executions. It has not yet been connected to the USB/IP commands or device data path.
+
 The report links the tested revision and raw evidence. [Native interoperability](docs/research/native-qemu-matrix.md) and [virtual device tests](docs/research/userspace-qemu.md) have their own recorded baselines. These results establish the stated simulated-device behavior; real-device compatibility and two-machine hardware acceptance remain unverified.
 
 ## Current boundaries
 
-- **Network protection is external.** There is no built-in TLS or remote identity authentication. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
+- **Network protection is external.** The USB/IP commands have no built-in TLS or remote identity authentication. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.

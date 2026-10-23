@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T10:14:29.162489+00:00",
+  "result": "ORIGINAL_FAIL_PRESERVED_SOURCE_CAUSE_IDENTIFIED",
+  "run_head": "f4774a63e189a0cfaec9d8515b719b0e399c87ea",
+  "run_result": "FAIL",
+  "run_kernel": "6.8.0-106-generic",
+  "source_guard_passed": true,
+  "binary_guard_passed": true,
+  "guest_exit_code": 0,
+  "scope": "Read-only raw/source investigation; no runner.verify, shell probe, build/Cargo/QEMU/USB invocation; writes only this report and fixed primary-source research under /tmp.",
+  "raw_facts": {
+    "first_observed_failure": "RUSTUSB_PAIR_RESULT: FAIL stage=helper-export exit=1",
+    "stage_helper_export_exit1": true,
+    "two_helper_export_success": true,
+    "primary_snapshot_stages": [
+      "original"
+    ],
+    "probe_was_not_launched": true,
+    "device_speeds": [
+      {
+        "bus_id": "1-1",
+        "speed": "480",
+        "usb_version": "2.00",
+        "driver": "usb"
+      },
+      {
+        "bus_id": "1-2",
+        "speed": "12",
+        "usb_version": "2.00",
+        "driver": "usb"
+      }
+    ],
+    "no_shell_x_trace": true
+  },
+  "causal_chain": [
+    {
+      "source": "drivers/usb/core/driver.c:305-317",
+      "fact": "usb_unbind_device invokes generic device-driver disconnect."
+    },
+    {
+      "source": "drivers/usb/core/generic.c:269-276",
+      "fact": "usb_generic_driver_disconnect calls usb_set_configuration(udev,-1) if currently configured."
+    },
+    {
+      "source": "drivers/usb/core/message.c:1993-2004,2059-2063,1390-1433",
+      "fact": "-1 maps to configuration0. Old configured interfaces are device_del/unregistered and actconfig becomesNULL."
+    },
+    {
+      "source": "drivers/usb/core/sysfs.c:25-42,49,91",
+      "fact": "bNumInterfaces and bConfigurationValue show functions return rc=0 bytes when actconfigNULL. Read result is empty, not the string0."
+    },
+    {
+      "source": "run/source/guest-kernel-socketpair-init.sh:62-67",
+      "fact": "Empty cfg assignment itself succeeds; no interfaces means unmatched literal glob remains, [ -d \"$interface\" ] returns1 and set-e exits silently before exported snapshot is emitted."
+    },
+    {
+      "source": "drivers/usb/usbip/stub_dev.c:310-396",
+      "fact": "stub_probe allocates/stores the export and claims hub port; it does not restore generic device configuration."
+    }
+  ],
+  "causal_strength": "Raw proves successful exports and missing exported snapshot with silent stage exit. Fixed source plus shell logic explains the IF-glob failure path; there is no sh-x/command trace or persisted exported partial sysfs snapshot, so do not claim a traced exact failing shell command.",
+  "additional_proven_harness_bug": {
+    "source": "run/source/kernel-socketpair-probe.rs:220,244-245,254,257",
+    "fact": "Probe requires speed12 and attachUSBspeed2 for both devices, but actual HID is speed480/high-speed (also kernel dmesg); FTDI is speed12/full-speed. This is a later unreached bug, not the observed first failure.",
+    "required_mapping": {
+      "1-1": {
+        "sysfs_speed": "480",
+        "usb_kernel_speed": 3
+      },
+      "1-2": {
+        "sysfs_speed": "12",
+        "usb_kernel_speed": 2
+      }
+    }
+  },
+  "phase_contract_recommendation": {
+    "stable_generation": [
+      "physical real sysfs path/dev/inode",
+      "bus number/device address",
+      "VID/PID",
+      "original known speed and node receipt"
+    ],
+    "separate_phase_fields": [
+      "active configuration as Option<u8>; empty sysfs meansNone, do not coerce raw output to character0",
+      "actual interfaces vector may be empty while exported-unconfigured",
+      "configuration/IF/alt/driver state must be asserted per phase independently from generation"
+    ],
+    "pre_export": "Original config1/IF0alt0 with usbhid/ftdi_sio; preserve this exact restoration target.",
+    "exported_before_pair": "Physical device boundusbip-host andAVAILABLE, samegeneration/address; active configurationNone and0currentIF after generic unbind.",
+    "ready_after_real_vhci_enum": "VHCI local config1, expected completeIF/alt, trueHID/FTDIdriver; server actual config/IF must be re-observed after forwarded SET_CONFIGURATION rather than compared to exported empty state.",
+    "after_shutdown": "stub_device_reset invokesusb_reset_device. hub.c6108-6124 preserves/restores current actconfig if present, and6141+ alt state; if noactconfig it skips restoring. Thus normal imported config1 can remainconfig1 after shutdown, while partial pre-config failures can stayNone. Never require equality with exportedNone snapshot or invent final state.",
+    "unexported": "Only after actualNULL+oldlocalgone+stubAVAILABLE, helperunexport; final originalconfig/IF/alt/drivers andstablegeneration must independently match original baseline."
+  },
+  "phase_source_facts": [
+    {
+      "source": "drivers/usb/usbip/stub_rx.c:130-148,170-188",
+      "fact": "Forwarded standardSET_CONFIGURATION performs realusb_set_configuration under device lock; wrapper returns0 after logging USBerrors, so actualsysfs observation matters."
+    },
+    {
+      "source": "drivers/usb/core/message.c:2165-2217",
+      "fact": "Nonzero configuration installs new interfaces and registers them."
+    },
+    {
+      "source": "drivers/usb/core/driver.c:333-336;stub_dev.c:387",
+      "fact": "Kernel interface probes reject usb_device_is_owned; stub hub-port claim keeps original classdriver from binding while exported."
+    },
+    {
+      "source": "drivers/usb/usbip/stub_dev.c:212-241;drivers/usb/core/hub.c:6108-6169",
+      "fact": "Disconnect event reset preserves currentconfiguration/alternates on success; does not promise return to initial exported-unconfigured phase."
+    }
+  ],
+  "reviewer_accountability": "The prior NO_MUST_FIX source review missed both the Native device-driver unconfigure lifecycle assumption and the QEMU-xHCI HID speed assumption. Prior report remains historical and is not rewritten as though these were caught before the run.",
+  "fixed_linux": {
+    "tag": "v6.8",
+    "commit": "e8f897f4afef0031fe618a8e94127a0934896aba",
+    "new_primary_sources": [
+      {
+        "path": "drivers/usb/core/generic.c",
+        "local": "/tmp/rustusb-native-export-state-source-20261023/drivers__usb__core__generic.c",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/generic.c?format=TEXT",
+        "status": 200,
+        "length": 9529,
+        "sha256": "339d41f71cdef535dce4b541dcdd9f7e45966183bc1d9d627f6b13e7e4710ab9",
+        "git_blob": "b134bff5c3fe3e86215bdcd14a2591a521f5ba3c",
+        "matches_earlier_cache": true
+      },
+      {
+        "path": "drivers/usb/core/sysfs.c",
+        "local": "/tmp/rustusb-native-export-state-source-20261023/drivers__usb__core__sysfs.c",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/sysfs.c?format=TEXT",
+        "status": 200,
+        "length": 33184,
+        "sha256": "ba805996ba2f87fd237b9cf368e699f5f397d52d765e60559085c3d57aeb778a",
+        "git_blob": "5d21718afb05cff29a985dcd1678849dc706dfe6",
+        "matches_earlier_cache": true
+      },
+      {
+        "path": "drivers/usb/core/hub.c",
+        "local": "/tmp/rustusb-native-export-state-source-20261023/drivers__usb__core__hub.c",
+        "url": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux/+/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/hub.c?format=TEXT",
+        "status": 200,
+        "length": 187820,
+        "sha256": "d486569c6da9a3166ae06fa5a9ab27b3ff11ad708ea57846e07e58ce2038626f",
+        "git_blob": "e38a4124f6102a5ff2a47107a8286815cfc5c8e2"
+      }
+    ],
+    "additional_fixed_source_hashes": [
+      {
+        "path": "/tmp/rustusb-sigkill-recovery-research-20261023/drivers__usb__core__driver.c",
+        "length": 59236,
+        "sha256": "2f81e953001354db884b6ce1624839d64399acef0150a14cf357ae77cb2aca37",
+        "reviewed_lines": "305-317,321-336",
+        "upstream_path": "drivers/usb/core/driver.c",
+        "git_blob": "e01b1913d02bf68aa3dd3ad4e3a30adb11585c5f",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/driver.c"
+      },
+      {
+        "path": "/tmp/rustusb-guardian-linux-sources-20261023/drivers__usb__core__message.c",
+        "length": 75012,
+        "sha256": "d481c175d4ad5607c328664f9be6059368b0eced3660d4bc223f98540c5a2eba",
+        "reviewed_lines": "1390-1433,1993-2004,2059-2063,2100-2217",
+        "upstream_path": "drivers/usb/core/message.c",
+        "git_blob": "077dfe48d01c1cb2ab807197450daae79d56c59a",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/message.c"
+      },
+      {
+        "path": "/tmp/rustusb-phase3-stub-fd-source-20261023/drivers__usb__usbip__stub_rx.c",
+        "length": 17059,
+        "sha256": "7bc5dc2e4fbe40f36488720ecc4890820b625ff80011825dfcbc5b409fa63e9f",
+        "reviewed_lines": "130-148,170-188",
+        "upstream_path": "drivers/usb/usbip/stub_rx.c",
+        "git_blob": "fc01b31bbb875d1b200c68ba32f219168035a532",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/usbip/stub_rx.c"
+      },
+      {
+        "path": "/tmp/rustusb-phase3-stub-fd-source-20261023/drivers__usb__usbip__stub_dev.c",
+        "length": 12504,
+        "sha256": "646534a85036d9cf98a19d976dd8b65e95405f4d749a5d2688cc3ce8a456dcb3",
+        "reviewed_lines": "212-241,310-396",
+        "upstream_path": "drivers/usb/usbip/stub_dev.c",
+        "git_blob": "ce625b1ce9a5125c43655acc46c160d227d37686",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/usbip/stub_dev.c"
+      }
+    ],
+    "source_text_archival_boundary": "Keep hashes, exact URLs/Gitblob IDs and citations in repository reports; do not archive copied GPL source bodies as project source."
+  },
+  "evidence": [
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/build.log",
+      "length": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/serial-received.bin",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/artifact-sha256.json",
+      "length": 1937,
+      "sha256": "d5c67ee87cf5684fa65b4fbb3c1e2288e102fd7457bb233c1847837b1d89a36b"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/guest-qemu.stderr",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/summary.json",
+      "length": 47165,
+      "sha256": "5863f01c405d018f53d5bc07c202cd81053ed73768b93a396dda68fc60c729ea"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/first-observed-failure.json",
+      "length": 65,
+      "sha256": "d8437f15fd9a1ecc22497461c946d2eee6347e4381ce37887cbad7fdba70c150"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/guest-serial.log",
+      "length": 34216,
+      "sha256": "82843d41d89a490b7747bc78b9d7789a806b745b3a87ce82f380c0498a6fbc3d"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/guest-evidence.log",
+      "length": 18172,
+      "sha256": "7a2a61645728c640961ead0e1934435d1189383897feb59e645d7f8b7f990493"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/source/run-kernel-socketpair-qemu.py",
+      "length": 26896,
+      "sha256": "1c6da88a4df0a74f0b0fdd3f83b6bcfa13f71edeabdcdd9f1f14aa5e2760bf1c"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/source/kernel-socketpair-probe.rs",
+      "length": 20251,
+      "sha256": "2e6f8d554556aca7f334f94007b7fab02aae6becb43a2c2953a45ccad1ae7cbf"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/source/run-physical-qemu.py",
+      "length": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/source/run-native-qemu.py",
+      "length": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/source/guest-kernel-socketpair-init.sh",
+      "length": 13360,
+      "sha256": "cf96abc08e7b02bbec3536a3015d739434f4715ac46058e5df7c41bfba3cc4ac"
+    },
+    {
+      "path": "/tmp/rustusb-kernel-socketpair-f4774a6-20261023/source/guest-init.sh",
+      "length": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+    }
+  ],
+  "raw_before_after_sha256_unchanged": true,
+  "missing_or_unverified": [
+    "No exported partial sysfs snapshot or per-command xtrace persists; exact shell failure is source-grounded inference.",
+    "No pair attach, kernel-family success, actual forwardedI/O, explicitshutdown cleanup or finaloriginaldriver restoration occurred.",
+    "No TLS/networkauthentication/secure productFD API or realhardware acceptance."
+  ]
+}

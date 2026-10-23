@@ -6,6 +6,8 @@
 
 当前为 **Phase 1 开发预览**：已完成源码调研并实现 Native 路线；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、内建 TLS、TUI、GUI、存储安全共享仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
+新增[TLS基础库](docs/research/secure-transport-foundation.md)的18项传输测试通过，完整软件套件增至304次执行；尚未接入USB/IP命令或设备数据通路，实际连接仍需外部网络保护。
+
 可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，见[虚拟服务指南](docs/rust-virtual-server.md)与干净cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)。
 
 实验性 `physical-nusb` 后端通过受限 helper 的 FD 授权，在普通用户进程中使用 Linux USBFS，见[物理服务指南](docs/rust-physical-server.md)。最新[checked release 修复与验收](docs/research/usbfs-checked-release.md)保留真实释放错误，失败后不执行配置切换；同一干净 `6e809a1` 的 11 项 QEMU 全部通过，含 8 个取消/断线场景、ECM 与 HID/FTDI 正常/热拔回归，共113项协议检查、22个guest正常退出。完整软件检查及37c2d61的[四平台CI](docs/evidence/publication-native-fixture-20261023.json)每格222项通过。真实硬件、内核内部挂起、ISO、认证和TLS仍未验收，完整Phase2仍未完成。
