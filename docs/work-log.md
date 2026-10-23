@@ -515,3 +515,5 @@
 - 626修复后软件/实际xtrace/165输入Git映射/工具与ELF/Native-only/本地runtime/作者与独立审查共71份约7.41MB归档`docs/evidence/data-link-management-software-20261024`，逐original/bytes/SHA/staged blob核。此前608、首mTLS FAIL及e152 QEMU FAIL继续独立归档。当前934矩阵四PASS/virtual readiness FAIL不改变626软件结论，也不宣告15组全通过。
 
 - 934原矩阵四PASS/virtual准备FAIL/十未运行、源与ELFguards及只读诊断共2552份约29.36MB归档`docs/evidence/data-link-matrix-93428ce-20261024`，逐original/bytes/SHA/staged核。修正精度：valve9个socket完整forward并不代表peerPCAP收到9（server6/client8），失败拆解期间不能给完整PacketAudit结论；Host START为send时刻而非nc syscall开始。LinkUp晚于初始NO-CARRIER与负向探测超时相符，保留为事实支持的readiness候选，不凭跨时钟差宣称精确nc截止。新屏障将直接采carrier/operstate/uptime并有hostACK，原nc/probe门槛保持。
+
+- 新harness readiness修复冻结：双端实际carrier1/operstateup及guest uptime原件由host核验后才ACK，双方ACK后再START；client原3240探测前再核实际up。最多200样本/10 guest秒仅约束初始化事实等待，原nc-w2/refused、1000/3000probe、原逐包重组与生命周期断言不变。H201静态/17构造checks PASS，N源审无mustfix，165 Rust输入和CLI/helper仍逐字等626；这些静态检查不冒充新QEMU结果。下一轮从新的cleanhead重跑15组，934原FAIL与四PASS保持。

@@ -255,12 +255,15 @@ def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summar
     virtual = backend == "virtual"
     phase_verifier = lifecycle(backend).phase_proof
 
-    def send_once(mark, role, message):
+    def send_once(mark, role, message, observed=None):
         if mark in sent:
             return
         connections[role].sendall(message.encode() + b"\n")
+        entry = {"monotonic_ns": time.monotonic_ns(), "mark": mark, "role": role, "command": message}
+        if observed is not None:
+            entry["observed"] = observed
         with control_log.open("a") as log:
-            log.write(json.dumps({"monotonic_ns": time.monotonic_ns(), "mark": mark, "role": role, "command": message}) + "\n")
+            log.write(json.dumps(entry) + "\n")
         sent.add(mark)
 
     while time.monotonic() < deadline:
@@ -276,11 +279,15 @@ def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summar
             if "Kernel panic" in kernel or "Oops:" in kernel:
                 raise RuntimeError(f"{role} kernel fault")
             collect_live(evidence, role, logs[role])
+            if f"LINK_NETWORK_READY role={role}\n" in logs[role] and f"network-ready-{role}" not in sent:
+                observed = packet_audit.network_ready_sample(evidence / "live" / role, role)
+                send_once(f"network-ready-{role}", role, "NETWORK_READY_ACK", observed)
         keys = re.search(r"^AGENT_KEYS (\[.*\])$", logs["server"], re.M)
         if keys:
             send_once("keys", "client", keys[1])
             (evidence / "keys.json").write_text(keys[1] + "\n")
-        if "LINK_SERVER_READY\n" in logs["server"] and "keys" in sent:
+        if ("LINK_SERVER_READY\n" in logs["server"] and "keys" in sent
+                and all(f"network-ready-{role}" in sent for role in processes)):
             send_once("start", "client", "START")
         while ftdi is not None and select.select([ftdi], [], [], 0)[0]:
             chunk = ftdi.recv(4096)

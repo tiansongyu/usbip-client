@@ -10,6 +10,40 @@ publish() {
     /usr/bin/base64 "$publish_file"
     echo "LINK_RAW_END $(basename "$publish_file")"
 }
+network_sample() {
+    NETWORK_SAMPLE_STAGE=$1 NETWORK_SAMPLE_NUMBER=$2
+    # shellcheck disable=SC2034
+    read -r NETWORK_UPTIME NETWORK_IDLE < /proc/uptime
+    NETWORK_CARRIER=$(cat /sys/class/net/eth0/carrier)
+    NETWORK_OPERSTATE=$(cat /sys/class/net/eth0/operstate)
+    case "$NETWORK_CARRIER" in 0|1) ;; *) return 1 ;; esac
+    case "$NETWORK_OPERSTATE" in unknown|notpresent|down|lowerlayerdown|testing|dormant|up) ;; *) return 1 ;; esac
+    NETWORK_CENTISECONDS=$(printf '%s\n' "$NETWORK_UPTIME" | awk '{printf "%.0f",$1*100}')
+    jq -nc --arg role "$ROLE" --arg stage "$NETWORK_SAMPLE_STAGE" --arg uptime "$NETWORK_UPTIME" \
+        --argjson number "$NETWORK_SAMPLE_NUMBER" --argjson carrier "$NETWORK_CARRIER" --arg operstate "$NETWORK_OPERSTATE" \
+        '{schema_version:1,role:$role,stage:$stage,observation:$number,guest_uptime:$uptime,carrier:$carrier,operstate:$operstate}'
+}
+network_ready() {
+    STAGE=network-link-ready
+    cp /tmp/network.txt /tmp/network-before-ready.txt
+    : > /tmp/network-ready-observations.jsonl
+    for network_poll in $(seq 1 200); do
+        network_sample ready "$network_poll" >> /tmp/network-ready-observations.jsonl
+        if [ "$network_poll" = 1 ]; then NETWORK_STARTED=$NETWORK_CENTISECONDS; fi
+        [ "$((NETWORK_CENTISECONDS-NETWORK_STARTED))" -le 1000 ]
+        if [ "$NETWORK_CARRIER" = 1 ] && [ "$NETWORK_OPERSTATE" = up ]; then break; fi
+        sleep 0.05
+    done
+    [ "$NETWORK_CARRIER" = 1 ] && [ "$NETWORK_OPERSTATE" = up ]
+    tail -n 1 /tmp/network-ready-observations.jsonl > /tmp/network-ready.json
+    ip addr show dev eth0 > /tmp/network-ready.txt
+    publish /tmp/network-ready-observations.jsonl
+    publish /tmp/network-ready.json
+    publish /tmp/network-ready.txt
+    echo "LINK_NETWORK_READY role=$ROLE"
+    host_expect NETWORK_READY_ACK
+    echo "LINK_NETWORK_READY_ACK role=$ROLE"
+}
 start_profile() {
     agent start "$1" > "/tmp/start-$1-$2.json" 2> "/tmp/start-$1-$2.log"
     jq -e '.schema_version==1 and .journal_healthy and .response.result=="started" and .response.replayed==false and .response.job.operator_uid==1000' "/tmp/start-$1-$2.json" > /dev/null
@@ -55,6 +89,7 @@ phase_snapshot() {
     for phase_file in "/tmp/agent-$1.json" "/tmp/root-$1.json"; do publish "$phase_file"; done
     if [ "$ROLE" = server ]; then publish "/tmp/host-$1.json"; else publish "/tmp/vhci-$1.txt"; fi
 }
+network_ready
 if [ "$ROLE" = server ]; then
 @@SERVER_SETUP@@
     manifest; agent_start 1; denied server
@@ -99,6 +134,10 @@ else
 @@CLIENT_SETUP@@
     manifest; agent_start 1; denied hid
     host_expect START
+    network_sample negative-probes 1 > /tmp/network-probe-start.json
+    [ "$NETWORK_CARRIER" = 1 ] && [ "$NETWORK_OPERSTATE" = up ]
+    publish /tmp/network-probe-start.json
+    echo LINK_NETWORK_PROBES_START
     for family in 4 6; do
         if [ "$family" = 4 ]; then peer=192.0.2.1; else peer=fd42:7275:7374::1; fi
         if timeout 5 /usr/bin/nc-openbsd "-$family" -z -v -w 2 "$peer" 3240 > "/tmp/plaintext-$family.log" 2>&1; then exit 1; else plain_rc=$?; fi

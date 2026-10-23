@@ -11,6 +11,15 @@ The runner accepts `--backend native|usbfs|virtual` and
 `--family ipv4|ipv6`. Source support is separate from actual run evidence. Each
 backend has its own lifecycle verifier; the packet boundary is shared.
 
+Before either guest starts its workload, it observes `eth0` carrier `1` and
+operstate `up`, with at most 200 observations within ten seconds of guest
+uptime. The host validates the raw observations and acknowledges both guests
+before sending `START`. The client captures another actual link observation
+before the original IPv4/IPv6 3240 refusal probes. Their two-second connection
+timeout and exact refusal requirement remain unchanged. This is an initial
+network precondition, separate from same-data TLS health and its 1000/3000 ms
+probe policy.
+
 | Backend | Actual workload | Resource proof |
 | --- | --- | --- |
 | Native | QEMU HID key events and FTDI RX/TX | Original import/stub terminal proofs; held exports retire only after final stop and complete original baseline restoration |

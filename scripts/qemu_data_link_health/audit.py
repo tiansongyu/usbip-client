@@ -10,6 +10,7 @@ from collections import Counter, defaultdict
 import ipaddress
 import json
 from pathlib import Path
+import re
 import struct
 import stat
 
@@ -35,6 +36,92 @@ def bounded(path, limit):
     raw = path.read_bytes()
     require(len(raw) <= limit, "artifact grew beyond bound")
     return raw
+
+
+def _network_observation(value, role, stage, number):
+    require(set(value) == {"schema_version", "role", "stage", "observation", "guest_uptime", "carrier", "operstate"},
+            "network observation fields changed")
+    require(value["schema_version"] == 1 and value["role"] == role and value["stage"] == stage
+            and type(value["observation"]) is int and value["observation"] == number,
+            "wrong network observation identity/order")
+    uptime = value["guest_uptime"]
+    require(isinstance(uptime, str) and re.fullmatch(r"[0-9]{1,10}\.[0-9]{2}", uptime),
+            "invalid actual guest uptime")
+    require(type(value["carrier"]) is int and value["carrier"] in (0, 1)
+            and value["operstate"] in ("unknown", "notpresent", "down", "lowerlayerdown", "testing", "dormant", "up"),
+            "invalid actual carrier/operstate")
+    seconds, fraction = uptime.split(".")
+    return int(seconds) * 100 + int(fraction)
+
+
+def network_ready_sample(directory, role):
+    """Validate actual read-only link observations before host acknowledges them."""
+    require(role in ROLES, "unknown network-ready role")
+    directory = Path(directory)
+    names = ("network-ready-observations.jsonl", "network-ready.json", "network-ready.txt")
+    originals = {name: bounded(directory / name, 64 * 1024) for name in names}
+    lines = originals[names[0]].splitlines(keepends=True)
+    require(1 <= len(lines) <= 200 and all(line.endswith(b"\n") for line in lines), "network poll count/complete records")
+    samples = [json.loads(line) for line in lines]
+    times = [_network_observation(sample, role, "ready", number) for number, sample in enumerate(samples, 1)]
+    require(all(earlier <= later for earlier, later in zip(times, times[1:]))
+            and times[-1] - times[0] <= 1000, "network readiness exceeds bounded monotonic observation window")
+    require(all(sample["carrier"] != 1 or sample["operstate"] != "up" for sample in samples[:-1]),
+            "network polling continued after readiness")
+    require(samples[-1]["carrier"] == 1 and samples[-1]["operstate"] == "up"
+            and originals[names[1]] == lines[-1], "network-ready is not the actual first complete ready sample")
+    snapshot = originals[names[2]].decode()
+    interface = re.search(r"^\d+: eth0: <([^>]+)>", snapshot, re.M)
+    last = 1 if role == "server" else 2
+    require(interface is not None and "UP" in interface[1].split(",") and "NO-CARRIER" not in interface[1].split(",")
+            and f"inet 192.0.2.{last}/24 " in snapshot
+            and f"inet6 fd42:7275:7374::{last}/64 " in snapshot, "actual ready interface/address snapshot incomplete")
+    return {"role": role, "poll_count": len(samples), "guest_uptime": samples[-1]["guest_uptime"],
+            "carrier": 1, "operstate": "up", "artifact_sha256": {name: digest(raw) for name, raw in originals.items()}}
+
+
+def network_readiness(evidence):
+    """Check captured readiness and host ACK/START ordering, without cross-guest clock arithmetic."""
+    evidence = Path(evidence)
+    controls = [json.loads(line) for line in bounded(evidence / "host-control.jsonl", 64 * 1024).splitlines()]
+    require(1 <= len(controls) <= 100 and all(type(row["monotonic_ns"]) is int and row["monotonic_ns"] > 0 for row in controls),
+            "bounded actual host control timestamps required")
+    require(all(a["monotonic_ns"] <= b["monotonic_ns"] for a, b in zip(controls, controls[1:])), "host control clock/order changed")
+    starts = [(number, row) for number, row in enumerate(controls) if row["command"] == "START"]
+    require(len(starts) == 1 and starts[0][1]["mark"] == "start" and starts[0][1]["role"] == "client", "one actual client START required")
+    start_index, start = starts[0]
+    facts = []
+    for role in ROLES:
+        observed = network_ready_sample(evidence / f"{role}-artifacts", role)
+        require(network_ready_sample(evidence / "live" / role, role) == observed, "ready raw bytes changed after host ACK")
+        acknowledgements = [(number, row) for number, row in enumerate(controls)
+                            if row["mark"] == f"network-ready-{role}"]
+        require(len(acknowledgements) == 1, "one actual network ACK for each role")
+        ack_index, ack = acknowledgements[0]
+        require(ack["role"] == role and ack["command"] == "NETWORK_READY_ACK" and ack["observed"] == observed
+                and ack_index < start_index and ack["monotonic_ns"] <= start["monotonic_ns"],
+                "START preceded validated actual link readiness")
+        log = bounded(evidence / f"{role}-evidence.log", MAX_LOG_BYTES).decode()
+        ready = f"LINK_NETWORK_READY role={role}\n"
+        accepted = f"LINK_NETWORK_READY_ACK role={role}\n"
+        require(log.count(ready) == log.count(accepted) == 1 and log.index(ready) < log.index(accepted),
+                "guest did not observe its network barrier acknowledgement")
+        if role == "client":
+            before_probe = bounded(evidence / f"{role}-artifacts" / "network-probe-start.json", 4096)
+            require(before_probe == bounded(evidence / "live" / role / "network-probe-start.json", 4096), "actual probe readiness bytes changed")
+            sample = json.loads(before_probe)
+            probe_time = _network_observation(sample, role, "negative-probes", 1)
+            seconds, fraction = observed["guest_uptime"].split(".")
+            require(probe_time >= int(seconds) * 100 + int(fraction) and sample["carrier"] == 1 and sample["operstate"] == "up",
+                    "negative connection probe preceded actual carrier readiness")
+            marker = "LINK_NETWORK_PROBES_START\n"
+            require(log.count(marker) == 1 and log.index(accepted) < log.index(marker), "negative probe preceded the guest ACK barrier")
+            observed["probe_start_sha256"] = digest(before_probe)
+            observed["probe_start_guest_uptime"] = sample["guest_uptime"]
+        observed["ack_host_monotonic_ns"] = ack["monotonic_ns"]
+        facts.append(observed)
+    return {"scope": "Actual initial carrier/operstate and address precondition; not TLS health or USB completion",
+            "roles": facts, "start_host_monotonic_ns": start["monotonic_ns"]}
 
 
 def pcap(path, family):
@@ -248,6 +335,7 @@ def tls_facts(flow, packets, armed_at):
 
 def audit(evidence):
     evidence = Path(evidence)
+    readiness = network_readiness(evidence)
     raw = bounded(evidence / "valve.jsonl", MAX_LOG_BYTES)
     require(raw.endswith(b"\n"), "valve final line incomplete")
     lines = raw.splitlines()
@@ -412,7 +500,7 @@ def audit(evidence):
     return {"schema_version": 1, "result": "PACKET_AUDIT_PASS", "family": family,
             "scope": "Exact bounded Ethernet/flow/drop/FD journal plus two raw PCAPs. TLS ciphertext framing/signatures only; no decryption. Does not decide heartbeat timing, Catalog semantics, USB I/O or terminal proof.",
             "valve_sha256": digest(raw), "packets": len(seen), "captures": capture_meta,
-            "plaintext_3240_refusals": refusal_proofs,
+            "initial_network_readiness": readiness, "plaintext_3240_refusals": refusal_proofs,
             "rules": rule_facts, "tls_source_directions": streams}
 
 
