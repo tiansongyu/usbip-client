@@ -18,7 +18,8 @@ use std::{
     path::{Component, Path},
 };
 
-const SCHEMA_VERSION: u32 = 1;
+const LEGACY_SCHEMA_VERSION: u32 = 1;
+const RECOVERY_SCHEMA_VERSION: u32 = 2;
 const MAX_RECORDS: usize = 256;
 const MAX_INTERFACES: usize = 256;
 const MAX_BYTES: usize = 16 * 1024 * 1024;
@@ -71,6 +72,42 @@ pub(crate) struct Owner {
     pub boot_id: String,
 }
 
+/// Immutable recovery permission captured when a new grant is authorized.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum RecoveryAuthorization {
+    /// No automatic recovery or retirement; legacy grants always use this value.
+    ManualOnly,
+    /// Permit only original-driver CONNECT with unchanged configuration and alternates.
+    /// Execution still requires current policy and independent complete observations.
+    ConnectOriginalDrivers,
+}
+
+impl<'de> Deserialize<'de> for RecoveryAuthorization {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
+        struct Visitor;
+        impl de::Visitor<'_> for Visitor {
+            type Value = RecoveryAuthorization;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+                formatter.write_str("manual_only or connect_original_drivers as a string")
+            }
+
+            fn visit_str<E: de::Error>(self, value: &str) -> std::result::Result<Self::Value, E> {
+                match value {
+                    "manual_only" => Ok(RecoveryAuthorization::ManualOnly),
+                    "connect_original_drivers" => Ok(RecoveryAuthorization::ConnectOriginalDrivers),
+                    _ => Err(E::unknown_variant(
+                        value,
+                        &["manual_only", "connect_original_drivers"],
+                    )),
+                }
+            }
+        }
+        deserializer.deserialize_str(Visitor)
+    }
+}
+
 /// One unresolved authorization, persisted before any FD delivery.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -81,11 +118,50 @@ pub(crate) struct Record {
     pub owner: Owner,
     /// Original state which a restart must not silently replace.
     pub baseline: Baseline,
+    /// Explicit authorization, required in schema 2 and never inferred on reload.
+    pub recovery: RecoveryAuthorization,
 }
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct Journal {
+struct RecordV1 {
+    lease_id: String,
+    owner: Owner,
+    baseline: Baseline,
+}
+
+impl From<RecordV1> for Record {
+    fn from(record: RecordV1) -> Self {
+        Self {
+            lease_id: record.lease_id,
+            owner: record.owner,
+            baseline: record.baseline,
+            recovery: RecoveryAuthorization::ManualOnly,
+        }
+    }
+}
+
+// Inspect only the version without buffering an unbounded JSON value tree.
+// The second pass applies the selected strict schema and bounded arrays.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct JournalHeader {
+    schema_version: u32,
+    #[serde(rename = "records")]
+    _records: de::IgnoredAny,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct JournalV1 {
+    schema_version: u32,
+    #[serde(deserialize_with = "legacy_records")]
+    records: Vec<RecordV1>,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct JournalV2 {
     schema_version: u32,
     #[serde(deserialize_with = "records")]
     records: Vec<Record>,
@@ -95,6 +171,38 @@ struct Journal {
 struct JournalRef<'a> {
     schema_version: u32,
     records: Vec<&'a Record>,
+}
+
+#[derive(Serialize)]
+struct RecordV1Ref<'a> {
+    lease_id: &'a str,
+    owner: &'a Owner,
+    baseline: &'a Baseline,
+}
+
+impl<'a> From<&'a Record> for RecordV1Ref<'a> {
+    fn from(record: &'a Record) -> Self {
+        Self {
+            lease_id: &record.lease_id,
+            owner: &record.owner,
+            baseline: &record.baseline,
+        }
+    }
+}
+
+#[derive(Serialize)]
+struct JournalV1Ref<'a> {
+    schema_version: u32,
+    records: Vec<RecordV1Ref<'a>>,
+}
+
+/// One bounded, internally consistent view of the persistent authorization table.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct Snapshot {
+    /// Private on-disk version, independent from the lifecycle IPC protocol.
+    pub schema_version: u32,
+    /// All unresolved grants, in stable lease-ID order.
+    pub records: Vec<Record>,
 }
 
 fn bounded_vec<'de, D, T, const N: usize>(deserializer: D) -> std::result::Result<Vec<T>, D::Error>
@@ -143,6 +251,12 @@ fn records<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> std::result::Result<Vec<Record>, D::Error> {
     bounded_vec::<D, Record, MAX_RECORDS>(deserializer)
+}
+
+fn legacy_records<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Vec<RecordV1>, D::Error> {
+    bounded_vec::<D, RecordV1, MAX_RECORDS>(deserializer)
 }
 
 fn interfaces<'de, D: Deserializer<'de>>(
@@ -368,6 +482,7 @@ pub(crate) struct Store {
     lock: File,
     uid: u32,
     journal_identity: Option<(u64, u64)>,
+    schema_version: u32,
     records: BTreeMap<String, Record>,
     poisoned: Cell<bool>,
     journal_bytes: Option<Vec<u8>>,
@@ -404,6 +519,7 @@ impl Store {
             lock,
             uid,
             journal_identity,
+            schema_version: LEGACY_SCHEMA_VERSION,
             records: BTreeMap::new(),
             poisoned: Cell::new(false),
             journal_bytes: None,
@@ -483,28 +599,43 @@ impl Store {
         if bytes.len() > MAX_BYTES {
             return Err(Error::State("physical journal exceeds byte limit".into()));
         }
-        let journal: Journal = serde_json::from_slice(&bytes)
+        let header: JournalHeader = serde_json::from_slice(&bytes)
             .map_err(|_| Error::State("physical journal schema or JSON is invalid".into()))?;
-        if journal.schema_version != SCHEMA_VERSION || journal.records.len() > MAX_RECORDS {
-            return Err(Error::State(
-                "unsupported physical journal version or record limit".into(),
-            ));
-        }
-        self.journal_bytes = Some(bytes);
+        let (schema_version, records) = match header.schema_version {
+            LEGACY_SCHEMA_VERSION => {
+                let journal: JournalV1 = serde_json::from_slice(&bytes).map_err(|_| {
+                    Error::State("physical journal schema or JSON is invalid".into())
+                })?;
+                (
+                    journal.schema_version,
+                    journal.records.into_iter().map(Record::from).collect(),
+                )
+            }
+            RECOVERY_SCHEMA_VERSION => {
+                let journal: JournalV2 = serde_json::from_slice(&bytes).map_err(|_| {
+                    Error::State("physical journal schema or JSON is invalid".into())
+                })?;
+                (journal.schema_version, journal.records)
+            }
+            _ => {
+                return Err(Error::State("unsupported physical journal version".into()));
+            }
+        };
         let mut devices = BTreeSet::new();
-        for record in journal.records {
+        let mut table = BTreeMap::new();
+        for record in records {
             validate_record(&record)?;
             if !devices.insert(record.baseline.device_id.clone())
-                || self
-                    .records
-                    .insert(record.lease_id.clone(), record)
-                    .is_some()
+                || table.insert(record.lease_id.clone(), record).is_some()
             {
                 return Err(Error::State(
                     "duplicate physical journal lease or device".into(),
                 ));
             }
         }
+        self.schema_version = schema_version;
+        self.records = table;
+        self.journal_bytes = Some(bytes);
         Ok(())
     }
 
@@ -553,6 +684,15 @@ impl Store {
         Ok(self.records.values().cloned().collect())
     }
 
+    /// Copy the private schema and complete bounded table from the same observation.
+    pub(crate) fn snapshot(&self) -> Result<Snapshot> {
+        let records = self.records()?;
+        Ok(Snapshot {
+            schema_version: self.schema_version,
+            records,
+        })
+    }
+
     /// Durably remove a separately verified authorization; absence is idempotent.
     /// This storage operation performs no USB verification or capability revocation.
     pub(crate) fn retire(&mut self, lease_id: &str) -> Result<bool> {
@@ -590,11 +730,34 @@ impl Store {
                 "physical journal or lifetime lock was replaced".into(),
             ));
         }
-        let mut bytes = serde_json::to_vec(&JournalRef {
-            schema_version: SCHEMA_VERSION,
-            records: next.values().collect(),
-        })
-        .map_err(|_| Error::State("cannot serialize physical journal".into()))?;
+        let schema_version = match self.schema_version {
+            LEGACY_SCHEMA_VERSION
+                if next
+                    .values()
+                    .all(|record| record.recovery == RecoveryAuthorization::ManualOnly) =>
+            {
+                LEGACY_SCHEMA_VERSION
+            }
+            LEGACY_SCHEMA_VERSION | RECOVERY_SCHEMA_VERSION => RECOVERY_SCHEMA_VERSION,
+            _ => {
+                return Err(Error::State(
+                    "invalid physical journal storage version".into(),
+                ));
+            }
+        };
+        let encoded = if schema_version == LEGACY_SCHEMA_VERSION {
+            serde_json::to_vec(&JournalV1Ref {
+                schema_version,
+                records: next.values().map(RecordV1Ref::from).collect(),
+            })
+        } else {
+            serde_json::to_vec(&JournalRef {
+                schema_version,
+                records: next.values().collect(),
+            })
+        };
+        let mut bytes =
+            encoded.map_err(|_| Error::State("cannot serialize physical journal".into()))?;
         bytes.push(b'\n');
         if bytes.len() > MAX_BYTES {
             return Err(Error::State("physical journal exceeds byte limit".into()));
@@ -616,6 +779,7 @@ impl Store {
             return Err(std::io::Error::other("injected directory fsync failure").into());
         }
         self.directory.sync_all()?;
+        self.schema_version = schema_version;
         self.journal_identity = Some((metadata.dev(), metadata.ino()));
         self.journal_bytes = Some(bytes);
         Ok(())
@@ -690,15 +854,27 @@ mod tests {
                     driver: Some("cdc_ether".into()),
                 }],
             },
+            recovery: RecoveryAuthorization::ManualOnly,
         })
     }
 
     fn encoded(records: Vec<Record>) -> Result<Vec<u8>> {
-        serde_json::to_vec(&Journal {
-            schema_version: SCHEMA_VERSION,
-            records,
-        })
-        .map_err(|error| std::io::Error::other(error).into())
+        encoded_version(records, LEGACY_SCHEMA_VERSION)
+    }
+
+    fn encoded_version(records: Vec<Record>, schema_version: u32) -> Result<Vec<u8>> {
+        let encoded = if schema_version == LEGACY_SCHEMA_VERSION {
+            serde_json::to_vec(&JournalV1Ref {
+                schema_version,
+                records: records.iter().map(RecordV1Ref::from).collect(),
+            })
+        } else {
+            serde_json::to_vec(&JournalV2 {
+                schema_version,
+                records,
+            })
+        };
+        encoded.map_err(|error| std::io::Error::other(error).into())
     }
 
     #[test]
@@ -717,6 +893,137 @@ mod tests {
         assert!(!reopened.retire(&original.lease_id)?);
         drop(reopened);
         assert!(fixture.open()?.records()?.is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn legacy_records_stay_manual_until_a_distinct_opt_in_grant_upgrades_storage() -> Result<()> {
+        let fixture = Fixture::new()?;
+        let original = record(1)?;
+        let mut store = fixture.open()?;
+        assert_eq!(store.snapshot()?.schema_version, LEGACY_SCHEMA_VERSION);
+        store.reserve(original.clone())?;
+        let before = fs::read(fixture.path().join(JOURNAL))?;
+        let legacy: JournalV1 = serde_json::from_slice(&before).map_err(std::io::Error::other)?;
+        assert_eq!(legacy.schema_version, LEGACY_SCHEMA_VERSION);
+        assert_eq!(legacy.records.len(), 1);
+        drop(store);
+        let mut store = fixture.open()?;
+        assert_eq!(fs::read(fixture.path().join(JOURNAL))?, before);
+        assert_eq!(
+            store.snapshot()?,
+            Snapshot {
+                schema_version: LEGACY_SCHEMA_VERSION,
+                records: vec![original.clone()],
+            }
+        );
+        let mut authorized = record(2)?;
+        authorized.recovery = RecoveryAuthorization::ConnectOriginalDrivers;
+        store.reserve(authorized.clone())?;
+        let upgraded: JournalV2 = serde_json::from_slice(&fs::read(fixture.path().join(JOURNAL))?)
+            .map_err(std::io::Error::other)?;
+        assert_eq!(upgraded.schema_version, RECOVERY_SCHEMA_VERSION);
+        assert_eq!(upgraded.records, vec![original.clone(), authorized.clone()]);
+        assert!(
+            serde_json::from_slice::<JournalV1>(&fs::read(fixture.path().join(JOURNAL))?).is_err()
+        );
+        drop(store);
+        assert_eq!(
+            fixture.open()?.snapshot()?,
+            Snapshot {
+                schema_version: RECOVERY_SCHEMA_VERSION,
+                records: vec![original, authorized],
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn schema_two_never_downgrades_after_authorized_record_or_empty_table_retirement() -> Result<()>
+    {
+        let fixture = Fixture::new()?;
+        let mut authorized = record(1)?;
+        authorized.recovery = RecoveryAuthorization::ConnectOriginalDrivers;
+        let manual = record(2)?;
+        let mut store = fixture.open()?;
+        store.reserve(authorized.clone())?;
+        store.reserve(manual.clone())?;
+        assert!(store.retire(&authorized.lease_id)?);
+        assert_eq!(
+            store.snapshot()?,
+            Snapshot {
+                schema_version: RECOVERY_SCHEMA_VERSION,
+                records: vec![manual.clone()],
+            }
+        );
+        assert!(store.retire(&manual.lease_id)?);
+        drop(store);
+        let mut store = fixture.open()?;
+        assert_eq!(
+            store.snapshot()?,
+            Snapshot {
+                schema_version: RECOVERY_SCHEMA_VERSION,
+                records: vec![],
+            }
+        );
+        store.reserve(manual.clone())?;
+        drop(store);
+        assert_eq!(
+            fixture.open()?.snapshot()?,
+            Snapshot {
+                schema_version: RECOVERY_SCHEMA_VERSION,
+                records: vec![manual],
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn recovery_permission_is_required_in_v2_and_forbidden_in_v1() -> Result<()> {
+        let fixture = Fixture::new()?;
+        drop(fixture.open()?);
+        for recovery in [
+            serde_json::Value::Null,
+            serde_json::json!(false),
+            serde_json::json!("automatic"),
+            serde_json::json!("ManualOnly"),
+            serde_json::json!({"connect_original_drivers": true}),
+            serde_json::json!({"connect_original_drivers": null}),
+            serde_json::json!({"manual_only": null}),
+        ] {
+            let mut value = serde_json::to_value(record(1)?).map_err(std::io::Error::other)?;
+            value["recovery"] = recovery;
+            fixture.replace(
+                &serde_json::to_vec(&serde_json::json!({"schema_version":2,"records":[value]}))
+                    .map_err(std::io::Error::other)?,
+            )?;
+            assert!(fixture.open().is_err());
+        }
+        let mut missing = serde_json::to_value(record(1)?).map_err(std::io::Error::other)?;
+        missing
+            .as_object_mut()
+            .ok_or_else(|| Error::State("fixture record".into()))?
+            .remove("recovery");
+        fixture.replace(
+            &serde_json::to_vec(&serde_json::json!({"schema_version":2,"records":[missing]}))
+                .map_err(std::io::Error::other)?,
+        )?;
+        assert!(fixture.open().is_err());
+        for recovery in [
+            RecoveryAuthorization::ManualOnly,
+            RecoveryAuthorization::ConnectOriginalDrivers,
+        ] {
+            let mut value = record(1)?;
+            value.recovery = recovery;
+            fixture.replace(
+                &serde_json::to_vec(&JournalV2 {
+                    schema_version: LEGACY_SCHEMA_VERSION,
+                    records: vec![value],
+                })
+                .map_err(std::io::Error::other)?,
+            )?;
+            assert!(fixture.open().is_err());
+        }
         Ok(())
     }
 
@@ -745,16 +1052,23 @@ mod tests {
 
     #[test]
     fn missing_original_driver_is_not_an_explicit_unbound_baseline() -> Result<()> {
-        let mut value =
-            serde_json::to_value(record(1)?).map_err(|_| Error::State("fixture encode".into()))?;
-        value["baseline"]["interfaces"][0]
-            .as_object_mut()
-            .ok_or_else(|| Error::State("fixture interface".into()))?
-            .remove("driver");
-        assert!(serde_json::from_value::<Record>(value).is_err());
-        let mut explicit = record(1)?;
-        explicit.baseline.interfaces[0].driver = None;
-        validate_record(&explicit)?;
+        let fixture = Fixture::new()?;
+        drop(fixture.open()?);
+        for schema_version in [LEGACY_SCHEMA_VERSION, RECOVERY_SCHEMA_VERSION] {
+            let mut value: serde_json::Value =
+                serde_json::from_slice(&encoded_version(vec![record(1)?], schema_version)?)
+                    .map_err(std::io::Error::other)?;
+            value["records"][0]["baseline"]["interfaces"][0]
+                .as_object_mut()
+                .ok_or_else(|| Error::State("fixture interface".into()))?
+                .remove("driver");
+            fixture.replace(&serde_json::to_vec(&value).map_err(std::io::Error::other)?)?;
+            assert!(fixture.open().is_err());
+            let mut explicit = record(1)?;
+            explicit.baseline.interfaces[0].driver = None;
+            fixture.replace(&encoded_version(vec![explicit.clone()], schema_version)?)?;
+            assert_eq!(fixture.open()?.records()?, vec![explicit]);
+        }
         Ok(())
     }
 
@@ -797,14 +1111,17 @@ mod tests {
         let before = fs::read(fixture.path().join(JOURNAL))?;
         let mut duplicate = record(2)?;
         duplicate.lease_id.clone_from(&original.lease_id);
+        duplicate.recovery = RecoveryAuthorization::ConnectOriginalDrivers;
         assert!(store.reserve(duplicate).is_err());
         let mut generation = record(2)?;
+        generation.recovery = RecoveryAuthorization::ConnectOriginalDrivers;
         generation
             .baseline
             .device_id
             .clone_from(&original.baseline.device_id);
         assert!(store.reserve(generation).is_err());
         assert_eq!(fs::read(fixture.path().join(JOURNAL))?, before);
+        assert_eq!(store.snapshot()?.schema_version, LEGACY_SCHEMA_VERSION);
         assert_eq!(store.records()?, vec![original]);
         Ok(())
     }
@@ -819,21 +1136,74 @@ mod tests {
             .baseline
             .device_id
             .clone_from(&original.baseline.device_id);
-        let mut unknown_record = serde_json::to_value(&original).map_err(std::io::Error::other)?;
+        let mut unknown_record =
+            serde_json::to_value(RecordV1Ref::from(&original)).map_err(std::io::Error::other)?;
         unknown_record["unknown"] = serde_json::json!(true);
         let cases = vec![
             b"{".to_vec(),
-            b"{\"schema_version\":2,\"records\":[]}".to_vec(),
+            b"{\"schema_version\":3,\"records\":[]}".to_vec(),
+            b"{\"schema_version\":0,\"records\":[]}".to_vec(),
+            b"{\"schema_version\":1,\"schema_version\":2,\"records\":[]}".to_vec(),
+            b"{\"schema_version\":2,\"schema_version\":2,\"records\":[]}".to_vec(),
+            b"{\"schema_version\":2,\"records\":[],\"records\":[]}".to_vec(),
             b"{\"schema_version\":1,\"records\":[],\"unknown\":true}".to_vec(),
+            b"{\"schema_version\":2,\"records\":[],\"unknown\":true}".to_vec(),
             b"{\"schema_version\":1}".to_vec(),
+            b"{\"schema_version\":2}".to_vec(),
+            b"{\"records\":[]}".to_vec(),
+            b"{\"schema_version\":2,\"records\":null}".to_vec(),
             encoded(vec![original.clone(), original.clone()])?,
-            encoded(vec![original, same_device])?,
+            encoded(vec![original.clone(), same_device.clone()])?,
+            encoded_version(
+                vec![original.clone(), original.clone()],
+                RECOVERY_SCHEMA_VERSION,
+            )?,
+            encoded_version(vec![original, same_device], RECOVERY_SCHEMA_VERSION)?,
             serde_json::to_vec(&serde_json::json!({"schema_version":1,"records":[unknown_record]}))
                 .map_err(std::io::Error::other)?,
         ];
         for bytes in cases {
             fixture.replace(&bytes)?;
             assert!(fixture.open().is_err());
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn strict_nested_fields_reject_duplicate_and_unknown_permissions_without_fallback() -> Result<()>
+    {
+        let fixture = Fixture::new()?;
+        drop(fixture.open()?);
+        let bytes = encoded_version(vec![record(1)?], RECOVERY_SCHEMA_VERSION)?;
+        let text =
+            String::from_utf8(bytes).map_err(|_| Error::State("fixture JSON encoding".into()))?;
+        for replacement in [
+            "\"recovery\":\"manual_only\",\"recovery\":\"manual_only\"",
+            "\"recovery\":\"manual_only\",\"force\":true",
+        ] {
+            let corrupted = text.replace("\"recovery\":\"manual_only\"", replacement);
+            assert_ne!(corrupted, text);
+            fixture.replace(corrupted.as_bytes())?;
+            assert!(fixture.open().is_err());
+        }
+        for schema_version in [LEGACY_SCHEMA_VERSION, RECOVERY_SCHEMA_VERSION] {
+            let bytes = encoded_version(vec![record(1)?], schema_version)?;
+            let text = String::from_utf8(bytes)
+                .map_err(|_| Error::State("fixture JSON encoding".into()))?;
+            for (needle, replacement) in [
+                ("\"uid\":1000", "\"uid\":1000,\"uid\":1000"),
+                (
+                    "\"configuration\":1",
+                    "\"configuration\":1,\"configuration\":1",
+                ),
+                ("\"alternate\":1", "\"alternate\":1,\"alternate\":1"),
+                ("\"node_inode\":401", "\"node_inode\":401,\"force\":true"),
+            ] {
+                let corrupted = text.replace(needle, replacement);
+                assert_ne!(corrupted, text);
+                fixture.replace(corrupted.as_bytes())?;
+                assert!(fixture.open().is_err());
+            }
         }
         Ok(())
     }
@@ -850,8 +1220,10 @@ mod tests {
         let records = (0..=MAX_RECORDS)
             .map(|number| record(number as u32))
             .collect::<Result<Vec<_>>>()?;
-        fixture.replace(&encoded(records)?)?;
-        assert!(fixture.open().is_err());
+        for schema_version in [LEGACY_SCHEMA_VERSION, RECOVERY_SCHEMA_VERSION] {
+            fixture.replace(&encoded_version(records.clone(), schema_version)?)?;
+            assert!(fixture.open().is_err());
+        }
         let mut excessive = record(1)?;
         excessive.baseline.interfaces = (0..=MAX_INTERFACES)
             .map(|number| OriginalInterface {
@@ -860,8 +1232,10 @@ mod tests {
                 driver: None,
             })
             .collect();
-        fixture.replace(&encoded(vec![excessive])?)?;
-        assert!(fixture.open().is_err());
+        for schema_version in [LEGACY_SCHEMA_VERSION, RECOVERY_SCHEMA_VERSION] {
+            fixture.replace(&encoded_version(vec![excessive.clone()], schema_version)?)?;
+            assert!(fixture.open().is_err());
+        }
         // The actual boundary remains usable; no arbitrary profile narrowing.
         let mut full = record(1)?;
         full.baseline.interfaces = (0..MAX_INTERFACES)
@@ -871,8 +1245,10 @@ mod tests {
                 driver: None,
             })
             .collect();
-        fixture.replace(&encoded(vec![full.clone()])?)?;
-        assert_eq!(fixture.open()?.records()?, vec![full]);
+        for schema_version in [LEGACY_SCHEMA_VERSION, RECOVERY_SCHEMA_VERSION] {
+            fixture.replace(&encoded_version(vec![full.clone()], schema_version)?)?;
+            assert_eq!(fixture.open()?.records()?, vec![full.clone()]);
+        }
         Ok(())
     }
 
@@ -1003,16 +1379,49 @@ mod tests {
         store.reserve(original.clone())?;
         fs::create_dir(fixture.path().join(TEMP))?;
         let before = fs::read(fixture.path().join(JOURNAL))?;
-        assert!(store.reserve(record(2)?).is_err());
+        let mut authorized = record(2)?;
+        authorized.recovery = RecoveryAuthorization::ConnectOriginalDrivers;
+        assert!(store.reserve(authorized).is_err());
         assert_eq!(fs::read(fixture.path().join(JOURNAL))?, before);
         assert_eq!(store.records.len(), 1);
+        assert_eq!(store.schema_version, LEGACY_SCHEMA_VERSION);
         assert!(store.get(&original.lease_id).is_err());
         assert!(store.has_device(&original.baseline.device_id).is_err());
         assert!(store.records().is_err());
+        assert!(store.snapshot().is_err());
         assert!(store.retire(&original.lease_id).is_err());
         assert!(store.reserve(record(3)?).is_err());
         drop(store);
         assert_eq!(fixture.open()?.records()?, vec![original]);
+        Ok(())
+    }
+
+    #[test]
+    fn uncertain_upgrade_never_installs_cache_and_reopen_keeps_actual_permissions() -> Result<()> {
+        let fixture = Fixture::new()?;
+        let mut store = fixture.open()?;
+        let original = record(1)?;
+        store.reserve(original.clone())?;
+        let mut authorized = record(2)?;
+        authorized.recovery = RecoveryAuthorization::ConnectOriginalDrivers;
+        store.fail_after_rename = true;
+        assert!(store.reserve(authorized.clone()).is_err());
+        assert_eq!(store.schema_version, LEGACY_SCHEMA_VERSION);
+        assert_eq!(store.records.len(), 1);
+        assert_eq!(store.records.get(&original.lease_id), Some(&original));
+        assert!(store.snapshot().is_err());
+        assert!(store.get(&authorized.lease_id).is_err());
+        assert!(store.reserve(record(3)?).is_err());
+        assert!(store.retire(&original.lease_id).is_err());
+        drop(store);
+        // This observes the renamed file, not a power-loss durability simulation.
+        assert_eq!(
+            fixture.open()?.snapshot()?,
+            Snapshot {
+                schema_version: RECOVERY_SCHEMA_VERSION,
+                records: vec![original, authorized],
+            }
+        );
         Ok(())
     }
 

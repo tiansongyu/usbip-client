@@ -26,6 +26,39 @@ pub(crate) use device::LinuxEndpoint as Endpoint;
 pub(crate) use device::LinuxInterface as Interface;
 pub use device::{RawCompletion, RawControlTransfer};
 
+/// Ask Linux to probe an unbound USB interface through an already-open USBFS FD.
+///
+/// This synchronous, potentially blocking operation borrows the descriptor and
+/// preserves the real OS errno. It neither opens a path nor claims, detaches,
+/// resets, or changes configuration/alternate settings. Linux selects a matching
+/// driver; success does not certify the driver or device generation. The caller
+/// must validate the FD and independently verify the complete intended state.
+/// This wrapper creates no device wrapper, timer, or event thread and submits no
+/// control transfer of its own. A selected driver's probe may perform USB I/O.
+#[cfg(target_os = "linux")]
+pub fn connect_kernel_driver(
+    fd: std::os::fd::BorrowedFd<'_>,
+    interface: u8,
+) -> std::io::Result<()> {
+    usbfs::attach_kernel_driver(fd, interface).map_err(std::io::Error::from)
+}
+
+#[cfg(all(test, target_os = "linux"))]
+mod connect_tests {
+    use std::{fs::File, os::fd::AsFd};
+
+    #[test]
+    fn borrowed_connect_preserves_errno_without_consuming_the_descriptor() -> std::io::Result<()> {
+        let file = File::open("/dev/null")?;
+        let result = super::connect_kernel_driver(file.as_fd(), 0);
+        assert!(
+            matches!(result, Err(error) if error.raw_os_error() == Some(rustix::io::Errno::NOTTY.raw_os_error()))
+        );
+        file.metadata()?;
+        Ok(())
+    }
+}
+
 use crate::transfer::TransferError;
 use crate::ErrorKind;
 

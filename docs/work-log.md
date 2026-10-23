@@ -332,3 +332,12 @@
 - 两个测试提交已正常push到指定SSH origin，远端更新da764d0；CI39916267084和Pages39916267217已触发，暂未将未完成job标通过。当前补齐机制报告及验收E26，产品自动恢复仍未实现。
 - 最终独立raw复核596/596通过，未调用runner.verify：逐149 Git输入、生成init、真实kcmp/18 ioctl/全部close/wait、完整基线和三轮KEY/RX/TX原件核验；交付文档另一agent审查无mustfix。root逐69份归档原件长度/SHA和144本地文档链接核对通过，另追加文档审查原件。现有产品/旧harness保持不变，不重复整套旧QEMU来替代本轮单项实测。
 - 精确da764d0的CI39916267084已四原生job completed/success，Pages39916267217亦completed/success；连接器与官方API最终job身份/结论一致。五份发布原件及索引`publication-guardian-da764d0-20261023.json`已归档。本次未重新解析各Rust测试计数，旧250项仍归属933e720；站点源码未变。准备最后文档/证据提交，保持完整目标未完成，后续为受限产品自动恢复契约。
+
+## 继续：明确授权的原驱动自动恢复
+
+- 上一goal turn有实际进展：独立句柄机制、失败修复和完整证据已提交推送c8f2e90；本轮开始时工作区clean，重读完整原始需求、AGENTS、核心skill、架构和相关审查。完整目标继续active，不把机制实验当成产品恢复。
+- 先写`physical-driver-autorestore-design.md`，确定默认空的精确设备恢复许可、私有disk2与旧IPC1分离、旧record永远manual、新许可持久化后才交付FD；samecfg/完整IF/alt才允许CONNECT，不改变现有正常多配置功能。恢复在owner确实结束后独立open B，实际blocking任务持有变更锁，helper停止join真实任务；当前策略仍按既有重启生效语义。三个只读审查分别细化journal、safe CONNECT/任务所有权及产品QEMU正向。
+
+- 候选实现新增严格磁盘1/2迁移、显式恢复策略、旧IPC投影、单后台任务和独立B受限CONNECT。首次定向daemon all-features测试64项通过；正在执行完整软件门禁，尚未运行新产品QEMU。设计/实现审查无mustfix不等于运行验收；CONNECT的driver probe可能改变状态，必须全scope复核，不能承诺其没有USB副作用。
+
+- 完整`bash scripts/check.sh`实际exit0：default90/all-features158/vendor20，共268次测试执行，31result、0失败/忽略；fmt、两组Clippy/release和严格rustdoc均通过，111个产品/vendor/check输入前后SHA相同。独立实现审查未发现mustfix；软件证据已归档，下一步从干净提交执行两个产品自动恢复QEMU正向及旧默认off回归，不能提前归属产品运行通过。

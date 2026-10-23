@@ -65,14 +65,14 @@ rustusb --socket /run/rustusb/control.sock physical-server \
 
 拔出后旧 slot 不会自动授权同端口的新设备。重新连接需要管理员核对新设备，再显式重新启动服务获取新代际的 FD；无序列号设备的候选指纹仍不构成可靠硬件身份认证。
 
-Unix信号监听在helper通信前注册，等待异步helper响应时可取消；这不终止已运行的blocking内核初始化。合作停止须等待原有清理，真实验证见[报告](research/server-signal-shutdown.md)。SIGKILL/崩溃后的自动驱动恢复仍未实现，不能用进程退出代替设备恢复核验。新的持久授权保护与管理员协调见下节；运行证据以测试报告为准。
+Unix信号监听在helper通信前注册，等待异步helper响应时可取消；这不终止已运行的blocking内核初始化。合作停止须等待原有清理，真实验证见[报告](research/server-signal-shutdown.md)。SIGKILL/崩溃默认保留未决记录；可选原驱动恢复的许可和限制见下节，不能用进程退出代替设备恢复核验。新的持久授权保护与管理员协调见下节；运行证据以测试报告为准。
 
 在 [SIGKILL/首次重启测试](research/physical-crash-recovery.md)中，旧进程退出后原驱动没有恢复，新进程却以当时的空驱动作为 original 并报告 `cleanup_verified=true`。该字段只验证当前进程的基线。强制退出后不能靠重启后的 ready/stopped 判断旧设备已恢复；应保留原状态和诊断，由管理员核对同代际配置、alternate 与驱动。
 
 
 ## 持久授权记录与管理员协调
 
-helper 与物理客户端需一起升级到 journal schema 1；旧版 OpenPhysical 请求在授权前拒绝。每次授权在 FD 交付前保存原配置、完整接口/alternate/driver、代际和 OS owner，不保存序列号或 USB 数据。默认目录 `/var/lib/rustusb/physical` 由 helper 首次创建，root0700，固定 journal/lock 文件 root0600；root helper 可用 `--physical-state-dir` 选另一受保护绝对路径。前端不能选择状态路径；同一设备的所有 helper 必须共用一个状态目录，不得用另一个目录绕过未决记录。
+helper 与物理客户端需一起升级到 durable lifecycle 协议版本1（不同于私有磁盘schema）；旧版 OpenPhysical 请求在授权前拒绝。每次授权在 FD 交付前保存原配置、完整接口/alternate/driver、代际和 OS owner，不保存序列号或 USB 数据。默认目录 `/var/lib/rustusb/physical` 由 helper 首次创建，root0700，固定 journal/lock 文件 root0600；root helper 可用 `--physical-state-dir` 选另一受保护绝对路径。前端不能选择状态路径；同一设备的所有 helper 必须共用一个状态目录，不得用另一个目录绕过未决记录。
 
 正常服务结束会先清理 USB、等待自己的后台任务、释放 registry，再由 helper 独立核验并清除记录。交付不确定、初始化中断、清理或记录写入失败会保留未决状态；下一次同指纹启动被拒绝，包括同端口的新代际。已交付 FD 不可由该记录撤销，获授权服务仍是受信任进程。
 
@@ -90,4 +90,21 @@ sudo rustusb --json physical-reconcile <lease-id>
 
 该命令只读设备状态并退休记录，不执行 bind、配置切换或强制清理；状态仍不匹配则失败并保留记录。旧代际已拔出或跨启动消失时，管理员可加 `--acknowledge-gone` 确认结束旧记录，命令不操作替代设备；随后重新启动仍需当前策略和新的完整扫描/FD receipt。这不是每次重插都自动要求修改 allowlist 的机制。
 
-不要删除 journal、lock 或整个目录来解除拒绝。已有目录缺 journal、损坏、不安全权限、重复 helper 或提交不确定都会拒绝授权；删除整个目录会破坏不可恢复的原始历史，程序无法区分管理员删除与首次安装。本轮不声称断电耐久已实测，也没有自动重新绑定驱动。实现与验收状态见[报告](research/physical-journal-recovery.md)和[设计](research/physical-crash-recovery-design.md)。
+不要删除 journal、lock 或整个目录来解除拒绝。已有目录缺 journal、损坏、不安全权限、重复 helper 或提交不确定都会拒绝授权；删除整个目录会破坏不可恢复的原始历史，程序无法区分管理员删除与首次安装。本轮不声称断电耐久已实测。默认策略不自动重新绑定驱动；下面的额外许可才允许受限恢复。实现与验收状态见[报告](research/physical-journal-recovery.md)和[设计](research/physical-crash-recovery-design.md)。
+
+
+## 可选的原驱动自动恢复
+
+此功能为实验性实现候选，本轮运行验收尚未完成；以[实施设计](research/physical-driver-autorestore-design.md)和后续证据为准。默认关闭。管理员可在策略中添加 `physical_connect_restore_device_ids`，内容必须是 `physical_device_ids` 的无重复子集。例如上面示例设备可额外设置：
+
+```json
+"physical_connect_restore_device_ids": ["usb-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
+```
+
+这授予新授权记录“恢复完整原驱动基线”的权限。helper 在交付 FD 前把许可保存到私有磁盘schema2；旧schema1记录保持 `manual_only`，不会因策略新增许可追授权限，升级后不自动降级。`physical-pending` 仍用协议版本1和原record形状，磁盘2时额外返回 `storage_schema_version: 2` 与当前页的 `recovery_authorizations`。两种编号不能互换。
+
+helper 周期性检查持久许可与当前启动时加载的 UID、设备和可信网络策略。只有同boot的原owner确已结束、FD交付结束、原代际/配置/完整接口/alternate仍一致，才独立打开设备并对缺失的原driver发送 CONNECT。它不发送配置/alternate切换、claim、detach或reset，也不抢占usbfs、usbip-host或其他driver。内核CONNECT不能指定driver，driver probe仍可能发USB请求或改变alternate；helper逐步重读全部状态，变化超出范围就保留未决记录，关闭自己的FD后再次完整核验才退休记录。原基线已经恢复时无需CONNECT。
+
+每条未决记录在每个helper实例中最多实际尝试一次；失败保留记录并在helper stderr记录 `physical_auto_restore` 的 `failed` 原因。`attempt` 只表示开始核验恢复，`retired` 才表示最终核验及持久退休成功。不同boot、热拔/重插、配置或alternate改变、外部占用与不确定状态仍需管理员协调。获授权服务和外部root仍受信任，该功能不撤销其他FD或证明设备全部请求已停止。
+
+策略仍需重启helper才生效。改变设备用途或撤销恢复许可前，应停止helper并等待它的实际在途恢复操作结束，再改策略并重启；只编辑文件不会即时撤销许可，已经交付的服务FD也不因此失效。helper合作停止会等待实际blocking工作，内核硬阻塞时无法保证严格有界退出。

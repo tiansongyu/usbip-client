@@ -74,7 +74,7 @@ struct App {
     backend: NativeBackend,
     // Serializes all mutations from this helper. It does not lock out an
     // administrator running usbip independently; identity checks still matter.
-    state: Mutex<ManagedState>,
+    state: Arc<Mutex<ManagedState>>,
     #[cfg(feature = "physical-usb")]
     journal: Option<Arc<std::sync::Mutex<super::journal::Store>>>,
     #[cfg(feature = "physical-usb")]
@@ -137,6 +137,15 @@ impl App {
         }
         let before = current_device(&id).await?;
         super::physical::ensure_eligible(&before)?;
+        let recovery = if self
+            .policy
+            .physical_connect_restore_device_ids
+            .contains(&id)
+        {
+            super::journal::RecoveryAuthorization::ConnectOriginalDrivers
+        } else {
+            super::journal::RecoveryAuthorization::ManualOnly
+        };
         let (mut grant, record) = tokio::task::spawn_blocking(move || {
             let grant = super::physical::open_current(before)?;
             let baseline = super::physical_lifecycle::capture(&grant.device, &grant.receipt)?;
@@ -149,6 +158,7 @@ impl App {
                     lease_id,
                     owner,
                     baseline,
+                    recovery,
                 },
             ))
         })
@@ -245,12 +255,15 @@ impl App {
         if let Some(after) = &after {
             super::journal::validate_lease_id(after)?;
         }
-        let records = if self.journal.is_some() {
-            self.journal(|store| store.records()).await?
+        let snapshot = if self.journal.is_some() {
+            self.journal(|store| store.snapshot()).await?
         } else {
-            Vec::new()
+            super::journal::Snapshot {
+                schema_version: 1,
+                records: Vec::new(),
+            }
         };
-        pending_page(records, after)
+        pending_page(snapshot, after)
     }
 
     async fn handle(&self, uid: u32, req: Request) -> Result<serde_json::Value> {
@@ -269,6 +282,9 @@ impl App {
                 "physical_usb_capability_enabled": cfg!(feature = "physical-usb"),
                 "physical_journal_schema_version": if cfg!(feature = "physical-usb") { Some(1_u32) } else { None },
                 "physical_device_allowlist_count": self.policy.physical_device_ids.len(),
+                "physical_connect_restore_supported": cfg!(feature = "physical-usb"),
+                "physical_connect_restore_allowlist_count": self.policy.physical_connect_restore_device_ids.len(),
+                "physical_journal_storage_versions": if cfg!(feature = "physical-usb") { vec![1_u32, 2] } else { vec![] },
                 "native_data_encryption": false,
                 "external_trusted_network_confirmed": self.policy.trusted_network,
                 "kernel": kernel,
@@ -461,25 +477,203 @@ impl App {
 }
 
 #[cfg(feature = "physical-usb")]
+#[derive(Debug, PartialEq, Eq)]
+enum RecoveryAttempt {
+    Deferred,
+    Skipped,
+    Retired,
+}
+
+#[cfg(feature = "physical-usb")]
+fn recovery_permitted(policy: &Policy, record: &super::journal::Record) -> bool {
+    record.recovery == super::journal::RecoveryAuthorization::ConnectOriginalDrivers
+        && policy.authorize_uid(record.owner.uid).is_ok()
+        && policy
+            .authorize_physical(&record.baseline.device_id)
+            .is_ok()
+        && policy
+            .physical_connect_restore_device_ids
+            .contains(&record.baseline.device_id)
+}
+
+#[cfg(feature = "physical-usb")]
+impl App {
+    // Called only while the actual blocking task owns the global mutation guard.
+    // Keep the journal mutex out of USB calls, so pending remains readable.
+    fn recover_record(&self, lease_id: &str) -> Result<RecoveryAttempt> {
+        let journal = self
+            .journal
+            .as_ref()
+            .ok_or_else(|| Error::State("physical journal unavailable".into()))?;
+        let record = journal
+            .lock()
+            .map_err(|_| Error::State("physical journal lock poisoned".into()))?
+            .get(lease_id)?;
+        let Some(record) = record else {
+            return Ok(RecoveryAttempt::Skipped);
+        };
+        if !recovery_permitted(&self.policy, &record) {
+            return Ok(RecoveryAttempt::Skipped);
+        }
+        if self
+            .handoffs
+            .lock()
+            .map_err(|_| Error::State("physical handoff lock poisoned".into()))?
+            .contains(lease_id)
+            || !super::physical_recovery::owner_ended(&record)?
+        {
+            return Ok(RecoveryAttempt::Deferred);
+        }
+        tracing::info!(
+            operation = "physical_auto_restore",
+            lease_id,
+            phase = "attempt",
+            "original owner ended; checking authorized original driver restoration"
+        );
+        super::physical_recovery::restore(&record)?;
+        journal
+            .lock()
+            .map_err(|_| Error::State("physical journal lock poisoned".into()))?
+            .retire(lease_id)?;
+        tracing::info!(
+            operation = "physical_auto_restore",
+            lease_id,
+            phase = "retired",
+            "original baseline independently verified; physical record retired"
+        );
+        Ok(RecoveryAttempt::Retired)
+    }
+}
+
+#[cfg(feature = "physical-usb")]
+async fn locked_recovery<T: Send + 'static>(
+    guard: tokio::sync::OwnedMutexGuard<ManagedState>,
+    action: impl FnOnce() -> Result<T> + Send + 'static,
+) -> Result<T> {
+    // Cancellation of this future cannot drop the guard held by the real
+    // blocking task. Do not abort or replace that work after a timeout.
+    let mut task = tokio::task::spawn_blocking(move || {
+        let _state = guard;
+        action()
+    });
+    loop {
+        tokio::select! {
+            result = &mut task => return result.map_err(|_| Error::State("physical automatic restoration task failed".into()))?,
+            _ = tokio::time::sleep(CLEANUP_TIMEOUT) => {
+                tracing::warn!(operation = "physical_auto_restore", "still awaiting actual restoration work; mutation lock retained");
+            }
+        }
+    }
+}
+
+#[cfg(feature = "physical-usb")]
+async fn recovery_loop(app: Arc<App>, mut stop: tokio::sync::watch::Receiver<bool>) -> Result<()> {
+    let mut attempted = HashSet::<String>::new();
+    let mut interval = tokio::time::interval(Duration::from_millis(250));
+    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    loop {
+        tokio::select! {
+            biased;
+            _ = stop.changed() => return Ok(()),
+            _ = interval.tick() => {}
+        }
+        if *stop.borrow() {
+            return Ok(());
+        }
+        let snapshot = app.journal(|store| store.snapshot()).await?;
+        // Completed leases cannot accumulate across an unbounded helper lifetime.
+        attempted.retain(|id| snapshot.records.iter().any(|record| &record.lease_id == id));
+        for record in snapshot.records {
+            if attempted.contains(&record.lease_id) || !recovery_permitted(&app.policy, &record) {
+                continue;
+            }
+            let guard = tokio::select! {
+                biased;
+                _ = stop.changed() => return Ok(()),
+                guard = app.state.clone().lock_owned() => guard,
+            };
+            if *stop.borrow() {
+                return Ok(());
+            }
+            let lease_id = record.lease_id;
+            let recovering = lease_id.clone();
+            let service = app.clone();
+            match locked_recovery(guard, move || service.recover_record(&recovering)).await {
+                Ok(RecoveryAttempt::Deferred) => {}
+                Ok(_) => {
+                    attempted.insert(lease_id);
+                }
+                Err(error) => {
+                    let errno = match &error {
+                        Error::Io(error) => error.raw_os_error(),
+                        _ => None,
+                    };
+                    let reason = Response::failure(error).error;
+                    tracing::warn!(
+                        operation = "physical_auto_restore",
+                        lease_id,
+                        phase = "failed",
+                        errno,
+                        reason,
+                        "automatic restoration stopped; record retained for administrator reconciliation"
+                    );
+                    attempted.insert(lease_id);
+                }
+            }
+        }
+    }
+}
+
+// The public lifecycle protocol stays at version 1. Private storage adds
+// recovery authorization without changing the strict legacy record shape.
+#[cfg(feature = "physical-usb")]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PendingRecord {
+    lease_id: String,
+    owner: super::journal::Owner,
+    baseline: super::journal::Baseline,
+}
+
+#[cfg(feature = "physical-usb")]
 fn pending_page(
-    mut records: Vec<super::journal::Record>,
+    mut snapshot: super::journal::Snapshot,
     after: Option<String>,
 ) -> Result<serde_json::Value> {
-    records.sort_by(|a, b| a.lease_id.cmp(&b.lease_id));
+    snapshot.records.sort_by(|a, b| a.lease_id.cmp(&b.lease_id));
     let mut page = Vec::new();
+    let mut authorizations = Vec::new();
+    // Reserve response envelope, cursor, and both array/object delimiters.
     let mut bytes = 1024;
     let mut more = false;
-    for record in records
+    for record in snapshot
+        .records
         .into_iter()
         .filter(|record| after.as_ref().is_none_or(|after| &record.lease_id > after))
     {
-        let size = serde_json::to_vec(&record).map_err(json_error)?.len() + 1;
+        let authorization =
+            serde_json::json!({"lease_id":record.lease_id,"recovery":record.recovery});
+        let entry = PendingRecord {
+            lease_id: record.lease_id,
+            owner: record.owner,
+            baseline: record.baseline,
+        };
+        let mut size = serde_json::to_vec(&entry).map_err(json_error)?.len() + 1;
+        if snapshot.schema_version == 2 {
+            size += serde_json::to_vec(&authorization)
+                .map_err(json_error)?
+                .len()
+                + 1;
+        }
         if bytes + size >= MAX_FRAME_BYTES {
             more = true;
             break;
         }
         bytes += size;
-        page.push(record);
+        page.push(entry);
+        if snapshot.schema_version == 2 {
+            authorizations.push(authorization);
+        }
     }
     if more && page.is_empty() {
         return Err(Error::State(
@@ -491,7 +685,12 @@ fn pending_page(
     } else {
         None
     };
-    Ok(serde_json::json!({"schema_version":1,"records":page,"next_after":next_after}))
+    let mut result = serde_json::json!({"schema_version":1,"records":page,"next_after":next_after});
+    if snapshot.schema_version == 2 {
+        result["storage_schema_version"] = serde_json::json!(2);
+        result["recovery_authorizations"] = serde_json::json!(authorizations);
+    }
+    Ok(result)
 }
 
 fn same_device_generation(before: &Device, after: &Device) -> bool {
@@ -901,7 +1100,7 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
     let app = Arc::new(App {
         policy,
         backend: NativeBackend::default(),
-        state: Mutex::new(ManagedState::default()),
+        state: Arc::new(Mutex::new(ManagedState::default())),
         #[cfg(feature = "physical-usb")]
         journal,
         #[cfg(feature = "physical-usb")]
@@ -914,6 +1113,17 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
     tracing::info!(
         "root helper listening; unknown kernel ports are not owned; no built-in data encryption"
     );
+    #[cfg(feature = "physical-usb")]
+    let (recovery_stop, recovery_rx) = tokio::sync::watch::channel(false);
+    // A JoinSet owns the sole scheduler. All ordinary/error serve exits below
+    // signal it and join actual in-flight blocking work before releasing state.
+    #[cfg(feature = "physical-usb")]
+    let mut recovery_jobs = JoinSet::new();
+    #[cfg(feature = "physical-usb")]
+    if app.journal.is_some() && !app.policy.physical_connect_restore_device_ids.is_empty() {
+        recovery_jobs.spawn(recovery_loop(app.clone(), recovery_rx));
+    }
+    let outcome: Result<()> = async {
     loop {
         tokio::select! {
             accepted = listener.accept() => {
@@ -933,12 +1143,26 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
             }
             _ = termination.recv() => break,
             interrupt = tokio::signal::ctrl_c() => { interrupt?; break; }
+            recovery = async {
+                #[cfg(feature = "physical-usb")]
+                if let Some(result) = recovery_jobs.join_next().await {
+                    return result.map_err(|_| Error::State("physical recovery scheduler failed".into()))?;
+                }
+                std::future::pending::<Result<()>>().await
+            } => {
+                recovery?;
+                return Err(Error::State("physical recovery scheduler stopped unexpectedly".into()));
+            }
             Some(result) = jobs.join_next(), if !jobs.is_empty() => {
                 if result.is_err() { tracing::error!("helper request task failed; administrator reconciliation may be needed"); }
             }
         }
     }
+    Ok(())
+    }.await;
     drop(listener);
+    #[cfg(feature = "physical-usb")]
+    let _ = recovery_stop.send(true);
     // Stop accepting work, but allow bounded in-flight native operations to
     // finish. Existing native kernel sessions intentionally survive shutdown.
     while let Some(result) = jobs.join_next().await {
@@ -946,11 +1170,17 @@ pub(super) async fn serve(config: &Path, socket: &Path, physical_state: &Path) -
             tracing::error!("helper request failed during shutdown");
         }
     }
+    #[cfg(feature = "physical-usb")]
+    while let Some(result) = recovery_jobs.join_next().await {
+        result.map_err(|_| {
+            Error::State("physical recovery scheduler failed during shutdown".into())
+        })??;
+    }
     let current = fs::symlink_metadata(socket)?;
     if current.dev() == bound_metadata.dev() && current.ino() == bound_metadata.ino() {
         fs::remove_file(socket)?;
     }
-    Ok(())
+    outcome
 }
 
 #[cfg(test)]
@@ -1092,17 +1322,70 @@ mod tests {
             policy: Policy {
                 allowed_uids,
                 physical_device_ids: vec![],
+                physical_connect_restore_device_ids: vec![],
                 export_device_ids: vec![],
                 peers: vec![],
                 trusted_network: false,
             },
             backend: NativeBackend::default(),
-            state: Mutex::new(ManagedState::default()),
+            state: Arc::new(Mutex::new(ManagedState::default())),
             #[cfg(feature = "physical-usb")]
             journal: None,
             #[cfg(feature = "physical-usb")]
             handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),
         })
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[tokio::test]
+    async fn cancelling_recovery_wait_does_not_unlock_actual_blocking_work() -> Result<()> {
+        let state = Arc::new(Mutex::new(ManagedState::default()));
+        let guard = state.clone().lock_owned().await;
+        let (started_tx, started_rx) = tokio::sync::oneshot::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel();
+        let waiter = tokio::spawn(locked_recovery(guard, move || {
+            let _ = started_tx.send(());
+            release_rx
+                .recv()
+                .map_err(|_| Error::State("test blocking gate disconnected".into()))?;
+            Ok(())
+        }));
+        started_rx
+            .await
+            .map_err(|_| Error::State("test task did not start".into()))?;
+        waiter.abort();
+        let cancelled = waiter.await.is_err();
+        let locked = state.try_lock().is_err();
+        // Release before assertions, even if the ownership invariant regresses.
+        release_tx
+            .send(())
+            .map_err(|_| Error::State("test blocking task disappeared".into()))?;
+        let _done = timeout(Duration::from_secs(5), state.lock())
+            .await
+            .map_err(|_| Error::Timeout("test actual recovery completion".into()))?;
+        assert!(cancelled);
+        assert!(
+            locked,
+            "cancelling the waiter released the actual mutation lock"
+        );
+        Ok(())
+    }
+
+    #[cfg(feature = "physical-usb")]
+    #[test]
+    fn legacy_empty_pending_keeps_exact_protocol_shape() -> Result<()> {
+        let page = pending_page(
+            super::super::journal::Snapshot {
+                schema_version: 1,
+                records: vec![],
+            },
+            None,
+        )?;
+        assert_eq!(
+            page,
+            serde_json::json!({"schema_version":1,"records":[],"next_after":null})
+        );
+        Ok(())
     }
 
     #[cfg(feature = "physical-usb")]
@@ -1138,6 +1421,7 @@ mod tests {
         let bus_id = rustusb_core::BusId::new("1-1")?;
         let records: Vec<_> = (0..6)
             .map(|number| Record {
+                recovery: super::super::journal::RecoveryAuthorization::ConnectOriginalDrivers,
                 lease_id: format!("00000000-0000-0000-0000-{number:012x}"),
                 owner: Owner {
                     uid: 1000,
@@ -1167,14 +1451,50 @@ mod tests {
                 },
             })
             .collect();
+        let mut policy = app(vec![1000]).policy.clone();
+        policy.trusted_network = true;
+        policy
+            .physical_device_ids
+            .push(records[0].baseline.device_id.clone());
+        policy.physical_connect_restore_device_ids = policy.physical_device_ids.clone();
+        assert!(recovery_permitted(&policy, &records[0]));
+        let mut manual = records[0].clone();
+        manual.recovery = super::super::journal::RecoveryAuthorization::ManualOnly;
+        assert!(!recovery_permitted(&policy, &manual));
+        for remove in 0..4 {
+            let mut changed = policy.clone();
+            match remove {
+                0 => changed.allowed_uids.clear(),
+                1 => changed.physical_device_ids.clear(),
+                2 => changed.physical_connect_restore_device_ids.clear(),
+                _ => changed.trusted_network = false,
+            }
+            assert!(!recovery_permitted(&changed, &records[0]));
+        }
         let mut after = None;
         let mut observed = Vec::new();
         loop {
-            let page = pending_page(records.clone(), after)?;
+            let page = pending_page(
+                super::super::journal::Snapshot {
+                    schema_version: 2,
+                    records: records.clone(),
+                },
+                after,
+            )?;
+            assert_eq!(page["schema_version"], 1);
+            assert_eq!(page["storage_schema_version"], 2);
             let response = Response::success(page.clone());
             assert!(serde_json::to_vec(&response).map_err(json_error)?.len() + 1 < MAX_FRAME_BYTES);
-            let entries: Vec<Record> =
+            let entries: Vec<PendingRecord> =
                 serde_json::from_value(page["records"].clone()).map_err(json_error)?;
+            let authorizations = page["recovery_authorizations"]
+                .as_array()
+                .ok_or_else(|| Error::State("test authorization list".into()))?;
+            assert_eq!(authorizations.len(), entries.len());
+            for (entry, authorization) in entries.iter().zip(authorizations) {
+                assert_eq!(authorization["lease_id"], entry.lease_id);
+                assert_eq!(authorization["recovery"], "connect_original_drivers");
+            }
             assert!(!entries.is_empty());
             assert!(
                 entries
@@ -1359,6 +1679,7 @@ mod tests {
             let service = Arc::new(App {
                 policy: Policy {
                     allowed_uids: if allow_uid { vec![uid] } else { vec![] },
+                    physical_connect_restore_device_ids: vec![],
                     physical_device_ids: if allow_device {
                         vec![id.clone()]
                     } else {
@@ -1369,7 +1690,7 @@ mod tests {
                     trusted_network,
                 },
                 backend: NativeBackend::default(),
-                state: Mutex::new(ManagedState::default()),
+                state: Arc::new(Mutex::new(ManagedState::default())),
                 journal: None,
                 handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),
             });

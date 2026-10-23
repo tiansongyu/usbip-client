@@ -130,9 +130,11 @@ FD 是整台设备的写能力，helper 不介入后续每个 USB 请求，策�
 
 [SIGKILL/首次重启负向](research/physical-crash-recovery.md)已证实旧版本重启会采用空驱动为新 original。新增的 schema 1 物理授权账本在 FD 交付前保存完整原配置/接口/alternate/driver、代际与 OS owner，同指纹未决记录阻止新 grant。helper 在 root 管理的目录内用独占锁和原子文件/目录 fsync 保存，损坏和不确定提交拒绝继续使用。普通服务 shutdown 后 join 自有后台任务并释放 registry，`FinishPhysical` 验证原 OS owner 和实际原基线再退休记录；未知交付或初始化取消仍需协调。管理员只读 `PhysicalPending`/`ReconcilePhysical` 可检查恢复后的同代际或明确确认旧代际已消失，不执行恢复写入。具体契约见[实施切片](research/physical-crash-recovery-design.md)，使用方法见[指南](rust-physical-server.md)。
 
-持久记录不是 FD 撤销或自动崩溃恢复：helper 不保留旧 USBFS OFD 来冒充独立恢复 open，原会话实际修改范围仍由后端内存管理。自动恢复的监督、可信变更范围与可安全执行的恢复操作仍在后续设计中，不能仅凭 PID 消失清记录。软件和 QEMU 证据分别记账，旧负向结果保持。
+持久记录不是 FD 撤销或自动崩溃恢复：helper 不保留旧 USBFS OFD 来冒充独立恢复 open，原会话实际修改范围仍由后端内存管理。默认策略不自动恢复，不能仅凭 PID 消失清记录。显式opt-in的同配置/alternate CONNECT-only候选实现见下文。软件和 QEMU 证据分别记账，旧负向结果保持。
 
 [独立句柄机制实验](research/usbfs-guardian-mechanism.md)在clean da764d0验证了独立B、A副本延长占用、另一OFD C的非抢占拒绝和B恢复后真实复用；实现位于guest-only测试工具，未改变上述产品架构或schema1权限契约。
+
+[原驱动恢复实施设计](research/physical-driver-autorestore-design.md)新增精确设备许可和磁盘schema2的不可变恢复范围，旧record保持manual；生命周期IPC仍为1。单后台任务在原owner确已结束后独立open B，实际blocking闭包拥有helper全局变更锁，依次完整观察/CONNECT/关闭B/严格核验/持久退休。后台不跨USB调用持有journal mutex，pending仍可读；合作退出停止新工作并join已开始工作。默认关闭、每helper实例每lease最多一次尝试，任何不确定保留记录。这是实现候选，不能把上一机制实验当成本轮产品运行通过。
 
 ## 技术依据
 

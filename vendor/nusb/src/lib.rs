@@ -235,7 +235,7 @@ pub use enumeration::{
 mod device;
 pub use device::{Device, Endpoint, Interface};
 #[cfg(target_os = "linux")]
-pub use platform::{RawCompletion, RawControlTransfer};
+pub use platform::{connect_kernel_driver, RawCompletion, RawControlTransfer};
 
 pub mod transfer;
 

@@ -17,6 +17,8 @@ mod physical;
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
 mod physical_lifecycle;
 #[cfg(all(feature = "physical-usb", target_os = "linux"))]
+mod physical_recovery;
+#[cfg(all(feature = "physical-usb", target_os = "linux"))]
 pub use physical::PhysicalGrant;
 
 /// Maximum line size, including the terminating newline, for local IPC.
@@ -229,6 +231,11 @@ pub struct Policy {
     /// Empty by default, including in policies written before this feature.
     #[serde(default)]
     pub physical_device_ids: Vec<String>,
+    /// Exact subset permitted to restore persisted original drivers after the
+    /// original owner ends, without changing configuration or alternates.
+    /// Empty by default. Policy changes take effect after helper restart.
+    #[serde(default)]
+    pub physical_connect_restore_device_ids: Vec<String>,
     /// Exact endpoints approved for import, including the TCP port.
     pub peers: Vec<Peer>,
     /// Administrator confirmation of an external trusted VPN/tunnel and
@@ -242,6 +249,7 @@ impl Policy {
         if self.allowed_uids.len() > 256
             || self.export_device_ids.len() > 1024
             || self.physical_device_ids.len() > 1024
+            || self.physical_connect_restore_device_ids.len() > 1024
             || self.peers.len() > 256
         {
             return Err(Error::InvalidInput("policy entry limit exceeded".into()));
@@ -254,6 +262,15 @@ impl Policy {
             if self.export_device_ids.contains(id) {
                 return Err(Error::InvalidInput(
                     "a device cannot be approved for both Native and physical USBFS export".into(),
+                ));
+            }
+        }
+        let mut recovery_ids = std::collections::HashSet::new();
+        for id in &self.physical_connect_restore_device_ids {
+            validate_device_id(id)?;
+            if !self.physical_device_ids.contains(id) || !recovery_ids.insert(id) {
+                return Err(Error::InvalidInput(
+                    "physical recovery IDs must be a unique subset of physical_device_ids".into(),
                 ));
             }
         }
@@ -400,6 +417,7 @@ mod tests {
         Ok(Policy {
             allowed_uids: vec![1000],
             physical_device_ids: vec![],
+            physical_connect_restore_device_ids: vec![],
             export_device_ids: vec![format!("usb-{}", "a".repeat(64))],
             peers: vec![Peer {
                 host: Host::new("192.0.2.1")?,
@@ -445,9 +463,11 @@ mod tests {
             .cloned()
             .ok_or_else(|| Error::State("test policy object".into()))?;
         old.remove("physical_device_ids");
+        old.remove("physical_connect_restore_device_ids");
         let restored: Policy = serde_json::from_value(serde_json::Value::Object(old))
             .map_err(|_| Error::State("old policy did not decode".into()))?;
         assert!(restored.physical_device_ids.is_empty());
+        assert!(restored.physical_connect_restore_device_ids.is_empty());
         p.physical_device_ids = p.export_device_ids.clone();
         assert!(p.validate().is_err());
         p.physical_device_ids = vec![format!("usb-{}", "b".repeat(64))];
@@ -463,6 +483,23 @@ mod tests {
             assert!(serde_json::from_value::<Request>(extra).is_err());
         }
         p.physical_device_ids = vec![format!("usb-{}", "b".repeat(64)); 1025];
+        assert!(p.validate().is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn recovery_policy_requires_explicit_unique_bounded_physical_subset() -> Result<()> {
+        let mut p = policy()?;
+        let id = format!("usb-{}", "b".repeat(64));
+        p.physical_connect_restore_device_ids = vec![id.clone()];
+        assert!(p.validate().is_err());
+        p.physical_device_ids = vec![id.clone()];
+        p.validate()?;
+        p.physical_connect_restore_device_ids.push(id.clone());
+        assert!(p.validate().is_err());
+        p.physical_connect_restore_device_ids = vec!["../untrusted".into()];
+        assert!(p.validate().is_err());
+        p.physical_connect_restore_device_ids = vec![id; 1025];
         assert!(p.validate().is_err());
         Ok(())
     }

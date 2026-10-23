@@ -1,0 +1,90 @@
+{
+  "scope": "CONNECT-only original-driver auto-restoration implementation slice; source freeze before parent-controlled Cargo/QEMU validation",
+  "head": "c8f2e905fa68ca80a5a707c63a95d652c1f1ac32",
+  "files": {
+    "crates/rustusb-daemon/src/physical_lifecycle.rs": {
+      "bytes": 15597,
+      "sha256": "dee620f52088454a04cfe1167f276a50d899759d9152953c0789afe1a2116800"
+    },
+    "crates/rustusb-daemon/src/physical_recovery.rs": {
+      "bytes": 12627,
+      "sha256": "2c8ab21f797de5d5de6d1d4f146096db04a7f012f7759b7517c02d38a156a576"
+    },
+    "vendor/nusb/src/lib.rs": {
+      "bytes": 15033,
+      "sha256": "3be5f69a741894d7d0f23b44fac258ce1f9c62ee1ca0f8eda848489b37d3a855"
+    },
+    "vendor/nusb/src/platform/linux_usbfs/mod.rs": {
+      "bytes": 3367,
+      "sha256": "79d055e137240004852ee6ee63adc2250d307b3da3a67f4ceff9a689bd05f30d"
+    },
+    "vendor/nusb/RUSTUSB.md": {
+      "bytes": 5671,
+      "sha256": "b7b2ae36eddadcdd1ba8c61cb485244ff2f7bf177b044a5f91e25fc9f291b12f"
+    },
+    "vendor/nusb/RUSTUSB.patch": {
+      "bytes": 30716,
+      "sha256": "d9d5d48ddc7143253354f7bc4e3a47f5462b1dcfb3be51946087a77a0761fe58"
+    },
+    "vendor/nusb/RUSTUSB-PROVENANCE.json": {
+      "bytes": 18409,
+      "sha256": "be957ad03725b47a9938a204b105d31142d30cc0bb5feea3133f9a74abb2e15e"
+    }
+  },
+  "api": {
+    "owner_ended": "(&Record) -> Result<bool>; same boot required; matching tuple including zombie defers",
+    "restore": "(&Record) -> Result<()>; only ConnectOriginalDrivers; independent B; whole-scope observation before/after CONNECT; drop B before final two strict observations; no Store mutation",
+    "nusb": "Linux connect_kernel_driver(BorrowedFd, u8) -> io::Result<()>; thin synchronous existing ioctl wrapper with real errno"
+  },
+  "added_tests": {
+    "physical_lifecycle": 1,
+    "physical_recovery": 7,
+    "nusb": 1,
+    "executed_by_this_agent": false
+  },
+  "validation": {
+    "single_file_rustfmt": true,
+    "provenance_report": "/tmp/rustusb-autorestore-vendor-provenance-20261023.json",
+    "provenance": {
+      "result": "PASS",
+      "original_file_count": 70,
+      "modified_files": [
+        "src/device.rs",
+        "src/lib.rs",
+        "src/platform/linux_usbfs/device.rs",
+        "src/platform/linux_usbfs/mod.rs",
+        "src/transfer/internal.rs"
+      ],
+      "archive_sha256": "03fba503685f5c3e9f6a11ff9711c16086ab6beacaa6ad3df9e217a91a8d4c82",
+      "patch_sha256": "d9d5d48ddc7143253354f7bc4e3a47f5462b1dcfb3be51946087a77a0761fe58",
+      "patch_byte_count": 30716,
+      "licenses": {
+        "LICENSE-MIT": {
+          "unchanged": true,
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        },
+        "LICENSE-APACHE": {
+          "unchanged": true,
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        }
+      },
+      "unsafe_token_counts": [
+        346,
+        346
+      ],
+      "vendor_target_exists": false,
+      "failures": []
+    },
+    "cargo": false,
+    "qemu": false,
+    "usb_access": false,
+    "commit": false
+  },
+  "boundaries": [
+    "caller owns current policy, handoff exclusion, actual blocking mutation guard and journal retirement",
+    "cannot choose the probed driver or eliminate external-root TOCTOU",
+    "matching original configuration/full interfaces/alternates required; no direct configuration/alternate/claim/detach operations",
+    "old manual records remain unauthorized; no automatic gone-generation acknowledgement",
+    "successful CONNECT and process death do not certify FD revocation"
+  ]
+}

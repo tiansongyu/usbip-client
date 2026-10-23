@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-23T07:51:12.785216+00:00",
+  "head": "c8f2e905fa68ca80a5a707c63a95d652c1f1ac32",
+  "result": "IMPLEMENTED_PENDING_PARENT_BUILD_AND_TEST",
+  "scope": "Agent authored journal.rs only; separately reviewed current root-authored linux.rs integration as source without editing it.",
+  "files": {
+    "crates/rustusb-daemon/src/journal.rs": {
+      "bytes": 55281,
+      "sha256": "540d740e4e143ea543893c3dcbe2f95188f700320cab4e1979a34aa65c5b93d6"
+    },
+    "crates/rustusb-daemon/src/linux.rs": {
+      "bytes": 73445,
+      "sha256": "373aace67ecb6f63d891005c2e20f777832d128461cb6e0bf2172e99f21b7c35"
+    },
+    "docs/research/physical-driver-autorestore-design.md": {
+      "bytes": 8173,
+      "sha256": "335cedafaad0069a9ffbcec1f02cb97c37b6b9257d0b7cfcbe1f3e5f5f7de100"
+    }
+  },
+  "public_crate_api": [
+    "RecoveryAuthorization::{ManualOnly,ConnectOriginalDrivers}",
+    "Record.recovery: RecoveryAuthorization",
+    "Snapshot { schema_version: u32, records: Vec<Record> }",
+    "Store::snapshot() -> Result<Snapshot>",
+    "Original reserve/get/records/has_device/retire methods retained; snapshot calls records to share health check and preserve production use."
+  ],
+  "implementation_facts": [
+    "Explicit recovery string deserializer rejects null, object-encoded unit variants and unknown strings; schema2 field has no default.",
+    "Strict header with IgnoredAny dispatches into strict v1/v2 structs; file16MiB/records256/interfaces256 bounds remain. Legacy decoding always assigns ManualOnly, independently of Policy.",
+    "Default/manual-only fresh journals remain schema1. First non-manual record upgrades entire atomic commit to2 with explicit manual metadata on old records. Loaded/upgraded2 never downgrades, including empty file.",
+    "Record bytes/owner/baseline stay immutable. No permission mutation API was added. Store snapshot is bounded and sorted under caller lock.",
+    "Version/cache publication occurs only after directory fsync; uncertain write poisons. Existing file ownership, NOFOLLOW, flock, nlink, inode/byte guards and replacement rules remain."
+  ],
+  "test_source": {
+    "previous_test_functions": 16,
+    "current_test_functions": 21,
+    "new_test_functions": [
+      "legacy_records_stay_manual_until_a_distinct_opt_in_grant_upgrades_storage",
+      "schema_two_never_downgrades_after_authorized_record_or_empty_table_retirement",
+      "recovery_permission_is_required_in_v2_and_forbidden_in_v1",
+      "strict_nested_fields_reject_duplicate_and_unknown_permissions_without_fallback",
+      "uncertain_upgrade_never_installs_cache_and_reopen_keeps_actual_permissions"
+    ],
+    "existing_tests_extended": [
+      "Both versions preserve missing-driver versus explicit-null distinction.",
+      "Duplicate lease/device cannot retrofit recovery or upgrade storage.",
+      "Both versions enforce record/interface bounds; strict header duplicates, unknowns, versions and record duplicates.",
+      "Pre-rename upgrade failure keeps v1/cache and poisons all access."
+    ],
+    "executed": false
+  },
+  "actual_checks": [
+    {
+      "command": "rustfmt --edition 2024 crates/rustusb-daemon/src/journal.rs",
+      "result": "exit0; only this authorized file formatted"
+    },
+    {
+      "command": "git diff --check -- crates/rustusb-daemon/src/journal.rs",
+      "result": "exit0"
+    }
+  ],
+  "linux_source_review": {
+    "mustfix": [],
+    "facts": [
+      "attempted remains subset of current bounded snapshot and prunes completed leases each iteration; Deferred is not charged as an attempt.",
+      "OwnedMutexGuard moves into actual blocking closure; cancellation of async waiter does not release active mutation lock.",
+      "Record/policy/handoff/owner rechecked under global mutation guard; restore then retire under same guard; journal std mutex is not held across USB operations.",
+      "Normal listener/signal/scheduler error exits converge through stop; existing request jobs and the sole recovery scheduler are joined before normal release.",
+      "PendingRecord projection preserves old record fields; v2 only adds same-page authorization summary counted in page budget; old grant description/lifecycle protocol1 unchanged."
+    ],
+    "limits": [
+      "No runtime helper shutdown/join, QEMU, Cargo or Rust tests were executed by this agent.",
+      "Cancellation test source demonstrates blocking guard ownership, not a completed whole-serve shutdown runtime test.",
+      "Review targets root linux bytes hashed above, not subsequent edits."
+    ]
+  },
+  "repository_files_edited_by_agent": [
+    "crates/rustusb-daemon/src/journal.rs"
+  ],
+  "cargo_or_compilation_run": false,
+  "qemu_run": false,
+  "commit_or_push_by_agent": false
+}

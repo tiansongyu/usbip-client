@@ -58,13 +58,23 @@ previously used by the new raw API.
   attempts CONNECT. Original portable `release` and Drop remain best effort.
   A successful ioctl does not certify original configuration, alternates,
   generation or driver restoration; the caller must observe those separately.
+- Linux-only `connect_kernel_driver` borrows an already validated USBFS FD and
+  synchronously forwards to the existing CONNECT ioctl wrapper, preserving OS
+  errno. It does not construct a Device, read descriptors, submit its own control
+  transfer, register events, or create a timer/thread. A selected driver's probe
+  may perform USB I/O. The wrapper neither claims nor detaches an
+  interface and cannot select a specific driver. Callers must verify the exact
+  generation and full intended configuration/interface/alternate/driver state.
+  Its negative regression uses only `/dev/null`, never USB hardware.
 
 Compile-only prototype work is not USB interoperability evidence. The three
 new raw control tests use initialized memory only; upstream's other eleven
 library tests also do not open USB. Five additional lifecycle tests use only
 callbacks and owned Arc fixtures: real errno mapping, no retry from Drop,
 release/CONNECT order and errors, and Busy while references remain. They do
-not open USB or construct fake device descriptors. Run them without creating vendor artifacts:
+not open USB or construct fake device descriptors. One additional borrowed-FD
+CONNECT test uses only `/dev/null` to check errno and descriptor ownership. The
+twenty library tests do not require USB access. Run them without creating vendor artifacts:
 
 ```sh
 cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio \

@@ -7,7 +7,7 @@ license.workspace = true
 
 [features]
 default = []
-physical-usb = ["rustix/net"]
+physical-usb = ["rustix/net", "dep:nusb"]
 
 [dependencies]
 rustusb-core.workspace = true
@@ -20,6 +20,9 @@ clap.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 rustix.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+nusb = { workspace = true, optional = true }
 
 [dev-dependencies]
 tempfile.workspace = true

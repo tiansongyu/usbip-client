@@ -87,6 +87,33 @@ pub(crate) fn require_ended_owner(record: &Record) -> Result<()> {
     Err(Error::State("original physical grant owner still exists; stop and reap it before administrator reconciliation".into()))
 }
 
+/// Observe an ended original process without granting old-boot recovery rights.
+/// A still-present matching tuple, including a zombie, remains live here.
+pub(crate) fn owner_ended_same_boot(record: &Record) -> Result<bool> {
+    owner_ended_at(
+        record,
+        Path::new("/proc/sys/kernel/random/boot_id"),
+        Path::new("/proc"),
+    )
+}
+
+fn owner_ended_at(record: &Record, boot: &Path, processes: &Path) -> Result<bool> {
+    if uuid(boot)? != record.owner.boot_id {
+        return Err(Error::State(
+            "automatic physical recovery requires the original boot; record retained".into(),
+        ));
+    }
+    let stat = match bounded(
+        &processes.join(record.owner.pid.to_string()).join("stat"),
+        4096,
+    ) {
+        Ok(stat) => stat,
+        Err(Error::Io(error)) if error.kind() == std::io::ErrorKind::NotFound => return Ok(true),
+        Err(error) => return Err(error),
+    };
+    Ok(start_time(&stat, record.owner.pid)? != record.owner.start_time)
+}
+
 fn generation_at(root: &Path, baseline: &Baseline) -> Result<bool> {
     let path = root.join(baseline.bus_id.as_str());
     let metadata = match fs::metadata(&path) {
@@ -147,7 +174,14 @@ fn same_baseline(expected: &Baseline, observed: &Baseline) -> Result<()> {
     Ok(())
 }
 
-fn observe_current(baseline: &Baseline) -> Result<Baseline> {
+/// Independently observe complete current state within the original generation.
+pub(crate) fn observe_current(baseline: &Baseline) -> Result<Baseline> {
+    observe_current_device(baseline).map(|(observed, _)| observed)
+}
+
+/// Return the checked current scanner device for a subsequent fixed-path open.
+/// Callers must compare the new descriptor receipt and reobserve after opening.
+pub(crate) fn observe_current_device(baseline: &Baseline) -> Result<(Baseline, Device)> {
     let root = Path::new("/sys/bus/usb/devices");
     if !generation_at(root, baseline)? {
         return Err(Error::State(
@@ -196,7 +230,7 @@ fn observe_current(baseline: &Baseline) -> Result<Baseline> {
             "physical generation or configuration changed during observation".into(),
         ));
     }
-    Ok(observed)
+    Ok((observed, device.clone()))
 }
 
 pub(crate) fn capture(device: &Device, receipt: &PhysicalDeviceReceipt) -> Result<Baseline> {
@@ -297,6 +331,7 @@ mod tests {
             lease_id: "00000000-0000-0000-0000-000000000001".into(),
             owner: caller.clone(),
             baseline: baseline()?,
+            recovery: crate::journal::RecoveryAuthorization::ManualOnly,
         };
         require_owner(&record, &caller)?;
         assert!(require_ended_owner(&record).is_err());
@@ -339,6 +374,44 @@ mod tests {
         fs::rename(&path, directory.path().join("old"))?;
         fs::create_dir(&path)?;
         assert!(!generation_at(directory.path(), &old)?);
+        Ok(())
+    }
+
+    #[test]
+    fn automatic_owner_observation_rejects_old_boot_and_unknown_process_state() -> Result<()> {
+        let root = tempfile::tempdir()?;
+        let boot = root.path().join("boot");
+        let processes = root.path().join("proc");
+        let process = processes.join("42");
+        fs::create_dir_all(&process)?;
+        let mut record = Record {
+            lease_id: "00000000-0000-0000-0000-000000000001".into(),
+            owner: Owner {
+                uid: 1000,
+                pid: 42,
+                start_time: 123,
+                boot_id: "11111111-2222-3333-4444-555555555555".into(),
+            },
+            baseline: baseline()?,
+            recovery: crate::journal::RecoveryAuthorization::ConnectOriginalDrivers,
+        };
+        fs::write(&boot, &record.owner.boot_id)?;
+        let prefix = (4..=21).map(|_| "0").collect::<Vec<_>>().join(" ");
+        for state in ["R", "Z"] {
+            fs::write(
+                process.join("stat"),
+                format!("42 (odd ) name) {state} {prefix} 123 0"),
+            )?;
+            assert!(!owner_ended_at(&record, &boot, &processes)?);
+        }
+        record.owner.start_time = 122;
+        assert!(owner_ended_at(&record, &boot, &processes)?);
+        fs::write(process.join("stat"), "42 (broken) R 1")?;
+        assert!(owner_ended_at(&record, &boot, &processes).is_err());
+        fs::remove_file(process.join("stat"))?;
+        assert!(owner_ended_at(&record, &boot, &processes)?);
+        fs::write(&boot, "00000000-0000-0000-0000-000000000002")?;
+        assert!(owner_ended_at(&record, &boot, &processes).is_err());
         Ok(())
     }
 }
