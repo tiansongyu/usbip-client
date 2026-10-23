@@ -369,30 +369,69 @@ async fn closed(peer: &mut Peer) -> TestResult<String> {
         result => Err(format!("TLS data connection did not close: {result:?}").into()),
     }
 }
-async fn blocked_writer(child: &mut Child) -> TestResult<String> {
+async fn blocked_writer(child: &mut Child, evidence: &Path) -> TestResult<Value> {
     let deadline = Instant::now() + Duration::from_secs(2);
-    loop {
-        require(
-            child.try_wait()?.is_none(),
-            "child exited before stdout block observation",
-        )?;
-        for task in fs::read_dir(format!("/proc/{}/task", child.id()))? {
-            let path = task?.path();
-            if let Ok(wait) = fs::read_to_string(path.join("wchan"))
-                && wait.trim() == "pipe_write"
-            {
-                return Ok(path
+    let mut observations = Vec::new();
+    let result: TestResult<Value> = async {
+        loop {
+            require(
+                child.try_wait()?.is_none(),
+                "child exited before stdout block observation",
+            )?;
+            observations.clear();
+            for task in fs::read_dir(format!("/proc/{}/task", child.id()))? {
+                let path = task?.path();
+                let tid = path
                     .file_name()
                     .ok_or("task id absent")?
                     .to_string_lossy()
-                    .into_owned());
+                    .into_owned();
+                let comm = fs::read_to_string(path.join("comm"));
+                let wait = fs::read_to_string(path.join("wchan"));
+                // Linux split anonymous and FIFO pipe writers. Accept only
+                // the two known anonymous stdout write wait symbols.
+                let blocked = wait
+                    .as_ref()
+                    .is_ok_and(|wait| matches!(wait.trim(), "pipe_write" | "anon_pipe_write"));
+                let observation = json!({
+                    "tid":tid,
+                    "comm":comm.as_ref().ok(),
+                    "comm_read_error":comm.as_ref().err().map(ToString::to_string),
+                    "wchan":wait.as_ref().ok(),
+                    "wchan_read_error":wait.as_ref().err().map(ToString::to_string),
+                });
+                observations.push(observation.clone());
+                if blocked {
+                    return Ok(observation);
+                }
             }
+            require(
+                Instant::now() < deadline,
+                "actual stdout writer did not enter pipe_write or anon_pipe_write",
+            )?;
+            tokio::time::sleep(Duration::from_millis(5)).await;
         }
-        require(
-            Instant::now() < deadline,
-            "actual stdout writer did not enter pipe_write",
-        )?;
-        tokio::time::sleep(Duration::from_millis(5)).await;
+    }
+    .await;
+    let saved = save(
+        &evidence.join("blocked-writer-observation.json"),
+        &json!({
+            "pid":child.id(),
+            "matched":result.as_ref().ok(),
+            "error":result.as_ref().err().map(ToString::to_string),
+            "last_observed_tasks":observations,
+        }),
+    );
+    match (result, saved) {
+        (Ok(observation), Ok(())) => Ok(observation),
+        (Err(error), Ok(())) => {
+            Err(format!("{error}; actual stdout task observations: {observations:?}").into())
+        }
+        (Ok(_), Err(error)) => Err(error),
+        (Err(error), Err(save_error)) => Err(format!(
+            "{error}; could not retain stdout observation: {save_error}; actual tasks: {observations:?}"
+        )
+        .into()),
     }
 }
 async fn wait(child: &mut Child, output: &mut Output, drain: bool) -> TestResult<ExitStatus> {
@@ -530,8 +569,8 @@ async fn run_case(case: Case, credentials: &Credentials, evidence: &Path) -> Tes
             require(rustix::fs::fcntl_getfl(&padding)?.contains(rustix::fs::OFlags::NONBLOCK) && !rustix::fs::fcntl_getfl(&writer)?.contains(rustix::fs::OFlags::NONBLOCK), "independent OFD flags differ")?;
             output.frozen = true;
             control(&mut child.0, json!({"op":"snapshot","id":"blocked-output"}))?;
-            let task = blocked_writer(&mut child.0).await?;
-            blocked = json!({"capacity":PIPE_BYTES,"synthetic_fill":filled,"blocked_writer_task":task,"stdout_drained_after_fill":false});
+            let observed = blocked_writer(&mut child.0, &directory).await?;
+            blocked = json!({"capacity":PIPE_BYTES,"synthetic_fill":filled,"blocked_writer_task":observed["tid"],"blocked_writer_comm":observed["comm"],"blocked_writer_wchan":observed["wchan"],"stdout_drained_after_fill":false});
         }
         // The child remains our unreaped direct child, so its PID cannot be reused.
         require(child.0.try_wait()?.is_none(), "child ended before requested termination")?;
