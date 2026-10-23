@@ -90,7 +90,7 @@ For supervised jobs independent of the requesting CLI, see the experimental
 [application service guide](docs/application-service-guide.md). Its nonroot agent
 provides fixed profiles, OS-UID action authorization, per-connection stop and
 bounded durable session/audit history. Native agent QEMU acceptance is recorded
-separately from the foreground paths in the [service validation report](docs/research/application-service-validation.md).
+with the foreground paths in the [shared-owner validation report](docs/research/shared-owner-validation.md). Both entries use the same actual service owners; foreground output acknowledgements do not substitute for managed durable admission.
 
 ## Choose a backend
 
@@ -122,11 +122,11 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The latest [application-service validation report](docs/research/application-service-validation.md) records:
+The latest [shared-owner validation report](docs/research/shared-owner-validation.md) records 530 software executions on inputs matching `2638a8c`, and nine QEMU runs at clean `b45c2e8`:
 
-- **495 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
-- **Eight paired QEMU scenarios, sixteen successful guest exits**: six foreground virtual/USBFS/Native paths across IPv4/IPv6, plus two Native agent scenarios for independent task ownership, targeted stop, SIGKILL/root-proof coordination and real I/O after restart. Tested revisions and collection scopes are recorded separately.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64, each with 495 test executions, signal and output-backpressure checks on the recorded software revision.
+- **530 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
+- **Nine paired QEMU runs, eighteen successful guest exits**: six foreground virtual/USBFS/Native paths across IPv4/IPv6, two Native agent scenarios for independent task ownership, targeted stop and restart recovery, and the original USBFS TERM regression. All use the same frozen revision and release artifacts.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `2638a8c`](https://github.com/tiansongyu/usbip-client/actions/runs/39999926362) passes 530 executions, five secure-adapter signal/backpressure cases and the original local lifecycle checks on each platform.
 
 Earlier [secure-path tests](docs/research/secure-usbip-validation.md), [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence, including failed development runs and their fixes.
 

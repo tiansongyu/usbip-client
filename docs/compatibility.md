@@ -1,6 +1,6 @@
 # 兼容性与支持证据
 
-2026-10-24最新应用服务切片：软件196/279/20共495次与四原生平台CI归clean`eaa1936`；六前台双栈回归同版通过。Native agent两family的actual配置/权限采证在clean`cb08672`补强并通过，产品150源/ELF仍等eaa；主选八场景16guest，原两eaa agent PASS另存，不算新增设备兼容。详见[E31报告](research/application-service-validation.md)。managed virtual/USBFS agent仅软件覆盖；这些结果不扩大下表真实硬件/ISO/aarch64 USB内核支持范围。
+2026-10-24最新[E32共享owner](research/shared-owner-validation.md)：匹配2638a8c输入的530次软件，以及clean b45c2e8的九项QEMU/18guest0，涵盖六前台、两Native agent与原USBFS TERM，同一产品源/ELF。下面保留E31版本归属：软件196/279/20共495次与四原生平台CI归clean`eaa1936`；六前台双栈回归同版通过。Native agent两family的actual配置/权限采证在clean`cb08672`补强并通过，产品150源/ELF仍等eaa；主选八场景16guest，原两eaa agent PASS另存，不算新增设备兼容。详见[E31报告](research/application-service-validation.md)。managed virtual/USBFS agent仅软件覆盖；这些结果不扩大下表真实硬件/ISO/aarch64 USB内核支持范围。
 
 新增[安全broker验收](research/secure-usbip-validation.md)：clean b83c931在Linux6.8 x86_64双QEMU来宾完成Native HID/FTDI、virtual HID/CDC、USBFS HID/FTDI各自IPv4和IPv6的实际mTLS目录/IMPORT/URB，两周期I/O、SIGTERM清理和重用共六场景/12guest0。软件412次与四平台CI是独立软件证据；它不证明真实硬件、aarch64 USB内核、其他内核、ISO或任意跨配置兼容。
 

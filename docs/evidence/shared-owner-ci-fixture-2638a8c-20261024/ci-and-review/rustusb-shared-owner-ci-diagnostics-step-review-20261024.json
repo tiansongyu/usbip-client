@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "result": "NO_MUST_FIX",
+  "scope": "Independent read-only CI diagnostic candidate and linked test producer source review; no CI trigger/rerun, Cargo/QEMU/subprocess test execution.",
+  "head": "2638a8c4700d79233d283de1a168f574be5f8ee4",
+  "sources": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 3283,
+      "sha256": "67092afdddc20ff9e8a53d4949765aa94389ee066f533ea912be52c0e3ee0bb1"
+    },
+    {
+      "path": "crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "bytes": 26643,
+      "sha256": "bff44c6a83194e857c45b403dde80f6255e9141fbf627e32f483a7bddf6c49c8"
+    }
+  ],
+  "checks": [
+    {
+      "id": "quality_command_unchanged",
+      "passed": true
+    },
+    {
+      "id": "diagnostic_runs_after_quality",
+      "passed": true
+    },
+    {
+      "id": "no_job_failure_bypass",
+      "passed": true
+    },
+    {
+      "id": "fixed_evidence_directory_prefix",
+      "passed": true
+    },
+    {
+      "id": "only_named_json_reads",
+      "passed": true
+    },
+    {
+      "id": "summary_field_whitelist",
+      "passed": true
+    },
+    {
+      "id": "no_external_execution",
+      "passed": true
+    },
+    {
+      "id": "read_only_python_ast",
+      "passed": true
+    }
+  ],
+  "findings": [
+    "Original scripts/check.sh remains an ordinary failing quality step. always() executes only the following diagnostic after failure; it cannot erase prior failure or make subsequent implicit success() steps run as though quality passed. No retries or reruns added.",
+    "Summary output is narrowed to controlled result/closure/timing/blocked fields; stopped snapshots and raw stdout payload are omitted. The other named JSON producer records only PID, task TID/comm/wchan and read errors; no env/cmdline/memory/keys.",
+    "Private DER remains in another ephemeral credentials directory, not this evidence prefix. No key/certificate/PKIJSON or raw stdout file is selected.",
+    "Malformed diagnostic JSON could add another step failure, never turn quality failure into success. Timeout/permissions/checkout and quality command are unchanged."
+  ],
+  "limits": [
+    "Original Ubuntu24 failures lack actual wchan artifacts. New aliases/observations cannot retroactively prove those values; four official connector logs remain separate and are not re-parsed here.",
+    "Pre-freeze source snapshot, not a runtime or CI pass. Reviewer checked YAML and extracted Python AST without executing the diagnostic over any runtime directory.",
+    "Error/blocked values are safe based on the exact reviewed producer; printer is not a universal redactor of arbitrary malicious JSON.",
+    "Exact pipe_write/anon_pipe_write aliases leave4096/EAGAIN/FIONREAD/no-drain/status/TLSclosure requirements and all deadlines unchanged. No helper/USB/hardware scope added."
+  ],
+  "reviewer_correction": "Initial one-off metadata script used x[name] for unnamed checkout step and failed before producing a report. Corrected lookup to x.get(name); no source, validation predicate or runtime raw changed. Failure record retained separately."
+}

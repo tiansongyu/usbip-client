@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_FROZEN_RUNTIME_NOT_EXECUTED",
+  "head": "b45c2e8c67a06396360fee0af6c0a092a950a6ff",
+  "owned_file": {
+    "path": "crates/rustusb-cli/src/secure_foreground_tests.rs",
+    "bytes": 26643,
+    "sha256": "bff44c6a83194e857c45b403dde80f6255e9141fbf627e32f483a7bddf6c49c8"
+  },
+  "original": {
+    "path": "/tmp/rustusb-secure-foreground-wchan-fix-20261024/original.rs",
+    "bytes": 24748,
+    "sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+  },
+  "scope": "Only Linux rust-backend cfg(test) secure foreground fixture. No production source, Cargo/main/workflow/harness edit, no Cargo/QEMU/commit. Parent independently owns docs/workflow.",
+  "changes": [
+    "Exact trimmed wchan allowlist: pipe_write or anon_pipe_write. No suffix, substring, unknown-blocking match or skip.",
+    "Capture actual own-child pid plus each last-observed task tid/comm/wchan and read errors. Raw comm/wchan string values are not replaced with inferred kernel names.",
+    "Both success and failure persist blocked-writer-observation.json in each blocked case directory. Failure returned Error retains real last observations even if CI does not upload files; observation-save failure retains original failure context.",
+    "Keep blocked_writer_task as original string task ID; add blocked_writer_comm and blocked_writer_wchan to successful case JSON.",
+    "No new mirrored unit test; original test count unchanged."
+  ],
+  "static_checks": [
+    {
+      "command": "rustfmt --edition 2024 crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "exit_code": 0
+    },
+    {
+      "command": "rustfmt --edition 2024 --check crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check -- crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "exit_code": 0
+    },
+    {
+      "check": "Byte equality outside blocked_writer function and exact call/result JSON change",
+      "result": true
+    },
+    {
+      "check": "test attributes/count unchanged",
+      "result": true
+    }
+  ],
+  "unchanged": [
+    "blocked writer observation deadline 2s and polling interval5ms",
+    "4096B pipe size/exact fill/FIONREAD and independent OFD flag checks",
+    "stdout frozen/no-drain before and after exit",
+    "5s output budget/4..7s deadline evidence and8s cooperative signal window",
+    "actual mTLS two IMPORT/pending IN and socket-closure assertions",
+    "no new runtime test/filter/feature skip and no production env hook"
+  ],
+  "source_predicate_review": {
+    "accepted_after_original_trim": [
+      "pipe_write",
+      "anon_pipe_write"
+    ],
+    "rejected_examples": [
+      "fifo_pipe_write",
+      "some_pipe_write",
+      "anon_pipe_write_extra",
+      "futex_wait",
+      "0",
+      ""
+    ],
+    "scope": "Source predicate reasoning only; not an executed unit or kernel test."
+  },
+  "diagnosis_boundary": "Original Ubuntu24 job logs show kernel6.17 and observation timeout, but did not capture raw wchan. anon_pipe_write explanation is supported by parent-verified fixed Linux v6.17 fs/pipe.c; no raw old CI wchan value is invented. New diagnostics permit actual confirmation on rerun.",
+  "diagnostic_content_boundary": "Only own-child process/task identifiers, comm/wchan and read error strings; no keys, private DER, USB data or unrelated process scan.",
+  "not_performed": [
+    "Cargo",
+    "Rust compilation",
+    "actual test execution",
+    "QEMU",
+    "commit",
+    "workflow edits"
+  ]
+}

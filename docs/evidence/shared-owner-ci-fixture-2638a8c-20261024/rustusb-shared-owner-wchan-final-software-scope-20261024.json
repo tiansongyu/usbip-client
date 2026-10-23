@@ -1,0 +1,40 @@
+{
+  "gate": {
+    "exit_code": 0,
+    "inputs_unchanged": true,
+    "input_count": 152,
+    "tests": {
+      "default": {
+        "passed": 212,
+        "failed": 0,
+        "ignored": 0,
+        "results": 19
+      },
+      "all_features": {
+        "passed": 298,
+        "failed": 0,
+        "ignored": 0,
+        "results": 19
+      },
+      "vendor": {
+        "passed": 20,
+        "failed": 0,
+        "ignored": 0,
+        "results": 1
+      }
+    },
+    "utc": "2026-10-23T18:00:56.411547+00:00"
+  },
+  "only_software_source_delta_from_b45": [
+    "crates/rustusb-cli/src/secure_foreground_tests.rs"
+  ],
+  "release_elf_same_as_qemu_b45": {
+    "rustusb": "ee66f1c9af551f603ad0cd5cbaf3b7e25ce13329819728802defe2632528df01",
+    "rustusb-helper": "cc6525a4aa746fcfea5e05ee6a6cbc5975cf24bd82d13928da6e50a5fccb3c2a"
+  },
+  "qemu_attribution": "all nine QEMU remain original b45 inputs, not relabelled as test-fix commit",
+  "kernel_source": "https://raw.githubusercontent.com/torvalds/linux/v6.17/fs/pipe.c",
+  "source_fact": "anonymous pipe write_iter points to anon_pipe_write, whose full-pipe path waits for space",
+  "old_ci": "Ubuntu22 two success; Ubuntu24 two failures; original actual wchan absent so source-based diagnosis, not reconstructed observation",
+  "workflow": "always read-only safe summaries/observations, original quality gate result retained"
+}

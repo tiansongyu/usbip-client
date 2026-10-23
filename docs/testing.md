@@ -285,3 +285,7 @@ server实际运行`secure-server --backend virtual|usbfs|native --config /etc/ru
 完整外链PCAP必须覆盖实际选定IPv4或IPv6 TLS，另外两族直接3240均拒绝。TCP按sequence完整重组和TLS framing检查，明文管理/URB/公开fixture签名不得出现；ICMPv6控制需显式分类计数，扩展头后的TCP不可跳过，fragment/未知协议拒绝。没有TLS session-key日志或解密结果；抓包结论仅归所测路径。
 
 收集summary、clean/source/ELF guards、实际进程receipt、两guest终态、原始input/serial文件、每阶段sysfs/journal、双PCAP和失败原件，再进行独立raw复核。QEMU退出0不是guest成功，guest成功也不能覆盖host verifier失败；后验parser修复不得改原summary。证书负向与猜BusID等实际TLS软件测试单列，不扩写成本QEMU每项已覆盖。真实硬件、ISO、跨配置/崩溃恢复、生产网络/服务隔离与完整Phase3会话审计继续单独验收。
+
+## 共享前台与托管owner回归（E32）
+
+匹配2638a8c输入的完整530软件通过；clean b45c2e8的六安全前台双栈、两Native agent双栈及原USBFS TERM九项QEMU/18guest0通过，见[验收](research/shared-owner-validation.md)。新软件mTLS五组合与旧本地四信号/两背压分别记账；blocked只证明退出/socket关闭。原startup证明Status可取消，helper acceptance=false，不能冒充accepted initializer或kernel内部硬阻塞验收；Resource ACK无限停顿仍未决。

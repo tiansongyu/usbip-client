@@ -72,7 +72,7 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 **G3 gate：** [安全模型](security.md) S1–S6 的适用项全部有证据；无认证、错误 / 过期 / 撤销凭据、非法设备、重放 / 重复连接和并发争用全部拒绝；外部抓包证明 DEVLIST 和 IMPORT 后的 URB 均走加密通道，直连 3240 在 IPv4 / IPv6 被阻断。状态机覆盖 Discovered / Available / Exporting / Connecting / Connected / Disconnecting / Disconnected / Error / Recovering，所有关键路径有超时、取消、幂等清理和重启恢复测试。不能在故障后无条件恢复存储写入。
 
-应用服务增量见[实施契约](research/application-service-design.md)、[英文操作指南](application-service-guide.md)及[E31验收](research/application-service-validation.md)：非root agent直接持有真实job、typed会话事实和Root tracked proof，managed admission、独立连接stop与有界原子audit已实现；软件196/279/20共495次、四原生CI及两Native agent双栈/六前台回归通过，版本和补强采证分别记账。前台runner统一提取、raw-v1同数据链heartbeat/RTT、持久日志轮转以及无独立root proof的Rust崩溃session协调仍未完成，不宣告完整G3。
+应用服务增量见[实施契约](research/application-service-design.md)、[英文操作指南](application-service-guide.md)及[E31验收](research/application-service-validation.md)：非root agent直接持有真实job、typed会话事实和Root tracked proof，managed admission、独立连接stop与有界原子audit已实现；软件196/279/20共495次、四原生CI及两Native agent双栈/六前台回归通过，版本和补强采证分别记账。后续[E32共享owner](research/shared-owner-validation.md)以匹配2638a8c的输入完成530软件、在clean b45c2e8完成九项QEMU/18guest0，消除前台owner重复并保留两模式边界。raw-v1同数据链heartbeat/RTT、持久日志轮转以及无独立root proof的Rust崩溃session协调仍未完成，不宣告完整G3。
 
 ## 7. Phase 4：完整 TUI
 

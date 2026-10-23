@@ -10,7 +10,7 @@
 - Native EOF在同一helper持有原K时，已执行真实shutdown/原代际清理，成功后退休；operation错误与cleanup结果分开。USBFS EOF不能证明交付的FD已释放，保留原Finish/显式恢复/root协调规则。
 - 复用锁定的Tokio1.54.1/rustix1.1.5/serde/sha2，不新增密码实现。已读实际官方crate源码：`JoinSet::shutdown`会abort，新的owner supervisor须发合作stop并逐个join；UDS的peer_cred是授权来源。三个官方固定版本docs.rs页面本次无法访问，来源索引记录失败并锁实际安装源码SHA，不捏造在线核验。
 
-采用实际非空`rustusb-service`库，直接拥有真实runner、连接任务、helper handles和清理树；新`rustusb agent`是其非root托管入口。先实现托管runner，现前台安全命令保留原JSON、信号与测试控制语义；将前台命令提取为同runner的适配器继续待做，不因本项而宣称两入口已消除重复。GUI/TUI以后调用同一应用客户端；不解析CLI子进程输出来管理资源。
+采用实际非空`rustusb-service`库，直接拥有真实runner、连接任务、helper handles和清理树；新`rustusb agent`是其非root托管入口。先实现托管runner，现前台安全命令保留原JSON、信号与测试控制语义；本设计的初始交付未消除两入口重复；后续[E32](shared-owner-validation.md)已依[独立提取设计](shared-owner-design.md)让前台命令适配同一owner，前台untracked与托管持久准入仍显式区分。GUI/TUI以后调用同一应用客户端；不解析CLI子进程输出来管理资源。
 
 ## 身份、配置和本机控制
 

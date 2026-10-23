@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-23T18:00:27.055398+00:00",
+  "result": "PASS_SOURCE_REVIEW_ONLY",
+  "review_scope": "Narrow independent read-only review of Linux stdout wait-channel fixture compatibility correction; no runtime acceptance.",
+  "source": {
+    "path": "crates/rustusb-cli/src/secure_foreground_tests.rs",
+    "bytes": 26643,
+    "sha256": "bff44c6a83194e857c45b403dde80f6255e9141fbf627e32f483a7bddf6c49c8"
+  },
+  "base": {
+    "head": "b45c2e8c67a06396360fee0af6c0a092a950a6ff",
+    "source_sha256": "64211605e5dd9b9f786c202d67f36a4d0bb31d6862770f178b79c7790c331b8b"
+  },
+  "static_checks": [
+    {
+      "check": "Original source equals exactb45 Gitblob",
+      "result": true
+    },
+    {
+      "check": "Outside blocked_writer and its call/result JSON byte-identical",
+      "result": true
+    },
+    {
+      "check": "Test-only Linux/rust-backend whole-module cfg unchanged",
+      "result": true
+    },
+    {
+      "check": "Test attributes/count unchanged",
+      "result": true
+    }
+  ],
+  "findings": [],
+  "reviewed_facts": [
+    "Exact trimmed allowlist pipe_write or anon_pipe_write; no substring, suffix, unknown-wait acceptance or skip.",
+    "Observations come only from still-running unreaped direct child/proc/PID/task; original PID ownership preserved.",
+    "Actual PID/TID/comm/wchan/read failures persisted to per-case blocked-writer-observation.json on both success and failure. No invented old CI value.",
+    "Observe file save failure does not turn failed observation into success; combined error retains original failure and last observations.",
+    "New observed fields are diagnostic only; retained blocked_writer_task string and stdout_drained_after_fill=false.",
+    "4096B exact fill/FIONREAD, independent OFD flags and no-drain source unchanged.",
+    "Two real mTLS IMPORTs/pendingIN, peer closures, ready final snapshot and blocked lack-of-snapshot distinction unchanged.",
+    "2s observation,5ms poll,5s output/4..7s measured deadline,8s cooperative window and child wait budget unchanged."
+  ],
+  "limits": [
+    "No Cargo, compiler, test, process fixture or QEMU executed by this reviewer.",
+    "Original Ubuntu24 CI did not capture raw wchan; symbol explanation remains source-based and rerun must establish actual values.",
+    "New code records comm but does not assert a thread name. Its stdout-writer attribution retains original fixture scope: child stdout is the filled anonymous pipe, stderr is a regular file, stdin is read-only child input.",
+    "No product source change is represented by this fixture correction; prior QEMU stays attributed to original b45 artifacts."
+  ],
+  "handoff": {
+    "path": "/tmp/rustusb-secure-foreground-wchan-fix-20261024/handoff.json",
+    "sha256": "b25aa9291339aaaf071fc6e75ea6e3d57a0ca27794f86f1df03f709bb1c93ffc"
+  },
+  "actions": {
+    "repo_write": false,
+    "build_or_test": false,
+    "product_or_qemu": false
+  }
+}

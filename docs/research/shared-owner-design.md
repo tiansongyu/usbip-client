@@ -38,4 +38,6 @@ USBFS 初始化采用显式安全改进：一旦交付 helper handle 或启动 a
 3. 原六 foreground 双栈 QEMU、两 Native agent 双栈，旧 disk1 与 managed disk2/3 分别核；同源/ELF/clean guards 与 raw 独立复核。失败原件不覆盖。
 4. 本地原四 signal/两背压仍跑；它们只覆盖 plaintext virtual，另加实际 TLS secure 子进程输出阻塞/信号回归。初始化合作停止的实际 task 证据独立记账，不把纯软件 fixture 当 kernel 硬阻塞验收。
 
+CI 补充只读诊断：新增 stdout 测试需识别已核内核的 `pipe_write` / `anon_pipe_write` 两个明确等待点，并保存实际线程观察；不接受任意阻塞、不放宽 4096B 满管道、无 drain 或时间预算。quality gate 后的 always step 仅打印测试摘要与有界线程观察，不读取临时私钥或原始 USB 数据，不替代或掩盖主 gate 失败。
+
 设计先于代码。本项完成后也不把完整 Phase3、真实硬件或 TUI/GUI 标完成。

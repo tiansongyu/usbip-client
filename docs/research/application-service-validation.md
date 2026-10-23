@@ -17,8 +17,9 @@ the enhanced Native agent pair at `cb08672`. The original Native agent pair at
 
 - `rustusb-service` directly owns client, Native server and optional Rust
   virtual/USBFS runners. It does not start CLI subprocesses or parse their stdout.
-  Existing foreground secure commands remain separate implementations; their
-  consolidation is unfinished.
+  This report describes the original separate foreground implementation; the
+  later [shared-owner increment](shared-owner-validation.md) consolidates both
+  entries and preserves their explicit persistence and EOF policies.
 - A root-managed manifest fixes profiles, TLS configuration references, helper
   endpoint and data/control directories. Each RPC uses kernel Unix peer UID
   authorization for an exact profile/action. The broker UID remains the trust

@@ -1,6 +1,6 @@
 # 需求逐项验收审计
 
-审计日期：2026-10-24。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目七项Native双QEMU矩阵在干净b4cbfc3全部通过，新增三机争用与主动TCP中止在干净b487144通过；可选Rust固定虚拟HID/CDC在干净cfeffd3的双QEMU实际功能和清理通过；USBFS adapter正常/热拔及原虚拟回归在干净37bc6b4全部通过；最新配置安全/多接口恢复在干净22d172d完成ECM、HID/FTDI正常和热拔三项最终回归，最新checked release在clean6e809a1的十一项QEMU通过，113case/22guest0，软件及37c2d61四平台CI每格222项通过；新增Unix信号合作停止E23在clean934358f的软件/本地四项/四QEMU通过，CI39899971271四原生平台每格222次测试及两背压/四信号场景通过；E30在clean b83c931完成virtual/USBFS/Native × IPv4/IPv6安全USB/IP六场景、12guest0，完整软件412次及精确f9558fc四平台CI每格412次通过。E31新增非root应用服务/managed admission/定向stop/持久audit，495软件与eaa四平台CI通过，六前台eaa及两Native agent cb08672补采双栈通过；主八场景16guest，原两agent PASS另保留。双Ubuntu真实硬件、完整Phase3会话审计/恢复及长期功能仍未完成。**
+审计日期：2026-10-24。依据为 [原始完整需求](requirements.md)、当前源码、持久测试输出和 Git 实况；不是按已实现部分重新定义目标。本文区分交付产物、源码行为、软件测试、仿真和真实硬件，后续阶段仍保留原范围。重要结论是：**Phase 0 研究与设计产物已交付，Phase 1 有可编译的软件实现和自动测试证据，本项目七项Native双QEMU矩阵在干净b4cbfc3全部通过，新增三机争用与主动TCP中止在干净b487144通过；可选Rust固定虚拟HID/CDC在干净cfeffd3的双QEMU实际功能和清理通过；USBFS adapter正常/热拔及原虚拟回归在干净37bc6b4全部通过；最新配置安全/多接口恢复在干净22d172d完成ECM、HID/FTDI正常和热拔三项最终回归，最新checked release在clean6e809a1的十一项QEMU通过，113case/22guest0，软件及37c2d61四平台CI每格222项通过；新增Unix信号合作停止E23在clean934358f的软件/本地四项/四QEMU通过，CI39899971271四原生平台每格222次测试及两背压/四信号场景通过；E30在clean b83c931完成virtual/USBFS/Native × IPv4/IPv6安全USB/IP六场景、12guest0，完整软件412次及精确f9558fc四平台CI每格412次通过。E31新增非root应用服务/managed admission/定向stop/持久audit，495软件与eaa四平台CI通过，六前台eaa及两Native agent cb08672补采双栈通过；主八场景16guest，原两agent PASS另保留。E32共享前台owner以匹配2638a8c输入完成530软件、在clean b45c2e8完成九QEMU/18guest0，原clean4d单组兼容FAIL保留。双Ubuntu真实硬件、完整Phase3会话审计/恢复及长期功能仍未完成。**
 
 状态约定：`已交付` 表示文档 / 源码存在且已核对；`软件已验证` 表示适用自动测试有结果；`部分` 表示功能或证据尚不覆盖原要求；`待验收` 表示有实现或计划但缺必需运行证据；`后续阶段` 表示明确尚未实现。文档存在、测试通过和产品支持互不替代。
 
@@ -39,6 +39,7 @@
 | E29 | [TLS基础与内核通道报告](research/secure-transport-foundation.md)、[软件](evidence/secure-transport-foundation-20261023/manifest.json)、[首FAIL](evidence/kernel-socketpair-first-failure-f4774a6-20261023/manifest.json)、[修复准备](evidence/kernel-socketpair-export-fix-20261023/manifest.json)、[实际PASS](evidence/kernel-socketpair-final-24a424b-20261023/manifest.json) | 非空mTLS/证书principal/device ACL基础库18项测试、全软件304次及精确f4774a6的[四平台CI](evidence/publication-secure-transport-f4774a6-20261023.json)每格304/背压/信号通过；该历史版本尚未接USB链。clean24a424b单guest真实匿名kernelstub↔VHCI HID/FTDI I/O、每方向35B、50host断言、guest0，109选定输入/ELF guard真，四端显式shutdown后NULL/Gone/AVAILABLE及普通helper原driver恢复。原f4774a6导出后采证FAIL不改判；不证明远端TLS、崩溃/热拔、产品FD API或G1/G2/G3 |
 | E30 | [安全USB/IP实施与验收报告](research/secure-usbip-validation.md)、[初始化修复与412次软件门禁](evidence/secure-usbip-native-initialization-fix-20261023/manifest.json)、[最终六场景](evidence/secure-usbip-final-b83c931-20261023/manifest.json) | clean b83c931，virtual/USBFS/Native × IPv4/IPv6六PASS、12guest0；125选定输入/ELF/HEAD/clean guards真。真实mTLS DEVLIST及IMPORT后URB、两周期HID/每向35B serial、双栈3240拒绝、非broker拒绝、合作TERM/重用与完整原driver恢复；独立生命周期492/安全350个审计谓词复核通过（非USB case数）。软件159/233/20共412次及精确f9558fc CI39953971059四原生平台每格412/两背压/四信号通过；四原FAIL保留，不证明硬件G1/G2、ISO、跨配置/崩溃或完整Phase3 |
 | E31 | [应用服务验收](research/application-service-validation.md)、[495软件](evidence/application-service-software-20261023/manifest.json)、[eaa八原运行/CI](evidence/application-service-validation-eaa1936-20261023/manifest.json)、[cb Native补采](evidence/application-agent-config-final-cb08672-20261024/manifest.json) | 产品2a0f8d7；eaa软件196/279/20共495、四平台CI39979747581及六前台/两Native agent双栈PASS；cb08672仅增强actual TLS配置/权限采证，两Native再PASS且150产品源/ELF等eaa。主八场景16guest，原两agent限定PASS另留。Native真实owner/定向stop/137精确Rootproof/重启I/O/完整baseline；不证明Rust agent QEMU、全G3、硬件、heartbeat/RTT或轮转 |
+| E32 | [共享owner设计](research/shared-owner-design.md)、[英文验收](research/shared-owner-validation.md)、[最终软件](evidence/shared-owner-final-software-20261024/manifest.json)、[原兼容FAIL](evidence/shared-owner-compat-failure-4d700c2-20261024/manifest.json)、[九项QEMU原件](evidence/shared-owner-final-b45c2e8-20261024/manifest.json) | 产品7f007a9/b45c2e8，530软件/39result/152输入逐最终Gitblob；clean b45c2e8九run/18guest0、192总输入保持/同ELF，六安全前台、两Native agent与旧USBFS TERM，独立raw生命周期/安全复核。[CI39999926362](https://github.com/tiansongyu/usbip-client/actions/runs/39999926362)在测试修订2638a8c四原生平台每格530/五TLS/原信号背压全通过，原b45两CI FAIL保留。Foreground无伪WAL，Managed不降级；ACK/EOF/原JSON与信号背压保留。旧4d单组FAIL不重分类；initializer内部、任意WAL停顿有界清理与硬件/fullG3仍未验收 |
 
 当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订的软件/CI见E22；信号修复后的934358f软件、本地与QEMU见E23，CI39899971271已实际四平台通过；SIGKILL旧负向见E24，持久授权的933e720仿真、250次软件测试及四平台CI39908004666见E25，独立恢复句柄实验见E26，受限产品自动恢复与2ab9976的268次软件/七项QEMU见E27，旧producer/许可撤销/外部C三项边界见E28，TLS基础与匿名内核机制见E29，历史安全产品六矩阵与412次软件见E30，最新495软件/四CI及应用服务八场景（六前台eaa、两Native补采cb）见E31。历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
@@ -126,7 +127,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 原要求测试类别 | 当前证据 | 状态和缺失 |
 | --- | --- | --- |
-| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E31默认196/allfeatures279/vendor20，共495次；含managed admission/独立完成、可信配置、精确tracked proof/迁移、持久FS/容量/retry/角色状态及原协议测试；E30的412次保留原版 | 软件门禁通过；真实TLS软件用例不代替QEMU每个负向，描述符与取消覆盖仍有边界 |
+| 单元：序列化 / 反序列化 / 端序 / 描述符 / ID / 状态 / 配置 / 认证 / 错误 / 超时 / 取消 | 当前E32默认212/allfeatures298/vendor20，共530次；共享owner/真实TLS背压与记录锁回归，E31原495归旧版；含managed admission/独立完成、可信配置、精确tracked proof/迁移、持久FS/容量/retry/角色状态及原协议测试；E30的412次保留原版 | 软件门禁通过；真实TLS软件用例不代替QEMU每个负向，描述符与取消覆盖仍有边界 |
 | 三方向互操作 | E07：managed / linux-client / linux-server各HID和FTDI | Native三方向实际功能及清理通过；E10另验证自有虚拟Rust Server→RustUSB Native client/VHCI；独立官方CLI专场、物理及完整G2仍待验收 |
 | QEMU HID / CDC / 描述符 / 断开 / 重连 / 异常包 | 上游HID/CDC有E02；本项目Native有E07；虚拟与USBFS有E10/E13 | 七项Native矩阵通过；FTDI不是CDC，E13新增USBFS HID/FTDI正常与热拔，并复跑本项目标准双接口CDC虚拟服务；完整网络/热插拔异常矩阵后续 |
 | 真实 U 盘 / 串口 / HID / JTAG / 摄像头 | compatibility 与 testing 定义逐设备测试 | 全部未执行；存储拒绝；UVC / Audio / Composite / alt / ISO 各需独立证据 |
@@ -138,11 +139,11 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 
 | 必需命令 / 约束 | 证据及判定 |
 | --- | --- |
-| `cargo fmt --all -- --check` | scripts/check.sh首项，E31完整脚本通过；成功无输出正常。后续源码修改需重跑 |
-| `cargo clippy --workspace --all-targets -- -D warnings` | E31默认与all-features两组通过；自有工作区禁止unsafe/unwrap/expect/panic，vendor另记来源；lint不证明USB或安全语义 |
-| `cargo test --workspace` | E31默认196/allfeatures279，另vendor20，共495次/39result/0失败/0忽略；150输入前后不变且逐eaa Gitblob核，cb产品源保持；历史数量归原版，不等于硬件验收 |
-| `cargo build --workspace --release` | E31默认与all-features release成功；新agent两fam及原六前台分别locked all-features构建，精确SHA/实际进程receipt，cb与eaa两ELF相同 |
-| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E31两组通过；不代表全部规划能力已实现 |
+| `cargo fmt --all -- --check` | scripts/check.sh首项，E32完整脚本通过；成功无输出正常。后续源码修改需重跑 |
+| `cargo clippy --workspace --all-targets -- -D warnings` | E32默认与all-features两组通过；自有工作区禁止unsafe/unwrap/expect/panic，vendor另记来源；lint不证明USB或安全语义 |
+| `cargo test --workspace` | E32默认212/allfeatures298，另vendor20，共530次/39result/0失败/0忽略；152输入前后不变且逐2638a8c Gitblob核。软件在b45 HEAD的测试修复工作树执行，不冒充cleanb45；先前4d修复工作树的530仍归原b45输入；历史E31数量保留原版，不等于硬件验收 |
+| `cargo build --workspace --release` | E32默认与all-features release成功；九QEMU逐run locked all-features构建，精确SHA/实际进程receipt相同；E31原版归属仍保留 |
+| 公共 API 文档 | `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps` 在check.sh中，E32两组通过；不代表全部规划能力已实现 |
 | 工具链 / 依赖 / 许可 | 锁定稳定 1.97.1 和 2024；Cargo.lock / inventory / third-party；最终变更后更新清单；未声称完成发布合规认证 |
 | 平台 / 资源 / 清理 | 有界输入、明确平台错误、阻塞隔离、固定进程、真实sysfs与保守未知资源处理；目标所有OS/架构及长期异常路径仍需独立gate，不用lint或绿色CI覆盖 |
 
@@ -221,4 +222,8 @@ E25保留首clean e0ac478的harness同步FAIL和缺失证据边界，修订仅�
 
 Native agent在RPC返回后实际I/O、定向停HID但原serial继续、client KILL137后Root精确proof协调/旧ID保留与新attempt真实I/O、server TERM完整driverbaseline均有原件。新版实际TLS JSON/public DER/pin/policy/两epoch权限、双方PCAP及actual UID/ELF经独立复核；私钥仅metadata。完整来源与所有限制见[专项报告](research/application-service-validation.md)。
 
-这是原G3的子步骤：旧前台仍未统一提取，Rust无独立proof的崩溃session、同数据链heartbeat/RTT、轮转/长期审计、网络证书负向/轮换矩阵等未完成。物理硬件G1/G2、ISO及其余阶段不改为通过。
+这是原G3的子步骤：本E31交付时旧前台未统一提取，后续E32已完成；Rust无独立proof的崩溃session、同数据链heartbeat/RTT、轮转/长期审计、网络证书负向/轮换矩阵等未完成。物理硬件G1/G2、ISO及其余阶段不改为通过。
+
+## 19. 共享前台与托管owner子步骤（E32）
+
+见[英文验收](research/shared-owner-validation.md)。同一clean b45c2e8、同CLI/helper九项QEMU全部PASS/18guest0，六前台安全双栈、两Native agent与旧USBFS TERM；最终530软件及新mTLS五组合/旧本地四signal两背压通过。独立raw源码/生命周期与安全复核、首clean4d真实FAIL及原件均保留。前台与managed共用实际owner，但前台无伪session/WAL/correlation，输出ACK非持久准入；操作/清理/记录独立，Native解锁先于记录等待。initializer总await只是源码约束，旧startup明确acceptance=false；准备Resource ACK无限停顿仍未决。无硬件/ISO/完整G3或后续阶段通过声明。

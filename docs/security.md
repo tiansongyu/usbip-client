@@ -4,7 +4,7 @@
 
 ## 1. 资产、前提和边界
 
-新增应用服务的权限、状态与恢复切片见[契约](research/application-service-design.md)及[E31验收](research/application-service-validation.md)。非root agent直接持有实际job；本机RPC按SO_PEERCRED逐profile/action授权，不接受端点/路径/凭据/FD或任意helper请求。broker UID仍是整个helper池的信任域，profile ACL不隔离同UID任意进程。Root proof须kind/correlation/key/UID/resource全匹配，活owner不能被只读observer提前退休；新进程资源0和PID死亡均非旧释放证明。
+[E32共享owner](research/shared-owner-validation.md)保持Foreground untracked与Managed durable/tracked的明确边界；stdout delivery ACK不是持久准入。实际stub close后释放独占锁，再等待原记录ACK，不丢原future；准备阶段Resource ACK无限停顿仍未证明有界清理。新增应用服务的权限、状态与恢复切片见[契约](research/application-service-design.md)及[E31验收](research/application-service-validation.md)。非root agent直接持有实际job；本机RPC按SO_PEERCRED逐profile/action授权，不接受端点/路径/凭据/FD或任意helper请求。broker UID仍是整个helper池的信任域，profile ACL不隔离同UID任意进程。Root proof须kind/correlation/key/UID/resource全匹配，活owner不能被只读observer提前退休；新进程资源0和PID死亡均非旧释放证明。
 
 Native agent双栈仿真已有定向停止、KILL137协调与新attempt实际I/O；actual TLS JSON/public DER/pin/权限与PCAP分别采证。审计为有界最小字段ring，私钥内容不采集；不等于永久归档/轮转。raw-v1无同数据链heartbeat/RTT，Rust无独立proof的崩溃session仍未决，证书负向/轮换等完整gate继续未完成。
 
