@@ -1,6 +1,6 @@
 # Shutdown while preparation recording is stalled
 
-2026-10-24. Baseline clean `e10b5fbe9df89216c0002ea11a51d41837fd9b03`. Status: proposed / implementation in progress. The preceding goal turn made verified progress: framed-v2 data-link health, 626 software executions, clean `531e0c3` fifteen-run QEMU validation and the English README/site publication. The original Phase 0–7 objective remains active.
+2026-10-24. Baseline clean `e10b5fbe9df89216c0002ea11a51d41837fd9b03`. Status: implemented with software evidence; final QEMU validation in progress. The preceding goal turn made verified progress: framed-v2 data-link health, 626 software executions, clean `531e0c3` fifteen-run QEMU validation and the English README/site publication. The original Phase 0–7 objective remains active.
 
 This change addresses requirements 4.5 and 4.11: cooperative stop must reach actual owners while a preparation/ready journal acknowledgement is delayed. It does not make a stuck filesystem or kernel syscall cancellable, promise bounded process exit, or complete Phase 3. Hardware G1/G2 remains unexecuted.
 
@@ -46,6 +46,14 @@ A helper-induced invalidation following an intentional close is not a new unrela
 Cancellation before a helper request must not dispatch new helper work merely to obtain a proof. An already reserved but unsent managed attempt keeps the existing conservative Unconfirmed boundary; do not forge NotStarted/Verified or a root terminal for it. Such a local metadata-only cancellation must not be used as authority to close an unrelated safe export. Keep its unresolved result explicit and separate from a real resource-close failure or a journal failure, which remain job-failure conditions.
 
 Add deterministic regressions with independent job and local stop senders: two real owned endpoints, target Resource and Available confirmations held, target actual close observed, sibling still owned, then the original ACK released successfully and the sibling able to continue. A late recording rejection is a different global failure case. Include known identity failure interrupted by stop, pre-helper local cancellation, and the reserved/no-handle boundary without changing its proof rules.
+
+## Software checkpoint before final QEMU
+
+The revised complete `bash -x scripts/check.sh` run passes 280 default + 367 all-features + 20 vendor executions: 667 total, 39 result rows, zero failures/ignored tests. Its actual source is dirty `b1de034`; all 167 selected inputs remain stable. Native-only check/tree passes. The same all-features CLI SHA-256 `72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2` passes the original four local signal and two output-backpressure checks. Helper bytes remain `b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5`. Commit-input reconciliation will be recorded separately; it does not relabel this dirty run as clean.
+
+The actual earlier 655-execution candidate and five later failing local/identity assertions remain separate. The repaired assertions retain their cleanup/ACK/isolation conditions. A new actual TCP/memory-DER mTLS fixture explicitly authorizes both Native keys and checks stopped direct IMPORT status 4, live reserved status 2 and repeated empty catalogs on the same listener, in raw-v1 and framed-v2. This is ordinary-user production-handler evidence, not trusted-file/helper/kernel evidence.
+
+Clean `68cc3ad` runs the unchanged old product with the new global Resource gate. Native/job and USBFS/job both actually fail timely release while their original fsync is held; each subsequently completes original cleanup and fresh real HID/FTDI reuse. These are retained negative results, not final acceptance of the revised product. Local QEMU uses separate Resource/Available gates, preserves the original HID while cancelling serial, and checks the last individually stopped export leaves the same listener with an authenticated empty catalog.
 
 ## Sticky service shutdown
 

@@ -139,7 +139,7 @@ pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Res
             }
         }
     }
-    shutdown.send_replace(true);
+    let shutdown_result = request_shutdown(&controls, &shutdown);
     // Request tasks own no device capability. Their individual bounded deadline
     // completes while the real supervisor continues handling cleanup facts.
     while let Some(result) = requests.join_next().await {
@@ -148,14 +148,46 @@ pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Res
     drop(sender);
     let result = owner
         .await
-        .map_err(|_| Error::State("agent supervisor task ended abnormally".into()))?;
+        .map_err(|_| Error::State("agent supervisor task ended abnormally".into()))
+        .and_then(|result| result);
     let endpoint_result = endpoint.unlink();
+    let result = match (result, shutdown_result) {
+        (Err(owner), Err(stop)) => Err(Error::State(format!(
+            "agent stop delivery: {stop}; supervisor: {owner}"
+        ))),
+        (Err(error), _) | (_, Err(error)) => Err(error),
+        (Ok(()), Ok(())) => Ok(()),
+    };
     result?;
     endpoint_result?;
     if let Some(error) = accept_error {
         return Err(error.into());
     }
     Ok(())
+}
+
+// Stop delivery cannot depend on a store transaction finishing. This is only
+// cooperative control, never a durable response or terminal/cleanup receipt.
+pub(crate) fn request_shutdown(
+    controls: &Mutex<Controls>,
+    shutdown: &watch::Sender<bool>,
+) -> Result<()> {
+    let result = match controls.lock() {
+        Ok(mut controls) => {
+            controls.begin_shutdown();
+            Ok(())
+        }
+        Err(poisoned) => {
+            // Send stop to every still-represented owner even after poison.
+            // Report the failure after the caller has joined the supervisor.
+            poisoned.into_inner().begin_shutdown();
+            Err(Error::State(
+                "agent controls lock poisoned during stop".into(),
+            ))
+        }
+    };
+    shutdown.send_replace(true);
+    result
 }
 
 async fn request(

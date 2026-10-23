@@ -1,5 +1,6 @@
 //! Shared Rust engine owner, with explicit foreground and durable managed modes.
 
+use super::recording;
 use crate::{
     context::stopped,
     foreground::{Control, ControlError, Event, JobOutcome, Snapshot},
@@ -455,6 +456,7 @@ async fn serving(
     monitor: Option<ServerMonitor>,
     context: RunContext,
     exports: &[Export],
+    pending: &mut Option<recording::Pending>,
 ) -> Served {
     let (done, finished) = watch::channel(false);
     let (failed, mut failure) = watch::channel(false);
@@ -468,11 +470,35 @@ async fn serving(
     });
     let result: std::result::Result<(), StageError> = async {
         for export in exports {
-            export
-                .session
-                .observe(SessionState::Available, Evidence::ExportReady, None)
-                .await
-                .map_err(StageError::Recording)?;
+            let reporter = export.session.clone();
+            let mut stop = context.stop.clone();
+            let mut local = export.session.stop.clone();
+            match recording::wait(
+                async move {
+                    reporter
+                        .observe(SessionState::Available, Evidence::ExportReady, None)
+                        .await
+                },
+                async {
+                    tokio::select! {
+                        biased;
+                        _=stopped(&mut stop)=>Ok(()),
+                        _=stopped(&mut local)=>Ok(()),
+                        _=stopped(&mut failure)=>Ok(()),
+                    }
+                },
+            )
+            .await
+            {
+                recording::Wait::Ready(result) => result.map_err(StageError::Recording)?,
+                recording::Wait::Interrupted {
+                    pending: original,
+                    reason,
+                } => {
+                    *pending = Some(original);
+                    return reason.map_err(StageError::Operation);
+                }
+            }
         }
         context
             .emit(Event::Ready {
@@ -569,9 +595,10 @@ async fn prepare(
     binding: &Binding,
     context: &RunContext,
     exports: &mut [Export],
+    pending: &mut Option<recording::Pending>,
 ) -> std::result::Result<Option<Owner>, StageError> {
     #[cfg(not(all(feature = "physical-nusb", target_os = "linux")))]
-    let _ = (binding, &exports);
+    let _ = (binding, &exports, &pending);
     if stopping(&context.stop) {
         return Ok(None);
     }
@@ -631,11 +658,42 @@ async fn prepare(
                 if stopping(&context.stop) || stopping(&export.session.stop) {
                     return Ok(None);
                 }
-                let correlation = export
-                    .session
-                    .attempt(BrokerResourceKind::UsbfsGrant)
-                    .await
-                    .map_err(StageError::Recording)?;
+                let reporter = export.session.clone();
+                let mut stop = context.stop.clone();
+                let mut local = export.session.stop.clone();
+                let correlation = match recording::wait(
+                    async move { reporter.attempt(BrokerResourceKind::UsbfsGrant).await },
+                    async {
+                        tokio::select! {
+                            biased;
+                            _=stopped(&mut stop)=>Ok(()),
+                            _=stopped(&mut local)=>Ok(()),
+                        }
+                    },
+                )
+                .await
+                {
+                    recording::Wait::Ready(result) => result.map_err(StageError::Recording)?,
+                    recording::Wait::Interrupted {
+                        pending: original,
+                        reason,
+                    } => {
+                        export.grant = Some(Grant {
+                            attempted: context.is_managed(),
+                            lease_id: None,
+                        });
+                        *pending = Some(original);
+                        reason.map_err(StageError::Operation)?;
+                        return Ok(None);
+                    }
+                };
+                if stopping(&context.stop) || stopping(&export.session.stop) {
+                    export.grant = Some(Grant {
+                        attempted: correlation.is_some(),
+                        lease_id: None,
+                    });
+                    return Ok(None);
+                }
                 export.grant = Some(Grant {
                     attempted: true,
                     lease_id: None,
@@ -665,11 +723,32 @@ async fn prepare(
                     device: grant.device,
                     receipt: grant.receipt,
                 });
-                export
-                    .session
-                    .resource(correlation, &grant.lease_id)
-                    .await
-                    .map_err(StageError::Recording)?;
+                let reporter = export.session.clone();
+                let lease_id = grant.lease_id;
+                match recording::wait(
+                    async move { reporter.resource(correlation, &lease_id).await },
+                    async {
+                        tokio::select! {
+                            biased;
+                            _=stopped(&mut stop)=>Ok(()),
+                            _=stopped(&mut local)=>Ok(()),
+                        }
+                    },
+                )
+                .await
+                {
+                    recording::Wait::Ready(result) => result.map_err(StageError::Recording)?,
+                    recording::Wait::Interrupted {
+                        pending: original,
+                        reason,
+                    } => {
+                        *pending = Some(original);
+                        // Returning drops the entire source vector. The outer
+                        // owner issues every Finish before draining this ACK.
+                        reason.map_err(StageError::Operation)?;
+                        return Ok(None);
+                    }
+                }
             }
             if stopping(&context.stop) {
                 return Ok(None);
@@ -701,6 +780,7 @@ async fn finish_exports(
     operation: &Result<()>,
     owners_closed: bool,
     started: bool,
+    pending: Option<recording::Pending>,
 ) -> (Result<()>, Result<()>) {
     let base = if owners_closed {
         if started {
@@ -721,6 +801,11 @@ async fn finish_exports(
     #[cfg(not(all(feature = "physical-nusb", target_os = "linux")))]
     let _ = context;
     let mut recording = Ok(());
+    // The original stage precedes this session's Closing/Finish, but not actual
+    // FD/backend cleanup or any received delegation's root Finish above.
+    if let Some(original) = pending {
+        retain_error(&mut recording, original.await);
+    }
     // All received capabilities have been attempted above, before any
     // application persistence acknowledgement can wait or fail.
     for (export, evidence) in exports.iter().zip(evidence) {
@@ -731,7 +816,12 @@ async fn finish_exports(
         let recorded = export
             .session
             .finish(
-                operation.as_ref().err().map(Failure::from_error),
+                operation
+                    .as_ref()
+                    .err()
+                    .or(recording.as_ref().err())
+                    .or(observed.as_ref().err())
+                    .map(Failure::from_error),
                 evidence,
                 Metrics::default(),
             )
@@ -816,7 +906,8 @@ async fn run(binding: Binding, selection: Selection, context: RunContext) -> Job
             };
         }
     };
-    let prepared = prepare(selection, &binding, &context, &mut exports).await;
+    let mut pending = None;
+    let prepared = prepare(selection, &binding, &context, &mut exports, &mut pending).await;
     let mut owner = None;
     let mut cleanup = Ok(());
     let mut recording = Ok(());
@@ -847,6 +938,7 @@ async fn run(binding: Binding, selection: Selection, context: RunContext) -> Job
                                 monitor,
                                 context.clone(),
                                 &exports,
+                                &mut pending,
                             )
                             .await;
                             cleanup = served.cleanup;
@@ -873,8 +965,15 @@ async fn run(binding: Binding, selection: Selection, context: RunContext) -> Job
     retain_error(&mut cleanup, closed);
     // Finish every received delegation after all actual owner FDs have ended.
     // An error for one export never skips the remaining helper Finish requests.
-    let (finished, recorded) =
-        finish_exports(&exports, &context, &operation, owners_closed, started).await;
+    let (finished, recorded) = finish_exports(
+        &exports,
+        &context,
+        &operation,
+        owners_closed,
+        started,
+        pending,
+    )
+    .await;
     retain_error(&mut cleanup, finished);
     retain_error(&mut recording, recorded);
     if let Some(task) = observing {
@@ -973,6 +1072,145 @@ mod tests {
             connection,
         });
         (context, frontend, stop)
+    }
+
+    #[tokio::test]
+    async fn held_available_ack_releases_actual_listener_and_lease_before_original_record()
+    -> Result<()> {
+        tokio::time::timeout(Duration::from_secs(5), async {
+            let backend = VirtualBackend::new()?;
+            let server = ServerHandle::bind(
+                ServerConfig {
+                    listen: ([127, 0, 0, 1], 0).into(),
+                    ..ServerConfig::default()
+                },
+                backend.clone(),
+            )
+            .await?;
+            let address = server.local_addr();
+            let mut network = import(address).await?;
+            assert!(
+                backend
+                    .snapshot()?
+                    .devices
+                    .iter()
+                    .any(|device| device.leased)
+            );
+            let (facts, mut receiver) = mpsc::channel(2);
+            let (stop, stopping) = watch::channel(false);
+            let context = RunContext::managed(JobContext {
+                instance_id: InstanceId::new("00000000-0000-0000-0000-000000000001")?,
+                job_id: JobId::new("00000000-0000-0000-0000-000000000002")?,
+                helper_socket: "/no-helper-needed-for-real-virtual-owner".into(),
+                stop: stopping.clone(),
+                facts: facts.clone(),
+            });
+            let session: RunSession = SessionContext {
+                health: crate::health::HealthReporter::default(),
+                id: SessionId::new("00000000-0000-0000-0000-000000000003")?,
+                stop: stopping,
+                facts,
+            }
+            .into();
+            let exports = vec![Export {
+                session,
+                #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+                grant: None,
+            }];
+            let (closed_tx, closed_rx) = tokio::sync::oneshot::channel();
+            let task = tokio::spawn(async move {
+                let owner = Owner::Virtual(backend);
+                let mut pending = None;
+                // Production ready/shutdown pipeline with a real listener and
+                // IMPORT lease; the held actor reply is not a filesystem test.
+                let served = serving(
+                    server,
+                    &owner,
+                    false,
+                    None,
+                    context.clone(),
+                    &exports,
+                    &mut pending,
+                )
+                .await;
+                let snapshot = owner.close().await?;
+                let Snapshot::Virtual(snapshot) = snapshot else {
+                    return Err(Error::State("wrong owner snapshot".into()));
+                };
+                assert!(
+                    snapshot
+                        .devices
+                        .iter()
+                        .all(|device| !device.leased && device.pending_urbs == 0)
+                );
+                closed_tx
+                    .send(())
+                    .map_err(|_| Error::State("cleanup observer ended".into()))?;
+                let (finished, recorded) = finish_exports(
+                    &exports,
+                    &context,
+                    &served.operation,
+                    served.cleanup.is_ok(),
+                    true,
+                    pending,
+                )
+                .await;
+                served.operation?;
+                served.cleanup?;
+                finished?;
+                assert!(served.recording.is_ok());
+                Ok::<_, Error>(recorded)
+            });
+            let Some(JobMessage::Observe {
+                evidence: Evidence::ExportReady,
+                state: SessionState::Available,
+                reply,
+                ..
+            }) = receiver.recv().await
+            else {
+                return Err(Error::State("expected held Available record".into()));
+            };
+            stop.send_replace(true);
+            closed_rx
+                .await
+                .map_err(|_| Error::State("real owner did not close before ACK".into()))?;
+            closed(&mut network).await?;
+            assert!(TcpStream::connect(address).await.is_err());
+            assert!(!reply.is_closed() && !task.is_finished());
+            assert!(receiver.try_recv().is_err());
+            reply
+                .send(Err(Error::Permission(
+                    "late Available recording rejection".into(),
+                )))
+                .map_err(|_| Error::State("original Available ACK was dropped".into()))?;
+            let Some(JobMessage::Observe {
+                evidence: Evidence::Closing,
+                reply,
+                ..
+            }) = receiver.recv().await
+            else {
+                return Err(Error::State(
+                    "Closing did not follow original Available".into(),
+                ));
+            };
+            let _ = reply.send(Ok(()));
+            let Some(JobMessage::Finish {
+                cleanup: Cleanup::Verified,
+                reply,
+                ..
+            }) = receiver.recv().await
+            else {
+                return Err(Error::State("actual cleanup did not reach Finish".into()));
+            };
+            let _ = reply.send(Ok(()));
+            let result = task
+                .await
+                .map_err(|_| Error::State("real Rust owner task failed".into()))??;
+            assert!(matches!(result, Err(Error::Permission(_))));
+            Ok(())
+        })
+        .await
+        .map_err(|_| Error::Timeout("held Available owner fixture".into()))?
     }
 
     #[tokio::test]

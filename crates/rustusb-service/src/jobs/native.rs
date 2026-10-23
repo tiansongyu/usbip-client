@@ -2,7 +2,7 @@
 
 use super::{
     io::{self, Counters},
-    link,
+    link, recording,
 };
 use crate::{
     context::stopped,
@@ -24,7 +24,7 @@ use std::{
     pin::Pin,
     sync::{
         Arc,
-        atomic::{AtomicBool, Ordering},
+        atomic::{AtomicBool, AtomicU8, Ordering},
     },
     time::Duration,
 };
@@ -124,6 +124,24 @@ async fn cleanup_then_unlock(
     result
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+enum CloseCause {
+    Open,
+    Job,
+    Local,
+    Requested,
+    Invalidated,
+    Failure,
+}
+
+// This private result cannot be confused with a cleanup proof or public state.
+enum PrepareOutcome {
+    Ready(Arc<Export>),
+    LocalCancelled { unresolved: Option<Error> },
+    JobStopped,
+}
+
 struct Export {
     key: DeviceKey,
     published: RemoteDevice,
@@ -134,21 +152,43 @@ struct Export {
     use_lock: Mutex<()>,
     reserved: AtomicBool,
     failed: AtomicBool,
+    close_cause: AtomicU8,
+    pending_record: Mutex<Option<recording::Pending>>,
+    prior_failure: Mutex<Option<Failure>>,
+    // Only the received-owner software fixture supplies a Unix control receipt.
+    // Production always owns the root-validated NativeExportHandle above.
+    #[cfg(test)]
+    fixture_close: Mutex<Option<Recording>>,
 }
 impl Export {
     fn accepting(&self) -> bool {
-        !stop_requested(&self.stop.subscribe())
+        !stop_requested(&self.session.stop)
+            && self.close_cause.load(Ordering::Acquire) == CloseCause::Open as u8
+            && !stop_requested(&self.stop.subscribe())
             && !stop_requested(&self.invalidated)
             && !self.reserved.load(Ordering::Acquire)
             && !self.failed.load(Ordering::Acquire)
     }
-    async fn close(&self) -> JobOutcome {
-        // Disable catalog/IMPORT before stopping this export's sole stub owner.
+    fn unexpected_invalidation(&self) -> bool {
+        let cause = self.close_cause.load(Ordering::Acquire);
+        cause == CloseCause::Invalidated as u8
+            || cause == CloseCause::Failure as u8
+            || (cause == CloseCause::Open as u8
+                && stop_requested(&self.invalidated)
+                && !stop_requested(&self.session.stop)
+                && !stop_requested(&self.stop.subscribe()))
+    }
+    async fn actual_close(&self) -> Result<()> {
+        // Only the collection's one watcher may take the real capability.
         self.stop.send_replace(true);
         let using = self.use_lock.lock().await;
         let handle = self.handle.lock().await.take();
-        let cleanup = cleanup_then_unlock(
+        cleanup_then_unlock(
             async {
+                #[cfg(test)]
+                if let Some(close) = self.fixture_close.lock().await.take() {
+                    return close.await;
+                }
                 match handle {
                     Some(handle) => handle.close().await,
                     None => Err(Error::State("Native export close repeated".into())),
@@ -157,12 +197,55 @@ impl Export {
             Some(using),
             &self.failed,
         )
-        .await;
+        .await
+    }
+
+    async fn retain_record(&self, pending: recording::Pending) -> Result<()> {
+        let mut slot = self.pending_record.lock().await;
+        if let Some(previous) = slot.take() {
+            // Even an invariant failure cannot discard an accepted transaction.
+            *slot = Some(Box::pin(async move {
+                let mut result = previous.await;
+                merge_result(&mut result, pending.await);
+                result
+            }));
+            return Err(Error::State(
+                "Native preparation already has a retained record".into(),
+            ));
+        }
+        *slot = Some(pending);
+        Ok(())
+    }
+
+    async fn remember_failure(&self, error: &Error) {
+        let mut failure = self.prior_failure.lock().await;
+        if failure.is_none() {
+            *failure = Some(Failure::from_error(error));
+        }
+    }
+
+    async fn finalize(&self, cleanup: Result<()>, lost: bool) -> JobOutcome {
+        // Every real close has already been started/joined before batch
+        // finalization. The exact original transaction precedes Closing.
+        let pending = self.pending_record.lock().await.take();
+        let mut recording = match pending {
+            Some(pending) => pending.await,
+            None => Ok(()),
+        };
+        let operation = if lost {
+            Err(Error::State("Native export invalidated".into()))
+        } else {
+            Ok(())
+        };
         let observed = self
             .session
             .observe(SessionState::Disconnecting, Evidence::Closing, None)
             .await;
-        let failure = observed.as_ref().err().map(Failure::from_error);
+        let recorded_failure = *self.prior_failure.lock().await;
+        let failure = recorded_failure
+            .or_else(|| operation.as_ref().err().map(Failure::from_error))
+            .or_else(|| recording.as_ref().err().map(Failure::from_error))
+            .or_else(|| observed.as_ref().err().map(Failure::from_error));
         let recorded = self
             .session
             .finish(
@@ -175,14 +258,136 @@ impl Export {
                 Metrics::default(),
             )
             .await;
-        let mut recording = observed;
+        merge_result(&mut recording, observed);
         merge_result(&mut recording, recorded);
         JobOutcome {
-            operation: Ok(()),
+            operation,
             cleanup,
             recording,
             final_event: None,
         }
+    }
+}
+
+struct ClosedExport {
+    export: Arc<Export>,
+    cleanup: Result<()>,
+    lost: bool,
+}
+impl ClosedExport {
+    async fn finalize(self) -> JobOutcome {
+        self.export.finalize(self.cleanup, self.lost).await
+    }
+}
+
+struct Preparation {
+    exports: Vec<Arc<Export>>,
+    closes: JoinSet<ClosedExport>,
+    fatal: watch::Sender<bool>,
+    local_unresolved: Vec<Error>,
+}
+impl Default for Preparation {
+    fn default() -> Self {
+        let (fatal, _) = watch::channel(false);
+        Self {
+            exports: Vec::new(),
+            closes: JoinSet::new(),
+            fatal,
+            local_unresolved: Vec::new(),
+        }
+    }
+}
+impl Preparation {
+    fn register(&mut self, export: Arc<Export>, mut job_stop: watch::Receiver<bool>) {
+        // Install before any Resource wait. This remains polled independently
+        // while another export is waiting for Begin/Attempt/Available storage.
+        self.exports.push(export.clone());
+        let fatal = self.fatal.clone();
+        self.closes.spawn(async move {
+            let mut local_stop = export.session.stop.clone();
+            let mut requested = export.stop.subscribe();
+            let mut invalidated = export.invalidated.clone();
+            let mut failure = fatal.subscribe();
+            let cause = tokio::select! {
+                biased;
+                _ = stopped(&mut job_stop) => CloseCause::Job,
+                _ = stopped(&mut local_stop) => CloseCause::Local,
+                _ = stopped(&mut failure) => CloseCause::Failure,
+                _ = stopped(&mut requested) => CloseCause::Requested,
+                _ = stopped(&mut invalidated) => CloseCause::Invalidated,
+            };
+            export.close_cause.store(cause as u8, Ordering::Release);
+            let cleanup = export.actual_close().await;
+            if cleanup.is_err() || cause == CloseCause::Invalidated {
+                // Real resource failure closes siblings even while the parent
+                // is waiting for a different metadata transaction.
+                fatal.send_replace(true);
+            }
+            ClosedExport {
+                export,
+                cleanup,
+                lost: cause == CloseCause::Invalidated,
+            }
+        });
+    }
+    fn stopping(&self) -> bool {
+        *self.fatal.borrow()
+            || self.exports.iter().any(|export| {
+                export.failed.load(Ordering::Acquire) || export.unexpected_invalidation()
+            })
+    }
+    fn retain_local(&mut self, unresolved: Option<Error>) -> Result<()> {
+        if let Some(error) = unresolved {
+            if self.local_unresolved.len() >= 16 {
+                return Err(Error::State(
+                    "Native local cancellation budget exceeded".into(),
+                ));
+            }
+            self.local_unresolved.push(error);
+        }
+        Ok(())
+    }
+    fn finish_local(&mut self, outcome: &mut JobOutcome) {
+        // Metadata-only uncertainty is reported after genuine whole-job stop
+        // and all actual cleanup. It is never authority to stop a safe sibling.
+        for error in self.local_unresolved.drain(..) {
+            merge_result(&mut outcome.cleanup, Err(error));
+        }
+    }
+
+    fn request_stop(&self) {
+        for export in &self.exports {
+            export.stop.send_replace(true);
+        }
+    }
+    async fn collect_actual(&mut self) -> (Vec<ClosedExport>, Result<()>) {
+        let mut completed = Vec::new();
+        let mut result = Ok(());
+        while let Some(closed) = self.closes.join_next().await {
+            match closed {
+                Ok(closed) => completed.push(closed),
+                Err(_) => merge_result(
+                    &mut result,
+                    Err(Error::State(
+                        "Native actual-close task failed; cleanup unconfirmed".into(),
+                    )),
+                ),
+            }
+        }
+        (completed, result)
+    }
+}
+
+async fn preparation_stop(export: &Export, mut job: watch::Receiver<bool>) -> Result<()> {
+    let mut local = export.session.stop.clone();
+    let mut requested = export.stop.subscribe();
+    let mut source = export.invalidated.clone();
+    tokio::select! {
+        biased;
+        _ = stopped(&mut job) => Ok(()),
+        _ = stopped(&mut local) => Ok(()),
+        _ = stopped(&mut requested) => Ok(()),
+        _ = stopped(&mut source) => Err(Error::State("Native export invalidated during preparation".into())),
     }
 }
 
@@ -196,94 +401,88 @@ impl Drop for Reservation {
 async fn prepare(
     key: &DeviceKey,
     context: &RunContext,
-) -> std::result::Result<Option<Arc<Export>>, JobOutcome> {
+    preparation: &mut Preparation,
+) -> std::result::Result<PrepareOutcome, JobOutcome> {
     let session = context
         .begin_session(SessionRole::Export, key.clone(), None)
         .await
         .map_err(|error| stage_outcome(Err(StageError::Recording(error))))?;
-    let mut attempted = false;
-    let mut skipped = false;
-    let mut owner = None;
-    let operation = async {
-        session
-            .observe(SessionState::Exporting, Evidence::Intent, None)
-            .await
-            .map_err(StageError::Recording)?;
-        let correlation = session
-            .attempt(BrokerResourceKind::NativeExport)
-            .await
-            .map_err(StageError::Recording)?;
-        attempted = correlation.is_some();
-        if stop_requested(&context.stop) || stop_requested(&session.stop) {
-            if !attempted {
-                skipped = true;
-                return Ok(());
-            }
-            return Err(Error::State("Native export stopped before prepare".into()).into());
-        }
-        let id = key
-            .fingerprint()
-            .ok_or_else(|| Error::InvalidInput("Native device fingerprint required".into()))?;
-        attempted = true;
-        owner = Some(match correlation.clone() {
-            Some(correlation) => {
-                prepare_native_export_tracked(&context.helper_socket, id.to_owned(), correlation)
-                    .await?
-            }
-            None => prepare_native_export(&context.helper_socket, id.to_owned()).await?,
-        });
-        let handle = owner
-            .as_ref()
-            .ok_or_else(|| Error::State("Native export owner absent".into()))?;
-        session
-            .resource(correlation, handle.lease_id())
-            .await
-            .map_err(StageError::Recording)?;
-        if handle.device_key() != key {
-            return Err(Error::Protocol("Native export identity differs".into()).into());
-        }
-        Ok(())
+    if stop_requested(&context.stop) || stop_requested(&session.stop) {
+        return cancel_unrequested(&session, &context.stop, false).await;
     }
-    .await;
-    if skipped {
-        return Ok(None);
-    }
-    if operation.is_err() {
-        let mut outcome = stage_outcome(operation);
-        let cleanup = match owner {
-            Some(handle) => handle.close().await,
-            None if attempted => Err(Error::State("Native export prepare unconfirmed".into())),
-            None => Ok(()),
-        };
+    if let Err(error) = session
+        .observe(SessionState::Exporting, Evidence::Intent, None)
+        .await
+    {
+        preparation.request_stop();
+        let mut outcome = stage_outcome(Err(StageError::Recording(error)));
         let recorded = session
             .finish(
-                outcome
-                    .operation
-                    .as_ref()
-                    .err()
-                    .or(outcome.recording.as_ref().err())
-                    .map(Failure::from_error),
-                if cleanup.is_err() {
-                    Cleanup::Unconfirmed
-                } else if attempted {
-                    Cleanup::Verified
-                } else {
-                    Cleanup::NotStarted
-                },
+                outcome.recording.as_ref().err().map(Failure::from_error),
+                Cleanup::NotStarted,
                 Metrics::default(),
             )
             .await;
-        outcome.cleanup = cleanup;
         merge_result(&mut outcome.recording, recorded);
         return Err(outcome);
     }
-    let handle = owner.ok_or_else(|| {
-        JobOutcome::before_start(Error::State("Native export owner absent".into()))
+    if stop_requested(&context.stop) || stop_requested(&session.stop) {
+        return cancel_unrequested(&session, &context.stop, false).await;
+    }
+    let correlation = match session.attempt(BrokerResourceKind::NativeExport).await {
+        Ok(correlation) => correlation,
+        Err(error) => {
+            preparation.request_stop();
+            let mut outcome = stage_outcome(Err(StageError::Recording(error)));
+            let recorded = session
+                .finish(
+                    outcome.recording.as_ref().err().map(Failure::from_error),
+                    Cleanup::NotStarted,
+                    Metrics::default(),
+                )
+                .await;
+            merge_result(&mut outcome.recording, recorded);
+            return Err(outcome);
+        }
+    };
+    if stop_requested(&context.stop) || stop_requested(&session.stop) {
+        return cancel_unrequested(&session, &context.stop, correlation.is_some()).await;
+    }
+    let id = key.fingerprint().ok_or_else(|| {
+        JobOutcome::before_start(Error::InvalidInput(
+            "Native device fingerprint required".into(),
+        ))
     })?;
+    // This possibly accepted helper exchange is retained to its actual result.
+    let acquired = match correlation.clone() {
+        Some(correlation) => {
+            prepare_native_export_tracked(&context.helper_socket, id.to_owned(), correlation).await
+        }
+        None => prepare_native_export(&context.helper_socket, id.to_owned()).await,
+    };
+    let handle = match acquired {
+        Ok(handle) => handle,
+        Err(error) => {
+            preparation.request_stop();
+            let mut outcome = JobOutcome::before_start(error);
+            outcome.cleanup = Err(Error::State("Native export prepare unconfirmed".into()));
+            let recorded = session
+                .finish(
+                    outcome.operation.as_ref().err().map(Failure::from_error),
+                    Cleanup::Unconfirmed,
+                    Metrics::default(),
+                )
+                .await;
+            merge_result(&mut outcome.recording, recorded);
+            return Err(outcome);
+        }
+    };
+    let received_key = handle.device_key().clone();
+    let lease_id = handle.lease_id().to_owned();
     let published = handle.published_device().clone();
     let invalidated = handle.invalidated();
     let (stop, _) = watch::channel(false);
-    Ok(Some(Arc::new(Export {
+    let export = Arc::new(Export {
         key: key.clone(),
         published,
         handle: Mutex::new(Some(handle)),
@@ -293,7 +492,153 @@ async fn prepare(
         use_lock: Mutex::new(()),
         reserved: AtomicBool::new(false),
         failed: AtomicBool::new(false),
-    })))
+        close_cause: AtomicU8::new(CloseCause::Open as u8),
+        pending_record: Mutex::new(None),
+        prior_failure: Mutex::new(None),
+        #[cfg(test)]
+        fixture_close: Mutex::new(None),
+    });
+    preparation.register(export.clone(), context.stop.clone());
+    finish_received_export(export, received_key, lease_id, correlation, &context.stop).await
+}
+
+async fn cancel_unrequested(
+    session: &RunSession,
+    job: &watch::Receiver<bool>,
+    reserved: bool,
+) -> std::result::Result<PrepareOutcome, JobOutcome> {
+    let cleanup = if reserved {
+        Cleanup::Unconfirmed
+    } else {
+        Cleanup::NotStarted
+    };
+    let recorded = session
+        .finish(Some(Failure::Cancelled), cleanup, Metrics::default())
+        .await;
+    if let Err(error) = recorded {
+        return Err(stage_outcome(Err(StageError::Recording(error))));
+    }
+    let unresolved = reserved.then(|| Error::State("Native reserved export attempt was cancelled before helper request; cleanup unconfirmed".into()));
+    if stop_requested(job) {
+        if let Some(error) = unresolved {
+            let mut outcome = success();
+            outcome.cleanup = Err(error);
+            return Err(outcome);
+        }
+        Ok(PrepareOutcome::JobStopped)
+    } else {
+        Ok(PrepareOutcome::LocalCancelled { unresolved })
+    }
+}
+
+// The actual owner enters here immediately after the helper has returned it.
+// Kept separate so ordinary-user fixtures can exercise this production phase
+// without bypassing the helper client's root credential/path checks.
+async fn finish_received_export(
+    export: Arc<Export>,
+    received_key: DeviceKey,
+    lease_id: String,
+    correlation: Option<rustusb_core::application::BrokerCorrelation>,
+    stop: &watch::Receiver<bool>,
+) -> std::result::Result<PrepareOutcome, JobOutcome> {
+    let mut outcome = success();
+    // Known invalid identity never depends on which select branch wins.
+    if received_key != export.key {
+        let error = Error::Protocol("Native export identity differs".into());
+        export.remember_failure(&error).await;
+        export.stop.send_replace(true);
+        outcome.operation = Err(error);
+    }
+    let reporter = export.session.clone();
+    let recorded = recording::wait(
+        async move { reporter.resource(correlation, &lease_id).await },
+        preparation_stop(&export, stop.clone()),
+    )
+    .await;
+    let mut interrupted = false;
+    match recorded {
+        recording::Wait::Ready(Err(error)) => {
+            export.remember_failure(&error).await;
+            outcome.recording = Err(error);
+        }
+        recording::Wait::Ready(Ok(())) => {}
+        recording::Wait::Interrupted { pending, reason } => {
+            interrupted = true;
+            merge_result(&mut outcome.recording, export.retain_record(pending).await);
+            merge_result(&mut outcome.operation, reason);
+        }
+    }
+    if outcome.operation.is_err() || outcome.recording.is_err() {
+        return Err(outcome);
+    }
+    if stop_requested(stop) {
+        return Ok(PrepareOutcome::JobStopped);
+    }
+    if export.unexpected_invalidation() || export.failed.load(Ordering::Acquire) {
+        return Err(JobOutcome::before_start(Error::State(
+            "Native export failed during preparation".into(),
+        )));
+    }
+    if stop_requested(&export.session.stop) {
+        return Ok(PrepareOutcome::LocalCancelled { unresolved: None });
+    }
+    if interrupted || stop_requested(&export.stop.subscribe()) {
+        return Ok(PrepareOutcome::JobStopped);
+    }
+    Ok(PrepareOutcome::Ready(export))
+}
+
+async fn record_available(
+    export: &Arc<Export>,
+    stop: watch::Receiver<bool>,
+) -> std::result::Result<(), JobOutcome> {
+    if stop_requested(&stop) {
+        return Err(success());
+    }
+    if export.unexpected_invalidation() || export.failed.load(Ordering::Acquire) {
+        return Err(JobOutcome::before_start(Error::State(
+            "Native export failed before ready".into(),
+        )));
+    }
+    if stop_requested(&export.session.stop) {
+        return Ok(());
+    }
+    if stop_requested(&export.stop.subscribe()) {
+        return Err(success());
+    }
+    let reporter = export.session.clone();
+    match recording::wait(
+        async move {
+            reporter
+                .observe(SessionState::Available, Evidence::ExportReady, None)
+                .await
+        },
+        preparation_stop(export, stop.clone()),
+    )
+    .await
+    {
+        recording::Wait::Ready(Ok(())) => Ok(()),
+        recording::Wait::Ready(Err(error)) => {
+            export.remember_failure(&error).await;
+            Err(stage_outcome(Err(StageError::Recording(error))))
+        }
+        recording::Wait::Interrupted { pending, reason } => {
+            let mut outcome = stage_outcome(reason.map_err(StageError::Operation));
+            merge_result(&mut outcome.recording, export.retain_record(pending).await);
+            if outcome.operation.is_err() || outcome.recording.is_err() {
+                return Err(outcome);
+            }
+            if !stop_requested(&stop)
+                && stop_requested(&export.session.stop)
+                && !export.unexpected_invalidation()
+                && !export.failed.load(Ordering::Acquire)
+            {
+                Ok(())
+            } else {
+                Err(outcome)
+            }
+        }
+    }
 }
 
 enum Task {
@@ -342,25 +687,37 @@ fn snapshot(exports: &[Arc<Export>]) -> Snapshot {
 }
 
 pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) -> JobOutcome {
-    let mut exports = Vec::new();
+    let mut preparation = Preparation::default();
+    let mut preparation_interrupted = false;
     let mut outcome = success();
     let mut buses = HashSet::new();
     for key in &config.devices {
-        if stop_requested(&context.stop) {
+        if stop_requested(&context.stop) || preparation.stopping() {
+            preparation_interrupted = true;
             break;
         }
-        match prepare(key, &context).await {
-            Ok(Some(export)) => {
+        match prepare(key, &context, &mut preparation).await {
+            Ok(PrepareOutcome::Ready(export)) => {
                 let distinct = buses.insert(export.published.bus_id.clone());
-                exports.push(export);
                 if !distinct {
                     outcome.operation =
                         Err(Error::Protocol("duplicate Native publication bus".into()));
                     break;
                 }
             }
-            Ok(None) => break,
+            Ok(PrepareOutcome::LocalCancelled { unresolved }) => {
+                if let Err(error) = preparation.retain_local(unresolved) {
+                    outcome.cleanup = Err(error);
+                    preparation_interrupted = true;
+                    break;
+                }
+            }
+            Ok(PrepareOutcome::JobStopped) => {
+                preparation_interrupted = true;
+                break;
+            }
             Err(result) => {
+                preparation_interrupted = true;
                 merge(&mut outcome, result, true);
                 break;
             }
@@ -368,7 +725,8 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
     }
     if outcome.operation.is_ok() && outcome.cleanup.is_ok() && outcome.recording.is_ok() {
         outcome.operation = server::devlist_reply(
-            &exports
+            &preparation
+                .exports
                 .iter()
                 .map(|export| export.published.clone())
                 .collect::<Vec<_>>(),
@@ -378,9 +736,11 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
     if outcome.operation.is_err()
         || outcome.cleanup.is_err()
         || outcome.recording.is_err()
+        || preparation_interrupted
+        || preparation.stopping()
         || stop_requested(&context.stop)
     {
-        merge(&mut outcome, close_all(&exports).await, true);
+        merge(&mut outcome, close_all(&mut preparation).await, true);
         return outcome;
     }
     // A stop never drops a helper prepare or listener acquisition future.
@@ -388,64 +748,65 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
         Ok(listener) => listener,
         Err(error) => {
             outcome.operation = Err(error.into());
-            merge(&mut outcome, close_all(&exports).await, true);
+            merge(&mut outcome, close_all(&mut preparation).await, true);
             return outcome;
         }
     };
-    for export in &exports {
-        if let Err(error) = export
-            .session
-            .observe(SessionState::Available, Evidence::ExportReady, None)
-            .await
-        {
-            merge_result(&mut outcome.recording, Err(error));
+    for export in &preparation.exports {
+        if let Err(result) = record_available(export, context.stop.clone()).await {
+            preparation_interrupted = true;
+            merge(&mut outcome, result, true);
             break;
         }
     }
-    if outcome.recording.is_ok() {
+    if outcome.recording.is_ok()
+        && !preparation_interrupted
+        && !preparation.stopping()
+        && !stop_requested(&context.stop)
+    {
         outcome.operation = async {
             context
                 .emit(Event::Ready {
                     address: listener.local_addr()?,
                     secure: true,
-                    snapshot: snapshot(&exports),
+                    snapshot: snapshot(&preparation.exports),
                 })
                 .await
         }
         .await;
     }
-    if outcome.operation.is_err() || outcome.recording.is_err() || stop_requested(&context.stop) {
+    if outcome.operation.is_err()
+        || outcome.recording.is_err()
+        || preparation_interrupted
+        || preparation.stopping()
+        || stop_requested(&context.stop)
+    {
         drop(listener);
-        merge(&mut outcome, close_all(&exports).await, true);
+        merge(&mut outcome, close_all(&mut preparation).await, true);
         return outcome;
     }
     let mut tasks = JoinSet::new();
     let (stop_all, stop) = watch::channel(false);
-    for export in &exports {
-        let export = export.clone();
-        let mut job_stop = stop.clone();
-        tasks.spawn(async move {
-            let mut local_stop = export.session.stop.clone();
-            let mut loss = export.invalidated.clone();
-            let lost = tokio::select! {
-                biased;
-                _ = stopped(&mut job_stop) => false,
-                _ = stopped(&mut local_stop) => false,
-                _ = stopped(&mut loss) => true,
-            };
-            let mut result = export.close().await;
-            if lost {
-                result.operation = Err(Error::State("Native export invalidated".into()));
-            }
-            Task::Export(result)
-        });
-    }
     let budget = Arc::new(Semaphore::new(16));
     let mut job_stop = context.stop.clone();
     let operation = loop {
         tokio::select! {
             biased;
             _ = stopped(&mut job_stop) => break Ok(()),
+            closed = preparation.closes.join_next(), if !preparation.closes.is_empty() => {
+                match closed {
+                    Some(Ok(closed)) => {
+                        let failed = closed.cleanup.is_err() || closed.lost;
+                        tasks.spawn(async move { Task::Export(closed.finalize().await) });
+                        if failed { break Ok(()); }
+                    },
+                    Some(Err(_)) => {
+                        merge_result(&mut outcome.cleanup, Err(Error::State("Native actual-close task failed; cleanup unconfirmed".into())));
+                        break Err(Error::State("Native actual-close task failed".into()));
+                    },
+                    None => {},
+                }
+            },
             result = tasks.join_next(), if !tasks.is_empty() => match result {
                 Some(Ok(Task::Export(result))) => {
                     let failed = result.operation.is_err() || result.cleanup.is_err() || result.recording.is_err();
@@ -470,7 +831,7 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
                         let result = context.emit(Event::Ack { id }).await;
                         break result;
                     },
-                    Control::Snapshot { id } => Event::Snapshot { id, snapshot: snapshot(&exports) },
+                    Control::Snapshot { id } => Event::Snapshot { id, snapshot: snapshot(&preparation.exports) },
                     _ => Event::Error { id: None, code: ControlError::InvalidControl },
                 };
                 if let Err(error) = context.emit(event).await { break Err(error); }
@@ -479,7 +840,7 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
                 let (network, _) = match accepted { Ok(value) => value, Err(error) => break Err(error.into()) };
                 let Ok(permit) = budget.clone().try_acquire_owned() else { continue };
                 let config = config.clone();
-                let registry = exports.clone();
+                let registry = preparation.exports.clone();
                 let context = context.clone();
                 let stop = stop.clone();
                 tasks.spawn(async move {
@@ -492,7 +853,16 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
     merge_result(&mut outcome.operation, operation);
     drop(listener);
     stop_all.send_replace(true);
-    // Join every real stub owner before its export's final baseline close.
+    preparation.request_stop();
+    // Stub close releases its use lock before WAL. Join every actual export
+    // close before awaiting any remaining connection/final-record receipts.
+    let (closed, actual_result) = preparation.collect_actual().await;
+    merge_result(&mut outcome.cleanup, actual_result);
+    for export in closed {
+        tasks.spawn(async move { Task::Export(export.finalize().await) });
+    }
+    // Every remaining task now owns only real cleanup already in progress or
+    // metadata finalization. Never abort a retained helper/record transaction.
     while let Some(task) = tasks.join_next().await {
         match task {
             Ok(Task::Export(result)) => merge(&mut outcome, result, true),
@@ -503,7 +873,8 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
             ),
         }
     }
-    if exports
+    if preparation
+        .exports
         .iter()
         .any(|export| export.failed.load(Ordering::Acquire))
     {
@@ -512,21 +883,26 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
             Err(Error::State("Native owned cleanup unconfirmed".into())),
         );
     }
+    preparation.finish_local(&mut outcome);
     if outcome.operation.is_ok() && outcome.cleanup.is_ok() && outcome.recording.is_ok() {
         outcome.final_event = Some(Event::NativeStopped {
-            exports_closed: exports.len(),
+            exports_closed: preparation.exports.len(),
         });
     }
     outcome
 }
 
-async fn close_all(exports: &[Arc<Export>]) -> JobOutcome {
+async fn close_all(preparation: &mut Preparation) -> JobOutcome {
+    preparation.request_stop();
+    let (completed, actual_result) = preparation.collect_actual().await;
     let mut tasks = JoinSet::new();
-    for export in exports {
-        let export = export.clone();
-        tasks.spawn(async move { export.close().await });
+    for closed in completed {
+        tasks.spawn(closed.finalize());
     }
-    join_closes(tasks).await
+    let mut outcome = join_closes(tasks).await;
+    merge_result(&mut outcome.cleanup, actual_result);
+    preparation.finish_local(&mut outcome);
+    outcome
 }
 
 async fn join_closes(mut tasks: JoinSet<JobOutcome>) -> JobOutcome {
@@ -589,6 +965,7 @@ async fn management(
                 export.key == device_key
                     && export.published.bus_id == bus_id
                     && peer.allows(&export.key)
+                    && !stop_requested(&export.session.stop)
                     && !stop_requested(&export.stop.subscribe())
                     && !stop_requested(&export.invalidated)
                     && !export.failed.load(Ordering::Acquire)
@@ -880,9 +1257,160 @@ async fn connection_inner(
 }
 
 #[cfg(test)]
+#[path = "native_prepare_tests.rs"]
+mod prepare_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use tokio::io::AsyncReadExt;
+
+    #[tokio::test]
+    async fn received_export_stop_closes_before_original_resource_ack() -> Result<()> {
+        // Production received-owner phase plus real application messages. The
+        // Unix peer below is only a software cleanup receipt, not a trusted
+        // helper, root-credential test, kernel export or driver restoration.
+        use crate::{
+            context::{JobMessage, SessionContext},
+            health::HealthReporter,
+        };
+        use rustusb_core::application::{AttemptId, BrokerCorrelation, InstanceId, SessionId};
+        let correlation = BrokerCorrelation {
+            instance_id: InstanceId::new("00000000-0000-0000-0000-000000000001")?,
+            session_id: SessionId::new("00000000-0000-0000-0000-000000000002")?,
+            attempt_id: AttemptId::new("00000000-0000-0000-0000-000000000003")?,
+        };
+        let key = DeviceKey::native(&format!("usb-{}", "a".repeat(64)))?;
+        let (facts, mut messages) = tokio::sync::mpsc::channel(8);
+        let (stop, receiver) = watch::channel(false);
+        let (invalidated, invalidation) = watch::channel(false);
+        let (export_stop, _) = watch::channel(false);
+        let (mut owned_control, mut peer) = tokio::net::UnixStream::pair()?;
+        let export = Arc::new(Export {
+            key: key.clone(),
+            published: super::super::management_tests::device()?,
+            handle: Mutex::new(None),
+            session: RunSession::from(SessionContext {
+                health: HealthReporter::default(),
+                id: correlation.session_id.clone(),
+                stop: receiver.clone(),
+                facts,
+            }),
+            invalidated: invalidation,
+            stop: export_stop,
+            use_lock: Mutex::new(()),
+            reserved: AtomicBool::new(false),
+            failed: AtomicBool::new(false),
+            close_cause: AtomicU8::new(CloseCause::Open as u8),
+            pending_record: Mutex::new(None),
+            prior_failure: Mutex::new(None),
+            fixture_close: Mutex::new(Some(Box::pin(async move {
+                owned_control.write_all(b"close").await?;
+                let mut response = [0; 2];
+                owned_control.read_exact(&mut response).await?;
+                if response != *b"ok" {
+                    return Err(Error::Protocol("fixture cleanup receipt".into()));
+                }
+                Ok(())
+            }))),
+        });
+        let lease = "00000000-0000-0000-0000-000000000004".to_owned();
+        let task = tokio::spawn(async move {
+            let mut preparation = Preparation::default();
+            preparation.register(export.clone(), receiver.clone());
+            match finish_received_export(export, key, lease, Some(correlation), &receiver).await {
+                Err(mut outcome) => {
+                    merge(&mut outcome, close_all(&mut preparation).await, true);
+                    Err(outcome)
+                }
+                Ok(PrepareOutcome::JobStopped) => {
+                    let mut outcome = success();
+                    merge(&mut outcome, close_all(&mut preparation).await, true);
+                    Err(outcome)
+                }
+                Ok(value) => {
+                    let _ = close_all(&mut preparation).await;
+                    Ok(value)
+                }
+            }
+        });
+        let resource = messages
+            .recv()
+            .await
+            .ok_or_else(|| Error::State("Resource request absent".into()))?;
+        let JobMessage::Resource { reply, .. } = resource else {
+            return Err(Error::State(
+                "first received-owner record was not Resource".into(),
+            ));
+        };
+        stop.send_replace(true);
+        let mut close = [0; 5];
+        let released_before_ack =
+            tokio::time::timeout(Duration::from_secs(2), peer.read_exact(&mut close))
+                .await
+                .is_ok();
+        // Always release the original gate and collect the owner, including on
+        // the old failing path. A successful send also proves its ACK survives.
+        reply
+            .send(Err(Error::State(
+                "fixture original Resource rejection".into(),
+            )))
+            .map_err(|_| Error::State("original Resource ACK was abandoned".into()))?;
+        if !released_before_ack {
+            tokio::time::timeout(Duration::from_secs(2), peer.read_exact(&mut close))
+                .await
+                .map_err(|_| Error::Timeout("fixture cleanup after gate release".into()))??;
+        }
+        assert_eq!(&close, b"close");
+        peer.write_all(b"ok").await?;
+        let closing = messages
+            .recv()
+            .await
+            .ok_or_else(|| Error::State("Closing record absent".into()))?;
+        let JobMessage::Observe {
+            state,
+            evidence,
+            reply,
+            ..
+        } = closing
+        else {
+            return Err(Error::State("Closing record order".into()));
+        };
+        assert_eq!(state, SessionState::Disconnecting);
+        assert_eq!(evidence, Evidence::Closing);
+        let _ = reply.send(Ok(()));
+        let finish = messages
+            .recv()
+            .await
+            .ok_or_else(|| Error::State("Finish record absent".into()))?;
+        let JobMessage::Finish { cleanup, reply, .. } = finish else {
+            return Err(Error::State("Finish record order".into()));
+        };
+        assert!(matches!(cleanup, Cleanup::Verified));
+        let _ = reply.send(Ok(()));
+        let result = task
+            .await
+            .map_err(|_| Error::State("received-owner task failed".into()))?;
+        let outcome = match result {
+            Err(outcome) => outcome,
+            Ok(_) => {
+                return Err(Error::State(
+                    "stopped preparation remained available".into(),
+                ));
+            }
+        };
+        assert!(outcome.operation.is_ok());
+        assert!(outcome.cleanup.is_ok());
+        assert!(
+            matches!(outcome.recording, Err(Error::State(ref message)) if message.contains("fixture original Resource rejection"))
+        );
+        drop(invalidated);
+        assert!(
+            released_before_ack,
+            "actual received-owner cleanup was blocked by the original Resource ACK"
+        );
+        Ok(())
+    }
 
     #[tokio::test]
     async fn actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner()
@@ -1184,10 +1712,11 @@ mod tests {
             connection,
         });
         let key = DeviceKey::native(&format!("usb-{}", "a".repeat(64)))?;
-        match prepare(&key, &context).await {
-            Ok(None) => Ok(()),
-            Ok(Some(export)) => {
-                export.close().await.into_result()?;
+        let mut preparation = Preparation::default();
+        match prepare(&key, &context, &mut preparation).await {
+            Ok(PrepareOutcome::JobStopped) => Ok(()),
+            Ok(_) => {
+                close_all(&mut preparation).await.into_result()?;
                 Err(Error::State("vanished caller unexpectedly exported".into()))
             }
             Err(outcome) => {
@@ -1214,10 +1743,11 @@ mod tests {
         let key = DeviceKey::native(&format!("usb-{}", "a".repeat(64)))?;
         // The missing helper path makes an accidental real prepare fail. This
         // drives the actual shared preparation owner, not a mirrored state branch.
-        match prepare(&key, &context).await {
-            Ok(None) => Ok(()),
-            Ok(Some(export)) => {
-                export.close().await.into_result()?;
+        let mut preparation = Preparation::default();
+        match prepare(&key, &context, &mut preparation).await {
+            Ok(PrepareOutcome::JobStopped) => Ok(()),
+            Ok(_) => {
+                close_all(&mut preparation).await.into_result()?;
                 Err(Error::State(
                     "stopped foreground unexpectedly exported a device".into(),
                 ))

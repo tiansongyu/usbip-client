@@ -12,6 +12,8 @@ mod link;
 mod management_tests;
 #[cfg(target_os = "linux")]
 mod native;
+#[cfg(any(target_os = "linux", feature = "rust-backend"))]
+mod recording;
 #[cfg(feature = "rust-backend")]
 mod rust_server;
 

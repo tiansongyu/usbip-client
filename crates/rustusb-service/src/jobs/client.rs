@@ -1,7 +1,7 @@
 use super::{
     discover_until,
     io::{self, Counters},
-    link,
+    link, recording,
 };
 use crate::{
     context::stopped,
@@ -26,6 +26,11 @@ impl From<Error> for StageError {
 }
 
 type Recording = Pin<Box<dyn Future<Output = rustusb_core::Result<()>> + Send>>;
+
+fn stop_requested(stop: &watch::Receiver<bool>) -> bool {
+    *stop.borrow() || stop.has_changed().is_err()
+}
+
 struct Stops {
     job: watch::Receiver<bool>,
     session: watch::Receiver<bool>,
@@ -150,11 +155,35 @@ pub(super) async fn run(
                 }.into());
             }
         };
-        let correlation = session.attempt(BrokerResourceKind::NativeImport).await.map_err(StageError::Recording)?;
+        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
+        link::check(link_monitor.as_ref())?;
+        let reporter = session.clone();
+        let mut import_ended = link_monitor.as_ref().map(rustusb_transport::LinkMonitor::ended);
+        let correlation = match recording::wait(
+            async move { reporter.attempt(BrokerResourceKind::NativeImport).await },
+            async {
+                tokio::select! {
+                    biased;
+                    _=stopped(&mut job_stop)=>Ok(()),
+                    _=stopped(&mut session_stop)=>Ok(()),
+                    error=link::ended(&mut import_ended,link_monitor.as_ref())=>Err(error),
+                }
+            },
+        ).await {
+            recording::Wait::Ready(result) => result.map_err(StageError::Recording)?,
+            recording::Wait::Interrupted { pending, reason } => {
+                // The original managed reservation may still commit. Keep the
+                // existing conservative no-handle outcome, but never send a
+                // helper request after its late ACK. Network cleanup comes first.
+                attempted = !context.is_foreground();
+                postponed_recording = Some(pending);
+                return reason.map_err(StageError::Operation);
+            }
+        };
         // A managed reservation is already durable even before its RPC. A
         // foreground None has no WAL and remains NotStarted until we send.
         attempted = correlation.is_some();
-        if *context.stop.borrow() || *session.stop.borrow() { return Ok(()); }
+        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
         link::check(link_monitor.as_ref())?;
         // Never cancel an accepted helper prepare. Receive the actual handle,
         // record its ID, and then close it when a stop arrived meanwhile.
@@ -175,10 +204,11 @@ pub(super) async fn run(
         if !record_or_stop(Box::pin(async move { reporter.resource(correlation,&channel_id).await }),&mut postponed_recording,&mut stops).await? { return Ok(()); }
         let reporter=session.clone();
         if !record_or_stop(Box::pin(async move { reporter.observe(SessionState::Connecting,Evidence::Prepared,None).await }),&mut postponed_recording,&mut stops).await? { return Ok(()); }
-        if *context.stop.borrow() || *session.stop.borrow() { return Ok(()); }
+        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
         link::check(link_monitor.as_ref())?;
         let kernel = owner.take_relay()?;
         copying = Some(tokio::spawn(relay_link(network, kernel, context.is_foreground(), counters.clone(), link_monitor.clone())));
+        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
         // An accepted helper mutation remains owned until its actual response.
         // No timeout or WAL waiter drops this exchange or fabricates its result.
         let receipt = owner.commit().await?;
@@ -339,6 +369,192 @@ where
 mod tests {
     use super::*;
     use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+    #[tokio::test]
+    async fn stopped_import_attempt_closes_actual_tls_before_late_ack_and_never_calls_helper()
+    -> crate::jobs::management_tests::TestResult {
+        use crate::context::{JobContext, JobMessage, SessionContext};
+        use crate::jobs::management_tests::{credentials, device, loaded};
+        use rustusb_core::{
+            DeviceKey, VirtualProfile,
+            application::{AttemptId, BrokerCorrelation, InstanceId, JobId, SessionId},
+        };
+        use rustusb_protocol::{secure, server};
+        use tokio::{
+            net::TcpListener,
+            sync::{mpsc, oneshot},
+        };
+
+        tokio::time::timeout(Duration::from_secs(15), async {
+            for (framed, sender_disappears) in [(false, false), (true, false), (true, true)] {
+                let (tls, client) = credentials(framed)?;
+                let listener = TcpListener::bind("127.0.0.1:0").await?;
+                let config = Arc::new(loaded(client, listener.local_addr()?)?);
+                let (closed_tx, closed_rx) = oneshot::channel();
+                let peer =
+                    tokio::spawn(async move {
+                        let (tcp, _) = listener.accept().await?;
+                        let (mut connection, _) = link::accept(&tls, tcp).await?;
+                        assert!(matches!(
+                            secure::read_prelude(&mut connection.io).await?,
+                            secure::SecureOperation::Catalog
+                        ));
+                        assert!(matches!(
+                            server::read_management(&mut connection.io).await?,
+                            server::Management::Devlist
+                        ));
+                        let remote = device()?;
+                        secure::write_catalog_mapping(
+                            &mut connection.io,
+                            &[secure::DeviceMapping {
+                                device_key: DeviceKey::virtual_profile(VirtualProfile::Hid),
+                                bus_id: remote.bus_id.clone(),
+                            }],
+                        )
+                        .await?;
+                        connection
+                            .io
+                            .write_all(&server::devlist_reply(std::slice::from_ref(&remote))?)
+                            .await?;
+                        connection.io.flush().await?;
+                        assert!(
+                            link::complete_management(
+                                &mut connection.io,
+                                &mut connection.owner,
+                                std::future::pending()
+                            )
+                            .await?
+                        );
+                        drop(connection);
+                        let (tcp, _) = listener.accept().await?;
+                        let (mut connection, _) = link::accept(&tls, tcp).await?;
+                        assert!(matches!(
+                            secure::read_prelude(&mut connection.io).await?,
+                            secure::SecureOperation::Import { .. }
+                        ));
+                        assert!(matches!(
+                            server::read_management(&mut connection.io).await?,
+                            server::Management::Import(_)
+                        ));
+                        connection
+                            .io
+                            .write_all(&server::import_reply(0, Some(&remote))?)
+                            .await?;
+                        connection.io.flush().await?;
+                        let mut byte = [0];
+                        let read = connection.io.read(&mut byte).await;
+                        assert!(matches!(read, Ok(0) | Err(_)));
+                        let (_, sample) = link::finish(&mut connection.owner).await;
+                        if framed {
+                            assert!(sample.is_some_and(|sample| sample.phase
+                                == rustusb_core::link_health::LinkPhase::Ended));
+                        }
+                        closed_tx
+                            .send(())
+                            .map_err(|_| Error::State("TLS close observer ended".into()))?;
+                        Ok::<_, Error>(())
+                    });
+                let (facts, mut receiver) = mpsc::channel(2);
+                let (stop, stopping) = watch::channel(false);
+                let instance = InstanceId::new("00000000-0000-0000-0000-000000000001")?;
+                let id = SessionId::new("00000000-0000-0000-0000-000000000003")?;
+                let directory = tempfile::tempdir()?;
+                let helper = directory.path().join("must-not-be-contacted.sock");
+                let context = RunContext::managed(JobContext {
+                    instance_id: instance.clone(),
+                    job_id: JobId::new("00000000-0000-0000-0000-000000000002")?,
+                    helper_socket: helper.clone(),
+                    stop: stopping.clone(),
+                    facts: facts.clone(),
+                });
+                let task = tokio::spawn(run(config, Duration::from_secs(5), context));
+                let Some(JobMessage::Begin { reply, .. }) = receiver.recv().await else {
+                    return Err(Error::State("missing real client Begin".into()).into());
+                };
+                let _ = reply.send(Ok(SessionContext {
+                    health: crate::health::HealthReporter::default(),
+                    id: id.clone(),
+                    stop: stopping,
+                    facts,
+                }));
+                let Some(JobMessage::Observe {
+                    evidence: Evidence::Intent,
+                    reply,
+                    ..
+                }) = receiver.recv().await
+                else {
+                    return Err(Error::State("missing client Intent".into()).into());
+                };
+                let _ = reply.send(Ok(()));
+                let Some(JobMessage::Attempt {
+                    kind: BrokerResourceKind::NativeImport,
+                    reply,
+                    ..
+                }) = receiver.recv().await
+                else {
+                    return Err(Error::State("missing held actual Attempt".into()).into());
+                };
+                if sender_disappears {
+                    // This gates the real pending Attempt, not the smaller
+                    // Ready-to-helper interval covered by source guards.
+                    drop(stop);
+                } else {
+                    stop.send_replace(true);
+                }
+                closed_rx.await?;
+                assert!(!task.is_finished() && !reply.is_closed());
+                assert!(receiver.try_recv().is_err());
+                assert!(!helper.exists());
+                let late = if framed {
+                    Ok(BrokerCorrelation {
+                        instance_id: instance,
+                        session_id: id,
+                        attempt_id: AttemptId::new("00000000-0000-0000-0000-000000000004")?,
+                    })
+                } else {
+                    Err(Error::Permission("late original Attempt rejection".into()))
+                };
+                reply
+                    .send(late)
+                    .map_err(|_| Error::State("original Attempt future dropped".into()))?;
+                let Some(JobMessage::Observe {
+                    evidence: Evidence::Closing,
+                    reply,
+                    ..
+                }) = receiver.recv().await
+                else {
+                    return Err(Error::State(
+                        "stopped Attempt sent unexpected helper preparation fact".into(),
+                    )
+                    .into());
+                };
+                let _ = reply.send(Ok(()));
+                let Some(JobMessage::Finish {
+                    cleanup: Cleanup::Unconfirmed,
+                    reply,
+                    ..
+                }) = receiver.recv().await
+                else {
+                    return Err(Error::State(
+                        "reserved unsent Attempt lost conservative outcome".into(),
+                    )
+                    .into());
+                };
+                let _ = reply.send(Ok(()));
+                let outcome = task.await?;
+                // A late Attempt ACK cannot cause the deliberately nonexistent
+                // helper to be contacted: that would add a real operation error.
+                assert!(outcome.operation.is_ok());
+                assert!(outcome.cleanup.is_err());
+                assert_eq!(outcome.recording.is_ok(), framed);
+                assert!(!helper.exists());
+                peer.await??;
+            }
+            Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+        })
+        .await??;
+        Ok(())
+    }
 
     #[tokio::test]
     async fn link_failure_during_an_accepted_ack_cleans_before_waiting_for_that_same_ack()

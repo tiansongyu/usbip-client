@@ -41,8 +41,34 @@ pub(crate) struct Controls {
     sessions: BTreeMap<SessionId, Control>,
     health: BTreeMap<SessionId, HealthEntry>,
     journal_unhealthy: bool,
+    shutdown_requested: bool,
 }
 impl Controls {
+    fn register_job(&mut self, id: JobId, control: Control) {
+        if self.shutdown_requested {
+            control.stop.send_replace(true);
+        }
+        self.jobs.insert(id, control);
+    }
+
+    fn register_session(&mut self, id: SessionId, control: Control) {
+        let parent_stopped = self
+            .jobs
+            .get(&control.job_id)
+            .is_some_and(|job| *job.stop.borrow());
+        if self.shutdown_requested || parent_stopped {
+            control.stop.send_replace(true);
+        }
+        self.sessions.insert(id, control);
+    }
+
+    pub(crate) fn begin_shutdown(&mut self) {
+        // The same short mutex protects registration and the sticky latch.
+        // A Start/Begin commit finishing later cannot create an unstopped owner.
+        self.shutdown_requested = true;
+        self.stop_all();
+    }
+
     pub fn health(
         &self,
         config: &LoadedConfig,
@@ -302,22 +328,22 @@ impl Runtime {
     ) -> Result<()> {
         let mut stopping = *stop.borrow();
         let mut tick = tokio::time::interval(Duration::from_secs(1));
-        if stopping && let Ok(controls) = self.controls.lock() {
-            controls.stop_all();
+        if stopping && let Ok(mut controls) = self.controls.lock() {
+            controls.begin_shutdown();
         }
         loop {
             if stopping && self.workers.is_empty() && self.recoveries.is_empty() {
                 break;
             }
             tokio::select! {
-                changed=stop.changed(),if !stopping=>{let _=changed;stopping=true;if let Ok(controls)=self.controls.lock(){controls.stop_all();}else{self.healthy=false;}},
+                changed=stop.changed(),if !stopping=>{let _=changed;stopping=true;if let Ok(mut controls)=self.controls.lock(){controls.begin_shutdown();}else{self.healthy=false;}},
                 fact=self.facts.recv()=>{if let Some(fact)=fact{self.fact(fact).await;}},
                 result=self.workers.join_next(),if !self.workers.is_empty()=>{if let Some(result)=result{match result{Ok((id,result))=>self.job_finished(id,result).await,Err(_)=>{self.healthy=false;tracing::error!("application owner task ended abnormally; cleanup remains unproven");}}}},
                 result=self.recoveries.join_next(),if !self.recoveries.is_empty()=>{if let Some(Ok((id,proofs)))=result{self.recovered(id,proofs).await;}},
                 command=commands.recv(),if !stopping=>{match command {Some(command)=>{
                     let response=self.command(command.uid,command.request).await;
                     let _=command.reply.send(ResponseEnvelope{schema_version:1,journal_healthy:self.healthy,response});
-                },None=>{stopping=true;if let Ok(controls)=self.controls.lock(){controls.stop_all();}else{self.healthy=false;}}}},
+                },None=>{stopping=true;if let Ok(mut controls)=self.controls.lock(){controls.begin_shutdown();}else{self.healthy=false;}}}},
                 _=tick.tick(),if !stopping&&self.healthy&&self.recoveries.is_empty()=>self.start_recovery(),
             }
         }
@@ -667,15 +693,18 @@ impl Runtime {
         next.preflight(true)?;
         self.persist(next).await?;
         let (sender, receiver) = watch::channel(false);
-        self.controls.lock().map_err(|_| lock_error())?.jobs.insert(
-            id.clone(),
-            Control {
-                profile,
-                job_id: id.clone(),
-                stop: sender,
-                stoppable: true,
-            },
-        );
+        self.controls
+            .lock()
+            .map_err(|_| lock_error())?
+            .register_job(
+                id.clone(),
+                Control {
+                    profile,
+                    job_id: id.clone(),
+                    stop: sender,
+                    stoppable: true,
+                },
+            );
         let context = JobContext {
             instance_id: self.instance.clone(),
             job_id: id.clone(),
@@ -862,8 +891,7 @@ impl Runtime {
         self.controls
             .lock()
             .map_err(|_| lock_error())?
-            .sessions
-            .insert(
+            .register_session(
                 id.clone(),
                 Control {
                     profile: job.profile,

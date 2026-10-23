@@ -10,6 +10,188 @@ use std::{collections::BTreeSet, os::unix::fs::PermissionsExt, path::PathBuf};
 
 const PROFILE: &str = "fixed-profile";
 
+// Real production stop delivery and store await, with ordinary owned Unix
+// endpoints as resource witnesses. This is not a helper/kernel USB test.
+#[tokio::test]
+async fn shutdown_fanout_reaches_owned_stream_before_stalled_store_ack() -> Result<()> {
+    use tokio::io::AsyncReadExt;
+    let mut fixture = Fixture::new()?;
+    let id = JobId::new(uuid(101))?;
+    let (job_stop, mut job_receiver) = watch::channel(false);
+    let controls = fixture.runtime.controls.clone();
+    controls.lock().map_err(|_| lock_error())?.register_job(
+        id.clone(),
+        Control {
+            profile: PROFILE.into(),
+            job_id: id,
+            stop: job_stop.clone(),
+            stoppable: true,
+        },
+    );
+    let (owned, mut observer) = tokio::net::UnixStream::pair()?;
+    let owner = tokio::spawn(async move {
+        crate::context::stopped(&mut job_receiver).await;
+        drop(owned);
+    });
+    let store = fixture.runtime.store.clone();
+    let (locked, lock_received) = oneshot::channel();
+    let (release, released) = std::sync::mpsc::channel();
+    let blocker = tokio::task::spawn_blocking(move || {
+        let _guard = store.lock().map_err(|_| lock_error())?;
+        locked
+            .send(())
+            .map_err(|_| Error::State("shutdown lock observer".into()))?;
+        released
+            .recv_timeout(Duration::from_secs(5))
+            .map_err(|_| Error::Timeout("shutdown fixture release".into()))?;
+        Ok::<_, Error>(())
+    });
+    lock_received
+        .await
+        .map_err(|_| Error::State("shutdown fixture lock".into()))?;
+    let next = fixture.runtime.state.clone();
+    let recording = fixture.runtime.persist(next);
+    tokio::pin!(recording);
+    assert!(
+        tokio::time::timeout(Duration::from_millis(20), &mut recording)
+            .await
+            .is_err()
+    );
+    let (shutdown, queued) = watch::channel(false);
+    crate::ipc::request_shutdown(&controls, &shutdown)?;
+    assert!(*queued.borrow());
+    let before_ack =
+        tokio::time::timeout(Duration::from_millis(100), observer.read(&mut [0])).await;
+    let closed_before_ack = matches!(before_ack, Ok(Ok(0)));
+    assert!(
+        tokio::time::timeout(Duration::from_millis(20), &mut recording)
+            .await
+            .is_err()
+    );
+    // Always release the real store gate, even for the original failing product.
+    // This late fixture teardown is explicitly not the pre-ACK release proof.
+    release
+        .send(())
+        .map_err(|_| Error::State("shutdown blocker abandoned".into()))?;
+    recording.await?;
+    blocker
+        .await
+        .map_err(|_| Error::State("shutdown blocker task".into()))??;
+    job_stop.send_replace(true);
+    owner
+        .await
+        .map_err(|_| Error::State("shutdown owner task".into()))?;
+    assert!(
+        closed_before_ack,
+        "actual owned endpoint remained open while journal ACK was stalled"
+    );
+    Ok(())
+}
+
+#[test]
+fn shutdown_late_registration_inherits_the_same_sticky_stop() -> Result<()> {
+    let controls = Mutex::new(Controls::default());
+    let (shutdown, _queued) = watch::channel(false);
+    crate::ipc::request_shutdown(&controls, &shutdown)?;
+    let id = JobId::new(uuid(102))?;
+    let (job_stop, job_receiver) = watch::channel(false);
+    let (session_stop, session_receiver) = watch::channel(false);
+    let mut controls = controls.lock().map_err(|_| lock_error())?;
+    controls.register_job(
+        id.clone(),
+        Control {
+            profile: PROFILE.into(),
+            job_id: id.clone(),
+            stop: job_stop,
+            stoppable: true,
+        },
+    );
+    controls.register_session(
+        SessionId::new(uuid(103))?,
+        Control {
+            profile: PROFILE.into(),
+            job_id: id,
+            stop: session_stop,
+            stoppable: true,
+        },
+    );
+    assert!(*job_receiver.borrow(), "late job missed service shutdown");
+    assert!(
+        *session_receiver.borrow(),
+        "late session missed service shutdown"
+    );
+    Ok(())
+}
+
+#[test]
+fn shutdown_late_session_inherits_its_already_stopped_job() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let id = JobId::new(uuid(104))?;
+    let (job_stop, _job_receiver) = watch::channel(false);
+    let (session_stop, session_receiver) = watch::channel(false);
+    let mut controls = Controls::default();
+    controls.register_job(
+        id.clone(),
+        Control {
+            profile: PROFILE.into(),
+            job_id: id.clone(),
+            stop: job_stop,
+            stoppable: true,
+        },
+    );
+    assert!(controls.request(
+        &fixture.runtime.config,
+        operator_uid(),
+        &Request::StopJob { job_id: id.clone() }
+    )?);
+    controls.register_session(
+        SessionId::new(uuid(105))?,
+        Control {
+            profile: PROFILE.into(),
+            job_id: id,
+            stop: session_stop,
+            stoppable: true,
+        },
+    );
+    assert!(
+        *session_receiver.borrow(),
+        "late session missed authorized job stop"
+    );
+    Ok(())
+}
+
+#[test]
+fn shutdown_poison_still_fans_out_and_returns_an_explicit_error() -> Result<()> {
+    let controls = Arc::new(Mutex::new(Controls::default()));
+    let (owner_stop, owner_receiver) = watch::channel(false);
+    let id = JobId::new(uuid(106))?;
+    controls.lock().map_err(|_| lock_error())?.register_job(
+        id.clone(),
+        Control {
+            profile: PROFILE.into(),
+            job_id: id,
+            stop: owner_stop,
+            stoppable: true,
+        },
+    );
+    let poisoned = controls.clone();
+    let unwound = std::thread::spawn(move || -> Result<()> {
+        let _guard = poisoned.lock().map_err(|_| lock_error())?;
+        // Deliberately unwind with the guard held; no application owner panics.
+        std::panic::resume_unwind(Box::new("intentional controls poison fixture"));
+    })
+    .join();
+    assert!(unwound.is_err());
+    let (shutdown, queued) = watch::channel(false);
+    assert!(matches!(
+        crate::ipc::request_shutdown(&controls, &shutdown),
+        Err(Error::State(_))
+    ));
+    assert!(*queued.borrow());
+    assert!(*owner_receiver.borrow());
+    Ok(())
+}
+
 fn uuid(value: u64) -> String {
     format!("00000000-0000-0000-0000-{value:012x}")
 }
