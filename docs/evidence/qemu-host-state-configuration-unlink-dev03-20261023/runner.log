@@ -1,0 +1,24 @@
+{
+  "result": "FAIL",
+  "operation": "configuration",
+  "mode": "unlink",
+  "evidence": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023"
+}
+Traceback (most recent call last):
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py", line 408, in <module>
+    main()
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py", line 373, in main
+    summary["tracer_events"], summary["tracer_beacons"] = verify_gate(logs["server"], args.operation, args.nonce)
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py", line 193, in verify_gate
+    beacons = json_lines(block(log, "BEACONS"))
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py", line 85, in json_lines
+    return [json.loads(line) for line in value.splitlines() if line.strip()]
+  File "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py", line 85, in <listcomp>
+    return [json.loads(line) for line in value.splitlines() if line.strip()]
+  File "/usr/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.10/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

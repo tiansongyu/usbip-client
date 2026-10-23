@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "scope": "new Python/shell syntax, help and non-guest/unsafe-input refusals only; no Cargo/QEMU/ptrace/USB/module/network action",
+  "result": "PASS",
+  "checks": [
+    {
+      "check": "python_compile",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "busybox",
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sh",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 2,
+      "expected_returncode": 2,
+      "stdout": "",
+      "stderr": "Refusing host-state init outside a disposable QEMU guest\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py",
+        "--help"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "stdout": "usage: run-host-state-qemu.py [-h] --operation {configuration,alternate,clear}\n                              --mode {unlink,eof} [--kernel KERNEL]\n                              [--timeout TIMEOUT] [--nonce NONCE]\n                              [--skip-build] [--evidence EVIDENCE]\n\nGate real USBFS host-state syscall entry in two disposable x86_64 guests. Only\nthe guest-root tracer pauses the ordinary server's matching blocking TID. No\nhost USB, ptrace, module, TAP, listener or network configuration is used. This\nproves syscall-entry ordering, not an in-kernel active USB ioctl window.\n\noptions:\n  -h, --help            show this help message and exit\n  --operation {configuration,alternate,clear}\n  --mode {unlink,eof}\n  --kernel KERNEL\n  --timeout TIMEOUT\n  --nonce NONCE\n  --skip-build          development only; final evidence requires the default\n                        locked build\n  --evidence EVIDENCE\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py",
+        "--operation",
+        "configuration",
+        "--mode",
+        "unlink",
+        "--kernel",
+        "../unsafe"
+      ],
+      "returncode": 2,
+      "expected_returncode": 2,
+      "stdout": "",
+      "stderr": "usage: run-host-state-qemu.py [-h] --operation {configuration,alternate,clear}\n                              --mode {unlink,eof} [--kernel KERNEL]\n                              [--timeout TIMEOUT] [--nonce NONCE]\n                              [--skip-build] [--evidence EVIDENCE]\nrun-host-state-qemu.py: error: --kernel must be one safe kernel-release token\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/run-host-state-qemu.py",
+        "--operation",
+        "configuration",
+        "--mode",
+        "unlink",
+        "--nonce",
+        "bad!"
+      ],
+      "returncode": 2,
+      "expected_returncode": 2,
+      "stdout": "",
+      "stderr": "usage: run-host-state-qemu.py [-h] --operation {configuration,alternate,clear}\n                              --mode {unlink,eof} [--kernel KERNEL]\n                              [--timeout TIMEOUT] [--nonce NONCE]\n                              [--skip-build] [--evidence EVIDENCE]\nrun-host-state-qemu.py: error: --nonce must contain 1\u201348 safe ASCII letters, digits, hyphens or underscores\n"
+    }
+  ],
+  "source_sha256": {
+    "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+    "guest-host-state-init.sh": "f18ad14e06be03ef71a1a05e304592298b831c5ee853e24be86166b6d19bde8d"
+  }
+}

@@ -1,0 +1,1440 @@
+{
+  "schema_version": 1,
+  "scope": "Dirty-development evidence only: nine isolated QEMU attempts, three retained FAIL and six PASS; clean-commit final six-case verification remains pending",
+  "development_base_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+  "all_runs_working_tree_dirty": true,
+  "runtime_failures_preserved": 3,
+  "development_pass_runs": 6,
+  "pass_probe_case_count": 48,
+  "pass_guest_exit_zero_count": 12,
+  "checks": {
+    "all_nine_runs_default_locked_all_features_build": true,
+    "all_nine_runs_same_cli_helper_binary_sha256": true,
+    "all_nine_guest_cli_helper_match_build": true,
+    "six_pass_runs_same_frozen_four_sources": true,
+    "common_binary_sha256": {
+      "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+      "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+    },
+    "same_frozen_sources_current_at_initial_archival": true
+  },
+  "production_source_comparison": {
+    "baseline_commit": "fbc856cfd95bf48a0839538f5ec4cedb75d159f2",
+    "command": [
+      "git",
+      "diff",
+      "--quiet",
+      "fbc856cfd95bf48a0839538f5ec4cedb75d159f2",
+      "--",
+      "crates",
+      "vendor",
+      "Cargo.toml",
+      "Cargo.lock"
+    ],
+    "returncode": 0,
+    "no_untracked_crate_or_vendor_files": true,
+    "scope": "tracked crates/vendor/Cargo source unchanged; only four new QEMU test programs and documentation/evidence added"
+  },
+  "frozen_script_sha256": {
+    "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+    "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+    "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+    "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a"
+  },
+  "runs": [
+    {
+      "run": "dev01",
+      "operation": "configuration",
+      "mode": "unlink",
+      "result": "FAIL",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": "a host-state guest reported failure",
+      "source_fingerprint_sha256": "166c3304721a4963c5081a19dceaff6fa6c57ec1ba724a82cf6fbafaddbcadef",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "f18ad14e06be03ef71a1a05e304592298b831c5ee853e24be86166b6d19bde8d",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 0,
+      "directory": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-configuration-unlink-dev01-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "911b40dd233f3cb05421b975a3d1eddd20ac16d7fee50d19c55fdf756357fc36",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/build.log",
+          "bytes": 62,
+          "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/client-qemu.stderr",
+          "bytes": 71,
+          "sha256": "ae67a8935a9a9a9a8a4c9770646376b6c533be5a626bf23f94580e57f852d091",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/client-serial.log",
+          "bytes": 30227,
+          "sha256": "ec2930fb6cc6cbfd3cd95370847c0caa702559c450facee7cdbdecddd5ada3ae",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/runner.log",
+          "bytes": 508,
+          "sha256": "1b9a0a472f2911e8ceef710121d6e6dbf831b4f100f9d842eae1ba808d54e971",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/server-qemu.stderr",
+          "bytes": 82,
+          "sha256": "93514f40b6f79809b45e3984a14061ff1599bbfaa5a2686ff7c11867e9989935",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/server-serial.log",
+          "bytes": 58692,
+          "sha256": "dfeffdbbd1c419b4c8ebd7ae002d801c5195202412c38d28174b8f407cf9dcd2",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "617e675e488b23054e17b8c1a2f234256e1c5d1fe8837605a42965af8f413b1e",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/guest-host-state-init.sh",
+          "bytes": 19812,
+          "sha256": "f18ad14e06be03ef71a1a05e304592298b831c5ee853e24be86166b6d19bde8d",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev01-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev01-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev01-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "c5bade9a516ceee6bb0a1441308e43c053ce6723f941f3b7659d8ceda6e7ccf7",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev01-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev01-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev01-20261023/summary.json",
+          "bytes": 7935,
+          "sha256": "a0537ff7fe917a3828a75be2b68bf3bc62c5488465ea41f5172be5ede21f9d70",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev01-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev02",
+      "operation": "configuration",
+      "mode": "unlink",
+      "result": "FAIL",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": "a host-state guest reported failure",
+      "source_fingerprint_sha256": "d638ed6a8133de08b3b17d4baf3c5639aca40cb0c93fc32d2a2d4dcd0408e5a1",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "e9a2189d86bc03957d722dbec9720d469a04db0757b61851afe3cda04ec4ee70",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 0,
+      "directory": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-configuration-unlink-dev02-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "25c2cb02f83f503fe97e6b7c2412d0132119126f17b9e2a760ddc1eaa4944097",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/client-serial.log",
+          "bytes": 36576,
+          "sha256": "922ad58de22a2688513469a168f39e521bcf937dd600878148d26359aa42aea7",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/runner.log",
+          "bytes": 508,
+          "sha256": "ef30bbb109b317a8ac0072be21c78dad7b4bb3063441638200e8ec1664cb6787",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/server-qemu.stderr",
+          "bytes": 153,
+          "sha256": "0e3f859e457204f269c0bbe46f8e841568aae89fe7ad053d70dad0891d845876",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/server-serial.log",
+          "bytes": 33199,
+          "sha256": "11b8b0ab08e183f4453a1d6dedf7f71dffa34a72cbcf6d065d48ad16b8a4c783",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "d635ba1c5f37a686502e495da977b66c4cadec30c45579f0e7227d55d90d3f86",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/guest-host-state-init.sh",
+          "bytes": 19814,
+          "sha256": "e9a2189d86bc03957d722dbec9720d469a04db0757b61851afe3cda04ec4ee70",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev02-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev02-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev02-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "e4b0d0dca560d0816fffdaea4c78ddad092fe7670751f7e5ea51ef0e8f43e293",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev02-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev02-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev02-20261023/summary.json",
+          "bytes": 7929,
+          "sha256": "9ac99d8728fe7efbe4733e8ca6931fd359ff710d62303aa063265b452ca83d81",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev02-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev03",
+      "operation": "configuration",
+      "mode": "unlink",
+      "result": "FAIL",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": "Expecting value: line 1 column 1 (char 0)",
+      "source_fingerprint_sha256": "7c89c3a2313567294141cc429882e48c36fbcadaff4fd74092afdb8e3d06561f",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "82fe6be4745ade5961d61a71deca1ef08cd43158f103e953d3409c25b04f45fb",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 9,
+      "directory": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "eb55471c6066373fdfc42e1d65af56a3aa658273de09583bd1916a60cd79f0cb",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/client-serial.log",
+          "bytes": 32550,
+          "sha256": "b4a66f84e83ffd65a13819a32c744b052f21aa34592c25dfdd92b75353412133",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/runner.log",
+          "bytes": 1455,
+          "sha256": "78f21a8a04767f48abc798bbe10ec9a5d48b969fd00274275c3270d84cb63a8e",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/server-qemu.stderr",
+          "bytes": 164,
+          "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/server-serial.log",
+          "bytes": 75559,
+          "sha256": "9a76b66ec4961683eb497242b771501e512c8ba0f2b4d41cbdbcb0ffc65713a5",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "9fb7dcd2f6b922297bf54b5f1f6b41c7e682779f18af8f5c82c150c32dc2bca9",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/guest-host-state-init.sh",
+          "bytes": 20098,
+          "sha256": "82fe6be4745ade5961d61a71deca1ef08cd43158f103e953d3409c25b04f45fb",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev03-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev03-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev03-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "a4ba98319bde3fdce3a142f0dd3889a44a2c502a6b0b1267e65d9a2bfde8262a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev03-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev03-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev03-20261023/summary.json",
+          "bytes": 47293,
+          "sha256": "b6be00baf75b36c189aa25531a3dead8f9b13c30c7339c696d5e713ee84df179",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev03-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev04",
+      "operation": "configuration",
+      "mode": "unlink",
+      "result": "PASS",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": null,
+      "source_fingerprint_sha256": "075b0138165b0c1dfc7e4a8db39813bb91af2754ef4714dfaa7a3f1f3118402a",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 9,
+      "directory": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-configuration-unlink-dev04-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "887e7585be32eb7b7b544ea4d711efde83e0e5603f22f2b886444399ce64f99b",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/build.log",
+          "bytes": 62,
+          "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/client-serial.log",
+          "bytes": 32589,
+          "sha256": "2bf0cb5613d0ec26f09a748c35c017fffa70f5bbccffa3b4d404230ecbd028c2",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/runner.log",
+          "bytes": 152,
+          "sha256": "70c1969263bbbab28b924d969ca5feb6cd0798f08eb248a4eeaf18c6965f6226",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/server-qemu.stderr",
+          "bytes": 164,
+          "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/server-serial.log",
+          "bytes": 71435,
+          "sha256": "6d1495d1292ea48f7238770402db8cd86a7e22e990e162671543763c3eb0dc26",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "79a0bb3270e5ace2672765994bf4d84ead43c7d969b012096b86c1c26e505751",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/guest-host-state-init.sh",
+          "bytes": 20099,
+          "sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev04-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev04-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev04-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "838f49f2e7a6847f32504370dd94f8d5cfe52ee304cdaf415c0e1409ac2fd360",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev04-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev04-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-unlink-dev04-20261023/summary.json",
+          "bytes": 77489,
+          "sha256": "528c7fa49fcc8483e0ac62df2f9f092fe40d4d668fcb9452a5c8be51f88646b3",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-unlink-dev04-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev05",
+      "operation": "configuration",
+      "mode": "eof",
+      "result": "PASS",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": null,
+      "source_fingerprint_sha256": "075b0138165b0c1dfc7e4a8db39813bb91af2754ef4714dfaa7a3f1f3118402a",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 7,
+      "directory": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-configuration-eof-dev05-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "7ef853b8676198b5fac9d0fdc9678c7f08c15da993a06ff43b553ec865db2731",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/client-serial.log",
+          "bytes": 32118,
+          "sha256": "cb876906415188a29fbc47165d5564dcadf1dc65ad5c667512be223af9f37f88",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/runner.log",
+          "bytes": 146,
+          "sha256": "5f1951f4987702ab887c3f6867c894d62d79c52442d5d9a8247392441101d458",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/server-qemu.stderr",
+          "bytes": 164,
+          "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/server-serial.log",
+          "bytes": 91743,
+          "sha256": "2b907cd8cbde0e6cc8fb220ee42d732d0964859fc4c685099b05171328fa6a11",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "79a0bb3270e5ace2672765994bf4d84ead43c7d969b012096b86c1c26e505751",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/guest-host-state-init.sh",
+          "bytes": 20099,
+          "sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev05-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev05-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev05-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "838f49f2e7a6847f32504370dd94f8d5cfe52ee304cdaf415c0e1409ac2fd360",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev05-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev05-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-configuration-eof-dev05-20261023/summary.json",
+          "bytes": 118015,
+          "sha256": "e13efa6b1ac6428a4406f4f19540dd5797412080220376ec8f90570c67c194d1",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-configuration-eof-dev05-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev06",
+      "operation": "alternate",
+      "mode": "unlink",
+      "result": "PASS",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": null,
+      "source_fingerprint_sha256": "075b0138165b0c1dfc7e4a8db39813bb91af2754ef4714dfaa7a3f1f3118402a",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 9,
+      "directory": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-alternate-unlink-dev06-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "737bed3173a5f260f0f0c9476a251ab5dd9837e16c08b9b44453cc6ec91404b7",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/client-serial.log",
+          "bytes": 32576,
+          "sha256": "62d5f608ef854815722d3d486e973ed92c11a09b344715c0c0dd0434511b2d75",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/runner.log",
+          "bytes": 144,
+          "sha256": "e1cb6663dbff2ebd405580b29c14c645ebf285587b515234fe011062ca2c3bfd",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/server-qemu.stderr",
+          "bytes": 164,
+          "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/server-serial.log",
+          "bytes": 72603,
+          "sha256": "def47ff1fa8a4523c100b9d74a891fcc22587fa7b9bc66f6106038d557bd04e3",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "79a0bb3270e5ace2672765994bf4d84ead43c7d969b012096b86c1c26e505751",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/guest-host-state-init.sh",
+          "bytes": 20099,
+          "sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev06-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev06-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev06-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "838f49f2e7a6847f32504370dd94f8d5cfe52ee304cdaf415c0e1409ac2fd360",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev06-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev06-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-unlink-dev06-20261023/summary.json",
+          "bytes": 81653,
+          "sha256": "7538e33a6331f709096d0f208fd77b4d47ff0cb3839cf7c1f395cebe5c9bd466",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-unlink-dev06-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev07",
+      "operation": "alternate",
+      "mode": "eof",
+      "result": "PASS",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": null,
+      "source_fingerprint_sha256": "075b0138165b0c1dfc7e4a8db39813bb91af2754ef4714dfaa7a3f1f3118402a",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 7,
+      "directory": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-alternate-eof-dev07-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "192ceedf4f2b53f92cdc058917b517f4283952c56b65db12d92c8170d442b1f5",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/client-serial.log",
+          "bytes": 32030,
+          "sha256": "c4959943e6b33fad37d1b89b1268210e15c7024c17d33ccfea87b903182b2d18",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/runner.log",
+          "bytes": 138,
+          "sha256": "71a3eafee270347752c00fbc11998679f6e7fb81c28d829e1e020813e51dabb7",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/server-qemu.stderr",
+          "bytes": 164,
+          "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/server-serial.log",
+          "bytes": 79648,
+          "sha256": "67c479707422e9185e05bf5dc23adf90153eed698574e9c9c121b5a63ba555c9",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "79a0bb3270e5ace2672765994bf4d84ead43c7d969b012096b86c1c26e505751",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/guest-host-state-init.sh",
+          "bytes": 20099,
+          "sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev07-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev07-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev07-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "838f49f2e7a6847f32504370dd94f8d5cfe52ee304cdaf415c0e1409ac2fd360",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev07-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev07-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-alternate-eof-dev07-20261023/summary.json",
+          "bytes": 95316,
+          "sha256": "24a8f08f04ab0454647381817ba8c2d3e515f84a2c72755279552702ba36faef",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-alternate-eof-dev07-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev08",
+      "operation": "clear",
+      "mode": "unlink",
+      "result": "PASS",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": null,
+      "source_fingerprint_sha256": "075b0138165b0c1dfc7e4a8db39813bb91af2754ef4714dfaa7a3f1f3118402a",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 9,
+      "directory": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-clear-unlink-dev08-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "ec2b37ef78e5e626f93b670cd5f59f0f846f413693a10a8ad19c9ea19a5c64b7",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/client-serial.log",
+          "bytes": 32499,
+          "sha256": "cd84483d58938aa85dfab561fa9157868de1b7b2f847326577ed14bbef84a3c1",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/runner.log",
+          "bytes": 136,
+          "sha256": "c946d8c6d731326ac90e4d3cb50a5f118f88b0bbebf2d305c0aa2bcef61bc962",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/server-qemu.stderr",
+          "bytes": 246,
+          "sha256": "d46009914ec8eb5ae180e744f23c081c084875accefaf8be6be96d0956ae2eb8",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/server-serial.log",
+          "bytes": 73349,
+          "sha256": "81964623ab5cc5bb0e4849854cc60a26d2b88b22b3fcf71b25f616858ed477ed",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "79a0bb3270e5ace2672765994bf4d84ead43c7d969b012096b86c1c26e505751",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/guest-host-state-init.sh",
+          "bytes": 20099,
+          "sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev08-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev08-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev08-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "838f49f2e7a6847f32504370dd94f8d5cfe52ee304cdaf415c0e1409ac2fd360",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev08-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev08-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-unlink-dev08-20261023/summary.json",
+          "bytes": 83288,
+          "sha256": "a0135e3a1ef361a1f27dbf466b0ebcf910eeb020dde73031995c05d010637c6f",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-unlink-dev08-20261023/summary.json"
+        }
+      ]
+    },
+    {
+      "run": "dev09",
+      "operation": "clear",
+      "mode": "eof",
+      "result": "PASS",
+      "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+      "working_tree_dirty": true,
+      "build_performed": true,
+      "build_command": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--all-features"
+      ],
+      "error": null,
+      "source_fingerprint_sha256": "075b0138165b0c1dfc7e4a8db39813bb91af2754ef4714dfaa7a3f1f3118402a",
+      "script_sha256": {
+        "run-host-state-qemu.py": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+        "guest-host-state-init.sh": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+        "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+        "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+        "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+        "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+      },
+      "binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_binary_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "probe_case_count": 7,
+      "directory": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023",
+      "original_tmp_directory": "/tmp/rustusb-host-state-clear-eof-dev09-20261023",
+      "artifact_count": 14,
+      "artifacts": [
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/artifacts.sha256",
+          "bytes": 1131,
+          "sha256": "d3149e13c068776acd04dd3c83328a9f16b193c26e3027b7fe3f499d7057d453",
+          "provenance": "derived SHA256 manifest of all other run artifacts"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/build.log",
+          "bytes": 62,
+          "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023/build.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/client-qemu.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023/client-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/client-serial.log",
+          "bytes": 31946,
+          "sha256": "0dd29f34cb1aa2e10ddb28e2ee7f821a9ea3b914b4a27a3d20aa95a39d1693fc",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023/client-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/runner.log",
+          "bytes": 130,
+          "sha256": "4e39032c705535ed2134db48318f47b50f49ae04391fabeb28d2967121aef168",
+          "provenance": "raw runner stdout/stderr, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023-runner.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/server-qemu.stderr",
+          "bytes": 246,
+          "sha256": "d46009914ec8eb5ae180e744f23c081c084875accefaf8be6be96d0956ae2eb8",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023/server-qemu.stderr"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/server-serial.log",
+          "bytes": 70964,
+          "sha256": "205c5f2feffef645d354a15d8765957a46f3e5a462ee53979e1f440ba3a0a42c",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023/server-serial.log"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/artifacts.sha256",
+          "bytes": 436,
+          "sha256": "79a0bb3270e5ace2672765994bf4d84ead43c7d969b012096b86c1c26e505751",
+          "provenance": "derived SHA256 manifest of four exact pre-run sources and source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/guest-host-state-init.sh",
+          "bytes": 20099,
+          "sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev09-source-20261023/guest-host-state-init.sh"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/host-state-wire-probe.rs",
+          "bytes": 25999,
+          "sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev09-source-20261023/host-state-wire-probe.rs"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/run-host-state-qemu.py",
+          "bytes": 27620,
+          "sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev09-source-20261023/run-host-state-qemu.py"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/source.json",
+          "bytes": 728,
+          "sha256": "838f49f2e7a6847f32504370dd94f8d5cfe52ee304cdaf415c0e1409ac2fd360",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev09-source-20261023/source.json"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/source/usbfs-syscall-gate.c",
+          "bytes": 34291,
+          "sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+          "provenance": "raw pre-run source snapshot/metadata, byte-identical to /tmp/rustusb-host-state-dev09-source-20261023/usbfs-syscall-gate.c"
+        },
+        {
+          "path": "docs/evidence/qemu-host-state-clear-eof-dev09-20261023/summary.json",
+          "bytes": 77784,
+          "sha256": "5bc8fed9c11de7b730b317ba634acc2ae0e32fdec38d560f04e0de9d9b678f8c",
+          "provenance": "raw runtime artifact, byte-identical to /tmp/rustusb-host-state-clear-eof-dev09-20261023/summary.json"
+        }
+      ]
+    }
+  ],
+  "static_artifacts": [
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/artifacts.sha256",
+      "bytes": 4026,
+      "sha256": "f954ee00d24abb91025a45849c8724f0053f50153cdf5996048de273848d1c44",
+      "provenance": "derived SHA256 manifest of all other static artifacts"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/excluded-build-artifacts.json",
+      "bytes": 2971,
+      "sha256": "8fc9de014b1c6fc76356c20db66bae0013c4e9ee469ee9e11379ae245361ec65",
+      "provenance": "derived archival metadata; original-command and source-provenance limits explicitly recorded"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-busybox-read-20261023.json",
+      "bytes": 174,
+      "sha256": "e2dea1f21a0914cd62c365516e072684df1401a3dbb89bacfaed13f111cc71e2",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-busybox-read-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-carrier-static-20261023.json",
+      "bytes": 1175,
+      "sha256": "014f63d80ac5d00b9bec8d1f941b9f16853254d98cc97419188c14314a94dfe4",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-carrier-static-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-harness-static-20261023.json",
+      "bytes": 3981,
+      "sha256": "126c3d26431e6d15175e7f96f7eaf4daaadddd365b56a359e191cacdba3da3e4",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-harness-static-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/artifacts.sha256",
+      "bytes": 560,
+      "sha256": "a147ff7ba3ab87bc35f70129c4266be8d5d906df42fdcd30f6e5af635b7800a6",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/artifacts.sha256"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/diagnosis.json",
+      "bytes": 2429,
+      "sha256": "e40a78a103e3fa0ab1a07a5b70d2e85ce2fa42dd48d2fc6762c8f247cec8c403",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/diagnosis.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/fixed.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/fixed.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/fixed.stdout",
+      "bytes": 161,
+      "sha256": "12ce9e740b3dd88643bb55e9d3355da6b00a18a1480767e2235c39fac43788fa",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/fixed.stdout"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/original.stderr",
+      "bytes": 204,
+      "sha256": "5d032feae53782314654755876d2584ad5b5970780c3f356db18df7d077c45ad",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/original.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/original.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/original.stdout"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/snapshot.json",
+      "bytes": 65,
+      "sha256": "4e03d7d272ad6e33786d8b8ed467e13b046e02965c4cc63dae71c352aa2aa04d",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/snapshot.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-label-diagnosis-20261023/sysfs.json",
+      "bytes": 66,
+      "sha256": "5e72d19b34a47430f7aa77e180e20a0f619a5d9de55bb6012ead351b45267fc4",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-label-diagnosis-20261023/sysfs.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/artifacts.sha256",
+      "bytes": 648,
+      "sha256": "339961fd9762cd0c03f6ef315669c9e8e53e8209a2aac6ebd8a4da68d3ada9f8",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/artifacts.sha256"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/diagnosis.json",
+      "bytes": 2846,
+      "sha256": "cce1c94c91b482f53df5898fc568f9d7fdc3e17e0ab75a3bba06da87c4fae4bb",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/diagnosis.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/exit.json",
+      "bytes": 61,
+      "sha256": "d4ca8a99f231787cfb693d3d698b18a1a40fcf3952737b9f761cbc992120aecd",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/exit.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/fixed.stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/fixed.stderr.raw"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/fixed.stdout.raw",
+      "bytes": 194,
+      "sha256": "72e315e303e5b7a98de45364200bb88ef02e95a40b74d100bfbc65dbd0abfed5",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/fixed.stdout.raw"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/held.json",
+      "bytes": 61,
+      "sha256": "de74e3bd02b976f22d066e5fd9ec31862775a8cc01070271f41817916fddcc71",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/held.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/original.stderr.raw",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/original.stderr.raw"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/original.stdout.raw",
+      "bytes": 761,
+      "sha256": "99d7c0b902e5ee5bd284cfaec072623590a09cf91223d391bd046e28cb149b1a",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/original.stdout.raw"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-host-state-jq-pty-diagnosis-20261023/ready.json",
+      "bytes": 62,
+      "sha256": "ee594879a3949af1365dfc983571b38f0bc436f0a2dd90b2ba610c2807c94708",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-host-state-jq-pty-diagnosis-20261023/ready.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-analyzer-dev03-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-analyzer-dev03-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-analyzer-dev04-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-analyzer-dev04-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-analyzer-full-dev04-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-analyzer-full-dev04-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev01-20261023.log",
+      "bytes": 3426,
+      "sha256": "8ccb7c0566f5d0244ae1c104e6a3137d6f3a5b6676b672dbdf934a87344ab4c1",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-compile-dev01-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev02-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-compile-dev02-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev03-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-compile-dev03-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev04-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-compile-dev04-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev05-20261023.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-compile-dev05-20261023.log"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-unprivileged-dev02-20261023.json",
+      "bytes": 495,
+      "sha256": "bd2a3f3fd1c1af91d1aa32957e6d3ac2bfb7c88d90e8380ee35858a056d0543a",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-unprivileged-dev02-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-unprivileged-dev04-20261023.json",
+      "bytes": 562,
+      "sha256": "725afcdd50dbea6562db59a1cae7f7170d94e3440ac52d3edc9811c587f6c3fd",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-unprivileged-dev04-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-unprivileged-dev05-20261023.json",
+      "bytes": 562,
+      "sha256": "7b1f977f897b1450be72b850944dbc93c30049c6c646f07c70e99e3a8b4e178e",
+      "provenance": "raw static/diagnostic artifact byte-identical to /tmp/rustusb-usbfs-syscall-gate-unprivileged-dev05-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-host-state-static-20261023/static-provenance.json",
+      "bytes": 5397,
+      "sha256": "ba6a54762673290f03f5d7bf48508152b74aebb1f36680098b1a97963d99d4dd",
+      "provenance": "derived archival metadata; original-command and source-provenance limits explicitly recorded"
+    }
+  ],
+  "additional_sequence_artifact": {
+    "path": "docs/evidence/host-state-additional-development-sequence-20261023.json",
+    "bytes": 1534,
+    "sha256": "1355db157ff274bdc7f28dd066e9e62b1b34891886ab450287b6c430ddcf9e4a",
+    "provenance": "raw sequence JSON byte-identical to /tmp/rustusb-host-state-additional-development-sequence-20261023.json; covers dev05 through dev09"
+  },
+  "indexed_artifact_count": 161,
+  "real_hardware_test_performed": false,
+  "kernel_internal_ioctl_active_window_proven": false,
+  "limitations": [
+    "Tracer stops at syscall entry before kernel ioctl execution; does not demonstrate a USB driver blocked inside the kernel",
+    "SET_CONFIGURATION legitimately releases old interface claims before its target ioctl; only no premature final restore/availability is asserted there",
+    "Special operations are not raw URBs; usbfs_inflight may remain zero while Special is active",
+    "QEMU CDC ECM CLEAR_HALT returns the real -32; successful clear-halt recovery is not claimed",
+    "Probe static commands reported by implementing agent had no separately persisted output logs; no raw output fabricated",
+    "Historical compiler output files without saved source snapshots are labelled accordingly; ELF/object files are hash-inventoried but not committed",
+    "All six PASS are dirty development results; clean final six-case evidence must be produced separately"
+  ],
+  "post_development_startup_refinement": {
+    "scope": "Only initial ARM idle wait is 25 seconds; all armed-phase RPC remain 3 seconds, gate 8 seconds. Six clean final cases pending; historical development artifacts unchanged.",
+    "script_sha256": {
+      "run-host-state-qemu.py": "c9a993904b7642ed11b6dfe25fc101a7ce3198277e66a5768b74271703b1d275",
+      "guest-host-state-init.sh": "1ba7bfd37cdb63c1c92968508be956fe1e7696edaef10c89b0daf251fbd97026",
+      "host-state-wire-probe.rs": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+      "usbfs-syscall-gate.c": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a"
+    }
+  }
+}

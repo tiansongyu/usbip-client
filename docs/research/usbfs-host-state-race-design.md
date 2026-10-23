@@ -1,6 +1,6 @@
 # USBFS host-state 取消与断线测试设计
 
-2026-10-23（Asia/Shanghai），基线 `fbc856c`。状态：设计与可行性评估，尚未实现或取得本轮测试结果。承接 [Composite 最终报告](composite-qemu.md) 明确保留的 active 操作窗口缺口；不修改 G1/G2 真实硬件结论。
+2026-10-23（Asia/Shanghai），基线 `fbc856c`。状态：已实现独立guest harness，六场景dirty开发通过；最终clean提交复跑仍待执行。承接 [Composite 最终报告](composite-qemu.md) 明确保留的 active 操作窗口缺口；不修改 G1/G2 真实硬件结论。
 
 ## 需要证明的契约
 
@@ -50,7 +50,7 @@ queued 取消已有观察，但本轮若声称确定性覆盖，必须再建立�
 
 新增四文件，旧 runner 和生产 Rust/vendor 均保持：`scripts/qemu/run-host-state-qemu.py`、`guest-host-state-init.sh`、`host-state-wire-probe.rs`、`usbfs-syscall-gate.c`。每次运行参数 `--operation configuration|alternate|clear --mode unlink|eof`，一次两 guest；三类各两种模式在同一 clean 提交依次冻结复跑。
 
-协调器调用形式：`usbfs-syscall-gate --directory /run/rustusb-gate --usb-node /dev/bus/usb/BBB/DDD -- /usr/bin/setpriv ... /usr/bin/rustusb ...`。保持 child 的 stdin/stdout/stderr 用于实际 server；追踪器自己的事件仅写 root0700目录。目录含 `tracee.pid`、`arm`（`<nonce> <operation>\n`）、`held.json`、`release`（`<nonce>\n`）、`exit.json`、`events.jsonl`。只接受一次 arm；nonce 为安全 ASCII token。匹配 `SYS_ioctl`、白名单 request 及与指定字符节点 dev/inode/rdev 相同的实际 FD，不读取参数指针。held/exit JSON均包含 nonce/operation/tid/fd/request、节点身份、monotonic_ns；exit 另含 signed return_value/is_error。追踪期间额外统计同一FD的 claim/release/config/interface/clear/driver ioctl 白名单，持门期间不得出现提前 cleanup 的变更；不记录数据或指针。单门8秒、进程120秒硬截止，超时只能FAIL并结束测试。
+协调器调用形式：`usbfs-syscall-gate --directory /run/rustusb-gate --usb-node /dev/bus/usb/BBB/DDD -- /usr/bin/setpriv ... /usr/bin/rustusb ...`。保持 child 的 stdin/stdout/stderr 用于实际 server；追踪器自己的事件仅写 root0700目录。kernel cmdline另带`rustusb.host_state_test=1`。child只接受固定前缀`/usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb`，其后为实际physical-server参数。额外`ready.json`仅在实际rustusb exec、UID/GID1000和CapEff/Prm/Amb均0后生成。目录含 `tracee.pid`、`arm`（`<nonce> <operation>\n`）、`held.json`、`release`（`<nonce>\n`）、`exit.json`、`events.jsonl`。只接受一次 arm；nonce 为安全 ASCII token。匹配 `SYS_ioctl`、白名单 request 及与指定字符节点 dev/inode/rdev 相同的实际 FD，不读取参数指针。held/exit JSON均包含 nonce/operation/tid/fd/request、节点身份、monotonic_ns；exit 另含 signed return_value/is_error。追踪期间额外统计同一FD的 claim/release/config/interface/clear/driver ioctl 白名单，持门期间不得出现提前 cleanup 的变更；不记录数据或指针。单门8秒、进程120秒硬截止，超时只能FAIL并结束测试。
 
 独立Rust probe在client普通UID运行，参数为 `<operation> <mode> <nonce>`，USB/IP连接 `192.0.2.1:3240`；与server root shell通过独立测试TCP `192.0.2.1:5002` 单连接双向行协议协调，每行不超过128B。server先发 `READY <nonce>`；后续命令与成功响应为同名命令加nonce，只有 `ARM` 成功响应名为 `ARMED`：
 
@@ -60,6 +60,10 @@ queued 取消已有观察，但本轮若声称确定性覆盖，必须再建立�
 - `RELEASE`：写匹配nonce，等待真实syscall-exit，原retval不得改写。unlink模式随后精确核A completion和UNLINK0，C行为及同连接GET_CONFIGURATION/GET_INTERFACE健康；eof模式没有旧网络回复。
 - `RESTORED`：probe先关闭原wire（unlink模式），server等待同代际原cfg1/alt0,1/双cdc_ether恢复和全部pending/queued/inflight/budget0、available/cleanup_verified。`DONE`：有界shutdown实际server并等待tracer和server正常退出后回应，两个guest最后各自PASS退出。
 
-A/B选择：SET_CONFIGURATION A=1/B=2（A重新配置后IF1回alt0），SET_INTERFACE A=(1,0)/B=(1,1)，CLEAR_HALT A/B=0x82。A配置/接口真实返回0，clear严格保留当前QEMU ECM的-32。配置/接口后C须按新空map返回-32；clear失败后C须仍为真实pending并可取消，不能因失败损坏原映射。若发行版实际行为不同必须保留FAIL并调查，不放宽原errno或新映射断言。
+A/B选择：SET_CONFIGURATION A=1/B=2（A重新配置后IF1回alt0），SET_INTERFACE A=(1,0)/B=(1,1)，CLEAR_HALT A/B=0x82。A配置/接口真实返回0，clear严格保留当前QEMU ECM的-32。配置/接口后C须按新空map返回-32；clear失败后C先发额外`PENDING <nonce>` RPC，server等待snapshot唯一pending1/queued0/usbfs_inflight1/预算384再回应，probe才取消C并要求-104，证明真实提交后的pending而非只取消排队；不能因失败损坏原映射。若发行版实际行为不同必须保留FAIL并调查，不放宽原errno或新映射断言。
 
 所有成功条件必须由实际trace入口/出口、wire字节、server事件和独立sysfs/FD观察共同支持。门期间读取内存snapshot不会碰被暂停线程持有的nusb接口mutex；不得对同接口调用阻塞的alternate查询造成测试死锁。
+
+## 最终冻结前的启动期限复核
+
+初始READY写入FIFO时，TCP客户端可能尚未连接，随后还需DEVLIST与IMPORT；此前初次ARM和后续RPC共用3秒，短于客户端15秒初始连接预算，可能造成慢启动假FAIL。仅初次`read_rpc ARM`使用独立25秒idle上限，作为该启动阶段的独立总截止，后续RPC仍3秒、单门8秒、wire单帧2秒；不重发已接受的USB请求，不放宽任何取消/恢复断言。六次dirty开发PASS保留原始四源码SHA，当前启动修订需下一轮clean六场景单独验证。

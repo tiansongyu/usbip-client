@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "scope": "derived provenance notes for existing static artifacts; no checks rerun during archive",
+  "compiler_commands": [
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev01-20261023.log",
+      "reported_command": [
+        "cc",
+        "-static",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "scripts/qemu/usbfs-syscall-gate.c",
+        "-o",
+        "/tmp/rustusb-usbfs-syscall-gate-dev01-20261023"
+      ],
+      "reported_result": "FAIL: missing sys/ioctl.h",
+      "command_provenance": "reported by implementing agent; log bytes retained independently; original shell transcript not stored",
+      "exact_source_snapshot_available": false
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev02-20261023.log",
+      "reported_command": [
+        "cc",
+        "-static",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "scripts/qemu/usbfs-syscall-gate.c",
+        "-o",
+        "/tmp/rustusb-usbfs-syscall-gate-dev02-20261023"
+      ],
+      "reported_result": "PASS: empty compiler log",
+      "command_provenance": "reported by implementing agent; log bytes retained independently; original shell transcript not stored",
+      "exact_source_snapshot_available": false
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev03-20261023.log",
+      "reported_command": [
+        "cc",
+        "-static",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "scripts/qemu/usbfs-syscall-gate.c",
+        "-o",
+        "/tmp/rustusb-usbfs-syscall-gate-dev03-20261023"
+      ],
+      "reported_result": "PASS: empty compiler log",
+      "command_provenance": "reported by implementing agent; log bytes retained independently; original shell transcript not stored",
+      "exact_source_snapshot_available": false
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev04-20261023.log",
+      "reported_command": [
+        "cc",
+        "-static",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "scripts/qemu/usbfs-syscall-gate.c",
+        "-o",
+        "/tmp/rustusb-usbfs-syscall-gate-dev04-20261023"
+      ],
+      "reported_result": "PASS: empty compiler log",
+      "command_provenance": "reported by implementing agent; log bytes retained independently; original shell transcript not stored",
+      "exact_source_snapshot_available": false
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-compile-dev05-20261023.log",
+      "reported_command": [
+        "cc",
+        "-static",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "scripts/qemu/usbfs-syscall-gate.c",
+        "-o",
+        "/tmp/rustusb-usbfs-syscall-gate-dev05-20261023"
+      ],
+      "reported_result": "PASS: empty compiler log",
+      "command_provenance": "reported by implementing agent; log bytes retained independently; original shell transcript not stored",
+      "exact_source_snapshot_available": true
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-analyzer-dev03-20261023.log",
+      "reported_flags": [
+        "-fanalyzer",
+        "-fsyntax-only"
+      ],
+      "interpretation": "syntax-only invocation; not evidence that full GCC analyzer ran",
+      "command_provenance": "reported by implementing agent; original shell transcript not stored"
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-analyzer-dev04-20261023.log",
+      "reported_flags": [
+        "-fanalyzer",
+        "-fsyntax-only"
+      ],
+      "interpretation": "syntax-only invocation; not evidence that full GCC analyzer ran",
+      "command_provenance": "reported by implementing agent; original shell transcript not stored"
+    },
+    {
+      "log_path": "docs/evidence/qemu-host-state-static-20261023/rustusb-usbfs-syscall-gate-analyzer-full-dev04-20261023.log",
+      "reported_command": [
+        "cc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fanalyzer",
+        "-c",
+        "scripts/qemu/usbfs-syscall-gate.c",
+        "-o",
+        "/tmp/rustusb-usbfs-syscall-gate-analyzer-dev04-20261023.o"
+      ],
+      "reported_result": "PASS: actual analyzer compilation to object, empty log",
+      "command_provenance": "reported by implementing agent; object hash retained without committing build output"
+    }
+  ],
+  "probe_static_checks": {
+    "durable_raw_stdout_stderr_logs_available": false,
+    "reported_result": "rustfmt and rustc -D warnings passed with empty tool output; not reconstructed as persistent raw logs",
+    "reported_commands": [
+      "rustfmt --edition 2024 scripts/qemu/host-state-wire-probe.rs",
+      "rustc --edition=2024 -O -D warnings scripts/qemu/host-state-wire-probe.rs -o <corresponding standalone ELF>"
+    ],
+    "command_provenance": "reported by implementing agent; actual per-run compilation commands also stored in each runtime summary"
+  }
+}

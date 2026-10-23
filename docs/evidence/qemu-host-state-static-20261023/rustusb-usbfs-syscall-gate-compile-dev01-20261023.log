@@ -1,0 +1,46 @@
+In file included from scripts/qemu/usbfs-syscall-gate.c:14:
+scripts/qemu/usbfs-syscall-gate.c: In function ‘mutation’:
+scripts/qemu/usbfs-syscall-gate.c:368:20: error: expected expression before ‘unsigned’
+  368 |     if (request == USBDEVFS_CLAIMINTERFACE || request == USBDEVFS_DISCONNECT_CLAIM)
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:368:58: error: expected expression before ‘struct’
+  368 |     if (request == USBDEVFS_CLAIMINTERFACE || request == USBDEVFS_DISCONNECT_CLAIM)
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:370:20: error: expected expression before ‘unsigned’
+  370 |     if (request == USBDEVFS_RELEASEINTERFACE)
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:372:20: error: expected expression before ‘unsigned’
+  372 |     if (request == USBDEVFS_SETCONFIGURATION)
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:374:20: error: expected expression before ‘struct’
+  374 |     if (request == USBDEVFS_SETINTERFACE)
+      |                    ^~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:376:20: error: expected expression before ‘unsigned’
+  376 |     if (request == USBDEVFS_CLEAR_HALT)
+      |                    ^~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:378:20: error: expected expression before ‘struct’
+  378 |     if (request == USBDEVFS_IOCTL || request == USBDEVFS_CONNECT ||
+      |                    ^~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:378:46: error: comparison of integer expressions of different signedness: ‘long unsigned int’ and ‘int’ [-Werror=sign-compare]
+  378 |     if (request == USBDEVFS_IOCTL || request == USBDEVFS_CONNECT ||
+      |                                              ^~
+scripts/qemu/usbfs-syscall-gate.c:379:17: error: comparison of integer expressions of different signedness: ‘long unsigned int’ and ‘int’ [-Werror=sign-compare]
+  379 |         request == USBDEVFS_DISCONNECT || request == USBDEVFS_RESET ||
+      |                 ^~
+scripts/qemu/usbfs-syscall-gate.c:379:51: error: comparison of integer expressions of different signedness: ‘long unsigned int’ and ‘int’ [-Werror=sign-compare]
+  379 |         request == USBDEVFS_DISCONNECT || request == USBDEVFS_RESET ||
+      |                                                   ^~
+scripts/qemu/usbfs-syscall-gate.c:380:20: error: expected expression before ‘unsigned’
+  380 |         request == USBDEVFS_RESETEP)
+      |                    ^~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c: In function ‘controls’:
+scripts/qemu/usbfs-syscall-gate.c:441:33: error: expected expression before ‘unsigned’
+  441 |                 gate->request = USBDEVFS_SETCONFIGURATION;
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:443:33: error: expected expression before ‘struct’
+  443 |                 gate->request = USBDEVFS_SETINTERFACE;
+      |                                 ^~~~~~~~~~~~~~~~~~~~~
+scripts/qemu/usbfs-syscall-gate.c:445:33: error: expected expression before ‘unsigned’
+  445 |                 gate->request = USBDEVFS_CLEAR_HALT;
+      |                                 ^~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors

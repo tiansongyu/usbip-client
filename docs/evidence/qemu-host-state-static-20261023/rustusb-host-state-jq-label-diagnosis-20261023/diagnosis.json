@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "pure synthetic JSON; original jq compile failure reproduced and variable-only fix verified; no Cargo/QEMU/ptrace/USB actions",
+  "jq_version": "jq-1.6",
+  "jq_sha256": "858a84f22b39317f13a57b4b91e535925c1b4f819d9bb2864361df4ad6acb00f",
+  "old_guest_sha256": "f18ad14e06be03ef71a1a05e304592298b831c5ee853e24be86166b6d19bde8d",
+  "fixed_guest_sha256": "e9a2189d86bc03957d722dbec9720d469a04db0757b61851afe3cda04ec4ee70",
+  "checks": [
+    {
+      "name": "original",
+      "command": [
+        "/usr/bin/jq",
+        "-cn",
+        "--arg",
+        "label",
+        "baseline",
+        "--slurpfile",
+        "snapshot",
+        "/tmp/rustusb-host-state-jq-label-diagnosis-20261023/snapshot.json",
+        "--slurpfile",
+        "sysfs",
+        "/tmp/rustusb-host-state-jq-label-diagnosis-20261023/sysfs.json",
+        "{label:$label,snapshot:$snapshot[0],sysfs:$sysfs[0]}"
+      ],
+      "returncode": 3,
+      "stdout": "",
+      "stderr": "jq: error: syntax error, unexpected label, expecting IDENT or __loc__ (Unix shell quoting issues?) at <top-level>, line 1:\n{label:$label,snapshot:$snapshot[0],sysfs:$sysfs[0]}        \njq: 1 compile error\n"
+    },
+    {
+      "name": "fixed",
+      "command": [
+        "/usr/bin/jq",
+        "-cn",
+        "--arg",
+        "tag",
+        "baseline",
+        "--slurpfile",
+        "snapshot",
+        "/tmp/rustusb-host-state-jq-label-diagnosis-20261023/snapshot.json",
+        "--slurpfile",
+        "sysfs",
+        "/tmp/rustusb-host-state-jq-label-diagnosis-20261023/sysfs.json",
+        "{\"label\":$tag,\"snapshot\":$snapshot[0],\"sysfs\":$sysfs[0]}"
+      ],
+      "returncode": 0,
+      "stdout": "{\"label\":\"baseline\",\"snapshot\":{\"schema_version\":1,\"buffer_bytes_reserved\":0,\"devices\":[]},\"sysfs\":{\"generation\":\"synthetic\",\"configuration\":1,\"interfaces\":[]}}\n",
+      "stderr": ""
+    },
+    {
+      "name": "shell_syntax",
+      "command": [
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "shell_syntax",
+      "command": [
+        "busybox",
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

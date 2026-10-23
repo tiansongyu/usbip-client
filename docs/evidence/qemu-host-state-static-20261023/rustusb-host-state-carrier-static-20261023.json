@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "syntax and non-guest refusal only; carrier barrier runtime result remains untested; no network/Cargo/QEMU/ptrace action",
+  "guest_sha256": "82fe6be4745ade5961d61a71deca1ef08cd43158f103e953d3409c25b04f45fb",
+  "old_dev02_guest_sha256": "e9a2189d86bc03957d722dbec9720d469a04db0757b61851afe3cda04ec4ee70",
+  "checks": [
+    {
+      "command": [
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "busybox",
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sh",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 2,
+      "expected_returncode": 2,
+      "stdout": "",
+      "stderr": "Refusing host-state init outside a disposable QEMU guest\n"
+    }
+  ]
+}

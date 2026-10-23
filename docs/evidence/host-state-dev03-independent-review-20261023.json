@@ -1,0 +1,479 @@
+{
+  "schema_version": 1,
+  "review": "offline independent review of development configuration/unlink syscall-entry gate",
+  "run_directory": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023",
+  "overall_run_result": "FAIL",
+  "original_summary_error": "Expecting value: line 1 column 1 (char 0)",
+  "independent_scope_checks_result": "PASS",
+  "checks_passed": 76,
+  "checks_total": 76,
+  "failed_checks": [],
+  "must_fix_in_examined_product_semantics": [],
+  "run_provenance": {
+    "git_commit": "345163bef598ffe45b62f0b4175a4a7a56c36a98",
+    "working_tree_dirty": true,
+    "operation": "configuration",
+    "mode": "unlink",
+    "nonce": "hs-dev03-config-unlink",
+    "kernel": "6.8.0-106-generic",
+    "build_performed": true,
+    "binary_sha256": {
+      "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+      "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+    },
+    "probe_binary_sha256": "9662e9c8465a7f1ff4fa2eabbc62938053eeab85c707086a784384b247d81f62",
+    "tracer_binary_sha256": "082bb6de874de98818ce07c831d1aefc2e915f94afeeb8ab53b788ca2d4f5171",
+    "guest_exit_codes": {
+      "server": 0,
+      "client": 0
+    }
+  },
+  "derived_beacons_parse": {
+    "raw_block_sha256": "41a6334a0156824ff9510d96d06e1c01900bba02e2f5361d7a2368ee6b9e96fd",
+    "raw_json_error": "Expecting value: line 1 column 1 (char 0)",
+    "transformation": "offline derived view only: remove ANSI SGR ESC [ digits/semicolons m; no other edits; raw serial and summary unchanged",
+    "sgr_sequences_removed": 480,
+    "derived_json_sha256": "1646df636741e7025d0bc42c7fa16f487d73d4f5f8d4cb8d3e14dbc222ffa18c",
+    "beacons": {
+      "ready": {
+        "schema_version": 1,
+        "event": "ready",
+        "tracer_pid": 286,
+        "tracee_pid": 288,
+        "tracee_starttime": 316,
+        "uid": 1000,
+        "gid": 1000,
+        "cap_effective": 0,
+        "cap_permitted": 0,
+        "cap_ambient": 0,
+        "cap_inheritable": 0,
+        "monotonic_ns": 3413146742
+      },
+      "held": {
+        "schema_version": 1,
+        "event": "held",
+        "nonce": "hs-dev03-config-unlink",
+        "operation": "configuration",
+        "tracer_pid": 286,
+        "tracee_pid": 288,
+        "tracee_starttime": 316,
+        "tid": 328,
+        "fd": 10,
+        "request": 2147767557,
+        "node_device": 5,
+        "node_inode": 159,
+        "node_rdev": 48385,
+        "monotonic_ns": 5666444197,
+        "mutation_counts": {
+          "claim": 2,
+          "release": 2,
+          "configuration": 1,
+          "alternate": 1,
+          "clear": 0,
+          "driver": 0
+        }
+      },
+      "exit": {
+        "schema_version": 1,
+        "event": "exit",
+        "nonce": "hs-dev03-config-unlink",
+        "operation": "configuration",
+        "tracer_pid": 286,
+        "tracee_pid": 288,
+        "tracee_starttime": 316,
+        "tid": 328,
+        "fd": 10,
+        "request": 2147767557,
+        "node_device": 5,
+        "node_inode": 159,
+        "node_rdev": 48385,
+        "monotonic_ns": 6400401636,
+        "mutation_counts": {
+          "claim": 2,
+          "release": 2,
+          "configuration": 1,
+          "alternate": 1,
+          "clear": 0,
+          "driver": 0
+        },
+        "return_value": 0,
+        "is_error": false
+      }
+    }
+  },
+  "timing": {
+    "entry_to_release_ns": 732882248,
+    "entry_to_exit_ns": 733957439,
+    "ptrace_stops": 6021
+  },
+  "coverage": [
+    "actual physical Special blocking thread reached USBDEVFS_SETCONFIGURATION syscall-entry; syscall not yet executed at hold",
+    "queued B cancellation returned -104 while A stayed held; active A later returned actual success and UNLINK0",
+    "C waited with A under 640-byte reservation, then new empty endpoint map returned EPIPE/-32",
+    "same TCP connection actual GET_CONFIGURATION=1 and GET_INTERFACE=0",
+    "same sysfs generation and original config1/IF0alt0+IF1alt1/two cdc_ether drivers restored; all pending/queued/inflight/reservations zero; tracer and server exited normally"
+  ],
+  "limits": [
+    "development dirty-tree run, not final clean acceptance; entire run remains FAIL because raw BEACONS JSON carried terminal ANSI color",
+    "syscall-entry pause is before kernel ioctl execution, not evidence of kernel-internal active or hung ioctl",
+    "only configuration/unlink mode reviewed; EOF, alternate, clear-halt and physical hardware are outside this run",
+    "SET_CONFIGURATION legitimately released both old claims before entry; cached current_drivers=usbfs during hold is not actual retained claim evidence; independent sysfs correctly shows driver null and alt0",
+    "wire evidence consists of the independently reviewed source-matched probe strict frame assertions and raw case output; no separate packet capture is present",
+    "FD/PID/UID assertions were performed by guest coordinator and tracer; raw independent stat values are not separately dumped, while held/exit identity tuple is retained"
+  ],
+  "source_identity_checks": {
+    "usbfs-syscall-gate.c": {
+      "run_sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+      "review_sha256": "9cbf64833aefc09e4098c79358e2fa8a230aacb83e127723d433f54a88ebf91a",
+      "equal": true
+    },
+    "host-state-wire-probe.rs": {
+      "run_sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+      "review_sha256": "94ea4b1d44cd386f92f5bb1e7ef63bd0e2c381c846f794c197f7ae502f724c86",
+      "equal": true
+    },
+    "run-host-state-qemu.py": {
+      "run_sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+      "review_sha256": "02cc84e79fcb9c2fbf55f424d2bd5d6d68a3c34f2b41d656ed8ef6c3c2291a21",
+      "equal": true
+    }
+  },
+  "inputs": {
+    "build.log": {
+      "path": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6"
+    },
+    "client-qemu.stderr": {
+      "path": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-serial.log": {
+      "path": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023/client-serial.log",
+      "bytes": 32550,
+      "sha256": "b4a66f84e83ffd65a13819a32c744b052f21aa34592c25dfdd92b75353412133"
+    },
+    "server-qemu.stderr": {
+      "path": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023/server-qemu.stderr",
+      "bytes": 164,
+      "sha256": "babd843afd26bdc13c9b8acce0d09c65df40dce3cb10b324e04a57276bcca06d"
+    },
+    "server-serial.log": {
+      "path": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023/server-serial.log",
+      "bytes": 75559,
+      "sha256": "9a76b66ec4961683eb497242b771501e512c8ba0f2b4d41cbdbcb0ffc65713a5"
+    },
+    "summary.json": {
+      "path": "/tmp/rustusb-host-state-configuration-unlink-dev03-20261023/summary.json",
+      "bytes": 47293,
+      "sha256": "b6be00baf75b36c189aa25531a3dead8f9b13c30c7339c696d5e713ee84df179"
+    }
+  },
+  "checks": [
+    {
+      "name": "one_trace_armed",
+      "pass": true
+    },
+    {
+      "name": "one_trace_held",
+      "pass": true
+    },
+    {
+      "name": "one_trace_released",
+      "pass": true
+    },
+    {
+      "name": "one_trace_exit",
+      "pass": true
+    },
+    {
+      "name": "one_trace_finished",
+      "pass": true
+    },
+    {
+      "name": "overall_failure_preserved",
+      "pass": true
+    },
+    {
+      "name": "host_error_is_beacon_json_parse",
+      "pass": true
+    },
+    {
+      "name": "raw_beacon_contains_only_removable_SGR_escapes",
+      "pass": true
+    },
+    {
+      "name": "both_guest_exit_zero",
+      "pass": true
+    },
+    {
+      "name": "development_dirty_state_explicit",
+      "pass": true
+    },
+    {
+      "name": "configuration_unlink_identity",
+      "pass": true
+    },
+    {
+      "name": "default_locked_allfeatures_build_recorded",
+      "pass": true
+    },
+    {
+      "name": "topology_is_guest_only",
+      "pass": true
+    },
+    {
+      "name": "exact_nine_probe_cases",
+      "pass": true
+    },
+    {
+      "name": "probe_cases_match_raw_summary",
+      "pass": true
+    },
+    {
+      "name": "probe_result_matches_raw_summary",
+      "pass": true
+    },
+    {
+      "name": "all_probe_nonces_match",
+      "pass": true
+    },
+    {
+      "name": "probe_progress_monotonic",
+      "pass": true
+    },
+    {
+      "name": "B_queued_cancel_status_minus104",
+      "pass": true
+    },
+    {
+      "name": "A_completion_and_unlink_win",
+      "pass": true
+    },
+    {
+      "name": "C_new_empty_map_EPIPE_zero_length",
+      "pass": true
+    },
+    {
+      "name": "same_connection_actual_configuration_alt_readback",
+      "pass": true
+    },
+    {
+      "name": "ready_ordinary_identity",
+      "pass": true
+    },
+    {
+      "name": "matching_beacon_schema",
+      "pass": true
+    },
+    {
+      "name": "held_exit_exact_identity_and_counters",
+      "pass": true
+    },
+    {
+      "name": "ready_same_PID_generation",
+      "pass": true
+    },
+    {
+      "name": "target_actual_USBFS_SETCONFIGURATION",
+      "pass": true
+    },
+    {
+      "name": "target_fd_node_tuple",
+      "pass": true
+    },
+    {
+      "name": "real_ioctl_success_untouched",
+      "pass": true
+    },
+    {
+      "name": "armed_entry_release_exit_order",
+      "pass": true
+    },
+    {
+      "name": "gate_under_eight_seconds",
+      "pass": true
+    },
+    {
+      "name": "all_trace_timestamps_monotonic",
+      "pass": true
+    },
+    {
+      "name": "no_tracer_failure",
+      "pass": true
+    },
+    {
+      "name": "trace_schema_all_one",
+      "pass": true
+    },
+    {
+      "name": "no_mutation_entry_while_held",
+      "pass": true
+    },
+    {
+      "name": "no_held_flagged_mutation",
+      "pass": true
+    },
+    {
+      "name": "only_A_reaches_configuration_ioctl",
+      "pass": true
+    },
+    {
+      "name": "entire_session_single_SETCONFIGURATION",
+      "pass": true
+    },
+    {
+      "name": "held_release_exit_counts_equal",
+      "pass": true
+    },
+    {
+      "name": "legal_preentry_releases_are_distinct",
+      "pass": true
+    },
+    {
+      "name": "all_ioctl_entries_have_same_node",
+      "pass": true
+    },
+    {
+      "name": "paired_whitelisted_ioctl_entries_exits",
+      "pass": true
+    },
+    {
+      "name": "tracee_and_threads_clean_exit",
+      "pass": true
+    },
+    {
+      "name": "all_cloned_threads_exited",
+      "pass": true
+    },
+    {
+      "name": "tracer_finished_6021_stops",
+      "pass": true
+    },
+    {
+      "name": "raw_server_observations_match_summary",
+      "pass": true
+    },
+    {
+      "name": "raw_server_events_match_summary",
+      "pass": true
+    },
+    {
+      "name": "observation_labels_exact",
+      "pass": true
+    },
+    {
+      "name": "actual_original_sysfs",
+      "pass": true
+    },
+    {
+      "name": "baseline_one_device_identity",
+      "pass": true
+    },
+    {
+      "name": "baseline_all_resources_retired",
+      "pass": true
+    },
+    {
+      "name": "baseline_original_generation_config_alt_drivers",
+      "pass": true
+    },
+    {
+      "name": "held_one_device_identity",
+      "pass": true
+    },
+    {
+      "name": "held_real_lease_and_budget",
+      "pass": true
+    },
+    {
+      "name": "held_logical_queued_count",
+      "pass": true
+    },
+    {
+      "name": "held_sysfs_config_claim_release_expected",
+      "pass": true
+    },
+    {
+      "name": "witness_one_device_identity",
+      "pass": true
+    },
+    {
+      "name": "witness_real_lease_and_budget",
+      "pass": true
+    },
+    {
+      "name": "witness_logical_queued_count",
+      "pass": true
+    },
+    {
+      "name": "witness_sysfs_config_claim_release_expected",
+      "pass": true
+    },
+    {
+      "name": "restored_one_device_identity",
+      "pass": true
+    },
+    {
+      "name": "restored_all_resources_retired",
+      "pass": true
+    },
+    {
+      "name": "restored_original_generation_config_alt_drivers",
+      "pass": true
+    },
+    {
+      "name": "stopped_one_device_identity",
+      "pass": true
+    },
+    {
+      "name": "stopped_all_resources_retired",
+      "pass": true
+    },
+    {
+      "name": "stopped_original_generation_config_alt_drivers",
+      "pass": true
+    },
+    {
+      "name": "witness_worker_observed_B_cancel",
+      "pass": true
+    },
+    {
+      "name": "final_cancel_and_completion_accounting",
+      "pass": true
+    },
+    {
+      "name": "exact_stopped_server_event",
+      "pass": true
+    },
+    {
+      "name": "server_stderr_empty",
+      "pass": true
+    },
+    {
+      "name": "both_guest_PASS_markers",
+      "pass": true
+    },
+    {
+      "name": "usbfs-syscall-gate.c_reviewed_source_matches_run",
+      "pass": true
+    },
+    {
+      "name": "host-state-wire-probe.rs_reviewed_source_matches_run",
+      "pass": true
+    },
+    {
+      "name": "run-host-state-qemu.py_reviewed_source_matches_run",
+      "pass": true
+    },
+    {
+      "name": "current_guest_only_Mcn_change_reconstructs_run",
+      "pass": true
+    },
+    {
+      "name": "all_input_artifacts_unchanged",
+      "pass": true
+    }
+  ]
+}

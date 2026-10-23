@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "same jq with synthetic files on PTY; strict json.loads; no ANSI stripping, Cargo, QEMU, ptrace or USB action",
+  "jq_version": "jq-1.6",
+  "jq_sha256": "858a84f22b39317f13a57b4b91e535925c1b4f819d9bb2864361df4ad6acb00f",
+  "old_guest_sha256": "82fe6be4745ade5961d61a71deca1ef08cd43158f103e953d3409c25b04f45fb",
+  "fixed_guest_sha256": "2f6e403dff8516f473f12b6376d08b6b5a1cf4ea5fc8fabe567c965fab187d6c",
+  "pty_checks": [
+    {
+      "name": "original",
+      "command": [
+        "/usr/bin/jq",
+        "-cn",
+        "--slurpfile",
+        "ready",
+        "/tmp/rustusb-host-state-jq-pty-diagnosis-20261023/ready.json",
+        "--slurpfile",
+        "held",
+        "/tmp/rustusb-host-state-jq-pty-diagnosis-20261023/held.json",
+        "--slurpfile",
+        "exit",
+        "/tmp/rustusb-host-state-jq-pty-diagnosis-20261023/exit.json",
+        "{ready:$ready[0],held:$held[0],exit:$exit[0]}"
+      ],
+      "returncode": 0,
+      "stdout_bytes": 761,
+      "stdout_sha256": "99d7c0b902e5ee5bd284cfaec072623590a09cf91223d391bd046e28cb149b1a",
+      "contains_ansi_escape": true,
+      "json_loads": "rejected",
+      "json_error": "Expecting value: line 1 column 1 (char 0)",
+      "parsed": null
+    },
+    {
+      "name": "fixed",
+      "command": [
+        "/usr/bin/jq",
+        "-Mcn",
+        "--slurpfile",
+        "ready",
+        "/tmp/rustusb-host-state-jq-pty-diagnosis-20261023/ready.json",
+        "--slurpfile",
+        "held",
+        "/tmp/rustusb-host-state-jq-pty-diagnosis-20261023/held.json",
+        "--slurpfile",
+        "exit",
+        "/tmp/rustusb-host-state-jq-pty-diagnosis-20261023/exit.json",
+        "{ready:$ready[0],held:$held[0],exit:$exit[0]}"
+      ],
+      "returncode": 0,
+      "stdout_bytes": 194,
+      "stdout_sha256": "72e315e303e5b7a98de45364200bb88ef02e95a40b74d100bfbc65dbd0abfed5",
+      "contains_ansi_escape": false,
+      "json_loads": "accepted",
+      "json_error": null,
+      "parsed": {
+        "ready": {
+          "schema_version": 1,
+          "event": "ready",
+          "nonce": "synthetic"
+        },
+        "held": {
+          "schema_version": 1,
+          "event": "held",
+          "nonce": "synthetic"
+        },
+        "exit": {
+          "schema_version": 1,
+          "event": "exit",
+          "nonce": "synthetic"
+        }
+      }
+    }
+  ],
+  "syntax_checks": [
+    {
+      "command": [
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "busybox",
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-host-state-init.sh"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}
