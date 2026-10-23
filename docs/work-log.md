@@ -527,3 +527,9 @@
 - 最终证据提交e01b092，英文报告/README/站点/技能同步提交f095ff5，普通push并核远端main相同且primary clean。精确f095的CI40032354147四原生job及Pages40032354233 check/deploy全部completed/success；这里只核状态，不重算626、不把531详细CI/QEMU重归属。165软件输入逐f095 Gitblob及当前文件一致。
 - 线上六资源HTTPS200且逐f095 Gitblob完全同字节，CUA实际显示626/15/18及新报告，1280/390无页面横向overflow、两响应式图加载、ArrowRight/Home和URL同步、console0。viewport变化后首次立即观察图未就绪/首次click未改变选择，检查实际ready/bounds/console后再语义click成功；不推断未捕获原因或修改代码。reset下一次读取实观1280×720，public tab8标deliverable；临时tab11已关、两个exact-owned预览脚本PID核cmdline后TERM且确认消失。发布API初始pending/progress/final、六原资源、只读状态审查及browser记录归档data-link-publication-f095ff5-20261024。最后仅提交这些回执/维护文档和日志再普通push；软件165与网站六源不变。完整Phase0–7目标保持active，本轮为有证据的进展，硬件G1/G2、完整G3及后续阶段继续未完成。
 - 添加发布链接后最终143站点/354本地链接、node及diff检查通过。首次补验沿用旧checker临时输出名，覆盖了临时351报告；新354先另存、已提交351归档从未改变，临时旧报告由该归档逐字恢复，另名checker再验354。两次新报告和恢复说明加入发布归档，不把补验回填为原351结果。
+
+### 2026-10-24：准备期记录停顿下的实际停止（设计中）
+
+- 上一goal turn为实际进展，e10b5fb正常push/clean；本轮完整重读原附件及AGENTS/项目skill、相关共享owner/应用服务契约。完整Phase0–7目标保持，不把README/展示页完成缩作整个目标。三agent只读交叉定位准备期记录等待，root独占Cargo/QEMU/Git。
+- 源码确认Native Resource、后续设备Begin/Attempt及Available，USBFS Resource/后续Attempt、Rust Available，以及client远端IMPORT后的Attempt仍可阻挡实际资源清理；已有incoming/client后续retained-ACK不能外推这些边界。IPC授权stop有独立watch，但agent TERM仅入Runtime队列，persist停顿时无法fanout；补点须含sticky latch和晚注册control继承，不能只发一次快照。
+- 先写research/prepare-recording-shutdown-design.md，明确actualclose与record finalize分离、全已接收资源先释放/全部Finish后再等原ACK、不丢accepted helper/initializer、不伪造terminal。QEMU计划区分Resource fsync门与accepted initializer syscall-entry门，旧Status startup acceptance=false继续不作为该证明。Tokio1.54.1两个versioned docs.rs访问失败，转实际已安装固定源码及SHA记账；目前尚无本项新运行PASS。
