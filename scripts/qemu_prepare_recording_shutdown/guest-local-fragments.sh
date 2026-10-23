@@ -27,6 +27,19 @@ local_host_proof() {
     jq -e --arg target "$TARGET_BUS" --slurpfile before /tmp/host-before.json --slurpfile held /tmp/host-held.json '
       length==2 and .==([$before[0][]|select(.bus==$target)]+[$held[0][]|select(.bus!=$target)]|sort_by(.bus))' "$1" > /dev/null
 }
+local_stub_retired() {
+    jq -es --slurpfile stub /tmp/local-detach-stub.json --slurpfile survivor /tmp/local-survivor.json --slurpfile original /tmp/root-held.json --slurpfile during /tmp/root-local-survivor-io.json '
+      length==1 and (.[0] | $stub[0] as $k | $survivor[0] as $s |
+      [$original[0].exports[]|select(.lease_id==$s.attempts[0].resource_id)] as $owned |
+      {terminal:{resource_id:$k.channel_id,kind:"native_stub",device_key:$s.device_key,owner_uid:2000,correlation:$k.correlation,proof:"native_stub_available"},server_id:null} as $proof |
+      .schema_version==2 and .records==[] and ($owned|length)==1 and .exports==$owned and
+      ($during[0].terminals|length)==1 and (.terminals|length)==2 and
+      (.terminals|sort_by(.terminal.resource_id))==(($during[0].terminals+[$proof])|sort_by(.terminal.resource_id)))' "$1" > /dev/null
+}
+local_stub_available_host() {
+    jq -es --arg hid "$HID_BUS" --slurpfile before /tmp/host-before.json '
+      length==1 and (.[0]|length==2 and .==($before[0]|map(if .bus==$hid then .device_driver="usbip-host" | .usbip_status=1 | .interfaces|=map(.driver="") else . end)))' "$1" > /dev/null
+}
 # END FUNCTIONS
 # BEGIN SERVER
     local_identify
@@ -73,7 +86,39 @@ local_host_proof() {
     root_snapshot local-survivor-io
     echo PREPARE_LOCAL_DETACH_HID
     host_expect SURVIVOR_DETACHED
-    root_snapshot local-after-detach
+    STAGE=local-stub-retirement
+    # The client NULL/proof marker is not a server-side stub-retirement receipt.
+    # Pin the real observed stub before polling; no stop/management mutation is
+    # issued until exact retirement and the unchanged export have been observed.
+    jq -ce --slurpfile survivor /tmp/local-survivor.json '[.exports[]|select(.lease_id==$survivor[0].attempts[0].resource_id)]|select(length==1)|.[0].stub|select(.state.phase=="observed" and .channel_id!=null and .correlation!=null)' /tmp/root-local-survivor-io.json > /tmp/local-detach-stub.json
+    read -r DETACH_START DETACH_IDLE < /proc/uptime
+    STUB_RETIRED=false
+    : > /tmp/local-detach-observations.jsonl
+    for detach_observation in $(seq 1 500); do
+        root_snapshot "local-detach-poll-$detach_observation"
+        jq -es 'length==1 and (.[0]|.schema_version==2 and (.exports|type)=="array" and (.terminals|type)=="array")' "/tmp/root-local-detach-poll-$detach_observation.json" > /dev/null
+        detach_root=false detach_host=false
+        if local_stub_retired "/tmp/root-local-detach-poll-$detach_observation.json"; then detach_root=true; fi
+        if local_stub_available_host "/tmp/host-local-detach-poll-$detach_observation.json"; then detach_host=true; fi
+        read -r DETACH_NOW DETACH_IDLE < /proc/uptime
+        within_bound=false
+        if awk -v start="$DETACH_START" -v now="$DETACH_NOW" 'BEGIN{exit !(now-start<=15)}'; then within_bound=true; fi
+        jq -nc --argjson observation "$detach_observation" --arg uptime "$DETACH_NOW" --arg started "$DETACH_START" --argjson root "$detach_root" --argjson host "$detach_host" --argjson within "$within_bound" '{observation:$observation,uptime:$uptime,started_uptime:$started,root_retired_exact:$root,host_available_original:$host,within_bound:$within,read_only:true,last_export_stop_sent:false}' >> /tmp/local-detach-observations.jsonl
+        if [ "$detach_root:$detach_host:$within_bound" = true:true:true ]; then STUB_RETIRED=true; break; fi
+        [ "$within_bound" = true ] || break
+        kill -0 "$TRACER_PID"; sleep 0.05
+    done
+    jq -nc --arg started "$DETACH_START" --arg completed "$DETACH_NOW" --argjson observations "$detach_observation" --argjson retired "$STUB_RETIRED" '{started_uptime:$started,completed_uptime:$completed,observations:$observations,limit_seconds:15,maximum_observations:500,retired:$retired,read_only:true,last_export_stop_sent:false}' > /tmp/local-detach-barrier.json
+    # A timeout fails before any local last-export stop; EXIT may only perform
+    # ordinary global failure cleanup, whose later proofs are not backfilled.
+    [ "$STUB_RETIRED" = true ]
+    cp "/tmp/root-local-detach-poll-$detach_observation.json" /tmp/root-local-after-detach.json
+    cp "/tmp/host-local-detach-poll-$detach_observation.json" /tmp/host-local-after-detach.json
+    echo PREPARE_LOCAL_STUB_RETIRED
+    STAGE=local-last-export-stop
+    read -r LAST_STOP_UPTIME LAST_STOP_IDLE < /proc/uptime
+    printf '%s\n' "$LAST_STOP_UPTIME" > /tmp/local-last-export-stop-uptime.txt
+    echo PREPARE_LOCAL_LAST_EXPORT_STOP_REQUEST
     agent stop-session "$SURVIVOR_SESSION" > /tmp/local-stop-survivor.json
     jq -e '.response.result=="stop_accepted" and .response.owner_present' /tmp/local-stop-survivor.json > /dev/null
     wait_sessions pool /tmp/local-empty-sessions.json '.response.sessions|length==3 and all(.terminal and .cleanup=="verified")'
