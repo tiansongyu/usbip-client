@@ -272,3 +272,9 @@
 - 独立candidate的三份定向原log、精确1762d65 patch和未执行的备用draft亦按原bytes补存server-signals-isolated-candidate-20261023，原validation明确fmt仅工具响应、无单独rawlog，不补造缺失记录。
 
 - 最终11份文档与证据的另一agent只读审查347/347通过、无mustfix。README/AGENTS/架构/测试/兼容/E23/roadmap和两服务指南已同步，保留完整项目范围；本机与四平台各222次执行、四信号+原两背压、四QEMU8guest0均归精确clean934，旧6e809矩阵和37c2d61历史CI不重归属。root再次核138软件/scripts/CI冻结文件未变、四索引179份原件全部长度/SHA一致、本地文档链接可解析，准备文档证据提交与普通push。
+
+## 继续：USBFS 强制退出与重启协调
+
+- 从 clean e0e6118 继续，完整原始需求、AGENTS、核心 skill 和架构已重新核对；上一轮文档证据已正常 push。当前读源码和独立并行审查，使用 writing-technical-design 与 technical-documentation，沿用现有 docs/research，不为套模板新增无关组件 skill。
+- 先记录 draft 设计 physical-crash-recovery-design.md，再新增独立 SIGKILL / 首次 restart QEMU 负向；产品与原 SIGTERM harness 不变。重点核旧原状态是否随进程消失、新服务是否重置恢复基线。SCM_RIGHTS 的同 OFD 与独立 open 区别、pidfd 的有限保证均以固定 Linux v6.8 源码及 Linux man-pages 核对，不能把 FD dup 当作不影响旧 claim 释放的恢复句柄。
+- 两份独立设计审查均无阻止负向测试的 mustfix，但明确尚非持久 guard/自动恢复实施契约：正常记录退休、交付不确定性、helper 重启/丢失或损坏记录、并发预留与能力不可撤销边界均需解决。五份固定 Linux v6.8 commit 源码逐 Git blob/长度/SHA 核对，报告及来源清单归档 physical-crash-design-20261023；没有复制 GPL 实现进产品。新 guest 预审发现条件调用函数抑制 shell set-e 的身份验证漏洞，已要求作者逐项显式返回失败，尚未启动运行。

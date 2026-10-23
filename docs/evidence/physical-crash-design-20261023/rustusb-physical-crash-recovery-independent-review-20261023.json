@@ -1,0 +1,650 @@
+{
+  "baseline_head": "e0e6118d85ca5641c8f33f700fbf9bd7668729f9",
+  "draft_review": {
+    "clarifications_for_future_design": [
+      "Keep namespace/boot/process identity and device generation distinct; use pidfd only for its process identity/death meaning.",
+      "A B recovery open is not a revocation mechanism and equal node fstat cannot prove independent OFDs.",
+      "Current clean restart snapshots cannot certify the former session; do not overwrite originals before reconciliation.",
+      "Avoid claiming all close work is deferred after exit: normal exit_files and exit_task_work are ordered; extra references and unreturned operations are the material uncertainty."
+    ],
+    "confirmed": [
+      "Per-open state vs duplicate references is correct.",
+      "No current persistent physical lease/journal is correct.",
+      "Snapshot rebaseline is a source prediction to test, not a claimed runtime result.",
+      "Draft distinguishes child death, final close and all capability references correctly.",
+      "First proposed negative retains wait137 as an expected kill fact while leaving recovery assertions FAIL; noIMPORT restart preserves original baseline.",
+      "Draft correctly leaves write-ahead/ACK/helper restart/concurrency and non-revocable FD capability unresolved."
+    ],
+    "must_fix": [],
+    "path": "docs/research/physical-crash-recovery-design.md",
+    "result": "PASS_SOURCE_FACTS_NO_MUST_FIX",
+    "sha256": "aaba8905d0eb9501b64a4e6ee96d93cc16e913ed213f9bdab366d482ec57fe3c"
+  },
+  "findings": [
+    {
+      "id": "ofd_scope",
+      "kind": "verified_source_fact",
+      "refs": [
+        "usbfs_state",
+        "usbfs_open"
+      ],
+      "text": "Each usbfs open allocates a new usb_dev_state and stores it in struct file private_data. Claim bits and pending/completed URB lists belong to that open file description, not a numeric FD or application PID."
+    },
+    {
+      "id": "last_close",
+      "kind": "verified_source_fact",
+      "refs": [
+        "file_put_reference",
+        "file_final_release",
+        "usbfs_last_release"
+      ],
+      "text": "Only final struct file reference release invokes usbdev_release; it releases owned interfaces and destroys/frees its async requests. Closing one duplicate, losing the helper socket, or observing one child exit is not equivalent to proving that final reference released."
+    },
+    {
+      "id": "exit_nuance",
+      "kind": "verified_source_fact",
+      "refs": [
+        "exit_files",
+        "exit_task_work",
+        "file_put_reference"
+      ],
+      "text": "Ordinary exit_files closes that task file table; do_exit then runs exit_task_work. Do not claim release is always deferred after wait. The missing premise is absence of other references, including fork/dup/SCM_RIGHTS queues or another process, and any unreturned kernel operation."
+    },
+    {
+      "id": "handoff_today",
+      "kind": "verified_source_fact",
+      "refs": [
+        "helper_fresh_open",
+        "helper_send_rights",
+        "helper_grant_handoff",
+        "helper_no_physical_registry"
+      ],
+      "text": "The helper opens a fixed validated character node, hands the FD through SCM_RIGHTS, then drops its local grant at serve_connection return. ManagedState records Native exports/ports only, so there is no retained physical capability lease or crash journal."
+    },
+    {
+      "id": "dup_trap",
+      "kind": "design_inference_from_sources",
+      "refs": [
+        "usbfs_state",
+        "usbfs_last_release",
+        "nusb_from_fd"
+      ],
+      "text": "A watchdog retaining a dup/SCM_RIGHTS copy of the worker FD keeps the same usbfs state alive after child SIGKILL. It must not simultaneously assume kernel last-close cleanup occurred. Do not wrap a shared OFD in a second independent nusb event loop and steal the child completions."
+    },
+    {
+      "id": "independent_open",
+      "kind": "verified_source_fact_and_design_inference",
+      "refs": [
+        "usbfs_claim",
+        "usbfs_release_interface",
+        "usbfs_complete_user_addresses"
+      ],
+      "text": "A second independent open is a separate usbfs state. Its RELEASEINTERFACE cannot release another state claim: its own ifclaimed bit is absent. It cannot reconstruct or reap the dead nusb allocator requests; recovery must first resolve old ownership. Equal fstat node/inode values do not distinguish dup from independent open."
+    },
+    {
+      "id": "no_original_rollback_in_kernel",
+      "kind": "verified_source_fact",
+      "refs": [
+        "usbfs_last_release",
+        "usb_unbind",
+        "usbfs_connect"
+      ],
+      "text": "Kernel release/unbind does not possess the application original-driver/configuration transaction. Unbind can reset alternate0; no source chain restores the previously detached application driver. USBDEVFS_CONNECT merely runs driver probing and does not select the saved driver by name."
+    },
+    {
+      "id": "nusb_shutdown_limits",
+      "kind": "verified_source_fact",
+      "refs": [
+        "nusb_no_reattach",
+        "nusb_checked_release",
+        "worker_private_ownership"
+      ],
+      "text": "Current no-reattach claim deliberately disables the nusb destructor reconnect path. release_checked is an explicit one-shot live-owner operation. SIGKILL bypasses Rust destructors and loses the private Worker state; it does not turn the capability into a revocable lease."
+    },
+    {
+      "id": "snapshot_not_journal",
+      "kind": "verified_source_fact",
+      "refs": [
+        "physical_snapshot",
+        "physical_slot_original_config",
+        "worker_private_ownership"
+      ],
+      "text": "PhysicalDeviceSnapshot is diagnostic, without receipt, original alternates, separate original configuration, owned_original set, configuration_changed flag, or in-progress Special transaction. Slot.source/private Worker hold these only in process memory. Serialize(snapshot) alone cannot authorize post-crash restoration."
+    },
+    {
+      "id": "restart_can_rebaseline",
+      "kind": "source_path_prediction_not_runtime_result",
+      "refs": [
+        "helper_grant_eligible",
+        "initialize_new_original"
+      ],
+      "text": "Helper ensure_eligible does not reject every unbound interface. initialize derives original_drivers from fresh grant metadata and marks an independently consistent newly registered slot clean/available. A post-crash unbound device may therefore become the new original. The planned no-IMPORT first-restart negative must establish the actual result; no run was performed by this review."
+    },
+    {
+      "id": "restoration_authority",
+      "kind": "verified_current_contract",
+      "refs": [
+        "worker_restore",
+        "reconnect_owned_only",
+        "validate_original",
+        "current_configuration_safety"
+      ],
+      "text": "Existing recovery checks same generation/configuration, historical actually owned interfaces and whether configuration was changed by this worker. Reuse those checks; do not create a fresh Slot that silently replaces the saved baseline or treat a fresh journal-less FD as old ownership."
+    }
+  ],
+  "git_status_at_end": "M docs/work-log.md\n?? docs/research/physical-crash-recovery-design.md\n?? scripts/qemu/guest-crash-init.sh",
+  "interface_docs": [
+    {
+      "title": "SCM_RIGHTS shares open file descriptions",
+      "url": "https://man7.org/linux/man-pages/man7/unix.7.html"
+    },
+    {
+      "title": "dup and shared file offset/status flags",
+      "url": "https://man7.org/linux/man-pages/man2/dup.2.html"
+    },
+    {
+      "title": "open creates distinct open file description",
+      "url": "https://man7.org/linux/man-pages/man2/open.2.html"
+    },
+    {
+      "title": "pidfd identities and exit notification",
+      "url": "https://man7.org/linux/man-pages/man2/pidfd_open.2.html"
+    }
+  ],
+  "limitations": [
+    "Linux v6.8 tag resolves to recorded immutable e8f897f... commit; official sources and exact SHA/Git blobs saved. Ubuntu6.8.0-106 is a separate build requiring guest runtime evidence. Tag signature was not independently verified.",
+    "No existing SIGTERM matrix was rerun or relabeled as SIGKILL evidence.",
+    "Independent FD plus journal plus pidfd is not FD revocation. A malicious/forwarding holder, surviving descendant, or helper death can leave old capability references.",
+    "Neither journal nor recovery can undo already delivered OUT/vendor-control side effects or resurrect trustworthy completion counters lost with process memory.",
+    "A small persisted restart-denial gate is the recommended first implementation, while general automatic recovery requires approved protocol/ownership and crash-gap design."
+  ],
+  "must_refuse_or_quarantine": [
+    "Missing, corrupt, oversized, stale-schema, non-root-owned journal or failed durable write/rename/fsync; do not fabricate a baseline.",
+    "Unresolved managed lease or other live worker epoch; do not grant again merely because current interfaces show None.",
+    "PID alone or pidfd readability without the capability-reference/descendant/forwarded-FD assumptions; never signal a reused PID.",
+    "Unknown in-flight host-state intent or missing result ACK, especially configuration/alternate changes; do not replay transfers or assume side effects absent.",
+    "Changed boot/device/node/sysfs/address generation, ambiguous fingerprint or hot reinsert; classify old generation Gone and require new explicit authorization.",
+    "Foreign usbfs/usbip-host/kernel ownership, unknown interface set, unsafe/storage/block descendants, or state outside the last confirmed transition; do not detach a new driver.",
+    "Independent B cannot release old A claims; RELEASEINTERFACE error/Busy is not success or authority to force unbind.",
+    "Kernel ioctl still active, unreconciled old OFD references, or bounded cleanup timeout; quarantine and report rather than drop a future and advertise Available.",
+    "Original driver None with nonzero alternate is not generically solved: release can reset alternate0. Preserve independent final checks and report unsupported/unresolved recovery rather than inventing success.",
+    "Helper/supervisor restart loses live pidfd/FD handles; journal survives only metadata, not kernel ownership. Reconcile before new grants.",
+    "New driver probe yields a different binding, descriptor or config differs, or actual original verification fails; do not detach/retry blindly.",
+    "Do not blanket-reject every legitimate original driver=None device. The new gate applies to known unresolved leases, not all unbound hardware."
+  ],
+  "nusb": {
+    "archive_sha256": "03fba503685f5c3e9f6a11ff9711c16086ab6beacaa6ad3df9e217a91a8d4c82",
+    "licenses": "MIT OR Apache-2.0",
+    "patch_matches_provenance": true,
+    "patch_sha256": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623",
+    "scope": "Reviewed current vendored Linux API/cleanup source and provenance, not rerun all 70 original-file checks or compilation.",
+    "upstream_commit": "c80218d342740321190436bc45304ebbbf16bef0",
+    "version": "0.2.8"
+  },
+  "recommended_minimum": {
+    "candidate_future_recovery": "For a confirmed stable interrupted session only: deny regrant, verify known child termination plus capability reference/ownership contract, wait bounded for old usbfs claims to cease, recheck exact generation/current safety/state, apply only confirmed own restoration through B, then independent final original-state checks. Unknown/blocked cleanup remains quarantined; clear record only after verification.",
+    "helper_watchdog_boundary": "Helper may deny grants and record/query bounded leases; a future typed recovery action must derive fixed node/interface/baseline from its own authorized record. Do not accept arbitrary PID, path, driver, ioctl, executable or restoration snapshot. An ordinary supervisor with B can perform allowed usbfs ioctls without making the network server root. If helper executes recovery itself it must preserve the same narrow checks and bounded ownership, not become a USB/IP data parser.",
+    "immediate_scope": "Perform only the planned isolated SIGKILL + first restart without IMPORT negative on unchanged product. Preserve original baseline, wait137, missing stopped and actual restart snapshots. No automatic-recovery product implementation is justified by this review alone.",
+    "journal_minimum": [
+      "schema/length bounds, helper/session epoch and authenticated caller UID; boot_id plus process PID/starttime/UID/exe identity (pidfd live handle when available)",
+      "complete PhysicalDeviceReceipt plus device fingerprint, descriptor identity and bus/address; do not use Bus ID/VIDPID alone",
+      "immutable original configuration and each original interface number/alternate/driver, captured by trusted helper observation",
+      "phase, monotonically increasing operation ID, claim/configuration/alternate intent, prior confirmed state, known actual owned interfaces, terminal errno and scoped observed post-state",
+      "dirty mark durably committed before capability handoff or a mutation is permitted; bounded root-owned non-symlink storage, atomic replacement and fsync policy; write/parse/checksum/schema failure blocks grants",
+      "clean/recovered only after old ownership is resolved and independent same-generation original config/alt/driver checks complete; no raw payload, device serial, raw pointer or transfer replay"
+    ],
+    "larger_alternative": "Moving actual USB ownership/Worker into an ordinary separate process surviving frontend death avoids losing private transaction state for frontend SIGKILL, but adds a bounded USB request IPC and still does not solve that owner own SIGKILL or FD forwarding. Do not call it the minimal current patch.",
+    "next_minimal_product_unit": "A managed physical lease/restart gate in the existing helper, not a new generic broker or root network parser. Persist immutable pre-grant baseline plus device/process epochs before sending a usable capability. Refuse a second grant while the prior managed record is unresolved; no overwrite with newly observed None.",
+    "ordinary_supervisor": "Prefer one ordinary supervisor owning its fixed child identity and bounded control channel, with helper retaining authorization/journal and per-device grant arbitration. If a recovery capability is retained, create a genuinely independent open B; do not retain worker open A through dup merely for observation. No runtime-only duplicate prevents all foreign references, so the trust/FD-forwarding boundary remains explicit.",
+    "restart_order": "On helper restart load and validate unresolved journal before granting devices. Surviving old capability holders remain authoritative uncertainty. Do not reopen/regrant a replacement generation automatically, delete stale journal on PID absence, or infer revocation from helper socket loss.",
+    "write_ahead_ack": "A typed mutation requires a persisted intent ACK before the worker acts, and a persisted terminal/result observation before its epoch can become a recovery-authorized stable state. Death between intent and confirmed result leaves uncertainty, not permission to replay or undo. This does not eliminate external-admin TOCTOU."
+  },
+  "repository_source_bytes_unchanged_during_final_report": {
+    ".agents/skills/rustusb-development/SKILL.md": true,
+    "AGENTS.md": true,
+    "Cargo.lock": true,
+    "crates/rustusb-core/src/lib.rs": true,
+    "crates/rustusb-daemon/src/lib.rs": true,
+    "crates/rustusb-daemon/src/linux.rs": true,
+    "crates/rustusb-daemon/src/physical.rs": true,
+    "crates/rustusb-rust-backend/src/physical.rs": true,
+    "crates/rustusb-rust-backend/src/physical/observe.rs": true,
+    "crates/rustusb-rust-backend/src/physical/safety.rs": true,
+    "crates/rustusb-rust-backend/src/physical/worker.rs": true,
+    "docs/architecture.md": true,
+    "docs/research/physical-crash-recovery-design.md": true,
+    "docs/security.md": true,
+    "vendor/nusb/RUSTUSB-PROVENANCE.json": true,
+    "vendor/nusb/RUSTUSB.patch": true,
+    "vendor/nusb/src/device.rs": true,
+    "vendor/nusb/src/platform/linux_usbfs/device.rs": true
+  },
+  "repository_sources": [
+    {
+      "length": 2906,
+      "path": "AGENTS.md",
+      "sha256": "a63014368bfff77cba9fc3cfccea3ce6e7c14db8ae923bc041bbaca00984cd4c"
+    },
+    {
+      "length": 3719,
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "sha256": "10ef52f9f77ca2da0eca60f9fee0f7b7082a6eb4bf0f658cf0e887f581ba2380"
+    },
+    {
+      "length": 20499,
+      "path": "docs/architecture.md",
+      "sha256": "9bdbd3f71c6edba1beb8da8b678a44be921b26ec6f8b95f597774f01d2094f61"
+    },
+    {
+      "length": 24178,
+      "path": "docs/security.md",
+      "sha256": "16fb7a5a4c78812b505887002a61e773e7f0249903f3ae90b3588da007522fe5"
+    },
+    {
+      "length": 7268,
+      "path": "docs/research/physical-crash-recovery-design.md",
+      "sha256": "aaba8905d0eb9501b64a4e6ee96d93cc16e913ed213f9bdab366d482ec57fe3c"
+    },
+    {
+      "length": 13081,
+      "path": "crates/rustusb-core/src/lib.rs",
+      "sha256": "bcebf74dd1aed8b99d8536935c48015a2a3af0bcca545cc9cdba27c74ba108db"
+    },
+    {
+      "length": 15504,
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "sha256": "7171430c1eba68bd9a2afddac9ff364289f244f1a2c695077bcec9aa0296b153"
+    },
+    {
+      "length": 46342,
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301"
+    },
+    {
+      "length": 13737,
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48"
+    },
+    {
+      "length": 20028,
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2"
+    },
+    {
+      "length": 31142,
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d"
+    },
+    {
+      "length": 11175,
+      "path": "crates/rustusb-rust-backend/src/physical/safety.rs",
+      "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2"
+    },
+    {
+      "length": 55625,
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+    },
+    {
+      "length": 40877,
+      "path": "vendor/nusb/src/device.rs",
+      "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289"
+    },
+    {
+      "length": 46376,
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+    },
+    {
+      "length": 18409,
+      "path": "vendor/nusb/RUSTUSB-PROVENANCE.json",
+      "sha256": "ce9db7b1a06ca38da3dd39d6e105a38e6dba5158f598dd091ac09e72198a9593"
+    },
+    {
+      "length": 29273,
+      "path": "vendor/nusb/RUSTUSB.patch",
+      "sha256": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623"
+    },
+    {
+      "length": 22870,
+      "path": "Cargo.lock",
+      "sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a"
+    }
+  ],
+  "result": "PASS_READ_ONLY_DESIGN_REVIEW",
+  "reviewed_utc": "2026-10-23T04:51:04.374903+00:00",
+  "schema_version": 1,
+  "scope": "Read-only source audit and proposed minimum fail-closed design, not a SIGKILL recovery implementation or runtime acceptance. Only /tmp official source/provenance/report files written; no builds, USB, modules, QEMU, ptrace or signal operations.",
+  "source_refs": [
+    {
+      "id": "usbfs_state",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^struct usb_dev_state",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 61,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L61"
+    },
+    {
+      "id": "usbfs_open",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int usbdev_open",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 1032,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L1032"
+    },
+    {
+      "id": "usbfs_last_release",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int usbdev_release",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 1089,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L1089"
+    },
+    {
+      "id": "usbfs_claim",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int claimintf",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 779,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L779"
+    },
+    {
+      "id": "usbfs_release_interface",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int releaseintf",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 812,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L812"
+    },
+    {
+      "id": "usbfs_connect",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int proc_ioctl\\(",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 2316,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L2316"
+    },
+    {
+      "id": "usbfs_disconnect_claim",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int proc_disconnect_claim",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 2460,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L2460"
+    },
+    {
+      "id": "usbfs_complete_user_addresses",
+      "path": "drivers__usb__core__devio.c",
+      "pattern": "^static int processcompl\\(",
+      "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+      "symbol_start_line": 2040,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c#L2040"
+    },
+    {
+      "id": "usb_unbind",
+      "path": "drivers__usb__core__driver.c",
+      "pattern": "^static int usb_unbind_interface",
+      "sha256": "2f81e953001354db884b6ce1624839d64399acef0150a14cf357ae77cb2aca37",
+      "symbol_start_line": 431,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/driver.c#L431"
+    },
+    {
+      "id": "usb_release_driver",
+      "path": "drivers__usb__core__driver.c",
+      "pattern": "^void usb_driver_release_interface",
+      "sha256": "2f81e953001354db884b6ce1624839d64399acef0150a14cf357ae77cb2aca37",
+      "symbol_start_line": 612,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/driver.c#L612"
+    },
+    {
+      "id": "file_final_release",
+      "path": "fs__file_table.c",
+      "pattern": "^static void __fput\\(",
+      "sha256": "b27545c59c85415f64f4712b226f99ab4947aa5ece376c45095028d67404f9e0",
+      "symbol_start_line": 350,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file_table.c#L350"
+    },
+    {
+      "id": "file_put_reference",
+      "path": "fs__file_table.c",
+      "pattern": "^void fput\\(",
+      "sha256": "b27545c59c85415f64f4712b226f99ab4947aa5ece376c45095028d67404f9e0",
+      "symbol_start_line": 425,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file_table.c#L425"
+    },
+    {
+      "id": "exit_files",
+      "path": "fs__file.c",
+      "pattern": "^void exit_files\\(",
+      "sha256": "c129e331b9042443bcd516d8fda58f58c755da41b70b94097d5ad7a9412acf43",
+      "symbol_start_line": 456,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file.c#L456"
+    },
+    {
+      "id": "exit_task_work",
+      "path": "kernel__exit.c",
+      "pattern": "^\\s*exit_task_work\\(tsk\\);",
+      "sha256": "c7a2878deada686a04be224f8b5185ad022a995a297229ff8b43e8c3b53f2af9",
+      "symbol_start_line": 871,
+      "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/kernel/exit.c#L871"
+    },
+    {
+      "id": "helper_no_physical_registry",
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "pattern": "^struct ManagedState",
+      "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301",
+      "symbol_start_line": 30,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/linux.rs#L30"
+    },
+    {
+      "id": "helper_open_authorize",
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "pattern": "^    async fn open_physical\\(",
+      "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301",
+      "symbol_start_line": 82,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/linux.rs#L82"
+    },
+    {
+      "id": "helper_grant_handoff",
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "pattern": "^async fn serve_connection",
+      "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301",
+      "symbol_start_line": 454,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/linux.rs#L454"
+    },
+    {
+      "id": "helper_fresh_open",
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "pattern": "^pub\\(crate\\) fn open_current",
+      "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48",
+      "symbol_start_line": 116,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/physical.rs#L116"
+    },
+    {
+      "id": "helper_grant_eligible",
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "pattern": "^pub\\(crate\\) fn ensure_eligible",
+      "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48",
+      "symbol_start_line": 53,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/physical.rs#L53"
+    },
+    {
+      "id": "helper_send_rights",
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "pattern": "^pub\\(crate\\) async fn send_fd",
+      "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48",
+      "symbol_start_line": 203,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/physical.rs#L203"
+    },
+    {
+      "id": "helper_received_validation",
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "pattern": "^pub\\(crate\\) fn validate_received",
+      "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48",
+      "symbol_start_line": 164,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-daemon/src/physical.rs#L164"
+    },
+    {
+      "id": "physical_snapshot",
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "pattern": "^pub struct PhysicalDeviceSnapshot",
+      "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2",
+      "symbol_start_line": 77,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical.rs#L77"
+    },
+    {
+      "id": "physical_slot_original_config",
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "pattern": "^struct Slot",
+      "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2",
+      "symbol_start_line": 123,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical.rs#L123"
+    },
+    {
+      "id": "initialize_new_original",
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "pattern": "^pub\\(super\\) async fn initialize",
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d",
+      "symbol_start_line": 352,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical/observe.rs#L352"
+    },
+    {
+      "id": "validate_original",
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "pattern": "^pub\\(super\\) async fn validate_grant",
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d",
+      "symbol_start_line": 210,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical/observe.rs#L210"
+    },
+    {
+      "id": "reconnect_owned_only",
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "pattern": "^pub\\(super\\) fn reconnect_drivers",
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d",
+      "symbol_start_line": 152,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical/observe.rs#L152"
+    },
+    {
+      "id": "current_configuration_safety",
+      "path": "crates/rustusb-rust-backend/src/physical/safety.rs",
+      "pattern": "^fn check\\(",
+      "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2",
+      "symbol_start_line": 17,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical/safety.rs#L17"
+    },
+    {
+      "id": "worker_private_ownership",
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+      "pattern": "^    owned_original:",
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f",
+      "symbol_start_line": 137,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical/worker.rs#L137"
+    },
+    {
+      "id": "worker_restore",
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+      "pattern": "^async fn restore\\(",
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f",
+      "symbol_start_line": 1039,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/crates/rustusb-rust-backend/src/physical/worker.rs#L1039"
+    },
+    {
+      "id": "nusb_from_fd",
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pattern": "^    pub\\(crate\\) fn from_fd\\(",
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e",
+      "symbol_start_line": 119,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/vendor/nusb/src/platform/linux_usbfs/device.rs#L119"
+    },
+    {
+      "id": "nusb_no_reattach",
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pattern": "^    pub\\(crate\\) fn detach_and_claim_interface_no_reattach",
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e",
+      "symbol_start_line": 452,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/vendor/nusb/src/platform/linux_usbfs/device.rs#L452"
+    },
+    {
+      "id": "nusb_checked_release",
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pattern": "^    pub fn release_checked\\(",
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e",
+      "symbol_start_line": 821,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/vendor/nusb/src/platform/linux_usbfs/device.rs#L821"
+    },
+    {
+      "id": "nusb_device_drop",
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pattern": "^impl Drop for LinuxDevice",
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e",
+      "symbol_start_line": 630,
+      "url": "https://github.com/tiansongyu/usbip-client/blob/e0e6118d85ca5641c8f33f700fbf9bd7668729f9/vendor/nusb/src/platform/linux_usbfs/device.rs#L630"
+    },
+    {
+      "id": "draft",
+      "path": "docs/research/physical-crash-recovery-design.md",
+      "provenance": "uncommitted root draft bytes at review time; do not attribute these bytes to baseline HEAD",
+      "sha256": "aaba8905d0eb9501b64a4e6ee96d93cc16e913ed213f9bdab366d482ec57fe3c"
+    }
+  ],
+  "upstream": {
+    "commit": "e8f897f4afef0031fe618a8e94127a0934896aba",
+    "linux_tag": "v6.8",
+    "retrieved_utc": "2026-10-23T04:44:01.391100+00:00",
+    "schema_version": 1,
+    "scope": "official read-only source retrieval; tag resolution recorded, no signature verification claimed",
+    "sources": [
+      {
+        "api_sha256": "31f1df6ea85c33be3c2ff81bcf101a1517f6c44a9160f7a8dd5943c41eb33541",
+        "git_blob": "3beb6a862e8084d97c619aacd32a624f1f6db3ce",
+        "length": 73143,
+        "lines": 2928,
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/drivers__usb__core__devio.c",
+        "path": "drivers/usb/core/devio.c",
+        "sha256": "8aee2c8210aa6bb28029ccdf6a75bd1cf1239abcc192afe5587ebf7301f40627",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/devio.c"
+      },
+      {
+        "api_sha256": "ca6fa28a8e037f7864128e541ca16f4e033b640131320d4109f10f534b275230",
+        "git_blob": "e01b1913d02bf68aa3dd3ad4e3a30adb11585c5f",
+        "length": 59236,
+        "lines": 2039,
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/drivers__usb__core__driver.c",
+        "path": "drivers/usb/core/driver.c",
+        "sha256": "2f81e953001354db884b6ce1624839d64399acef0150a14cf357ae77cb2aca37",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/core/driver.c"
+      },
+      {
+        "api_sha256": "08eb08bce027cd3d30e9eabe4782752c44555677c0a5d6d54d37269e5fef04cf",
+        "git_blob": "b991f90571b4d3089a0c00884fea3e38f317b1da",
+        "length": 12571,
+        "lines": 489,
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/fs__file_table.c",
+        "path": "fs/file_table.c",
+        "sha256": "b27545c59c85415f64f4712b226f99ab4947aa5ece376c45095028d67404f9e0",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file_table.c"
+      },
+      {
+        "api_sha256": "7086c377ff91261b833b1d644a54a7335fab2870c2a4b71dfd660b56ca7bd54f",
+        "git_blob": "3b683b9101d841b65f568e946915acc565e8b90a",
+        "length": 36885,
+        "lines": 1462,
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/fs__file.c",
+        "path": "fs/file.c",
+        "sha256": "c129e331b9042443bcd516d8fda58f58c755da41b70b94097d5ad7a9412acf43",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/file.c"
+      },
+      {
+        "api_sha256": "d65bf51c2313945038ef758a2e18833c6251687505a53fe901578446d225c2d1",
+        "git_blob": "dfb963d2f862ada6a2f06259c6df4923272cb218",
+        "length": 48977,
+        "lines": 1930,
+        "local": "/tmp/rustusb-sigkill-recovery-research-20261023/kernel__exit.c",
+        "path": "kernel/exit.c",
+        "sha256": "c7a2878deada686a04be224f8b5185ad022a995a297229ff8b43e8c3b53f2af9",
+        "url": "https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/kernel/exit.c"
+      }
+    ],
+    "tag_object": "90d1f30371ae3337beb01666b226320728d35c70"
+  }
+}

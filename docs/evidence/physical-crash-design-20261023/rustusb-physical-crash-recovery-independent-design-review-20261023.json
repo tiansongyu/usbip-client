@@ -1,0 +1,425 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "reviewer": "phase2_scope_review",
+  "scope": "Read-only source and design feasibility review; no repository edits, builds, Cargo, QEMU, USB operations, or product changes by reviewer.",
+  "observed_head": "e0e6118d85ca5641c8f33f700fbf9bd7668729f9",
+  "observed_status": [
+    " M docs/work-log.md",
+    "?? docs/research/physical-crash-recovery-design.md"
+  ],
+  "status": "DRAFT_DIRECTION_APPROPRIATE_FOR_NEGATIVE_VALIDATION_ONLY_NOT_IMPLEMENTATION_READY",
+  "runtime_claims": [],
+  "decision": {
+    "this_round": "Freeze existing product. Add only an independent two-guest SIGKILL negative observation and the first no-IMPORT restart observation. Preserve the initial baseline and actual FAIL independently of evidence-collection completion. No recovery guard, persistent lease, guardian, or automatic restore is implemented by the draft.",
+    "next_product_slice_candidate": "A root-helper-owned, bounded persistent delegation ledger preventing a new grant from silently replacing an unresolved original baseline. It must include a normal verified retirement/reconciliation path in the same product slice; a permanent deny with no usable release path is not a complete fix.",
+    "automatic_restore": "Defer until ownership, process/capability lifetime, trustworthy original intent, configuration/alternate ambiguity, and helper restart semantics have been designed and tested.",
+    "phase_boundary": "Requirements 4.5 and exceptional-exit testing justify this work now; it is not acceptance of complete Phase 2, Phase 3 authentication/encryption/state management, Phase 5 service packaging, Windows, storage recovery, or physical G1/G2."
+  },
+  "current_source_facts": [
+    {
+      "fact": "Helper App serializes its operations but OpenPhysical does not insert a physical ownership/delegation record. serve_connection holds PhysicalGrant only until one JSON/ACK/SCM_RIGHTS exchange completes, then drops its reference. Helper restart reconstructs only empty in-memory Native ManagedState.",
+      "refs": [
+        "crates/rustusb-daemon/src/linux.rs:30",
+        "crates/rustusb-daemon/src/linux.rs:82",
+        "crates/rustusb-daemon/src/linux.rs:446",
+        "crates/rustusb-daemon/src/linux.rs:525",
+        "crates/rustusb-daemon/src/linux.rs:643"
+      ]
+    },
+    {
+      "fact": "PhysicalGrant and GrantDescription contain an open FD, Device and PhysicalDeviceReceipt. Device has selected interface alternates/drivers but no active configuration field; a trustworthy helper recovery baseline needs an additional coherent configuration observation.",
+      "refs": [
+        "crates/rustusb-core/src/lib.rs:204",
+        "crates/rustusb-core/src/lib.rs:249",
+        "crates/rustusb-daemon/src/physical.rs:29",
+        "crates/rustusb-daemon/src/physical.rs:51"
+      ]
+    },
+    {
+      "fact": "Ordinary process initialize constructs originals from the current helper Device, reads current configuration, matches current drivers, and starts available/cleanup_verified=true. This is a fresh registry baseline, not proof that an earlier process restored its originals. Actual acceptance on the first restart is still to be measured.",
+      "refs": [
+        "crates/rustusb-rust-backend/src/physical/observe.rs:396",
+        "crates/rustusb-rust-backend/src/physical/observe.rs:405",
+        "crates/rustusb-rust-backend/src/physical/observe.rs:558"
+      ]
+    },
+    {
+      "fact": "IMPORT acquires interfaces using no_reattach. The in-process worker alone remembers acquired original interfaces and configuration_changed. Normal restore waits real terminals, performs checked releases, rejects uncertain external state, and independently checks original config/alt/drivers.",
+      "refs": [
+        "crates/rustusb-rust-backend/src/physical/worker.rs:123",
+        "crates/rustusb-rust-backend/src/physical/worker.rs:249",
+        "crates/rustusb-rust-backend/src/physical/worker.rs:796",
+        "crates/rustusb-rust-backend/src/physical/worker.rs:1038"
+      ]
+    },
+    {
+      "fact": "SIGTERM changes retain the original cleanup owner. SIGKILL cannot execute that application cleanup; process exit, client VHCI auto-NULL, and socket EOF do not by themselves establish server driver/config/alt restoration.",
+      "refs": [
+        "crates/rustusb-cli/src/physical_server.rs:130",
+        "docs/research/server-signal-shutdown-design.md:9",
+        "docs/research/physical-crash-recovery-design.md:7"
+      ]
+    },
+    {
+      "fact": "Same-generation scanner checks and per-interface reobservation already reject foreign usbfs/usbip-host, unsafe configuration, mismatching original driver, and replug generations during normal cleanup. Recovery must preserve these checks rather than introduce a force-unbind escape hatch.",
+      "refs": [
+        "crates/rustusb-rust-backend/src/physical/safety.rs:8",
+        "crates/rustusb-rust-backend/src/physical/safety.rs:71",
+        "crates/rustusb-rust-backend/src/physical/observe.rs:150",
+        "crates/rustusb-rust-backend/src/physical/observe.rs:175"
+      ]
+    }
+  ],
+  "mechanisms": [
+    {
+      "mechanism": "Retain the original SCM_RIGHTS FD or dup",
+      "assessment": "Not a separate recovery capability. It shares the USBFS open file description. Keeping it alive prevents final close of that usb_dev_state and can retain the old claim/async queues after service death. Do not assume both retained duplicate and automatic final-close cleanup. Reaping the old nusb user-pointer completions in another process would require a separate carefully audited design; do not transplant pointer values.",
+      "sources": [
+        "https://man7.org/linux/man-pages/man7/unix.7.html",
+        "https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/devio.c"
+      ]
+    },
+    {
+      "mechanism": "Independently open the same current USB device",
+      "assessment": "Gets a different usb_dev_state; it can preserve a generation-scoped potential recovery handle, but cannot RELEASEINTERFACE for another open. An existing foreign driver/usbfs claim is a refusal condition. CONNECT only asks the kernel to probe; it is not a command naming the original driver and must be checked afterwards.",
+      "sources": [
+        "https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/devio.c"
+      ],
+      "local_refs": [
+        "vendor/nusb/src/platform/linux_usbfs/usbfs.rs:88"
+      ]
+    },
+    {
+      "mechanism": "Ordinary parent supervising its fixed child",
+      "assessment": "Smallest process-death prototype and preserves non-root data path. A real child wait avoids recycled-PID guesses. Still requires independent recovery capability, original-state transfer, backpressure-safe control and explicit parent-death handling. It covers child failure only; parent death/host restart lose volatile intent. A journal-free supervisor must be marketed only for that narrower fault model.",
+      "sources": [
+        "https://man7.org/linux/man-pages/man2/pidfd_open.2.html"
+      ]
+    },
+    {
+      "mechanism": "Root helper retaining an independent recovery FD and lease",
+      "assessment": "Matches the existing FD authorization boundary and avoids launching network USB/IP parsers as root. It adds sensitive lifecycle work, resource bounds and locking to helper. Its own death closes the independent handle; a new helper needs a persistent unresolved record and must not reopen a reused Bus ID automatically. PIDFD/socket EOF is a notification, not revocation or proof of last reference.",
+      "sources": [
+        "https://man7.org/linux/man-pages/man2/pidfd_open.2.html",
+        "https://man7.org/linux/man-pages/man7/unix.7.html"
+      ]
+    },
+    {
+      "mechanism": "Persistent delegation journal and restart reconciliation",
+      "assessment": "Best initial durable safety boundary: preserve trusted originals and deny silent rebaselining. The journal is intent/evidence, not kernel truth or authority to force restore. A file/rename alone is not durable publication; failure must prevent grant, and updates require file plus containing-directory synchronization under a documented supported filesystem boundary.",
+      "sources": [
+        "https://man7.org/linux/man-pages/man2/fsync.2.html"
+      ]
+    }
+  ],
+  "threat_model": {
+    "trusted_current_premise": "Root/host kernel and protected helper policy are trusted. The ordinary USBFS server is trusted to exercise its delegated whole-device write FD; no existing per-URB sandbox or revocation exists. New ledger design must not silently claim it can contain a malicious process retaining/passing that FD.",
+    "adversarial_or_concurrent_inputs": [
+      "Unauthorised UID or fabricated lease/generation/finish request",
+      "Malformed, oversized, unknown-version, symlinked or insecure state file",
+      "Failure/crash between durable publication, grant send, client receive, cleanup verification and retirement",
+      "Concurrent approved server requesting the same device before either IMPORT",
+      "External usbip-host/usbfs/other driver acquisition, configuration change, or replug using same fingerprint/Bus ID/address",
+      "Helper or supervisor death; inherited/SCM-passed duplicate capability outliving the original service"
+    ],
+    "outside_claimed_protection": [
+      "Compromised root/kernel/device firmware",
+      "Forced recovery of active storage, mounted filesystems, or data consistency",
+      "Guaranteed termination of an uninterruptible in-kernel operation",
+      "Revocation of already delegated whole-device FDs",
+      "Transparent restoration of all multi-configuration/nondefault alternate histories without operation provenance"
+    ]
+  },
+  "normal_path_must_be_preserved": [
+    "Do not ban all driver=None baselines. Legitimately unbound approved devices remain representable. Reject unresolved history by trusted record and receipt, not by treating None as evidence of crash.",
+    "Do not require a single configuration or alt0 globally. Existing ECM multiple configuration/alternate behavior remains available to the live authorized service. A deny-only unresolved ledger need not journal every USB control request because it performs no automatic restoration.",
+    "One grant/record covers the service registration lifetime and its multiple IMPORT/cleanup cycles. An IMPORT lease is not the same lifecycle as the helper delegation; their names/state must distinguish them.",
+    "Normal stop and no-IMPORT stop must have a real bounded retirement path, followed by an ordinary second start and actual I/O. Setup failure after one of up to 16 grants, cancelled prepare and bind/output failures also require explicit cleanup/record disposition.",
+    "Do not clear a record merely because a client asserts cleanup_verified, outputs stopped, closes its control socket, or exits. Helper must independently check the stored baseline and decide the remaining-capability trust/lifetime boundary. This decision is still open, not solved by this report.",
+    "An old generation record must never authorize recovery on replug. Preserve the old record as gone/stale and require a newly verified explicit grant; do not overwrite the old baseline or apply a blanket device-ID deny forever without a reconciliation path."
+  ],
+  "must_resolve_before_product_implementation": [
+    {
+      "id": "P1",
+      "issue": "Normal retirement authority and capability lifetime",
+      "required_decision": "Specify which authenticated process may finish which record, when all relevant backend FD owners have been dropped, how helper independently verifies config/alternates/driver/generation/full safety, and what residual FD-duplication assumption remains. A client boolean or PID death is insufficient. Test both ordinary second start and refusal while a retained-capability test process still owns an interface."
+    },
+    {
+      "id": "P2",
+      "issue": "Trusted baseline coherence",
+      "required_decision": "Helper, not request JSON, captures original config plus exact full interface/alt/driver set and generation under bounded coherent pre/post observation. Current Device lacks active config. Do not persist serial strings/raw USB data unnecessarily; store only bounded restoration metadata under root-only protection."
+    },
+    {
+      "id": "P3",
+      "issue": "Write-ahead delegation and acknowledgement ambiguity",
+      "required_decision": "Reserve per generation and persist unresolved state before the FD may escape, including queued ancillary rights. Unknown send/ACK outcomes remain unresolved. Do not delete on timeout/EOF merely because receive was not acknowledged. Prevent a concurrent second grant before first service claims USB."
+    },
+    {
+      "id": "P4",
+      "issue": "State store restart/migration/error semantics",
+      "required_decision": "Fixed protected path; strict schema/version/size limits; singleton helper or cross-instance store exclusion; atomic durable publish/retire; read-only status on corruption. Missing first-install store vs lost established store needs a documented initialization/migration distinction; silent empty-default after failure reopens the gap."
+    },
+    {
+      "id": "P5",
+      "issue": "Identity across daemon and host restart",
+      "required_decision": "Persist boot identity or an equivalent boot boundary. Current dev/inode/USB-address receipt is within one kernel instance, not cross-boot identity. Never auto-apply old restoration on changed boot/generation; fresh explicit authorization must preserve historical evidence."
+    },
+    {
+      "id": "P6",
+      "issue": "Usable reconciliation after crash before Finish",
+      "required_decision": "Keep an unresolved record on doubt, but provide bounded observation/admin reconciliation and safe retirement criteria. Permanent denial after a normally restored process crashed just before Finish is conservative degradation, not full recovery. Any reset/forget action must be explicit, root-authorized, and not disguise device writes."
+    },
+    {
+      "id": "P7",
+      "issue": "Automatic configuration/alternate restore later",
+      "required_decision": "For auto-write recovery, initial baseline alone cannot show whether a changed config belongs to this service or an external actor. Need proven owned mutation range with before/intent/observed outcome ordering, or quarantine uncertain changes. Preserve None+nonzero-alt limitation; generic CONNECT cannot guarantee exact original driver."
+    }
+  ],
+  "draft_review": {
+    "decision": "No must-fix for launching the bounded negative observation described in the draft. Not ready as an implementation contract for a durable guard or automatic recovery.",
+    "required_wording": "Current round is source review plus independent negative runtime evidence only. Future unresolved-lease guard must include normal verified retirement and usable reconciliation. Never claim the guard/recovery already exists.",
+    "negative_contract_notes": [
+      "SIGKILL wait137 is a process-termination fact, not recovery PASS/FAIL by itself. Finish both guest collection paths before verdict.",
+      "Require fixed full observation window even when original driver not restored; absence of stopped means final backend counts unknown, not zero and not permanent leak.",
+      "Restart is a distinct first observation only, no IMPORT and no destructive pre-cleanup. Initial baseline stays immutable; a restarted ready cleanup_verified means only its own registry semantics.",
+      "If restart fails, save actual error/exit/FD/sysfs and do not retry until evidence is complete. If ready, capture before any control input and then cooperate-stop, collecting post-stop external state.",
+      "Guard input/source/ELF and helper PID/identity against accidental helper restart or stale process substitution."
+    ]
+  },
+  "acceptance_matrix": [
+    {
+      "id": "N1",
+      "phase": "this round",
+      "scenario": "Existing product SIGKILL after real HID+FTDI I/O and pending URBs",
+      "required_evidence": "Exact owned service identity, before original/generation/claims/budget, single KILL and actual wait, fixed observation window, independent server sysfs and client auto-disconnect before detach, missing stopped preserved",
+      "expected_status": "Actual product recovery verdict, never converted by test collection success"
+    },
+    {
+      "id": "N2",
+      "phase": "this round",
+      "scenario": "First restart on same IDs without IMPORT",
+      "required_evidence": "Same helper, no pre-repair; actual ready/original/current/cleanup_verified or exact refusal; FD and independent sysfs; cooperative stop and post-stop; initial original snapshot retained",
+      "expected_status": "Observation only; no blanket expected acceptance and no recovery claim"
+    },
+    {
+      "id": "L1",
+      "phase": "future gate slice",
+      "scenario": "Normal service and no-IMPORT start/stop, each followed by second start and real I/O",
+      "required_evidence": "Durable initial record, helper-verified retirement, no leaked deny; multi-device partial setup paths also bounded",
+      "expected_status": "PASS required before calling ledger a usable fix"
+    },
+    {
+      "id": "L2",
+      "phase": "future gate slice",
+      "scenario": "Existing ECM multiple configuration and alt behavior",
+      "required_evidence": "Current protocol/UDP/config/alt/driver restoration regressions still pass; no new singleconfig/None rejection",
+      "expected_status": "PASS preservation"
+    },
+    {
+      "id": "L3",
+      "phase": "future gate slice",
+      "scenario": "Crash at grant reserve/publish/send/receive and restored-before-retire",
+      "required_evidence": "Each actual failpoint; no escaped unrecorded FD; unresolved preserved; explicit normal reconciliation recovery path",
+      "expected_status": "No blind new baseline or silent erase"
+    },
+    {
+      "id": "L4",
+      "phase": "future gate slice",
+      "scenario": "Concurrent grants and duplicated/inherited service capability",
+      "required_evidence": "Only one live delegation per current generation; old holder continues to own claim in retained-FD case and new grant/retire is refused",
+      "expected_status": "No PID/EOF based revocation claim"
+    },
+    {
+      "id": "L5",
+      "phase": "future gate slice",
+      "scenario": "Helper KILL/restart with live or unresolved delegation",
+      "required_evidence": "Old ability may remain; durable rows survive and new helper observes but does not steal; stale socket handled explicitly",
+      "expected_status": "Refuse ambiguous reuse; preserve actual live data behavior"
+    },
+    {
+      "id": "L6",
+      "phase": "future gate slice",
+      "scenario": "Truncated/version-invalid/insecure journal, missing established store, disk/full/fsync/rename errors",
+      "required_evidence": "No device FD grant on failed publication or corrupt state; Native/read-only diagnostics disposition documented; originals not overwritten",
+      "expected_status": "Bounded fail closed"
+    },
+    {
+      "id": "L7",
+      "phase": "future gate slice",
+      "scenario": "External usbfs, usbip-host, different driver/config takeover",
+      "required_evidence": "Refusal with zero forced unbind/config writes; unrelated device I/O continues",
+      "expected_status": "No adoption or force cleanup"
+    },
+    {
+      "id": "L8",
+      "phase": "future gate slice",
+      "scenario": "Replug same fingerprint/Bus ID and helper vs full host restart",
+      "required_evidence": "Old receipt rejected; old record retained; changed boot not mistaken for matching inode; only explicit new verified grant can authorize current generation",
+      "expected_status": "No authorization inheritance"
+    },
+    {
+      "id": "L9",
+      "phase": "future gate slice",
+      "scenario": "Forged finish/lease fields from unauthorized or wrong owner and stale replay",
+      "required_evidence": "No record deletion/grant/device operation; exact current policy and actor check; repeated successful finish idempotent",
+      "expected_status": "Default deny"
+    },
+    {
+      "id": "R1",
+      "phase": "later automatic recovery",
+      "scenario": "Child death with independent FD vs same-OFD retained duplicate",
+      "required_evidence": "Separate open identities and kernel state; same-OFD case does not assume final-close cleanup; real terminal and drivers observed",
+      "expected_status": "Narrow documented recovery only"
+    },
+    {
+      "id": "R2",
+      "phase": "later automatic recovery",
+      "scenario": "Crash during configuration/alternate change and successful/failed raw IOCTL",
+      "required_evidence": "Trusted intent and actual outcome or quarantine; no blind rollback from current value alone; external changes refused",
+      "expected_status": "No fabricated completion or state"
+    },
+    {
+      "id": "R3",
+      "phase": "later automatic recovery",
+      "scenario": "Composite sibling probe, original=None, nonzero alternate",
+      "required_evidence": "Per-interface reobserve and exact original outcome; currently unsupported None+nonzero case remains explicit",
+      "expected_status": "No generic support claim"
+    },
+    {
+      "id": "R4",
+      "phase": "later automatic recovery",
+      "scenario": "Supervisor death, helper death during recovery, repeated recovery and bounded kernel stall",
+      "required_evidence": "Durable unresolved state and idempotent observations; no future-drop-as-cancellation or claim of terminating kernel wait",
+      "expected_status": "Quarantine on uncertainty"
+    },
+    {
+      "id": "H1",
+      "phase": "still open",
+      "scenario": "Physical G1/G2, real serial/HID/other devices, storage, successful clear/partial, kernel-internal active window",
+      "required_evidence": "Separate explicit environment/device authorization and evidence",
+      "expected_status": "QEMU does not close these gates"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/devio.c",
+      "checked": "Pinned v6.8 source plus existing local copy, functions usbdev_open/usbdev_release/releaseintf/proc_setconfig/proc_ioctl; Ubuntu guest behavior not inferred as already run."
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man7/unix.7.html",
+      "checked": "SCM_RIGHTS transfers a reference to an open file description, equivalent to duplication."
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/pidfd_open.2.html",
+      "checked": "PIDFD process observation and child/PID-reuse conditions; not FD capability lifetime or authorization."
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/fsync.2.html",
+      "checked": "Directory entry durability requires directory fsync in addition to file sync."
+    }
+  ],
+  "input_manifest": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 2906,
+      "sha256": "a63014368bfff77cba9fc3cfccea3ce6e7c14db8ae923bc041bbaca00984cd4c"
+    },
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "bytes": 3719,
+      "sha256": "10ef52f9f77ca2da0eca60f9fee0f7b7082a6eb4bf0f658cf0e887f581ba2380"
+    },
+    {
+      "path": "docs/requirements.md",
+      "bytes": 19823,
+      "sha256": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c"
+    },
+    {
+      "path": "docs/architecture.md",
+      "bytes": 20499,
+      "sha256": "9bdbd3f71c6edba1beb8da8b678a44be921b26ec6f8b95f597774f01d2094f61"
+    },
+    {
+      "path": "docs/security.md",
+      "bytes": 24178,
+      "sha256": "16fb7a5a4c78812b505887002a61e773e7f0249903f3ae90b3588da007522fe5"
+    },
+    {
+      "path": "docs/roadmap.md",
+      "bytes": 14413,
+      "sha256": "8849754a3e789c16fa478b83a602c8c244d06a954d64fcbc47befa39ff3a8f10"
+    },
+    {
+      "path": "docs/research/rust-physical-backend-design.md",
+      "bytes": 6820,
+      "sha256": "d2604cdbd09d74e7b5a7f4a5521ef4d057f4ad1daa9b801406fb041b0bf0c4a2"
+    },
+    {
+      "path": "docs/research/physical-crash-recovery-design.md",
+      "bytes": 7268,
+      "sha256": "aaba8905d0eb9501b64a4e6ee96d93cc16e913ed213f9bdab366d482ec57fe3c"
+    },
+    {
+      "path": "crates/rustusb-core/src/lib.rs",
+      "bytes": 13081,
+      "sha256": "bcebf74dd1aed8b99d8536935c48015a2a3af0bcca545cc9cdba27c74ba108db"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/lib.rs",
+      "bytes": 15504,
+      "sha256": "7171430c1eba68bd9a2afddac9ff364289f244f1a2c695077bcec9aa0296b153"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "bytes": 46342,
+      "sha256": "58a72486622bbb9a34a7cea5632ee06c3ca002a0080686bbb0d32194f2fe1301"
+    },
+    {
+      "path": "crates/rustusb-daemon/src/physical.rs",
+      "bytes": 13737,
+      "sha256": "7fb0217a17b4586a1ac9c03c2d38e5fa39bc6b087c15a11d62ca4cadf6557b48"
+    },
+    {
+      "path": "crates/rustusb-cli/src/physical_server.rs",
+      "bytes": 5852,
+      "sha256": "a35b88aa74376bbc22dbf755e1c421e0ec8002af7521094f7c824504e142915b"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical.rs",
+      "bytes": 20028,
+      "sha256": "416d0dac9d423b41efd8c583a3e4b146283e9cb3aee7ac1b726b1a129447c4f2"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/observe.rs",
+      "bytes": 31142,
+      "sha256": "f71bbc75dad0301c2e578c95a4c8aa5da2b03d037ac3c347ba4e245b9c6d100d"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs",
+      "bytes": 55625,
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/safety.rs",
+      "bytes": 11175,
+      "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2"
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "bytes": 46376,
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "bytes": 7670,
+      "sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011"
+    }
+  ],
+  "review_limits": [
+    "Source-level feasibility and threat-model review only; no new runtime outcomes.",
+    "Root is intentionally drafting docs concurrently; observed docs-dirty is not a product source freeze failure.",
+    "Exact journal/API/retirement protocol remains proposed and must be refined after actual negative observation.",
+    "No full security platform, systemd packaging, TLS/authentication, storage recovery, or generalized supervisor introduced."
+  ]
+}
