@@ -352,3 +352,12 @@
 - 两新产品正向另一agent独立raw复核559/559证据断言通过，未调用runner verifier，核实际来源、完整基线/许可、wait137、日志/纯观察先于API和六轮原I/O。复核器初稿以字符串排序代替Path组件排序误判fingerprint，保留初稿/修正稿；实际QEMU和产品不改判。归档无ELF本体，审查核build→guest→after记录哈希链；无逐CONNECT syscall/errno跟踪。新报告、E27及README/网站均保留这些边界。
 
 - 最终文档独立30项审查通过、225本地链接无缺失；root逐206归档原件/staged blob和152运行输入核对，111软件输入亦保持。报告/README/展示站更新提交10dde54已正常push；Pages39923414349 check/deploy全部success，线上HTML/CSS/JS/3 SVG六资源HTTPS200且逐10dde54字节一致。全局readme-site四文件仍等于原归档，Codex发现symlink有效。五份发布/技能复核原件归档autorestore-site-publication；该时点10dde54软件CI仍运行中，完整产品CI通过仍精确归属2ab9976，未冒称新的CI计数。
+
+## 继续：恢复许可与外部占用的实际边界
+
+- 上一goal turn为实际进展：e34e309实现受限原driver恢复，clean2ab9976七QEMU/14guest与268次软件/四原生CI通过，英文README/网站/全局skill交付已推送至744d9be。本轮重新读取完整原始需求和项目约定，开始时工作区clean；完整目标保持active。
+- 先写physical-driver-autorestore-negative-design，明确L真实旧helper产出schema1不追授、P撤销当前许可、C外部OFD先claim及失败不重试。L尾部必须人工恢复+只读协调，P/C才在明确helper重启后由产品恢复；不混淆手动与自动验收。root负责隔离旧producer构建，测试harness另分配，所有真实USB操作仅发生在可销毁guest。
+
+- 旧producer在独立detached933e720和独立target目录实际locked/all-features构建成功，109源码输入/head/clean前后guard真；3769624B helper SHA2ce89408…0819b（实际新构建，不要求等于历史不同路径ELF）。当前产物未覆盖。只读预审确认C可先被ensure_eligible拒绝、P空恢复名单不启动scheduler、L保留disk1旧IPC形状；正式设计修正C释放必须在同一仍运行helper下观察不重试。744d9be的后续软件/Pages CI均已实际success，本轮不重新解析那份日志的测试计数。
+
+- 当前产品完整scripts/check.sh再次实际exit0，111输入前后SHA保持，default90/allfeatures158/vendor20共268次、31result、0失败/忽略，fmt/Clippy/release/严格rustdoc通过；与此前产品输入相同。旧producer与准备/预审原件分开归档，尚未把新增C源码或构造校验当成QEMU运行。
