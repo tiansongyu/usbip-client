@@ -1,6 +1,6 @@
 # USBFS 显式释放结果与错误传播
 
-2026-10-23，基线`54da615`。状态：待实现与验证。承接[host-state最终验证](usbfs-host-state-races.md)，不将本轮扩展为原无驱动非零alternate的通用恢复承诺。
+2026-10-23，基线`54da615`。状态：实现已合入`4e81a11`，222次软件测试通过；首轮clean十一项候选矩阵10PASS/1FAIL，最终冻结尚待下述物理测试输出隔离修订。承接[host-state最终验证](usbfs-host-state-races.md)，不将本轮扩展为原无驱动非零alternate的通用恢复承诺。
 
 ## 已核实的问题
 
@@ -28,3 +28,11 @@ Linux6.8 [devio.c](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/
 4. 放门后记录实际syscall-exit=-22。修复后A按真实-22完成且UNLINK0；EOF不要求旧wire回复。trace须证明未执行SET_CONFIGURATION2；后续IF1释放确实完成，不因首错跳过。恢复到原CDC双driver/config1/alt0,1、末资源0，server/tracer正常退出。
 5. 先在旧产品上运行新断言并保留真实FAIL，再应用产品修复；全部失败、准确源码、原始日志和派生解释均保留。若外部解绑前置或内核返回不同，只能FAIL并调查，不放宽errno或恢复断言。
 6. 完整Cargo质量gate、vendor纯测试；修复后开发验证，再在同一clean提交串行冻结原六场景、新release两场景及ECM/HID/FTDI必要回归。范围内所有证据完成后再更新验收，不把原硬件G1/G2或完整Phase2标为完成。
+
+## 首轮候选矩阵后的断言输出隔离
+
+`4e81a11`同一clean提交顺序运行八项host-state、ECM、物理normal/hot。前十项PASS；hot原始server串口第547–548行显示`RUSTUSB_PHYSICAL`与`_REINSERT_STALE: PASS ...`之间插入内核hid-generic printk。host严格匹配拒绝整条缺失标记，整轮/sequence保留FAIL，不将字符串清洗后的拼接视为PASS，也不在原证据上重写结果。
+
+只修改物理测试的`run-physical-qemu.py`和`guest-physical-init.sh`：QEMU保留第一串口ttyS0记录完整kernel console，另加第二ISA串口ttyS1作为guest程序stdout/stderr；来宾挂载devtmpfs后确认字符节点并重定向，打印独立channel beacon。host实时协调、断言和JSON解析读独立evidence log；Kernel panic/BUG/一致性检查继续读取原kernel serial及程序输出，两个文件均归档。保持全部I/O、热拔/新代际、权限、资源、超时断言；不抑制kernel日志，不延长等待或在parser中忽略插入内容。
+
+该修订只隔离测试输出，不改变产品或协议。先保全首轮11项candidate原bytes/固定Git来源及严格FAIL；另行提交后在同一clean提交运行十一项最终矩阵。原软件输入未变时不因纯测试输出修改重复完整Cargo gate，但更新Python/BusyBox语法及实际新串口运行验证；若发现代码或新的问题则执行相应检查。

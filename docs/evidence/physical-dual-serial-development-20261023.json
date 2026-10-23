@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "scope": "One dirty development QEMU hot-unplug smoke for two-UART evidence isolation; not clean final acceptance",
+  "result": "PASS",
+  "git_commit": "4e81a1195b871d605a7f334f2183231ee6ceea7c",
+  "working_tree_dirty": true,
+  "default_locked_all_features_build": true,
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "protocol_probe_case_count": 15,
+  "script_sha256": {
+    "run-physical-qemu.py": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+    "guest-physical-init.sh": "e62da0544782a411f8ff95c02be3f9865865dc09e03c1d713599b1871cb39226",
+    "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "source_provenance": "Five exact scripts/source.json captured before this dirty development run; snapshot bytes match summary hashes.",
+  "output_channels": {
+    "server": {
+      "kernel_console": {
+        "device": "ttyS0",
+        "file": "server-serial.log"
+      },
+      "program_evidence": {
+        "device": "ttyS1",
+        "file": "server-evidence.log"
+      }
+    },
+    "client": {
+      "kernel_console": {
+        "device": "ttyS0",
+        "file": "client-serial.log"
+      },
+      "program_evidence": {
+        "device": "ttyS1",
+        "file": "client-evidence.log"
+      }
+    }
+  },
+  "observed_evidence_channel_beacons": {
+    "server": "RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=server device=ttyS1 kernel_console=ttyS0",
+    "client": "RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0"
+  },
+  "serial_output": {
+    "expected_bytes": 140,
+    "received_bytes": 140,
+    "sha256": "7d2284a6df1220f6daa02362b9cc884b2aca1a86386c045f8157f27b090c5e2c",
+    "exact_match": true
+  },
+  "static_check_count": 34,
+  "after_guard_provenance": "Completed before PASS in exact frozen runner; legacy physical summary schema does not persist after hash values.",
+  "candidate_failure_preserved": {
+    "path": "docs/evidence/checked-release-candidate-20261023.json",
+    "sha256": "d2674f48dd3b4ddb2bd4597a9b71b9a393e443e5d363dc0c3a36bd3d5da8eebc",
+    "result": "FAIL"
+  },
+  "indexed_artifact_count": 20,
+  "artifacts": [
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/client-evidence.log",
+      "bytes": 4762,
+      "sha256": "88d8b2d4b01634493a4574ded2c9dd2e55e835942810919d2da4bf49af91e0be",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/client-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/client-serial.log",
+      "bytes": 39530,
+      "sha256": "8aa116d8d2980eb87fa7e1db5c42347b37e22aed66f98fc359ad66968f268954",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/server-evidence.log",
+      "bytes": 20919,
+      "sha256": "882aedc867a61f2afb43415c3a621382cadb4f57ead1d5a2c1829af79b681372",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/server-evidence.log"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/server-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/server-serial.log",
+      "bytes": 36167,
+      "sha256": "10a84890430a9c25baf1d99ecf3b062ef25ce65edbb2e088b305919f02da2e02",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/summary.json",
+      "bytes": 78348,
+      "sha256": "d02233d3b28e7255c0049de45ab2ae0e926192678b8722996ef983888570cb55",
+      "provenance": "raw runtime",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/runner.log",
+      "bytes": 89,
+      "sha256": "3162234878b8f5fa357baf3b3bbae25c5b3c065aa5100ec1f07a9d90450f6c26",
+      "provenance": "raw external runner log",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-20261023-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/guest-init.sh",
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+      "provenance": "raw pre-run five-script source snapshot/metadata",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-source-20261023/guest-init.sh"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/guest-physical-init.sh",
+      "bytes": 28064,
+      "sha256": "e62da0544782a411f8ff95c02be3f9865865dc09e03c1d713599b1871cb39226",
+      "provenance": "raw pre-run five-script source snapshot/metadata",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-source-20261023/guest-physical-init.sh"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/physical-wire-probe.rs",
+      "bytes": 20786,
+      "sha256": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+      "provenance": "raw pre-run five-script source snapshot/metadata",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-source-20261023/physical-wire-probe.rs"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/run-native-qemu.py",
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+      "provenance": "raw pre-run five-script source snapshot/metadata",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-source-20261023/run-native-qemu.py"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/run-physical-qemu.py",
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+      "provenance": "raw pre-run five-script source snapshot/metadata",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-source-20261023/run-physical-qemu.py"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/source.json",
+      "bytes": 702,
+      "sha256": "8abee0bd8e220d74af5f762af135e24d5d27991972ad77e46591de636ab9ea14",
+      "provenance": "raw pre-run five-script source snapshot/metadata",
+      "original_path": "/tmp/rustusb-physical-dual-serial-dev01-source-20261023/source.json"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/static/rustusb-physical-dual-serial-static-20261023.json",
+      "bytes": 6776,
+      "sha256": "d1781064bf2cc4cf7fab72af7aa7eb1ef02acfff75f8d6167a2fb8c68d6933d1",
+      "provenance": "original static/PTY validation record or exact check script",
+      "original_path": "/tmp/rustusb-physical-dual-serial-static-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/static/test-rustusb-physical-dual-serial-20261023.py",
+      "bytes": 5246,
+      "sha256": "e9b1dd8c8986292b7fb540c4622b4ab35f31b5b593dcd1a4e8ba562c90a8a507",
+      "provenance": "original static/PTY validation record or exact check script",
+      "original_path": "/tmp/test-rustusb-physical-dual-serial-20261023.py"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/source/artifacts.sha256",
+      "bytes": 508,
+      "sha256": "7d3ac819f5227768eed17b9ea0230f0b78fa9c4642fdbbdcf3e5cbff8d945470",
+      "provenance": "derived SHA256 manifest of all other artifacts under this directory"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/static/artifacts.sha256",
+      "bytes": 228,
+      "sha256": "b85db856431cbc2820937a74c396823a6a5c862d74e50fc3b1c75b46d4fbb949",
+      "provenance": "derived SHA256 manifest of all other artifacts under this directory"
+    },
+    {
+      "path": "docs/evidence/qemu-physical-dual-serial-dev01-20261023/artifacts.sha256",
+      "bytes": 1714,
+      "sha256": "24c007ddb0bd04a7b35d90fd3457a250edf65ddceea7f542a9459021fb055c7a",
+      "provenance": "derived SHA256 manifest of all other artifacts under this directory"
+    }
+  ],
+  "index_self_indexed": false,
+  "real_hardware_test_performed": false
+}

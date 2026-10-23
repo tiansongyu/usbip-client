@@ -1,0 +1,1177 @@
+{
+  "schema_version": 1,
+  "review": "independent read-only checked-release product diff review",
+  "source_tree": "/tmp/rustusb-checked-release-implementation-20261023",
+  "head": "6845ebc2ff2baafe6423643085e75efa012bf4a4",
+  "source_tree_dirty": true,
+  "result": "PASS",
+  "must_fix": [],
+  "scope_limitations": [
+    "Source/API/ownership/errno/provenance review only; no build, QEMU, ptrace, USB or host mutation performed.",
+    "Parent-reported vendor19/backend41/clippy results were not rerun by this reviewer.",
+    "Checked RELEASE success is not independent configuration/alternate/driver restoration proof and does not solve driverless nonzero alternate restoration.",
+    "Real ioctl regression results remain to be run after applying the fix."
+  ],
+  "facts": [
+    {
+      "path": "vendor/nusb/src/device.rs:640",
+      "finding": "Portable release signature and best-effort contract retained; Linux-only safe release_checked is additive."
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs:687",
+      "finding": "One-shot release state cleared before actual RELEASE; no CONNECT after failure and no duplicate syscall from Drop."
+    },
+    {
+      "path": "vendor/nusb/src/platform/linux_usbfs/device.rs:710",
+      "finding": "Only unique Arc performs checked operation; Busy with other references invokes no release syscall."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs:180",
+      "finding": "All mapped releases sequentially awaited and every error logged; original first errno retained."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs:805",
+      "finding": "SET_CONFIGURATION skipped when checked release failed; subsequent actual-state observation and claim safety still run."
+    },
+    {
+      "path": "crates/rustusb-rust-backend/src/physical/worker.rs:1084",
+      "finding": "Temporary alternate claim/set/release retain errno; release awaited and independently logged even if selection failed."
+    },
+    {
+      "path": ".gitattributes:5",
+      "finding": "Whitespace exception is limited to generated vendor/nusb/RUSTUSB.patch."
+    }
+  ],
+  "archive": {
+    "path": "/home/ubuntu/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/nusb-0.2.8.crate",
+    "sha256": "03fba503685f5c3e9f6a11ff9711c16086ab6beacaa6ad3df9e217a91a8d4c82"
+  },
+  "reviewed_artifacts": {
+    ".gitattributes": {
+      "bytes": 220,
+      "sha256": "12c7503c1f0b6804abf5d1ff47b4ceb40683b2ee556ae5891e6137547696b74b"
+    },
+    "crates/rustusb-rust-backend/src/physical/worker.rs": {
+      "bytes": 55625,
+      "sha256": "bc9e0b159b1af66a631cd46995b6a2c51ab66745ec714ed64ec63f21db3c587f"
+    },
+    "vendor/nusb/RUSTUSB-PROVENANCE.json": {
+      "bytes": 18409,
+      "sha256": "ce9db7b1a06ca38da3dd39d6e105a38e6dba5158f598dd091ac09e72198a9593"
+    },
+    "vendor/nusb/RUSTUSB.md": {
+      "bytes": 4903,
+      "sha256": "711ca550bed5a9b8856e00a285b56ea57c8b1ce21f051a85df34519fac032f83"
+    },
+    "vendor/nusb/RUSTUSB.patch": {
+      "bytes": 29273,
+      "sha256": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623"
+    },
+    "vendor/nusb/src/device.rs": {
+      "bytes": 40877,
+      "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289"
+    },
+    "vendor/nusb/src/platform/linux_usbfs/device.rs": {
+      "bytes": 46376,
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+    }
+  },
+  "checks": [
+    {
+      "name": "archive_sha",
+      "passed": true,
+      "details": "03fba503685f5c3e9f6a11ff9711c16086ab6beacaa6ad3df9e217a91a8d4c82"
+    },
+    {
+      "name": "all_original_archive_paths_preserved",
+      "passed": true,
+      "details": 70
+    },
+    {
+      "name": "original_sha:.cargo/config.toml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:.cargo/config.toml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:.cargo_vcs_info.json",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:.cargo_vcs_info.json",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:.github/workflows/release.yml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:.github/workflows/release.yml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:.github/workflows/rust.yml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:.github/workflows/rust.yml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:.gitignore",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:.gitignore",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:Cargo.lock",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:Cargo.lock",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:Cargo.toml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:Cargo.toml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:Cargo.toml.orig",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:Cargo.toml.orig",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:LICENSE-APACHE",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:LICENSE-APACHE",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:LICENSE-MIT",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:LICENSE-MIT",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:README.md",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:README.md",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/bulk.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/bulk.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/bulk_io.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/bulk_io.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/bulk_io_smol.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/bulk_io_smol.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/bulk_io_tokio.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/bulk_io_tokio.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/buses.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/buses.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/control.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/control.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/detach.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/detach.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/detach_claim.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/detach_claim.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/list.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/list.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:examples/string_descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:examples/string_descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/bitset.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/bitset.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/error.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/error.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/io/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/io/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/io/read.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/io/read.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/io/write.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/io/write.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/lib.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/lib.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/maybe_future.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/maybe_future.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/events.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/events.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/linux_usbfs/usbfs.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/linux_usbfs/usbfs.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/events.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/events.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/iokit.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/iokit.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/iokit_c.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/iokit_c.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/iokit_usb.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/iokit_usb.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/macos_iokit/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/macos_iokit/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/webusb/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/webusb/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/webusb/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/webusb/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/webusb/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/webusb/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/webusb/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/webusb/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/cfgmgr32.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/cfgmgr32.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/hotplug_win7.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/hotplug_win7.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/hub.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/hub.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/registry.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/registry.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/threadpool.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/threadpool.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/platform/windows_winusb/util.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/platform/windows_winusb/util.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/transfer/buffer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/transfer/buffer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/transfer/control.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/transfer/control.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/transfer/internal.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/transfer/internal.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "original_sha:src/transfer/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "vendored_sha:src/transfer/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "license_mit_original_unchanged",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "license_apache_original_unchanged",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_sha",
+      "passed": true,
+      "details": "12abf55b39e8f3340cb46bff9a763f5e314cde5e8cf950bba95f0dee1503f623"
+    },
+    {
+      "name": "patch_has_exact_modified_file_set",
+      "passed": true,
+      "details": [
+        "src/device.rs",
+        "src/lib.rs",
+        "src/platform/linux_usbfs/device.rs",
+        "src/platform/linux_usbfs/mod.rs",
+        "src/transfer/internal.rs"
+      ]
+    },
+    {
+      "name": "patch_recreates_current:.cargo/config.toml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:.cargo_vcs_info.json",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:.github/workflows/release.yml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:.github/workflows/rust.yml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:.gitignore",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:Cargo.lock",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:Cargo.toml",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:Cargo.toml.orig",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:LICENSE-APACHE",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:LICENSE-MIT",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:README.md",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/bulk.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/bulk_io.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/bulk_io_smol.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/bulk_io_tokio.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/buses.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/control.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/detach.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/detach_claim.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/list.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:examples/string_descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/bitset.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/descriptors.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/error.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/io/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/io/read.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/io/write.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/lib.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/maybe_future.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/events.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/linux_usbfs/usbfs.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/events.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/iokit.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/iokit_c.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/iokit_usb.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/macos_iokit/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/webusb/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/webusb/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/webusb/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/webusb/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/cfgmgr32.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/device.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/enumeration.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/hotplug.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/hotplug_win7.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/hub.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/registry.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/threadpool.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/transfer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/platform/windows_winusb/util.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/transfer/buffer.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/transfer/control.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/transfer/internal.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "patch_recreates_current:src/transfer/mod.rs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "unsafe_tokens_unchanged",
+      "passed": true,
+      "details": {
+        "original": 346,
+        "current": 346
+      }
+    }
+  ],
+  "check_count": 217,
+  "passed_count": 217
+}

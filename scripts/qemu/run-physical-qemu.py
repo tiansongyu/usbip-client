@@ -24,6 +24,7 @@ import time
 REPO = Path(__file__).resolve().parents[2]
 ROLES = ["server", "client"]
 OWN_SCRIPTS = ["run-physical-qemu.py", "guest-physical-init.sh", "physical-wire-probe.rs"]
+INTEGRITY_FAILURES = ["Kernel panic", "BUG:", "was already given back", "seqnum max"]
 spec = importlib.util.spec_from_file_location("native_qemu", REPO / "scripts/qemu/run-native-qemu.py")
 native = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(native)
@@ -45,6 +46,32 @@ def source_fingerprint():
                 digest.update(len(data).to_bytes(8, "big"))
                 digest.update(data)
     return digest.hexdigest()
+
+
+def read_channels(evidence):
+    program = {role: (evidence / f"{role}-evidence.log").read_text(errors="replace") for role in ROLES}
+    kernel = {role: (evidence / f"{role}-serial.log").read_text(errors="replace") for role in ROLES}
+    return program, kernel
+
+
+def check_channel_failures(program, kernel):
+    for role in ROLES:
+        for channel, log in [("evidence", program[role]), ("kernel", kernel[role])]:
+            if "RUSTUSB_PHYSICAL_RESULT: FAIL" in log:
+                raise RuntimeError(f"a physical guest reported failure: {role}/{channel}")
+            if any(message in log for message in INTEGRITY_FAILURES):
+                raise RuntimeError(f"{role} {channel} channel reported an integrity failure")
+
+
+def verify_channel_beacons(program):
+    beacons = {}
+    for role in ROLES:
+        expected = f"RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role={role} device=ttyS1 kernel_console=ttyS0"
+        observed = [line for line in program[role].splitlines() if line.startswith("RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL:")]
+        if observed != [expected]:
+            raise RuntimeError(f"one exact {role} evidence channel beacon required")
+        beacons[role] = observed[0]
+    return beacons
 
 
 def physical_initramfs(work, kernel, probe):
@@ -217,6 +244,9 @@ def main():
                      "qemu_usb_devices": 2, "host_network_listener": False},
         "result": "FAIL",
         "hot_unplug_requested": args.hot_unplug,
+        "output_channels": {role: {"kernel_console": {"device": "ttyS0", "file": f"{role}-serial.log"},
+                                  "program_evidence": {"device": "ttyS1", "file": f"{role}-evidence.log"}}
+                            for role in ROLES},
     }
     processes = {}
     qmp = None
@@ -259,12 +289,14 @@ def main():
                 # QEMU creates its file asynchronously after Popen returns.
                 # Establish it before the first poll, including startup failures.
                 (evidence / f"{role}-serial.log").touch(exist_ok=False)
+                (evidence / f"{role}-evidence.log").touch(exist_ok=False)
                 stderr = (evidence / f"{role}-qemu.stderr").open("wb")
                 handles.append(stderr)
                 command = ["qemu-system-x86_64", "-m", "512", "-smp", "2", *acceleration,
                            "-kernel", str(image), "-initrd", str(archive),
                            "-append", f"console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role={role} rustusb.hot_unplug={int(args.hot_unplug)}",
                            "-display", "none", "-serial", f"file:{evidence / (role + '-serial.log')}",
+                           "-serial", f"file:{evidence / (role + '-evidence.log')}",
                            "-monitor", "none", "-no-reboot", "-nic", "none", "-netdev", f"socket,id=private,fd={endpoint.fileno()}",
                            "-device", f"e1000,id=private-nic,netdev=private,mac=52:54:00:00:00:{mac}"]
                 if role == "server":
@@ -272,6 +304,7 @@ def main():
                                 "-chardev", f"socket,id=ftdi,path={work / 'ftdi.sock'},server=on,wait=off",
                                 "-device", "usb-serial,id=physical-ftdi,bus=usb.0,port=2,chardev=ftdi,always-plugged=on",
                                 "-qmp", f"unix:{qmp_path},server=on,wait=off"]
+                summary.setdefault("qemu_commands", {})[role] = command
                 processes[role] = subprocess.Popen(command, pass_fds=[endpoint.fileno()], stdin=subprocess.DEVNULL,
                                                    stdout=subprocess.DEVNULL, stderr=stderr)
             for endpoint in links:
@@ -285,7 +318,8 @@ def main():
             serial_cycles = [1, 2, 3, 4] if args.hot_unplug else [1, 2]
             expected_serial = b"".join(f"RUSTUSB-TX-{cycle}-0001:fedcba9876543210\n".encode() for cycle in serial_cycles)
             while time.monotonic() < deadline:
-                logs = {role: (evidence / f"{role}-serial.log").read_text(errors="replace") for role in ROLES}
+                logs, kernel_logs = read_channels(evidence)
+                check_channel_failures(logs, kernel_logs)
                 if "RUSTUSB_PHYSICAL_PROBE_WAIT_INPUT key=3" in logs["client"] and "probe" not in injections:
                     qmp.call("send-key", {"keys": [{"type": "qcode", "data": "3"}], "hold-time": 100})
                     injections.add("probe")
@@ -324,8 +358,6 @@ def main():
                     serial_received.extend(chunk)
                     if not expected_serial.startswith(serial_received):
                         raise RuntimeError("unexpected or out-of-order bytes reached host FTDI chardev")
-                if any("RUSTUSB_PHYSICAL_RESULT: FAIL" in log for log in logs.values()):
-                    raise RuntimeError("a physical guest reported failure")
                 if all(f"RUSTUSB_PHYSICAL_RESULT: PASS role={role}" in logs[role] for role in ROLES) and serial_received == expected_serial:
                     break
                 if all(process.poll() is not None for process in processes.values()):
@@ -366,10 +398,13 @@ def main():
                 for marker in required[role]:
                     if marker not in logs[role].splitlines():
                         raise RuntimeError(f"missing required {role} assertion: {marker}")
-                if any(message in logs[role] for message in ["Kernel panic", "BUG:", "was already given back", "seqnum max"]):
-                    raise RuntimeError(f"{role} kernel reported an integrity failure")
                 if processes[role].wait(timeout=10) != 0:
                     raise RuntimeError(f"{role} exited unsuccessfully")
+            # Re-read both channels after actual guest termination. A late
+            # printk or diagnostic after the program PASS must still fail.
+            logs, kernel_logs = read_channels(evidence)
+            check_channel_failures(logs, kernel_logs)
+            summary["observed_evidence_channel_beacons"] = verify_channel_beacons(logs)
             # Both QEMUs have closed their descriptors. Drain through EOF so
             # late output after a guest PASS cannot evade the exact-byte check.
             serial_socket.settimeout(2)
@@ -437,7 +472,7 @@ def main():
             handle.close()
         summary["guest_exit_codes"] = {role: process.returncode for role, process in processes.items()}
         for role in ROLES:
-            path = evidence / f"{role}-serial.log"
+            path = evidence / f"{role}-evidence.log"
             if path.exists():
                 summary[role + "_checks"] = [line.strip() for line in path.read_text(errors="replace").splitlines() if line.startswith("RUSTUSB_")]
         (evidence / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")

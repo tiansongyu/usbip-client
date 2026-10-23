@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "scope": "Static syntax and pure temporary-file/PTY checks only; no QEMU, Cargo, guest, USB, host UART, modules or network operations",
+  "result": "PASS",
+  "check_count": 34,
+  "checks": [
+    {
+      "name": "python_ast",
+      "result": "PASS"
+    },
+    {
+      "name": "shell_syntax",
+      "result": "PASS",
+      "command": [
+        "/usr/bin/busybox",
+        "sh",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-physical-init.sh"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "shell_syntax",
+      "result": "PASS",
+      "command": [
+        "/bin/bash",
+        "-n",
+        "/home/ubuntu/github/usbip-client/scripts/qemu/guest-physical-init.sh"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "exact_two_channel_beacons",
+      "result": "PASS"
+    },
+    {
+      "name": "benign_two_channel_input",
+      "result": "PASS"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "evidence",
+      "sentinel": "Kernel panic"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "evidence",
+      "sentinel": "BUG:"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "evidence",
+      "sentinel": "was already given back"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "evidence",
+      "sentinel": "seqnum max"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "evidence",
+      "sentinel": "RUSTUSB_PHYSICAL_RESULT: FAIL"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "kernel",
+      "sentinel": "Kernel panic"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "kernel",
+      "sentinel": "BUG:"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "kernel",
+      "sentinel": "was already given back"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "kernel",
+      "sentinel": "seqnum max"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "server",
+      "channel": "kernel",
+      "sentinel": "RUSTUSB_PHYSICAL_RESULT: FAIL"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "evidence",
+      "sentinel": "Kernel panic"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "evidence",
+      "sentinel": "BUG:"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "evidence",
+      "sentinel": "was already given back"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "evidence",
+      "sentinel": "seqnum max"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "evidence",
+      "sentinel": "RUSTUSB_PHYSICAL_RESULT: FAIL"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "kernel",
+      "sentinel": "Kernel panic"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "kernel",
+      "sentinel": "BUG:"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "kernel",
+      "sentinel": "was already given back"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "kernel",
+      "sentinel": "seqnum max"
+    },
+    {
+      "name": "both_channels_reject_early_or_late_failure",
+      "result": "PASS",
+      "role": "client",
+      "channel": "kernel",
+      "sentinel": "RUSTUSB_PHYSICAL_RESULT: FAIL"
+    },
+    {
+      "name": "reject_invalid_channel_beacon",
+      "result": "PASS",
+      "role": "server",
+      "kind": "missing"
+    },
+    {
+      "name": "reject_invalid_channel_beacon",
+      "result": "PASS",
+      "role": "server",
+      "kind": "duplicate"
+    },
+    {
+      "name": "reject_invalid_channel_beacon",
+      "result": "PASS",
+      "role": "server",
+      "kind": "wrong_device"
+    },
+    {
+      "name": "reject_invalid_channel_beacon",
+      "result": "PASS",
+      "role": "client",
+      "kind": "missing"
+    },
+    {
+      "name": "reject_invalid_channel_beacon",
+      "result": "PASS",
+      "role": "client",
+      "kind": "duplicate"
+    },
+    {
+      "name": "reject_invalid_channel_beacon",
+      "result": "PASS",
+      "role": "client",
+      "kind": "wrong_device"
+    },
+    {
+      "name": "read_program_and_kernel_files_separately",
+      "result": "PASS"
+    },
+    {
+      "name": "raw_candidate_marker_preserved_without_repair",
+      "result": "PASS",
+      "original_sha256": "5330b4869e03561c468183cc11ff08ea161b7d5051c54b007900234b3ca7def3",
+      "synthetic_program_channel": true
+    },
+    {
+      "name": "actual_busybox_stty_and_redirection_on_disposable_pty",
+      "result": "PASS",
+      "exit_code": 0,
+      "output_bytes": 86,
+      "output_sha256": "cd63e8ccdb41754efe12a876868812edb97c78ac1a6b9b3fc0be49cbd89e50e6",
+      "raw_no_echo": true,
+      "clocal": true,
+      "hupcl": false,
+      "baud": 115200
+    }
+  ],
+  "source_sha256": {
+    "run-physical-qemu.py": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+    "guest-physical-init.sh": "e62da0544782a411f8ff95c02be3f9865865dc09e03c1d713599b1871cb39226"
+  },
+  "busybox_sha256": "b3c1009e1b5c927e537487c80639cdf404f69e3eb49371d9be5d841672be3ff9"
+}

@@ -1,0 +1,679 @@
+[    0.000000] Linux version 6.8.0-106-generic (buildd@lcy02-amd64-085) (x86_64-linux-gnu-gcc-12 (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #106~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar  6 08:44:59 UTC  (Ubuntu 6.8.0-106.106~22.04.1-generic 6.8.12)
+[    0.000000] Command line: console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=server
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   Hygon HygonGenuine
+[    0.000000]   Centaur CentaurHauls
+[    0.000000]   zhaoxin   Shanghai  
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000001ffdffff] usable
+[    0.000000] BIOS-e820: [mem 0x000000001ffe0000-0x000000001fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] SMBIOS 2.8 present.
+[    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[    0.000000] Hypervisor detected: KVM
+[    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+[    0.000000] kvm-clock: using sched offset of 178254044 cycles
+[    0.000001] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+[    0.000002] tsc: Detected 4291.916 MHz processor
+[    0.000412] last_pfn = 0x1ffe0 max_arch_pfn = 0x400000000
+[    0.000429] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+[    0.000430] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.002571] found SMP MP-table at [mem 0x000f5b90-0x000f5b9f]
+[    0.002584] Using GB pages for direct mapping
+[    0.002716] RAMDISK: [mem 0x1f7f1000-0x1ffdffff]
+[    0.002720] ACPI: Early table checksum verification disabled
+[    0.002722] ACPI: RSDP 0x00000000000F59D0 000014 (v00 BOCHS )
+[    0.002724] ACPI: RSDT 0x000000001FFE196E 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002728] ACPI: FACP 0x000000001FFE181A 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002732] ACPI: DSDT 0x000000001FFE0040 0017DA (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002734] ACPI: FACS 0x000000001FFE0000 000040
+[    0.002735] ACPI: APIC 0x000000001FFE188E 000080 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002737] ACPI: HPET 0x000000001FFE190E 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002739] ACPI: WAET 0x000000001FFE1946 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002740] ACPI: Reserving FACP table memory at [mem 0x1ffe181a-0x1ffe188d]
+[    0.002741] ACPI: Reserving DSDT table memory at [mem 0x1ffe0040-0x1ffe1819]
+[    0.002741] ACPI: Reserving FACS table memory at [mem 0x1ffe0000-0x1ffe003f]
+[    0.002741] ACPI: Reserving APIC table memory at [mem 0x1ffe188e-0x1ffe190d]
+[    0.002742] ACPI: Reserving HPET table memory at [mem 0x1ffe190e-0x1ffe1945]
+[    0.002742] ACPI: Reserving WAET table memory at [mem 0x1ffe1946-0x1ffe196d]
+[    0.002868] No NUMA configuration found
+[    0.002869] Faking a node at [mem 0x0000000000000000-0x000000001ffdffff]
+[    0.002872] NODE_DATA(0) allocated [mem 0x1f7c6000-0x1f7f0fff]
+[    0.002933] Zone ranges:
+[    0.002934]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.002935]   DMA32    [mem 0x0000000001000000-0x000000001ffdffff]
+[    0.002936]   Normal   empty
+[    0.002936]   Device   empty
+[    0.002937] Movable zone start for each node
+[    0.002938] Early memory node ranges
+[    0.002938]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.002939]   node   0: [mem 0x0000000000100000-0x000000001ffdffff]
+[    0.002940] Initmem setup node 0 [mem 0x0000000000001000-0x000000001ffdffff]
+[    0.003032] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.003038] On node 0, zone DMA: 97 pages in unavailable ranges
+[    0.003414] On node 0, zone DMA32: 32 pages in unavailable ranges
+[    0.003535] ACPI: PM-Timer IO Port: 0x608
+[    0.003541] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.003553] IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+[    0.003554] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.003556] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.003556] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.003557] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.003558] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.003560] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.003560] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.003563] TSC deadline timer available
+[    0.003563] smpboot: Allowing 2 CPUs, 0 hotplug CPUs
+[    0.003571] kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+[    0.003579] kvm-guest: KVM setup pv remote TLB flush
+[    0.003581] kvm-guest: setup PV sched yield
+[    0.003585] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.003585] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.003586] [mem 0x20000000-0xfeffbfff] available for PCI devices
+[    0.003587] Booting paravirtualized kernel on KVM
+[    0.003588] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.003591] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+[    0.003719] percpu: Embedded 85 pages/cpu s225280 r8192 d114688 u1048576
+[    0.003742] kvm-guest: PV spinlocks enabled
+[    0.003743] PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.003744] Kernel command line: console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.role=server
+[    0.003772] Unknown kernel command line parameters "RUSTUSB_QEMU_GUEST=1", will be passed to user space.
+[    0.003778] random: crng init done
+[    0.003792] Dentry cache hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.003799] Inode-cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.003819] Fallback order for Node 0: 0 
+[    0.003821] Built 1 zonelists, mobility grouping on.  Total pages: 128736
+[    0.003822] Policy zone: DMA32
+[    0.003825] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+[    0.004170] Memory: 453608K/523768K available (22528K kernel code, 4432K rwdata, 13988K rodata, 4912K init, 4808K bss, 69900K reserved, 0K cma-reserved)
+[    0.004845] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.004862] ftrace: allocating 58284 entries in 228 pages
+[    0.014197] ftrace: allocated 228 pages with 4 groups
+[    0.014757] Dynamic Preempt: voluntary
+[    0.014885] rcu: Preemptible hierarchical RCU implementation.
+[    0.014887] rcu: 	RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=2.
+[    0.014888] 	Trampoline variant of Tasks RCU enabled.
+[    0.014888] 	Rude variant of Tasks RCU enabled.
+[    0.014889] 	Tracing variant of Tasks RCU enabled.
+[    0.014889] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.014890] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.014896] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.014897] RCU Tasks Rude: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.014898] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.016469] NR_IRQS: 524544, nr_irqs: 440, preallocated irqs: 16
+[    0.016654] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.019270] Console: colour VGA+ 80x25
+[    0.019290] printk: legacy console [ttyS0] enabled
+[    0.043728] ACPI: Core revision 20230628
+[    0.043934] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.044279] APIC: Switch to symmetric I/O mode setup
+[    0.044539] x2apic enabled
+[    0.044750] APIC: Switched APIC routing to: physical x2apic
+[    0.044944] kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+[    0.045196] kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+[    0.045527] kvm-guest: setup PV IPIs
+[    0.046108] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.046331] tsc: Marking TSC unstable due to TSCs unsynchronized
+[    0.046539] Calibrating delay loop (skipped) preset value.. 8583.83 BogoMIPS (lpj=4291916)
+[    0.046861] RDSEED32 is broken. Disabling the corresponding CPUID bit.
+[    0.047090] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+[    0.047580] Last level iTLB entries: 4KB 512, 2MB 255, 4MB 127
+[    0.047779] Last level dTLB entries: 4KB 512, 2MB 255, 4MB 127, 1GB 0
+[    0.048000] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.048288] Spectre V2 : Mitigation: Retpolines
+[    0.048443] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+[    0.048538] Spectre V2 : Enabling Restricted Speculation for firmware calls
+[    0.048774] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+[    0.049059] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
+[    0.049553] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.049822] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.050044] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.050268] x86/fpu: Supporting XSAVE feature 0x020: 'AVX-512 opmask'
+[    0.050538] x86/fpu: Supporting XSAVE feature 0x040: 'AVX-512 Hi256'
+[    0.050762] x86/fpu: Supporting XSAVE feature 0x080: 'AVX-512 ZMM_Hi256'
+[    0.050997] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.051271] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.051489] x86/fpu: xstate_offset[5]:  832, xstate_sizes[5]:   64
+[    0.051538] x86/fpu: xstate_offset[6]:  896, xstate_sizes[6]:  512
+[    0.051755] x86/fpu: xstate_offset[7]: 1408, xstate_sizes[7]: 1024
+[    0.051972] x86/fpu: xstate_offset[9]: 2432, xstate_sizes[9]:    8
+[    0.052190] x86/fpu: Enabled xstate features 0x2e7, context size is 2440 bytes, using 'compacted' format.
+[    0.070091] Freeing SMP alternatives memory: 48K
+[    0.070269] pid_max: default: 32768 minimum: 301
+[    0.070463] LSM: initializing lsm=lockdown,capability,landlock,yama,apparmor,integrity
+[    0.070543] landlock: Up and running.
+[    0.070674] Yama: becoming mindful.
+[    0.070819] AppArmor: AppArmor initialized
+[    0.070984] Mount-cache hash table entries: 1024 (order: 1, 8192 bytes, linear)
+[    0.071241] Mountpoint-cache hash table entries: 1024 (order: 1, 8192 bytes, linear)
+[    0.071721] smpboot: CPU0: AMD Ryzen 9 9950X 16-Core Processor (family: 0x1a, model: 0x44, stepping: 0x0)
+[    0.072148] Performance Events: Fam17h+ core perfctr, AMD PMU driver.
+[    0.072388] ... version:                0
+[    0.072535] ... bit width:              48
+[    0.072537] ... generic registers:      6
+[    0.072540] ... value mask:             0000ffffffffffff
+[    0.072728] ... max period:             00007fffffffffff
+[    0.072916] ... fixed-purpose events:   0
+[    0.073060] ... event mask:             000000000000003f
+[    0.073302] signal: max sigframe size: 3376
+[    0.073565] rcu: Hierarchical SRCU implementation.
+[    0.073737] rcu: 	Max phase no-delay instances is 400.
+[    0.074120] smp: Bringing up secondary CPUs ...
+[    0.074335] smpboot: x86: Booting SMP configuration:
+[    0.074512] .... node  #0, CPUs:      #1
+[    0.074581] smp: Brought up 1 node, 2 CPUs
+[    0.074843] smpboot: Max logical packages: 1
+[    0.074995] smpboot: Total of 2 processors activated (17167.66 BogoMIPS)
+[    0.075614] devtmpfs: initialized
+[    0.075682] x86/mm: Memory block size: 128MB
+[    0.075946] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.075946] futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+[    0.076576] pinctrl core: initialized pinctrl subsystem
+[    0.076834] PM: RTC time: 02:41:56, date: 2026-10-23
+[    0.077408] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.077703] DMA: preallocated 128 KiB GFP_KERNEL pool for atomic allocations
+[    0.077963] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.078238] DMA: preallocated 128 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.078522] audit: initializing netlink subsys (disabled)
+[    0.078560] audit: type=2000 audit(1792723317.032:1): state=initialized audit_enabled=0 res=1
+[    0.078615] thermal_sys: Registered thermal governor 'fair_share'
+[    0.078890] thermal_sys: Registered thermal governor 'bang_bang'
+[    0.079108] thermal_sys: Registered thermal governor 'step_wise'
+[    0.079320] thermal_sys: Registered thermal governor 'user_space'
+[    0.079540] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.079770] cpuidle: using governor ladder
+[    0.080146] cpuidle: using governor menu
+[    0.080464] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    0.080594] PCI: Using configuration type 1 for base access
+[    0.080791] PCI: Using configuration type 1 for extended access
+[    0.081063] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.085848] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.086103] HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+[    0.086353] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.086539] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.087417] ACPI: Added _OSI(Module Device)
+[    0.087417] ACPI: Added _OSI(Processor Device)
+[    0.087417] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.087835] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    0.097657] ACPI: _OSC evaluation for CPUs failed, trying _PDC
+[    0.097838] ACPI: Interpreter enabled
+[    0.097981] ACPI: PM: (supports S0 S3 S4 S5)
+[    0.097981] ACPI: Using IOAPIC for interrupt routing
+[    0.097981] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.098158] PCI: Using E820 reservations for host bridge windows
+[    0.098429] ACPI: Enabled 2 GPEs in block 00 to 0F
+[    0.099341] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    0.099541] acpi PNP0A03:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI EDR HPX-Type3]
+[    0.100000] acpiphp: Slot [3] registered
+[    0.100147] acpiphp: Slot [4] registered
+[    0.100292] acpiphp: Slot [5] registered
+[    0.100439] acpiphp: Slot [6] registered
+[    0.100543] acpiphp: Slot [7] registered
+[    0.100688] acpiphp: Slot [8] registered
+[    0.100837] acpiphp: Slot [9] registered
+[    0.100982] acpiphp: Slot [10] registered
+[    0.101130] acpiphp: Slot [11] registered
+[    0.101278] acpiphp: Slot [12] registered
+[    0.101428] acpiphp: Slot [13] registered
+[    0.101543] acpiphp: Slot [14] registered
+[    0.101690] acpiphp: Slot [15] registered
+[    0.101839] acpiphp: Slot [16] registered
+[    0.101987] acpiphp: Slot [17] registered
+[    0.102135] acpiphp: Slot [18] registered
+[    0.102283] acpiphp: Slot [19] registered
+[    0.102465] acpiphp: Slot [20] registered
+[    0.102546] acpiphp: Slot [21] registered
+[    0.102695] acpiphp: Slot [22] registered
+[    0.102843] acpiphp: Slot [23] registered
+[    0.102993] acpiphp: Slot [24] registered
+[    0.103141] acpiphp: Slot [25] registered
+[    0.103298] acpiphp: Slot [26] registered
+[    0.103447] acpiphp: Slot [27] registered
+[    0.104543] acpiphp: Slot [28] registered
+[    0.104691] acpiphp: Slot [29] registered
+[    0.104842] acpiphp: Slot [30] registered
+[    0.104999] acpiphp: Slot [31] registered
+[    0.105147] PCI host bridge to bus 0000:00
+[    0.105303] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    0.105539] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    0.105778] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    0.106041] pci_bus 0000:00: root bus resource [mem 0x20000000-0xfebfffff window]
+[    0.106313] pci_bus 0000:00: root bus resource [mem 0x100000000-0x17fffffff window]
+[    0.106539] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.106794] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.107449] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
+[    0.107695] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
+[    0.108276] pci 0000:00:01.1: BAR 4 [io  0xc0a0-0xc0af]
+[    0.108475] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
+[    0.108539] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
+[    0.108759] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
+[    0.109005] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
+[    0.109270] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+[    0.109648] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+[    0.109923] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
+[    0.110240] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+[    0.111044] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+[    0.111278] pci 0000:00:02.0: BAR 2 [mem 0xfebd0000-0xfebd0fff]
+[    0.111497] pci 0000:00:02.0: ROM [mem 0xfebc0000-0xfebcffff pref]
+[    0.111556] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    0.112068] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.112807] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
+[    0.113042] pci 0000:00:03.0: BAR 1 [io  0xc000-0xc03f]
+[    0.113239] pci 0000:00:03.0: ROM [mem 0xfea80000-0xfeafffff pref]
+[    0.113694] pci 0000:00:04.0: [8086:7020] type 00 class 0x0c0300 conventional PCI endpoint
+[    0.114226] pci 0000:00:04.0: BAR 4 [io  0xc080-0xc09f]
+[    0.114584] pci 0000:00:05.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.115286] pci 0000:00:05.0: BAR 0 [mem 0xfeba0000-0xfebbffff]
+[    0.115484] pci 0000:00:05.0: BAR 1 [io  0xc040-0xc07f]
+[    0.115549] pci 0000:00:05.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
+[    0.118852] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    0.119089] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    0.119315] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    0.119548] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    0.119760] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
+[    0.120569] iommu: Default domain type: Translated
+[    0.120728] iommu: DMA domain TLB invalidation policy: lazy mode
+[    0.121050] SCSI subsystem initialized
+[    0.121561] ACPI: bus type USB registered
+[    0.121721] usbcore: registered new interface driver usbfs
+[    0.121920] usbcore: registered new interface driver hub
+[    0.122116] usbcore: registered new device driver usb
+[    0.122116] pps_core: LinuxPPS API ver. 1 registered
+[    0.122116] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.122116] PTP clock support registered
+[    0.122544] EDAC MC: Ver: 3.0.0
+[    0.122708] NetLabel: Initializing
+[    0.122708] NetLabel:  domain hash size = 128
+[    0.122822] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.123031] NetLabel:  unlabeled traffic allowed by default
+[    0.123554] mctp: management component transport protocol core
+[    0.123753] NET: Registered PF_MCTP protocol family
+[    0.123753] PCI: Using ACPI for IRQ routing
+[    0.124543] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    0.124756] pci 0000:00:02.0: vgaarb: bridge control possible
+[    0.124964] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    0.125265] vgaarb: loaded
+[    0.125265] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    0.125538] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+[    0.128556] clocksource: Switched to clocksource kvm-clock
+[    0.129076] VFS: Disk quotas dquot_6.6.0
+[    0.129232] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.129537] AppArmor: AppArmor Filesystem Enabled
+[    0.129713] pnp: PnP ACPI init
+[    0.129960] pnp: PnP ACPI: found 6 devices
+[    0.135276] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    0.135596] NET: Registered PF_INET protocol family
+[    0.135775] IP idents hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.141944] tcp_listen_portaddr_hash hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.142228] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.142492] TCP established hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.142754] TCP bind hash table entries: 4096 (order: 5, 131072 bytes, linear)
+[    0.142999] TCP: Hash tables configured (established 4096 bind 4096)
+[    0.143227] MPTCP token hash table entries: 512 (order: 2, 12288 bytes, linear)
+[    0.143474] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.143692] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.143946] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.144136] NET: Registered PF_XDP protocol family
+[    0.144300] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    0.144519] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    0.144730] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    0.144960] pci_bus 0000:00: resource 7 [mem 0x20000000-0xfebfffff window]
+[    0.145187] pci_bus 0000:00: resource 8 [mem 0x100000000-0x17fffffff window]
+[    0.145434] pci 0000:00:01.0: PIIX3: Enabling Passive Release
+[    0.145627] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    0.152087] ACPI: \_SB_.LNKC: Enabled at IRQ 11
+[    0.159005] pci 0000:00:04.0: quirk_usb_early_handoff+0x0/0x190 took 12850 usecs
+[    0.159318] PCI: CLS 0 bytes, default 64
+[    0.159569] Trying to unpack rootfs image as initramfs...
+[    0.160137] Initialise system trusted keyrings
+[    0.160315] Key type blacklist registered
+[    0.160493] workingset: timestamp_bits=36 max_order=17 bucket_order=0
+[    0.160801] zbud: loaded
+[    0.161216] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.161523] fuse: init (API version 7.39)
+[    0.161744] integrity: Platform Keyring initialized
+[    0.161936] integrity: Machine keyring initialized
+[    0.166473] Key type asymmetric registered
+[    0.166618] Asymmetric key parser 'x509' registered
+[    0.166797] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 243)
+[    0.167073] io scheduler mq-deadline registered
+[    0.167346] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[    0.167626] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+[    0.167944] ACPI: button: Power Button [PWRF]
+[    0.168202] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled
+[    0.189466] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.190462] Linux agpgart interface v0.103
+[    0.191077] loop: module loaded
+[    0.191522] scsi host0: ata_piix
+[    0.191666] scsi host1: ata_piix
+[    0.191792] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0xc0a0 irq 14 lpm-pol 0
+[    0.192051] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0xc0a8 irq 15 lpm-pol 0
+[    0.192517] ACPI: bus type drm_connector registered
+[    0.192758] tun: Universal TUN/TAP device driver, 1.6
+[    0.192951] PPP generic driver version 2.4.2
+[    0.199449] uhci_hcd 0000:00:04.0: UHCI Host Controller
+[    0.199631] uhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 1
+[    0.199889] uhci_hcd 0000:00:04.0: detected 2 ports
+[    0.200110] uhci_hcd 0000:00:04.0: irq 11, io port 0x0000c080
+[    0.200338] usb usb1: New USB device found, idVendor=1d6b, idProduct=0001, bcdDevice= 6.08
+[    0.200613] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.200855] usb usb1: Product: UHCI Host Controller
+[    0.201021] usb usb1: Manufacturer: Linux 6.8.0-106-generic uhci_hcd
+[    0.201231] usb usb1: SerialNumber: 0000:00:04.0
+[    0.201434] hub 1-0:1.0: USB hub found
+[    0.201563] hub 1-0:1.0: 2 ports detected
+[    0.201765] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    0.202354] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    0.202521] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    0.202791] mousedev: PS/2 mouse device common for all mice
+[    0.203010] rtc_cmos 00:05: RTC can wake from S4
+[    0.203303] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+[    0.203737] rtc_cmos 00:05: registered as rtc0
+[    0.203912] rtc_cmos 00:05: setting system clock to 2026-10-23T02:41:56 UTC (1792723316)
+[    0.204202] rtc_cmos 00:05: alarms up to one day, y3k, 242 bytes nvram, hpet irqs
+[    0.204454] i2c_dev: i2c /dev entries driver
+[    0.204604] device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+[    0.205016] device-mapper: uevent: version 1.0.3
+[    0.205187] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    0.205470] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    0.205788] ledtrig-cpu: registered to indicate activity on CPUs
+[    0.206036] drop_monitor: Initializing network drop monitor service
+[    0.206319] NET: Registered PF_INET6 protocol family
+[    0.211673] Freeing initrd memory: 8124K
+[    0.211938] Segment Routing with IPv6
+[    0.212070] In-situ OAM (IOAM) with IPv6
+[    0.212213] NET: Registered PF_PACKET protocol family
+[    0.212395] Key type dns_resolver registered
+[    0.212635] IPI shorthand broadcast: enabled
+[    0.213346] sched_clock: Marking stable (184009674, 28879978)->(214492507, -1602855)
+[    0.213666] registered taskstats version 1
+[    0.213875] Loading compiled-in X.509 certificates
+[    0.214240] Loaded X.509 cert 'Build time autogenerated kernel key: 456e54511b8b6ecbbc2d6cfc1b8060287c67b744'
+[    0.214734] Loaded X.509 cert 'Canonical Ltd. Live Patch Signing 2025 Kmod: d541cef61dc7e793b7eb7e899970a2eef0b5dc8c'
+[    0.215248] Loaded X.509 cert 'Canonical Ltd. Live Patch Signing: 14df34d1a87cf37625abec039ef2bf521249b969'
+[    0.215736] Loaded X.509 cert 'Canonical Ltd. Kernel Module Signing: 88f752e560a1e0737e31163a466ad7b70a850c19'
+[    0.216065] blacklist: Loading compiled-in revocation X.509 certificates
+[    0.216292] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing: 61482aa2830d0ab2ad5af10b7250da9033ddcef0'
+[    0.216619] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2017): 242ade75ac4a15e50d50c84b0d45ff3eae707a03'
+[    0.216968] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (ESM 2018): 365188c1d374d6b07c3c8f240f8ef722433d6a8b'
+[    0.217323] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2019): c0746fd6c5da3ae827864651ad66ae47fe24b3e8'
+[    0.217671] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v1): a8d54bbb3825cfb94fa13c9f8a594a195c107b8d'
+[    0.218029] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v2): 4cf046892d6fd3c9a5b03f98d845f90851dc6a8c'
+[    0.218381] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v3): 100437bb6de6e469b581e61cd66bce3ef4ed53af'
+[    0.218741] Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (Ubuntu Core 2019): c1d57b8f6b743f23ee41f4f7ee292f06eecadfb9'
+[    0.220280] Key type .fscrypt registered
+[    0.220415] Key type fscrypt-provisioning registered
+[    0.220863] Key type encrypted registered
+[    0.221003] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.221194] ima: No TPM chip found, activating TPM-bypass!
+[    0.221375] Loading compiled-in module X.509 certificates
+[    0.221743] Loaded X.509 cert 'Build time autogenerated kernel key: 456e54511b8b6ecbbc2d6cfc1b8060287c67b744'
+[    0.222190] ima: Allocated hash algorithm: sha256
+[    0.222354] ima: No architecture policies found
+[    0.222510] evm: Initialising EVM extended attributes:
+[    0.222679] evm: security.selinux
+[    0.222793] evm: security.SMACK64
+[    0.222906] evm: security.SMACK64EXEC
+[    0.223027] evm: security.SMACK64TRANSMUTE
+[    0.223162] evm: security.SMACK64MMAP
+[    0.223284] evm: security.apparmor
+[    0.223397] evm: security.ima
+[    0.223498] evm: security.capability
+[    0.223617] evm: HMAC attrs: 0x1
+[    0.223883] PM:   Magic number: 14:96:663
+[    0.225303] RAS: Correctable Errors collector initialized.
+[    0.225522] clk: Disabling unused clocks
+[    0.348958] ata2: found unknown device (class 0)
+[    0.349422] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    0.350110] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    0.366201] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    0.366405] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    0.372413] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    0.373069] Freeing unused decrypted memory: 2028K
+[    0.373441] Freeing unused kernel image (initmem) memory: 4912K
+[    0.373584] Write protecting the kernel read-only data: 36864k
+[    0.373803] Freeing unused kernel image (rodata/data gap) memory: 348K
+[    0.397207] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    0.397372] Run /init as init process
+RUSTUSB_COMPOSITE_BOOT role=server kernel=6.8.0-106-generic
+[    0.401181] e1000: Intel(R) PRO/1000 Network Driver
+[    0.401320] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    0.422909] usb 1-1: new full-speed USB device number 2 using uhci_hcd
+[    0.582621] usb 1-1: New USB device found, idVendor=0525, idProduct=a4a2, bcdDevice= 0.00
+[    0.582846] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=10
+[    0.583044] usb 1-1: Product: RNDIS/QEMU USB Network Device
+[    0.583196] usb 1-1: Manufacturer: QEMU
+[    0.583302] usb 1-1: SerialNumber: 1-0000:00:04.0-1
+[    0.687301] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:00:00:51
+[    0.687484] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    0.693927] ACPI: \_SB_.LNKA: Enabled at IRQ 10
+[    0.973340] e1000 0000:00:05.0 eth1: (PCI:33MHz:32-bit) 52:54:00:cc:00:01
+[    0.973524] e1000 0000:00:05.0 eth1: Intel(R) PRO/1000 Network Connection
+[    0.981072] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    0.981349] usbcore: registered new interface driver cdc_ether
+RUSTUSB_COMPOSITE_PEER_QUIET: PASS interface=eth1 down=true raw_probe_isolated=true
+RUSTUSB_COMPOSITE_ISOLATION: PASS role=server ip_forward=0
+2026-10-23T02:41:57.281707Z  INFO rustusb: local device discovery completed device_count=1
+RUSTUSB_COMPOSITE_OBSERVED bus=1-1 speed=12 bNumInterfaces=2
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_OBSERVED original_net=eth2 peer_net=eth1
+RUSTUSB_COMPOSITE_ROUTE_ISOLATION: PASS server_usb_ipv4=false forwarding=false
+RUSTUSB_COMPOSITE_OBSERVED node=/dev/bus/usb/001/002 metadata=character special file 0:0 600
+RUSTUSB_COMPOSITE_ORIGINAL: PASS config=1 interfaces=2 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1 speed=12 node=root0600
+  "error": "state: permission denied: caller UID is not approved by the administrator",
+2026-10-23T02:41:57.385463Z ERROR rustusb: operation failed error=state: permission denied: caller UID is not approved by the administrator
+RUSTUSB_COMPOSITE_UID_GATE: PASS role=server allowed_uid=1000 denied_uid=1001
+RUSTUSB_COMPOSITE_HELPER_CONNECTION_CLOSED method=reset_after_frame
+{"ok":false,"data":null,"error":"permission denied: caller UID is not approved by the administrator"}
+RUSTUSB_COMPOSITE_OPEN_DENIED: PASS uid=1001 explicit_refusal=true
+RUSTUSB_COMPOSITE_SERVER_UID: PASS uid=1000 capabilities=0 helper_fd=true server_native_modules=false
+nc: timed out
+[    3.021315] e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+nc: timed out
+nc: timed out
+[    4.423614] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.620236] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.620974] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    4.969301] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    4.969995] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    5.251113] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    5.295433] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    5.313271] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+[    5.358810] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+[    5.371447] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+RUSTUSB_COMPOSITE_USBMON_BEGIN
+ffff898342729300 4406028 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff898342729300 4406624 C Co:1:002:0 0 0
+ffff8983412d43c0 4407061 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d43c0 4407614 C Co:1:002:0 0 0
+ffff898342729300 4408006 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff898342729300 4408617 C Co:1:002:0 0 0
+ffff8983412d43c0 4408644 S Co:1:002:0 s 00 09 0001 0000 0000 0
+ffff8983412d43c0 4409615 C Co:1:002:0 0 0
+ffff898342729300 4410250 S Ci:1:002:0 s 80 06 0100 0000 0012 18 <
+ffff898342729300 4410620 C Ci:1:002:0 0 18 = 12010002 02000040 2505a2a4 00000102 0a02
+ffff898342729300 4410795 S Ci:1:002:0 s 80 06 0200 0000 0100 256 <
+ffff898342729300 4412625 C Ci:1:002:0 0 67 = 09024300 020209c0 32090400 00010202 ff060524 00100105 24010001 04240200
+ffff8983412d43c0 4412820 S Ci:1:002:0 s 80 06 0201 0000 0100 256 <
+ffff8983412d43c0 4414637 C Ci:1:002:0 0 80 = 09025000 020107c0 32090400 00010206 00050524 00100105 24060001 0d240f03
+ffff8983412d43c0 4415091 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983412d43c0 4415646 C Ci:1:002:0 0 1 = 01
+ffff898342729e40 4415839 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff898342729e40 4416641 C Ci:1:002:0 0 1 = 00
+ffff8983427296c0 4416898 S Co:1:002:0 s 00 09 0002 0000 0000 0
+ffff8983427296c0 4418646 C Co:1:002:0 0 0
+ffff8983427296c0 4418654 S Ci:1:002:0 s 80 06 0309 0409 00ff 255 <
+ffff8983427296c0 4420648 C Ci:1:002:0 0 38 = 26035100 45004d00 55002000 55005300 42002000 4e006500 74002000 52004e00
+ffff8983427296c0 4420663 S Ci:1:002:0 s 80 06 0306 0409 00ff 255 <
+ffff8983427296c0 4422655 C Ci:1:002:0 0 74 = 4a035100 45004d00 55002000 55005300 42002000 4e006500 74002000 52004e00
+ffff8983427296c0 4422684 S Ci:1:002:0 s 80 06 0304 0409 00ff 255 <
+ffff8983427296c0 4424660 C Ci:1:002:0 0 56 = 38035100 45004d00 55002000 55005300 42002000 4e006500 74002000 44006100
+ffff8983412d4480 4425430 S Bi:1:002:2 -115 64 <
+ffff8983412d4480 4583228 C Bi:1:002:2 -2 0
+ffff8983427296c0 4583456 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983427296c0 4584228 C Ci:1:002:0 0 1 = 02
+ffff8983427296c0 4584406 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983427296c0 4585227 C Ci:1:002:0 0 1 = 00
+ffff8983427296c0 4585711 S Co:1:002:0 s 00 09 0001 0000 0000 0
+ffff8983427296c0 4587233 C Co:1:002:0 0 0
+ffff8983427296c0 4587268 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983427296c0 4588236 C Co:1:002:0 0 0
+ffff8983427296c0 4588240 S Co:1:002:0 s 21 43 000c 0000 0000 0
+ffff8983427296c0 4589253 C Co:1:002:0 -32 1 >
+ffff8983427296c0 4589271 S Ci:1:002:0 s 80 06 0303 0409 00ff 255 <
+ffff8983427296c0 4591245 C Ci:1:002:0 0 26 = 1a033400 30003500 34003000 30006300 63003000 30003000 3200
+ffff898342729000 4601019 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff898342729000 4601295 C Co:1:002:0 0 0
+ffff8983427296c0 4601975 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983427296c0 4602347 C Ci:1:002:0 0 1 = 01
+ffff8983412d4480 4602553 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983412d4480 4603294 C Ci:1:002:0 0 1 = 00
+ffff8983427296c0 4603719 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983427296c0 4604294 C Co:1:002:0 0 0
+ffff8983412d4480 4604328 S Bi:1:002:2 -115 64 <
+ffff8983412d4480 4758799 C Bi:1:002:2 -2 0
+ffff8983427296c0 4759056 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983427296c0 4759800 C Ci:1:002:0 0 1 = 01
+ffff8983412d4480 4760218 S Bi:1:002:2 -115 64 <
+ffff8983412d4480 4911262 C Bi:1:002:2 -2 0
+ffff8983412d4480 4911449 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d4480 4912256 C Co:1:002:0 0 0
+ffff8983427296c0 4912512 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983427296c0 4913255 C Ci:1:002:0 0 1 = 00
+ffff8983412d4240 4913931 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983412d4240 4914258 C Ci:1:002:0 0 1 = 00
+ffff8983412d4240 4914635 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d4240 4915261 C Co:1:002:0 0 0
+ffff8983412d4240 4915480 S Ci:1:002:0 s c0 ff 0000 0000 0001 1 <
+ffff8983412d4240 4916271 C Ci:1:002:0 -32 0
+ffff8983412d4240 4916446 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983412d4240 4917265 C Ci:1:002:0 0 1 = 01
+ffff8983427296c0 4917615 S Ii:1:002:1 -115:32 1 <
+ffff8983427296c0 4925299 C Ii:1:002:1 -32:32 1 = 00
+ffff8983412d4a80 4925493 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983412d4a80 4926291 C Ci:1:002:0 0 1 = 01
+ffff8983412d4300 4926885 S Co:1:002:0 s 02 01 0000 0082 0000 0
+ffff8983412d4300 4927292 C Co:1:002:0 -32 1 >
+ffff8983412d4300 4927474 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983412d4300 4928294 C Ci:1:002:0 0 1 = 01
+ffff8983412d4e40 4928679 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d4e40 4929295 C Co:1:002:0 0 0
+ffff8983412d4e40 4929349 S Co:1:002:0 s 00 09 0000 0000 0000 0
+ffff8983412d4e40 4931301 C Co:1:002:0 0 0
+ffff8983412d4e40 4931559 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983412d4e40 4934309 C Ci:1:002:0 0 1 = 00
+ffff8983412d46c0 4934776 S Co:1:002:0 s 00 09 0001 0000 0000 0
+ffff8983412d46c0 4936314 C Co:1:002:0 0 0
+ffff8983412d46c0 4936351 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 4937317 C Co:1:002:0 0 0
+ffff8983412d46c0 4937323 S Co:1:002:0 s 21 43 000c 0000 0000 0
+ffff8983412d46c0 4938321 C Co:1:002:0 -32 1 >
+ffff8983412d46c0 4938327 S Ci:1:002:0 s 80 06 0303 0409 00ff 255 <
+ffff8983412d46c0 4940325 C Ci:1:002:0 0 26 = 1a033400 30003500 34003000 30006300 63003000 30003000 3200
+ffff8983412d4000 4950017 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d4000 4950362 C Co:1:002:0 0 0
+ffff8983412d46c0 4950807 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983412d46c0 4951359 C Ci:1:002:0 0 1 = 01
+ffff8983412d46c0 4951530 S Ci:1:002:0 s 81 0a 0000 0001 0001 1 <
+ffff8983412d46c0 4952360 C Ci:1:002:0 0 1 = 00
+ffff8983412d46c0 4952750 S Ci:1:002:0 s 80 08 0000 0000 0001 1 <
+ffff8983412d46c0 4953362 C Ci:1:002:0 0 1 = 01
+ffff8983412d46c0 5055130 S Co:1:002:0 s 00 09 0001 0000 0000 0
+ffff8983412d46c0 5055640 C Co:1:002:0 0 0
+ffff8983412d46c0 5056391 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 5056638 C Co:1:002:0 0 0
+ffff8983412d46c0 5056874 S Bi:1:002:2 -115 64 <
+ffff8983412d46c0 5215114 C Bi:1:002:2 -2 0
+ffff8983412d46c0 5215176 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d46c0 5216117 C Co:1:002:0 0 0
+ffff8983412d46c0 5216477 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 5217126 C Co:1:002:0 0 0
+ffff8983412d46c0 5217175 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d46c0 5218126 C Co:1:002:0 0 0
+ffff8983412d46c0 5218235 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 5219126 C Co:1:002:0 0 0
+ffff8983412d46c0 5219148 S Co:1:002:0 s 21 43 000c 0000 0000 0
+ffff8983412d46c0 5220135 C Co:1:002:0 -32 1 >
+ffff8983412d46c0 5220142 S Ci:1:002:0 s 80 06 0303 0409 00ff 255 <
+ffff8983412d46c0 5222131 C Ci:1:002:0 0 26 = 1a033400 30003500 34003000 30006300 63003000 30003000 3200
+ffff8983412d4000 5276014 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d4000 5276300 C Co:1:002:0 0 0
+ffff8983412d46c0 5276551 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 5277300 C Co:1:002:0 0 0
+ffff8983427296c0 5277611 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983427296c0 5278295 C Co:1:002:0 0 0
+ffff8983427296c0 5278539 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983427296c0 5279300 C Co:1:002:0 0 0
+ffff8983427296c0 5279325 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983427296c0 5280304 C Co:1:002:0 0 0
+ffff8983427296c0 5280367 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983427296c0 5281307 C Co:1:002:0 0 0
+ffff8983427296c0 5281320 S Co:1:002:0 s 21 43 000c 0000 0000 0
+ffff8983427296c0 5282314 C Co:1:002:0 -32 1 >
+ffff8983427296c0 5282318 S Ci:1:002:0 s 80 06 0303 0409 00ff 255 <
+ffff8983427296c0 5284315 C Ci:1:002:0 0 26 = 1a033400 30003500 34003000 30006300 63003000 30003000 3200
+ffff8983412d46c0 5334013 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d46c0 5334457 C Co:1:002:0 0 0
+ffff898342729000 5334683 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff898342729000 5335461 C Co:1:002:0 0 0
+ffff8983412d46c0 5335747 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d46c0 5336455 C Co:1:002:0 0 0
+ffff8983412d46c0 5336723 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 5337461 C Co:1:002:0 0 0
+ffff8983412d46c0 5337488 S Co:1:002:0 s 01 0b 0000 0001 0000 0
+ffff8983412d46c0 5338462 C Co:1:002:0 0 0
+ffff8983412d46c0 5338516 S Co:1:002:0 s 01 0b 0001 0001 0000 0
+ffff8983412d46c0 5339465 C Co:1:002:0 0 0
+ffff8983412d46c0 5339477 S Co:1:002:0 s 21 43 000c 0000 0000 0
+ffff8983412d46c0 5340470 C Co:1:002:0 -32 1 >
+ffff8983412d46c0 5340476 S Ci:1:002:0 s 80 06 0303 0409 00ff 255 <
+ffff8983412d46c0 5342476 C Ci:1:002:0 0 26 = 1a033400 30003500 34003000 30006300 63003000 30003000 3200
+RUSTUSB_COMPOSITE_USBMON_END
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_BASELINE: PASS original_config_alt_drivers=true inflight=0 budget=0
+RUSTUSB_COMPOSITE_PEER_NETWORK: PASS interface=eth1 address=198.18.0.1 host_network=false
+[    5.486283] e1000: eth1 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+RUSTUSB_COMPOSITE_PEER_UID: PASS uid=1000 capabilities=0
+[    5.540814] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+RUSTUSB_COMPOSITE_HELD: PASS cycle=1 config=1 alt1=1 both_drivers=usbfs
+[    6.546040] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_RELEASED: PASS cycle=1 config=1 alt0=0 alt1=1 drivers=cdc_ether inflight=0 budget=0
+[    6.707207] cdc_ether 1-1:1.0 eth2: unregister 'cdc_ether' usb-0000:00:04.0-1, CDC Ethernet Device
+RUSTUSB_COMPOSITE_HELD: PASS cycle=2 config=1 alt1=1 both_drivers=usbfs
+[    7.270404] cdc_ether 1-1:1.0 eth2: register 'cdc_ether' at usb-0000:00:04.0-1, CDC Ethernet Device, 40:54:00:cc:00:02
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_RELEASED: PASS cycle=2 config=1 alt0=0 alt1=1 drivers=cdc_ether inflight=0 budget=0
+RUSTUSB_COMPOSITE_UDP_PEER: PASS cycles=2
+RUSTUSB_COMPOSITE_PEER_EVENTS_BEGIN
+RUSTUSB_COMPOSITE_UDP_PEER_READY
+{"event":"composite_udp_peer","cycle":1,"request_bytes":38,"response_bytes":39,"exact":true}
+{"event":"composite_udp_peer","cycle":2,"request_bytes":38,"response_bytes":39,"exact":true}
+RUSTUSB_COMPOSITE_UDP_PEER: PASS cycles=2
+RUSTUSB_COMPOSITE_PEER_EVENTS_END
+RUSTUSB_COMPOSITE_OBSERVED config=1 driver0=cdc_ether driver1=cdc_ether alt0=0 alt1=1
+RUSTUSB_COMPOSITE_PRODUCTION_LOGS: PASS fixed_payload_absent=true level=default
+RUSTUSB_COMPOSITE_STOPPED: PASS exit=0 restored=true pending=0 inflight=0 budget=0
+RUSTUSB_COMPOSITE_EVENTS_BEGIN
+{"address":"192.0.2.1:3240","event":"ready","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":0,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":0,"bulk_out":0,"bytes_in":0,"bytes_out":0,"controls":0,"errors":0,"interrupt_in":0,"interrupt_out":0,"unlink_cancelled":0,"unlinks":0},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":0}],"schema_version":1}}
+{"event":"snapshot","id":"baseline","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":4,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":5,"bulk_out":0,"bytes_in":182,"bytes_out":0,"controls":34,"errors":13,"interrupt_in":1,"interrupt_out":0,"unlink_cancelled":3,"unlinks":3},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":25}],"schema_version":1}}
+{"event":"snapshot","id":"held-1","schema_version":1,"snapshot":{"buffer_bytes_reserved":16708,"devices":[{"bus_id":"1-1","cancelled":4,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":7,"bulk_out":0,"bytes_in":849,"bytes_out":0,"controls":55,"errors":18,"interrupt_in":1,"interrupt_out":0,"unlink_cancelled":3,"unlinks":3},"current_drivers":[{"driver":"usbfs","interface":0},{"driver":"usbfs","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":6,"queued_urbs":4,"speed":2,"state":"leased","usbfs_inflight":2,"usbfs_reaped":46}],"schema_version":1}}
+{"event":"snapshot","id":"io-1","schema_version":1,"snapshot":{"buffer_bytes_reserved":16708,"devices":[{"bus_id":"1-1","cancelled":4,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":10,"bulk_out":4,"bytes_in":1076,"bytes_out":302,"controls":55,"errors":18,"interrupt_in":1,"interrupt_out":0,"unlink_cancelled":3,"unlinks":3},"current_drivers":[{"driver":"usbfs","interface":0},{"driver":"usbfs","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":6,"queued_urbs":4,"speed":2,"state":"leased","usbfs_inflight":2,"usbfs_reaped":53}],"schema_version":1}}
+{"event":"snapshot","id":"released-1","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":10,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":15,"bulk_out":4,"bytes_in":1076,"bytes_out":302,"controls":56,"errors":25,"interrupt_in":2,"interrupt_out":0,"unlink_cancelled":9,"unlinks":9},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":56}],"schema_version":1}}
+{"event":"snapshot","id":"held-2","schema_version":1,"snapshot":{"buffer_bytes_reserved":13424,"devices":[{"bus_id":"1-1","cancelled":10,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":15,"bulk_out":5,"bytes_in":1563,"bytes_out":392,"controls":77,"errors":30,"interrupt_in":2,"interrupt_out":0,"unlink_cancelled":9,"unlinks":9},"current_drivers":[{"driver":"usbfs","interface":0},{"driver":"usbfs","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":5,"queued_urbs":3,"speed":2,"state":"leased","usbfs_inflight":2,"usbfs_reaped":76}],"schema_version":1}}
+{"event":"snapshot","id":"io-2","schema_version":1,"snapshot":{"buffer_bytes_reserved":16708,"devices":[{"bus_id":"1-1","cancelled":10,"cleanup_verified":false,"configuration":1,"counters":{"bulk_in":17,"bulk_out":7,"bytes_in":1704,"bytes_out":514,"controls":77,"errors":30,"interrupt_in":2,"interrupt_out":0,"unlink_cancelled":9,"unlinks":9},"current_drivers":[{"driver":"usbfs","interface":0},{"driver":"usbfs","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":true,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":6,"queued_urbs":4,"speed":2,"state":"leased","usbfs_inflight":2,"usbfs_reaped":80}],"schema_version":1}}
+{"event":"snapshot","id":"released-2","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":16,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":24,"bulk_out":7,"bytes_in":1864,"bytes_out":514,"controls":78,"errors":37,"interrupt_in":3,"interrupt_out":0,"unlink_cancelled":15,"unlinks":15},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":85}],"schema_version":1}}
+{"event":"ack","id":"stop","ok":true,"schema_version":1}
+{"event":"stopped","schema_version":1,"snapshot":{"buffer_bytes_reserved":0,"devices":[{"bus_id":"1-1","cancelled":16,"cleanup_verified":true,"configuration":1,"counters":{"bulk_in":24,"bulk_out":7,"bytes_in":1864,"bytes_out":514,"controls":78,"errors":37,"interrupt_in":3,"interrupt_out":0,"unlink_cancelled":15,"unlinks":15},"current_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"device_id":"usb-48f4045d51dd7087e09c2e7a88419924474c03ab74b4c9f41b751702d87d9883","ep0_max_packet_size":64,"leased":false,"original_drivers":[{"driver":"cdc_ether","interface":0},{"driver":"cdc_ether","interface":1}],"pending_urbs":0,"queued_urbs":0,"speed":2,"state":"available","usbfs_inflight":0,"usbfs_reaped":85}],"schema_version":1}}
+RUSTUSB_COMPOSITE_EVENTS_END
+RUSTUSB_COMPOSITE_RESULT: PASS role=server
+[    7.466064] ACPI: PM: Preparing to enter system sleep state S5
+[    7.466245] reboot: Power down

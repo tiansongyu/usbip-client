@@ -1,0 +1,32 @@
+    Checking pin-project-lite v0.2.17
+    Checking bitflags v2.13.2
+    Checking linux-raw-sys v0.12.1
+    Checking slab v0.4.12
+    Checking once_cell v1.21.4
+    Checking log v0.4.34
+    Checking futures-core v0.3.34
+    Checking tokio v1.53.3
+    Checking rustix v1.1.5
+ Documenting nusb v0.2.8 (/tmp/rustusb-checked-release-implementation-20261023/vendor/nusb)
+error: unresolved link to `futures_io::AsyncRead`
+  --> src/io/read.rs:31:33
+   |
+31 | ///   [`futures_io::AsyncRead`](futures_io::AsyncRead) and
+   |                                 ^^^^^^^^^^^^^^^^^^^^^ no item named `futures_io` in scope
+   |
+   = note: `-D rustdoc::broken-intra-doc-links` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(rustdoc::broken_intra_doc_links)]`
+
+error: unresolved link to `futures_io::AsyncBufRead`
+  --> src/io/read.rs:32:24
+   |
+32 | ///   [`AsyncBufRead`](futures_io::AsyncBufRead) for async IO.
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^ no item named `futures_io` in scope
+
+error: unresolved link to `futures_io::AsyncWrite`
+  --> src/io/write.rs:26:34
+   |
+26 | ///   [`futures_io::AsyncWrite`](futures_io::AsyncWrite) for async IO.
+   |                                  ^^^^^^^^^^^^^^^^^^^^^^ no item named `futures_io` in scope
+
+error: could not document `nusb`

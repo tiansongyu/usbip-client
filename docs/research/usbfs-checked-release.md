@@ -1,6 +1,6 @@
-# USBFS checked release：旧产品负向 QEMU 证据
+# USBFS checked release：错误传播与 QEMU 验证
 
-2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。本报告尚不包含修复后或 clean 最终验收；实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
+2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。产品修复已合入 `4e81a11`；首轮 clean 候选矩阵为 10 PASS、1 FAIL，物理输出隔离后的完整冻结验收尚待进行。实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
 
 ## 测试路径与来源
 
@@ -34,3 +34,29 @@ dev02 的 [server 串口](../evidence/qemu-checked-release-old-product-eof-dev02
 [静态记录](../evidence/qemu-checked-release-static-20261023/host-state-release-harness-static-20261023.json)明确是已观察 tool 结果的派生转录及独立构建物哈希，没有重构 raw 编译日志；独立 ELF 不归档。新解析器对[旧六项 clean 原日志的只读回归](../evidence/qemu-checked-release-static-20261023/host-state-release-old-six-parser-20261023.json)通过 48 个 case，不代表重新运行 QEMU，也不能替代本轮修复验证。
 
 后续须用修复产品证明原 -22 的 wire 传播、剩余 IF1 显式释放继续完成、全程零 SET_CONFIGURATION 入口、后到 C 使用实际空 map，以及原双 CDC driver/config1/alt0,1 和全部资源的真实恢复；EOF 场景不要求关闭连接上出现 A 回复。完成开发与软件 gate 后，还须在同一 clean 提交执行新两项和既定回归。checked ioctl 的结果不等于完整状态恢复；本轮不证明原无 driver/非零 alternate 通用恢复、内核内部 active 窗口、真实硬件或整个 Phase2。
+
+
+## 产品修复与软件验证
+
+`4e81a1195b871d605a7f334f2183231ee6ceea7c` 为固定 nusb 增加 Linux-only safe `Interface::release_checked()`。它保留真实 RELEASEINTERFACE/CONNECT errno；最后 owner 在调用前解除析构重试，共享引用返回 Busy 且不发 ioctl。原 portable release/Drop 契约保留。worker 全部逐项 await 并保留首错；release 失败不执行 SET_CONFIGURATION，随后重新观察实际配置。原 alternate 临时 claim 同样 checked 释放，即使 select 失败也等待并记录 release。独立确认设备消失的既有 Gone 分支不声称原驱动恢复。
+
+[独立产品复核](../evidence/checked-release-product-independent-review-20261023.json)的 217 项通过，包含原 70 文件来源、许可证、精确 patch 重建及未增加 unsafe（346 token）。[完整软件 gate](../evidence/checked-release-software-validation-20261023.json)在 clean `4e81a11` 执行 `bash scripts/check.sh`，exit0；默认89、all-features114、vendor19，共222次执行，0失败/忽略，fmt、两组Clippy、release及workspace严格rustdoc通过，96份软件输入前后不变。
+
+补充 vendor tokio-only 严格 rustdoc 在修复前后均因相同三个未启用 futures_io 链接失败，原始日志保留。按固定 crate 的 docs.rs metadata 使用 all-features 后严格 rustdoc 通过；未修改原链接或放宽检查。[四平台原生 CI](../evidence/publication-checked-release-20261023.json)实际全部 completed/success，Ubuntu22.04/24.04 × x86_64/aarch64 每格同样222次及两项背压检查通过，[原日志与API](../evidence/ci-checked-release-4e81a11-20261023/artifacts.sha256)按原字节归档。CI不证明设备转发。
+
+## 第一轮 clean 候选矩阵：10 PASS、1 FAIL
+
+同一 clean `4e81a11` 串行运行十一项，运行期间没有仓库写入或并行构建；[原 sequence](../evidence/checked-release-candidate-sequence-20261023.json)和[106份归档索引](../evidence/checked-release-candidate-20261023.json)保留整体 FAIL。
+
+- 新 release UNLINK/EOF 及原 configuration/alternate/clear 六项全部 PASS，共64项 wire case、16个guest exit0。真实首release=-22，后续IF1 release=0，首次 reclaim 前仅有这一次后续release；全trace没有SET_CONFIGURATION入口。UNLINK收到A=-22/UNLINK0；EOF不要求已关闭连接回复。最终同代际原cfg1/alt0,1/双cdc_ether及资源0恢复。
+- ECM回归 PASS，19项probe，两个周期均实际UDP38B请求/39B响应。独立私有PCAP解码、IPv4/UDP校验和、USBMON同tag的模型STALL -32/1 opaque数据及恢复通过。
+- 原HID/FTDI normal回归 PASS，15项probe与70B精确串口输出。
+- hot回归严格 FAIL：server原ttyS0的 `RUSTUSB_PHYSICAL_REINSERT_STALE` 标记被内核 `hid-generic` printk 从中间插断。两guest exit0及可观察的Gone/FTDI继续/140B/资源0不替代host缺完整marker的裁决；不拼接原字节、不补填未到达的after字段。
+
+[独立原始证据复核](../evidence/checked-release-candidate-independent-review-20261023.json)913项检查通过，85份原始输入哈希不变；这里通过的是复核完整性，运行结果仍为10/1。旧FTDI runner未持久原始host payload，独立复核仅依host计数/SHA及guest精确内容断言，不假造额外raw解码。
+
+## 物理证据通道修正
+
+只修改物理QEMU runner与guest init：ttyS0继续收集完整kernel console，ttyS1记录程序输出；host在两通道持续检查原FAIL及四类内核完整性错误，来宾退出后再次检查晚到日志。每角色须有唯一精确通道beacon，所有旧marker、USB断言、字节匹配和超时保持。
+
+[双UART开发索引](../evidence/physical-dual-serial-development-20261023.json)的 dirty `4e81a11` 热拔测试完整 PASS（15项probe、140B精确输出、两guest exit0），是开发验证，不能替代接下来的clean十一项最终矩阵。[独立开发复核](../evidence/physical-dual-serial-dev01-independent-review-20261023.json)113/113通过；首轮FAIL保持原样，本修订不修改生产Rust代码。

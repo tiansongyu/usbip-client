@@ -43,6 +43,12 @@ cleanup() {
     poweroff -f
 }
 trap cleanup EXIT
+STAGE=evidence-channel
+[ -c /dev/ttyS1 ]
+/bin/busybox stty -F /dev/ttyS1 raw -echo 115200 clocal -hupcl
+exec > /dev/ttyS1 2>&1
+echo "RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=$ROLE device=ttyS1 kernel_console=ttyS0"
+STAGE=boot
 echo "RUSTUSB_PHYSICAL_BOOT role=$ROLE kernel=$(uname -r)"
 for name in usb-common usbcore e1000 evdev hid hid-generic usbhid usbserial ftdi_sio; do
     [ ! -f "/modules/$name.ko" ] || insmod "/modules/$name.ko"

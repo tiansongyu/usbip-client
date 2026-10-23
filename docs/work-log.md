@@ -222,3 +222,9 @@
 - 最新54da615四平台CI的四份原log和两个API响应另按原bytes归档，见`evidence/ci-host-state-docs-54da615-20261023/artifacts.sha256`。新测试只扩展四harness的release动作，原8秒门/3秒ARM后RPC保持；静态检查及新parser读取旧六clean原日志48项通过，未冒称重跑旧QEMU。
 - 旧产品dev01 UNLINK和dev02 EOF默认locked构建均真实FAIL。dev01内核EXIT marker=-22但wire seq100 status0，独立probe在cases4准确拒绝；host早停缺完整末trace。dev02持久34event前缀为release -22→下一release0→SETCONFIG entry/exit0，后续adapter快照cfg2触发RESTORED严格失败，下游clientshortframe；未持久fresh独立sysfs2或最终恢复，不能补造永久泄漏结论。两run均缺after guards，原guest退出0也不改FAIL。
 - 25份开发产物/共同dev01前置源码/静态来源已逐bytes归档，明确dev02复用同冻结快照。另一独立69项复核全部通过而原运行裁决保持FAIL；源码设计review另存。具体范围与缺失见`research/usbfs-checked-release.md`。产品实现候选在独立worktree并行完成纯测试，尚未应用本工作树；之后应用再开发与clean最终验证。
+- 实现子任务中断后root接手独立worktree收尾：保留legacy接口，新增Linux checked one-shot/真实release与CONNECT errno，worker全部await/首errno和临时alt失败仍记录release。vendor19、后端41与Clippy通过；独立源码/许可证/70文件/精确patch重建217项PASS，无新增unsafe，仍346 token。候选提交5f92833 cherry-pick为main4e81a11。
+- vendor严格rustdoc仅开tokio时，新旧产品均在同三个未启用futures_io链接失败，原日志保留；按该固定crate的docs.rs metadata开启all-features后严格rustdoc通过，未通过改断言或改原源码掩盖。root完整scripts/check.sh在clean4e81a11 exit0，89/114/19共222项0失败/忽略，全部Cargo gates通过，96软件输入及四harness前后SHA一致，随后普通push4e81a11且远端一致。
+- 同一clean4e81a11串行十一项候选矩阵全部运行结束、无repo写/并行构建：release两项、原六host-state、ECM和physicalnormal共前10PASS；最后physicalhot原始串口在REINSERT_STALE标记中间插入kernel hid-generic printk，host准确按缺完整marker判FAIL，sequence保持FAIL。其余可证功能与最终scope待独立raw复核，不把guest自身PASS替代host裁决。先归档本轮，再分离物理测试ttyS0 kernel与ttyS1程序证据，产品不改。
+
+- 首轮候选106份原始归档完成，独立913项复核完整性PASS但runtime仍10PASS/1FAIL；全部85输入SHA未变。双UART只改物理两脚本，34项静态/20负向通道检查和独立源码审查通过；dirty4e81a11热拔dev01实际PASS，15probe、140B精确FTDI、两guest0、完整重插marker及双channel beacon。准备提交冻结后新v2十一项，不覆盖首轮失败。
+- 双UART开发原始/source/static共20份归档SHA逐项通过；第二独立raw复核113/113，完整marker、双通道guard/实际QEMU argv/source与二进制均相符。仅开发证据，准备clean v2；.gitignore同步允许保留新的evidence串口原始.log。

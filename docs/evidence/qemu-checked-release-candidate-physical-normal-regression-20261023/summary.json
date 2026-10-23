@@ -1,0 +1,1686 @@
+{
+  "started_at_utc": "20261023T024204Z",
+  "scope": "ordinary UID1000 helper-authorized nusb/usbfs server over QEMU HID/FTDI devices to Linux VHCI; no host USB",
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "git_commit": "4e81a1195b871d605a7f334f2183231ee6ceea7c",
+  "working_tree_dirty": false,
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--all-features"
+  ],
+  "cargo_lock_sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a",
+  "source_fingerprint_sha256": "6f6b98438d65b4c0c134d08610a9ae87c6875cb196b53968cd1a925741dcafce",
+  "script_sha256": {
+    "run-physical-qemu.py": "ec283dc7aff2bbdb183216d84a96833722ce9c22200bde0a0618053ffca2eec6",
+    "guest-physical-init.sh": "540563cc20fee64608786ee26cd3edf871c18b67c659d20d43e5978fcd847e70",
+    "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "link": [
+      "server:192.0.2.1",
+      "client:192.0.2.2"
+    ],
+    "ip_forward": false,
+    "qemu_usb_devices": 2,
+    "host_network_listener": false
+  },
+  "result": "PASS",
+  "hot_unplug_requested": false,
+  "binary_sha256": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "probe_binary_sha256": "bbe04aa8c2f7d73a54ac4505ecc6814216b6718b3d49666d182901a2ffcbb857",
+  "guest_binary_sha256": {
+    "rustusb": "50a9a3a762e2acd43e1c92d96adbaca4c7f135e2d1e26908cc5df913b07c8145",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "cfa95817fb1936e164484f3b58cea6bcc8b27ee7dcfca2ef81b0f8ea35f08e3a",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "protocol_probe_cases": [
+    {
+      "event": "physical_probe_case",
+      "case": "real_unsupported_control_stall_and_survival",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_control_descriptor_and_speed",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_configuration_barrier_preserves_following_in",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_unlink_reaped_no_old_completion_or_input_loss",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_pending_eof_releases_lease",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_zero_bulk_out_actual_zero",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_one_byte_bulk_in_pending_cancelled",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_zero_bulk_in_original_length",
+      "result": "PASS",
+      "observation": "pending_cancelled"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_non_mps_fifteen_byte_bulk_in",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "real_ftdi_descriptor_and_speed",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "all_lifecycle_checks",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "both_real_devices_exclusive_busy",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "both_real_devices_available",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "both_real_devices_exclusive_busy",
+      "result": "PASS"
+    },
+    {
+      "event": "physical_probe_case",
+      "case": "both_real_devices_available",
+      "result": "PASS"
+    }
+  ],
+  "server_events": [
+    {
+      "address": "192.0.2.1:3240",
+      "event": "ready",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 0,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 0,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 0,
+              "bytes_out": 0,
+              "controls": 0,
+              "errors": 0,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 0,
+              "unlinks": 0
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 0
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "baseline",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 3,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 36,
+              "bytes_out": 0,
+              "controls": 7,
+              "errors": 4,
+              "interrupt_in": 5,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 10
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 2,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 3,
+              "bulk_out": 1,
+              "bytes_in": 33,
+              "bytes_out": 0,
+              "controls": 2,
+              "errors": 2,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 5
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "held-1",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 3,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 338,
+              "bytes_out": 1,
+              "controls": 21,
+              "errors": 4,
+              "interrupt_in": 5,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 23
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 5,
+              "bulk_out": 1,
+              "bytes_in": 195,
+              "bytes_out": 0,
+              "controls": 30,
+              "errors": 7,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 4,
+              "unlinks": 4
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 34
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "io-1",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 3,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 354,
+              "bytes_out": 1,
+              "controls": 21,
+              "errors": 4,
+              "interrupt_in": 7,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 25
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 6,
+              "bulk_out": 2,
+              "bytes_in": 232,
+              "bytes_out": 35,
+              "controls": 30,
+              "errors": 7,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 4,
+              "unlinks": 4
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 36
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "released-1",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 4,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 354,
+              "bytes_out": 1,
+              "controls": 21,
+              "errors": 5,
+              "interrupt_in": 8,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 26
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 6,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 8,
+              "bulk_out": 2,
+              "bytes_in": 232,
+              "bytes_out": 35,
+              "controls": 30,
+              "errors": 9,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 4,
+              "unlinks": 4
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 37
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "held-2",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 656,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 5,
+              "interrupt_in": 8,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 39
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 8,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 10,
+              "bulk_out": 2,
+              "bytes_in": 394,
+              "bytes_out": 35,
+              "controls": 58,
+              "errors": 14,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 66
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "io-2",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 672,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 5,
+              "interrupt_in": 10,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 41
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 8,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 11,
+              "bulk_out": 3,
+              "bytes_in": 431,
+              "bytes_out": 70,
+              "controls": 58,
+              "errors": 14,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 68
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "snapshot",
+      "id": "released-2",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 5,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 672,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 6,
+              "interrupt_in": 11,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 42
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 10,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 13,
+              "bulk_out": 3,
+              "bytes_in": 431,
+              "bytes_out": 70,
+              "controls": 58,
+              "errors": 16,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 69
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    {
+      "event": "ack",
+      "id": "stop",
+      "ok": true,
+      "schema_version": 1
+    },
+    {
+      "event": "stopped",
+      "schema_version": 1,
+      "snapshot": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 5,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 672,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 6,
+              "interrupt_in": 11,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 42
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 10,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 13,
+              "bulk_out": 3,
+              "bytes_in": 431,
+              "bytes_out": 70,
+              "controls": 58,
+              "errors": 16,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 69
+          }
+        ],
+        "schema_version": 1
+      }
+    }
+  ],
+  "server_observations": {
+    "snapshots": {
+      "baseline": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 3,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 36,
+              "bytes_out": 0,
+              "controls": 7,
+              "errors": 4,
+              "interrupt_in": 5,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 10
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 2,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 3,
+              "bulk_out": 1,
+              "bytes_in": 33,
+              "bytes_out": 0,
+              "controls": 2,
+              "errors": 2,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 2
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 5
+          }
+        ],
+        "schema_version": 1
+      },
+      "held-1": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 3,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 338,
+              "bytes_out": 1,
+              "controls": 21,
+              "errors": 4,
+              "interrupt_in": 5,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 23
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 5,
+              "bulk_out": 1,
+              "bytes_in": 195,
+              "bytes_out": 0,
+              "controls": 30,
+              "errors": 7,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 4,
+              "unlinks": 4
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 34
+          }
+        ],
+        "schema_version": 1
+      },
+      "io-1": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 3,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 354,
+              "bytes_out": 1,
+              "controls": 21,
+              "errors": 4,
+              "interrupt_in": 7,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 25
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 6,
+              "bulk_out": 2,
+              "bytes_in": 232,
+              "bytes_out": 35,
+              "controls": 30,
+              "errors": 7,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 4,
+              "unlinks": 4
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 36
+          }
+        ],
+        "schema_version": 1
+      },
+      "released-1": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 4,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 354,
+              "bytes_out": 1,
+              "controls": 21,
+              "errors": 5,
+              "interrupt_in": 8,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 26
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 6,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 8,
+              "bulk_out": 2,
+              "bytes_in": 232,
+              "bytes_out": 35,
+              "controls": 30,
+              "errors": 9,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 4,
+              "unlinks": 4
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 37
+          }
+        ],
+        "schema_version": 1
+      },
+      "held-2": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 656,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 5,
+              "interrupt_in": 8,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 39
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 8,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 10,
+              "bulk_out": 2,
+              "bytes_in": 394,
+              "bytes_out": 35,
+              "controls": 58,
+              "errors": 14,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 66
+          }
+        ],
+        "schema_version": 1
+      },
+      "io-2": {
+        "buffer_bytes_reserved": 2832,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 4,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 672,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 5,
+              "interrupt_in": 10,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 1,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 41
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 8,
+            "cleanup_verified": false,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 11,
+              "bulk_out": 3,
+              "bytes_in": 431,
+              "bytes_out": 70,
+              "controls": 58,
+              "errors": 14,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "usbfs",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": true,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 2,
+            "queued_urbs": 1,
+            "speed": 2,
+            "state": "leased",
+            "usbfs_inflight": 1,
+            "usbfs_reaped": 68
+          }
+        ],
+        "schema_version": 1
+      },
+      "released-2": {
+        "buffer_bytes_reserved": 0,
+        "devices": [
+          {
+            "bus_id": "1-1",
+            "cancelled": 5,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 0,
+              "bulk_out": 0,
+              "bytes_in": 672,
+              "bytes_out": 2,
+              "controls": 35,
+              "errors": 6,
+              "interrupt_in": 11,
+              "interrupt_out": 0,
+              "unlink_cancelled": 2,
+              "unlinks": 3
+            },
+            "current_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "ep0_max_packet_size": 64,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "usbhid",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 3,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 42
+          },
+          {
+            "bus_id": "1-2",
+            "cancelled": 10,
+            "cleanup_verified": true,
+            "configuration": 1,
+            "counters": {
+              "bulk_in": 13,
+              "bulk_out": 3,
+              "bytes_in": 431,
+              "bytes_out": 70,
+              "controls": 58,
+              "errors": 16,
+              "interrupt_in": 0,
+              "interrupt_out": 0,
+              "unlink_cancelled": 6,
+              "unlinks": 6
+            },
+            "current_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "ep0_max_packet_size": 8,
+            "leased": false,
+            "original_drivers": [
+              {
+                "driver": "ftdi_sio",
+                "interface": 0
+              }
+            ],
+            "pending_urbs": 0,
+            "queued_urbs": 0,
+            "speed": 2,
+            "state": "available",
+            "usbfs_inflight": 0,
+            "usbfs_reaped": 69
+          }
+        ],
+        "schema_version": 1
+      }
+    },
+    "final_snapshot": {
+      "buffer_bytes_reserved": 0,
+      "devices": [
+        {
+          "bus_id": "1-1",
+          "cancelled": 5,
+          "cleanup_verified": true,
+          "configuration": 1,
+          "counters": {
+            "bulk_in": 0,
+            "bulk_out": 0,
+            "bytes_in": 672,
+            "bytes_out": 2,
+            "controls": 35,
+            "errors": 6,
+            "interrupt_in": 11,
+            "interrupt_out": 0,
+            "unlink_cancelled": 2,
+            "unlinks": 3
+          },
+          "current_drivers": [
+            {
+              "driver": "usbhid",
+              "interface": 0
+            }
+          ],
+          "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+          "ep0_max_packet_size": 64,
+          "leased": false,
+          "original_drivers": [
+            {
+              "driver": "usbhid",
+              "interface": 0
+            }
+          ],
+          "pending_urbs": 0,
+          "queued_urbs": 0,
+          "speed": 3,
+          "state": "available",
+          "usbfs_inflight": 0,
+          "usbfs_reaped": 42
+        },
+        {
+          "bus_id": "1-2",
+          "cancelled": 10,
+          "cleanup_verified": true,
+          "configuration": 1,
+          "counters": {
+            "bulk_in": 13,
+            "bulk_out": 3,
+            "bytes_in": 431,
+            "bytes_out": 70,
+            "controls": 58,
+            "errors": 16,
+            "interrupt_in": 0,
+            "interrupt_out": 0,
+            "unlink_cancelled": 6,
+            "unlinks": 6
+          },
+          "current_drivers": [
+            {
+              "driver": "ftdi_sio",
+              "interface": 0
+            }
+          ],
+          "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+          "ep0_max_packet_size": 8,
+          "leased": false,
+          "original_drivers": [
+            {
+              "driver": "ftdi_sio",
+              "interface": 0
+            }
+          ],
+          "pending_urbs": 0,
+          "queued_urbs": 0,
+          "speed": 2,
+          "state": "available",
+          "usbfs_inflight": 0,
+          "usbfs_reaped": 69
+        }
+      ],
+      "schema_version": 1
+    }
+  },
+  "serial_output": {
+    "expected_bytes": 70,
+    "received_bytes": 70,
+    "sha256": "a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5",
+    "exact_match": true
+  },
+  "serial_input_ledger": {
+    "raw_probe_payload_bytes": 13,
+    "raw_probe_usb_status_bytes": 2,
+    "kernel_serial_payload_bytes": 70
+  },
+  "pass_markers_verified": true,
+  "qmp_events": [],
+  "injections": [
+    "key-1",
+    "key-2",
+    "probe",
+    "probe-serial",
+    "serial-1",
+    "serial-2"
+  ],
+  "serial_received_bytes": 70,
+  "serial_received_sha256": "a40e2368e405f8bcc8b832ee7d42b3d471b41363046704a77e0834444ca36cb5",
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "server_checks": [
+    "RUSTUSB_PHYSICAL_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_PHYSICAL_SERVER_MODULES: PASS usbip_host=false vhci_hcd=false",
+    "RUSTUSB_PHYSICAL_ISOLATION role=server ip_forward=0",
+    "RUSTUSB_PHYSICAL_FD_GATE: PASS direct_uid1000=denied direct_uid1001=denied nodes=root0600",
+    "RUSTUSB_PHYSICAL_HELPER_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_PHYSICAL_HELPER_CONNECTION_CLOSED method=reset_after_frame",
+    "RUSTUSB_PHYSICAL_OPEN_FD_DENIED: PASS uid=1001 route=open_physical json_refusal=true closed=true",
+    "RUSTUSB_PHYSICAL_SERVER_UID: PASS uid=1000 app_root=false capabilities=0",
+    "RUSTUSB_PHYSICAL_PROBE_CLEANUP: PASS original_drivers=true inflight=0",
+    "RUSTUSB_PHYSICAL_SERVER_HELD: PASS cycle=1 drivers=usbfs leases=2",
+    "RUSTUSB_PHYSICAL_SERVER_RELEASED: PASS cycle=1 inflight=0 drivers=usbhid,ftdi_sio",
+    "RUSTUSB_PHYSICAL_SERVER_HELD: PASS cycle=2 drivers=usbfs leases=2",
+    "RUSTUSB_PHYSICAL_SERVER_RELEASED: PASS cycle=2 inflight=0 drivers=usbhid,ftdi_sio",
+    "RUSTUSB_PHYSICAL_STOPPED: PASS exit=0 original_drivers=true inflight=0",
+    "RUSTUSB_PHYSICAL_EVENTS_BEGIN",
+    "RUSTUSB_PHYSICAL_EVENTS_END",
+    "RUSTUSB_PHYSICAL_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_PHYSICAL_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_PHYSICAL_ISOLATION role=client ip_forward=0",
+    "RUSTUSB_PHYSICAL_UID_GATE: PASS denied_uid=1001 allowed_uid=1000",
+    "RUSTUSB_PHYSICAL_PROBE_WAIT_INPUT key=3",
+    "RUSTUSB_PHYSICAL_PROBE_WAIT_SERIAL bytes=13",
+    "RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=1 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio",
+    "RUSTUSB_PHYSICAL_WAIT_INPUT cycle=1",
+    "RUSTUSB_PHYSICAL_WAIT_SERIAL cycle=1",
+    "RUSTUSB_PHYSICAL_HID: PASS cycle=1 key_code=2 down=true up=true same_receipt=true",
+    "RUSTUSB_PHYSICAL_FTDI: PASS cycle=1 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true",
+    "RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=1 kernel_sessions=0 both_devices_removed=true",
+    "RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=1 available_devices=2",
+    "RUSTUSB_PHYSICAL_ATTACHED: PASS cycle=2 sessions=2 hid_driver=usbhid serial_driver=ftdi_sio",
+    "RUSTUSB_PHYSICAL_WAIT_INPUT cycle=2",
+    "RUSTUSB_PHYSICAL_WAIT_SERIAL cycle=2",
+    "RUSTUSB_PHYSICAL_HID: PASS cycle=2 key_code=3 down=true up=true same_receipt=true",
+    "RUSTUSB_PHYSICAL_FTDI: PASS cycle=2 in=35 out=35 exact_bytes=true tty_echo=false same_receipt=true",
+    "RUSTUSB_PHYSICAL_CLIENT_RELEASED: PASS cycle=2 kernel_sessions=0 both_devices_removed=true",
+    "RUSTUSB_PHYSICAL_REDISCOVERED: PASS cycle=2 available_devices=2",
+    "RUSTUSB_PHYSICAL_RESULT: PASS role=client"
+  ]
+}
