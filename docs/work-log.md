@@ -443,3 +443,14 @@
 - 主要八场景按六前台eaa+两Native补采cb记16guest，原两eaa agent仅作额外保留，不算新增兼容。E31/英文guide、README英中、站点、架构/安全/兼容/测试/路线图及项目skill同步；源审纠正当前验收表仍412/E30、untracked physical disk2不能降1与两列表多一格三项。14份文档310本地/仓库映射链接、表格检查通过；32外链未做HTTP遍历。135站点静态与JS语法通过。CUA在项目子路径实际1280/375无横向overflow、图片与手机竖图加载、495/8/16文案和新guide链接存在、键盘左右切页/恢复成功、console无warn/error。截图接口仍不可用，仅DOM确认；本轮不称pixel/noJS/reducedmotion重验。CSS/JS/三SVG仍逐eaa相同。全局readme-site四文件与Codex发现symlink保持原安装字节。
 
 - 最终794份新运行/QA原件逐original/bytes/SHA/staged blob核后提交`f9b6cde`并正常push。精确f9软件CI39987113008四原生job和Pages39987113149 check/deploy均completed/success；这是新版本状态，不重计或重归属eaa详细495/CI日志。线上HTML/CSS/JS/三SVG六资源HTTPS200且逐f9 Gitblob字节一致，CUA刷新实际495/8/16文案、新guide链接和已加载图，console无warn/error；非pixel截图。临时tab9已关闭、预览server2090901 TERM/wait143，线上tab8保留交付。九份发布回执另存`application-service-publication-f9b6cde-20261024`；150产品/152前台/154agent冻结源集合仍逐所记版本相同。最后仅提交发布记录，完整原目标继续active，真实硬件及完整Phase3和后续阶段未宣告完成。
+
+### 2026-10-24：前台与托管共享实际 owner（进行中）
+
+- 从 clean `9314aa0` 继续原完整目标；上一轮是有证据的实际进展，英文 README、展示站与全局 readme-site skill 已交付。本轮按项目技能先读架构、应用服务设计和实际前台/托管源码，先写 `research/shared-owner-design.md`，再提取共同 owner。CLI 保留信号/有界 stdin/stdout 适配，实际 helper/网络/设备生命周期由 service 一套 pipeline 持有；Foreground 不伪造 SessionId/WAL/correlation，Managed 仍真实持久准入。
+- 三位 agent 分别负责 Native/client、Rust owner 和独立 mTLS 生命周期测试，另做交叉只读审查；root 独占 Cargo/QEMU/提交。保留前台 copy_bidirectional 排空与托管首 EOF、Native status2/4、旧 JSON/helper 格式和 5 秒输出预算。新增 USBFS accepted helper/initializer 不取消的安全边界，不宣称 kernel 硬阻塞有截止。
+- 初次 cargo check exit0，指出两处提取后未使用的错误汇总 shim；删除无用 shim，统一使用保留 operation/cleanup/recording 的 JobOutcome。首 all-features Clippy 因 unused import 与大 enum 失败，原日志保留；测试专属 import 移入 test 模块，真实 Native receipt 装 Box 不改 wire JSON。第二 Clippy exit0。这些属于开发检查，不是最终冻结验收。
+- 独立源码审查发现并修正 Native 非法 stdin 后 EOF 兼容、重复信号可能饿死已完成 owner、Rust WAL 错误误归 operation；另指出只读 Status 不能随 accepted-init 一起总 await，已恢复 stop-select，旧 helper-backlog TERM 场景将原样回归。Native use_lock 跨记录 ACK 及多 export 串行记录阻碍实际 close 的风险正在窄修。尚未执行本轮运行验收/QEMU，不提前记 PASS。
+
+- 首完整 gate 停在默认特性 Clippy 的 `is_managed` dead-code，未执行测试；152 输入前后不变，实际两份待修源码在修改前保存并逐首 guard SHA 确认。仅给 Rust 专用私有 method 加 feature cfg；独立审查还在执行前发现两 Native 测试 key 少 `usb-`，只修 fixture，不放宽产品验证。第二完整 `scripts/check.sh` exit0：default212/all-features298/vendor20，共530次测试、39个result，零失败/忽略，152输入前后保持，fmt/两Clippy/两release/两严格Rustdoc通过。
+- Native use_lock/记录 future 窄修已完成并独立源码复核：Begin/Intent/Attempt 不持锁；已有 stub 后 stop 保留原已poll记录 future，先实际 close/failed 标记/解锁，再等原 ACK 与 Closing/Finish；多个 export 收尾先全部启动再总 join，无 abort。调用方 stop sender 消失亦停止。准备阶段 Resource ACK 无限停顿仍是未决边界，不宣称任意 WAL stall 有界清理。
+- 新真实 loopback mTLS 子进程五组合全部 PASS（四信号 ready/blocked + 约5秒输出截止）；memory DER 不覆盖可信文件加载/helper/USB。blocked 只证明有界退出与 TLS 数据 socket 关闭，ready 才由真实 stopped 证明末资源。旧本地四 signal 与两背压均 PASS，同 all-features release，四项 source/binary guards 真；约5秒输出截止仍非零错误。Native-only CLI secure-transport check/tree 通过，service存在而无 Rust engine/nusb/rusb，不重复计530。QEMU尚未执行，接下来冻结 clean 提交。

@@ -5,6 +5,7 @@
 
 pub mod config;
 pub mod context;
+pub mod foreground;
 #[cfg(target_os = "linux")]
 mod fs;
 #[cfg(target_os = "linux")]
@@ -12,6 +13,7 @@ pub mod ipc;
 pub mod jobs;
 pub mod model;
 pub mod rpc;
+mod run_context;
 #[cfg(target_os = "linux")]
 mod runtime;
 mod store;

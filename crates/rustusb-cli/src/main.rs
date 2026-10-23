@@ -5,16 +5,16 @@ mod agent;
 
 #[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod event_output;
-#[cfg(all(feature = "secure-transport", target_os = "linux"))]
-mod native_server;
+#[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
+mod foreground;
 #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
 mod physical_server;
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod secure_client;
+#[cfg(all(test, feature = "rust-backend", target_os = "linux"))]
+mod secure_foreground_tests;
 #[cfg(feature = "secure-transport")]
 mod secure_server;
-#[cfg(feature = "rust-backend")]
-mod server_binding;
 #[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod shutdown_signals;
 #[cfg(feature = "rust-backend")]

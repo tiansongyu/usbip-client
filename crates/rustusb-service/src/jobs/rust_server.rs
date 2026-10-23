@@ -1,15 +1,40 @@
-//! Managed Rust engine adapter. Admission is acknowledged before atomic claim.
+//! Shared Rust engine owner, with explicit foreground and durable managed modes.
 
-use super::combined;
 use crate::{
-    context::{JobContext, SessionContext, stopped},
+    context::stopped,
+    foreground::{Control, ControlError, Event, JobOutcome, Snapshot},
     model::{Cleanup, Evidence, Failure, Metrics, SessionRole},
+    run_context::{RunContext, RunSession},
 };
-use rustusb_core::{Error, Result, SessionState, server_session::*};
-use rustusb_rust_backend::{SecureServerConfig, ServerHandle, ServerMonitor, VirtualBackend};
+use rustusb_core::{DeviceKey, Error, Result, SessionState, VirtualProfile, server_session::*};
+use rustusb_rust_backend::{
+    SecureServerConfig, ServerConfig, ServerHandle, ServerMonitor, VirtualBackend,
+};
 use rustusb_transport::config::LoadedServerConfig;
 use std::{collections::BTreeSet, sync::Arc, time::Duration};
-use tokio::{sync::watch, task::JoinSet};
+use tokio::{
+    sync::watch,
+    task::{JoinHandle, JoinSet},
+};
+
+enum StageError {
+    Operation(Error),
+    Recording(Error),
+}
+
+impl From<Error> for StageError {
+    fn from(error: Error) -> Self {
+        Self::Operation(error)
+    }
+}
+
+fn stage_results(result: std::result::Result<(), StageError>) -> (Result<()>, Result<()>) {
+    match result {
+        Ok(()) => (Ok(()), Ok(())),
+        Err(StageError::Operation(error)) => (Err(error), Ok(())),
+        Err(StageError::Recording(error)) => (Ok(()), Err(error)),
+    }
+}
 
 fn metrics(value: ServerSessionMetrics) -> Metrics {
     Metrics {
@@ -31,7 +56,7 @@ fn failure(value: ServerSessionError) -> Failure {
     }
 }
 
-async fn record(session: &SessionContext, value: &ServerSessionSnapshot) -> Result<bool> {
+async fn record(session: &RunSession, value: &ServerSessionSnapshot) -> Result<bool> {
     let sampled = Some(metrics(value.metrics));
     match value.phase {
         ServerSessionPhase::Preparing | ServerSessionPhase::Claiming => {
@@ -86,7 +111,7 @@ async fn record(session: &SessionContext, value: &ServerSessionSnapshot) -> Resu
     Ok(false)
 }
 
-async fn incoming(monitor: ServerMonitor, id: ServerSessionId, context: JobContext) -> Result<()> {
+async fn incoming(monitor: ServerMonitor, id: ServerSessionId, context: RunContext) -> Result<()> {
     let initial = monitor
         .snapshot()?
         .sessions
@@ -195,7 +220,7 @@ async fn incoming(monitor: ServerMonitor, id: ServerSessionId, context: JobConte
 
 async fn supervise(
     monitor: ServerMonitor,
-    context: JobContext,
+    context: RunContext,
     mut finished: watch::Receiver<bool>,
     failed: watch::Sender<bool>,
 ) -> Result<()> {
@@ -232,265 +257,1026 @@ async fn supervise(
 struct Served {
     operation: Result<()>,
     cleanup: Result<()>,
-    recorded: Result<()>,
+    recording: Result<()>,
+    observing: Option<JoinHandle<Result<()>>>,
+}
+
+/// Only the admission/helper selection varies; every mode uses the same owner tree.
+enum Binding {
+    Legacy(ServerConfig),
+    Secure(Arc<LoadedServerConfig>),
+}
+
+impl Binding {
+    fn validate(&self) -> Result<()> {
+        match self {
+            Self::Legacy(config) => config.validate(),
+            Self::Secure(_) => Ok(()),
+        }
+    }
+
+    fn is_secure(&self) -> bool {
+        matches!(self, Self::Secure(_))
+    }
+
+    async fn bind(&self, owner: &Owner, monitor: Option<&ServerMonitor>) -> Result<ServerHandle> {
+        match (self, owner, monitor) {
+            (Self::Legacy(config), Owner::Virtual(backend), None) => {
+                ServerHandle::bind(config.clone(), backend.clone()).await
+            }
+            (Self::Secure(config), Owner::Virtual(backend), None) => {
+                ServerHandle::bind_tls(
+                    SecureServerConfig {
+                        listen: config.listen,
+                    },
+                    backend.clone(),
+                    config.tls.clone(),
+                )
+                .await
+            }
+            (Self::Secure(config), Owner::Virtual(backend), Some(monitor)) => {
+                ServerHandle::bind_managed_tls(
+                    SecureServerConfig {
+                        listen: config.listen,
+                    },
+                    backend.clone(),
+                    config.tls.clone(),
+                    monitor.clone(),
+                )
+                .await
+            }
+            #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+            (Self::Legacy(config), Owner::Physical(backend), None) => {
+                ServerHandle::bind_physical(config.clone(), backend.clone()).await
+            }
+            #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+            (Self::Secure(config), Owner::Physical(backend), None) => {
+                ServerHandle::bind_physical_tls(
+                    SecureServerConfig {
+                        listen: config.listen,
+                    },
+                    backend.clone(),
+                    config.tls.clone(),
+                )
+                .await
+            }
+            #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+            (Self::Secure(config), Owner::Physical(backend), Some(monitor)) => {
+                ServerHandle::bind_physical_managed_tls(
+                    SecureServerConfig {
+                        listen: config.listen,
+                    },
+                    backend.clone(),
+                    config.tls.clone(),
+                    monitor.clone(),
+                )
+                .await
+            }
+            (Self::Legacy(_), _, Some(_)) => Err(Error::Permission(
+                "managed jobs require an authenticated fixed profile".into(),
+            )),
+        }
+    }
+}
+
+enum Selection {
+    Virtual(Vec<DeviceKey>),
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    Physical(Vec<DeviceKey>),
+}
+
+impl Selection {
+    fn keys(&self) -> &[DeviceKey] {
+        match self {
+            Self::Virtual(keys) => keys,
+            #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+            Self::Physical(keys) => keys,
+        }
+    }
+}
+
+enum Owner {
+    Virtual(VirtualBackend),
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    Physical(rustusb_rust_backend::PhysicalBackend),
+}
+
+impl Owner {
+    fn snapshot(&self) -> Result<Snapshot> {
+        match self {
+            Self::Virtual(backend) => backend.snapshot().map(Snapshot::Virtual),
+            #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+            Self::Physical(backend) => backend.snapshot().map(Snapshot::Physical),
+        }
+    }
+
+    async fn close(self) -> Result<Snapshot> {
+        match self {
+            Self::Virtual(backend) => backend.snapshot().map(Snapshot::Virtual),
+            #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+            Self::Physical(backend) => backend.close().await.map(Snapshot::Physical),
+        }
+    }
+
+    fn input(&self, control: Control) -> std::result::Result<Event, Error> {
+        match control {
+            Control::Snapshot { id } => Ok(Event::Snapshot {
+                id,
+                snapshot: self.snapshot()?,
+            }),
+            Control::HidKey { id, key } => Ok(match self {
+                Self::Virtual(backend) => match backend.hid_key(key) {
+                    Ok(()) => Event::Ack { id },
+                    Err(_) => Event::Error {
+                        id: Some(id),
+                        code: ControlError::Rejected,
+                    },
+                },
+                #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+                Self::Physical(_) => Event::Error {
+                    id: Some(id),
+                    code: ControlError::UnsupportedPhysical,
+                },
+            }),
+            Control::CdcEmit { id, hex } => Ok(match self {
+                Self::Virtual(backend) => {
+                    match hex_bytes(&hex).and_then(|bytes| backend.cdc_emit(&bytes)) {
+                        Ok(()) => Event::Ack { id },
+                        Err(_) => Event::Error {
+                            id: Some(id),
+                            code: ControlError::Rejected,
+                        },
+                    }
+                }
+                #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+                Self::Physical(_) => Event::Error {
+                    id: Some(id),
+                    code: ControlError::UnsupportedPhysical,
+                },
+            }),
+            Control::Invalid => Ok(Event::Error {
+                id: None,
+                code: ControlError::InvalidControl,
+            }),
+            Control::Shutdown { .. } | Control::Eof => Err(Error::State(
+                "stop control was not dispatched by owner".into(),
+            )),
+        }
+    }
+}
+
+fn hex_bytes(hex: &str) -> Result<Vec<u8>> {
+    if hex.is_empty() || hex.len() > 2048 || !hex.len().is_multiple_of(2) {
+        return Err(Error::InvalidInput("hex must encode 1..1024 bytes".into()));
+    }
+    fn nibble(value: u8) -> Result<u8> {
+        match value {
+            b'0'..=b'9' => Ok(value - b'0'),
+            b'a'..=b'f' => Ok(value - b'a' + 10),
+            b'A'..=b'F' => Ok(value - b'A' + 10),
+            _ => Err(Error::InvalidInput("invalid hex digit".into())),
+        }
+    }
+    hex.as_bytes()
+        .chunks_exact(2)
+        .map(|pair| Ok(nibble(pair[0])? * 16 + nibble(pair[1])?))
+        .collect()
+}
+
+fn stopping(stop: &watch::Receiver<bool>) -> bool {
+    *stop.borrow() || stop.has_changed().is_err()
 }
 
 async fn serving(
     server: ServerHandle,
-    monitor: ServerMonitor,
-    mut context: JobContext,
-    exports: &[SessionContext],
+    owner: &Owner,
+    secure: bool,
+    monitor: Option<ServerMonitor>,
+    context: RunContext,
+    exports: &[Export],
 ) -> Served {
     let (done, finished) = watch::channel(false);
     let (failed, mut failure) = watch::channel(false);
-    let observing = tokio::spawn(supervise(monitor, context.clone(), finished, failed));
-    let ready = async {
+    let observing = monitor.map(|monitor| {
+        tokio::spawn(supervise(
+            monitor,
+            context.clone(),
+            finished,
+            failed.clone(),
+        ))
+    });
+    let result: std::result::Result<(), StageError> = async {
         for export in exports {
             export
+                .session
                 .observe(SessionState::Available, Evidence::ExportReady, None)
-                .await?;
+                .await
+                .map_err(StageError::Recording)?;
         }
-        Ok::<_, Error>(())
+        context
+            .emit(Event::Ready {
+                address: server.local_addr(),
+                secure,
+                snapshot: owner.snapshot()?,
+            })
+            .await?;
+        let mut stop = context.stop.clone();
+        loop {
+            tokio::select! {
+                biased;
+                _ = stopped(&mut stop) => return Ok(()),
+                // The observer join supplies the original recording error.
+                _ = stopped(&mut failure) => return Ok(()),
+                control = context.next_control() => match control {
+                    Control::Shutdown { id } => {
+                        context.emit(Event::Ack { id }).await?;
+                        return Ok(());
+                    }
+                    Control::Eof => return Ok(()),
+                    control => context.emit(owner.input(control)?).await?,
+                },
+            }
+        }
     }
     .await;
-    let operation = match ready {
-        Err(error) => Err(error),
-        Ok(()) => {
-            tokio::select! { biased; _ = stopped(&mut context.stop) => Ok(()), _ = stopped(&mut failure) => Err(Error::State("managed session persistence failed".into())) }
-        }
-    };
-    // Keep the monitor consumer running while shutdown cooperatively joins all
-    // actual claims/leases. A quiet final event still receives its durable ack.
-    let shutdown = server.shutdown().await;
+    let (operation, recording) = stage_results(result);
+    // Output and stop waiters never own this handle. Keep the managed consumer
+    // alive through shutdown so actual terminal events still receive durable ACKs.
+    let cleanup = server.shutdown().await;
     done.send_replace(true);
-    let observed = match observing.await {
-        Ok(result) => result,
-        Err(_) => Err(Error::State("managed monitor supervisor failed".into())),
-    };
+    // The consumer keeps running, but its durable receipts must not delay the
+    // physical registry close or the remaining helper Finish requests.
     Served {
         operation,
-        cleanup: shutdown,
-        recorded: observed,
+        cleanup,
+        recording,
+        observing,
     }
 }
 
-async fn exports(config: &LoadedServerConfig, context: &JobContext) -> Result<Vec<SessionContext>> {
-    let mut sessions: Vec<SessionContext> = Vec::new();
-    for key in &config.devices {
-        let registered = context
+struct Export {
+    session: RunSession,
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    grant: Option<Grant>,
+}
+
+#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+#[derive(Default)]
+struct Grant {
+    attempted: bool,
+    lease_id: Option<String>,
+}
+
+async fn exports(
+    keys: &[DeviceKey],
+    context: &RunContext,
+) -> std::result::Result<Vec<Export>, StageError> {
+    let mut exports: Vec<Export> = Vec::new();
+    for key in keys {
+        match context
             .begin_session(SessionRole::Export, key.clone(), None)
-            .await;
-        match registered {
-            Ok(session) => sessions.push(session),
-            Err(error) => {
-                for session in sessions {
-                    let _ = session
+            .await
+        {
+            Ok(session) => exports.push(Export {
+                session,
+                #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+                grant: None,
+            }),
+            Err(mut error) => {
+                for export in exports {
+                    if let Err(next) = export
+                        .session
                         .finish(
                             Some(Failure::Persistence),
                             Cleanup::NotStarted,
                             Metrics::default(),
                         )
-                        .await;
+                        .await
+                    {
+                        error = Error::State(format!("{error}; {next}"));
+                    }
                 }
-                return Err(error);
+                return Err(StageError::Recording(error));
             }
         }
     }
-    Ok(sessions)
+    Ok(exports)
+}
+
+async fn prepare(
+    selection: Selection,
+    binding: &Binding,
+    context: &RunContext,
+    exports: &mut [Export],
+) -> std::result::Result<Option<Owner>, StageError> {
+    #[cfg(not(all(feature = "physical-nusb", target_os = "linux")))]
+    let _ = (binding, &exports);
+    if stopping(&context.stop) {
+        return Ok(None);
+    }
+    match selection {
+        Selection::Virtual(_) => VirtualBackend::new()
+            .map(Owner::Virtual)
+            .map(Some)
+            .map_err(StageError::Operation),
+        #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+        Selection::Physical(keys) => {
+            use rustusb_core::application::BrokerResourceKind;
+            use rustusb_daemon::{
+                Request, open_physical, open_secure_physical, open_secure_physical_tracked, request,
+            };
+            use rustusb_rust_backend::{PhysicalBackend, PhysicalSource};
+            if !binding.is_secure() {
+                // Status is read-only and has not delegated a capability. Keep
+                // the old startup cancellation boundary; actual grant requests
+                // and initialization below must always be retained and awaited.
+                let mut stop = context.stop.clone();
+                let status = tokio::select! {
+                    biased;
+                    _ = stopped(&mut stop) => return Ok(None),
+                    result = request(&context.helper_socket, Request::Status) => result?,
+                };
+                if !status.ok {
+                    return Err(Error::State(
+                        status
+                            .error
+                            .unwrap_or_else(|| "helper rejected physical service caller".into()),
+                    )
+                    .into());
+                }
+                if status
+                    .data
+                    .get("physical_usb_capability_enabled")
+                    .and_then(|value| value.as_bool())
+                    != Some(true)
+                {
+                    return Err(Error::Unsupported("install a matching helper built with physical-usb and configure its physical_device_ids allowlist".into()).into());
+                }
+                if status
+                    .data
+                    .get("physical_journal_schema_version")
+                    .and_then(|value| value.as_u64())
+                    != Some(1)
+                {
+                    return Err(Error::Unsupported(
+                        "install a matching helper with physical delegation journal schema 1"
+                            .into(),
+                    )
+                    .into());
+                }
+            }
+            let mut sources = Vec::with_capacity(keys.len());
+            for (key, export) in keys.iter().zip(exports) {
+                if stopping(&context.stop) || stopping(&export.session.stop) {
+                    return Ok(None);
+                }
+                let correlation = export
+                    .session
+                    .attempt(BrokerResourceKind::UsbfsGrant)
+                    .await
+                    .map_err(StageError::Recording)?;
+                export.grant = Some(Grant {
+                    attempted: true,
+                    lease_id: None,
+                });
+                let id = key
+                    .fingerprint()
+                    .ok_or_else(|| Error::InvalidInput("physical fingerprint required".into()))?
+                    .to_owned();
+                // Accepted helper I/O is retained even when stop arrives. Only
+                // the mode selects tracked/untracked, never a failed WAL fallback.
+                let grant = match correlation.clone() {
+                    Some(correlation) => {
+                        open_secure_physical_tracked(&context.helper_socket, id, correlation)
+                            .await?
+                    }
+                    None if binding.is_secure() => {
+                        open_secure_physical(&context.helper_socket, id).await?
+                    }
+                    None => open_physical(&context.helper_socket, id).await?,
+                };
+                export.grant = Some(Grant {
+                    attempted: true,
+                    lease_id: Some(grant.lease_id.clone()),
+                });
+                sources.push(PhysicalSource {
+                    fd: grant.fd,
+                    device: grant.device,
+                    receipt: grant.receipt,
+                });
+                export
+                    .session
+                    .resource(correlation, &grant.lease_id)
+                    .await
+                    .map_err(StageError::Recording)?;
+            }
+            if stopping(&context.stop) {
+                return Ok(None);
+            }
+            // Never select/drop this initializer. Once it really returns the
+            // shared pipeline checks stop before bind and closes all owners.
+            PhysicalBackend::from_sources(sources)
+                .await
+                .map(Owner::Physical)
+                .map(Some)
+                .map_err(StageError::Operation)
+        }
+    }
+}
+
+fn retain_error(target: &mut Result<()>, next: Result<()>) {
+    if let Err(next) = next {
+        let previous = std::mem::replace(target, Ok(()));
+        *target = match previous {
+            Ok(()) => Err(next),
+            Err(previous) => Err(Error::State(format!("{previous}; {next}"))),
+        };
+    }
 }
 
 async fn finish_exports(
-    exports: &[SessionContext],
+    exports: &[Export],
+    context: &RunContext,
     operation: &Result<()>,
-    cleanup: Cleanup,
-) -> Result<()> {
-    let mut first = None;
-    for session in exports {
-        let observed = session
-            .observe(SessionState::Disconnecting, Evidence::Closing, None)
-            .await;
-        let recorded = session
-            .finish(
-                operation.as_ref().err().map(Failure::from_error),
-                cleanup,
-                Metrics::default(),
-            )
-            .await;
-        if first.is_none() {
-            first = observed.err().or(recorded.err());
-        }
-    }
-    first.map_or(Ok(()), Err)
-}
-
-pub(super) async fn virtual_server(
-    config: Arc<LoadedServerConfig>,
-    context: JobContext,
-) -> Result<()> {
-    let exports = exports(&config, &context).await?;
-    let monitor = ServerMonitor::new();
-    let serving = async {
-        let backend = VirtualBackend::new()?;
-        let server = ServerHandle::bind_managed_tls(
-            SecureServerConfig {
-                listen: config.listen,
-            },
-            backend,
-            config.tls.clone(),
-            monitor.clone(),
-        )
-        .await?;
-        Ok::<_, Error>(serving(server, monitor, context, &exports).await)
-    }
-    .await;
-    // All resources are memory-only, and serving joins the entire real task
-    // tree before returning; binding failure acquired no connection leases.
-    let (operation, cleanup) = match serving {
-        Ok(served) => {
-            let cleanup = if served.cleanup.is_ok() {
-                Cleanup::Verified
-            } else {
-                Cleanup::Unconfirmed
-            };
-            (
-                combined(served.operation, served.cleanup, served.recorded),
-                cleanup,
-            )
-        }
-        Err(error) => (Err(error), Cleanup::Verified),
-    };
-    let recorded = finish_exports(&exports, &operation, cleanup).await;
-    combined(operation, Ok(()), recorded)
-}
-
-#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
-pub(super) async fn physical_server(
-    config: Arc<LoadedServerConfig>,
-    context: JobContext,
-) -> Result<()> {
-    use rustusb_core::application::BrokerResourceKind;
-    use rustusb_daemon::{Request, open_secure_physical_tracked, request};
-    use rustusb_rust_backend::{PhysicalBackend, PhysicalSource};
-    let exports = exports(&config, &context).await?;
-    let mut sources = Vec::new();
-    let mut leases: Vec<Option<String>> = vec![None; exports.len()];
-    let mut attempted = vec![false; exports.len()];
-    let preparation = async {
-        for (index, (key, session)) in config.devices.iter().zip(&exports).enumerate() {
-            if *context.stop.borrow() || *session.stop.borrow() {
-                return Err(Error::State("physical preparation stopped".into()));
-            }
-            let correlation = session.attempt(BrokerResourceKind::UsbfsGrant).await?;
-            attempted[index] = true;
-            let id = key
-                .fingerprint()
-                .ok_or_else(|| Error::InvalidInput("physical fingerprint required".into()))?;
-            let grant = open_secure_physical_tracked(
-                &context.helper_socket,
-                id.to_owned(),
-                correlation.clone(),
-            )
-            .await?;
-            leases[index] = Some(grant.lease_id.clone());
-            sources.push(PhysicalSource {
-                fd: grant.fd,
-                device: grant.device,
-                receipt: grant.receipt,
-            });
-            session.resource(correlation, &grant.lease_id).await?;
-        }
-        Ok::<_, Error>(())
-    }
-    .await;
-    let mut backend = None;
-    let operation = match preparation {
-        Err(error) => {
-            drop(sources);
-            Err(error)
-        }
-        Ok(()) => match PhysicalBackend::from_sources(sources).await {
-            Err(error) => Err(error),
-            Ok(owner) => {
-                backend = Some(owner.clone());
-                let monitor = ServerMonitor::new();
-                match ServerHandle::bind_physical_managed_tls(
-                    SecureServerConfig {
-                        listen: config.listen,
-                    },
-                    owner,
-                    config.tls.clone(),
-                    monitor.clone(),
-                )
-                .await
-                {
-                    Ok(server) => {
-                        let served = serving(server, monitor, context.clone(), &exports).await;
-                        combined(served.operation, served.cleanup, served.recorded)
-                    }
-                    Err(error) => Err(error),
-                }
-            }
-        },
-    };
-    // Initializer is always awaited rather than cancelled. Once it has ended,
-    // close every worker before independently finishing all received grants.
-    let closed = match backend {
-        Some(owner) => owner.close().await.map(|_| ()),
-        None => Ok(()),
-    };
-    let mut first_error = None;
-    for (index, session) in exports.iter().enumerate() {
-        let cleanup = match &leases[index] {
-            Some(lease_id) if closed.is_ok() => {
-                match request(
-                    &context.helper_socket,
-                    Request::FinishPhysical {
-                        lease_id: lease_id.clone(),
-                    },
-                )
-                .await
-                {
-                    Ok(response) if response.ok => Ok(()),
-                    Ok(_) => Err(Error::State("helper physical finish unconfirmed".into())),
-                    Err(error) => Err(error),
-                }
-            }
-            Some(_) => Err(Error::State("physical worker close unconfirmed".into())),
-            None if attempted[index] => {
-                Err(Error::State("physical grant outcome unconfirmed".into()))
-            }
-            None => Ok(()),
-        };
-        let evidence = if cleanup.is_err() {
-            Cleanup::Unconfirmed
-        } else if attempted[index] {
+    owners_closed: bool,
+    started: bool,
+) -> (Result<()>, Result<()>) {
+    let base = if owners_closed {
+        if started {
             Cleanup::Verified
         } else {
             Cleanup::NotStarted
-        };
-        let observed = session
+        }
+    } else {
+        Cleanup::Unconfirmed
+    };
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    let (cleanup, evidence) = finish_grants(exports, owners_closed, base, |lease_id| {
+        finish_lease(&context.helper_socket, lease_id)
+    })
+    .await;
+    #[cfg(not(all(feature = "physical-nusb", target_os = "linux")))]
+    let (cleanup, evidence) = (Ok(()), vec![base; exports.len()]);
+    #[cfg(not(all(feature = "physical-nusb", target_os = "linux")))]
+    let _ = context;
+    let mut recording = Ok(());
+    // All received capabilities have been attempted above, before any
+    // application persistence acknowledgement can wait or fail.
+    for (export, evidence) in exports.iter().zip(evidence) {
+        let observed = export
+            .session
             .observe(SessionState::Disconnecting, Evidence::Closing, None)
             .await;
-        let recorded = session
+        let recorded = export
+            .session
             .finish(
                 operation.as_ref().err().map(Failure::from_error),
                 evidence,
                 Metrics::default(),
             )
             .await;
-        if first_error.is_none() {
-            first_error = cleanup.err().or(observed.err()).or(recorded.err());
-        }
+        retain_error(&mut recording, observed);
+        retain_error(&mut recording, recorded);
     }
-    combined(operation, closed, first_error.map_or(Ok(()), Err))
+    (cleanup, recording)
+}
+
+#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+async fn finish_grants<F, T>(
+    exports: &[Export],
+    owners_closed: bool,
+    base: Cleanup,
+    mut finish: F,
+) -> (Result<()>, Vec<Cleanup>)
+where
+    F: FnMut(String) -> T,
+    T: std::future::Future<Output = Result<()>>,
+{
+    let mut cleanup = Ok(());
+    let mut evidence = Vec::with_capacity(exports.len());
+    for export in exports {
+        evidence.push(match &export.grant {
+            Some(grant) => {
+                let finished = match &grant.lease_id {
+                    Some(lease_id) if owners_closed => finish(lease_id.clone()).await,
+                    Some(_) => Err(Error::State("physical worker close unconfirmed".into())),
+                    None if grant.attempted => {
+                        Err(Error::State("physical grant outcome unconfirmed".into()))
+                    }
+                    None => Ok(()),
+                };
+                let evidence = if finished.is_err() {
+                    Cleanup::Unconfirmed
+                } else if grant.attempted {
+                    Cleanup::Verified
+                } else {
+                    Cleanup::NotStarted
+                };
+                retain_error(&mut cleanup, finished);
+                evidence
+            }
+            None => base,
+        });
+    }
+    (cleanup, evidence)
+}
+
+#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+async fn finish_lease(socket: &std::path::Path, lease_id: String) -> Result<()> {
+    use rustusb_daemon::{Request, request};
+    let response = request(socket, Request::FinishPhysical { lease_id }).await?;
+    if response.ok {
+        Ok(())
+    } else {
+        Err(Error::State(response.error.unwrap_or_else(|| {
+            "helper could not verify physical delegation completion".into()
+        })))
+    }
+}
+
+async fn run(binding: Binding, selection: Selection, context: RunContext) -> JobOutcome {
+    if let Err(error) = binding.validate() {
+        return JobOutcome::before_start(error);
+    }
+    if context.is_managed() && !binding.is_secure() {
+        return JobOutcome::before_start(Error::Permission(
+            "managed jobs require an authenticated fixed profile".into(),
+        ));
+    }
+    let mut exports = match exports(selection.keys(), &context).await {
+        Ok(exports) => exports,
+        Err(error) => {
+            let (operation, recording) = stage_results(Err(error));
+            return JobOutcome {
+                operation,
+                cleanup: Ok(()),
+                recording,
+                final_event: None,
+            };
+        }
+    };
+    let prepared = prepare(selection, &binding, &context, &mut exports).await;
+    let mut owner = None;
+    let mut cleanup = Ok(());
+    let mut recording = Ok(());
+    let mut observing = None;
+    let operation = match prepared {
+        Err(error) => {
+            let (operation, recorded) = stage_results(Err(error));
+            recording = recorded;
+            operation
+        }
+        Ok(None) => Ok(()),
+        Ok(Some(prepared)) => {
+            owner = Some(prepared);
+            if stopping(&context.stop)
+                || exports.iter().any(|export| stopping(&export.session.stop))
+            {
+                Ok(())
+            } else {
+                let monitor = context.is_managed().then(ServerMonitor::new);
+                // No cancellation branch can discard a newly bound ServerHandle.
+                match owner.as_ref() {
+                    Some(owner) => match binding.bind(owner, monitor.as_ref()).await {
+                        Ok(server) => {
+                            let served = serving(
+                                server,
+                                owner,
+                                binding.is_secure(),
+                                monitor,
+                                context.clone(),
+                                &exports,
+                            )
+                            .await;
+                            cleanup = served.cleanup;
+                            recording = served.recording;
+                            observing = served.observing;
+                            served.operation
+                        }
+                        Err(error) => Err(error),
+                    },
+                    None => Err(Error::State("prepared Rust owner disappeared".into())),
+                }
+            }
+        }
+    };
+    let started = owner.is_some();
+    let (closed, snapshot) = match owner {
+        Some(owner) => match owner.close().await {
+            Ok(snapshot) => (Ok(()), Some(snapshot)),
+            Err(error) => (Err(error), None),
+        },
+        None => (Ok(()), None),
+    };
+    let owners_closed = closed.is_ok() && cleanup.is_ok();
+    retain_error(&mut cleanup, closed);
+    // Finish every received delegation after all actual owner FDs have ended.
+    // An error for one export never skips the remaining helper Finish requests.
+    let (finished, recorded) =
+        finish_exports(&exports, &context, &operation, owners_closed, started).await;
+    retain_error(&mut cleanup, finished);
+    retain_error(&mut recording, recorded);
+    if let Some(task) = observing {
+        let observed = match task.await {
+            Ok(result) => result,
+            Err(_) => Err(Error::State("managed monitor supervisor failed".into())),
+        };
+        retain_error(&mut recording, observed);
+    }
+    let final_event =
+        if context.is_foreground() && operation.is_ok() && cleanup.is_ok() && recording.is_ok() {
+            snapshot.map(|snapshot| Event::Stopped { snapshot })
+        } else {
+            None
+        };
+    JobOutcome {
+        operation,
+        cleanup,
+        recording,
+        final_event,
+    }
+}
+
+pub(super) async fn virtual_server(
+    config: Arc<LoadedServerConfig>,
+    context: RunContext,
+) -> JobOutcome {
+    let selection = Selection::Virtual(config.devices.clone());
+    run(Binding::Secure(config), selection, context).await
+}
+
+pub(super) async fn virtual_legacy(config: ServerConfig, context: RunContext) -> JobOutcome {
+    run(
+        Binding::Legacy(config),
+        Selection::Virtual(vec![
+            DeviceKey::virtual_profile(VirtualProfile::Hid),
+            DeviceKey::virtual_profile(VirtualProfile::CdcAcm),
+        ]),
+        context,
+    )
+    .await
+}
+
+#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+pub(super) async fn physical_server(
+    config: Arc<LoadedServerConfig>,
+    context: RunContext,
+) -> JobOutcome {
+    let selection = Selection::Physical(config.devices.clone());
+    run(Binding::Secure(config), selection, context).await
+}
+
+#[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+pub(super) async fn physical_legacy(
+    config: ServerConfig,
+    ids: Vec<String>,
+    context: RunContext,
+) -> JobOutcome {
+    if ids.is_empty() || ids.len() > 16 || ids.iter().collect::<BTreeSet<_>>().len() != ids.len() {
+        return JobOutcome::before_start(Error::InvalidInput(
+            "select 1..16 distinct approved physical device fingerprints".into(),
+        ));
+    }
+    let keys = match ids
+        .iter()
+        .map(|id| DeviceKey::physical(id))
+        .collect::<Result<Vec<_>>>()
+    {
+        Ok(keys) => keys,
+        Err(error) => return JobOutcome::before_start(error),
+    };
+    run(Binding::Legacy(config), Selection::Physical(keys), context).await
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::context::JobMessage;
-    use rustusb_core::{DeviceKey, VirtualProfile, application::SessionId};
+    use crate::context::{JobContext, JobMessage, SessionContext};
+    use crate::foreground::{self, ControlId, Delivery, ForegroundOptions, Frontend};
+    use rustusb_core::{
+        DeviceKey, VirtualProfile,
+        application::{InstanceId, JobId, SessionId},
+    };
     use tokio::sync::mpsc;
+    use tokio::{
+        io::{AsyncReadExt, AsyncWriteExt},
+        net::TcpStream,
+    };
+
+    fn foreground_fixture() -> (RunContext, Frontend, watch::Sender<bool>) {
+        let (frontend, connection) = foreground::channel();
+        let (stop, stopping) = watch::channel(false);
+        let context = RunContext::foreground(ForegroundOptions {
+            helper_socket: "/this-helper-must-never-be-contacted/rustusb.sock".into(),
+            stop: stopping,
+            connection,
+        });
+        (context, frontend, stop)
+    }
+
+    #[tokio::test]
+    async fn rejected_begin_receipt_is_recording_failure_before_any_owner() -> Result<()> {
+        let (facts, mut receiver) = mpsc::channel(2);
+        let (_stop, stop) = watch::channel(false);
+        let context = RunContext::managed(JobContext {
+            instance_id: InstanceId::new("00000000-0000-0000-0000-000000000001")?,
+            job_id: JobId::new("00000000-0000-0000-0000-000000000002")?,
+            helper_socket: "/this-helper-must-never-be-contacted/rustusb.sock".into(),
+            stop,
+            facts,
+        });
+        let task = tokio::spawn(async move {
+            exports(&[DeviceKey::virtual_profile(VirtualProfile::Hid)], &context).await
+        });
+        // A deliberately rejected receipt exercises the real message boundary;
+        // it is not a fake successful durable admission or a filesystem test.
+        match tokio::time::timeout(Duration::from_secs(2), receiver.recv())
+            .await
+            .map_err(|_| Error::Timeout("begin rejection fixture".into()))?
+        {
+            Some(JobMessage::Begin { reply, .. }) => {
+                let _ = reply.send(Err(Error::Permission("fixture store refused begin".into())));
+            }
+            _ => return Err(Error::State("expected begin before any owner".into())),
+        }
+        let result = task
+            .await
+            .map_err(|_| Error::State("begin rejection fixture task".into()))?;
+        let error = result
+            .err()
+            .ok_or_else(|| Error::State("begin rejection was lost".into()))?;
+        let (operation, recording) = stage_results(Err(error));
+        assert!(operation.is_ok());
+        assert!(matches!(recording, Err(Error::Permission(_))));
+        Ok(())
+    }
+
+    async fn next_event(frontend: &mut Frontend) -> Result<Delivery> {
+        tokio::time::timeout(Duration::from_secs(2), frontend.events.recv())
+            .await
+            .map_err(|_| Error::Timeout("foreground fixture event".into()))?
+            .ok_or_else(|| Error::State("foreground fixture event stream ended".into()))
+    }
+
+    async fn import(address: std::net::SocketAddr) -> Result<TcpStream> {
+        tokio::time::timeout(Duration::from_secs(2), async {
+            let mut stream = TcpStream::connect(address).await?;
+            let mut request = [0_u8; 40];
+            request[..8].copy_from_slice(&[1, 0x11, 0x80, 3, 0, 0, 0, 0]);
+            request[8..11].copy_from_slice(b"1-1");
+            stream.write_all(&request).await?;
+            let mut reply = [0; 320];
+            stream.read_exact(&mut reply).await?;
+            assert_eq!(&reply[..8], &[1, 0x11, 0, 3, 0, 0, 0, 0]);
+            Ok(stream)
+        })
+        .await
+        .map_err(|_| Error::Timeout("foreground fixture IMPORT".into()))?
+    }
+
+    async fn joined(task: JoinHandle<JobOutcome>) -> Result<JobOutcome> {
+        tokio::time::timeout(Duration::from_secs(2), task)
+            .await
+            .map_err(|_| Error::Timeout("foreground fixture cleanup".into()))?
+            .map_err(|_| Error::State("foreground fixture owner failed".into()))
+    }
+
+    async fn closed(stream: &mut TcpStream) -> Result<()> {
+        let mut byte = [0];
+        let read = tokio::time::timeout(Duration::from_secs(2), stream.read(&mut byte))
+            .await
+            .map_err(|_| Error::Timeout("foreground fixture TCP close".into()))?;
+        assert!(
+            matches!(read, Ok(0))
+                || matches!(read, Err(ref error) if error.kind() == std::io::ErrorKind::ConnectionReset)
+        );
+        Ok(())
+    }
+
+    fn stopped_snapshot(outcome: &JobOutcome) -> Result<()> {
+        match &outcome.final_event {
+            Some(Event::Stopped {
+                snapshot: Snapshot::Virtual(snapshot),
+            }) => {
+                assert!(
+                    snapshot
+                        .devices
+                        .iter()
+                        .all(|device| !device.leased && device.pending_urbs == 0)
+                );
+                Ok(())
+            }
+            _ => Err(Error::State(
+                "foreground fixture lacked actual stopped snapshot".into(),
+            )),
+        }
+    }
+
+    #[tokio::test]
+    async fn blocked_output_receipt_does_not_block_real_foreground_cleanup() -> Result<()> {
+        let (context, mut frontend, stop) = foreground_fixture();
+        let task = tokio::spawn(virtual_legacy(
+            ServerConfig {
+                listen: ([127, 0, 0, 1], 0).into(),
+                ..ServerConfig::default()
+            },
+            context,
+        ));
+        let ready = next_event(&mut frontend).await?;
+        let address = match &ready.event {
+            Event::Ready {
+                address,
+                secure: false,
+                ..
+            } => *address,
+            _ => return Err(Error::State("foreground fixture ready mismatch".into())),
+        };
+        ready.complete(Ok(()));
+        let mut stream = import(address).await?;
+        frontend
+            .controls
+            .send(Control::Snapshot {
+                id: ControlId::new("held")?,
+            })
+            .await
+            .map_err(|_| Error::State("foreground controls ended".into()))?;
+        let held = next_event(&mut frontend).await?;
+        match &held.event {
+            Event::Snapshot {
+                snapshot: Snapshot::Virtual(snapshot),
+                ..
+            } => assert!(snapshot.devices.iter().any(|device| device.leased)),
+            _ => return Err(Error::State("foreground fixture snapshot mismatch".into())),
+        }
+        // The real frontend has not acknowledged this event. Stop must still
+        // reach the owner and its actual IMPORT stream must be reclaimed.
+        stop.send_replace(true);
+        let outcome = joined(task).await?;
+        stopped_snapshot(&outcome)?;
+        closed(&mut stream).await?;
+        outcome.into_result()?;
+        drop(held);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn failed_ready_delivery_keeps_actual_cleanup_and_no_success_event() -> Result<()> {
+        let (context, mut frontend, _stop) = foreground_fixture();
+        let task = tokio::spawn(virtual_legacy(
+            ServerConfig {
+                listen: ([127, 0, 0, 1], 0).into(),
+                ..ServerConfig::default()
+            },
+            context,
+        ));
+        let ready = next_event(&mut frontend).await?;
+        let address = match &ready.event {
+            Event::Ready { address, .. } => *address,
+            _ => return Err(Error::State("foreground fixture ready mismatch".into())),
+        };
+        let mut stream = import(address).await?;
+        ready.complete(Err(Error::Io(std::io::Error::new(
+            std::io::ErrorKind::BrokenPipe,
+            "fixture stdout ended",
+        ))));
+        let outcome = joined(task).await?;
+        assert!(matches!(outcome.operation, Err(Error::Io(_))));
+        assert!(outcome.cleanup.is_ok());
+        assert!(outcome.recording.is_ok());
+        assert!(outcome.final_event.is_none());
+        closed(&mut stream).await
+    }
+
+    #[tokio::test]
+    async fn typed_controls_preserve_ack_error_and_ordered_shutdown() -> Result<()> {
+        let (context, mut frontend, _stop) = foreground_fixture();
+        let task = tokio::spawn(virtual_legacy(
+            ServerConfig {
+                listen: ([127, 0, 0, 1], 0).into(),
+                ..ServerConfig::default()
+            },
+            context,
+        ));
+        next_event(&mut frontend).await?.complete(Ok(()));
+        frontend
+            .controls
+            .send(Control::CdcEmit {
+                id: ControlId::new("bad")?,
+                hex: "secret-non-hex".into(),
+            })
+            .await
+            .map_err(|_| Error::State("foreground controls ended".into()))?;
+        let error = next_event(&mut frontend).await?;
+        assert!(matches!(
+            error.event,
+            Event::Error {
+                code: ControlError::Rejected,
+                ..
+            }
+        ));
+        assert!(!error.event.to_json()?.to_string().contains("secret"));
+        error.complete(Ok(()));
+        frontend
+            .controls
+            .send(Control::Shutdown {
+                id: ControlId::new("end")?,
+            })
+            .await
+            .map_err(|_| Error::State("foreground controls ended".into()))?;
+        let ack = next_event(&mut frontend).await?;
+        assert!(matches!(&ack.event, Event::Ack { id } if id.as_str() == "end"));
+        assert!(!task.is_finished());
+        ack.complete(Ok(()));
+        let outcome = joined(task).await?;
+        stopped_snapshot(&outcome)?;
+        outcome.into_result()
+    }
+
+    #[test]
+    fn cdc_payload_bounds_and_control_errors_remain_redacted() -> Result<()> {
+        assert!(hex_bytes(&"aa".repeat(1025)).is_err());
+        assert!(hex_bytes("0g").is_err());
+        assert!(hex_bytes("").is_err());
+        assert_eq!(hex_bytes("0034aF")?, [0, 0x34, 0xaf]);
+        for bad in [
+            br#"{"id":"bad\n","op":"snapshot"}"#.as_slice(),
+            br#"{"id":"x","op":"snapshot","secret":"payload"}"#,
+            br#"{"id":"x","op":"other"}"#,
+        ] {
+            let error = foreground::parse_control(bad)
+                .err()
+                .ok_or_else(|| Error::State("accepted invalid control".into()))?;
+            assert!(!error.to_string().contains("payload"));
+        }
+        Ok(())
+    }
+
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    #[tokio::test]
+    async fn finish_attempts_all_received_grants_before_any_recording_and_retains_errors()
+    -> Result<()> {
+        let (context, _frontend, _stop) = foreground_fixture();
+        let key = DeviceKey::physical(&format!("usb-{}", "a".repeat(64)))?;
+        let mut exports = exports(&[key.clone(), key.clone(), key], &context)
+            .await
+            .map_err(|error| match error {
+                StageError::Operation(error) | StageError::Recording(error) => error,
+            })?;
+        for (export, id) in exports.iter_mut().zip(["first", "second", "third"]) {
+            export.grant = Some(Grant {
+                attempted: true,
+                lease_id: Some(id.into()),
+            });
+        }
+        let mut attempted = Vec::new();
+        let (result, evidence) = finish_grants(&exports, true, Cleanup::Verified, |id| {
+            attempted.push(id.clone());
+            std::future::ready(match id.as_str() {
+                "first" => Err(Error::Permission("first rejection".into())),
+                "second" => Err(Error::State("second rejection".into())),
+                _ => Ok(()),
+            })
+        })
+        .await;
+        assert_eq!(attempted, ["first", "second", "third"]);
+        assert_eq!(
+            evidence,
+            [
+                Cleanup::Unconfirmed,
+                Cleanup::Unconfirmed,
+                Cleanup::Verified
+            ]
+        );
+        let error = result
+            .err()
+            .ok_or_else(|| Error::State("finish errors were lost".into()))?
+            .to_string();
+        assert!(error.contains("first rejection") && error.contains("second rejection"));
+        Ok(())
+    }
+
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    #[tokio::test]
+    async fn invalid_physical_selection_and_network_policy_precede_helper_io() -> Result<()> {
+        let id = format!("usb-{}", "a".repeat(64));
+        for ids in [vec![], vec![id.clone(); 2], vec![id.clone(); 17]] {
+            let (context, _frontend, _stop) = foreground_fixture();
+            let outcome = physical_legacy(ServerConfig::default(), ids, context).await;
+            assert!(matches!(outcome.operation, Err(Error::InvalidInput(_))));
+        }
+        let (context, _frontend, _stop) = foreground_fixture();
+        let outcome = physical_legacy(
+            ServerConfig {
+                listen: ([0, 0, 0, 0], 3240).into(),
+                ..ServerConfig::default()
+            },
+            vec![id],
+            context,
+        )
+        .await;
+        assert!(matches!(outcome.operation, Err(Error::Permission(_))));
+        Ok(())
+    }
 
     // These exercise the service's fact conversion and durable acknowledgement
     // boundary, not a real USB claim or a blocking kernel completion.
@@ -498,11 +1284,12 @@ mod tests {
     async fn soft_cleanup_deadline_is_not_finished_until_real_terminal() -> Result<()> {
         let (facts, mut receiver) = mpsc::channel(2);
         let (_stop, stop) = watch::channel(false);
-        let session = SessionContext {
+        let session: RunSession = SessionContext {
             id: SessionId::new("00000000-0000-0000-0000-000000000001")?,
             stop,
             facts,
-        };
+        }
+        .into();
         let mut value = ServerSessionSnapshot {
             id: ServerSessionId::new(1)?,
             device_key: DeviceKey::virtual_profile(VirtualProfile::Hid),

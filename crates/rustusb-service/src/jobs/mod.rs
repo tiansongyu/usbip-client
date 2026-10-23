@@ -13,6 +13,7 @@ mod native;
 mod rust_server;
 
 use crate::context::JobContext;
+use crate::{foreground::JobOutcome, run_context::RunContext};
 use rustusb_core::{DeviceBackend, Error, Result};
 use rustusb_protocol::secure::CatalogDevice;
 use rustusb_transport::config::{LoadedClientConfig, LoadedServerConfig};
@@ -35,6 +36,17 @@ pub enum LoadedJob {
     /// Authenticated explicitly granted USBFS generations.
     #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
     PhysicalServer(Arc<LoadedServerConfig>),
+    /// Explicit legacy virtual listener for foreground callers only.
+    #[cfg(feature = "rust-backend")]
+    VirtualLegacy(rustusb_rust_backend::ServerConfig),
+    /// Explicit legacy physical listener for foreground callers only.
+    #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+    PhysicalLegacy {
+        /// Existing trusted-network/peer validation is still mandatory.
+        config: rustusb_rust_backend::ServerConfig,
+        /// Exact helper-authorized legacy device fingerprints.
+        device_ids: Vec<String>,
+    },
 }
 
 /// Run the actual resource owner through operation and verified/unconfirmed cleanup.
@@ -42,6 +54,12 @@ pub enum LoadedJob {
 /// This future must be retained and joined after setting `context.stop`; dropping
 /// it is not a cleanup receipt. Persistence errors never bypass owned cleanup.
 pub async fn run_job(job: LoadedJob, context: JobContext) -> Result<()> {
+    run_owned(job, RunContext::managed(context))
+        .await
+        .into_result()
+}
+
+pub(crate) async fn run_owned(job: LoadedJob, context: RunContext) -> JobOutcome {
     match job {
         LoadedJob::Client { config, timeout } => {
             #[cfg(target_os = "linux")]
@@ -51,13 +69,15 @@ pub async fn run_job(job: LoadedJob, context: JobContext) -> Result<()> {
             #[cfg(not(target_os = "linux"))]
             {
                 let _ = (config, timeout, context);
-                Err(Error::Unsupported(
+                JobOutcome::before_start(Error::Unsupported(
                     "Native secure import requires Linux".into(),
                 ))
             }
         }
         LoadedJob::NativeServer(config) => {
-            validate_pool(&config, DeviceBackend::Native)?;
+            if let Err(error) = validate_pool(&config, DeviceBackend::Native) {
+                return JobOutcome::before_start(error);
+            }
             #[cfg(target_os = "linux")]
             {
                 native::run(config, context).await
@@ -65,20 +85,42 @@ pub async fn run_job(job: LoadedJob, context: JobContext) -> Result<()> {
             #[cfg(not(target_os = "linux"))]
             {
                 let _ = context;
-                Err(Error::Unsupported(
+                JobOutcome::before_start(Error::Unsupported(
                     "Native secure serving requires Linux".into(),
                 ))
             }
         }
         #[cfg(feature = "rust-backend")]
         LoadedJob::VirtualServer(config) => {
-            validate_pool(&config, DeviceBackend::Virtual)?;
+            if let Err(error) = validate_pool(&config, DeviceBackend::Virtual) {
+                return JobOutcome::before_start(error);
+            }
             rust_server::virtual_server(config, context).await
         }
         #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
         LoadedJob::PhysicalServer(config) => {
-            validate_pool(&config, DeviceBackend::Physical)?;
+            if let Err(error) = validate_pool(&config, DeviceBackend::Physical) {
+                return JobOutcome::before_start(error);
+            }
             rust_server::physical_server(config, context).await
+        }
+        #[cfg(feature = "rust-backend")]
+        LoadedJob::VirtualLegacy(config) => {
+            if context.is_managed() {
+                return JobOutcome::before_start(Error::Permission(
+                    "managed jobs require an authenticated fixed profile".into(),
+                ));
+            }
+            rust_server::virtual_legacy(config, context).await
+        }
+        #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
+        LoadedJob::PhysicalLegacy { config, device_ids } => {
+            if context.is_managed() {
+                return JobOutcome::before_start(Error::Permission(
+                    "managed jobs require an authenticated fixed profile".into(),
+                ));
+            }
+            rust_server::physical_legacy(config, device_ids, context).await
         }
     }
 }
@@ -119,14 +161,4 @@ async fn connect(
         .connect(&config.server_name, socket)
         .await
         .map_err(|_| Error::Permission("secure server authentication failed".into()))
-}
-
-fn combined(operation: Result<()>, cleanup: Result<()>, recorded: Result<()>) -> Result<()> {
-    match (operation, cleanup, recorded) {
-        (Err(_), Err(_), _) => Err(Error::State(
-            "job operation failed and cleanup is unconfirmed".into(),
-        )),
-        (_, Err(error), _) | (Err(error), _, _) => Err(error),
-        (_, _, result) => result,
-    }
 }
