@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "result": "ORIGINAL_RUN_FAIL_CONFIRMED",
+  "scope": "Independent selected raw evidence and fixed Linux source facts only; no runner.verify, build, test, QEMU or USB operation. Not a complete secure-run acceptance review.",
+  "checks": [
+    {
+      "name": "whole run retains actualFAIL clean18817cd/sourcebinaryguards",
+      "passed": true
+    },
+    {
+      "name": "cycle1 raw I/O+cooperativeclose/reuse markers and real helper disconnectedreceipt",
+      "passed": true
+    },
+    {
+      "name": "cycle1 native journal empty after actualclose",
+      "passed": true
+    },
+    {
+      "name": "cycle2 actualprimaryoperationNotFound distinct from cleanupunconfirmed, no connectedrecord",
+      "passed": true
+    },
+    {
+      "name": "cycle2 actualdurableintent not erased or calledObserved",
+      "passed": true
+    }
+  ],
+  "cause_scope": "Raw proves primary NotFound plus unresolved cleanup and durable Intent. It has no per-path syscall trace, so cannot identify which individual sysfs read/open failed. Fixed kernel ordering supports an initialization window; the source patch still needs independent review and real rerun.",
+  "source_semantics": [
+    {
+      "commit": "e8f897f4afef0031fe618a8e94127a0934896aba",
+      "path": "/tmp/rustusb-vhci-family-source-20261023/drivers__usb__usbip__vhci_hcd.c",
+      "length": 39249,
+      "sha256": "043dc9e555ed4d4f1ecd606e43bed83a9240bb3a8ba6a19de5f437c8a4308c4e",
+      "citation": "759-768: SET_ADDRESS stores vdev.udev and VDEV_ST_USED"
+    },
+    {
+      "commit": "e8f897f4afef0031fe618a8e94127a0934896aba",
+      "path": "/tmp/rustusb-native-export-state-source-20261023/drivers__usb__core__hub.c",
+      "length": 187820,
+      "sha256": "d486569c6da9a3166ae06fa5a9ab27b3ff11ad708ea57846e07e58ce2038626f",
+      "citation": "2590-2614: usb_enumerate_device then device_add"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/summary.json",
+      "length": 73218,
+      "sha256": "c99eba056279d77244178a8689e66d48b666f08c5d6ea0d72168fbc464f27f08"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/client-evidence.log",
+      "length": 81127,
+      "sha256": "fe5a96e12ef65ad21b936c8336a9f40459e81e3cbca2924907db5500dbab3c87"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/client-artifacts/attach-hid-2.log",
+      "length": 256,
+      "sha256": "d7108cad50599e88445418d4db6fdc712dbc3021a6c0108715712ff50a3220ee"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/client-artifacts/attach-hid-2.events",
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/client-artifacts/failure-native-channels.json",
+      "length": 725,
+      "sha256": "c514a67d7eeb493a74def2e44d77c4f95965d21be5bcb4f259b69af02fdc64f8"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/client-artifacts/attach-hid-1.events",
+      "length": 1115,
+      "sha256": "f4a50644c6d73a71c2bcf42c41b7514f95371e79b1a2bfb18d0a346696899645"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/client-artifacts/channels-empty-1.json",
+      "length": 46,
+      "sha256": "c377183f477887b4ce595aefd9e9a17e932fe48e137616103ea4f688b10b5908"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/host-control.jsonl",
+      "length": 660,
+      "sha256": "bee3b2909473560ecf158aa6a06d02eb48d62ab677efac0daf1e49623434ec65"
+    },
+    {
+      "path": "/tmp/rustusb-secure-qemu-virtual-ipv4-third-20261023/source/crates/rustusb-native/src/channel.rs",
+      "length": 26215,
+      "sha256": "dc46c36b87c813c8c7fa95aa34cddd22ee454db465d6603feb7e8b3ea454ff2c"
+    }
+  ],
+  "raw_unchanged_after_review": true
+}

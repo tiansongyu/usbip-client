@@ -228,6 +228,302 @@ fn read_rows(controller: &Path) -> Result<Option<Vec<Row>>> {
     require(output.len() == count as usize, "incomplete VHCI snapshot")?;
     Ok(Some(output))
 }
+// USED begins at SET_ADDRESS, before device_add publishes local sysfs. Only
+// never-seen missing initialization nodes may be pending; identity never resets.
+#[derive(Default)]
+struct InitialObserver {
+    row: Option<Row>,
+    directory: Option<(PathBuf, LocalDeviceGeneration)>,
+    seen_attributes: BTreeSet<PathBuf>,
+}
+impl InitialObserver {
+    fn pin_row(&mut self, row: &Row, remote: &RemoteDevice) -> Result<()> {
+        let devid = (remote.bus_number << 16) | remote.device_number;
+        require(
+            row.session.status == 6
+                && row.speed == remote.speed
+                && row.session.remote_device_id == Some(devid)
+                && row.session.local_bus_id.is_some()
+                && row.hub == if remote.speed >= 5 { "ss" } else { "hs" },
+            "initial Native row differs from authenticated metadata",
+        )?;
+        self.check_row(row)?;
+        if self.row.is_none() {
+            self.row = Some(row.clone());
+        }
+        Ok(())
+    }
+    fn check_row(&self, row: &Row) -> Result<()> {
+        if let Some(prior) = &self.row {
+            require(
+                row.session.status == 6
+                    && row.session.port == prior.session.port
+                    && row.session.local_bus_id == prior.session.local_bus_id
+                    && row.session.remote_device_id == prior.session.remote_device_id
+                    && row.speed == prior.speed
+                    && row.hub == prior.hub,
+                "initial Native row changed before enumeration completed",
+            )?;
+        }
+        Ok(())
+    }
+    fn directory(
+        &mut self,
+        session: &NativeSession,
+        controller: &Path,
+        devices: &Path,
+        uid: u32,
+    ) -> Result<Option<PathBuf>> {
+        let bus = session
+            .local_bus_id
+            .as_ref()
+            .ok_or_else(|| Error::State("missing initial local identity".into()))?;
+        let alias = devices.join(bus.as_str());
+        let real = match fs::canonicalize(&alias) {
+            Ok(real) => real,
+            Err(error)
+                if error.kind() == std::io::ErrorKind::NotFound && self.directory.is_none() =>
+            {
+                return Ok(None);
+            }
+            Err(error) => return Err(error.into()),
+        };
+        require(
+            real.starts_with(controller),
+            "initial device is outside selected controller",
+        )?;
+        let metadata = fs::metadata(&real)?;
+        require(
+            metadata.is_dir() && metadata.uid() == uid,
+            "invalid initial local USB directory",
+        )?;
+        let generation = LocalDeviceGeneration {
+            filesystem_device: metadata.dev(),
+            inode: metadata.ino(),
+        };
+        if let Some((path, prior)) = &self.directory {
+            require(
+                *path == real && *prior == generation,
+                "initial local USB generation changed",
+            )?;
+        } else {
+            // Pin as soon as the directory exists, even when all attributes are absent.
+            self.directory = Some((real.clone(), generation));
+        }
+        Ok(Some(real))
+    }
+    fn text(&mut self, path: &Path) -> Result<Option<String>> {
+        let file = match File::open(path) {
+            Ok(file) => file,
+            Err(error)
+                if error.kind() == std::io::ErrorKind::NotFound
+                    && !self.seen_attributes.contains(path) =>
+            {
+                return Ok(None);
+            }
+            Err(error) => return Err(error.into()),
+        };
+        let mut bytes = Vec::new();
+        file.take(65537).read_to_end(&mut bytes)?;
+        require(
+            bytes.len() <= 65536,
+            "initial Native attribute exceeds bound",
+        )?;
+        let text = String::from_utf8(bytes)
+            .map_err(|_| Error::State("invalid initial Native attribute encoding".into()))?;
+        self.seen_attributes.insert(path.to_owned());
+        Ok(Some(text))
+    }
+    fn local(
+        &mut self,
+        session: &NativeSession,
+        controller: &Path,
+        devices: &Path,
+        uid: u32,
+    ) -> Result<Option<NativeSession>> {
+        let Some(real) = self.directory(session, controller, devices, uid)? else {
+            return Ok(None);
+        };
+        let result = (|| -> Result<Option<NativeSession>> {
+            let Some(address) = self.text(&real.join("devnum"))? else {
+                return Ok(None);
+            };
+            let address = parse_initial_number(&address, 10)?;
+            require((1..=127).contains(&address), "invalid initial USB address")?;
+            let Some(vendor) = self.text(&real.join("idVendor"))? else {
+                return Ok(None);
+            };
+            let vendor = u16::try_from(parse_initial_number(&vendor, 16)?)
+                .map_err(|_| Error::State("invalid initial vendor".into()))?;
+            let Some(product) = self.text(&real.join("idProduct"))? else {
+                return Ok(None);
+            };
+            let product = u16::try_from(parse_initial_number(&product, 16)?)
+                .map_err(|_| Error::State("invalid initial product".into()))?;
+            require(
+                number(&real.join("devnum"), 10)? == address
+                    && number(&real.join("idVendor"), 16)? == u32::from(vendor)
+                    && number(&real.join("idProduct"), 16)? == u32::from(product),
+                "initial local descriptors changed during observation",
+            )?;
+            let generation = self
+                .directory
+                .as_ref()
+                .map(|(_, generation)| *generation)
+                .ok_or_else(|| Error::State("missing pinned initial generation".into()))?;
+            let mut observed = session.clone();
+            observed.vendor_id = Some(vendor);
+            observed.product_id = Some(product);
+            observed.local_device_address = Some(address);
+            observed.local_device_generation = Some(generation);
+            Ok(Some(observed))
+        })()?;
+        require(
+            self.directory(session, controller, devices, uid)?.is_some(),
+            "pinned initial device disappeared",
+        )?;
+        Ok(result)
+    }
+    fn check_local(&self, session: &NativeSession) -> Result<()> {
+        if let Some((_, generation)) = &self.directory {
+            require(
+                session.local_device_generation == Some(*generation),
+                "observed Native device replaced pinned initialization generation",
+            )?;
+        }
+        Ok(())
+    }
+    fn profile(
+        &mut self,
+        session: &NativeSession,
+        remote: &RemoteDevice,
+        controller: &Path,
+        devices: &Path,
+        uid: u32,
+    ) -> Result<Option<ImportedProfile>> {
+        require(
+            self.directory(session, controller, devices, uid)?.is_some(),
+            "profile lost pinned local device",
+        )?;
+        let result = self.profile_inner(session, remote, devices)?;
+        require(
+            self.directory(session, controller, devices, uid)?.is_some(),
+            "profile lost pinned local device",
+        )?;
+        Ok(result)
+    }
+    fn profile_inner(
+        &mut self,
+        session: &NativeSession,
+        remote: &RemoteDevice,
+        devices: &Path,
+    ) -> Result<Option<ImportedProfile>> {
+        let bus = session
+            .local_bus_id
+            .as_ref()
+            .ok_or_else(|| Error::State("profile needs local USB identity".into()))?;
+        let path = devices.join(bus.as_str());
+        let Some(config) = self.text(&path.join("bConfigurationValue"))? else {
+            return Ok(None);
+        };
+        let Some(count_text) = self.text(&path.join("bNumInterfaces"))? else {
+            return Ok(None);
+        };
+        let mut paths = Vec::new();
+        for (checked, entry) in fs::read_dir(devices)?.enumerate() {
+            require(checked < 4096, "USB interface directory exceeds bound")?;
+            let entry = entry?;
+            if entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with(&format!("{}:", bus.as_str()))
+            {
+                require(
+                    paths.len() < rustusb_protocol::MAX_INTERFACES,
+                    "initial interface set exceeds bound",
+                )?;
+                paths.push(entry.path());
+            }
+        }
+        if config.is_empty() || count_text.is_empty() {
+            require(
+                config.is_empty() && count_text.is_empty() && paths.is_empty(),
+                "inconsistent unconfigured initial USB profile",
+            )?;
+            return Ok(None);
+        }
+        let configuration = u8::try_from(parse_initial_number(&config, 10)?)
+            .map_err(|_| Error::State("invalid imported configuration".into()))?;
+        let count = parse_initial_number(&count_text, 10)? as usize;
+        require(
+            configuration == remote.configuration && count == remote.interfaces.len(),
+            "imported configuration/interface count differs",
+        )?;
+        require(
+            paths.len() <= count,
+            "initial interface set contains unexpected entries",
+        )?;
+        let mut interfaces = Vec::new();
+        for path in paths {
+            let mut values = Vec::with_capacity(5);
+            for (name, radix) in [
+                ("bInterfaceNumber", 16),
+                ("bAlternateSetting", 10),
+                ("bInterfaceClass", 16),
+                ("bInterfaceSubClass", 16),
+                ("bInterfaceProtocol", 16),
+            ] {
+                let Some(text) = self.text(&path.join(name))? else {
+                    return Ok(None);
+                };
+                values.push(
+                    u8::try_from(parse_initial_number(&text, radix)?)
+                        .map_err(|_| Error::State("invalid initial interface field".into()))?,
+                );
+            }
+            interfaces.push(ImportedInterface {
+                number: values[0],
+                alternate: values[1],
+                class: values[2],
+                subclass: values[3],
+                protocol: values[4],
+            });
+        }
+        interfaces.sort_by_key(|i| i.number);
+        require(
+            interfaces.windows(2).all(|w| w[0].number != w[1].number),
+            "duplicate initial interface number",
+        )?;
+        if interfaces.len() < count {
+            return Ok(None);
+        }
+        require(
+            interfaces.iter().zip(&remote.interfaces).all(|(a, b)| {
+                (a.class, a.subclass, a.protocol) == (b.class, b.subclass, b.protocol)
+            }),
+            "imported full interface set differs from authenticated descriptors",
+        )?;
+        require(
+            bounded(&path.join("bConfigurationValue"))? == config
+                && bounded(&path.join("bNumInterfaces"))? == count_text,
+            "imported configuration changed during observation",
+        )?;
+        Ok(Some(ImportedProfile {
+            configuration,
+            interfaces,
+        }))
+    }
+}
+fn parse_initial_number(value: &str, radix: u32) -> Result<u32> {
+    let text = value.trim();
+    require(
+        !text.is_empty() && text.chars().all(|c| c.is_digit(radix)),
+        "invalid initial Native numeric attribute",
+    )?;
+    u32::from_str_radix(text, radix)
+        .map_err(|_| Error::State("initial Native number out of bounds".into()))
+}
+
 fn observe_local(session: &NativeSession, controller: &Path) -> Result<NativeSession> {
     let bus = session
         .local_bus_id
@@ -268,71 +564,6 @@ fn observe_local(session: &NativeSession, controller: &Path) -> Result<NativeSes
         inode: before.ino(),
     });
     Ok(observed)
-}
-fn observed_profile(
-    session: &NativeSession,
-    remote: &RemoteDevice,
-) -> Result<Option<ImportedProfile>> {
-    let bus = session
-        .local_bus_id
-        .as_ref()
-        .ok_or_else(|| Error::State("profile needs local USB identity".into()))?;
-    let path = Path::new("/sys/bus/usb/devices").join(bus.as_str());
-    let config = bounded(&path.join("bConfigurationValue"))?;
-    if config.is_empty() {
-        return Ok(None);
-    }
-    let configuration = u8::try_from(number(&path.join("bConfigurationValue"), 10)?)
-        .map_err(|_| Error::State("invalid imported configuration".into()))?;
-    let count = number(&path.join("bNumInterfaces"), 10)?;
-    require(
-        configuration == remote.configuration && count as usize == remote.interfaces.len(),
-        "imported configuration/interface count differs",
-    )?;
-    let mut interfaces = Vec::new();
-    let mut checked = 0;
-    for entry in fs::read_dir("/sys/bus/usb/devices")? {
-        checked += 1;
-        require(checked <= 4096, "USB interface directory exceeds bound")?;
-        let entry = entry?;
-        let name = entry.file_name();
-        let name = name.to_string_lossy();
-        if !name.starts_with(&format!("{}:", bus.as_str())) {
-            continue;
-        }
-        let path = entry.path();
-        let byte = |name: &str, radix| -> Result<u8> {
-            u8::try_from(number(&path.join(name), radix)?)
-                .map_err(|_| Error::State("invalid imported interface field".into()))
-        };
-        interfaces.push(ImportedInterface {
-            number: byte("bInterfaceNumber", 16)?,
-            alternate: byte("bAlternateSetting", 10)?,
-            class: byte("bInterfaceClass", 16)?,
-            subclass: byte("bInterfaceSubClass", 16)?,
-            protocol: byte("bInterfaceProtocol", 16)?,
-        });
-    }
-    interfaces.sort_by_key(|i| i.number);
-    if interfaces.len() < count as usize {
-        return Ok(None);
-    }
-    require(
-        interfaces.len() == count as usize
-            && interfaces.windows(2).all(|w| w[0].number != w[1].number)
-            && interfaces.iter().zip(&remote.interfaces).all(|(a, b)| {
-                (a.class, a.subclass, a.protocol) == (b.class, b.subclass, b.protocol)
-            }),
-        "imported full interface set differs from authenticated descriptors",
-    )?;
-    require(
-        bounded(&path.join("bConfigurationValue"))? == config,
-        "imported configuration changed during observation",
-    )?;
-    Ok(Some(ImportedProfile {
-        configuration,
-        interfaces,
-    }))
 }
 fn old_local_gone(session: &NativeSession) -> Result<bool> {
     let bus = session
@@ -415,6 +646,7 @@ pub struct ImportChannel {
     write_started: bool,
     socket_inode: u64,
     profile: Option<ImportedProfile>,
+    initial: InitialObserver,
 }
 impl ImportChannel {
     /// Create an anonymous blocking pair, returning only the relay endpoint to delegate.
@@ -435,6 +667,7 @@ impl ImportChannel {
                 write_started: false,
                 socket_inode: metadata.ino(),
                 profile: None,
+                initial: InitialObserver::default(),
             },
             relay,
         ))
@@ -522,31 +755,64 @@ impl ImportChannel {
                 !cancel.load(Ordering::Acquire),
                 "Native channel cancelled during enumeration",
             )?;
+            controller_matches(&intent.controller)?;
             let snapshot = rows(&controller)?;
             let row = snapshot
                 .iter()
                 .find(|r| r.session.port == selected)
                 .ok_or_else(|| Error::State("selected port disappeared".into()))?;
             if row.session.status == 6 {
-                let local = observe_local(&row.session, &controller)?;
-                require(
-                    row.speed == self.remote.speed
-                        && local.remote_device_id == Some(devid)
-                        && local.vendor_id == Some(self.remote.vendor_id)
-                        && local.product_id == Some(self.remote.product_id),
-                    "enumerated Native identity differs from authenticated metadata",
-                )?;
-                self.local = Some(local.clone());
-                self.profile = observed_profile(&local, &self.remote)?;
-                if self.profile.is_some() {
-                    controller_matches(&intent.controller)?;
-                    return Ok(ImportReceipt {
-                        intent,
-                        session: local,
-                        kernel_socket_inode: self.socket_inode,
-                        profile: self.profile.clone(),
-                    });
+                self.initial.pin_row(row, &self.remote)?;
+                let devices = Path::new("/sys/bus/usb/devices");
+                if let Some(local) = self.initial.local(&row.session, &controller, devices, 0)? {
+                    require(
+                        local.vendor_id == Some(self.remote.vendor_id)
+                            && local.product_id == Some(self.remote.product_id),
+                        "enumerated Native identity differs from authenticated metadata",
+                    )?;
+                    if let Some(prior) = &self.local {
+                        require(
+                            crate::same_identity(prior, &local),
+                            "Native enumeration replaced the original local identity",
+                        )?;
+                    } else {
+                        self.local = Some(local.clone());
+                    }
+                    self.profile =
+                        self.initial
+                            .profile(&local, &self.remote, &controller, devices, 0)?;
+                    if self.profile.is_some() {
+                        // A full profile must belong to the same row and local generation
+                        // observed before it. Re-read both; do not adopt a later device.
+                        let after = rows(&controller)?;
+                        let after = after
+                            .iter()
+                            .find(|r| r.session.port == selected)
+                            .ok_or_else(|| {
+                                Error::State("completed import port disappeared".into())
+                            })?;
+                        self.initial.pin_row(after, &self.remote)?;
+                        let after_local = self
+                            .initial
+                            .local(&after.session, &controller, devices, 0)?
+                            .ok_or_else(|| {
+                                Error::State("completed local identity became incomplete".into())
+                            })?;
+                        require(
+                            crate::same_identity(&local, &after_local),
+                            "completed imported profile crossed a device generation",
+                        )?;
+                        controller_matches(&intent.controller)?;
+                        return Ok(ImportReceipt {
+                            intent,
+                            session: local,
+                            kernel_socket_inode: self.socket_inode,
+                            profile: self.profile.clone(),
+                        });
+                    }
                 }
+            } else {
+                self.initial.check_row(row)?;
             }
             require(
                 matches!(row.session.status, 4..=6),
@@ -579,7 +845,9 @@ impl ImportChannel {
                 .find(|r| r.session.port == intent.port)
                 .ok_or_else(|| Error::State("cleanup port disappeared".into()))?;
             if row.session.status == 6 {
+                self.initial.check_row(row)?;
                 let observed = observe_local(&row.session, &intent.controller.path)?;
+                self.initial.check_local(&observed)?;
                 if let Some(local) = &self.local {
                     require(
                         crate::same_identity(local, &observed),
@@ -674,3 +942,7 @@ mod tests {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "channel_initial_tests.rs"]
+mod initial_tests;

@@ -411,3 +411,5 @@
 - 采证修复clean5f1e25b第二次virtual/IPv4仍FAIL，182份原件归档；两guest0、四guards真且全部已输出文件可提取，不能覆盖实际FAIL。日志确认serial helper I/O失败，但客户端cleanup错误掩盖原operation。先在设计固定两错误都保留，再修CLI结果合并与完成RPC优先于失效通知，actual close仍总await；第四轮完整软件gate再次396/35result零失败忽略，121输入前后保持。新failure trap只读采有界Native/physical持久文件，准备第三次诊断。独立固定v6.8确认USED早于device_add的窗口，但未仅凭相关性改判首因；Native代码仍未改。41e2c67四平台CI已独立169项复核通过，每格396及本地信号/背压原范围，原QEMU失败保持。
 
 - 第三clean18817cd virtual/IPv4整体FAIL：cycle1真实HID key2 down/up、serial双向各35B和CDC echo、TERM/wait0/NULL/Gone/空journal及目录重用均通过；cycle2 HID失败。216份原件完整保留，operation NotFound与cleanup未确认同时可见，失败journal完整捕获为Intent；两guest0与四guards真不替代FAIL。没有逐syscall定位缺失属性。按已更新设计实施Native初始化Pending/Ready与首次目录代际固定，补真实临时文件夹具，由另一agent只读审；原Native调用方、10秒deadline和实际blockingguard/ownK边界不变。
+
+- Native私有InitialObserver修复已落：首次USED row及目录dev/ino固定，只对never-seen初始化属性缺失等待，已见属性消失/权限/格式/身份变化拒绝，完成后同row和local/profile复核；无publicAPI或helper角色扩张。8项真实tempdir夹具实际执行通过；第五轮完整软件gate exit0，default159/allfeatures233/vendor20共412次、35result零失败忽略，123选定输入前后SHA保持（本次纳入vendor测试lock及toolchain）。作者与独立源码审查原件归档，准备clean修复版QEMU，不把先前396/CI重归属新代码。

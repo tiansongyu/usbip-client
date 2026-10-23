@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "kind": "Independent source review, not author execution",
+  "result": "NO_SPECIFIC_MUSTFIX_FOUND_SOURCE_ONLY",
+  "head_at_review": "cbcab68b6c1c7269a7e474a666a2ef310a59da0b",
+  "sources": [
+    {
+      "path": "crates/rustusb-native/src/channel.rs",
+      "length": 37178,
+      "sha256": "49d6c77aecf0715bf1b9ceace046989ff630da519a02e722eb7536369a9ae2d6"
+    },
+    {
+      "path": "crates/rustusb-native/src/channel_initial_tests.rs",
+      "length": 10299,
+      "sha256": "1db8b24427d437378c38bfe18abb1561a5e4bf71490c6ff9fa3b71a6484af2c5"
+    }
+  ],
+  "author_manifest": {
+    "path": "/tmp/rustusb-native-initial-poll-author-handoff-20261023.json",
+    "length": 3385,
+    "sha256": "8d7f41ff3ba329247dbdd82969d27bbb4e32885927c8181e809bf377e04dbc00"
+  },
+  "original_failure_review": {
+    "path": "/tmp/rustusb-native-initialization-third-failure-raw-review-20261023.json",
+    "length": 3916,
+    "sha256": "cf6c7db678aa6891ede706a835ca216f836af4637b1f14708dcd876c48f1dbcd"
+  },
+  "checks": [
+    {
+      "name": "author frozen source hashes match actual reviewed files",
+      "passed": true
+    },
+    {
+      "name": "initial used row is checked against authenticated device then pinned",
+      "passed": true,
+      "source": "channel.rs InitialObserver::pin_row/check_row, ImportChannel::commit"
+    },
+    {
+      "name": "directory canonical path/dev/ino pinned immediately before attributes ready",
+      "passed": true,
+      "source": "InitialObserver::directory/local; missing pinned path, wrong owner/outside controller or replacement fails"
+    },
+    {
+      "name": "only never-seen NotFound from opening initialization path is pending",
+      "passed": true,
+      "source": "InitialObserver::directory/text; read failures, invalid UTF8/numeric data and previously seen missing attr are errors"
+    },
+    {
+      "name": "first local complete identity preserved and checked against remote VID/PID",
+      "passed": true,
+      "source": "ImportChannel::commit self.local initialization only when None; later same_identity required"
+    },
+    {
+      "name": "unconfigured phase requires both exact empty attributes and zero IF",
+      "passed": true,
+      "source": "InitialObserver::profile_inner; malformed/whitespace/partial-empty/config/count/complete tuple mismatch fails"
+    },
+    {
+      "name": "incomplete initial IF creation can wait with bounded counts",
+      "passed": true,
+      "source": "profile_inner; at most4096 directory entries, MAX_INTERFACES, attribute65536 bound, same existing10s commit deadline"
+    },
+    {
+      "name": "complete profile final row and generation/address/descriptors rechecked before receipt",
+      "passed": true,
+      "source": "commit after rows(), pin_row(), initial.local(), same_identity(), controller_matches()"
+    },
+    {
+      "name": "cleanup adds pin checks and never adopts replacement identity or new detach",
+      "passed": true,
+      "source": "shutdown check_row/check_local; existing retained K shutdown +NULL/old local gone; incomplete unknown still pending"
+    },
+    {
+      "name": "single actual attach write and durable intent precedes it unchanged",
+      "passed": true,
+      "source": "commit persist(intent) -> attach File.write once; no retry/rewrite/port takeover introduced"
+    },
+    {
+      "name": "eight meaningful deterministic private fixtures inspected, no sleeps or USB operations",
+      "passed": true,
+      "source": "channel_initial_tests.rs; missing then complete, early directory replacement/loss, seen-attr loss/nonfile, malformed/wrongowner, row changes, strict empty phase, partialIF/mismatch, postprofile generation change"
+    }
+  ],
+  "test_names": [
+    "used_before_device_add_waits_then_observes_the_same_complete_generation",
+    "directory_is_pinned_before_attributes_and_cannot_be_replaced_or_lost",
+    "only_never_seen_absent_attributes_are_pending",
+    "malformed_or_wrong_owner_initial_identity_never_retries",
+    "first_used_row_cannot_change_during_pending_initialization",
+    "unconfigured_profile_requires_both_empty_attributes_and_zero_interfaces",
+    "incomplete_interfaces_can_appear_but_complete_profile_mismatch_fails",
+    "final_generation_recheck_rejects_replacement_after_complete_profile"
+  ],
+  "executed_by_reviewer": [
+    "Read-only source/raw/hash parsing only"
+  ],
+  "not_executed": [
+    "Cargo/rustc/Clippy/unit tests",
+    "CLI/helper or device commands",
+    "QEMU/USB/sysfs mutation"
+  ],
+  "limits": [
+    "Original third QEMU remains FAIL: actual cycle2 NotFound, durable Intent and cleanup uncertainty; original data lacks per-path syscall trace.",
+    "Fixed Linux v6.8 SET_ADDRESS USED before device_add supports this initialization window but does not prove the exact missing path in that run.",
+    "Fixture temporary filesystem/UID substitution covers observation predicates, not actual kernel enumeration, USB forwarding, clean-run hardware or Phase3 acceptance.",
+    "A later real QEMU run and root unified software gates are necessary; no test execution is inferred from source inspection.",
+    "Ambiguous startup/cleanup still retains pending intents; no generalized restart recovery, replacement adoption or extra detach introduced."
+  ],
+  "source_unchanged_through_review": true
+}
