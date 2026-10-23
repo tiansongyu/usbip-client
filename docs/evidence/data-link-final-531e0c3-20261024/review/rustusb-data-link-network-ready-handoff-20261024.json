@@ -1,0 +1,1624 @@
+{
+  "baseline_commit": "93428ce0d27ca159003fdd98e0b9e61db7bb9d40",
+  "changes": [
+    {
+      "after": {
+        "bytes": 11732,
+        "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/guest-init.sh",
+        "sha256": "fcd1d68ec8daa2af394e916b02c223337c2696c90b724ca545c33849c636c86e"
+      },
+      "before_bytes": 9638,
+      "before_sha256": "312254b2328ee8645545ecf75ec883d1ecfcbb9e7f3b40e63f899d3eb437d6c5",
+      "path": "scripts/qemu_data_link_health/guest-init.sh"
+    },
+    {
+      "after": {
+        "bytes": 32087,
+        "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/run.py",
+        "sha256": "aee8e02ef4e1bfe7b970809936bc68a4c0500a55b3c64da0582639d76623866b"
+      },
+      "before_bytes": 31608,
+      "before_sha256": "66880633849887035530df4fb6c700bcf4ca4b16bc144b02031fe9c5fa86cf1a",
+      "path": "scripts/qemu_data_link_health/run.py"
+    },
+    {
+      "after": {
+        "bytes": 30241,
+        "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/audit.py",
+        "sha256": "b4b7eb58fd43c02d3c48be68fafc06c4184fb21e64358a52833a8f15c2b60daf"
+      },
+      "before_bytes": 23920,
+      "before_sha256": "f81cec49bd15bca29aa2c4a4a999e7c0bd10c446399624cf9eab8d8a79f4eb5a",
+      "path": "scripts/qemu_data_link_health/audit.py"
+    },
+    {
+      "after": {
+        "bytes": 7166,
+        "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/README.md",
+        "sha256": "5e9a5a28ffd8276800862ee965a76b1305985ff5a452f0afff0a21616d2efd46"
+      },
+      "before_bytes": 6616,
+      "before_sha256": "79df188b51924b7e8957f1301b82ff1a40205bb10f72ab7150a6e0e7ff7a1343",
+      "path": "scripts/qemu_data_link_health/README.md"
+    }
+  ],
+  "created_utc": "2026-10-23T21:12:07.732641+00:00",
+  "fix": "All new backends first observe actual carrier1/operstateup within200 samples/10guest-uptime-seconds, retain raw observations/address snapshot, and require host validated NETWORK_READY_ACK before workload. Host START requires both ACKs. Client recopies actual up/uptime before unchanged refusal probes. Shared packet auditor verifies raw hashes and control/guest marker ordering.",
+  "mustfix": [],
+  "preserved_previous_audit_function_AST": [
+    "require",
+    "bounded",
+    "pcap",
+    "_socket_address",
+    "health_binding",
+    "_tls13",
+    "_client_alpn",
+    "tls_facts",
+    "audit",
+    "main"
+  ],
+  "reports": [
+    {
+      "bytes": 8287,
+      "path": "/tmp/rustusb-data-link-virtual-network-first-diagnosis-20261024.py",
+      "sha256": "68374a20b5bbf817847167629bb7dc67d9ef150d6f1d286d4bc1263701dfa473"
+    },
+    {
+      "bytes": 15973,
+      "path": "/tmp/rustusb-data-link-virtual-network-first-diagnosis-20261024.json",
+      "sha256": "28eb685b1c5d3ac67089caa7e8e1249ea1e915ca0f02df1dfc8b24cc46e23c2b"
+    },
+    {
+      "bytes": 7773,
+      "path": "/tmp/rustusb-data-link-virtual-network-diagnosis-parser-first-20261024.py",
+      "sha256": "a4a869d98537c806216a56b8c201c3781e75d7dd9e05faf841fe22f2ce98126b"
+    },
+    {
+      "bytes": 220,
+      "path": "/tmp/rustusb-data-link-virtual-network-diagnosis-parser-first-20261024.json",
+      "sha256": "7b347fd884deb588c5333a760ca2167b5242df0a71aee5bb560cca5b1858416d"
+    },
+    {
+      "bytes": 3694,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024.py",
+      "sha256": "807b88086c0c26fd785dff2831d7fee0575c52070fbd4441d1fd2abfb5a630c7"
+    },
+    {
+      "bytes": 6439,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024.py",
+      "sha256": "f04ec378f40161162d379fc7ad3215c46d337ea85bcd4ff9bf1572e3eaac2e0e"
+    },
+    {
+      "bytes": 14796,
+      "path": "/tmp/rustusb-data-link-network-ready-source-20261024.patch",
+      "sha256": "2766cd30e59fbdd88f385698a85db0393308e47bfc341285262b14af10792987"
+    }
+  ],
+  "result": "SOURCE_FROZEN_NOT_RUNTIME_VERDICT",
+  "review": "N read current three source files and README and reported no mustfix; separate independent report follows.",
+  "root_cause_boundary": "934 virtual-v4 actual TCP3240 timeout before any Catalog/IMPORT/fault. Both original interfaces were NO-CARRIER; later linkup at guest uptime~2.768s. Source has unconditional Valve pump; received frames are promptly socket-forwarded. Missing actual initial link readiness is supported by raw/source; host START timestamp is not a guest nc syscall timestamp.",
+  "schema_version": 1,
+  "scope": [
+    "No Rust product, old runner or 934 worktree file was modified. No author Cargo/QEMU/host USB/network configuration operation.",
+    "Original 934 Native4/6 and USBFS4/6 four PASS groups, virtual4 FAIL and ten unrun groups retain their own original source and scope.",
+    "Original nc timeout5/w2/exact Connection refused, Probe1000/3000, valve bounds and previous packet/TLS/drop/reassembly/lifecycle assertions remain unchanged.",
+    "The first diagnosis parser assumed every socket-accepted frame appeared in receiving PCAP during failure teardown; its failure is preserved. Current report explicitly separates nine ingress/socket-forward records from incomplete receiving captures.",
+    "ACK host monotonic timestamps record sendall completion/logging; guest ACK marker proves later parsing, not an exact receive timestamp or nc syscall timestamp. Guest uptime comparisons remain within a guest.",
+    "Static evidence fixtures are not actual Ethernet/TLS/USB/heartbeat acceptance. New clean QEMU remains required."
+  ],
+  "static": {
+    "all_pass": true,
+    "constructed_readiness_checks": 17,
+    "constructed_result": "STATIC_EVIDENCE_FIXTURE_PASS",
+    "generated_backend_checks": 201
+  },
+  "static_fixture_originals": [
+    {
+      "bytes": 40660,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/native-init.sh",
+      "sha256": "4dfcb78ee5296435ba95489799edc12d136e498cebc70a9cc493e96e6480a729"
+    },
+    {
+      "bytes": 7001,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/native-jq.json",
+      "sha256": "cb54521145d417bad62ca08b55a1ab608538b9caeed71f2a566c881788b3e426"
+    },
+    {
+      "bytes": 55285,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/report.json",
+      "sha256": "5a95b5c131749c52036fb17d17ef6d96f3c0a925760f29760278c4f4f63c1457"
+    },
+    {
+      "bytes": 47151,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/usbfs-init.sh",
+      "sha256": "6eecd00502635b3dac8721c28cc05be6ed46add15d82ee588781cf3a8adf7036"
+    },
+    {
+      "bytes": 7942,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/usbfs-jq.json",
+      "sha256": "2445e6a9eea49fc3d36bf0071e1569fa88523dd57e1617b18dd957994c75d789"
+    },
+    {
+      "bytes": 47155,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/virtual-init.sh",
+      "sha256": "1d5a2ba69ca65d2a64bea15dc90dc59ba4f858dc0116d71eb12bf46c479b43d0"
+    },
+    {
+      "bytes": 7942,
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/virtual-jq.json",
+      "sha256": "2445e6a9eea49fc3d36bf0071e1569fa88523dd57e1617b18dd957994c75d789"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/host-control.jsonl",
+      "sha256": "c2a04007add531721530c47c97eec662c0548303dd275ed09bc7103461d121e3"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/START-before-second-ACK/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 367,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "517d486e788565e03319f5bceb3eb35a24f24671a9a8042c54f54cd29dfd95f5"
+    },
+    {
+      "bytes": 123,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/client-artifacts/network-ready.json",
+      "sha256": "f42bcf199fa6feb1fde438cbcbac001c1e2070ad91b03cb15bbefef825e40346"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 367,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/client/network-ready-observations.jsonl",
+      "sha256": "517d486e788565e03319f5bceb3eb35a24f24671a9a8042c54f54cd29dfd95f5"
+    },
+    {
+      "bytes": 123,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/client/network-ready.json",
+      "sha256": "f42bcf199fa6feb1fde438cbcbac001c1e2070ad91b03cb15bbefef825e40346"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/boolean-carrier/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "437dbd6f930a9d4fdab6f5e701d823db26fcefa319de25e986d7be538a241014"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/client-artifacts/network-ready.json",
+      "sha256": "c9fc911079997b3634fd1bbc1c6095616d61e07062360e10e9b491c6ccfd0ff0"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/client/network-ready-observations.jsonl",
+      "sha256": "437dbd6f930a9d4fdab6f5e701d823db26fcefa319de25e986d7be538a241014"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/client/network-ready.json",
+      "sha256": "c9fc911079997b3634fd1bbc1c6095616d61e07062360e10e9b491c6ccfd0ff0"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/carrier-still-zero/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/client-evidence.log",
+      "sha256": "4159786731fcf040e984aa2e814b7f5dda2654393d8e98acb793bb6e20c00480"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/guest-probe-before-ACK-marker/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 363,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "86d2edf4da03bce0e891622617144760c97f01198f8468224004531ebc062d1f"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/incomplete-observation-line/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 3,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/client/network-ready.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/live-original-differs/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-actual-probe-original/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 591,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/host-control.jsonl",
+      "sha256": "c623d6d34606933dac7d8895d493aa5df59b88dc8560a8405ee8e3410eba8622"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/missing-server-ACK/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "a85d42ad1afc45e2b593754d7835cfe2e768a53d6e765f8c44261286511cc4be"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/client/network-ready-observations.jsonl",
+      "sha256": "a85d42ad1afc45e2b593754d7835cfe2e768a53d6e765f8c44261286511cc4be"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/nonmonotonic-observation/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 366,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "6694794453f3c8b76835e1251d171220c4014db4a974320b0235cfea08719745"
+    },
+    {
+      "bytes": 122,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/client-artifacts/network-ready.json",
+      "sha256": "18e032849a0e459a2731d66cd452afb10376cd68e79b2ee5f2abee26754b7302"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 366,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/client/network-ready-observations.jsonl",
+      "sha256": "6694794453f3c8b76835e1251d171220c4014db4a974320b0235cfea08719745"
+    },
+    {
+      "bytes": 122,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/client/network-ready.json",
+      "sha256": "18e032849a0e459a2731d66cd452afb10376cd68e79b2ee5f2abee26754b7302"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/operstate-not-up/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 24814,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "1ee63cccf4908c739d766ad73f127de3bac1b942c7cf0274ff550a5c52d9a264"
+    },
+    {
+      "bytes": 122,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/client-artifacts/network-ready.json",
+      "sha256": "d3b758a384a1cff5ea54839a41e2090c13f4276c2c8531dd36eee58cf745cc2c"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 24814,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/client/network-ready-observations.jsonl",
+      "sha256": "1ee63cccf4908c739d766ad73f127de3bac1b942c7cf0274ff550a5c52d9a264"
+    },
+    {
+      "bytes": 122,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/client/network-ready.json",
+      "sha256": "d3b758a384a1cff5ea54839a41e2090c13f4276c2c8531dd36eee58cf745cc2c"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-200-observations/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 365,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "6de1ba5b3dd9013d78022aa2626316cde06c2f878d9c62500f840706f0df077f"
+    },
+    {
+      "bytes": 121,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/client-artifacts/network-ready.json",
+      "sha256": "93bf4bc42929fb4079b72497ff4942ba8170b42af120db1667ea9de45a2e87c2"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 365,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/client/network-ready-observations.jsonl",
+      "sha256": "6de1ba5b3dd9013d78022aa2626316cde06c2f878d9c62500f840706f0df077f"
+    },
+    {
+      "bytes": 121,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/client/network-ready.json",
+      "sha256": "93bf4bc42929fb4079b72497ff4942ba8170b42af120db1667ea9de45a2e87c2"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/over-ten-seconds/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "e2ceb341c47cf77ed269cac6076939f6fe54f290cfa64b0d8e6c5a38e841fe2e"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/client-artifacts/network-ready.json",
+      "sha256": "aca3872133202b8eff6e3a9823355c790d7bbe31d9f7f87a40fad5015e0bf735"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/client/network-ready-observations.jsonl",
+      "sha256": "e2ceb341c47cf77ed269cac6076939f6fe54f290cfa64b0d8e6c5a38e841fe2e"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/client/network-ready.json",
+      "sha256": "aca3872133202b8eff6e3a9823355c790d7bbe31d9f7f87a40fad5015e0bf735"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/post-ACK-ready-original-changed/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/client-artifacts/network-probe-start.json",
+      "sha256": "2cc01895e30236ebd0fc8d4ee93b4b99c4f4741a0077d6fe1318f27103e3d159"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/client/network-probe-start.json",
+      "sha256": "2cc01895e30236ebd0fc8d4ee93b4b99c4f4741a0077d6fe1318f27103e3d159"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-carrier-down/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/client-artifacts/network-probe-start.json",
+      "sha256": "12416ad40e2d6160413d7a64b3def7c65d37e7e1d1fb88e824d84c70ff2f330a"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/client/network-probe-start.json",
+      "sha256": "12416ad40e2d6160413d7a64b3def7c65d37e7e1d1fb88e824d84c70ff2f330a"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/probe-uptime-before-ready/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 139,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/client-artifacts/network-ready.txt",
+      "sha256": "1b5e9d813e046cce3701500b6023abdb29ac89f8f0f8d06136a12a8e521ee62e"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/ready-snapshot-NO-CARRIER/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    },
+    {
+      "bytes": 5728,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/report.json",
+      "sha256": "539940741438bcc40714263efee59ec1d41be22573d29d41c64548a3dc5e9440"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/client-artifacts/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/client-artifacts/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/client-artifacts/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/client-artifacts/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 92,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/client-evidence.log",
+      "sha256": "c37611046462531c01569f1d715108ceaf5de4047a7374d0bd6bf19ca80af866"
+    },
+    {
+      "bytes": 1105,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/host-control.jsonl",
+      "sha256": "3469ff9f1bc2362e0acfe10f0d781fea0f13bd94c7f5a9ba9ffe7e396edfeeb9"
+    },
+    {
+      "bytes": 130,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/client/network-probe-start.json",
+      "sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/client/network-ready-observations.jsonl",
+      "sha256": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/client/network-ready.json",
+      "sha256": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/client/network-ready.txt",
+      "sha256": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/server/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/server/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/live/server/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 364,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/server-artifacts/network-ready-observations.jsonl",
+      "sha256": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110"
+    },
+    {
+      "bytes": 120,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/server-artifacts/network-ready.json",
+      "sha256": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae"
+    },
+    {
+      "bytes": 137,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/server-artifacts/network-ready.txt",
+      "sha256": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+    },
+    {
+      "bytes": 66,
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/valid/server-evidence.log",
+      "sha256": "b6788f96bbbf25c6f66acdcdebefa7bb14aa850c1e5371ef3d94218ed0c5a9d2"
+    }
+  ],
+  "untouched_lifecycle_packet_sources": [
+    {
+      "bytes": 9718,
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/packets.py",
+      "sha256": "10c4e80aa7a93cb5663090918e73cea1f549fcd69f0e23008a95587fcd386fd5"
+    },
+    {
+      "bytes": 13728,
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/valve.py",
+      "sha256": "af59f3e5f4b5e0d2dbbcbb41aacc1386baf5c7dd30f31afc6c26768c792dab84"
+    },
+    {
+      "bytes": 24887,
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/verify.py",
+      "sha256": "e37f1cb422a998d6a135cbc796de1a4d3419a30112bbfa778b118358e12c58f1"
+    },
+    {
+      "bytes": 37276,
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/verify_rust.py",
+      "sha256": "e935b07a904754281e282c5c4ece91dc23eb7b84d05dd0d493ec837de1630db0"
+    },
+    {
+      "bytes": 10439,
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_data_link_health/guest-rust-fragments.sh",
+      "sha256": "ada89fa1a6716fc2c44bacaaeed079e2a7b6d5c4ea7ea18b7707d3a7792e64d5"
+    }
+  ]
+}

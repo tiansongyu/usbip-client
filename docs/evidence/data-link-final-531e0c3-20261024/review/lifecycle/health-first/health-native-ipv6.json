@@ -1,0 +1,28 @@
+{
+  "case": "health-native-ipv6",
+  "result": "FAIL",
+  "error": "AssertionError: provenance: all-features product",
+  "predicate_count": 2,
+  "categories": {
+    "provenance": 2
+  },
+  "checks": [
+    {
+      "category": "provenance",
+      "label": "terminal clean exact source/binaries",
+      "passed": true
+    },
+    {
+      "category": "provenance",
+      "label": "all-features product",
+      "passed": false
+    }
+  ],
+  "facts": {},
+  "summary": {
+    "path": "/tmp/rustusb-data-link-ready-531e0c3-20261024/health-native-ipv6/summary.json",
+    "bytes": 208571,
+    "sha256": "9a7fe68f38db5e2567ef2f8777eaf99735fb8a787c96afcc5471182f3d4269ca"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"/tmp/rustusb-data-link-final-lifecycle-review-20261024/health_review.py\", line 259, in run\n    try:self.artifacts();self.network();self.lifecycle();result='PASS'\n  File \"/tmp/rustusb-data-link-final-lifecycle-review-20261024/health_review.py\", line 96, in artifacts\n    self.check('provenance','all-features product',s['build_features']==['rust-backend','physical-nusb'])\n  File \"/tmp/rustusb-data-link-final-lifecycle-review-20261024/health_review.py\", line 70, in check\n    if not value:raise AssertionError(category+': '+label)\nAssertionError: provenance: all-features product\n"
+}

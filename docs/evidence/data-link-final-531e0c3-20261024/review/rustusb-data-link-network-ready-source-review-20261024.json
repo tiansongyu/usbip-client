@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "result": "SOURCE_REVIEW_NO_MUSTFIX_IDENTIFIED",
+  "head": "df83b2b4ddca204667cf3731763d7e4e39891cde",
+  "scope": "Read-only cross-review of new harness carrier-readiness delta; originalauditparser author disclosed. No productedits, Cargo, CLI, QEMU orUSBoperations.",
+  "files": [
+    {
+      "path": "scripts/qemu_data_link_health/guest-init.sh",
+      "bytes": 11732,
+      "sha256": "fcd1d68ec8daa2af394e916b02c223337c2696c90b724ca545c33849c636c86e"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/run.py",
+      "bytes": 32087,
+      "sha256": "aee8e02ef4e1bfe7b970809936bc68a4c0500a55b3c64da0582639d76623866b"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/audit.py",
+      "bytes": 30241,
+      "sha256": "b4b7eb58fd43c02d3c48be68fafc06c4184fb21e64358a52833a8f15c2b60daf"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/README.md",
+      "bytes": 7166,
+      "sha256": "5e9a5a28ffd8276800862ee965a76b1305985ff5a452f0afff0a21616d2efd46"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify.py",
+      "bytes": 24887,
+      "sha256": "e37f1cb422a998d6a135cbc796de1a4d3419a30112bbfa778b118358e12c58f1"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify_rust.py",
+      "bytes": 37276,
+      "sha256": "e935b07a904754281e282c5c4ece91dc23eb7b84d05dd0d493ec837de1630db0"
+    }
+  ],
+  "findings": [
+    {
+      "item": "actual_guest_condition",
+      "result": "PASS_SOURCE",
+      "fact": "Same-shell network_sample reads procUptime/carrier/operstate andwritesstrictJSON. Redirection isnot command substitution, soNETWORKglobals persist into outerpoll. Atmost200samples and1000guestcentiseconds, successonlycarrier1+operstateup; originalNO-CARRIERsnapshotretained."
+    },
+    {
+      "item": "host_gate",
+      "result": "PASS_SOURCE",
+      "fact": "Eachrolepublishesactualrawreadyfiles andwaitsNETWORK_READY_ACK; host validatesrawsample/address/completefirstready before ACKsend; STARTrequiresbothACKmarkerssent andexistingServerReady/keybarriers."
+    },
+    {
+      "item": "client_preprobe",
+      "result": "PASS_SOURCE",
+      "fact": "AfterguestSTARTreceive,clientrereadsactualcarrier/operstate/uptimeandpublishesnegative-probesrecord beforeunchangedIPv4/IPv6NCloop. AuditrequiresACKacceptancelog beforeprobe marker andguestuptime nonregression."
+    },
+    {
+      "item": "failclosed_verifier",
+      "result": "PASS_SOURCE",
+      "fact": "Auditrequiresstrictfields/types/count/monotonicobservations/firstcomplete1+up/rawlastlineexactmatch, actualaddresses/nonnocarrierUPsnapshot, livevsfinalSHAequality andbothACK\u2192STARThostorder; bothNative/Rust lifecycleverifiers callsharedaudit."
+    },
+    {
+      "item": "unchanged_protocol_assertions",
+      "result": "PASS_SOURCE",
+      "fact": "No oldpacket/reassembly/flow/drop/TLScriteria loosened. Originalnc-w2/outertimeout5/exactConnectionRefused andsame-data1000/3000probe unchanged. Readinesssleep0.05onlypollsactualcondition, neverassumesreadyafterdelay."
+    }
+  ],
+  "static_checks_by_reviewer": [
+    "ast.parse audit.py/run.py PASS",
+    "dash -n of3Hgeneratednative/usbfs/virtual init files PASS",
+    "git diff --check4changedharnessfiles PASS"
+  ],
+  "author_fixture_provenance": [
+    {
+      "path": "/tmp/rustusb-data-link-network-ready-static-20261024/report.json",
+      "bytes": 55285,
+      "sha256": "5a95b5c131749c52036fb17d17ef6d96f3c0a925760f29760278c4f4f63c1457"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-ready-fixtures-20261024/report.json",
+      "bytes": 5728,
+      "sha256": "539940741438bcc40714263efee59ec1d41be22573d29d41c64548a3dc5e9440"
+    }
+  ],
+  "author_fixture_scope": "H reports201static/17constructedreadinessfixtures. Reviewerreadtheseoriginals butdidnotrerunthem; neitherareQEMU/TLS/USBacceptance.",
+  "product_guard": {
+    "count": 165,
+    "before_equals_after": true,
+    "current_all_bytes_sha_match_626_gate": true,
+    "actual_current_final_allfeatures_binaries_match": [
+      {
+        "path": "target/release/rustusb",
+        "bytes": 14976064,
+        "sha256": "bb6fb276c0cbfbb73c2cdb8af0f73d87045ac7235b4943cf096c0643d570814a"
+      },
+      {
+        "path": "target/release/rustusb-helper",
+        "bytes": 5926600,
+        "sha256": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+      }
+    ],
+    "prior_product_guard": {
+      "path": "/tmp/rustusb-data-link-readiness-product-guard-20261024.json",
+      "bytes": 979,
+      "sha256": "32d0deacf4a3c6c1d58bb1019ce48c4f3818da98691efae8b39e810450530083"
+    },
+    "626_gate_independent_report": {
+      "path": "/tmp/rustusb-data-link-management-software-first-independent-review-20261024.json",
+      "bytes": 48809,
+      "sha256": "f3bd1445cb198d61838a5db970b2c9d53594712c8ee1b83a7de9499eb156d262"
+    }
+  },
+  "scope_limits": [
+    "Hostcontroltimestampisrecordedafter sendall; itisnotguestreceivaltimeorncsyscallentry. Guestuptimeandhostmonotonicarenotcross-subtracted.",
+    "Socketforwardrecordmeanswholeframelocallywritten, notpeerPCAPreceipt. ExactpeerreceiptremainsfullPCAPauditresponsibility.",
+    "Carrier/addressreadyisaninitialprecondition, notTLSresponse/USBhealth/rootcleanup proof.",
+    "Original934matrix4PASS/virtual-v4FAIL/10unrun remain unchanged; staticfixdoesnotretroactivelyconvertFAIL.",
+    "No futureQEMU successclaimfromthisreview."
+  ]
+}

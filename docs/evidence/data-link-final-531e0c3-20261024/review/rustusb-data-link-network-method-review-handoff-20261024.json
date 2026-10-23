@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "source_head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+  "implementation_frozen": true,
+  "runtime_actions_performed": [],
+  "command": "python3 -B /tmp/rustusb-data-link-network-method-review-20261024.py --output /tmp/rustusb-data-link-network-method-review-reproduction-20261024",
+  "reviewer_identity": "Same agent authored the harness/auditor. This is an independent method, not an independent author/implementation claim.",
+  "totals": {
+    "completed_health_groups": 6,
+    "fault_phases": 18,
+    "raw_pcap_records": 12361,
+    "ingress_packets": 6298,
+    "actual_peer_forwarded_packets": 6063,
+    "dropped_packets": 235,
+    "reassembled_tls_directions": 168,
+    "unique_base64_artifacts": 1624
+  },
+  "global_inputs": 213,
+  "source_copy_checks": 2415,
+  "source_counts_by_schema": {
+    "modern_health_each": 178,
+    "modern_secure_each": 167,
+    "modern_agent_each": 169,
+    "legacy_sigterm_script_copies": 7
+  },
+  "raw_originals": 6181,
+  "diagnostic_assertions": 785098,
+  "counter_semantics": "Diagnostic assertions include per-byte TCP overlap checks; this number is not a software test count, USB case count, or independent reviewer count.",
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-final-20261024/packet-crosschecks.jsonl",
+      "bytes": 2843466,
+      "sha256": "8f17652eba354b019758856554e3d1add5379278a4909574878fc11f63b6f836"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-final-20261024/raw-originals-manifest.json",
+      "bytes": 1464223,
+      "sha256": "8bfa49310fe008b1ed73ff801662205afc900c19dbe45964e08bbeb2c66822cd"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-final-20261024/report.json",
+      "bytes": 139956,
+      "sha256": "a6dd2d6df4b4895080111a9f8d439ba55ec665aaf138f3d8a8e8f4b108ab95f1"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-final-20261024/reviewer.py",
+      "bytes": 37927,
+      "sha256": "b48a5ea07ae3bc14f00eede1c5501f5f9a0755415028e911636a66d3e2bcd9e3"
+    }
+  ],
+  "preserved_review_attempts": [
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt1-20261024/reviewer.py",
+      "bytes": 33121,
+      "sha256": "c036dac3fcae9dc4c482e58d2442e3102be47ae9bcce026a2e9c6f234b430582"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt1-20261024/report.json",
+      "bytes": 3640,
+      "sha256": "387024f7f22a7a75bf5df2ffde64f915acd57e90b2a9c00cdb7b4c7ae53c674a"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt1-20261024/raw-originals-manifest.json",
+      "bytes": 1462293,
+      "sha256": "1b71b1294803f7d4d4dd143fa0315866b5e5485b612ffb127338f70a351d3f01"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt2-20261024/reviewer.py",
+      "bytes": 33211,
+      "sha256": "d060c429d272fc49967989332beb934422d189241c94af6dd3a77a35bb5a0f2f"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt2-20261024/report.json",
+      "bytes": 8273,
+      "sha256": "f5d4f12410dfe5342d9bd39dd43d135354ad9fde6dd3d953a746a6c77e016b5a"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt2-20261024/raw-originals-manifest.json",
+      "bytes": 1463807,
+      "sha256": "e3a77312886aa9acda5af8a60e24091b51028ae76feb5ee66fb29dacc5021434"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt3-20261024/reviewer.py",
+      "bytes": 33213,
+      "sha256": "8e552376d186be3f2156a95af19a6b0b08b4aea4b5a0d74b04ba0e7309a88df7"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt3-20261024/report.json",
+      "bytes": 122406,
+      "sha256": "7001fb1c21849b185f0419d34140cdcb54ffaaa1f26537046e49adfc12f1d78e"
+    },
+    {
+      "path": "/tmp/rustusb-data-link-network-method-review-attempt3-20261024/raw-originals-manifest.json",
+      "bytes": 1463807,
+      "sha256": "e3a77312886aa9acda5af8a60e24091b51028ae76feb5ee66fb29dacc5021434"
+    }
+  ],
+  "mustfix": [],
+  "scope": [
+    "Six health groups: raw network facts and roles only.",
+    "All 15 groups: source and ELF provenance and actual recorded guest exits; old nine are compatibility runs, not new heartbeat cases."
+  ],
+  "limitations": [
+    "No decrypted server ALPN or h2 PING contents inferred from ciphertext. ClientHello offer and plaintext ServerHello TLS1.3 selection are parsed.",
+    "Health matched replies and timeout are application observations bound to actual TCP tuple; they do not prove USB completion.",
+    "Host ACK/START timestamps are send completion/log observations, not guest receive or nc syscall timestamps. Guest ordering and actual TCP refusal are separate evidence.",
+    "Catalog ciphertext is not decoded: unique new TLS flow is correlated with successful phase RPC and executed guest sequence.",
+    "Valve FD/dev/ino retention and broker kernel TCP inode ownership are distinct: actual proc TCP rows are associated with broker FD links, PID/starttime, UID and executable receipt. These are sequential snapshots, not an atomic kernel transaction.",
+    "Network results do not replace Root/helper cleanup or USB lifecycle acceptance. No hardware or ARM runtime result is claimed.",
+    "Historical e152 Catalog FAIL and 934 virtual readiness FAIL remain unchanged; final result is a new clean run."
+  ]
+}

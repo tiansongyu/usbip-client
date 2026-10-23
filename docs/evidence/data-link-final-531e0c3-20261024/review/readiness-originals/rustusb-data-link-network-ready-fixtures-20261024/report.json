@@ -1,0 +1,171 @@
+{
+  "result": "STATIC_EVIDENCE_FIXTURE_PASS",
+  "scope": "Constructed raw files and actual readiness verifier, no guest/script execution, TLS, USB, network configuration, Cargo or QEMU. Not a runtime acceptance.",
+  "checks": [
+    {
+      "name": "complete dual guest readiness ACK then START then actual probe observation",
+      "passed": true
+    },
+    {
+      "name": "carrier-still-zero",
+      "passed": true,
+      "rejection": "network-ready is not the actual first complete ready sample"
+    },
+    {
+      "name": "operstate-not-up",
+      "passed": true,
+      "rejection": "network-ready is not the actual first complete ready sample"
+    },
+    {
+      "name": "START-before-second-ACK",
+      "passed": true,
+      "rejection": "START preceded validated actual link readiness"
+    },
+    {
+      "name": "missing-server-ACK",
+      "passed": true,
+      "rejection": "one actual network ACK for each role"
+    },
+    {
+      "name": "post-ACK-ready-original-changed",
+      "passed": true,
+      "rejection": "START preceded validated actual link readiness"
+    },
+    {
+      "name": "probe-uptime-before-ready",
+      "passed": true,
+      "rejection": "negative connection probe preceded actual carrier readiness"
+    },
+    {
+      "name": "probe-carrier-down",
+      "passed": true,
+      "rejection": "negative connection probe preceded actual carrier readiness"
+    },
+    {
+      "name": "nonmonotonic-observation",
+      "passed": true,
+      "rejection": "network readiness exceeds bounded monotonic observation window"
+    },
+    {
+      "name": "over-ten-seconds",
+      "passed": true,
+      "rejection": "network readiness exceeds bounded monotonic observation window"
+    },
+    {
+      "name": "over-200-observations",
+      "passed": true,
+      "rejection": "network poll count/complete records"
+    },
+    {
+      "name": "ready-snapshot-NO-CARRIER",
+      "passed": true,
+      "rejection": "actual ready interface/address snapshot incomplete"
+    },
+    {
+      "name": "live-original-differs",
+      "passed": true,
+      "rejection": "network-ready is not the actual first complete ready sample"
+    },
+    {
+      "name": "boolean-carrier",
+      "passed": true,
+      "rejection": "invalid actual carrier/operstate"
+    },
+    {
+      "name": "incomplete-observation-line",
+      "passed": true,
+      "rejection": "network poll count/complete records"
+    },
+    {
+      "name": "guest-probe-before-ACK-marker",
+      "passed": true,
+      "rejection": "negative probe preceded the guest ACK barrier"
+    },
+    {
+      "name": "missing-actual-probe-original",
+      "passed": true,
+      "rejection": "missing/oversized artifact: network-probe-start.json"
+    }
+  ],
+  "valid_facts": {
+    "scope": "Actual initial carrier/operstate and address precondition; not TLS health or USB completion",
+    "roles": [
+      {
+        "role": "server",
+        "poll_count": 3,
+        "guest_uptime": "2.80",
+        "carrier": 1,
+        "operstate": "up",
+        "artifact_sha256": {
+          "network-ready-observations.jsonl": "08ef3e31c27a1125c70df51e0e0a4c5a523182c671d8012603b086f895e01110",
+          "network-ready.json": "ce27698f411009434e31a805a7f6223bb332836e7583df461d5c92a1b0f31bae",
+          "network-ready.txt": "af6a4673a7c9005d890216a5c0bef4c1b3fe3ac16fe8544e04c911b63562fc52"
+        },
+        "ack_host_monotonic_ns": 100
+      },
+      {
+        "role": "client",
+        "poll_count": 3,
+        "guest_uptime": "2.80",
+        "carrier": 1,
+        "operstate": "up",
+        "artifact_sha256": {
+          "network-ready-observations.jsonl": "4d376e63827bc3b25f4fa0d647b22bd98d4f91f58a52de887c5ce7e3e1fb9f82",
+          "network-ready.json": "06b94972ed119bf0e63275968181014ca61e227e6f92d89bdb5d63d974795064",
+          "network-ready.txt": "5e1d1ea12a134fcae9dc560a0d567d9ce84f29803a5008bdd0b89151cf8e3eed"
+        },
+        "probe_start_sha256": "a93c67ff9499409553300323dc0ce353c82242618db4e4130410485739cd90ab",
+        "probe_start_guest_uptime": "3.10",
+        "ack_host_monotonic_ns": 200
+      }
+    ],
+    "start_host_monotonic_ns": 300
+  },
+  "sources": [
+    {
+      "path": "scripts/qemu_data_link_health/README.md",
+      "sha256": "5e9a5a28ffd8276800862ee965a76b1305985ff5a452f0afff0a21616d2efd46",
+      "bytes": 7166
+    },
+    {
+      "path": "scripts/qemu_data_link_health/audit.py",
+      "sha256": "b4b7eb58fd43c02d3c48be68fafc06c4184fb21e64358a52833a8f15c2b60daf",
+      "bytes": 30241
+    },
+    {
+      "path": "scripts/qemu_data_link_health/guest-init.sh",
+      "sha256": "fcd1d68ec8daa2af394e916b02c223337c2696c90b724ca545c33849c636c86e",
+      "bytes": 11732
+    },
+    {
+      "path": "scripts/qemu_data_link_health/guest-rust-fragments.sh",
+      "sha256": "ada89fa1a6716fc2c44bacaaeed079e2a7b6d5c4ea7ea18b7707d3a7792e64d5",
+      "bytes": 10439
+    },
+    {
+      "path": "scripts/qemu_data_link_health/packets.py",
+      "sha256": "10c4e80aa7a93cb5663090918e73cea1f549fcd69f0e23008a95587fcd386fd5",
+      "bytes": 9718
+    },
+    {
+      "path": "scripts/qemu_data_link_health/run.py",
+      "sha256": "aee8e02ef4e1bfe7b970809936bc68a4c0500a55b3c64da0582639d76623866b",
+      "bytes": 32087
+    },
+    {
+      "path": "scripts/qemu_data_link_health/valve.py",
+      "sha256": "af59f3e5f4b5e0d2dbbcbb41aacc1386baf5c7dd30f31afc6c26768c792dab84",
+      "bytes": 13728
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify.py",
+      "sha256": "e37f1cb422a998d6a135cbc796de1a4d3419a30112bbfa778b118358e12c58f1",
+      "bytes": 24887
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify_rust.py",
+      "sha256": "e935b07a904754281e282c5c4ece91dc23eb7b84d05dd0d493ec837de1630db0",
+      "bytes": 37276
+    }
+  ]
+}

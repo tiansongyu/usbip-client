@@ -1,0 +1,29 @@
+--- /tmp/rustusb-data-link-compat-independent-review-20261024/agent.py
++++ /tmp/rustusb-data-link-final-lifecycle-review-20261024/compat/agent.py
+@@ -2,8 +2,8 @@
+ """Read-only independent evidence parser. No harness imports or verification calls."""
+ import argparse,base64,collections,datetime,hashlib,json,pathlib,re,struct,subprocess
+ REPO=pathlib.Path('/home/ubuntu/github/usbip-client')
+-EXPECTED='e29cc1163ff9ce3cd73833c15eb24611941bac34'
+-LOCK=json.loads(pathlib.Path('/tmp/rustusb-data-link-compat-independent-review-20261024/source-lock.json').read_text())
++EXPECTED='531e0c32a4b0e7252ca771ab4f10042c71c8c195'
++LOCK=json.loads(pathlib.Path('/tmp/rustusb-data-link-final-lifecycle-review-20261024/compat/source-lock.json').read_text())
+ EXPECTED_BINARIES=None
+ def sha(b):return hashlib.sha256(b).hexdigest()
+ def identity(s):return tuple(s[k] for k in ['id','instance_id','job_id','profile','role','device_key','principal'])
+@@ -27,7 +27,7 @@
+   self.check('provenance','exact current frozen input set includes service/core',summary['source_inputs']=={p:LOCK['source_hashes'][p] for p in LOCK['agent_inputs']})
+   software_manifest_path=LOCK['software_manifest_git_path']
+   software_manifest_bytes=pathlib.Path(software_manifest_path).read_bytes();software_manifest=json.loads(software_manifest_bytes)
+-  self.check('software_attribution','actual completed data-link candidate source manifest mapped to e29cc11',sha(software_manifest_bytes)==LOCK['software_manifest_sha256'] and len(software_manifest)==LOCK['software_input_count'])
++  self.check('software_attribution','actual completed data-link candidate source manifest mapped to 531e0c3',sha(software_manifest_bytes)==LOCK['software_manifest_sha256'] and len(software_manifest)==LOCK['software_input_count'])
+   for entry in software_manifest:
+    name=entry['path'];current=subprocess.check_output(['git','show',EXPECTED+':'+name],cwd=REPO)
+    self.check('software_attribution',name,len(current)==entry['bytes'] and sha(current)==entry['sha256'])
+@@ -245,5 +245,5 @@
+  EXPECTED_BINARIES=json.loads(args.expected_binaries.read_text())
+  if set(EXPECTED_BINARIES)!={'rustusb','rustusb-helper'} or not all(re.fullmatch('[0-9a-f]{64}',v) for v in EXPECTED_BINARIES.values()):raise ValueError('exact completed-build locked ELF map required')
+  if args.output.exists():raise FileExistsError('preserve earlier reviewer result')
+- r=Audit(args.evidence.resolve()).report();r['parser_sha256']=sha(pathlib.Path(__file__).read_bytes());r['source_lock_sha256']=sha(pathlib.Path('/tmp/rustusb-data-link-compat-independent-review-20261024/source-lock.json').read_bytes());r['reuse']={'original':'/tmp/rustusb-agent-config-independent-raw-audit-20261024.py','sha256':'6d60e2dd0c035c6bcb12f97f1fec0d206c62ceec786da1ac679f6f6b7236b706','changes':'e29cc11 source/ELF and local software-manifest provenance; added strict private application disk2/association/raw-v1/unchanged DTO checks; all prior lifecycle/configuration assertions retained.'};args.output.write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({'result':r['result'],'checks':r['check_count'],'categories':r['category_counts'],'error':r['error'],'output':str(args.output)}));return int(r['result']!='PASS')
++ r=Audit(args.evidence.resolve()).report();r['parser_sha256']=sha(pathlib.Path(__file__).read_bytes());r['source_lock_sha256']=sha(pathlib.Path('/tmp/rustusb-data-link-final-lifecycle-review-20261024/compat/source-lock.json').read_bytes());r['reuse']={'original':'/tmp/rustusb-agent-config-independent-raw-audit-20261024.py','sha256':'6d60e2dd0c035c6bcb12f97f1fec0d206c62ceec786da1ac679f6f6b7236b706','changes':'531e0c3 source/ELF and local software-manifest provenance; added strict private application disk2/association/raw-v1/unchanged DTO checks; all prior lifecycle/configuration assertions retained.'};args.output.write_text(json.dumps(r,indent=2)+'\n');print(json.dumps({'result':r['result'],'checks':r['check_count'],'categories':r['category_counts'],'error':r['error'],'output':str(args.output)}));return int(r['result']!='PASS')
+ if __name__=='__main__':raise SystemExit(main())

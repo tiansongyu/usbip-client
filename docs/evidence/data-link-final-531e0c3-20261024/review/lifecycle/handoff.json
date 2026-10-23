@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+  "report": {
+    "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/report.json",
+    "bytes": 16022,
+    "sha256": "87e0a711335d42128bd9ebc82c668005d1d04ed5d964d607c8f1288b1f19eecc"
+  },
+  "review_manifest": {
+    "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/manifest.json",
+    "bytes": 18077,
+    "sha256": "50b420a3475369e680d2e59e6a6478e0552a084d5902979d6f1ad276d4793716"
+  },
+  "raw_manifest": {
+    "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/raw-originals-manifest.json",
+    "bytes": 1424936,
+    "sha256": "b893ca1a3150d65de59509a493e6d3592cc616007d177df53419355030df43a3"
+  },
+  "replay": {
+    "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/replay.py",
+    "bytes": 1421,
+    "sha256": "2cef42f60c0139866f75b82b4e863140ba07fb2f7547c82564335edadae7d499"
+  },
+  "replay_command": "python3 -B /tmp/rustusb-data-link-final-lifecycle-review-20261024/replay.py /tmp/rustusb-data-link-final-lifecycle-replay-NEW",
+  "scopes": {
+    "new_health": {
+      "groups": 6,
+      "guest_exit_zero": 12,
+      "directional_fault_windows": 18,
+      "io_rounds": 42,
+      "serial_each_direction_bytes": 1470,
+      "virtual_self_echo_each_direction_bytes": 490,
+      "hardware_emulated_ftdi_independent_each_direction_bytes": 980,
+      "actual_endpoint_probe_timeout_samples": 35,
+      "timeout_enqueue_elapsed_millis_range": [
+        3000,
+        3002
+      ],
+      "decoded_guest_files": 1624,
+      "decoded_live_files": 472,
+      "pcap_frames_accounted": 12361,
+      "predicates": 27081
+    },
+    "old_raw_v1_compat": {
+      "groups": 9,
+      "guest_exit_zero": 18,
+      "decoded_guest_files": 1030,
+      "predicates": 3885,
+      "scope": "Six foreground+two Native agent+SIGTERM, old raw-v1 health explicitly unavailable; separate from new fault windows."
+    },
+    "total": {
+      "groups": 15,
+      "guest_exit_zero": 30,
+      "decoded_guest_files": 2654,
+      "raw_original_files": 5990
+    }
+  },
+  "predicate_counts": {
+    "new_health": 27081,
+    "old_compat_groups": 3885,
+    "old_compat_batch": 253,
+    "supplemental": 36,
+    "total": 31255,
+    "meaning": "Diagnostic comparisons including hashes/packets; not product-test or USB-case counts."
+  },
+  "review_files": 82,
+  "authorship": "Current reviewer authored new Rust guest-rust-fragments.sh/verify_rust.py and related service implementation. New Native harness is not this reviewer\u2019s work. Method independence is not independent author identity.",
+  "earlier_parser_errors": {
+    "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/parser-revision-history.json",
+    "bytes": 1305,
+    "sha256": "873dfd7a0e54c86a4d746d4fd8e4ee77614ad06dba3a2e745d078c6ac38b20a8"
+  },
+  "no_repo_changes": true,
+  "no_cargo_qemu_product_execution": true,
+  "no_harness_verifier_import_or_call": true
+}

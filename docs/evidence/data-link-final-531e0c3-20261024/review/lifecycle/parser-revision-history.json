@@ -1,0 +1,24 @@
+{
+  "scope": "Reviewer/parser defects only. No original run summary, source, expected USB outcome, or raw file was modified. Old9 inherited lifecycle assertions were not removed or relaxed.",
+  "entries": [
+    {
+      "file": "health_review-initial.py",
+      "issue": "Initial standalone parser had missing whitespace in Python conditional tokens; parse failed before opening raw data."
+    },
+    {
+      "file": "health_review-revision1.py",
+      "reports": "health-first",
+      "issue": "First parser expected a features list; actual frozen summary uses exact --workspace --all-features --release --locked string. Replaced with strict actual documented representation."
+    },
+    {
+      "file": "health_review-revision2.py",
+      "reports": "health-second",
+      "issue": "Assumed new selected README belonged to global213 py/sh/Rust inputs. Added direct immutable Gitblob check for the additional selected README; did not omit source verification."
+    },
+    {
+      "file": "health_review-revision3.py",
+      "reports": "health-third",
+      "issue": "Incorrectly normalized all decoded TCP directions. Raw valve packet flow preserves source-to-destination; decoder now preserves direction and compares each drop against correct directional armed tuple, including SYN/SYN-ACK."
+    }
+  ]
+}

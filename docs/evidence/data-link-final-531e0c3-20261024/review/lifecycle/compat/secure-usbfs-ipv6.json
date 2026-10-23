@@ -1,0 +1,538 @@
+{
+  "kind": "separate raw lifecycle audit",
+  "source_head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+  "evidence": "/tmp/rustusb-data-link-ready-531e0c3-20261024/secure-usbfs-ipv6",
+  "result": "PASS",
+  "reviewer_provenance": {
+    "identity": "/root/journal_harness_review; historical independent parser author; independent method does not imply different reviewer identity",
+    "derived_from": "/tmp/rustusb-foreground-six-lifecycle-raw-review-eaa1936-20261023.py",
+    "original_sha256": "5e2fa15807016a810aa2eae1a8c07265cabef98f206924522697a657c0bef239",
+    "changes": "New run/source/ELF attribution, single-group CLI, preserved raw kernel warning list; lifecycle assertions retained. No runner imports or verifier/pcap calls."
+  },
+  "limits": [
+    "Audit comparisons are not new USB cases.",
+    "Only this completed pair is reviewed; no Cargo/QEMU/USB/production executable run.",
+    "Historical runtime verdicts/source ownership stay unchanged.",
+    "No independent PCAP protocol/decryption review here.",
+    "No claim of kernel-hardblocked initialization acceptance, hardware G1/G2 or complete Phase3.",
+    "Legacy USBFS intermediate grant journal is not captured; only actual retained final journal is checked."
+  ],
+  "group": {
+    "group": "usbfs/ipv6",
+    "result": "PASS",
+    "evidence_root": "/tmp/rustusb-data-link-ready-531e0c3-20261024/secure-usbfs-ipv6",
+    "summary_sha256": "82ae5446df9796618d460f6ea171fcae924b981472e52387f2762c01d8649580",
+    "head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+    "completed_utc": "2026-10-23T21:19:14.546533+00:00",
+    "source_inputs": 167,
+    "artifact_entries": 293,
+    "redecoded_guest_artifacts": 103,
+    "binary_sha256": {
+      "rustusb": "bb6fb276c0cbfbb73c2cdb8af0f73d87045ac7235b4943cf096c0643d570814a",
+      "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+    },
+    "cycles": [
+      {
+        "cycle": 1,
+        "evdev_key_code": 2,
+        "serial_bytes_each_direction": 35,
+        "channel_ids": [
+          "450feecd-fc59-48b2-b428-b0a139a388c0",
+          "81ab4cbd-d7e4-441e-b453-dff4596bbffa"
+        ],
+        "local_generations": [
+          {
+            "filesystem_device": 23,
+            "inode": 25585
+          },
+          {
+            "filesystem_device": 23,
+            "inode": 25819
+          }
+        ]
+      },
+      {
+        "cycle": 2,
+        "evdev_key_code": 3,
+        "serial_bytes_each_direction": 35,
+        "channel_ids": [
+          "b77b3e48-5d52-488b-b806-d191500eb2f0",
+          "496b341c-4aa0-4d41-befc-1ec29b958168"
+        ],
+        "local_generations": [
+          {
+            "filesystem_device": 23,
+            "inode": 26003
+          },
+          {
+            "filesystem_device": 23,
+            "inode": 26237
+          }
+        ]
+      }
+    ],
+    "preserved_kernel_warning_lines": {
+      "server": [],
+      "client": [
+        {
+          "line": 479,
+          "text": "[    4.630207] vhci_hcd: vhci_device speed not set"
+        },
+        {
+          "line": 481,
+          "text": "[    4.745213] vhci_hcd: vhci_device speed not set"
+        },
+        {
+          "line": 492,
+          "text": "[    4.968959] vhci_hcd: urb->status -104"
+        },
+        {
+          "line": 494,
+          "text": "[    4.969323] vhci_hcd: urb->status -104"
+        },
+        {
+          "line": 522,
+          "text": "[    6.303206] vhci_hcd: vhci_device speed not set"
+        },
+        {
+          "line": 524,
+          "text": "[    6.417206] vhci_hcd: vhci_device speed not set"
+        },
+        {
+          "line": 535,
+          "text": "[    6.642346] vhci_hcd: urb->status -104"
+        },
+        {
+          "line": 537,
+          "text": "[    6.642706] vhci_hcd: urb->status -104"
+        }
+      ]
+    },
+    "assertion_count": 81,
+    "checks": [
+      {
+        "group": "provenance",
+        "name": "terminal source/build/guest guards",
+        "passed": true
+      },
+      {
+        "group": "provenance",
+        "name": "fixed actual foreground regression ELFs",
+        "passed": true
+      },
+      {
+        "group": "provenance",
+        "name": "all frozen inputs exact commit Git blobs",
+        "passed": true,
+        "detail": {
+          "count": 167
+        }
+      },
+      {
+        "group": "provenance",
+        "name": "reviewed initialization fix frozen",
+        "passed": true
+      },
+      {
+        "group": "provenance",
+        "name": "all artifact manifest originals match",
+        "passed": true,
+        "detail": {
+          "count": 293
+        }
+      },
+      {
+        "group": "provenance",
+        "name": "server raw serial artifact extraction exact",
+        "passed": true,
+        "detail": {
+          "count": 39
+        }
+      },
+      {
+        "group": "guest_completion",
+        "name": "server real boot and orderly PASS",
+        "passed": true
+      },
+      {
+        "group": "isolation",
+        "name": "server role keys CRNG RTC",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "server/executable-helper.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "server/executable-server-2.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "server/executable-server.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "server/executable-server-1.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "server/identity-server-1.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "server/identity-helper.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "server/identity-server-2.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "server/identity-server.txt",
+        "passed": true
+      },
+      {
+        "group": "topology",
+        "name": "server isolated separate guest and fixed role",
+        "passed": true
+      },
+      {
+        "group": "provenance",
+        "name": "client raw serial artifact extraction exact",
+        "passed": true,
+        "detail": {
+          "count": 64
+        }
+      },
+      {
+        "group": "guest_completion",
+        "name": "client real boot and orderly PASS",
+        "passed": true
+      },
+      {
+        "group": "isolation",
+        "name": "client role keys CRNG RTC",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "client/executable-hid-1.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "client/executable-helper.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "client/executable-serial-2.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "client/executable-hid-2.txt",
+        "passed": true
+      },
+      {
+        "group": "actual_elf",
+        "name": "client/executable-serial-1.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "client/identity-serial-1.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "client/identity-hid-1.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "client/identity-helper.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "client/identity-hid-2.txt",
+        "passed": true
+      },
+      {
+        "group": "credentials",
+        "name": "client/identity-serial-2.txt",
+        "passed": true
+      },
+      {
+        "group": "topology",
+        "name": "client isolated separate guest and fixed role",
+        "passed": true
+      },
+      {
+        "group": "catalog",
+        "name": "exact unique configured key/device mapping",
+        "passed": true
+      },
+      {
+        "group": "catalog",
+        "name": "full actual descriptor profiles",
+        "passed": true
+      },
+      {
+        "group": "isolation",
+        "name": "client broker policy exact and no fake trusted network",
+        "passed": true
+      },
+      {
+        "group": "isolation",
+        "name": "UID1000 denial no client kernel mutation",
+        "passed": true
+      },
+      {
+        "group": "network_refusal",
+        "name": "both actual IPv4 IPv6 plaintext refusals",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "two USED ports and complete observed durable records",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "hid exact lifecycle events",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "hid catalog target journal owner and full kernel receipt",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "hid complete actual configured profile",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "hid actual wait0 no recurrence of NotFound",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "serial exact lifecycle events",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "serial catalog target journal owner and full kernel receipt",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "serial complete actual configured profile",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "serial actual wait0 no recurrence of NotFound",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "actual evdev key down and up",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "exact real 35B RX and TX",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "SIGTERM completed allNULL durable empty and localGone",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "unchanged contender kernel and catalog reuse",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "two USED ports and complete observed durable records",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "hid exact lifecycle events",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "hid catalog target journal owner and full kernel receipt",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "hid complete actual configured profile",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "hid actual wait0 no recurrence of NotFound",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "serial exact lifecycle events",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "serial catalog target journal owner and full kernel receipt",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "serial complete actual configured profile",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "serial actual wait0 no recurrence of NotFound",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "actual evdev key down and up",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "exact real 35B RX and TX",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "SIGTERM completed allNULL durable empty and localGone",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "unchanged contender kernel and catalog reuse",
+        "passed": true
+      },
+      {
+        "group": "reuse",
+        "name": "four fresh channel IDs and local generations",
+        "passed": true
+      },
+      {
+        "group": "kernel_enumeration",
+        "name": "actual HID serial enumeration twice and exact address disconnection",
+        "passed": true
+      },
+      {
+        "group": "initialization",
+        "name": "Native import no recurrent NotFound or helper IO warning",
+        "passed": true
+      },
+      {
+        "group": "server_stop",
+        "name": "one real ready and SIGTERM orderly stopped",
+        "passed": true
+      },
+      {
+        "group": "ordering",
+        "name": "actual host controls sequence keeps IO before cleanup and reuse",
+        "passed": true
+      },
+      {
+        "group": "physical_baseline",
+        "name": "real two fixed synthetic original devices and drivers",
+        "passed": true
+      },
+      {
+        "group": "isolation",
+        "name": "server broker isolated and denied without baseline mutation",
+        "passed": true
+      },
+      {
+        "group": "physical_io",
+        "name": "two actual QMP key commands accepted",
+        "passed": true
+      },
+      {
+        "group": "physical_io",
+        "name": "host char backend received exact cumulative 70B",
+        "passed": true
+      },
+      {
+        "group": "physical_baseline",
+        "name": "final original full configuration IF alternates drivers generation restored",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "USBFS genuinely held active pending URBs and claims",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "USBFS real endpoint work visible",
+        "passed": true
+      },
+      {
+        "group": "cycle_1",
+        "name": "USBFS release verified zero resources and exact original baseline",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "USBFS genuinely held active pending URBs and claims",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "USBFS real endpoint work visible",
+        "passed": true
+      },
+      {
+        "group": "cycle_2",
+        "name": "USBFS release verified zero resources and exact original baseline",
+        "passed": true
+      },
+      {
+        "group": "journal",
+        "name": "USBFS final durable journal retired",
+        "passed": true
+      },
+      {
+        "group": "legacy_compatibility",
+        "name": "raw root journals remain schema1 without tracking fields",
+        "passed": true,
+        "detail": {
+          "journals": 5
+        }
+      },
+      {
+        "group": "immutability",
+        "name": "original summary unchanged by review",
+        "passed": true
+      }
+    ]
+  },
+  "parser_sha256": "46b85ad8aa86f74806a570d8c4d450a1157322d79c488844a5a3db2793aefa7e",
+  "source_lock_sha256": "723782b7eba13743767edf7063b46edc5180a25868af78b6479c32501c9ef3d7",
+  "expected_binaries_file_sha256": "2cf1042c292b48607e3f5ff857f0c71e9698363bc7628e5cd285651004d26822"
+}

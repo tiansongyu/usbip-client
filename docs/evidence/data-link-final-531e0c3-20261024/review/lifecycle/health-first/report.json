@@ -1,0 +1,82 @@
+{
+  "result": "FAIL",
+  "head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+  "reviewer_authorship": "Reviewer authored guest-rust-fragments.sh and verify_rust.py and related service code. This independently implemented standard-library parser imports no harness verifier; this is method independence, not independent author identity.",
+  "source": {
+    "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health_review.py",
+    "bytes": 32143,
+    "sha256": "7e22957f7d05cc5ddc46126b8b99b2c82758b0f6ee2a13897a865341cb24bb9a"
+  },
+  "groups": [
+    {
+      "case": "health-native-ipv4",
+      "result": "FAIL",
+      "predicate_count": 2,
+      "report": {
+        "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health/health-native-ipv4.json",
+        "bytes": 1316,
+        "sha256": "8d8cd854716196af748a1a497aa1172e12ded0a58a8cc101ebf9c428a6eaa02a"
+      }
+    },
+    {
+      "case": "health-native-ipv6",
+      "result": "FAIL",
+      "predicate_count": 2,
+      "report": {
+        "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health/health-native-ipv6.json",
+        "bytes": 1316,
+        "sha256": "013ad9c4b499f0d33cdb1d906b58d16ec502f6af0605f48265f8682b0a4d3f18"
+      }
+    },
+    {
+      "case": "health-usbfs-ipv4",
+      "result": "FAIL",
+      "predicate_count": 2,
+      "report": {
+        "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health/health-usbfs-ipv4.json",
+        "bytes": 1314,
+        "sha256": "fb5bafc1dd0888349a76a15dd8b73b6e114b5ea3c72dc6554bf27b3880a11fd4"
+      }
+    },
+    {
+      "case": "health-usbfs-ipv6",
+      "result": "FAIL",
+      "predicate_count": 2,
+      "report": {
+        "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health/health-usbfs-ipv6.json",
+        "bytes": 1314,
+        "sha256": "3050d3427b16bd8291aee24f9f88f90151fdb7575ef3c52f9e8da15d9590faa0"
+      }
+    },
+    {
+      "case": "health-virtual-ipv4",
+      "result": "FAIL",
+      "predicate_count": 2,
+      "report": {
+        "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health/health-virtual-ipv4.json",
+        "bytes": 1318,
+        "sha256": "bb00eeda125fa0603b610cc0a43d3080cc2aa4d3f5d4dfe61dfb94a2a124f43b"
+      }
+    },
+    {
+      "case": "health-virtual-ipv6",
+      "result": "FAIL",
+      "predicate_count": 2,
+      "report": {
+        "path": "/tmp/rustusb-data-link-final-lifecycle-review-20261024/health/health-virtual-ipv6.json",
+        "bytes": 1318,
+        "sha256": "eaa435fe11209727ddfeb4b1ed7537c0632e18434ce20d2d1df866ddfe1a4f8f"
+      }
+    }
+  ],
+  "boundaries": [
+    "Predicate/file counts are diagnostic comparisons, not USB cases.",
+    "MatchedReply/RTT are actual same-data driver observations qualified by session/epoch/TCP identity; encrypted PING bytes are not visible in PCAP. RTT is enqueue-to-library-Pong and does not measure USB latency.",
+    "Seven virtual CDC rounds are self-echo; virtual HID evidence is real enumeration/idle fault only, without injected KEY.",
+    "Target fault is idle/after-I/O; no pending URB or kernel internal active window is proven.",
+    "Rust incoming cleanup is actual engine completion evidence without Native helper proof; USBFS whole-device grant Final Finish is independently rooted.",
+    "Final transport errors and verified cleanup are recorded separately. No blanket no-error claim.",
+    "Source/ELF attribution is not hardware/complete Phase3 or a new software execution.",
+    "All earlier FAIL and unexecuted scopes remain unchanged."
+  ]
+}

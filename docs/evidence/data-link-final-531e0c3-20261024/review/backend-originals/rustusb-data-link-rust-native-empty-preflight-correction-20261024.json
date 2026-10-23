@@ -1,0 +1,42 @@
+{
+  "result": "PREVIOUS_REVIEW_INFERENCE_WITHDRAWN",
+  "scope": "Read-only preflight correction; no runtime failure or source mutation.",
+  "original_report": {
+    "path": "/tmp/rustusb-data-link-rust-native-empty-preflight-20261024.json",
+    "sha256": "a24e81215c939adca25127344f04b811e3003a2e816de9a5fe2822dbc67ffb4b"
+  },
+  "correction": "Native Store persists an empty disk1 only when opened. linux.rs1291 opens it only for nonempty secure_imports, nonempty secure_native_device_ids or an existing state directory. New Rust server policy has both Native pools empty, native.initramfs and common boot do not create its native state subdirectory, so absence is the correct fixture requirement. The e152 Native server had a nonempty secure_native pool and is not comparable.",
+  "mustfix": [],
+  "source": [
+    {
+      "path": "crates/rustusb-daemon/src/linux.rs",
+      "sha256": "fc7d2aec9701e80f6ece4cf2c383924bab3e4b89d4e9c4bb5b75bdca091760b4",
+      "bytes": 85131
+    },
+    {
+      "path": "crates/rustusb-daemon/src/native_state.rs",
+      "sha256": "e44b96f96aac1f16f15e0e819ead3e8c3078abba2a59197c2142aa6d8e7e463d",
+      "bytes": 38941
+    },
+    {
+      "path": "scripts/qemu/run-native-qemu.py",
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+      "bytes": 19626
+    },
+    {
+      "path": "scripts/qemu/run-secure-qemu.py",
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+      "bytes": 50549
+    },
+    {
+      "path": "scripts/qemu/guest-secure-init.sh",
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+      "bytes": 35715
+    },
+    {
+      "path": "scripts/qemu_data_link_health/guest-rust-fragments.sh",
+      "sha256": "ada89fa1a6716fc2c44bacaaeed079e2a7b6d5c4ea7ea18b7707d3a7792e64d5",
+      "bytes": 10439
+    }
+  ]
+}
