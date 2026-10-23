@@ -1,0 +1,176 @@
+   Compiling rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.77s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_protocol-53e3b85fd0b907ae)
+
+running 14 tests
+test secure::tests::framed_management_rejects_trailing_application_data ... ok
+test secure::tests::framed_management_fin_follows_complete_response_and_keeps_both_borrows_alive ... ok
+test secure::tests::import_rejects_refusal_or_changed_selected_metadata ... ok
+test secure::tests::client_rejects_a_catalog_without_matching_standard_devices ... ok
+test secure::tests::metadata_roundtrip_really_flushes_a_buffered_writer ... ok
+test secure::tests::import_consumes_exact_reply_and_preserves_the_same_streams_urb_bytes ... ok
+test tests::parses_network_byte_order_and_interfaces ... ok
+test secure::tests::catalog_mapping_limits_and_unique_bindings_are_enforced ... ok
+test secure::tests::prelude_rejects_lengths_truncation_versions_duplicates_and_unknown_fields ... ok
+test tests::rejects_malicious_lengths_headers_strings_duplicates_and_truncation ... ok
+test tests::accepts_exact_device_and_interface_limits ... ok
+test tests::actual_tcp_request_and_deadline ... ok
+test secure::tests::framed_management_peer_without_eof_hits_the_single_production_deadline ... ok
+test secure::tests::silent_connected_metadata_peer_reaches_the_real_production_deadline ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_rust_backend-1d7de8462b1520de)
+
+running 69 tests
+test descriptors::tests::fixed_profiles_have_exact_lengths_and_endpoint_layouts ... ok
+test device::tests::control_lengths_configuration_and_invalid_interface_never_panic ... ok
+test counted::tests::management_bytes_are_excluded_and_only_successful_reads_are_counted ... ok
+test counted::tests::partial_success_is_retained_when_following_write_or_flush_fails ... ok
+test device::tests::explicit_idle_rate_repeats_current_report_and_cancellation_does_not_consume_input ... ok
+test device::tests::keyboard_pending_reports_release_control_and_bounded_atomic_queue ... ok
+test device::tests::cdc_line_coding_control_lines_break_and_notification_are_stateful ... ok
+test device::tests::reconfiguration_retires_pending_and_clears_queues_without_consuming_new_data ... ok
+test managed::tests::lost_attempt_witness_is_unconfirmed_not_verified ... ok
+test monitor::tests::phase_history_reserves_terminal_and_dropped_attempt_never_fakes_cleanup ... ok
+test device::tests::registration_exclusivity_drop_and_discovery_are_real_state_changes ... ok
+test managed::tests::delayed_attempt_completion_keeps_ownership_after_soft_cleanup_deadline ... ok
+test monitor::tests::no_admission_times_out_and_observer_loss_cannot_admit ... ok
+test physical::tests::dropping_supervisor_tracking_does_not_abort_owned_work ... ok
+test physical::tests::close_rejects_another_registry_owner_without_disabling_it ... ok
+test physical::tests::reservations_cover_two_buffers_and_remain_bounded_until_retirement ... ok
+test physical::tests::close_joins_read_only_monitor_then_waits_for_supervisor_return ... ok
+test physical::observe::tests::reconnect_never_changes_foreign_or_unowned_bindings ... ok
+test physical::worker::tests::checked_release_loop_awaits_all_in_order_and_preserves_first_errno ... ok
+test physical::tests::failed_supervisor_join_does_not_report_closed ... ok
+test physical::observe::tests::alternate_is_decimal_and_driver_observations_are_bounded ... ok
+test physical::observe::tests::generation_distinguishes_missing_replaced_and_changed_address ... ok
+test physical::tests::regular_file_capability_is_rejected_before_any_usb_or_sysfs_access ... ok
+test physical::observe::tests::reconnect_observes_sibling_binding_without_a_second_connect ... ok
+test physical::worker::tests::queued_host_state_intents_defer_later_endpoint_routing ... ok
+test monitor::tests::active_and_unacknowledged_terminal_capacity_cannot_overwrite_history ... ok
+test physical::observe::tests::alternate_already_restored_by_probe_does_not_need_reclaiming ... ok
+test physical::worker::tests::physical_errno_and_partial_bytes_survive_completion_mapping ... ok
+test physical::observe::tests::reconnect_errors_require_actual_original_binding_to_converge ... ok
+test server::tests::asynchronous_control_in_out_preserve_original_errno_and_partial_bytes ... ok
+test device::tests::cdc_bulk_short_exact_packet_zero_length_limits_and_hashes ... ok
+test server::tls_tests::response_write_and_flush_share_one_deadline ... ok
+test server::tests::idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation ... ok
+test physical::safety::tests::configuration_zero_does_not_require_interfaces_or_claim_any ... ok
+test server::tests::real_tcp_devlist_busy_import_and_phase_rejection_release_leases ... ok
+test server::tests::listener_policy_and_connection_budget_are_enforced_before_spawn ... ok
+test physical::safety::tests::changed_generation_identity_configuration_or_interface_set_denies_claim ... ok
+test wire::tests::inconsistent_or_overlong_completion_is_rejected_without_silent_truncation ... ok
+test physical::observe::tests::reconnect_rejects_changed_scope_before_and_after_connect ... ok
+test wire::tests::rejects_resource_and_phase_fields_before_reading_payload ... ok
+test physical::safety::tests::current_configuration_allows_only_our_claimed_siblings ... ok
+test physical::safety::tests::inactive_storage_and_incomplete_descriptors_remain_blocked ... ok
+test physical::safety::tests::newly_bound_storage_quirks_and_block_children_refuse_claim ... ok
+test server::tests::failed_import_write_and_handle_drop_release_ownership ... ok
+test server::tests::one_byte_control_bounds_and_pending_unlink_have_no_late_submit ... ok
+test server::tests::response_budget_is_retained_until_the_complete_frame_is_written ... ok
+test wire::tests::complete_idle_connection_waits_but_partial_frame_has_a_single_owner ... ok
+test server::tls_tests::managed_tests::last_observer_drop_stops_live_lease_without_handle_drop ... ok
+test server::tls_tests::framed_mtls_catalog_completes_full_reply_and_both_half_closes_without_claims ... ok
+test server::tls_tests::plaintext_and_unmapped_certificate_cannot_reach_the_usbip_engine ... ok
+test server::tests::hung_usb_does_not_block_control_discovery_or_single_thread_timer ... ok
+test server::tests::fragmented_out_while_pending_and_wrapped_sequences_preserve_order ... ok
+test server::tests::unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping ... ok
+test server::tls_tests::production_secure_client_codecs_preserve_the_imported_tls_stream ... ok
+test server::tls_tests::managed_framed_catalog_and_acl_refusal_keep_fin_eof_without_device_admission ... ok
+test server::tls_tests::tls_shutdown_owns_pending_handshakes_management_and_imported_reader ... ok
+test server::tls_tests::authenticated_idle_and_imported_streams_keep_the_connection_budget_until_close ... ok
+test server::tests::duplicate_active_sequence_and_pending_bound_fail_closed ... ok
+test server::tls_tests::backend_qualified_keys_do_not_authorize_virtual_bus_ids ... ok
+test server::tls_tests::managed_tests::rejected_admission_and_busy_claim_keep_distinct_cleanup_facts ... ok
+test server::tls_tests::framed_busy_reply_is_complete_and_clean_while_original_import_stays_owned ... ok
+test server::tls_tests::selected_key_must_match_bus_even_when_principal_allows_both_devices ... ok
+test server::tls_tests::real_tls_catalog_import_control_hid_and_cdc_share_the_authenticated_engine ... ok
+test server::tls_tests::managed_tests::admission_precedes_claim_and_targeted_stop_preserves_other_tls_session ... ok
+test server::tls_tests::tls_fragmentation_unlink_eof_and_third_import_keep_actor_cleanup ... ok
+test server::tests::active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out ... ok
+test server::tls_tests::denied_direct_import_does_not_reveal_busy_or_change_the_existing_owner ... ok
+test server::tls_tests::mismatched_missing_or_malformed_secure_preludes_never_claim ... ok
+test server::tests::shutdown_deadline_reports_quarantine_without_releasing_pending_hardware ... ok
+
+test result: ok. 69 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.04s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-7a859de0bfa47681)
+
+running 50 tests
+test health::tests::frozen_raw_observation_never_gains_live_rtt_or_changes_source ... ok
+test health::tests::maximum_fixed_sample_fits_reserved_space_and_rtt_can_decrease ... ok
+test foreground::tests::independent_terminal_errors_preserve_all_original_context ... ok
+test config::tests::exact_profile_action_and_os_uid_are_required ... ok
+test config::tests::malformed_or_ambiguous_manifests_fail_before_credentials ... ok
+test foreground::tests::control_errors_do_not_reflect_payload_and_unknown_fields_fail ... ok
+test jobs::client::tests::all_recording_failures_are_retained ... ok
+test ipc::tests::unix_credentials_and_framing_come_from_the_actual_connection ... ok
+test jobs::io::tests::real_duplex_bytes_are_counted_and_first_eof_closes_both_sides ... ok
+test jobs::native::tests::all_close_tasks_start_while_a_sibling_record_ack_is_delayed ... ok
+test ipc::tests::oversized_empty_and_unknown_requests_fail_without_allocating_unboundedly ... ok
+test jobs::client::tests::foreground_half_close_still_drains_the_actual_reverse_stream ... ok
+test jobs::client::tests::managed_mode_retires_both_halves_at_the_first_eof ... ok
+test jobs::client::tests::link_failure_during_an_accepted_ack_cleans_before_waiting_for_that_same_ack ... ok
+test jobs::native::tests::data_link_failure_releases_real_streams_and_lock_before_retained_ack ... ok
+test jobs::native::tests::stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock ... ok
+test jobs::native::tests::export_invalidation_ends_idle_relay_with_error ... ok
+test jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof ... ok
+test jobs::rust_server::tests::cdc_payload_bounds_and_control_errors_remain_redacted ... ok
+test jobs::native::tests::vanished_foreground_stop_sender_skips_the_real_helper ... ok
+test jobs::native::tests::stopped_foreground_prepare_skips_the_real_helper_and_creates_no_export ... ok
+test jobs::rust_server::tests::invalid_physical_selection_and_network_policy_precede_helper_io ... ok
+test jobs::native::tests::relay_copies_both_directions_and_first_eof_releases_other_half ... ok
+test jobs::rust_server::tests::rejected_begin_receipt_is_recording_failure_before_any_owner ... ok
+test jobs::rust_server::tests::finish_attempts_all_received_grants_before_any_recording_and_retains_errors ... ok
+test jobs::rust_server::tests::soft_cleanup_deadline_is_not_finished_until_real_terminal ... ok
+test run_context::tests::explicit_foreground_has_no_correlation_or_durable_admission ... ok
+test run_context::tests::vanished_foreground_reader_reports_an_error_instead_of_fake_ack ... ok
+test run_context::tests::managed_admission_really_waits_and_propagates_rejection ... ok
+test run_context::tests::sticky_stop_interrupts_unacknowledged_output_delivery ... ok
+test jobs::rust_server::tests::typed_controls_preserve_ack_error_and_ordered_shutdown ... ok
+test jobs::rust_server::tests::blocked_output_receipt_does_not_block_real_foreground_cleanup ... ok
+test store::platform::tests::bounded_audit_preserves_monotonic_cursor_gap ... ok
+test runtime::tests::legacy_state_migrates_strictly_without_changing_public_session_or_metrics ... ok
+test jobs::rust_server::tests::failed_ready_delivery_keeps_actual_cleanup_and_no_success_event ... ok
+test jobs::management_tests::discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver ... ok
+test store::platform::tests::corrupt_changed_symlink_and_hardlink_state_are_never_reset ... ok
+test store::platform::tests::strict_legacy_file_is_atomically_upgraded_and_never_downgraded ... ok
+test runtime::tests::previous_epoch_health_is_historical_and_export_is_not_a_data_link ... ok
+test runtime::tests::finished_job_with_retained_child_is_not_pruned_into_an_orphan ... ok
+test store::platform::tests::atomic_restart_lock_and_sequence_are_real_filesystem_operations ... ok
+test runtime::tests::explicit_retry_never_starts_unknown_or_expired_requests ... ok
+test runtime::tests::unauthorized_stop_does_not_signal_and_is_durably_audited ... ok
+test jobs::native::tests::actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner ... ok
+test runtime::tests::verified_finish_from_error_audits_recovering_before_disconnected ... ok
+test jobs::management_tests::actual_client_refusal_keeps_original_failure_without_helper_attempt ... ok
+test runtime::tests::link_reads_remain_authorized_and_bounded_while_the_real_store_is_blocked ... ok
+test runtime::tests::canonical_retention_matches_memory_store_and_reopened_disk ... ok
+test runtime::tests::admission_capacity_refusal_keeps_journal_healthy_and_allows_finish ... ok
+test runtime::tests::health_growth_is_reserved_inside_the_existing_admission_budget ... ok
+
+test result: ok. 50 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.87s
+
+   Doc-tests rustusb_protocol
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_rust_backend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustusb_service
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

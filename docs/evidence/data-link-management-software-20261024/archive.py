@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,hashlib
+out=Path('/home/ubuntu/github/usbip-client/docs/evidence/data-link-management-software-20261024');out.mkdir(exist_ok=False);records=[]
+def copy(source,dest):
+ source=Path(source);assert source.is_file() and not source.is_symlink(),source;raw=source.read_bytes();p=out/dest;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw);assert p.read_bytes()==raw;records.append(dict(path=dest,original=str(source),bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest()))
+for label,directory in [('preparation','/tmp/rustusb-data-link-management-fix-preparation-20261024'),('subset','/tmp/rustusb-data-link-management-fix-subset-20261024'),('gate','/tmp/rustusb-data-link-management-software-first-20261024'),('local-runtime','/tmp/rustusb-data-link-management-local-runtime-20261024'),('service-author','/tmp/rustusb-service-short-management-author-20261024')]:
+ root=Path(directory)
+ for p in sorted(root.rglob('*')):
+  if p.is_file():copy(p,label+'/'+str(p.relative_to(root)))
+for name in ['rustusb-framed-management-author-handoff-20261024.json','rustusb-data-link-management-software-first-independent-review-20261024.json','review-rustusb-data-link-management-software-first-20261024.py']:
+ copy(Path('/tmp')/name,'review/'+name)
+copy(__file__,'archive.py')
+scope=dict(scope='Software and ordinary-UID runtime after the framed short-management lifetime fix. Initial first failures and earlier608/e29 runs remain separate.',product_fix_commit='6d933d27d46c184764f339701e0f03a0610a18a4',mapped_clean_source_commit='93428ce0d27ca159003fdd98e0b9e61db7bb9d40',actual_software_head='3ca4947083e06fbdf13d2448601c55848ac9fbde',actual_software_clean=False,frozen_inputs=165,default_executions=260,all_features_executions=346,vendor_executions=20,total_executions=626,qualified_names=366,result_rows=39,failed=0,ignored=0,cli_sha256='bb6fb276c0cbfbb73c2cdb8af0f73d87045ac7235b4943cf096c0643d570814a',helper_sha256='b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5',notes=['Original failed regression function is byte-identical and now passes in default/all-features.','Ten cargo commands are recorded in actual shell xtrace; final toolchain and ELF were sampled separately.','Native-only check/tree and four signals/two backpressure cases use separate raw receipts.','Input-to-Gitblob mapping does not relabel the dirty actual gate as a clean run.','QEMU acceptance is separate, and the934 matrix stopped after four PASS and virtual readiness FAIL.'])
+raw=(json.dumps(scope,indent=2)+'\n').encode();(out/'scope.json').write_bytes(raw);records.append(dict(path='scope.json',original='generated archive scope',bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest()));(out/'manifest.json').write_text(json.dumps(dict(schema_version=1,files=records),indent=2)+'\n');print('files',len(records)+1,'bytes',sum(x['bytes'] for x in records))

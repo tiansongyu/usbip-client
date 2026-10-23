@@ -1,0 +1,32 @@
+{
+  "binary": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+  "sha256_before": "bb6fb276c0cbfbb73c2cdb8af0f73d87045ac7235b4943cf096c0643d570814a",
+  "sha256_after": "bb6fb276c0cbfbb73c2cdb8af0f73d87045ac7235b4943cf096c0643d570814a",
+  "runs": [
+    {
+      "tag": "signals",
+      "command": [
+        "python3",
+        "scripts/test-server-signals.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--skip-build",
+        "--evidence",
+        "/tmp/rustusb-data-link-management-local-runtime-20261024/signals"
+      ],
+      "exit": 0,
+      "seconds": 0.4955046600080095
+    },
+    {
+      "tag": "backpressure",
+      "command": [
+        "python3",
+        "scripts/test-virtual-backpressure.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb"
+      ],
+      "exit": 0,
+      "seconds": 5.249323337979149
+    }
+  ]
+}

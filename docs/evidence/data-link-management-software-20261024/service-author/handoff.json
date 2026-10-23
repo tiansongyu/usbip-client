@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "status": "source_frozen_pending_root_compile_and_runtime_tests",
+  "head": "3ca4947083e06fbdf13d2448601c55848ac9fbde",
+  "files": [
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "bytes": 7837,
+      "sha256": "220b25fc53a95e7ce7554a3018fd7c4d81a3589b5501dc4b73b3b7e6373bc1d6",
+      "frozen_copy": "/tmp/rustusb-service-short-management-author-20261024/mod.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/link.rs",
+      "bytes": 7525,
+      "sha256": "d9b930c6b51920fddba044713b09d7f09b4f06001952f55477f70f7e7208a6d0",
+      "frozen_copy": "/tmp/rustusb-service-short-management-author-20261024/link.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 52631,
+      "sha256": "d281008c5aac7623c7fa359409c5fdac7ab82e4abfff9f9fd48ebdd99b4d213a",
+      "frozen_copy": "/tmp/rustusb-service-short-management-author-20261024/native.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "bytes": 19714,
+      "sha256": "5866164d105efc990c7b8cdcc8a6be29641105d4e9a54350bd35c61be249ba2e",
+      "frozen_copy": "/tmp/rustusb-service-short-management-author-20261024/client.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/management_tests.rs",
+      "bytes": 9939,
+      "sha256": "3edeabc3c53e3f5c6a6f20fb5bdcf5432990f6ba21b1cdaf5b179d9cd5c1d9b1",
+      "frozen_copy": "/tmp/rustusb-service-short-management-author-20261024/management_tests.rs"
+    }
+  ],
+  "contracts": [
+    "v2 management uses borrowed live I/O and production finish_framed_management after a fully parsed or flushed short reply.",
+    "Only pure FIN/EOF stage selects interruption; once join begins, the exact LinkOwner is retained and unconditionally awaited.",
+    "Confirmed FIN/EOF uses natural join and requires PeerEof; failure/timeout/caller stop requests stop and joins.",
+    "Discovery includes short close in its original caller deadline, preserves Ok(None) cooperative stop, and retains outer owner if parsing fails.",
+    "Client IMPORT retains I/O on errors, performs bounded v2 short close, preserves the original business error; successful IMPORT proceeds on the same stream without FIN.",
+    "Native Catalog and fully flushed status2/status4 short refusal share this completion; foreground helper-prepare refusal adds completion only after actual helper result. Managed helper-error EOF behavior is unchanged.",
+    "Raw-v1 skips framing completion and preserves its original ownership path.",
+    "Actual USB helper ownership/cleanup and durable recording remain separate; no accepted helper operation is newly canceled."
+  ],
+  "new_test_sources": [
+    {
+      "name": "actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner",
+      "scope": "Actual Native service connection handler with no exports, real TCP/mTLS v1 and v2, two public service discoveries and one fixed IMPORT refusal; no helper/device operation."
+    },
+    {
+      "name": "actual_client_refusal_keeps_original_failure_without_helper_attempt",
+      "scope": "Actual service client owner; real TCP/mTLS catalog then status2/status4 refusal in both v1/v2. A nonexistent helper endpoint must remain unused; business Protocol failure, cleanup and recording results separate."
+    },
+    {
+      "name": "discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver",
+      "scope": "Real TCP/mTLS v2; peer observes client FIN but deliberately withholds its FIN. Cooperative stop must return after actual owned driver join; peer subsequently joins its real interrupted driver. No sleep/retry."
+    }
+  ],
+  "validation": {
+    "rustfmt_single_owned_files": "PASS syntax/format",
+    "git_diff_check": "PASS",
+    "cargo_run_by_this_agent": false,
+    "qemu_run_by_this_agent": false,
+    "new_tests_executed_by_this_agent": false,
+    "production_dependencies_added": false,
+    "rcgen_dev_dependency": "Root added existing workspace rcgen pin for these software tests"
+  },
+  "unchanged_guest_sources": [
+    {
+      "path": "scripts/qemu_data_link_health/guest-rust-fragments.sh",
+      "sha256": "ada89fa1a6716fc2c44bacaaeed079e2a7b6d5c4ea7ea18b7707d3a7792e64d5"
+    },
+    {
+      "path": "scripts/qemu_data_link_health/verify_rust.py",
+      "sha256": "e935b07a904754281e282c5c4ece91dc23eb7b84d05dd0d493ec837de1630db0"
+    }
+  ],
+  "limitations": [
+    "No QEMU or hardware conclusion. Original e1529ea Native Catalog FAIL and root public-engine ConnectionAborted FAIL remain failures.",
+    "No decrypted packet claim identifying the exact first-failure RST/cached-DATA point.",
+    "The Native helper-prepare failure short reply remains a source-reviewed path; these new no-hardware tests do not create a real exported kernel stub or prove kernel cleanup."
+  ]
+}

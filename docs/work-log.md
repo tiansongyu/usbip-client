@@ -509,3 +509,7 @@
 
 - 短management产品修复提交`6d933d2`。N独立核626新gate：366个qualified观察名、10条actualcargo xtrace、两rustdoc-Dwarnings、165输入与CLI/helper均一致；原失败test函数逐字未改，现在默认/allfeatures各PASS，608旧run与626新run另账。
 - I/H完成新harness的virtual/USBFS分派，两新增guest/verifier文件与Native原脚本隔离；三backend静态198/构造32通过，Native生成仍逐e152相同。静态审查曾把Native非空pool初始化journal类推到Rustserver，复核helper条件后撤回，不是实际运行失败且未修改冻结源。virtual仅HID枚举闲置+真实CDC echo，USBFS不把linkbuffer冒作pending；per-lease与grant最终Finish分清。即将锁单一cleanhead运行六新/九旧共15组。
+
+- clean934新矩阵前四项Native/USBFS×双栈全部PASS（12方向），第五virtual-v4实际FAIL，余下virtual-v6与旧九共10项未执行。不是Catalog产品回归：client在原nc-w2的3240负向探测即超时，未产生catalog/jobs/sessions，0arm；两个原network.txt显示NO-CARRIER，真实dmesg LinkUp在guest约2.767秒，valve完整转发9包且无TCP/SYN。H源码核drive每轮无条件poll阀门，不是最初怀疑的virtual漏pump。准备在新harness初始增加实际carrier=1/operstate=up的有界事实屏障并收原件，保留nc-w2/refused原断言，不以sleep或扩大超时覆盖。四PASS/一FAIL与所有未运行项原样保留。
+
+- 626修复后软件/实际xtrace/165输入Git映射/工具与ELF/Native-only/本地runtime/作者与独立审查共71份约7.41MB归档`docs/evidence/data-link-management-software-20261024`，逐original/bytes/SHA/staged blob核。此前608、首mTLS FAIL及e152 QEMU FAIL继续独立归档。当前934矩阵四PASS/virtual readiness FAIL不改变626软件结论，也不宣告15组全通过。
