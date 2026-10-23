@@ -1,0 +1,77 @@
+--- RED
++++ FIX
+@@ -7,7 +7,10 @@
+     controls.lock().map_err(|_| lock_error())?.register_job(
+         id.clone(),
+         Control {
+-            profile: PROFILE.into(), job_id: id, stop: job_stop.clone(), stoppable: true,
++            profile: PROFILE.into(),
++            job_id: id,
++            stop: job_stop.clone(),
++            stoppable: true,
+         },
+     );
+     let (owned, mut observer) = tokio::net::UnixStream::pair()?;
+@@ -20,29 +23,52 @@
+     let (release, released) = std::sync::mpsc::channel();
+     let blocker = tokio::task::spawn_blocking(move || {
+         let _guard = store.lock().map_err(|_| lock_error())?;
+-        locked.send(()).map_err(|_| Error::State("shutdown lock observer".into()))?;
+-        released.recv_timeout(Duration::from_secs(5))
++        locked
++            .send(())
++            .map_err(|_| Error::State("shutdown lock observer".into()))?;
++        released
++            .recv_timeout(Duration::from_secs(5))
+             .map_err(|_| Error::Timeout("shutdown fixture release".into()))?;
+         Ok::<_, Error>(())
+     });
+-    lock_received.await.map_err(|_| Error::State("shutdown fixture lock".into()))?;
++    lock_received
++        .await
++        .map_err(|_| Error::State("shutdown fixture lock".into()))?;
+     let next = fixture.runtime.state.clone();
+     let recording = fixture.runtime.persist(next);
+     tokio::pin!(recording);
+-    assert!(tokio::time::timeout(Duration::from_millis(20), &mut recording).await.is_err());
++    assert!(
++        tokio::time::timeout(Duration::from_millis(20), &mut recording)
++            .await
++            .is_err()
++    );
+     let (shutdown, queued) = watch::channel(false);
+     crate::ipc::request_shutdown(&controls, &shutdown)?;
+     assert!(*queued.borrow());
+-    let before_ack = tokio::time::timeout(Duration::from_millis(100), observer.read(&mut [0])).await;
++    let before_ack =
++        tokio::time::timeout(Duration::from_millis(100), observer.read(&mut [0])).await;
+     let closed_before_ack = matches!(before_ack, Ok(Ok(0)));
+-    assert!(tokio::time::timeout(Duration::from_millis(20), &mut recording).await.is_err());
++    assert!(
++        tokio::time::timeout(Duration::from_millis(20), &mut recording)
++            .await
++            .is_err()
++    );
+     // Always release the real store gate, even for the original failing product.
+     // This late fixture teardown is explicitly not the pre-ACK release proof.
+-    release.send(()).map_err(|_| Error::State("shutdown blocker abandoned".into()))?;
++    release
++        .send(())
++        .map_err(|_| Error::State("shutdown blocker abandoned".into()))?;
+     recording.await?;
+-    blocker.await.map_err(|_| Error::State("shutdown blocker task".into()))??;
++    blocker
++        .await
++        .map_err(|_| Error::State("shutdown blocker task".into()))??;
+     job_stop.send_replace(true);
+-    owner.await.map_err(|_| Error::State("shutdown owner task".into()))?;
+-    assert!(closed_before_ack, "actual owned endpoint remained open while journal ACK was stalled");
++    owner
++        .await
++        .map_err(|_| Error::State("shutdown owner task".into()))?;
++    assert!(
++        closed_before_ack,
++        "actual owned endpoint remained open while journal ACK was stalled"
++    );
+     Ok(())
+ }

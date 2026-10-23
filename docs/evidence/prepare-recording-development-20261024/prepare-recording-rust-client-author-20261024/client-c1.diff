@@ -1,0 +1,70 @@
+--- client-before-c1
++++ client-after-c1
+@@ -26,6 +26,11 @@
+ }
+ 
+ type Recording = Pin<Box<dyn Future<Output = rustusb_core::Result<()>> + Send>>;
++
++fn stop_requested(stop: &watch::Receiver<bool>) -> bool {
++    *stop.borrow() || stop.has_changed().is_err()
++}
++
+ struct Stops {
+     job: watch::Receiver<bool>,
+     session: watch::Receiver<bool>,
+@@ -150,8 +155,7 @@
+                 }.into());
+             }
+         };
+-        if *context.stop.borrow() || context.stop.has_changed().is_err()
+-            || *session.stop.borrow() || session.stop.has_changed().is_err() { return Ok(()); }
++        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
+         link::check(link_monitor.as_ref())?;
+         let reporter = session.clone();
+         let mut import_ended = link_monitor.as_ref().map(rustusb_transport::LinkMonitor::ended);
+@@ -179,7 +183,7 @@
+         // A managed reservation is already durable even before its RPC. A
+         // foreground None has no WAL and remains NotStarted until we send.
+         attempted = correlation.is_some();
+-        if *context.stop.borrow() || *session.stop.borrow() { return Ok(()); }
++        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
+         link::check(link_monitor.as_ref())?;
+         // Never cancel an accepted helper prepare. Receive the actual handle,
+         // record its ID, and then close it when a stop arrived meanwhile.
+@@ -200,10 +204,11 @@
+         if !record_or_stop(Box::pin(async move { reporter.resource(correlation,&channel_id).await }),&mut postponed_recording,&mut stops).await? { return Ok(()); }
+         let reporter=session.clone();
+         if !record_or_stop(Box::pin(async move { reporter.observe(SessionState::Connecting,Evidence::Prepared,None).await }),&mut postponed_recording,&mut stops).await? { return Ok(()); }
+-        if *context.stop.borrow() || *session.stop.borrow() { return Ok(()); }
++        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
+         link::check(link_monitor.as_ref())?;
+         let kernel = owner.take_relay()?;
+         copying = Some(tokio::spawn(relay_link(network, kernel, context.is_foreground(), counters.clone(), link_monitor.clone())));
++        if stop_requested(&context.stop) || stop_requested(&session.stop) { return Ok(()); }
+         // An accepted helper mutation remains owned until its actual response.
+         // No timeout or WAL waiter drops this exchange or fabricates its result.
+         let receipt = owner.commit().await?;
+@@ -381,7 +386,7 @@
+         };
+ 
+         tokio::time::timeout(Duration::from_secs(15), async {
+-            for framed in [false, true] {
++            for (framed, sender_disappears) in [(false, false), (true, false), (true, true)] {
+                 let (tls, client) = credentials(framed)?;
+                 let listener = TcpListener::bind("127.0.0.1:0").await?;
+                 let config = Arc::new(loaded(client, listener.local_addr()?)?);
+@@ -489,7 +494,13 @@
+                 else {
+                     return Err(Error::State("missing held actual Attempt".into()).into());
+                 };
+-                stop.send_replace(true);
++                if sender_disappears {
++                    // This gates the real pending Attempt, not the smaller
++                    // Ready-to-helper interval covered by source guards.
++                    drop(stop);
++                } else {
++                    stop.send_replace(true);
++                }
+                 closed_rx.await?;
+                 assert!(!task.is_finished() && !reply.is_closed());
+                 assert!(receiver.try_recv().is_err());

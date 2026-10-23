@@ -1,0 +1,38 @@
+--- RED
++++ FIX
+@@ -6,13 +6,28 @@
+     let (job_stop, job_receiver) = watch::channel(false);
+     let (session_stop, session_receiver) = watch::channel(false);
+     let mut controls = controls.lock().map_err(|_| lock_error())?;
+-    controls.register_job(id.clone(), Control {
+-        profile: PROFILE.into(), job_id: id.clone(), stop: job_stop, stoppable: true,
+-    });
+-    controls.register_session(SessionId::new(uuid(103))?, Control {
+-        profile: PROFILE.into(), job_id: id, stop: session_stop, stoppable: true,
+-    });
++    controls.register_job(
++        id.clone(),
++        Control {
++            profile: PROFILE.into(),
++            job_id: id.clone(),
++            stop: job_stop,
++            stoppable: true,
++        },
++    );
++    controls.register_session(
++        SessionId::new(uuid(103))?,
++        Control {
++            profile: PROFILE.into(),
++            job_id: id,
++            stop: session_stop,
++            stoppable: true,
++        },
++    );
+     assert!(*job_receiver.borrow(), "late job missed service shutdown");
+-    assert!(*session_receiver.borrow(), "late session missed service shutdown");
++    assert!(
++        *session_receiver.borrow(),
++        "late session missed service shutdown"
++    );
+     Ok(())
+ }

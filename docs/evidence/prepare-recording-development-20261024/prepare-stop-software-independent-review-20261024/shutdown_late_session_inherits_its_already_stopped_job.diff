@@ -1,0 +1,43 @@
+--- RED
++++ FIX
+@@ -4,13 +4,32 @@
+     let (job_stop, _job_receiver) = watch::channel(false);
+     let (session_stop, session_receiver) = watch::channel(false);
+     let mut controls = Controls::default();
+-    controls.register_job(id.clone(), Control {
+-        profile: PROFILE.into(), job_id: id.clone(), stop: job_stop, stoppable: true,
+-    });
+-    assert!(controls.request(&fixture.runtime.config, operator_uid(), &Request::StopJob {job_id:id.clone()})?);
+-    controls.register_session(SessionId::new(uuid(105))?, Control {
+-        profile: PROFILE.into(), job_id: id, stop: session_stop, stoppable: true,
+-    });
+-    assert!(*session_receiver.borrow(), "late session missed authorized job stop");
++    controls.register_job(
++        id.clone(),
++        Control {
++            profile: PROFILE.into(),
++            job_id: id.clone(),
++            stop: job_stop,
++            stoppable: true,
++        },
++    );
++    assert!(controls.request(
++        &fixture.runtime.config,
++        operator_uid(),
++        &Request::StopJob { job_id: id.clone() }
++    )?);
++    controls.register_session(
++        SessionId::new(uuid(105))?,
++        Control {
++            profile: PROFILE.into(),
++            job_id: id,
++            stop: session_stop,
++            stoppable: true,
++        },
++    );
++    assert!(
++        *session_receiver.borrow(),
++        "late session missed authorized job stop"
++    );
+     Ok(())
+ }

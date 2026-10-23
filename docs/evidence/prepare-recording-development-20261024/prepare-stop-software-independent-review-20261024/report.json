@@ -1,0 +1,434 @@
+{
+  "status": "PASS: evidence classification and source consistency only; original RED results remain FAIL",
+  "runs": {
+    "red": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rustusb-service",
+        "shutdown_",
+        "--locked",
+        "--",
+        "--nocapture"
+      ],
+      "recorded_start_utc": "2026-10-23T22:35:13.290029+00:00",
+      "recorded_base_head": "c2464ed1108fda555acac2512f01a19a5e9bf31c",
+      "dirty_status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n",
+      "exit_code": 101,
+      "named_tests": [
+        {
+          "name": "runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop",
+          "result": "FAILED"
+        },
+        {
+          "name": "jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof",
+          "result": "ok"
+        },
+        {
+          "name": "runtime::tests::shutdown_late_session_inherits_its_already_stopped_job",
+          "result": "FAILED"
+        },
+        {
+          "name": "runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack",
+          "result": "FAILED"
+        }
+      ],
+      "counts": {
+        "passed": 1,
+        "failed": 3,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 41
+      },
+      "test_elapsed_seconds": 0.15,
+      "inputs": 165,
+      "actual_checkout": "/tmp/rustusb-prepare-stop-red-checkout-20261024",
+      "all_selected_checkout_bytes_match": true,
+      "before_after_equal": true,
+      "snapshots": [
+        {
+          "path": "crates/rustusb-service/src/ipc.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-red-20261024/ipc.rs",
+          "sha256": "eea0dfdcba701700357da00919696f142fa332a5305e0e0f187f2a6ebb54cced"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-red-20261024/runtime.rs",
+          "sha256": "3b018436a51501d802f9220d75f5678aa671d2913fe0c1eb9728a906a3e50993"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime_tests.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-red-20261024/runtime_tests.rs",
+          "sha256": "8da647465c7bfe2c5add826039fc1cf4661e8102b3f5a42bd451fd841f401133"
+        }
+      ],
+      "compile_success_then_test_binary_ran": true,
+      "raw_log_sha256": "f7f3ad9671d67c978e863bc169aa576a11cd56e68f3071c76db049b42606fb49"
+    },
+    "root-fixed": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rustusb-service",
+        "shutdown_",
+        "--locked",
+        "--",
+        "--nocapture"
+      ],
+      "recorded_start_utc": "2026-10-23T22:37:07.630703+00:00",
+      "recorded_base_head": "c2464ed1108fda555acac2512f01a19a5e9bf31c",
+      "dirty_status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n",
+      "exit_code": 0,
+      "named_tests": [
+        {
+          "name": "runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof",
+          "result": "ok"
+        },
+        {
+          "name": "runtime::tests::shutdown_late_session_inherits_its_already_stopped_job",
+          "result": "ok"
+        },
+        {
+          "name": "runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack",
+          "result": "ok"
+        }
+      ],
+      "counts": {
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 41
+      },
+      "test_elapsed_seconds": 0.05,
+      "inputs": 165,
+      "actual_checkout": "/tmp/rustusb-prepare-stop-root-fixed-checkout-20261024",
+      "all_selected_checkout_bytes_match": true,
+      "before_after_equal": true,
+      "snapshots": [
+        {
+          "path": "crates/rustusb-service/src/ipc.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-root-fixed-20261024/ipc.rs",
+          "sha256": "7bfa1dc5834fb8c4c79061a7a609719aeb9173e6cb0e51c9d087184e4fac2056"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-root-fixed-20261024/runtime.rs",
+          "sha256": "2f17f75fe7ac7276711c0bccb75617e76a43f1129433076d77bb4e6b119dbf2d"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime_tests.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-root-fixed-20261024/runtime_tests.rs",
+          "sha256": "e16d52c698ed3b9df8e99a6262cdb9ff7297791d380485be5318e83438c9d992"
+        }
+      ],
+      "compile_success_then_test_binary_ran": true,
+      "raw_log_sha256": "590106257996ba862cc0feb4eb842bbf200e58d5ce5967592d690860086bf3be"
+    },
+    "native-red": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rustusb-service",
+        "--all-features",
+        "--locked",
+        "jobs::native::tests::received_export_stop_closes_before_original_resource_ack",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "recorded_start_utc": "2026-10-23T22:37:15.434672+00:00",
+      "recorded_base_head": "c2464ed1108fda555acac2512f01a19a5e9bf31c",
+      "dirty_status": " M crates/rustusb-service/src/jobs/native.rs\n",
+      "exit_code": 101,
+      "named_tests": [
+        {
+          "name": "jobs::native::tests::received_export_stop_closes_before_original_resource_ack",
+          "result": "FAILED"
+        }
+      ],
+      "counts": {
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 50
+      },
+      "test_elapsed_seconds": 2.0,
+      "inputs": 165,
+      "actual_checkout": "/tmp/rustusb-prepare-stop-native-red-checkout-20261024",
+      "all_selected_checkout_bytes_match": true,
+      "before_after_equal": true,
+      "snapshots": [
+        {
+          "path": "crates/rustusb-service/src/ipc.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-native-red-20261024/ipc.rs",
+          "sha256": "48ecce824ea2034facb18305668eebaab3811f5f0dd6012d978031e4ccc25fe0"
+        },
+        {
+          "path": "crates/rustusb-service/src/jobs/native.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-native-red-20261024/jobs/native.rs",
+          "sha256": "f8ec8353f16dceeb32aa301b3bddf36bd0d87a8b25c6d6c518b6f8f89a9bf822"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-native-red-20261024/runtime.rs",
+          "sha256": "b66178bce96b683c5338dded6fca8ed5311f8a6c47caa16fd3b6b58f54b8ef41"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime_tests.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-native-red-20261024/runtime_tests.rs",
+          "sha256": "4f2270dbc84bcee55bfa1e79f966d088208930a9d7c21751dbc8eeae7768bf46"
+        }
+      ],
+      "compile_success_then_test_binary_ran": true,
+      "raw_log_sha256": "8943c4f4ea5b27d13ac80b0cbf0adbcfe3fc6ef31a724c1539e80d0e71e47731"
+    },
+    "rust-client-first": {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rustusb-service",
+        "--all-features",
+        "--locked",
+        "jobs::",
+        "--",
+        "--nocapture"
+      ],
+      "recorded_start_utc": "2026-10-23T22:38:49.053547+00:00",
+      "recorded_base_head": "c2464ed1108fda555acac2512f01a19a5e9bf31c",
+      "dirty_status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n?? crates/rustusb-service/src/jobs/recording.rs\n",
+      "exit_code": 0,
+      "named_tests": [
+        {
+          "name": "jobs::client::tests::all_recording_failures_are_retained",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::io::tests::real_duplex_bytes_are_counted_and_first_eof_closes_both_sides",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::client::tests::managed_mode_retires_both_halves_at_the_first_eof",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::client::tests::link_failure_during_an_accepted_ack_cleans_before_waiting_for_that_same_ack",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::client::tests::foreground_half_close_still_drains_the_actual_reverse_stream",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::all_close_tasks_start_while_a_sibling_record_ack_is_delayed",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::data_link_failure_releases_real_streams_and_lock_before_retained_ack",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::export_invalidation_ends_idle_relay_with_error",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::stopped_foreground_prepare_skips_the_real_helper_and_creates_no_export",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::relay_copies_both_directions_and_first_eof_releases_other_half",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::recording::tests::simultaneous_stop_does_not_poll_or_discard_the_original_record",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::recording::tests::interrupted_real_resource_message_keeps_the_original_rejection",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::cdc_payload_bounds_and_control_errors_remain_redacted",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::finish_attempts_all_received_grants_before_any_recording_and_retains_errors",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::vanished_foreground_stop_sender_skips_the_real_helper",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::invalid_physical_selection_and_network_policy_precede_helper_io",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::soft_cleanup_deadline_is_not_finished_until_real_terminal",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::rejected_begin_receipt_is_recording_failure_before_any_owner",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::typed_controls_preserve_ack_error_and_ordered_shutdown",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::failed_ready_delivery_keeps_actual_cleanup_and_no_success_event",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::blocked_output_receipt_does_not_block_real_foreground_cleanup",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::rust_server::tests::held_available_ack_releases_actual_listener_and_lease_before_original_record",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::management_tests::discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::client::tests::stopped_import_attempt_closes_actual_tls_before_late_ack_and_never_calls_helper",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::native::tests::actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner",
+          "result": "ok"
+        },
+        {
+          "name": "jobs::management_tests::actual_client_refusal_keeps_original_failure_without_helper_attempt",
+          "result": "ok"
+        }
+      ],
+      "counts": {
+        "passed": 28,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 29
+      },
+      "test_elapsed_seconds": 0.02,
+      "inputs": 166,
+      "actual_checkout": "/tmp/rustusb-prepare-stop-rust-client-checkout-20261024",
+      "all_selected_checkout_bytes_match": true,
+      "before_after_equal": true,
+      "snapshots": [
+        {
+          "path": "crates/rustusb-service/src/ipc.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/ipc.rs",
+          "sha256": "7bfa1dc5834fb8c4c79061a7a609719aeb9173e6cb0e51c9d087184e4fac2056"
+        },
+        {
+          "path": "crates/rustusb-service/src/jobs/client.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/jobs/client.rs",
+          "sha256": "52edaa1859ee6ca22716fbd433a19b6111628c44612bbfc7fa7611c38fb6a362"
+        },
+        {
+          "path": "crates/rustusb-service/src/jobs/mod.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/jobs/mod.rs",
+          "sha256": "21e72d6d19f4b192e8ca32ad45844814bdc155959e0ef938330b83d9d909e529"
+        },
+        {
+          "path": "crates/rustusb-service/src/jobs/recording.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/jobs/recording.rs",
+          "sha256": "47c9feb0080e90eeaa26bc7137ef3c3565f876821ec41f5d7488ebd4f7878038"
+        },
+        {
+          "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/jobs/rust_server.rs",
+          "sha256": "7388f08514e0817a779f3303d2a0f30e935a9c1b9ba254225478ac87ce3019b1"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/runtime.rs",
+          "sha256": "2f17f75fe7ac7276711c0bccb75617e76a43f1129433076d77bb4e6b119dbf2d"
+        },
+        {
+          "path": "crates/rustusb-service/src/runtime_tests.rs",
+          "snapshot": "/tmp/rustusb-prepare-stop-rust-client-first-20261024/runtime_tests.rs",
+          "sha256": "e16d52c698ed3b9df8e99a6262cdb9ff7297791d380485be5318e83438c9d992"
+        }
+      ],
+      "compile_success_then_test_binary_ran": true,
+      "raw_log_sha256": "10c819afa6ab61ee9cbd552f6997ee9b9583f0a2b17637b10b8bf2f56f579abd"
+    }
+  },
+  "red_to_fixed_assertion_comparison": [
+    {
+      "name": "shutdown_late_registration_inherits_the_same_sticky_stop",
+      "raw_bytes_identical": false,
+      "same_tokens_except_whitespace_and_optional_trailing_commas": true,
+      "red_sha256": "58fbccac618b4fa506523bccb2e8a145a845df0e8a67a5339ed75e07088a060c",
+      "fixed_sha256": "beebb3b3fa97a74bccafb64937b20b44f534ffb695986e39d7b19c3f6732c5ab"
+    },
+    {
+      "name": "shutdown_late_session_inherits_its_already_stopped_job",
+      "raw_bytes_identical": false,
+      "same_tokens_except_whitespace_and_optional_trailing_commas": true,
+      "red_sha256": "0c4c228804d7dcfbad977edd6ec5b7fc968a5d5b906ca9cff32e52fba0342a35",
+      "fixed_sha256": "a3032e9550df034b6bf98e9dfa144f3fc79ffb99671a38931f9ecd4c8eb40461"
+    },
+    {
+      "name": "shutdown_fanout_reaches_owned_stream_before_stalled_store_ack",
+      "raw_bytes_identical": false,
+      "same_tokens_except_whitespace_and_optional_trailing_commas": true,
+      "red_sha256": "b25fbe6179c5340d509ada3b0d95835423e1648ecaf4ddd23f66cbb816cb274e",
+      "fixed_sha256": "81501547ac14aedd1ccc1daa26ad872235ce027225d8bafe5a3a25062755dbb5"
+    }
+  ],
+  "input_deltas": {
+    "red -> root-fixed": [
+      "crates/rustusb-service/src/ipc.rs",
+      "crates/rustusb-service/src/runtime.rs",
+      "crates/rustusb-service/src/runtime_tests.rs"
+    ],
+    "root-fixed -> rust-client-first": [
+      "crates/rustusb-service/src/jobs/client.rs",
+      "crates/rustusb-service/src/jobs/mod.rs",
+      "crates/rustusb-service/src/jobs/recording.rs",
+      "crates/rustusb-service/src/jobs/rust_server.rs"
+    ]
+  },
+  "boundaries": [
+    "All four are development dirty checkouts based on recorded c2464ed, not clean revision acceptance. Selected byte maps do not imply a new immutable commit.",
+    "RED has three actually executed failing assertions and one prior passing test; root-fixed executes the same three predicates plus that prior test. Only formatting and optional trailing commas differ in those function bodies.",
+    "Native RED compiled and executed its actual received-owner phase plus real Resource oneshot/ordinary Unix-stream close receipt; no fake root handle or kernel claim.",
+    "Root store test holds an actual Store mutex while production Runtime::persist waits; it is not a directly instrumented fsync stall.",
+    "Rust/client subset executes real TCP/mTLS v1/v2 and real virtual listener/IMPORT lease plus real JobMessage ACK gates. It is not hardware, helper-root, USBFS kernel initialization, or a full software gate.",
+    "C1 sender-loss variant and new poison fixture are not covered by these four runs; no PASS reconstructed for them.",
+    "Shared target_dir test binaries can be overwritten by later Cargo invocations. Logs identify executed binary paths, but no contemporaneous binary SHA artifact exists in these four directories; this review does not hash current target bytes and retrospectively attribute them.",
+    "Reviewer authored Rust/client/recording changes and some older related service code. This is an independent parser/method cross-review, not independent implementation authorship."
+  ],
+  "execution": {
+    "cargo": false,
+    "qemu": false,
+    "git": false,
+    "repo_edits": false,
+    "harness_verifier_called": false
+  },
+  "raw_originals": 37,
+  "selected_source_comparisons": 661,
+  "source_snapshot_comparisons": 17,
+  "counts_are": "record/test execution observations, not USB compatibility cases"
+}

@@ -1,0 +1,115 @@
+{
+  "status": "source_diagnosis_and_proposal",
+  "date": "2026-10-24",
+  "report": "/tmp/rustusb-prepare-ack-stall-design-20261024.md",
+  "report_sha256": "9516f6881f199f5d7c5c1664fc17641fa519ad409d9b7d257add846aa2d20204",
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "98623ca159755aa94a6c87d63395bab8e41233c7bc5f4570f0fceb121135e08f",
+      "bytes": 8572
+    },
+    {
+      "path": ".agents/skills/rustusb-development/SKILL.md",
+      "sha256": "524256bec241e40ec1dc305f76adb4e4114c107c47d2c5e2093a7f4568f87316",
+      "bytes": 5531
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "64d7d125d39e5031b6e1cf33966964e7be4b6e64dc8f18f4ef690f51074e71cd",
+      "bytes": 25782
+    },
+    {
+      "path": "docs/research/application-service-design.md",
+      "sha256": "5b3fa27cd14c3b519a421792eaedb983fab66fc5e047f9530170ffc543c8315c",
+      "bytes": 12917
+    },
+    {
+      "path": "docs/research/shared-owner-design.md",
+      "sha256": "a5529d87ba6f6e5bf9c77e576f512160e7f10baa0e36f41f2d2b344ee826c75f",
+      "bytes": 6100
+    },
+    {
+      "path": "docs/research/data-link-health-design.md",
+      "sha256": "38a4e847bf7c2904b89d37816f042b775a34642cf7f6f8f989c027bb25d911fb",
+      "bytes": 15475
+    },
+    {
+      "path": "docs/research/data-link-health-validation.md",
+      "sha256": "aa35492723ba8c624f0167a3acb73a9ce744fa19fe32543d0708938a1b03732b",
+      "bytes": 14870
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "sha256": "d281008c5aac7623c7fa359409c5fdac7ab82e4abfff9f9fd48ebdd99b4d213a",
+      "bytes": 52631
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "sha256": "c49f3e8c7843d3f2c36354e8f70318588aab7594f1d82f79c649a94f45e07b2f",
+      "bytes": 51275
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "sha256": "5866164d105efc990c7b8cdcc8a6be29641105d4e9a54350bd35c61be249ba2e",
+      "bytes": 19714
+    },
+    {
+      "path": "crates/rustusb-service/src/run_context.rs",
+      "sha256": "10552e7ae07f4fda1e94805f37a5dd93181df71fcdf6f2176510f096a6f9528f",
+      "bytes": 11731
+    },
+    {
+      "path": "crates/rustusb-service/src/context.rs",
+      "sha256": "093cfa32978d4c307346c8bf2186f578a7057c9e3d71bf0518ede9cc4d287e9c",
+      "bytes": 6810
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "sha256": "b66178bce96b683c5338dded6fca8ed5311f8a6c47caa16fd3b6b58f54b8ef41",
+      "bytes": 46333
+    },
+    {
+      "path": "crates/rustusb-service/src/ipc.rs",
+      "sha256": "48ecce824ea2034facb18305668eebaab3811f5f0dd6012d978031e4ccc25fe0",
+      "bytes": 14129
+    },
+    {
+      "path": "crates/rustusb-service/src/store.rs",
+      "sha256": "21275ae843c72624a5ac3ae099aa47f2b8cc2277116e85dd82e3bc6506f988cb",
+      "bytes": 21694
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "sha256": "220b25fc53a95e7ce7554a3018fd7c4d81a3589b5501dc4b73b3b7e6373bc1d6",
+      "bytes": 7837
+    },
+    {
+      "path": "crates/rustusb-cli/src/agent.rs",
+      "sha256": "99207ef70d818d686fea3a66de2da8164e3933433828da1d66db433cb59bbbfd",
+      "bytes": 5212
+    }
+  ],
+  "executed": {
+    "repository_edits": false,
+    "git": false,
+    "cargo": false,
+    "qemu": false,
+    "usb_operations": false,
+    "runtime_tests": false
+  },
+  "core_findings": [
+    "Native current and sibling preparation plus Available WAL waits can retain actual exports",
+    "USBFS Resource/later Attempt and Rust Available can retain source/backend/server owners",
+    "Client and Native incoming pre-helper durable waits can retain actual network ownership",
+    "Client/stub post-handle retained-ACK cleanup mechanisms already exist",
+    "IPC runtime-only shutdown requires independent sticky fanout including late registration"
+  ],
+  "proposal_status": "not_implemented",
+  "limitations": [
+    "helper/initializer/actual cleanup hard blocking distinct",
+    "permanent WAL can keep final job pending after real cleanup",
+    "no current runtime PASS claim",
+    "reviewer authored related service integration"
+  ]
+}

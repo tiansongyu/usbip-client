@@ -1,0 +1,44 @@
+   Compiling rustusb-core v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-core)
+   Compiling nusb v0.2.8 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/vendor/nusb)
+   Compiling rustusb-protocol v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-protocol)
+   Compiling rustusb-linux v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-linux)
+   Compiling rustusb-transport v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-transport)
+   Compiling rustusb-native v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-native)
+   Compiling rustusb-rust-backend v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-rust-backend)
+   Compiling rustusb-daemon v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/tmp/rustusb-prepare-stop-rust-client-checkout-20261024/crates/rustusb-service)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.73s
+     Running unittests src/lib.rs (/home/ubuntu/github/usbip-client/target/debug/deps/rustusb_service-ec4511eef4d589c3)
+
+running 28 tests
+test jobs::client::tests::all_recording_failures_are_retained ... ok
+test jobs::io::tests::real_duplex_bytes_are_counted_and_first_eof_closes_both_sides ... ok
+test jobs::client::tests::managed_mode_retires_both_halves_at_the_first_eof ... ok
+test jobs::client::tests::link_failure_during_an_accepted_ack_cleans_before_waiting_for_that_same_ack ... ok
+test jobs::client::tests::foreground_half_close_still_drains_the_actual_reverse_stream ... ok
+test jobs::native::tests::all_close_tasks_start_while_a_sibling_record_ack_is_delayed ... ok
+test jobs::native::tests::data_link_failure_releases_real_streams_and_lock_before_retained_ack ... ok
+test jobs::native::tests::export_invalidation_ends_idle_relay_with_error ... ok
+test jobs::native::tests::stopped_foreground_prepare_skips_the_real_helper_and_creates_no_export ... ok
+test jobs::native::tests::stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock ... ok
+test jobs::native::tests::relay_copies_both_directions_and_first_eof_releases_other_half ... ok
+test jobs::recording::tests::simultaneous_stop_does_not_poll_or_discard_the_original_record ... ok
+test jobs::recording::tests::interrupted_real_resource_message_keeps_the_original_rejection ... ok
+test jobs::rust_server::tests::cdc_payload_bounds_and_control_errors_remain_redacted ... ok
+test jobs::rust_server::tests::finish_attempts_all_received_grants_before_any_recording_and_retains_errors ... ok
+test jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof ... ok
+test jobs::native::tests::vanished_foreground_stop_sender_skips_the_real_helper ... ok
+test jobs::rust_server::tests::invalid_physical_selection_and_network_policy_precede_helper_io ... ok
+test jobs::rust_server::tests::soft_cleanup_deadline_is_not_finished_until_real_terminal ... ok
+test jobs::rust_server::tests::rejected_begin_receipt_is_recording_failure_before_any_owner ... ok
+test jobs::rust_server::tests::typed_controls_preserve_ack_error_and_ordered_shutdown ... ok
+test jobs::rust_server::tests::failed_ready_delivery_keeps_actual_cleanup_and_no_success_event ... ok
+test jobs::rust_server::tests::blocked_output_receipt_does_not_block_real_foreground_cleanup ... ok
+test jobs::rust_server::tests::held_available_ack_releases_actual_listener_and_lease_before_original_record ... ok
+test jobs::management_tests::discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver ... ok
+test jobs::client::tests::stopped_import_attempt_closes_actual_tls_before_late_ack_and_never_calls_helper ... ok
+test jobs::native::tests::actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner ... ok
+test jobs::management_tests::actual_client_refusal_keeps_original_failure_without_helper_attempt ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.02s
+

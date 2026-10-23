@@ -1,0 +1,36 @@
+   Compiling rustusb-core v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-core)
+   Compiling rustusb-protocol v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-protocol)
+   Compiling rustusb-linux v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-linux)
+   Compiling rustusb-transport v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-transport)
+   Compiling rustusb-native v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-native)
+   Compiling rustusb-daemon v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/tmp/rustusb-prepare-stop-red-checkout-20261024/crates/rustusb-service)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.45s
+     Running unittests src/lib.rs (/home/ubuntu/github/usbip-client/target/debug/deps/rustusb_service-a9ca8e73e052b478)
+
+running 4 tests
+
+thread 'runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop' (2584036) panicked at crates/rustusb-service/src/runtime_tests.rs:80:5:
+late job missed service shutdown
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop ... FAILED
+
+thread 'runtime::tests::shutdown_late_session_inherits_its_already_stopped_job' (2584037) panicked at crates/rustusb-service/src/runtime_tests.rs:99:5:
+late session missed authorized job stop
+test jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof ... ok
+test runtime::tests::shutdown_late_session_inherits_its_already_stopped_job ... FAILED
+
+thread 'runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack' (2584035) panicked at crates/rustusb-service/src/runtime_tests.rs:61:5:
+actual owned endpoint remained open while journal ACK was stalled
+test runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack ... FAILED
+
+failures:
+
+failures:
+    runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack
+    runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop
+    runtime::tests::shutdown_late_session_inherits_its_already_stopped_job
+
+test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 41 filtered out; finished in 0.15s
+
+error: test failed, to rerun pass `-p rustusb-service --lib`
