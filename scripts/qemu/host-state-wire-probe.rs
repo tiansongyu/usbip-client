@@ -480,6 +480,9 @@ impl Probe {
             "active_completion_wins" if self.operation == "clear" => {
                 ",\"submit_status\":-32,\"actual_length\":0,\"unlink_status\":0"
             }
+            "active_completion_wins" if self.operation == "release" => {
+                ",\"submit_status\":-22,\"actual_length\":0,\"unlink_status\":0"
+            }
             "active_completion_wins" => {
                 ",\"submit_status\":0,\"actual_length\":0,\"unlink_status\":0"
             }
@@ -504,6 +507,7 @@ impl Probe {
     fn special(&self, seq: u32, devid: u32, second: bool) -> Vec<u8> {
         let setup = match self.operation.as_str() {
             "configuration" => [0, 9, if second { 2 } else { 1 }, 0, 0, 0, 0, 0],
+            "release" => [0, 9, if second { 1 } else { 2 }, 0, 0, 0, 0, 0],
             "alternate" => [1, 11, u8::from(second), 0, 1, 0, 0, 0],
             // Both A and B address the same real ECM IN endpoint.
             _ => [2, 1, 0, 0, 0x82, 0, 0, 0],
@@ -623,7 +627,12 @@ impl Probe {
             match reply.seq {
                 A => {
                     require(!a_terminal, "duplicate A terminal response")?;
-                    reply.submit(A, if clear { -32 } else { 0 }, 0)?;
+                    let status = match self.operation.as_str() {
+                        "clear" => -32,
+                        "release" => -22,
+                        _ => 0,
+                    };
+                    reply.submit(A, status, 0)?;
                     a_terminal = true;
                 }
                 UNLINK_A => {
@@ -690,7 +699,7 @@ fn json_string(value: &str) -> String {
 fn main() {
     let arguments: Vec<_> = std::env::args().collect();
     let valid = arguments.len() == 4
-        && ["configuration", "alternate", "clear"].contains(&arguments[1].as_str())
+        && ["configuration", "alternate", "clear", "release"].contains(&arguments[1].as_str())
         && ["unlink", "eof"].contains(&arguments[2].as_str())
         && !arguments[3].is_empty()
         && arguments[3].len() <= 48
@@ -699,7 +708,7 @@ fn main() {
             .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_' || byte == b'-');
     if !valid {
         eprintln!(
-            "{{\"event\":\"host_state_probe_result\",\"result\":\"FAIL\",\"stage\":\"arguments\",\"error\":\"usage: host-state-wire-probe <configuration|alternate|clear> <unlink|eof> <safe-nonce-1-to-48>\"}}"
+            "{{\"event\":\"host_state_probe_result\",\"result\":\"FAIL\",\"stage\":\"arguments\",\"error\":\"usage: host-state-wire-probe <configuration|alternate|clear|release> <unlink|eof> <safe-nonce-1-to-48>\"}}"
         );
         std::process::exit(1);
     }

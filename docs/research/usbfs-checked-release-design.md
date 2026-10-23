@@ -17,7 +17,7 @@ Linux6.8 [devio.c](https://github.com/torvalds/linux/blob/v6.8/drivers/usb/core/
 - 最后owner在调用真实RELEASE之前设置一次性attempted状态。成功或失败后，析构不再隐式重试同一release；丢弃future不意味着撤回已经启动的blocking任务。
 - 保留真实errno及上下文。release失败时绝不CONNECT；若原句柄选择自动reattach，checked路径也报告CONNECT的真实错误。portable路径继续best effort，物理adapter仍使用no_reattach并仅在整体协调后恢复原driver。
 - 不加入unsafe、指针操作、依赖或生产设备mock façade；仅以小型private生命周期状态和回调对一次性顺序做纯测试。
-- worker释放多个接口时全部逐项await，不遇首错提前drop其余接口；保留第一个真实errno，供Special回复和清理错误使用。配置切换遇release错误跳过SET_CONFIGURATION，重观察/协调规则仍生效。原alternate恢复中的临时claim也必须checked释放。
+- worker释放多个接口时全部逐项await，不遇首错提前drop其余接口；保留第一个真实errno，供Special回复和清理错误使用。配置切换遇release错误跳过SET_CONFIGURATION，重观察/协调规则仍生效。原alternate恢复中的临时claim也必须checked释放。已独立确认同代际消失的Gone分支仍按既有语义处理，不把无法恢复的拔出设备写成原驱动恢复成功。
 - nusb来源70文件、原许可、精确patch与SHA清单同步；公共Linux文档区分checked结果与独立恢复核验。
 
 ## 最小验证与失败保全

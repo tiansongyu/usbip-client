@@ -1,0 +1,1158 @@
+﻿2026-10-23T01:59:40.9135695Z Current runner version: '2.338.0'
+2026-10-23T01:59:40.9167536Z ##[group]Runner Image Provisioner
+2026-10-23T01:59:40.9168873Z Hosted Compute Agent
+2026-10-23T01:59:40.9170076Z Version: 20261012.601
+2026-10-23T01:59:40.9171190Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-23T01:59:40.9172326Z Build Date: 2026-10-12T17:48:21Z
+2026-10-23T01:59:40.9173698Z Worker ID: {138fe5bb-6c32-48bb-bb97-d0e3033dcd9f}
+2026-10-23T01:59:40.9174999Z Region: eastus2
+2026-10-23T01:59:40.9176466Z Cloud: Azure
+2026-10-23T01:59:40.9177441Z ##[endgroup]
+2026-10-23T01:59:40.9179867Z ##[group]Operating System
+2026-10-23T01:59:40.9181203Z Ubuntu
+2026-10-23T01:59:40.9182124Z 24.04.5
+2026-10-23T01:59:40.9183140Z LTS
+2026-10-23T01:59:40.9184130Z ##[endgroup]
+2026-10-23T01:59:40.9185132Z ##[group]Runner Image
+2026-10-23T01:59:40.9186621Z Image: ubuntu-24.04
+2026-10-23T01:59:40.9187698Z Version: 20261012.334.1
+2026-10-23T01:59:40.9189908Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-23T01:59:40.9193184Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-23T01:59:40.9195138Z ##[endgroup]
+2026-10-23T01:59:40.9197327Z ##[group]GITHUB_TOKEN Permissions
+2026-10-23T01:59:40.9200491Z Contents: read
+2026-10-23T01:59:40.9201505Z Metadata: read
+2026-10-23T01:59:40.9202792Z ##[endgroup]
+2026-10-23T01:59:40.9206785Z Secret source: Actions
+2026-10-23T01:59:40.9208803Z Cache mode: write
+2026-10-23T01:59:40.9210169Z Prepare workflow directory
+2026-10-23T01:59:40.9689754Z Prepare all required actions
+2026-10-23T01:59:40.9760431Z Getting action download info
+2026-10-23T01:59:41.1904540Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-23T01:59:41.3949900Z Complete job name: check (ubuntu-24.04, x86_64)
+2026-10-23T01:59:41.4850469Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-23T01:59:41.4851629Z with:
+2026-10-23T01:59:41.4852081Z   persist-credentials: false
+2026-10-23T01:59:41.4852636Z   repository: tiansongyu/usbip-client
+2026-10-23T01:59:41.4856849Z   token: ***
+2026-10-23T01:59:41.4857289Z   ssh-strict: true
+2026-10-23T01:59:41.4857732Z   ssh-user: git
+2026-10-23T01:59:41.4858164Z   clean: true
+2026-10-23T01:59:41.4858615Z   sparse-checkout-cone-mode: true
+2026-10-23T01:59:41.4859147Z   fetch-depth: 1
+2026-10-23T01:59:41.4859586Z   fetch-tags: false
+2026-10-23T01:59:41.4860035Z   show-progress: true
+2026-10-23T01:59:41.4860499Z   lfs: false
+2026-10-23T01:59:41.4860923Z   submodules: false
+2026-10-23T01:59:41.4861389Z   set-safe-directory: true
+2026-10-23T01:59:41.4861908Z   allow-unsafe-pr-checkout: false
+2026-10-23T01:59:41.4863036Z ##[endgroup]
+2026-10-23T01:59:41.5864990Z Syncing repository: tiansongyu/usbip-client
+2026-10-23T01:59:41.5868046Z ##[group]Getting Git version info
+2026-10-23T01:59:41.5869271Z Working directory is '/home/runner/work/usbip-client/usbip-client'
+2026-10-23T01:59:41.5871176Z [command]/usr/bin/git version
+2026-10-23T01:59:41.5943008Z git version 2.55.0
+2026-10-23T01:59:41.6001923Z ##[endgroup]
+2026-10-23T01:59:41.6012918Z Temporarily overriding HOME='/home/runner/work/_temp/5b5cdf2b-998b-471e-833d-0fb99be7c00b' before making global git config changes
+2026-10-23T01:59:41.6015319Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T01:59:41.6019119Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/usbip-client/usbip-client
+2026-10-23T01:59:41.6071014Z Deleting the contents of '/home/runner/work/usbip-client/usbip-client'
+2026-10-23T01:59:41.6074364Z ##[group]Determining repository object format
+2026-10-23T01:59:41.6076133Z ##[endgroup]
+2026-10-23T01:59:41.6077488Z ##[group]Initializing the repository
+2026-10-23T01:59:41.6080313Z [command]/usr/bin/git init /home/runner/work/usbip-client/usbip-client
+2026-10-23T01:59:41.6205124Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-23T01:59:41.6207406Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-23T01:59:41.6208383Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-23T01:59:41.6209192Z hint: call:
+2026-10-23T01:59:41.6209601Z hint:
+2026-10-23T01:59:41.6210133Z hint: 	git config --global init.defaultBranch <name>
+2026-10-23T01:59:41.6210765Z hint:
+2026-10-23T01:59:41.6211369Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-23T01:59:41.6212304Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-23T01:59:41.6213051Z hint:
+2026-10-23T01:59:41.6213469Z hint: 	git branch -m <name>
+2026-10-23T01:59:41.6213964Z hint:
+2026-10-23T01:59:41.6214603Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-23T01:59:41.6220897Z Initialized empty Git repository in /home/runner/work/usbip-client/usbip-client/.git/
+2026-10-23T01:59:41.6230646Z [command]/usr/bin/git remote add origin https://github.com/tiansongyu/usbip-client
+2026-10-23T01:59:41.6284127Z ##[endgroup]
+2026-10-23T01:59:41.6285572Z ##[group]Disabling automatic garbage collection
+2026-10-23T01:59:41.6288400Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-23T01:59:41.6327410Z ##[endgroup]
+2026-10-23T01:59:41.6328556Z ##[group]Setting up auth
+2026-10-23T01:59:41.6329506Z Removing SSH command configuration
+2026-10-23T01:59:41.6333670Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T01:59:41.6369472Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T01:59:41.6773049Z Removing HTTP extra header
+2026-10-23T01:59:41.6779892Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T01:59:41.6817048Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T01:59:41.7031485Z Removing includeIf entries pointing to credentials config files
+2026-10-23T01:59:41.7036463Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T01:59:41.7070979Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T01:59:41.7295646Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-23T01:59:41.7336338Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/usbip-client/usbip-client/.git.path /home/runner/work/_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:41.7370362Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/usbip-client/usbip-client/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:41.7409204Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:41.7443435Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:41.7476331Z ##[endgroup]
+2026-10-23T01:59:41.7477117Z ##[group]Fetching the repository
+2026-10-23T01:59:41.7482819Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +54da6151defe57a9a10de2f321ca1d13c0d8bbe3:refs/remotes/origin/main
+2026-10-23T01:59:42.1490596Z From https://github.com/tiansongyu/usbip-client
+2026-10-23T01:59:42.1491980Z  * [new ref]         54da6151defe57a9a10de2f321ca1d13c0d8bbe3 -> origin/main
+2026-10-23T01:59:42.1501094Z [command]/usr/bin/git branch --list --remote origin/main
+2026-10-23T01:59:42.1530721Z   origin/main
+2026-10-23T01:59:42.1541167Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+2026-10-23T01:59:42.1567646Z 54da6151defe57a9a10de2f321ca1d13c0d8bbe3
+2026-10-23T01:59:42.1572376Z ##[endgroup]
+2026-10-23T01:59:42.1573599Z ##[group]Determining the checkout info
+2026-10-23T01:59:42.1574549Z ##[endgroup]
+2026-10-23T01:59:42.1577008Z [command]/usr/bin/git sparse-checkout disable
+2026-10-23T01:59:42.1630699Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-23T01:59:42.1665179Z ##[group]Checking out the ref
+2026-10-23T01:59:42.1668917Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-23T01:59:42.2392913Z Switched to a new branch 'main'
+2026-10-23T01:59:42.2398708Z branch 'main' set up to track 'origin/main'.
+2026-10-23T01:59:42.2410459Z ##[endgroup]
+2026-10-23T01:59:42.2456899Z [command]/usr/bin/git log -1 --format=%H
+2026-10-23T01:59:42.2486528Z 54da6151defe57a9a10de2f321ca1d13c0d8bbe3
+2026-10-23T01:59:42.2496662Z ##[group]Removing auth
+2026-10-23T01:59:42.2497708Z Removing SSH command configuration
+2026-10-23T01:59:42.2500518Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T01:59:42.2536872Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T01:59:42.2760664Z Removing HTTP extra header
+2026-10-23T01:59:42.2764113Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T01:59:42.2817359Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T01:59:42.3059373Z Removing includeIf entries pointing to credentials config files
+2026-10-23T01:59:42.3061927Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T01:59:42.3088230Z includeif.gitdir:/home/runner/work/usbip-client/usbip-client/.git.path
+2026-10-23T01:59:42.3090852Z includeif.gitdir:/home/runner/work/usbip-client/usbip-client/.git/worktrees/*.path
+2026-10-23T01:59:42.3092588Z includeif.gitdir:/github/workspace/.git.path
+2026-10-23T01:59:42.3093991Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-23T01:59:42.3099282Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/usbip-client/usbip-client/.git.path
+2026-10-23T01:59:42.3126874Z /home/runner/work/_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:42.3138588Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/usbip-client/usbip-client/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-9c713c8a\-74e4\-4cfd\-a142\-6aa59fa3601e\.config
+2026-10-23T01:59:42.3178363Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/usbip-client/usbip-client/.git/worktrees/*.path
+2026-10-23T01:59:42.3206602Z /home/runner/work/_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:42.3217039Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/usbip-client/usbip-client/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-9c713c8a\-74e4\-4cfd\-a142\-6aa59fa3601e\.config
+2026-10-23T01:59:42.3253912Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-23T01:59:42.3281690Z /github/runner_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:42.3291175Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-9c713c8a\-74e4\-4cfd\-a142\-6aa59fa3601e\.config
+2026-10-23T01:59:42.3327238Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-23T01:59:42.3353067Z /github/runner_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config
+2026-10-23T01:59:42.3362925Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-9c713c8a\-74e4\-4cfd\-a142\-6aa59fa3601e\.config
+2026-10-23T01:59:42.3398191Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T01:59:42.3621434Z Removing credentials config '/home/runner/work/_temp/git-credentials-9c713c8a-74e4-4cfd-a142-6aa59fa3601e.config'
+2026-10-23T01:59:42.3629117Z ##[endgroup]
+2026-10-23T01:59:42.3864385Z ##[group]Run rustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy
+2026-10-23T01:59:42.3867377Z [36;1mrustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy[0m
+2026-10-23T01:59:42.4144158Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:59:42.4145299Z ##[endgroup]
+2026-10-23T01:59:42.4755750Z info: syncing channel updates for 1.97.1-x86_64-unknown-linux-gnu
+2026-10-23T01:59:42.6780501Z info: latest update on 2026-07-16 for version 1.97.1 (8bab26f4f 2026-07-14)
+2026-10-23T01:59:42.6784010Z info: downloading 5 components
+2026-10-23T01:59:50.6822931Z 
+2026-10-23T01:59:50.6892945Z   1.97.1-x86_64-unknown-linux-gnu installed - rustc 1.97.1 (8bab26f4f 2026-07-14)
+2026-10-23T01:59:50.6894448Z 
+2026-10-23T01:59:50.7006927Z ##[group]Run test "$(uname -m)" = "x86_64"
+2026-10-23T01:59:50.7007409Z [36;1mtest "$(uname -m)" = "x86_64"[0m
+2026-10-23T01:59:50.7007736Z [36;1muname -a[0m
+2026-10-23T01:59:50.7008005Z [36;1mcat /etc/os-release[0m
+2026-10-23T01:59:50.7008291Z [36;1mrustc -vV[0m
+2026-10-23T01:59:50.7008546Z [36;1mcargo -V[0m
+2026-10-23T01:59:50.7073603Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:59:50.7073916Z ##[endgroup]
+2026-10-23T01:59:50.7174518Z Linux runnervm8k3b6 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+2026-10-23T01:59:50.7184716Z PRETTY_NAME="Ubuntu 24.04.5 LTS"
+2026-10-23T01:59:50.7185377Z NAME="Ubuntu"
+2026-10-23T01:59:50.7185674Z VERSION_ID="24.04"
+2026-10-23T01:59:50.7186319Z VERSION="24.04.5 LTS (Noble Numbat)"
+2026-10-23T01:59:50.7186655Z VERSION_CODENAME=noble
+2026-10-23T01:59:50.7186925Z ID=ubuntu
+2026-10-23T01:59:50.7187164Z ID_LIKE=debian
+2026-10-23T01:59:50.7187566Z HOME_URL="https://www.ubuntu.com/"
+2026-10-23T01:59:50.7188006Z SUPPORT_URL="https://help.ubuntu.com/"
+2026-10-23T01:59:50.7188455Z BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+2026-10-23T01:59:50.7189007Z PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+2026-10-23T01:59:50.7189528Z UBUNTU_CODENAME=noble
+2026-10-23T01:59:50.7189832Z LOGO=ubuntu-logo
+2026-10-23T01:59:50.7453529Z rustc 1.97.1 (8bab26f4f 2026-07-14)
+2026-10-23T01:59:50.7454299Z binary: rustc
+2026-10-23T01:59:50.7454695Z commit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452
+2026-10-23T01:59:50.7455219Z commit-date: 2026-07-14
+2026-10-23T01:59:50.7456047Z host: x86_64-unknown-linux-gnu
+2026-10-23T01:59:50.7456684Z release: 1.97.1
+2026-10-23T01:59:50.7457205Z LLVM version: 22.1.6
+2026-10-23T01:59:50.7697403Z cargo 1.97.1 (c980f4866 2026-06-30)
+2026-10-23T01:59:50.7805111Z ##[group]Run scripts/check.sh
+2026-10-23T01:59:50.7805468Z [36;1mscripts/check.sh[0m
+2026-10-23T01:59:50.7870220Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:59:50.7870529Z ##[endgroup]
+2026-10-23T01:59:51.2470483Z     Updating crates.io index
+2026-10-23T01:59:51.6082003Z  Downloading crates ...
+2026-10-23T01:59:51.8861810Z   Downloaded generic-array v0.14.7
+2026-10-23T01:59:51.9241373Z   Downloaded colorchoice v1.0.5
+2026-10-23T01:59:51.9386898Z   Downloaded block-buffer v0.10.4
+2026-10-23T01:59:51.9444764Z   Downloaded errno v0.3.14
+2026-10-23T01:59:51.9745647Z   Downloaded cfg-if v1.0.5
+2026-10-23T01:59:51.9874333Z   Downloaded anstyle-query v1.1.5
+2026-10-23T01:59:51.9986692Z   Downloaded cpufeatures v0.2.17
+2026-10-23T01:59:52.0291728Z   Downloaded clap_lex v1.1.1
+2026-10-23T01:59:52.0893465Z   Downloaded utf8parse v0.2.2
+2026-10-23T01:59:52.1060344Z   Downloaded tracing-serde v0.2.0
+2026-10-23T01:59:52.1171901Z   Downloaded itoa v1.0.18
+2026-10-23T01:59:52.1355179Z   Downloaded lazy_static v1.5.1
+2026-10-23T01:59:52.1375333Z   Downloaded version_check v0.9.5
+2026-10-23T01:59:52.1388884Z   Downloaded matchers v0.2.0
+2026-10-23T01:59:52.1400946Z   Downloaded is_terminal_polyfill v1.70.2
+2026-10-23T01:59:52.1410889Z   Downloaded strsim v0.11.1
+2026-10-23T01:59:52.1424602Z   Downloaded crypto-common v0.1.7
+2026-10-23T01:59:52.1449397Z   Downloaded digest v0.10.7
+2026-10-23T01:59:52.1470270Z   Downloaded fastrand v2.5.0
+2026-10-23T01:59:52.1520448Z   Downloaded anstream v1.0.0
+2026-10-23T01:59:52.1720196Z   Downloaded heck v0.5.0
+2026-10-23T01:59:52.1971868Z   Downloaded anstyle v1.0.14
+2026-10-23T01:59:52.1988087Z   Downloaded anstyle-parse v1.0.0
+2026-10-23T01:59:52.2085293Z   Downloaded tracing-log v0.2.0
+2026-10-23T01:59:52.2198483Z   Downloaded tokio-macros v2.7.2
+2026-10-23T01:59:52.2262047Z   Downloaded nu-ansi-term v0.50.3
+2026-10-23T01:59:52.2292345Z   Downloaded thread_local v1.1.10
+2026-10-23T01:59:52.2307994Z   Downloaded thiserror v2.0.21
+2026-10-23T01:59:52.2385128Z   Downloaded sha2 v0.10.9
+2026-10-23T01:59:52.2412153Z   Downloaded signal-hook-registry v1.4.8
+2026-10-23T01:59:52.2424213Z   Downloaded pin-project-lite v0.2.17
+2026-10-23T01:59:52.2569640Z   Downloaded zmij v1.0.23
+2026-10-23T01:59:52.2610995Z   Downloaded quote v1.0.47
+2026-10-23T01:59:52.2640030Z   Downloaded smallvec v1.16.3
+2026-10-23T01:59:52.2653952Z   Downloaded thiserror-impl v2.0.21
+2026-10-23T01:59:52.2670878Z   Downloaded once_cell v1.21.4
+2026-10-23T01:59:52.2727081Z   Downloaded tracing-attributes v0.1.31
+2026-10-23T01:59:52.2803111Z   Downloaded bitflags v2.13.2
+2026-10-23T01:59:52.2858981Z   Downloaded clap_derive v4.6.7
+2026-10-23T01:59:52.2884148Z   Downloaded getrandom v0.4.3
+2026-10-23T01:59:52.2927094Z   Downloaded unicode-ident v1.0.27
+2026-10-23T01:59:52.2956009Z   Downloaded tempfile v3.27.0
+2026-10-23T01:59:52.2982109Z   Downloaded serde_core v1.0.229
+2026-10-23T01:59:52.3009949Z   Downloaded serde_derive v1.0.229
+2026-10-23T01:59:52.3040931Z   Downloaded socket2 v0.6.5
+2026-10-23T01:59:52.3059340Z   Downloaded log v0.4.34
+2026-10-23T01:59:52.3084426Z   Downloaded bytes v1.12.1
+2026-10-23T01:59:52.3124956Z   Downloaded clap v4.6.7
+2026-10-23T01:59:52.3231494Z   Downloaded sharded-slab v0.1.7
+2026-10-23T01:59:52.3265751Z   Downloaded proc-macro2 v1.0.107
+2026-10-23T01:59:52.3296947Z   Downloaded tracing-core v0.1.36
+2026-10-23T01:59:52.3383797Z   Downloaded serde v1.0.229
+2026-10-23T01:59:52.3425027Z   Downloaded typenum v1.20.1
+2026-10-23T01:59:52.3470449Z   Downloaded memchr v2.8.3
+2026-10-23T01:59:52.3529478Z   Downloaded mio v1.2.4
+2026-10-23T01:59:52.3651933Z   Downloaded clap_builder v4.6.7
+2026-10-23T01:59:52.3768430Z   Downloaded serde_json v1.0.154
+2026-10-23T01:59:52.3914149Z   Downloaded aho-corasick v1.1.5
+2026-10-23T01:59:52.3974878Z   Downloaded tracing-subscriber v0.3.23
+2026-10-23T01:59:52.4425187Z   Downloaded syn v3.0.9
+2026-10-23T01:59:52.4572064Z   Downloaded syn v2.0.119
+2026-10-23T01:59:52.4680389Z   Downloaded regex-syntax v0.8.11
+2026-10-23T01:59:52.4748424Z   Downloaded rustix v1.1.5
+2026-10-23T01:59:52.5027270Z   Downloaded tracing v0.1.44
+2026-10-23T01:59:52.5197566Z   Downloaded regex-automata v0.4.18
+2026-10-23T01:59:52.5338253Z   Downloaded libc v0.2.191
+2026-10-23T01:59:52.5822594Z   Downloaded tokio v1.54.1
+2026-10-23T01:59:52.6302348Z   Downloaded linux-raw-sys v0.12.1
+2026-10-23T01:59:52.7308330Z    Compiling proc-macro2 v1.0.107
+2026-10-23T01:59:52.7309216Z    Compiling quote v1.0.47
+2026-10-23T01:59:52.7310227Z    Compiling unicode-ident v1.0.27
+2026-10-23T01:59:52.7311140Z    Compiling serde_core v1.0.229
+2026-10-23T01:59:52.7932764Z    Compiling libc v0.2.191
+2026-10-23T01:59:52.9093304Z    Compiling serde v1.0.229
+2026-10-23T01:59:53.0907158Z    Compiling thiserror v2.0.21
+2026-10-23T01:59:53.5217625Z    Compiling syn v3.0.9
+2026-10-23T01:59:53.5296986Z    Compiling version_check v0.9.5
+2026-10-23T01:59:53.7567011Z     Checking once_cell v1.21.4
+2026-10-23T01:59:53.8687018Z    Compiling generic-array v0.14.7
+2026-10-23T01:59:53.9558501Z     Checking cfg-if v1.0.5
+2026-10-23T01:59:53.9917058Z     Checking typenum v1.20.1
+2026-10-23T01:59:54.0581879Z     Checking pin-project-lite v0.2.17
+2026-10-23T01:59:54.0936998Z     Checking errno v0.3.14
+2026-10-23T01:59:54.1517386Z     Checking tracing-core v0.1.36
+2026-10-23T01:59:54.4236832Z     Checking signal-hook-registry v1.4.8
+2026-10-23T01:59:54.5247296Z     Checking mio v1.2.4
+2026-10-23T01:59:54.7636975Z     Checking socket2 v0.6.5
+2026-10-23T01:59:54.8092077Z    Compiling syn v2.0.119
+2026-10-23T01:59:54.9906929Z    Compiling rustix v1.1.5
+2026-10-23T01:59:55.1516929Z     Checking block-buffer v0.10.4
+2026-10-23T01:59:55.2115712Z     Checking crypto-common v0.1.7
+2026-10-23T01:59:55.2207134Z     Checking bytes v1.12.1
+2026-10-23T01:59:55.2572973Z     Checking digest v0.10.7
+2026-10-23T01:59:55.4236790Z     Checking linux-raw-sys v0.12.1
+2026-10-23T01:59:55.6396895Z    Compiling zmij v1.0.23
+2026-10-23T01:59:55.7195047Z     Checking cpufeatures v0.2.17
+2026-10-23T01:59:55.7452174Z     Checking bitflags v2.13.2
+2026-10-23T01:59:55.8087146Z     Checking sha2 v0.10.9
+2026-10-23T01:59:56.0386970Z    Compiling serde_json v1.0.154
+2026-10-23T01:59:56.3786918Z     Checking memchr v2.8.3
+2026-10-23T01:59:56.7449188Z     Checking itoa v1.0.18
+2026-10-23T01:59:56.8257533Z     Checking utf8parse v0.2.2
+2026-10-23T01:59:56.8631979Z     Checking anstyle-parse v1.0.0
+2026-10-23T01:59:57.3707490Z    Compiling serde_derive v1.0.229
+2026-10-23T01:59:57.5986978Z    Compiling thiserror-impl v2.0.21
+2026-10-23T01:59:57.8148220Z    Compiling tokio-macros v2.7.2
+2026-10-23T01:59:58.3156876Z     Checking tokio v1.54.1
+2026-10-23T01:59:58.7237363Z     Checking regex-syntax v0.8.11
+2026-10-23T01:59:59.4106985Z    Compiling tracing-attributes v0.1.31
+2026-10-23T01:59:59.5067050Z     Checking anstyle-query v1.1.5
+2026-10-23T01:59:59.5352484Z     Checking is_terminal_polyfill v1.70.2
+2026-10-23T01:59:59.5679860Z     Checking colorchoice v1.0.5
+2026-10-23T01:59:59.6006842Z     Checking anstyle v1.0.14
+2026-10-23T01:59:59.7216823Z     Checking anstream v1.0.0
+2026-10-23T01:59:59.8558058Z     Checking regex-automata v0.4.18
+2026-10-23T02:00:00.4987141Z     Checking tracing v0.1.44
+2026-10-23T02:00:00.6189063Z     Checking lazy_static v1.5.1
+2026-10-23T02:00:00.6506987Z     Checking strsim v0.11.1
+2026-10-23T02:00:00.7496802Z     Checking log v0.4.34
+2026-10-23T02:00:00.8427295Z     Checking rustusb-core v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-core)
+2026-10-23T02:00:00.8466676Z    Compiling getrandom v0.4.3
+2026-10-23T02:00:00.9721858Z    Compiling heck v0.5.0
+2026-10-23T02:00:01.1256929Z     Checking clap_lex v1.1.1
+2026-10-23T02:00:01.2016738Z     Checking clap_builder v4.6.7
+2026-10-23T02:00:01.3057597Z     Checking rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:00:01.3197545Z     Checking matchers v0.2.0
+2026-10-23T02:00:01.3697480Z    Compiling clap_derive v4.6.7
+2026-10-23T02:00:01.4867017Z     Checking tracing-log v0.2.0
+2026-10-23T02:00:01.5667631Z     Checking tracing-serde v0.2.0
+2026-10-23T02:00:01.6447117Z     Checking sharded-slab v0.1.7
+2026-10-23T02:00:01.8715095Z     Checking rustusb-protocol v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-protocol)
+2026-10-23T02:00:02.0446853Z     Checking thread_local v1.1.10
+2026-10-23T02:00:02.1107118Z     Checking nu-ansi-term v0.50.3
+2026-10-23T02:00:02.1387444Z     Checking smallvec v1.16.3
+2026-10-23T02:00:02.2667808Z     Checking rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:00:02.2732357Z     Checking tracing-subscriber v0.3.23
+2026-10-23T02:00:02.6206492Z     Checking fastrand v2.5.0
+2026-10-23T02:00:02.7386888Z     Checking tempfile v3.27.0
+2026-10-23T02:00:03.0896780Z     Checking clap v4.6.7
+2026-10-23T02:00:03.2277838Z     Checking rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:00:03.3458668Z     Checking rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:00:04.1949488Z     Checking rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:00:05.2137818Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.99s
+2026-10-23T02:00:05.3652084Z    Compiling serde_core v1.0.229
+2026-10-23T02:00:05.3654552Z    Compiling libc v0.2.191
+2026-10-23T02:00:05.3686225Z    Compiling thiserror v2.0.21
+2026-10-23T02:00:05.3686853Z    Compiling once_cell v1.21.4
+2026-10-23T02:00:05.4097349Z    Compiling cfg-if v1.0.5
+2026-10-23T02:00:05.4367024Z    Compiling typenum v1.20.1
+2026-10-23T02:00:05.5297172Z    Compiling pin-project-lite v0.2.17
+2026-10-23T02:00:05.5687172Z    Compiling tracing-core v0.1.36
+2026-10-23T02:00:06.1457023Z    Compiling generic-array v0.14.7
+2026-10-23T02:00:06.1817071Z    Compiling bytes v1.12.1
+2026-10-23T02:00:06.3963332Z    Compiling errno v0.3.14
+2026-10-23T02:00:06.4893691Z    Compiling signal-hook-registry v1.4.8
+2026-10-23T02:00:06.7167128Z    Compiling mio v1.2.4
+2026-10-23T02:00:06.7276767Z    Compiling socket2 v0.6.5
+2026-10-23T02:00:06.8277038Z    Compiling block-buffer v0.10.4
+2026-10-23T02:00:06.8978428Z    Compiling crypto-common v0.1.7
+2026-10-23T02:00:06.9557099Z    Compiling digest v0.10.7
+2026-10-23T02:00:07.0907171Z    Compiling tokio v1.54.1
+2026-10-23T02:00:07.2167105Z    Compiling linux-raw-sys v0.12.1
+2026-10-23T02:00:07.2277351Z    Compiling bitflags v2.13.2
+2026-10-23T02:00:07.3986973Z    Compiling cpufeatures v0.2.17
+2026-10-23T02:00:07.4277053Z    Compiling sha2 v0.10.9
+2026-10-23T02:00:07.5467257Z    Compiling rustix v1.1.5
+2026-10-23T02:00:07.7356927Z    Compiling serde v1.0.229
+2026-10-23T02:00:07.7857763Z    Compiling tracing v0.1.44
+2026-10-23T02:00:07.9544436Z    Compiling zmij v1.0.23
+2026-10-23T02:00:08.2700176Z    Compiling rustusb-core v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-core)
+2026-10-23T02:00:08.3094789Z    Compiling memchr v2.8.3
+2026-10-23T02:00:08.8459627Z    Compiling itoa v1.0.18
+2026-10-23T02:00:08.9626776Z    Compiling serde_json v1.0.154
+2026-10-23T02:00:09.0676966Z    Compiling getrandom v0.4.3
+2026-10-23T02:00:09.1867130Z    Compiling fastrand v2.5.0
+2026-10-23T02:00:09.3527067Z    Compiling utf8parse v0.2.2
+2026-10-23T02:00:09.4007077Z    Compiling anstyle-parse v1.0.0
+2026-10-23T02:00:09.5096967Z    Compiling colorchoice v1.0.5
+2026-10-23T02:00:09.5496634Z    Compiling is_terminal_polyfill v1.70.2
+2026-10-23T02:00:09.5867386Z    Compiling anstyle-query v1.1.5
+2026-10-23T02:00:09.6257108Z    Compiling regex-syntax v0.8.11
+2026-10-23T02:00:10.3229129Z    Compiling tempfile v3.27.0
+2026-10-23T02:00:10.4920861Z    Compiling anstyle v1.0.14
+2026-10-23T02:00:10.6521277Z    Compiling anstream v1.0.0
+2026-10-23T02:00:10.7376916Z    Compiling regex-automata v0.4.18
+2026-10-23T02:00:10.9000218Z    Compiling rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:00:11.9357867Z    Compiling rustusb-protocol v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-protocol)
+2026-10-23T02:00:12.1136910Z    Compiling log v0.4.34
+2026-10-23T02:00:12.2547067Z    Compiling lazy_static v1.5.1
+2026-10-23T02:00:12.2879869Z    Compiling clap_lex v1.1.1
+2026-10-23T02:00:12.4652812Z    Compiling strsim v0.11.1
+2026-10-23T02:00:12.5386943Z    Compiling matchers v0.2.0
+2026-10-23T02:00:12.6036960Z    Compiling sharded-slab v0.1.7
+2026-10-23T02:00:12.8197075Z    Compiling clap_builder v4.6.7
+2026-10-23T02:00:13.0867826Z    Compiling tracing-log v0.2.0
+2026-10-23T02:00:13.2507381Z    Compiling rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:00:14.0777035Z    Compiling tracing-serde v0.2.0
+2026-10-23T02:00:14.1627126Z    Compiling thread_local v1.1.10
+2026-10-23T02:00:14.3238508Z    Compiling smallvec v1.16.3
+2026-10-23T02:00:14.4857136Z    Compiling nu-ansi-term v0.50.3
+2026-10-23T02:00:14.5707310Z    Compiling rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:00:14.7558086Z    Compiling tracing-subscriber v0.3.23
+2026-10-23T02:00:16.1016837Z    Compiling clap v4.6.7
+2026-10-23T02:00:16.1276753Z    Compiling rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:00:20.1967355Z    Compiling rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:00:23.3516570Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 18.07s
+2026-10-23T02:00:23.3576666Z      Running unittests src/main.rs (target/debug/deps/rustusb-c9f0b69953cf198a)
+2026-10-23T02:00:23.3588052Z 
+2026-10-23T02:00:23.3588226Z running 1 test
+2026-10-23T02:00:23.3616095Z test tests::cli_schema_and_input_validation ... ok
+2026-10-23T02:00:23.3616432Z 
+2026-10-23T02:00:23.3616682Z      Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+2026-10-23T02:00:23.3617272Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:23.3617639Z 
+2026-10-23T02:00:23.3621032Z 
+2026-10-23T02:00:23.3621162Z running 2 tests
+2026-10-23T02:00:23.3623518Z test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+2026-10-23T02:00:23.3624314Z test tests::validate_external_identifiers_and_serde ... ok
+2026-10-23T02:00:23.3624627Z 
+2026-10-23T02:00:23.3624881Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:23.3625241Z 
+2026-10-23T02:00:23.3627035Z      Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-a1ad21cb8fc01d12)
+2026-10-23T02:00:23.3637994Z 
+2026-10-23T02:00:23.3638165Z running 19 tests
+2026-10-23T02:00:23.3644349Z test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+2026-10-23T02:00:23.3645650Z test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+2026-10-23T02:00:23.3656912Z test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+2026-10-23T02:00:23.3658135Z test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+2026-10-23T02:00:23.3659171Z test linux::tests::early_uid_refusal_survives_a_failed_status_request_write ... ok
+2026-10-23T02:00:23.3659754Z test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+2026-10-23T02:00:23.3660296Z test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+2026-10-23T02:00:23.3660864Z test linux::tests::failed_request_write_cannot_be_replaced_by_invalid_or_success_response ... ok
+2026-10-23T02:00:23.3661508Z test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+2026-10-23T02:00:23.3663741Z test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+2026-10-23T02:00:23.3665091Z test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+2026-10-23T02:00:23.3667459Z test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+2026-10-23T02:00:23.3668359Z test tests::command_output_is_not_exposed ... ok
+2026-10-23T02:00:23.3673488Z test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+2026-10-23T02:00:23.3674208Z test tests::physical_policy_is_separate_bounded_and_backward_compatible ... ok
+2026-10-23T02:00:23.3674801Z test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+2026-10-23T02:00:23.3675731Z test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+2026-10-23T02:00:23.3685083Z test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+2026-10-23T02:00:23.3864352Z test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+2026-10-23T02:00:23.3865154Z 
+2026-10-23T02:00:23.3865535Z test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-10-23T02:00:23.3866472Z 
+2026-10-23T02:00:23.3869082Z      Running unittests src/main.rs (target/debug/deps/rustusb_helper-1034bed691850930)
+2026-10-23T02:00:23.3877586Z 
+2026-10-23T02:00:23.3877800Z running 0 tests
+2026-10-23T02:00:23.3878011Z 
+2026-10-23T02:00:23.3878372Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:23.3878893Z 
+2026-10-23T02:00:23.3880384Z      Running unittests src/lib.rs (target/debug/deps/rustusb_linux-4e63b969cba8af37)
+2026-10-23T02:00:23.3889152Z 
+2026-10-23T02:00:23.3889374Z running 0 tests
+2026-10-23T02:00:23.3889570Z 
+2026-10-23T02:00:23.3889897Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:23.3890355Z 
+2026-10-23T02:00:23.3892235Z      Running tests/discovery.rs (target/debug/deps/discovery-d3355eefac2ba508)
+2026-10-23T02:00:23.3900904Z 
+2026-10-23T02:00:23.3901060Z running 8 tests
+2026-10-23T02:00:23.4071925Z test kernel_export_occupancy_and_attribute_limits_are_explicit ... ok
+2026-10-23T02:00:23.4087650Z test block_descendants_are_denied_without_following_subsystem_symlinks ... ok
+2026-10-23T02:00:23.4088797Z test descendant_budget_exhaustion_refuses_to_claim_storage_safety ... ok
+2026-10-23T02:00:23.4089878Z test composite_storage_and_inactive_storage_are_blocked ... ok
+2026-10-23T02:00:23.4097463Z test missing_root_is_reported_instead_of_successful_empty_scan ... ok
+2026-10-23T02:00:23.4121482Z test metadata_and_fingerprint_survive_bus_and_address_reenumeration ... ok
+2026-10-23T02:00:23.4134411Z test storage_driver_is_blocked_even_for_vendor_class_quirks ... ok
+2026-10-23T02:00:23.4143930Z test unknown_hubs_short_reads_and_removed_devices_fail_closed ... ok
+2026-10-23T02:00:23.4144248Z 
+2026-10-23T02:00:23.4144493Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-10-23T02:00:23.4144847Z 
+2026-10-23T02:00:23.4146612Z      Running unittests src/lib.rs (target/debug/deps/rustusb_native-250e96ca480c2cb2)
+2026-10-23T02:00:23.4157342Z 
+2026-10-23T02:00:23.4157554Z running 31 tests
+2026-10-23T02:00:23.4166657Z test diagnostics::tests::module_entries_require_exact_safe_paths_and_names ... ok
+2026-10-23T02:00:23.4195065Z test diagnostics::tests::kernel_release_and_file_reads_are_bounded_and_do_not_accept_directories ... ok
+2026-10-23T02:00:23.4202509Z test diagnostics::tests::module_installation_and_loaded_sysfs_are_separate_observations ... ok
+2026-10-23T02:00:23.4203984Z test diagnostics::tests::kernel_configuration_distinguishes_disabled_builtin_and_unknown ... ok
+2026-10-23T02:00:23.4205438Z test diagnostics::tests::version_does_not_expose_multiline_control_or_arbitrary_output ... ok
+2026-10-23T02:00:23.4209317Z test diagnostics::tests::trust_checks_distinguish_missing_nonexecutable_and_untrusted_paths ... ok
+2026-10-23T02:00:23.4210594Z test diagnostics::tests::effective_driver_checks_require_attributes_and_valid_complete_status ... ok
+2026-10-23T02:00:23.5735806Z test diagnostics::tests::version_runner_timeout_and_output_limit_kill_and_reap ... ok
+2026-10-23T02:00:23.5767104Z test diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output ... ok
+2026-10-23T02:00:23.5870469Z test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+2026-10-23T02:00:23.9057177Z test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+2026-10-23T02:00:24.0658941Z test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+2026-10-23T02:00:24.1123262Z test tests::detach_does_not_wait_for_replacement_generation_at_same_path ... ok
+2026-10-23T02:00:24.2722966Z test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+2026-10-23T02:00:24.2818872Z test tests::detach_rejects_post_command_replacement_and_unknown_generation ... ok
+2026-10-23T02:00:24.2996615Z test tests::detach_reobserves_changed_status_without_repeating_the_command ... ok
+2026-10-23T02:00:24.3453142Z test tests::detach_waits_for_old_sysfs_generation_after_port_becomes_null ... ok
+2026-10-23T02:00:24.3560289Z test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+2026-10-23T02:00:24.3571987Z test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+2026-10-23T02:00:24.5166660Z test tests::export_and_unexport_require_observed_driver_changes ... ok
+2026-10-23T02:00:24.5207494Z test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+2026-10-23T02:00:24.5317100Z test tests::missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup ... ok
+2026-10-23T02:00:24.5324367Z test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+2026-10-23T02:00:24.5352748Z test tests::public_snapshot_still_rejects_status_changed_during_observation ... ok
+2026-10-23T02:00:24.5354837Z test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+2026-10-23T02:00:24.5447079Z test tests::same_device_on_reused_port_requires_the_original_generation_receipt ... ok
+2026-10-23T02:00:24.5472927Z test tests::snapshot_rejects_replacement_between_usb_attribute_reads ... ok
+2026-10-23T02:00:24.5513495Z test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+2026-10-23T02:00:24.7565169Z test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... ok
+2026-10-23T02:00:24.7601711Z test tests::unknown_export_state_and_untrusted_endpoint_records_are_rejected ... ok
+2026-10-23T02:00:24.7622861Z test tests::unsafe_record_directory_is_rejected_before_running_attach_tool ... ok
+2026-10-23T02:00:24.7623432Z 
+2026-10-23T02:00:24.7623891Z test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.35s
+2026-10-23T02:00:24.7624488Z 
+2026-10-23T02:00:24.7628328Z      Running unittests src/lib.rs (target/debug/deps/rustusb_protocol-64810c9d09a96150)
+2026-10-23T02:00:24.7639569Z 
+2026-10-23T02:00:24.7639713Z running 4 tests
+2026-10-23T02:00:24.7645138Z test tests::parses_network_byte_order_and_interfaces ... ok
+2026-10-23T02:00:24.7651568Z test tests::rejects_malicious_lengths_headers_strings_duplicates_and_truncation ... ok
+2026-10-23T02:00:24.7687220Z test tests::accepts_exact_device_and_interface_limits ... ok
+2026-10-23T02:00:24.7862497Z test tests::actual_tcp_request_and_deadline ... ok
+2026-10-23T02:00:24.7863064Z 
+2026-10-23T02:00:24.7863406Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-10-23T02:00:24.7863898Z 
+2026-10-23T02:00:24.7866884Z      Running unittests src/lib.rs (target/debug/deps/rustusb_rust_backend-3a793c3144415dd2)
+2026-10-23T02:00:24.7877596Z 
+2026-10-23T02:00:24.7877746Z running 24 tests
+2026-10-23T02:00:24.7889584Z test descriptors::tests::fixed_profiles_have_exact_lengths_and_endpoint_layouts ... ok
+2026-10-23T02:00:24.7890986Z test device::tests::control_lengths_configuration_and_invalid_interface_never_panic ... ok
+2026-10-23T02:00:24.7892355Z test device::tests::cdc_line_coding_control_lines_break_and_notification_are_stateful ... ok
+2026-10-23T02:00:24.7900002Z test device::tests::explicit_idle_rate_repeats_current_report_and_cancellation_does_not_consume_input ... ok
+2026-10-23T02:00:24.7901606Z test device::tests::keyboard_pending_reports_release_control_and_bounded_atomic_queue ... ok
+2026-10-23T02:00:24.7903234Z test device::tests::reconfiguration_retires_pending_and_clears_queues_without_consuming_new_data ... ok
+2026-10-23T02:00:24.7904609Z test device::tests::registration_exclusivity_drop_and_discovery_are_real_state_changes ... ok
+2026-10-23T02:00:24.7934670Z test device::tests::cdc_bulk_short_exact_packet_zero_length_limits_and_hashes ... ok
+2026-10-23T02:00:24.7973490Z test server::tests::failed_import_write_and_handle_drop_release_ownership ... ok
+2026-10-23T02:00:24.8027683Z test server::tests::asynchronous_control_in_out_preserve_original_errno_and_partial_bytes ... ok
+2026-10-23T02:00:24.8536974Z test server::tests::hung_usb_does_not_block_control_discovery_or_single_thread_timer ... ok
+2026-10-23T02:00:24.8538168Z test server::tests::idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation ... ok
+2026-10-23T02:00:24.8572787Z test server::tests::listener_policy_and_connection_budget_are_enforced_before_spawn ... ok
+2026-10-23T02:00:24.8801556Z test server::tests::fragmented_out_while_pending_and_wrapped_sequences_preserve_order ... ok
+2026-10-23T02:00:24.8821838Z test server::tests::real_tcp_devlist_busy_import_and_phase_rejection_release_leases ... ok
+2026-10-23T02:00:24.8992687Z test server::tests::one_byte_control_bounds_and_pending_unlink_have_no_late_submit ... ok
+2026-10-23T02:00:24.9040484Z test server::tests::response_budget_is_retained_until_the_complete_frame_is_written ... ok
+2026-10-23T02:00:24.9142015Z test server::tests::duplicate_active_sequence_and_pending_bound_fail_closed ... ok
+2026-10-23T02:00:24.9355028Z test wire::tests::complete_idle_connection_waits_but_partial_frame_has_a_single_owner ... ok
+2026-10-23T02:00:24.9356683Z test wire::tests::inconsistent_or_overlong_completion_is_rejected_without_silent_truncation ... ok
+2026-10-23T02:00:24.9358713Z test wire::tests::rejects_resource_and_phase_fields_before_reading_payload ... ok
+2026-10-23T02:00:24.9653939Z test server::tests::unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping ... ok
+2026-10-23T02:00:25.0232421Z test server::tests::active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out ... ok
+2026-10-23T02:00:34.9034899Z test server::tests::shutdown_deadline_reports_quarantine_without_releasing_pending_hardware ... ok
+2026-10-23T02:00:34.9035761Z 
+2026-10-23T02:00:34.9036719Z test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.12s
+2026-10-23T02:00:34.9037616Z 
+2026-10-23T02:00:34.9040786Z    Doc-tests rustusb_core
+2026-10-23T02:00:34.9462267Z 
+2026-10-23T02:00:34.9462699Z running 0 tests
+2026-10-23T02:00:34.9463013Z 
+2026-10-23T02:00:34.9463457Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:34.9464069Z 
+2026-10-23T02:00:34.9477413Z    Doc-tests rustusb_daemon
+2026-10-23T02:00:35.0004085Z 
+2026-10-23T02:00:35.0004579Z running 0 tests
+2026-10-23T02:00:35.0004848Z 
+2026-10-23T02:00:35.0005303Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:35.0006123Z 
+2026-10-23T02:00:35.0019094Z    Doc-tests rustusb_linux
+2026-10-23T02:00:35.0208385Z 
+2026-10-23T02:00:35.0208832Z running 0 tests
+2026-10-23T02:00:35.0209119Z 
+2026-10-23T02:00:35.0209584Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:35.0210193Z 
+2026-10-23T02:00:35.0221912Z    Doc-tests rustusb_native
+2026-10-23T02:00:35.0734836Z 
+2026-10-23T02:00:35.0735446Z running 0 tests
+2026-10-23T02:00:35.0735724Z 
+2026-10-23T02:00:35.0736426Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:35.0737076Z 
+2026-10-23T02:00:35.0752046Z    Doc-tests rustusb_protocol
+2026-10-23T02:00:35.1005486Z 
+2026-10-23T02:00:35.1005950Z running 0 tests
+2026-10-23T02:00:35.1006358Z 
+2026-10-23T02:00:35.1006973Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:35.1007373Z 
+2026-10-23T02:00:35.1019207Z    Doc-tests rustusb_rust_backend
+2026-10-23T02:00:35.1476727Z 
+2026-10-23T02:00:35.1477195Z running 0 tests
+2026-10-23T02:00:35.1477460Z 
+2026-10-23T02:00:35.1477748Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:00:35.1478100Z 
+2026-10-23T02:00:35.2386508Z    Compiling proc-macro2 v1.0.107
+2026-10-23T02:00:35.2387186Z    Compiling quote v1.0.47
+2026-10-23T02:00:35.2387892Z    Compiling unicode-ident v1.0.27
+2026-10-23T02:00:35.2388457Z    Compiling serde_core v1.0.229
+2026-10-23T02:00:35.2903251Z    Compiling libc v0.2.191
+2026-10-23T02:00:35.3738861Z    Compiling version_check v0.9.5
+2026-10-23T02:00:35.5716345Z    Compiling serde v1.0.229
+2026-10-23T02:00:35.5907240Z    Compiling generic-array v0.14.7
+2026-10-23T02:00:35.7398291Z    Compiling once_cell v1.21.4
+2026-10-23T02:00:36.0459187Z    Compiling syn v3.0.9
+2026-10-23T02:00:36.0957685Z    Compiling typenum v1.20.1
+2026-10-23T02:00:36.7787127Z    Compiling thiserror v2.0.21
+2026-10-23T02:00:36.9866818Z    Compiling tracing-core v0.1.36
+2026-10-23T02:00:37.4257041Z    Compiling pin-project-lite v0.2.17
+2026-10-23T02:00:37.4592993Z    Compiling errno v0.3.14
+2026-10-23T02:00:37.5518034Z    Compiling syn v2.0.119
+2026-10-23T02:00:37.9166894Z    Compiling cfg-if v1.0.5
+2026-10-23T02:00:37.9436780Z    Compiling signal-hook-registry v1.4.8
+2026-10-23T02:00:38.0077398Z    Compiling block-buffer v0.10.4
+2026-10-23T02:00:38.0916786Z    Compiling crypto-common v0.1.7
+2026-10-23T02:00:38.1532304Z    Compiling socket2 v0.6.5
+2026-10-23T02:00:38.3296830Z    Compiling mio v1.2.4
+2026-10-23T02:00:38.9636857Z    Compiling zmij v1.0.23
+2026-10-23T02:00:39.0893243Z    Compiling utf8parse v0.2.2
+2026-10-23T02:00:39.1107041Z    Compiling bytes v1.12.1
+2026-10-23T02:00:39.1336822Z    Compiling anstyle-parse v1.0.0
+2026-10-23T02:00:39.2920129Z    Compiling digest v0.10.7
+2026-10-23T02:00:39.4477217Z    Compiling is_terminal_polyfill v1.70.2
+2026-10-23T02:00:39.4846594Z    Compiling rustix v1.1.5
+2026-10-23T02:00:39.6838010Z    Compiling cpufeatures v0.2.17
+2026-10-23T02:00:39.7107200Z    Compiling serde_json v1.0.154
+2026-10-23T02:00:39.7897051Z    Compiling anstyle-query v1.1.5
+2026-10-23T02:00:39.8305682Z    Compiling anstyle v1.0.14
+2026-10-23T02:00:39.8456956Z    Compiling serde_derive v1.0.229
+2026-10-23T02:00:40.0177084Z    Compiling thiserror-impl v2.0.21
+2026-10-23T02:00:40.0397066Z    Compiling tokio-macros v2.7.2
+2026-10-23T02:00:40.5407449Z    Compiling tokio v1.54.1
+2026-10-23T02:00:41.1670531Z    Compiling colorchoice v1.0.5
+2026-10-23T02:00:41.2146761Z    Compiling regex-syntax v0.8.11
+2026-10-23T02:00:42.1127829Z    Compiling tracing-attributes v0.1.31
+2026-10-23T02:00:43.2077704Z    Compiling tracing v0.1.44
+2026-10-23T02:00:43.4737107Z    Compiling rustusb-core v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-core)
+2026-10-23T02:00:43.5076913Z    Compiling regex-automata v0.4.18
+2026-10-23T02:00:44.0666858Z    Compiling anstream v1.0.0
+2026-10-23T02:00:44.5483755Z    Compiling sha2 v0.10.9
+2026-10-23T02:00:46.3557460Z    Compiling rustusb-protocol v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-protocol)
+2026-10-23T02:00:47.2807034Z    Compiling bitflags v2.13.2
+2026-10-23T02:00:47.6093194Z    Compiling strsim v0.11.1
+2026-10-23T02:00:48.4234886Z    Compiling log v0.4.34
+2026-10-23T02:00:48.5994581Z    Compiling itoa v1.0.18
+2026-10-23T02:00:48.6746905Z    Compiling lazy_static v1.5.1
+2026-10-23T02:00:48.7112353Z    Compiling memchr v2.8.3
+2026-10-23T02:00:48.7760361Z    Compiling heck v0.5.0
+2026-10-23T02:00:48.9267035Z    Compiling clap_lex v1.1.1
+2026-10-23T02:00:49.1967420Z    Compiling linux-raw-sys v0.12.1
+2026-10-23T02:00:52.8897041Z    Compiling clap_builder v4.6.7
+2026-10-23T02:00:53.8308466Z    Compiling clap_derive v4.6.7
+2026-10-23T02:00:54.0257546Z    Compiling sharded-slab v0.1.7
+2026-10-23T02:00:54.2416166Z    Compiling tracing-log v0.2.0
+2026-10-23T02:00:54.5203823Z    Compiling matchers v0.2.0
+2026-10-23T02:00:54.6001995Z    Compiling tracing-serde v0.2.0
+2026-10-23T02:00:54.6117034Z    Compiling thread_local v1.1.10
+2026-10-23T02:00:54.6956957Z    Compiling nu-ansi-term v0.50.3
+2026-10-23T02:00:54.8197218Z    Compiling smallvec v1.16.3
+2026-10-23T02:00:55.0147124Z    Compiling tracing-subscriber v0.3.23
+2026-10-23T02:00:55.1657452Z    Compiling rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:00:55.5307469Z    Compiling clap v4.6.7
+2026-10-23T02:00:55.5637465Z    Compiling rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:00:57.4627821Z    Compiling rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:00:58.8937582Z    Compiling rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:01:03.6094183Z    Compiling rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:01:11.5253524Z     Finished `release` profile [optimized] target(s) in 36.34s
+2026-10-23T02:01:11.6279898Z     Checking rustusb-core v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-core)
+2026-10-23T02:01:11.6322646Z  Documenting rustusb-core v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-core)
+2026-10-23T02:01:11.8390237Z     Checking rustusb-protocol v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-protocol)
+2026-10-23T02:01:11.8396989Z     Checking rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:01:11.8398223Z  Documenting rustusb-protocol v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-protocol)
+2026-10-23T02:01:11.9802206Z  Documenting rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:01:12.0352698Z     Checking rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:01:12.0357024Z  Documenting rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:01:12.3881952Z  Documenting rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:01:12.8025251Z     Checking rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:01:12.8027208Z  Documenting rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:01:13.3517319Z  Documenting rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:01:13.8179977Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.25s
+2026-10-23T02:01:13.8234075Z    Generated /home/runner/work/usbip-client/usbip-client/target/doc/rustusb/index.html and 7 other files
+2026-10-23T02:01:13.9296385Z  Downloading crates ...
+2026-10-23T02:01:14.0685086Z   Downloaded slab v0.4.12
+2026-10-23T02:01:14.1622816Z   Downloaded futures-core v0.3.34
+2026-10-23T02:01:14.1899305Z    Compiling rustix v1.1.5
+2026-10-23T02:01:14.1900393Z     Checking linux-raw-sys v0.12.1
+2026-10-23T02:01:14.1951581Z     Checking slab v0.4.12
+2026-10-23T02:01:14.1963710Z     Checking futures-core v0.3.34
+2026-10-23T02:01:17.0622948Z     Checking rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:01:17.0624015Z     Checking tempfile v3.27.0
+2026-10-23T02:01:17.0625142Z     Checking nusb v0.2.8 (/home/runner/work/usbip-client/usbip-client/vendor/nusb)
+2026-10-23T02:01:17.2006215Z     Checking rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:01:17.7324666Z     Checking rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:01:18.0648423Z     Checking rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:01:19.1043172Z     Checking rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:01:20.1194874Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.24s
+2026-10-23T02:01:20.2422931Z    Compiling linux-raw-sys v0.12.1
+2026-10-23T02:01:20.2456806Z    Compiling slab v0.4.12
+2026-10-23T02:01:20.2476674Z    Compiling futures-core v0.3.34
+2026-10-23T02:01:21.0439316Z    Compiling rustix v1.1.5
+2026-10-23T02:01:23.4182893Z    Compiling tempfile v3.27.0
+2026-10-23T02:01:23.4184707Z    Compiling rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:01:23.4187047Z    Compiling nusb v0.2.8 (/home/runner/work/usbip-client/usbip-client/vendor/nusb)
+2026-10-23T02:01:24.2563462Z    Compiling rustusb-linux v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-linux)
+2026-10-23T02:01:24.5009185Z    Compiling rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:01:24.8608212Z    Compiling rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:01:29.8156535Z    Compiling rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:01:34.4480792Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 14.29s
+2026-10-23T02:01:34.4541750Z      Running unittests src/main.rs (target/debug/deps/rustusb-1fcebd51a2d2ad7e)
+2026-10-23T02:01:34.4556012Z 
+2026-10-23T02:01:34.4556275Z running 3 tests
+2026-10-23T02:01:34.4562860Z test virtual_server::tests::controls_reject_unbounded_or_sensitive_input_without_echo ... ok
+2026-10-23T02:01:34.4564067Z test physical_server::tests::invalid_selection_and_network_policy_fail_before_helper_io ... ok
+2026-10-23T02:01:34.4585561Z test tests::cli_schema_and_input_validation ... ok
+2026-10-23T02:01:34.4586184Z 
+2026-10-23T02:01:34.4586644Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:34.4587154Z 
+2026-10-23T02:01:34.4589862Z      Running unittests src/lib.rs (target/debug/deps/rustusb_core-a40965ad32b6f910)
+2026-10-23T02:01:34.4599455Z 
+2026-10-23T02:01:34.4599588Z running 2 tests
+2026-10-23T02:01:34.4602185Z test tests::lifecycle_rejects_unsafe_shortcuts ... ok
+2026-10-23T02:01:34.4602895Z test tests::validate_external_identifiers_and_serde ... ok
+2026-10-23T02:01:34.4603323Z 
+2026-10-23T02:01:34.4603790Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:34.4604273Z 
+2026-10-23T02:01:34.4605063Z      Running unittests src/lib.rs (target/debug/deps/rustusb_daemon-7d96cc7168eacc89)
+2026-10-23T02:01:34.4616205Z 
+2026-10-23T02:01:34.4616372Z running 25 tests
+2026-10-23T02:01:34.4622378Z test diagnostics::tests::valid_root_status_is_distinct_from_kernel_or_network_readiness ... ok
+2026-10-23T02:01:34.4623642Z test linux::tests::attach_reconciliation_preserves_live_sessions_and_only_selects_null_ports ... ok
+2026-10-23T02:01:34.4648002Z test diagnostics::tests::real_insecure_endpoint_is_rejected_without_sending_work ... ok
+2026-10-23T02:01:34.4662271Z test diagnostics::tests::active_snapshot_requires_current_schema_and_unique_valid_sessions ... ok
+2026-10-23T02:01:34.4664050Z test diagnostics::tests::denied_unknown_and_oversized_status_do_not_become_ready_or_expose_errors ... ok
+2026-10-23T02:01:34.4665306Z test linux::tests::early_uid_refusal_of_physical_capability_requires_no_acknowledgement ... ok
+2026-10-23T02:01:34.4666745Z test linux::tests::owned_export_requires_same_generation_and_verified_new_binding ... ok
+2026-10-23T02:01:34.4667847Z test linux::tests::early_uid_refusal_survives_a_failed_status_request_write ... ok
+2026-10-23T02:01:34.4668813Z test linux::tests::policy_metadata_rejects_writable_or_wrong_owner ... ok
+2026-10-23T02:01:34.4670228Z test linux::tests::failed_request_write_cannot_be_replaced_by_invalid_or_success_response ... ok
+2026-10-23T02:01:34.4671608Z test linux::tests::replacement_and_unknown_port_identities_block_attach_before_mutation ... ok
+2026-10-23T02:01:34.4672827Z test linux::tests::physical_capability_denial_precedes_scanning_or_opening_usb ... ok
+2026-10-23T02:01:34.4673944Z test linux::tests::real_unix_peer_credentials_allow_status_and_deny_unknown_uid ... ok
+2026-10-23T02:01:34.4675637Z test linux::tests::unix_unknown_fields_are_rejected_and_unapproved_actions_do_no_native_io ... ok
+2026-10-23T02:01:34.4677249Z test linux::tests::root_socket_validation_rejects_user_writable_directory ... ok
+2026-10-23T02:01:34.4678302Z test linux::tests::unknown_export_cannot_be_adopted_or_released_after_restart ... ok
+2026-10-23T02:01:34.4679777Z test physical::tests::descriptor_handoff_preserves_data_and_cloexec_without_root_or_usb ... ok
+2026-10-23T02:01:34.4680863Z test physical::tests::ancillary_marker_missing_or_duplicate_rights_are_rejected ... ok
+2026-10-23T02:01:34.4681425Z test physical::tests::regular_files_cannot_be_usb_capabilities ... ok
+2026-10-23T02:01:34.4681852Z test tests::command_output_is_not_exposed ... ok
+2026-10-23T02:01:34.4682241Z test tests::malformed_or_unknown_request_fields_are_rejected ... ok
+2026-10-23T02:01:34.4682708Z test tests::physical_policy_is_separate_bounded_and_backward_compatible ... ok
+2026-10-23T02:01:34.4683204Z test physical::tests::wrong_marker_and_truncated_rights_are_rejected ... ok
+2026-10-23T02:01:34.4683655Z test tests::policy_is_default_deny_and_bounds_external_ids ... ok
+2026-10-23T02:01:34.4862271Z test linux::tests::bounded_frames_reject_overflow_missing_newline_and_timeout ... ok
+2026-10-23T02:01:34.4862958Z 
+2026-10-23T02:01:34.4863465Z test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-10-23T02:01:34.4864191Z 
+2026-10-23T02:01:34.4867163Z      Running unittests src/main.rs (target/debug/deps/rustusb_helper-cc5399fdfabd01e0)
+2026-10-23T02:01:34.4877694Z 
+2026-10-23T02:01:34.4877903Z running 0 tests
+2026-10-23T02:01:34.4878201Z 
+2026-10-23T02:01:34.4878541Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:34.4879009Z 
+2026-10-23T02:01:34.4880572Z      Running unittests src/lib.rs (target/debug/deps/rustusb_linux-4a7d98a6d07ab896)
+2026-10-23T02:01:34.4889316Z 
+2026-10-23T02:01:34.4889537Z running 0 tests
+2026-10-23T02:01:34.4889801Z 
+2026-10-23T02:01:34.4890137Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:34.4890603Z 
+2026-10-23T02:01:34.4892157Z      Running tests/discovery.rs (target/debug/deps/discovery-e3ffa439901b1e1e)
+2026-10-23T02:01:34.4900968Z 
+2026-10-23T02:01:34.4901156Z running 8 tests
+2026-10-23T02:01:34.5081322Z test kernel_export_occupancy_and_attribute_limits_are_explicit ... ok
+2026-10-23T02:01:34.5082559Z test block_descendants_are_denied_without_following_subsystem_symlinks ... ok
+2026-10-23T02:01:34.5085728Z test descendant_budget_exhaustion_refuses_to_claim_storage_safety ... ok
+2026-10-23T02:01:34.5087210Z test composite_storage_and_inactive_storage_are_blocked ... ok
+2026-10-23T02:01:34.5093557Z test missing_root_is_reported_instead_of_successful_empty_scan ... ok
+2026-10-23T02:01:34.5126123Z test unknown_hubs_short_reads_and_removed_devices_fail_closed ... ok
+2026-10-23T02:01:34.5127764Z test storage_driver_is_blocked_even_for_vendor_class_quirks ... ok
+2026-10-23T02:01:34.5134208Z test metadata_and_fingerprint_survive_bus_and_address_reenumeration ... ok
+2026-10-23T02:01:34.5134549Z 
+2026-10-23T02:01:34.5134804Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-10-23T02:01:34.5135167Z 
+2026-10-23T02:01:34.5137434Z      Running unittests src/lib.rs (target/debug/deps/rustusb_native-6e88bbfe6c3e17a2)
+2026-10-23T02:01:34.5149806Z 
+2026-10-23T02:01:34.5149950Z running 31 tests
+2026-10-23T02:01:34.5155275Z test diagnostics::tests::module_entries_require_exact_safe_paths_and_names ... ok
+2026-10-23T02:01:34.5184467Z test diagnostics::tests::kernel_release_and_file_reads_are_bounded_and_do_not_accept_directories ... ok
+2026-10-23T02:01:34.5197237Z test diagnostics::tests::kernel_configuration_distinguishes_disabled_builtin_and_unknown ... ok
+2026-10-23T02:01:34.5201688Z test diagnostics::tests::version_does_not_expose_multiline_control_or_arbitrary_output ... ok
+2026-10-23T02:01:34.5203223Z test diagnostics::tests::trust_checks_distinguish_missing_nonexecutable_and_untrusted_paths ... ok
+2026-10-23T02:01:34.5211083Z test diagnostics::tests::module_installation_and_loaded_sysfs_are_separate_observations ... ok
+2026-10-23T02:01:34.5214033Z test diagnostics::tests::effective_driver_checks_require_attributes_and_valid_complete_status ... ok
+2026-10-23T02:01:34.6742074Z test diagnostics::tests::version_runner_timeout_and_output_limit_kill_and_reap ... ok
+2026-10-23T02:01:34.6772966Z test diagnostics::tests::version_runner_uses_fixed_arguments_environment_and_safe_output ... ok
+2026-10-23T02:01:34.6888801Z test tests::attach_claims_only_verified_session_and_failure_does_not_hide_side_effects ... ok
+2026-10-23T02:01:35.0122731Z test tests::attach_does_not_claim_missing_record_wrong_metadata_or_existing_port ... ok
+2026-10-23T02:01:35.1723979Z test tests::checked_detach_rejects_a_reused_port_without_running_tool ... ok
+2026-10-23T02:01:35.2210011Z test tests::detach_does_not_wait_for_replacement_generation_at_same_path ... ok
+2026-10-23T02:01:35.3804540Z test tests::detach_is_idempotent_and_waits_for_actual_kernel_release ... ok
+2026-10-23T02:01:35.3901155Z test tests::detach_rejects_post_command_replacement_and_unknown_generation ... ok
+2026-10-23T02:01:35.4070844Z test tests::detach_reobserves_changed_status_without_repeating_the_command ... ok
+2026-10-23T02:01:35.4526268Z test tests::detach_waits_for_old_sysfs_generation_after_port_becomes_null ... ok
+2026-10-23T02:01:35.4630242Z test tests::dropping_future_terminates_child_but_never_claims_kernel_rollback ... ok
+2026-10-23T02:01:35.4645205Z test tests::executable_verification_rejects_writable_configured_parent_chain ... ok
+2026-10-23T02:01:35.6277223Z test tests::export_and_unexport_require_observed_driver_changes ... ok
+2026-10-23T02:01:35.6314255Z test tests::failed_tool_can_leave_exported_state_and_busy_export_is_rejected ... ok
+2026-10-23T02:01:35.6405453Z test tests::missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup ... ok
+2026-10-23T02:01:35.6413055Z test tests::native_record_limit_is_rejected_before_network_or_kernel_mutations ... ok
+2026-10-23T02:01:35.6441526Z test tests::public_snapshot_still_rejects_status_changed_during_observation ... ok
+2026-10-23T02:01:35.6442840Z test tests::status_is_strict_and_does_not_call_enumerating_ports_connected ... ok
+2026-10-23T02:01:35.6548221Z test tests::same_device_on_reused_port_requires_the_original_generation_receipt ... ok
+2026-10-23T02:01:35.6574535Z test tests::snapshot_rejects_replacement_between_usb_attribute_reads ... ok
+2026-10-23T02:01:35.6616102Z test tests::snapshots_cover_every_status_attribute_and_reject_missing_rows ... ok
+2026-10-23T02:01:35.8657839Z test tests::subprocess_timeout_is_killed_and_reaped_and_output_is_bounded ... ok
+2026-10-23T02:01:35.8695160Z test tests::unknown_export_state_and_untrusted_endpoint_records_are_rejected ... ok
+2026-10-23T02:01:35.8716688Z test tests::unsafe_record_directory_is_rejected_before_running_attach_tool ... ok
+2026-10-23T02:01:35.8717289Z 
+2026-10-23T02:01:35.8717722Z test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.36s
+2026-10-23T02:01:35.8718328Z 
+2026-10-23T02:01:35.8720996Z      Running unittests src/lib.rs (target/debug/deps/rustusb_protocol-64810c9d09a96150)
+2026-10-23T02:01:35.8732406Z 
+2026-10-23T02:01:35.8732571Z running 4 tests
+2026-10-23T02:01:35.8741654Z test tests::parses_network_byte_order_and_interfaces ... ok
+2026-10-23T02:01:35.8742560Z test tests::rejects_malicious_lengths_headers_strings_duplicates_and_truncation ... ok
+2026-10-23T02:01:35.8780034Z test tests::accepts_exact_device_and_interface_limits ... ok
+2026-10-23T02:01:35.8954168Z test tests::actual_tcp_request_and_deadline ... ok
+2026-10-23T02:01:35.8954567Z 
+2026-10-23T02:01:35.8954889Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-10-23T02:01:35.8955359Z 
+2026-10-23T02:01:35.8957204Z      Running unittests src/lib.rs (target/debug/deps/rustusb_rust_backend-6ce3257820c975db)
+2026-10-23T02:01:35.8968616Z 
+2026-10-23T02:01:35.8968763Z running 40 tests
+2026-10-23T02:01:35.8973537Z test descriptors::tests::fixed_profiles_have_exact_lengths_and_endpoint_layouts ... ok
+2026-10-23T02:01:35.8974687Z test device::tests::control_lengths_configuration_and_invalid_interface_never_panic ... ok
+2026-10-23T02:01:35.8976967Z test device::tests::cdc_line_coding_control_lines_break_and_notification_are_stateful ... ok
+2026-10-23T02:01:35.8978547Z test device::tests::explicit_idle_rate_repeats_current_report_and_cancellation_does_not_consume_input ... ok
+2026-10-23T02:01:35.8979850Z test device::tests::keyboard_pending_reports_release_control_and_bounded_atomic_queue ... ok
+2026-10-23T02:01:35.8981117Z test device::tests::reconfiguration_retires_pending_and_clears_queues_without_consuming_new_data ... ok
+2026-10-23T02:01:35.8988751Z test physical::observe::tests::alternate_is_decimal_and_driver_observations_are_bounded ... ok
+2026-10-23T02:01:35.8990358Z test device::tests::registration_exclusivity_drop_and_discovery_are_real_state_changes ... ok
+2026-10-23T02:01:35.8998092Z test physical::observe::tests::generation_distinguishes_missing_replaced_and_changed_address ... ok
+2026-10-23T02:01:35.9017152Z test physical::observe::tests::alternate_already_restored_by_probe_does_not_need_reclaiming ... ok
+2026-10-23T02:01:35.9018265Z test physical::observe::tests::reconnect_never_changes_foreign_or_unowned_bindings ... ok
+2026-10-23T02:01:35.9026518Z test physical::observe::tests::reconnect_observes_sibling_binding_without_a_second_connect ... ok
+2026-10-23T02:01:35.9031156Z test physical::observe::tests::reconnect_errors_require_actual_original_binding_to_converge ... ok
+2026-10-23T02:01:35.9057471Z test device::tests::cdc_bulk_short_exact_packet_zero_length_limits_and_hashes ... ok
+2026-10-23T02:01:35.9058846Z test physical::observe::tests::reconnect_rejects_changed_scope_before_and_after_connect ... ok
+2026-10-23T02:01:35.9065025Z test physical::safety::tests::configuration_zero_does_not_require_interfaces_or_claim_any ... ok
+2026-10-23T02:01:35.9075358Z test physical::safety::tests::changed_generation_identity_configuration_or_interface_set_denies_claim ... ok
+2026-10-23T02:01:35.9078869Z test physical::tests::regular_file_capability_is_rejected_before_any_usb_or_sysfs_access ... ok
+2026-10-23T02:01:35.9080592Z test physical::tests::reservations_cover_two_buffers_and_remain_bounded_until_retirement ... ok
+2026-10-23T02:01:35.9082037Z test physical::worker::tests::physical_errno_and_partial_bytes_survive_completion_mapping ... ok
+2026-10-23T02:01:35.9090309Z test physical::worker::tests::queued_host_state_intents_defer_later_endpoint_routing ... ok
+2026-10-23T02:01:35.9122039Z test physical::safety::tests::inactive_storage_and_incomplete_descriptors_remain_blocked ... ok
+2026-10-23T02:01:35.9134157Z test physical::safety::tests::current_configuration_allows_only_our_claimed_siblings ... ok
+2026-10-23T02:01:35.9191334Z test physical::safety::tests::newly_bound_storage_quirks_and_block_children_refuse_claim ... ok
+2026-10-23T02:01:35.9231407Z test server::tests::failed_import_write_and_handle_drop_release_ownership ... ok
+2026-10-23T02:01:35.9256967Z test server::tests::asynchronous_control_in_out_preserve_original_errno_and_partial_bytes ... ok
+2026-10-23T02:01:35.9758743Z test server::tests::hung_usb_does_not_block_control_discovery_or_single_thread_timer ... ok
+2026-10-23T02:01:35.9768248Z test server::tests::idle_device_disconnect_closes_tcp_without_releasing_uncleaned_generation ... ok
+2026-10-23T02:01:35.9795094Z test server::tests::listener_policy_and_connection_budget_are_enforced_before_spawn ... ok
+2026-10-23T02:01:36.0053762Z test server::tests::fragmented_out_while_pending_and_wrapped_sequences_preserve_order ... ok
+2026-10-23T02:01:36.0074800Z test server::tests::real_tcp_devlist_busy_import_and_phase_rejection_release_leases ... ok
+2026-10-23T02:01:36.0215511Z test server::tests::one_byte_control_bounds_and_pending_unlink_have_no_late_submit ... ok
+2026-10-23T02:01:36.0294483Z test server::tests::response_budget_is_retained_until_the_complete_frame_is_written ... ok
+2026-10-23T02:01:36.0394802Z test server::tests::duplicate_active_sequence_and_pending_bound_fail_closed ... ok
+2026-10-23T02:01:36.0608803Z test wire::tests::complete_idle_connection_waits_but_partial_frame_has_a_single_owner ... ok
+2026-10-23T02:01:36.0610266Z test wire::tests::inconsistent_or_overlong_completion_is_rejected_without_silent_truncation ... ok
+2026-10-23T02:01:36.0612445Z test wire::tests::rejects_resource_and_phase_fields_before_reading_payload ... ok
+2026-10-23T02:01:36.0935185Z test server::tests::unfinished_cleanup_remains_busy_and_shutdown_waits_for_reaping ... ok
+2026-10-23T02:01:36.1403635Z test server::tests::active_cancel_waits_for_terminal_and_completion_race_keeps_partial_out ... ok
+2026-10-23T02:01:46.0253061Z test server::tests::shutdown_deadline_reports_quarantine_without_releasing_pending_hardware ... ok
+2026-10-23T02:01:46.0253596Z 
+2026-10-23T02:01:46.0253919Z test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.13s
+2026-10-23T02:01:46.0254433Z 
+2026-10-23T02:01:46.0256744Z    Doc-tests rustusb_core
+2026-10-23T02:01:46.0681663Z 
+2026-10-23T02:01:46.0682130Z running 0 tests
+2026-10-23T02:01:46.0682319Z 
+2026-10-23T02:01:46.0682603Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:46.0683285Z 
+2026-10-23T02:01:46.0697715Z    Doc-tests rustusb_daemon
+2026-10-23T02:01:46.1303015Z 
+2026-10-23T02:01:46.1303458Z running 0 tests
+2026-10-23T02:01:46.1303732Z 
+2026-10-23T02:01:46.1304205Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:46.1304698Z 
+2026-10-23T02:01:46.1318414Z    Doc-tests rustusb_linux
+2026-10-23T02:01:46.1508871Z 
+2026-10-23T02:01:46.1509383Z running 0 tests
+2026-10-23T02:01:46.1509571Z 
+2026-10-23T02:01:46.1509842Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:46.1510196Z 
+2026-10-23T02:01:46.1520645Z    Doc-tests rustusb_native
+2026-10-23T02:01:46.2034172Z 
+2026-10-23T02:01:46.2034951Z running 0 tests
+2026-10-23T02:01:46.2035161Z 
+2026-10-23T02:01:46.2035431Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:46.2036076Z 
+2026-10-23T02:01:46.2051134Z    Doc-tests rustusb_protocol
+2026-10-23T02:01:46.2317189Z 
+2026-10-23T02:01:46.2317750Z running 0 tests
+2026-10-23T02:01:46.2318029Z 
+2026-10-23T02:01:46.2318476Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:46.2319079Z 
+2026-10-23T02:01:46.2332384Z    Doc-tests rustusb_rust_backend
+2026-10-23T02:01:46.3049702Z 
+2026-10-23T02:01:46.3050251Z running 0 tests
+2026-10-23T02:01:46.3050454Z 
+2026-10-23T02:01:46.3050740Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:01:46.3051092Z 
+2026-10-23T02:01:46.3960637Z    Compiling rustix v1.1.5
+2026-10-23T02:01:46.3964118Z    Compiling linux-raw-sys v0.12.1
+2026-10-23T02:01:46.4015467Z    Compiling futures-core v0.3.34
+2026-10-23T02:01:46.4036863Z    Compiling slab v0.4.12
+2026-10-23T02:01:49.9356851Z    Compiling rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:01:49.9358691Z    Compiling nusb v0.2.8 (/home/runner/work/usbip-client/usbip-client/vendor/nusb)
+2026-10-23T02:01:51.6177300Z    Compiling rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:01:51.6657802Z    Compiling rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:01:56.9003754Z    Compiling rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:02:10.0924121Z     Finished `release` profile [optimized] target(s) in 23.75s
+2026-10-23T02:02:10.2015087Z     Checking rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:02:10.2016848Z  Documenting rustusb-native v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-native)
+2026-10-23T02:02:10.2018726Z     Checking rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:02:10.2020158Z  Documenting rustusb-rust-backend v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-rust-backend)
+2026-10-23T02:02:11.0947462Z     Checking rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:02:11.2590373Z  Documenting rustusb-daemon v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-daemon)
+2026-10-23T02:02:11.6698346Z  Documenting rustusb-cli v0.1.0 (/home/runner/work/usbip-client/usbip-client/crates/rustusb-cli)
+2026-10-23T02:02:12.2164315Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.08s
+2026-10-23T02:02:12.2220230Z    Generated /home/runner/work/usbip-client/usbip-client/target/doc/rustusb/index.html and 7 other files
+2026-10-23T02:02:12.2749742Z     Updating crates.io index
+2026-10-23T02:02:12.3994273Z  Downloading crates ...
+2026-10-23T02:02:12.4486196Z   Downloaded parking v2.2.1
+2026-10-23T02:02:12.4896931Z   Downloaded defmt-parser v1.0.0
+2026-10-23T02:02:12.4937699Z   Downloaded futures-io v0.3.34
+2026-10-23T02:02:12.5130519Z   Downloaded jiff-core v0.1.1
+2026-10-23T02:02:12.5169245Z   Downloaded futures-lite v2.6.1
+2026-10-23T02:02:12.5186965Z   Downloaded bitflags v1.3.2
+2026-10-23T02:02:12.5485009Z   Downloaded defmt-macros v1.1.1
+2026-10-23T02:02:12.5535627Z   Downloaded regex v1.13.1
+2026-10-23T02:02:12.5694909Z   Downloaded libc v0.2.190
+2026-10-23T02:02:12.6272513Z   Downloaded defmt v1.1.1
+2026-10-23T02:02:12.7486636Z   Downloaded env_logger v0.11.11
+2026-10-23T02:02:12.7513490Z   Downloaded env_filter v2.0.0
+2026-10-23T02:02:12.7584638Z   Downloaded jiff v0.2.38
+2026-10-23T02:02:12.8046348Z   Downloaded tokio v1.53.3
+2026-10-23T02:02:12.8707114Z    Compiling proc-macro2 v1.0.107
+2026-10-23T02:02:12.8707906Z    Compiling unicode-ident v1.0.27
+2026-10-23T02:02:12.8717467Z    Compiling quote v1.0.47
+2026-10-23T02:02:12.8718166Z    Compiling memchr v2.8.3
+2026-10-23T02:02:12.9317044Z    Compiling regex-syntax v0.8.11
+2026-10-23T02:02:13.0113108Z    Compiling utf8parse v0.2.2
+2026-10-23T02:02:13.0536934Z    Compiling anstyle-parse v1.0.0
+2026-10-23T02:02:13.1757297Z    Compiling log v0.4.34
+2026-10-23T02:02:13.3198082Z    Compiling aho-corasick v1.1.5
+2026-10-23T02:02:13.7047044Z    Compiling pin-project-lite v0.2.17
+2026-10-23T02:02:13.7427175Z    Compiling is_terminal_polyfill v1.70.2
+2026-10-23T02:02:13.7731637Z    Compiling syn v3.0.9
+2026-10-23T02:02:13.8094067Z    Compiling anstyle-query v1.1.5
+2026-10-23T02:02:13.8483391Z    Compiling jiff-core v0.1.1
+2026-10-23T02:02:15.1936852Z    Compiling regex-automata v0.4.18
+2026-10-23T02:02:15.3847001Z    Compiling colorchoice v1.0.5
+2026-10-23T02:02:15.4277061Z    Compiling rustix v1.1.5
+2026-10-23T02:02:15.6407007Z    Compiling anstyle v1.0.14
+2026-10-23T02:02:15.8147300Z    Compiling anstream v1.0.0
+2026-10-23T02:02:15.8822868Z    Compiling jiff v0.2.38
+2026-10-23T02:02:16.0788967Z    Compiling fastrand v2.5.0
+2026-10-23T02:02:16.2407637Z    Compiling futures-core v0.3.34
+2026-10-23T02:02:16.3186981Z    Compiling futures-io v0.3.34
+2026-10-23T02:02:16.4157459Z    Compiling parking v2.2.1
+2026-10-23T02:02:16.5107363Z    Compiling bitflags v2.13.2
+2026-10-23T02:02:16.6856816Z    Compiling linux-raw-sys v0.12.1
+2026-10-23T02:02:17.6087136Z    Compiling regex v1.13.1
+2026-10-23T02:02:18.0472416Z    Compiling env_filter v2.0.0
+2026-10-23T02:02:18.1207258Z    Compiling tokio-macros v2.7.2
+2026-10-23T02:02:18.3408171Z    Compiling bytes v1.12.1
+2026-10-23T02:02:18.6387060Z    Compiling env_logger v0.11.11
+2026-10-23T02:02:19.0090799Z    Compiling tokio v1.53.3
+2026-10-23T02:02:19.5446967Z    Compiling futures-lite v2.6.1
+2026-10-23T02:02:19.9516963Z    Compiling once_cell v1.21.4
+2026-10-23T02:02:20.0993712Z    Compiling slab v0.4.12
+2026-10-23T02:02:21.9445065Z    Compiling nusb v0.2.8 (/home/runner/work/usbip-client/usbip-client/vendor/nusb)
+2026-10-23T02:02:22.7563907Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 10.50s
+2026-10-23T02:02:22.7617433Z      Running unittests src/lib.rs (target/nusb-tests/debug/deps/nusb-9d1bd7f5da8e65bb)
+2026-10-23T02:02:22.7628276Z 
+2026-10-23T02:02:22.7630129Z running 14 tests
+2026-10-23T02:02:22.7632049Z test descriptors::test_concatenated::test_empty ... ok
+2026-10-23T02:02:22.7632953Z test descriptors::test_concatenated::test_invalid_total_len ... ok
+2026-10-23T02:02:22.7633868Z test descriptors::test_concatenated::test_short ... ok
+2026-10-23T02:02:22.7635356Z test descriptors::test_dell_webcam ... ok
+2026-10-23T02:02:22.7636342Z test descriptors::test_concatenated::test_one_config ... ok
+2026-10-23T02:02:22.7637148Z test descriptors::test_concatenated::test_two_configs ... ok
+2026-10-23T02:02:22.7637830Z test descriptors::test_empty_config ... ok
+2026-10-23T02:02:22.7638433Z test descriptors::test_linux_root_hub ... ok
+2026-10-23T02:02:22.7639017Z test hotplug::assert_send_sync ... ok
+2026-10-23T02:02:22.7639368Z test descriptors::test_malformed ... ok
+2026-10-23T02:02:22.7639654Z test device::assert_send_sync ... ok
+2026-10-23T02:02:22.7640836Z test platform::linux_usbfs::device::raw_completion_tests::control_in_preserves_errno_and_partial_bytes_without_setup ... ok
+2026-10-23T02:02:22.7642260Z test platform::linux_usbfs::device::raw_completion_tests::control_out_keeps_actual_bytes_on_error_without_echoing_payload ... ok
+2026-10-23T02:02:22.7643754Z test platform::linux_usbfs::device::raw_completion_tests::invalid_kernel_length_is_rejected_before_accessing_control_buffer ... ok
+2026-10-23T02:02:22.7644569Z 
+2026-10-23T02:02:22.7644966Z test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-10-23T02:02:22.7645537Z 
+2026-10-23T02:02:22.7731194Z ##[group]Run target/release/rustusb --help
+2026-10-23T02:02:22.7731575Z [36;1mtarget/release/rustusb --help[0m
+2026-10-23T02:02:22.7731879Z [36;1mtarget/release/rustusb doctor --json[0m
+2026-10-23T02:02:22.7732200Z [36;1mtarget/release/rustusb devices --json[0m
+2026-10-23T02:02:22.7794285Z shell: /usr/bin/bash -e {0}
+2026-10-23T02:02:22.7794542Z ##[endgroup]
+2026-10-23T02:02:22.7891791Z Linux USB/IP device management (experimental preview)
+2026-10-23T02:02:22.7892375Z 
+2026-10-23T02:02:22.7892603Z Usage: rustusb [OPTIONS] <COMMAND>
+2026-10-23T02:02:22.7893021Z 
+2026-10-23T02:02:22.7893199Z Commands:
+2026-10-23T02:02:22.7894226Z   physical-server  Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS)
+2026-10-23T02:02:22.7896147Z   virtual-server   Serve two virtual test devices; this experimental mode provides no authentication or TLS
+2026-10-23T02:02:22.7896982Z   devices          Scan local devices without changing drivers. Discovery is not compatibility validation
+2026-10-23T02:02:22.7897890Z   doctor           Read installed tool, module and helper capabilities without loading modules
+2026-10-23T02:02:22.7898972Z   discover         Query a server's USB/IP device list over an administrator-managed trusted network
+2026-10-23T02:02:22.7900142Z   export           Export an administrator-allowlisted device fingerprint via the privileged helper
+2026-10-23T02:02:22.7901308Z   unexport         Release an allowlisted export and request local driver reattachment
+2026-10-23T02:02:22.7902299Z   attach           Import a remote bus ID through an allowlisted endpoint and Linux VHCI
+2026-10-23T02:02:22.7903163Z   detach           Disconnect an authorized local VHCI port (0..255)
+2026-10-23T02:02:22.7904033Z   sessions         Read authoritative native kernel session state through the helper
+2026-10-23T02:02:22.7904826Z   status           Query helper and kernel status
+2026-10-23T02:02:22.7905500Z   help             Print this message or the help of the given subcommand(s)
+2026-10-23T02:02:22.7906334Z 
+2026-10-23T02:02:22.7906482Z Options:
+2026-10-23T02:02:22.7907013Z       --json               Emit machine-readable JSON to stdout; logs remain on stderr
+2026-10-23T02:02:22.7908068Z       --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]
+2026-10-23T02:02:22.7909179Z       --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]
+2026-10-23T02:02:22.7910099Z       --log-json           Emit JSON tracing logs on stderr
+2026-10-23T02:02:22.7910987Z   -h, --help               Print help
+2026-10-23T02:02:22.7911471Z   -V, --version            Print version
+2026-10-23T02:02:22.8804909Z {
+2026-10-23T02:02:22.8805298Z   "schema_version": 1,
+2026-10-23T02:02:22.8805728Z   "native": {
+2026-10-23T02:02:22.8806378Z     "system": {
+2026-10-23T02:02:22.8806786Z       "os": "linux",
+2026-10-23T02:02:22.8807287Z       "architecture": "x86_64",
+2026-10-23T02:02:22.8808054Z       "kernel_release": "6.17.0-1022-azure",
+2026-10-23T02:02:22.8808756Z       "kernel": {
+2026-10-23T02:02:22.8809246Z         "status": "available",
+2026-10-23T02:02:22.8809752Z         "detail": "Running Linux kernel release identified",
+2026-10-23T02:02:22.8810322Z         "action": "Use tools and modules packaged for this exact running kernel"
+2026-10-23T02:02:22.8810809Z       }
+2026-10-23T02:02:22.8811023Z     },
+2026-10-23T02:02:22.8811246Z     "usbip_host": {
+2026-10-23T02:02:22.8811514Z       "module": "usbip_host",
+2026-10-23T02:02:22.8811825Z       "loaded": {
+2026-10-23T02:02:22.8812082Z         "status": "not_loaded",
+2026-10-23T02:02:22.8812467Z         "detail": "No loaded-module sysfs directory observed",
+2026-10-23T02:02:22.8813181Z         "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+2026-10-23T02:02:22.8813813Z       },
+2026-10-23T02:02:22.8814034Z       "sysfs": {
+2026-10-23T02:02:22.8814287Z         "status": "missing",
+2026-10-23T02:02:22.8814958Z         "detail": "usbip-host driver directory unavailable (NotFound)",
+2026-10-23T02:02:22.8815624Z         "action": "An administrator should verify usbip_host is loaded and sysfs is mounted"
+2026-10-23T02:02:22.8816666Z       },
+2026-10-23T02:02:22.8816916Z       "availability": {
+2026-10-23T02:02:22.8817201Z         "status": "disabled",
+2026-10-23T02:02:22.8817680Z         "detail": "Matching kernel configuration explicitly disables this driver",
+2026-10-23T02:02:22.8818358Z         "action": "Install or boot a supported kernel configured with USB/IP support"
+2026-10-23T02:02:22.8818738Z       }
+2026-10-23T02:02:22.8818899Z     },
+2026-10-23T02:02:22.8819068Z     "vhci_hcd": {
+2026-10-23T02:02:22.8819263Z       "module": "vhci_hcd",
+2026-10-23T02:02:22.8819480Z       "loaded": {
+2026-10-23T02:02:22.8819670Z         "status": "not_loaded",
+2026-10-23T02:02:22.8819955Z         "detail": "No loaded-module sysfs directory observed",
+2026-10-23T02:02:22.8820481Z         "action": "An administrator may load the matching usbip_host or vhci_hcd module after reviewing policy"
+2026-10-23T02:02:22.8820948Z       },
+2026-10-23T02:02:22.8821114Z       "sysfs": {
+2026-10-23T02:02:22.8821304Z         "status": "missing",
+2026-10-23T02:02:22.8821628Z         "detail": "No supported VHCI controller/status interface observed",
+2026-10-23T02:02:22.8822178Z         "action": "An administrator should verify vhci_hcd is loaded; the adapter requires 1..=256 ports"
+2026-10-23T02:02:22.8822638Z       },
+2026-10-23T02:02:22.8822818Z       "availability": {
+2026-10-23T02:02:22.8823035Z         "status": "unknown",
+2026-10-23T02:02:22.8823495Z         "detail": "Kernel configuration enables a module but its matching installed module file was not established",
+2026-10-23T02:02:22.8824192Z         "action": "Install the USB/IP module package for the running kernel and regenerate its module index"
+2026-10-23T02:02:22.8824633Z       }
+2026-10-23T02:02:22.8824795Z     },
+2026-10-23T02:02:22.8824962Z     "usbip": {
+2026-10-23T02:02:22.8825158Z       "path": "/usr/bin/usbip",
+2026-10-23T02:02:22.8825379Z       "check": {
+2026-10-23T02:02:22.8825575Z         "status": "available",
+2026-10-23T02:02:22.8826711Z         "detail": "Trusted fixed version command succeeded",
+2026-10-23T02:02:22.8827351Z         "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+2026-10-23T02:02:22.8827881Z       },
+2026-10-23T02:02:22.8828081Z       "version": "usbip (usbip-utils 2.0)"
+2026-10-23T02:02:22.8828558Z     },
+2026-10-23T02:02:22.8828731Z     "usbipd": {
+2026-10-23T02:02:22.8828928Z       "path": "/usr/bin/usbipd",
+2026-10-23T02:02:22.8829162Z       "check": {
+2026-10-23T02:02:22.8829361Z         "status": "available",
+2026-10-23T02:02:22.8829640Z         "detail": "Trusted fixed version command succeeded",
+2026-10-23T02:02:22.8830224Z         "action": "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations"
+2026-10-23T02:02:22.8830759Z       },
+2026-10-23T02:02:22.8830962Z       "version": "usbipd (usbip-utils 2.0)"
+2026-10-23T02:02:22.8831217Z     },
+2026-10-23T02:02:22.8831905Z     "scope": "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed."
+2026-10-23T02:02:22.8832647Z   },
+2026-10-23T02:02:22.8832814Z   "helper": {
+2026-10-23T02:02:22.8833003Z     "status": "missing",
+2026-10-23T02:02:22.8833314Z     "detail": "The helper socket or its protected directory is missing.",
+2026-10-23T02:02:22.8833920Z     "action": "Ask an administrator to install/configure and start rustusb-helper; use the configured --socket path.",
+2026-10-23T02:02:22.8834431Z     "peer_verified": false,
+2026-10-23T02:02:22.8834659Z     "kernel_available": null,
+2026-10-23T02:02:22.8834893Z     "active_sessions": null,
+2026-10-23T02:02:22.8835156Z     "external_trusted_network_confirmed": null
+2026-10-23T02:02:22.8835419Z   },
+2026-10-23T02:02:22.8835727Z   "required_for_export": [
+2026-10-23T02:02:22.8836281Z     "native.usbip",
+2026-10-23T02:02:22.8836497Z     "native.usbip_host.sysfs",
+2026-10-23T02:02:22.8836718Z     "helper"
+2026-10-23T02:02:22.8836887Z   ],
+2026-10-23T02:02:22.8837085Z   "required_for_import": [
+2026-10-23T02:02:22.8837303Z     "native.usbip",
+2026-10-23T02:02:22.8837504Z     "native.vhci_hcd.sysfs",
+2026-10-23T02:02:22.8837714Z     "helper"
+2026-10-23T02:02:22.8837886Z   ],
+2026-10-23T02:02:22.8838063Z   "built_in_encryption": false,
+2026-10-23T02:02:22.8838314Z   "network_security_verified": false,
+2026-10-23T02:02:22.8838574Z   "hardware_test_performed": false,
+2026-10-23T02:02:22.8839507Z   "note": "Component observations are independent. Device/peer policy, usbipd listener, VPN/firewall/TLS, remote reachability, and USB I/O require separate verification. No module was loaded, service started, device bound, or session imported."
+2026-10-23T02:02:22.8840462Z }
+2026-10-23T02:02:22.8847117Z 2026-10-23T02:02:22.884605Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T02:02:22.8847575Z []
+2026-10-23T02:02:22.8883105Z ##[group]Run printf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin
+2026-10-23T02:02:22.8884125Z [36;1mprintf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin[0m
+2026-10-23T02:02:22.8884814Z [36;1mpython3 scripts/test-virtual-backpressure.py[0m
+2026-10-23T02:02:22.8946699Z shell: /usr/bin/bash -e {0}
+2026-10-23T02:02:22.8946956Z ##[endgroup]
+2026-10-23T02:02:22.9066366Z {"address":"127.0.0.1:41851","devices":[{"break_active":false,"bus_id":"1-1","cdc_in_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_loopback":true,"cdc_out_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_queued_bytes":0,"configuration":0,"counters":{"bulk_in":0,"bulk_out":0,"cdc_in_bytes":0,"cdc_injected_bytes":0,"cdc_out_bytes":0,"control":0,"hid_taps":0,"interrupt":0,"sessions_started":0,"unlink":0,"unlink_cancelled":0},"exported":true,"hid_queued_reports":0,"leased":false,"line_coding":{"data_bits":8,"parity":0,"rate":115200,"stop_bits":0},"line_state":0,"pending_urbs":0,"profile":"hid_keyboard"},{"break_active":false,"bus_id":"1-2","cdc_in_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_loopback":true,"cdc_out_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_queued_bytes":0,"configuration":0,"counters":{"bulk_in":0,"bulk_out":0,"cdc_in_bytes":0,"cdc_injected_bytes":0,"cdc_out_bytes":0,"control":0,"hid_taps":0,"interrupt":0,"sessions_started":0,"unlink":0,"unlink_cancelled":0},"exported":true,"hid_queued_reports":0,"leased":false,"line_coding":{"data_bits":8,"parity":0,"rate":115200,"stop_bits":0},"line_state":0,"pending_urbs":0,"profile":"cdc_acm"}],"event":"ready","schema_version":1}
+2026-10-23T02:02:22.9072232Z {"event":"ack","id":"ci-shutdown","ok":true,"schema_version":1}
+2026-10-23T02:02:22.9077282Z {"event":"stopped","schema_version":1,"snapshot":{"devices":[{"break_active":false,"bus_id":"1-1","cdc_in_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_loopback":true,"cdc_out_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_queued_bytes":0,"configuration":0,"counters":{"bulk_in":0,"bulk_out":0,"cdc_in_bytes":0,"cdc_injected_bytes":0,"cdc_out_bytes":0,"control":0,"hid_taps":0,"interrupt":0,"sessions_started":0,"unlink":0,"unlink_cancelled":0},"exported":true,"hid_queued_reports":0,"leased":false,"line_coding":{"data_bits":8,"parity":0,"rate":115200,"stop_bits":0},"line_state":0,"pending_urbs":0,"profile":"hid_keyboard"},{"break_active":false,"bus_id":"1-2","cdc_in_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_loopback":true,"cdc_out_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","cdc_queued_bytes":0,"configuration":0,"counters":{"bulk_in":0,"bulk_out":0,"cdc_in_bytes":0,"cdc_injected_bytes":0,"cdc_out_bytes":0,"control":0,"hid_taps":0,"interrupt":0,"sessions_started":0,"unlink":0,"unlink_cancelled":0},"exported":true,"hid_queued_reports":0,"leased":false,"line_coding":{"data_bits":8,"parity":0,"rate":115200,"stop_bits":0},"line_state":0,"pending_urbs":0,"profile":"cdc_acm"}],"schema_version":1}}
+2026-10-23T02:02:28.1762752Z {
+2026-10-23T02:02:28.1763201Z   "result": "PASS",
+2026-10-23T02:02:28.1763832Z   "scope": "local CLI output backpressure; no physical USB or kernel changes",
+2026-10-23T02:02:28.1764379Z   "host_uid": 1001,
+2026-10-23T02:02:28.1764635Z   "checks": [
+2026-10-23T02:02:28.1764867Z     {
+2026-10-23T02:02:28.1765103Z       "mode": "sigint",
+2026-10-23T02:02:28.1765370Z       "exit": 0,
+2026-10-23T02:02:28.1765629Z       "elapsed_seconds": 0.001,
+2026-10-23T02:02:28.1766193Z       "stdout_capacity": 4096,
+2026-10-23T02:02:28.1766533Z       "stdout_drained_after_fill": false,
+2026-10-23T02:02:28.1766967Z       "lease_socket_closed": true
+2026-10-23T02:02:28.1767270Z     },
+2026-10-23T02:02:28.1767739Z     {
+2026-10-23T02:02:28.1767972Z       "mode": "deadline",
+2026-10-23T02:02:28.1768246Z       "exit": 1,
+2026-10-23T02:02:28.1768502Z       "elapsed_seconds": 4.827,
+2026-10-23T02:02:28.1768821Z       "stdout_capacity": 4096,
+2026-10-23T02:02:28.1769138Z       "stdout_drained_after_fill": false,
+2026-10-23T02:02:28.1769491Z       "lease_socket_closed": true
+2026-10-23T02:02:28.1769792Z     }
+2026-10-23T02:02:28.1770006Z   ]
+2026-10-23T02:02:28.1770215Z }
+2026-10-23T02:02:28.1993685Z Post job cleanup.
+2026-10-23T02:02:28.2830588Z [command]/usr/bin/git version
+2026-10-23T02:02:28.2887534Z git version 2.55.0
+2026-10-23T02:02:28.2927908Z Temporarily overriding HOME='/home/runner/work/_temp/95f066fc-f048-4024-80af-c75065c350eb' before making global git config changes
+2026-10-23T02:02:28.2929703Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T02:02:28.2933987Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/usbip-client/usbip-client
+2026-10-23T02:02:28.2971872Z Removing SSH command configuration
+2026-10-23T02:02:28.2979488Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T02:02:28.3020108Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T02:02:28.3268840Z Removing HTTP extra header
+2026-10-23T02:02:28.3274605Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T02:02:28.3316503Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T02:02:28.3572556Z Removing includeIf entries pointing to credentials config files
+2026-10-23T02:02:28.3581173Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T02:02:28.3621326Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T02:02:28.4036895Z Cleaning up orphan processes

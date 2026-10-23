@@ -463,6 +463,8 @@ static int controls(struct gate *gate)
                 gate->request = USBDEVFS_SETINTERFACE;
             else if (strcmp(operation, "clear") == 0)
                 gate->request = USBDEVFS_CLEAR_HALT;
+            else if (strcmp(operation, "release") == 0)
+                gate->request = USBDEVFS_RELEASEINTERFACE;
             else
                 return -1;
             memcpy(gate->nonce, nonce, strlen(nonce) + 1);

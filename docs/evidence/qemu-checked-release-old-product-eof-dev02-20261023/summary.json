@@ -1,0 +1,227 @@
+{
+  "result": "FAIL",
+  "started_at_utc": "20261023T022108Z",
+  "scope": "two isolated x86_64 QEMU guests; real USBFS Special syscall-entry gate; not in-kernel execution or physical hardware",
+  "operation": "release",
+  "mode": "eof",
+  "nonce": "release-old-dev02",
+  "git_commit": "6845ebc2ff2baafe6423643085e75efa012bf4a4",
+  "working_tree_dirty": true,
+  "kernel": "6.8.0-106-generic",
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "c_compiler_version": "cc (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--all-features"
+  ],
+  "source_fingerprint_sha256": "a452c2e33d16a1f3973f3d85cd75b2e5fbe86ecf0233ea40f8a8494c48a48369",
+  "cargo_lock_sha256": "3ed9c8680b843c0bed995d8005b25a57bc01748c731e5a18955e625332d6b25a",
+  "script_sha256": {
+    "run-host-state-qemu.py": "1fa77f98900cf567cb759e611d61900fada9dacc55d1ab32e5d9d26bb97ce56c",
+    "guest-host-state-init.sh": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31",
+    "host-state-wire-probe.rs": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027",
+    "usbfs-syscall-gate.c": "f38c4a81dc895e741e03f534f7c68fd7b33626e40e04633899bea68a5dfc444c",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "topology": {
+    "guests": 2,
+    "management": "192.0.2.0/24",
+    "usb_controller": "piix3-usb-uhci",
+    "private_socketpairs": 2,
+    "server_peer_nic_down": true,
+    "host_network_listener": false,
+    "host_ptrace": false,
+    "host_usb": false,
+    "ip_forward": false
+  },
+  "startup_arm_idle_deadline_seconds": 25,
+  "gate_deadline_seconds": 8,
+  "rpc_deadline_seconds": 3,
+  "tracer_deadline_seconds": 120,
+  "binary_sha256": {
+    "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "probe_build_command": [
+    "rustc",
+    "--edition=2024",
+    "-O",
+    "-D",
+    "warnings",
+    "/home/ubuntu/github/usbip-client/scripts/qemu/host-state-wire-probe.rs",
+    "-o",
+    "/tmp/rustusb-host-state-qemu-re9lgzu7/host-state-wire-probe"
+  ],
+  "tracer_build_command": [
+    "cc",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "/home/ubuntu/github/usbip-client/scripts/qemu/usbfs-syscall-gate.c",
+    "-o",
+    "/tmp/rustusb-host-state-qemu-re9lgzu7/usbfs-syscall-gate"
+  ],
+  "probe_binary_sha256": "c86185e485685278b3767443fb461531a28ba938e3a302f7c814b0ad608e2006",
+  "tracer_binary_sha256": "288831a33a6ca1871c9b51f2107a261704ec9732fa3ac7cee2d6a48fff8cde8b",
+  "guest_binary_sha256": {
+    "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+    "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+  },
+  "guest_test_tool_sha256": {
+    "host-state-wire-probe": "c86185e485685278b3767443fb461531a28ba938e3a302f7c814b0ad608e2006",
+    "usbfs-syscall-gate": "288831a33a6ca1871c9b51f2107a261704ec9732fa3ac7cee2d6a48fff8cde8b"
+  },
+  "kernel_modules": {
+    "usb-common": {
+      "kind": "builtin"
+    },
+    "usbcore": {
+      "kind": "builtin"
+    },
+    "e1000": {
+      "kind": "module",
+      "guest_sha256": "9ba908b09b2248d6540136faf03a54066e03130fd2275db9cedccdc71803a79c"
+    },
+    "mii": {
+      "kind": "module",
+      "guest_sha256": "ab2aca8f273cf6d9eeb490da250cb63015d7643412b4fb53c381617124a0842a"
+    },
+    "usbnet": {
+      "kind": "module",
+      "guest_sha256": "5505494b5a09bd7c3bf99075eb92b78c5954428abd8c3abd8ba0a37248307093"
+    },
+    "cdc_ether": {
+      "kind": "module",
+      "guest_sha256": "c574b54eab157d0e140dedb494f092b65ddfb505cc418d986221d13912150b86"
+    },
+    "uhci-hcd": {
+      "kind": "builtin"
+    }
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "107596c9bd2d56cfefce89f6fd26ffbb24f2742812491e3e7cad878627f33c84",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "acceleration": "kvm",
+  "qemu_commands": {
+    "server": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-host-state-qemu-re9lgzu7/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-host-state-qemu-re9lgzu7/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.host_state_test=1 rustusb.role=server rustusb.operation=release rustusb.mode=eof rustusb.nonce=release-old-dev02",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-checked-release-old-product-dev02-20261023/server-serial.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=control,fd=3",
+      "-device",
+      "e1000,id=control-nic,netdev=control,mac=52:54:00:00:00:61",
+      "-device",
+      "piix3-usb-uhci,id=usb",
+      "-netdev",
+      "socket,id=usbdata,fd=5",
+      "-device",
+      "usb-net,id=ecm,bus=usb.0,port=1,netdev=usbdata,mac=52:54:00:cc:00:02",
+      "-netdev",
+      "socket,id=peerdata,fd=6",
+      "-device",
+      "e1000,id=peer-nic,netdev=peerdata,mac=52:54:00:cc:00:01"
+    ],
+    "client": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-host-state-qemu-re9lgzu7/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-host-state-qemu-re9lgzu7/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.host_state_test=1 rustusb.role=client rustusb.operation=release rustusb.mode=eof rustusb.nonce=release-old-dev02",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-checked-release-old-product-dev02-20261023/client-serial.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=control,fd=4",
+      "-device",
+      "e1000,id=control-nic,netdev=control,mac=52:54:00:00:00:62"
+    ]
+  },
+  "error": "a host-state guest reported failure",
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "server_checks": [
+    "RUSTUSB_HOST_STATE_BOOT role=server operation=release mode=eof nonce=release-old-dev02 kernel=6.8.0-106-generic",
+    "RUSTUSB_HOST_STATE_PEER_QUIET: PASS interface=eth1 down=true",
+    "RUSTUSB_HOST_STATE_MANAGEMENT_READY: PASS role=server interface=eth0 carrier=1 attempts=42",
+    "RUSTUSB_HOST_STATE_ISOLATION: PASS role=server ip_forward=0 native_usb_modules=false",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_BEGIN",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_END",
+    "RUSTUSB_HOST_STATE_ORIGINAL: PASS config=1 interfaces=2 alt0=0 alt1=1 drivers=cdc_ether node=root0600 direct_open=denied",
+    "RUSTUSB_HOST_STATE_UID_GATE: PASS allowed_uid=1000 denied_uid=1001 peer_verified=true",
+    "RUSTUSB_HOST_STATE_SERVER_UID: PASS uid=1000 capabilities=0 tracer_root=true helper_separate=true",
+    "RUSTUSB_HOST_STATE_RPC command=ARM nonce=release-old-dev02",
+    "RUSTUSB_HOST_STATE_RPC command=HELD nonce=release-old-dev02",
+    "RUSTUSB_HOST_STATE_HELD: PASS syscall_entry=true kernel_handler_active_unproven=true pending=1 budget=256",
+    "RUSTUSB_HOST_STATE_RPC command=ACCEPTED nonce=release-old-dev02",
+    "RUSTUSB_HOST_STATE_ACCEPTED: PASS pending=2 budget=512 server_accepted=true",
+    "RUSTUSB_HOST_STATE_RPC command=CLOSED nonce=release-old-dev02",
+    "RUSTUSB_HOST_STATE_CLOSED: PASS closing=true pending=2 budget=512 no_early_restore=true",
+    "RUSTUSB_HOST_STATE_RPC command=RELEASE nonce=release-old-dev02",
+    "RUSTUSB_HOST_STATE_RELEASE_FAULT: PASS action=guest_root_usbfs_unbind interface=0 bus=1-1 generation_unchanged=true fd_unchanged=true if0_none=true if1_usbfs=true budget_unchanged=true",
+    "RUSTUSB_HOST_STATE_EXIT: PASS operation=release retval=-22 untouched=true",
+    "RUSTUSB_HOST_STATE_RPC command=RESTORED nonce=release-old-dev02",
+    "RUSTUSB_HOST_STATE_DIAGNOSTIC role=server stage=rpc-RESTORED exit=1",
+    "RUSTUSB_HOST_STATE_RESULT: FAIL role=server stage=rpc-RESTORED exit=1"
+  ],
+  "client_checks": [
+    "RUSTUSB_HOST_STATE_BOOT role=client operation=release mode=eof nonce=release-old-dev02 kernel=6.8.0-106-generic",
+    "RUSTUSB_HOST_STATE_MANAGEMENT_READY: PASS role=client interface=eth0 carrier=1 attempts=41",
+    "RUSTUSB_HOST_STATE_ISOLATION: PASS role=client ip_forward=0 native_usb_modules=false",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_BEGIN",
+    "RUSTUSB_HOST_STATE_EXECUTABLES_END",
+    "RUSTUSB_HOST_STATE_DIAGNOSTIC role=client stage=ordinary-wire-probe exit=1",
+    "RUSTUSB_HOST_STATE_RESULT: FAIL role=client stage=ordinary-wire-probe exit=1"
+  ]
+}

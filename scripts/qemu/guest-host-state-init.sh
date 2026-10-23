@@ -27,7 +27,7 @@ for parameter in $(cat /proc/cmdline); do
     esac
 done
 case "$ROLE" in server|client) ;; *) exit 2 ;; esac
-case "$OPERATION" in configuration|alternate|clear) ;; *) exit 2 ;; esac
+case "$OPERATION" in configuration|alternate|clear|release) ;; *) exit 2 ;; esac
 case "$MODE" in unlink|eof) ;; *) exit 2 ;; esac
 case "$NONCE" in ''|*[!A-Za-z0-9_-]*) exit 2 ;; esac
 [ "${#NONCE}" -le 48 ]
@@ -232,7 +232,8 @@ wait_snapshot() {
 RELEASED_FILTER='.buffer_bytes_reserved == 0 and all(.devices[]; .state == "available" and .leased == false and .pending_urbs == 0 and .queued_urbs == 0 and .usbfs_inflight == 0 and .cleanup_verified == true and .configuration == 1 and .speed == 2 and .ep0_max_packet_size == 64 and .current_drivers == .original_drivers and .current_drivers == [{interface:0,driver:"cdc_ether"},{interface:1,driver:"cdc_ether"}])'
 wait_snapshot baseline "$RELEASED_FILTER"
 original_state
-case "$OPERATION" in configuration) EXPECTED_REQUEST=$((0x80045505)) ;; alternate) EXPECTED_REQUEST=$((0x80085504)) ;; clear) EXPECTED_REQUEST=$((0x80045515)) ;; esac
+case "$OPERATION" in configuration) EXPECTED_REQUEST=$((0x80045505)) ;; alternate) EXPECTED_REQUEST=$((0x80085504)) ;; clear) EXPECTED_REQUEST=$((0x80045515)) ;; release) EXPECTED_REQUEST=$((0x80045510)) ;; esac
+RELEASE_FAULT_APPLIED=0
 held_identity() {
     server_identity
     jq -e --arg nonce "$NONCE" --arg operation "$OPERATION" --argjson request "$EXPECTED_REQUEST" \
@@ -246,10 +247,12 @@ held_identity() {
     [ ! -f /run/rustusb-gate/exit.json ]
     jq -se --slurpfile held /run/rustusb-gate/held.json 'all(.[]; .event != "failure") and all(.[] | select(.event == "ioctl_entry" and .monotonic_ns >= $held[0].monotonic_ns); .mutation_counts == $held[0].mutation_counts)' /run/rustusb-gate/events.jsonl > /dev/null
     sysfs_observation
-    if [ "$OPERATION" != configuration ]; then
+    if [ "$RELEASE_FAULT_APPLIED" = 1 ]; then
+        jq -e '.interfaces == [{number:0,driver:null,alternate:0},{number:1,driver:"usbfs",alternate:1}]' /tmp/sysfs.json > /dev/null
+    elif [ "$OPERATION" != configuration ]; then
         jq -e '.interfaces == [{number:0,driver:"usbfs",alternate:0},{number:1,driver:"usbfs",alternate:1}]' /tmp/sysfs.json > /dev/null
     fi
-    if [ -f /tmp/held-sysfs.json ]; then jq -e --slurpfile held /tmp/held-sysfs.json '. == $held[0]' /tmp/sysfs.json > /dev/null; fi
+    if [ "$RELEASE_FAULT_APPLIED" = 0 ] && [ -f /tmp/held-sysfs.json ]; then jq -e --slurpfile held /tmp/held-sysfs.json '. == $held[0]' /tmp/sysfs.json > /dev/null; fi
 }
 read_rpc() {
     LINE=
@@ -305,11 +308,27 @@ else
 fi
 read_rpc RELEASE
 held_identity
+if [ "$OPERATION" = release ]; then
+    # This explicit guest-root intervention clears only IF0's real usbfs claim.
+    # The traced server remains stopped before its first RELEASEINTERFACE.
+    STAGE=external-usbfs-unbind
+    printf '%s\n' "$BUS:1.0" > /sys/bus/usb/drivers/usbfs/unbind
+    RELEASE_FAULT_APPLIED=1
+    held_identity
+    if [ "$MODE" = unlink ]; then
+        wait_snapshot release-fault '.buffer_bytes_reserved == 640 and all(.devices[]; .state == "leased" and .leased == true and .cleanup_verified == false and .pending_urbs == 2 and .queued_urbs >= 1 and .usbfs_inflight == 0)'
+    else
+        wait_snapshot release-fault '.buffer_bytes_reserved == 512 and all(.devices[]; .state == "closing" and .leased == true and .cleanup_verified == false and .pending_urbs == 2 and .queued_urbs == 0 and .usbfs_inflight == 0)'
+    fi
+    held_identity
+    echo "RUSTUSB_HOST_STATE_RELEASE_FAULT: PASS action=guest_root_usbfs_unbind interface=0 bus=$BUS generation_unchanged=true fd_unchanged=true if0_none=true if1_usbfs=true budget_unchanged=true"
+fi
 printf '%s\n' "$NONCE" > /run/rustusb-gate/release.tmp
 mv /run/rustusb-gate/release.tmp /run/rustusb-gate/release
 for attempt in $(seq 1 150); do [ ! -f /run/rustusb-gate/exit.json ] || break; sleep 0.01; done
 retval=0; is_error=false
 [ "$OPERATION" != clear ] || { retval=-32; is_error=true; }
+[ "$OPERATION" != release ] || { retval=-22; is_error=true; }
 jq -e --slurpfile held /run/rustusb-gate/held.json --argjson retval "$retval" --argjson is_error "$is_error" \
     '.schema_version == 1 and .event == "exit" and .nonce == $held[0].nonce and .operation == $held[0].operation and .tid == $held[0].tid and .fd == $held[0].fd and .request == $held[0].request and .node_device == $held[0].node_device and .node_inode == $held[0].node_inode and .node_rdev == $held[0].node_rdev and .mutation_counts == $held[0].mutation_counts and .monotonic_ns > $held[0].monotonic_ns and .return_value == $retval and .is_error == $is_error' /run/rustusb-gate/exit.json > /dev/null
 echo "RUSTUSB_HOST_STATE_EXIT: PASS operation=$OPERATION retval=$retval untouched=true"

@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "scope": "Old-product negative QEMU development evidence for checked USBFS release; not fixed-product or clean-final acceptance",
+  "result": "EXPECTED_BASELINE_FAILURES_PRESERVED",
+  "source_snapshot": {
+    "directory": "docs/evidence/qemu-checked-release-old-product-source-20261023",
+    "source_metadata": "docs/evidence/qemu-checked-release-old-product-source-20261023/source.json",
+    "captured_before": "old-product-dev01",
+    "also_used_for": "old-product-dev02",
+    "dev02_independent_pre_run_capture": false,
+    "four_script_sha256": {
+      "run-host-state-qemu.py": "1fa77f98900cf567cb759e611d61900fada9dacc55d1ab32e5d9d26bb97ce56c",
+      "guest-host-state-init.sh": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31",
+      "host-state-wire-probe.rs": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027",
+      "usbfs-syscall-gate.c": "f38c4a81dc895e741e03f534f7c68fd7b33626e40e04633899bea68a5dfc444c"
+    },
+    "production_source_equal_commit_as_recorded": "54da6151defe57a9a10de2f321ca1d13c0d8bbe3",
+    "provenance_note": "Original source.json copied unchanged. Equality of the four snapshot bytes with both run summaries is verified at archive time; missing run-after guards remain missing."
+  },
+  "runs": [
+    {
+      "id": "old-product-dev01",
+      "mode": "unlink",
+      "operation": "release",
+      "result": "FAIL",
+      "directory": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023",
+      "original_tmp_directory": "/tmp/rustusb-checked-release-old-product-dev01-20261023",
+      "original_runner_log": "/tmp/rustusb-checked-release-old-product-dev01-20261023-runner.log",
+      "summary": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/summary.json",
+      "git_commit": "6845ebc2ff2baafe6423643085e75efa012bf4a4",
+      "working_tree_dirty": true,
+      "default_locked_all_features_build": true,
+      "source_fingerprint_before_sha256": "a452c2e33d16a1f3973f3d85cd75b2e5fbe86ecf0233ea40f8a8494c48a48369",
+      "binary_before_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes_as_recorded": {
+        "server": 0,
+        "client": 0
+      },
+      "guest_exit_zero_is_not_a_pass": true,
+      "source_after_guard_completed": false,
+      "binary_after_guard_completed": false,
+      "unique_probe_case_count": 4,
+      "unique_probe_result": {
+        "event": "host_state_probe_result",
+        "operation": "release",
+        "mode": "unlink",
+        "nonce": "release-old-dev01",
+        "result": "FAIL",
+        "stage": "active_completion_wins",
+        "error": "SUBMIT expected seq=100 status=-22 actual=0; observed command=3 seq=100 status=0 actual=0",
+        "cases": 4,
+        "elapsed_ns": 5300315960
+      },
+      "observations": "real release errno -22 observed in server EXIT marker, but wire seq100 status0 rather than -22; host stopped early after client FAIL; no complete persisted trace/beacons",
+      "limitations": [
+        "run_failed_before_runtime_source_and_binary_after_guards",
+        "no_complete_server_stopped_or_tracer_finished_evidence",
+        "no_verified_final_resource_zero_or_original_state_restoration"
+      ],
+      "source_snapshot_capture": "shared dev01 pre-run capture; dev02 has matching recorded SHA but no separate pre-run capture"
+    },
+    {
+      "id": "old-product-dev02",
+      "mode": "eof",
+      "operation": "release",
+      "result": "FAIL",
+      "directory": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023",
+      "original_tmp_directory": "/tmp/rustusb-checked-release-old-product-dev02-20261023",
+      "original_runner_log": "/tmp/rustusb-checked-release-old-product-dev02-20261023-runner.log",
+      "summary": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/summary.json",
+      "git_commit": "6845ebc2ff2baafe6423643085e75efa012bf4a4",
+      "working_tree_dirty": true,
+      "default_locked_all_features_build": true,
+      "source_fingerprint_before_sha256": "a452c2e33d16a1f3973f3d85cd75b2e5fbe86ecf0233ea40f8a8494c48a48369",
+      "binary_before_sha256": {
+        "rustusb": "c033d3931a159ad579977331140a6d327bd86939bfdd19cf794f304527d04db9",
+        "rustusb-helper": "5d40d8e39286ab722a1abe7a09d1c68e0da9c5f3a7d2273f783b09f95cd64ae0"
+      },
+      "guest_exit_codes_as_recorded": {
+        "server": 0,
+        "client": 0
+      },
+      "guest_exit_zero_is_not_a_pass": true,
+      "source_after_guard_completed": false,
+      "binary_after_guard_completed": false,
+      "unique_probe_case_count": 5,
+      "unique_probe_result": {
+        "event": "host_state_probe_result",
+        "operation": "release",
+        "mode": "eof",
+        "nonce": "release-old-dev02",
+        "result": "FAIL",
+        "stage": "original_state_restored",
+        "error": "short frame",
+        "cases": 5,
+        "elapsed_ns": 4878611294
+      },
+      "observations": "34-event trap trace prefix contains target release -22, next release0, SET_CONFIGURATION entry/exit0 then new claims; adapter snapshot-25 configuration2 caused strict RESTORED failure; saved independent sysfs is still the earlier configuration1 release-fault observation",
+      "limitations": [
+        "run_failed_before_runtime_source_and_binary_after_guards",
+        "no_complete_server_stopped_or_tracer_finished_evidence",
+        "no_verified_final_resource_zero_or_original_state_restoration"
+      ],
+      "source_snapshot_capture": "shared dev01 pre-run capture; dev02 has matching recorded SHA but no separate pre-run capture"
+    }
+  ],
+  "static_records": {
+    "directory": "docs/evidence/qemu-checked-release-static-20261023",
+    "provenance": "The harness-static JSON explicitly transcribes already observed tool results and hashes; no raw static stdout/stderr logs were created. The old-six parser JSON is a derived read-only parsing result, not fresh QEMU verification. Standalone ELF build outputs are not archived; their hashes and lengths remain in the static record."
+  },
+  "artifact_count": 25,
+  "raw_byte_copy_count": 21,
+  "manifest_count": 4,
+  "artifacts": [
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/build.log",
+      "bytes": 62,
+      "sha256": "9576f1f7e73fc2bb1ec2336aae60cb485c591eadc60a1b998573411c34057e08",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/client-serial.log",
+      "bytes": 38180,
+      "sha256": "b64f4b520046bb5c5180484406f94c39a9d7bb9eff8a81a747040f57b17ba20c",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/server-qemu.stderr",
+      "bytes": 153,
+      "sha256": "4a8fac976b87cf98558744be3550f75c4c724cf8aa801c551e905dfb2aecf5d7",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/server-serial.log",
+      "bytes": 34097,
+      "sha256": "8ac5df3e338f7863b7cf2933ed64e067cf41ff888cf684f4c85ced36b03227fe",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/summary.json",
+      "bytes": 8849,
+      "sha256": "3782b100696ff72d229d8ed1544529c60f0f119ad7b5d5337f7f821c6efc1749",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/runner.log",
+      "bytes": 498,
+      "sha256": "133ce3854fbe2487be26f478d7b2524219d99f485f0a6243e22d3eaaf8581cd0",
+      "kind": "raw_runner",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-20261023-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-unlink-dev01-20261023/artifacts.sha256",
+      "bytes": 570,
+      "sha256": "1eb253f983bc9cdf26ed34bff403ea645b448c0ce0eae568f26577adc15d1e87",
+      "kind": "derived_archive_manifest"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/build.log",
+      "bytes": 62,
+      "sha256": "222a02ed477d249a21359df8cae975864a62d848f4739cadc5b00b6190a963c6",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023/build.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/client-qemu.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023/client-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/client-serial.log",
+      "bytes": 38310,
+      "sha256": "3f2b9388d918723542a4f2230fde765731db170b5631ff37ae06dcca4fe6f8cf",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023/client-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/server-qemu.stderr",
+      "bytes": 82,
+      "sha256": "93514f40b6f79809b45e3984a14061ff1599bbfaa5a2686ff7c11867e9989935",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023/server-qemu.stderr"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/server-serial.log",
+      "bytes": 92837,
+      "sha256": "d426abca3d97e7c8535f62d3c6eb797de684c867d6923ba67d708d046cf8692d",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023/server-serial.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/summary.json",
+      "bytes": 9220,
+      "sha256": "33baa3389c9f00eec1b99b47421d46aeb3a1f8b193017f84198d1d711a845598",
+      "kind": "raw_runtime",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023/summary.json"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/runner.log",
+      "bytes": 495,
+      "sha256": "89922b713544f215d6e7bcdf5a62c3d77c99c4e2c35355dc330fb736519d0c0e",
+      "kind": "raw_runner",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev02-20261023-runner.log"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-eof-dev02-20261023/artifacts.sha256",
+      "bytes": 570,
+      "sha256": "2294d95023ff89f181296df0f5d70097984542f7fbb03f4e565d37cdc19714f9",
+      "kind": "derived_archive_manifest"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/guest-host-state-init.sh",
+      "bytes": 21679,
+      "sha256": "63c118491bbeb5cf54f64a4fda88686fdd18fbdde8687efbb1317bc95d37cf31",
+      "kind": "raw_pre_run_source_snapshot",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-source-20261023/guest-host-state-init.sh"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/host-state-wire-probe.rs",
+      "bytes": 26443,
+      "sha256": "74e4113c78a4b4fd3e397f12224da0d28f9abe943cb73be0ed00a7a8b260f027",
+      "kind": "raw_pre_run_source_snapshot",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-source-20261023/host-state-wire-probe.rs"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/run-host-state-qemu.py",
+      "bytes": 30192,
+      "sha256": "1fa77f98900cf567cb759e611d61900fada9dacc55d1ab32e5d9d26bb97ce56c",
+      "kind": "raw_pre_run_source_snapshot",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-source-20261023/run-host-state-qemu.py"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/source.json",
+      "bytes": 597,
+      "sha256": "fc5438956e889b16640b640bae1c0f1417184672e9ec8c923e11583bdb5a041c",
+      "kind": "raw_pre_run_source_snapshot",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-source-20261023/source.json"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/usbfs-syscall-gate.c",
+      "bytes": 34406,
+      "sha256": "f38c4a81dc895e741e03f534f7c68fd7b33626e40e04633899bea68a5dfc444c",
+      "kind": "raw_pre_run_source_snapshot",
+      "original_path": "/tmp/rustusb-checked-release-old-product-dev01-source-20261023/usbfs-syscall-gate.c"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-old-product-source-20261023/artifacts.sha256",
+      "bytes": 436,
+      "sha256": "a7ac4bf56885eb0810c95645e6d3074564cd4b38eca781c199cc1ad1986b953d",
+      "kind": "derived_archive_manifest"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-static-20261023/host-state-release-harness-static-20261023.json",
+      "bytes": 2364,
+      "sha256": "6db4921e40d64070d7f8f979e6075cad1b874ac44439c32d171b8c37c4b27e53",
+      "kind": "derived_static_record_copied",
+      "original_path": "/tmp/rustusb-host-state-release-harness-static-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-static-20261023/host-state-release-old-six-parser-20261023.json",
+      "bytes": 1144,
+      "sha256": "e15cb724917353c639af831a8db656b00cfadb8f49f132dfae4f17dcabd79ea4",
+      "kind": "derived_static_record_copied",
+      "original_path": "/tmp/rustusb-host-state-release-old-six-parser-20261023.json"
+    },
+    {
+      "path": "docs/evidence/qemu-checked-release-static-20261023/artifacts.sha256",
+      "bytes": 228,
+      "sha256": "3ae293dbcbc4e21f9cdeae5b2417d8b6e871e28d4805f3806f32e971ca056720",
+      "kind": "derived_archive_manifest"
+    }
+  ],
+  "self_indexed": false
+}

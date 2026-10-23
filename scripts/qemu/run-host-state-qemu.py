@@ -24,7 +24,8 @@ import time
 REPO = Path(__file__).resolve().parents[2]
 OWN = ["run-host-state-qemu.py", "guest-host-state-init.sh", "host-state-wire-probe.rs", "usbfs-syscall-gate.c"]
 MODULES = ["usb-common", "usbcore", "e1000", "mii", "usbnet", "cdc_ether", "uhci-hcd"]
-REQUESTS = {"configuration": 0x80045505, "alternate": 0x80085504, "clear": 0x80045515}
+REQUESTS = {"configuration": 0x80045505, "alternate": 0x80085504, "clear": 0x80045515,
+            "release": 0x80045510}
 MUTATIONS = {"claim", "release", "configuration", "alternate", "clear", "driver"}
 spec = importlib.util.spec_from_file_location("native_qemu", REPO / "scripts/qemu/run-native-qemu.py")
 native = importlib.util.module_from_spec(spec)
@@ -113,7 +114,7 @@ def verify_probe(log, operation, mode, nonce):
     if mode == "unlink":
         terminal = by_name["active_completion_wins"]
         if (by_name["queued_cancel_worker_witness"].get("unlink_status") != -104
-                or terminal.get("submit_status") != (-32 if operation == "clear" else 0)
+                or terminal.get("submit_status") != {"clear": -32, "release": -22}.get(operation, 0)
                 or terminal.get("actual_length") != 0 or terminal.get("unlink_status") != 0):
             raise RuntimeError("wire queued-cancel or active-completion winner differs")
         if operation == "clear":
@@ -142,6 +143,8 @@ def verify_server(log, operation, mode, nonce):
         raise RuntimeError("one final clean physical server stopped event required")
     observations = json_lines(block(log, "OBSERVATIONS"))
     expected = ["baseline", "held", "witness"] if mode == "unlink" else ["baseline", "held", "accepted", "closed"]
+    if operation == "release":
+        expected += ["release-fault"]
     if operation == "clear" and mode == "unlink":
         expected += ["pending"]
     expected += ["restored", "stopped"]
@@ -170,16 +173,23 @@ def verify_server(log, operation, mode, nonce):
         else:
             count = 1 if name in ["held", "pending"] else 2
             charge = 256 if name == "held" else (384 if name == "pending" else (640 if mode == "unlink" else 512))
-            state = "closing" if name == "closed" else "leased"
+            state = "closing" if name == "closed" or (name == "release-fault" and mode == "eof") else "leased"
             if (snapshot["buffer_bytes_reserved"] != charge or dev["state"] != state or not dev["leased"]
                     or dev["cleanup_verified"] or dev["pending_urbs"] != count or dev["usbfs_inflight"] != (1 if name == "pending" else 0)):
                 raise RuntimeError("held syscall lost its lease, request ownership or real budget")
             if (name in ["held", "closed", "pending"] and dev["queued_urbs"] != 0
-                    or name in ["witness", "accepted"] and dev["queued_urbs"] < 1):
+                    or name in ["witness", "accepted"] and dev["queued_urbs"] < 1
+                    or name == "release-fault" and (dev["queued_urbs"] != 0 if mode == "eof" else dev["queued_urbs"] < 1)):
                 raise RuntimeError("queued/deferred or EOF cancellation state differs")
-            if observed[name]["sysfs"] != observed["held"]["sysfs"]:
-                raise RuntimeError("independent sysfs ownership changed before release")
-            if operation != "configuration" and observed[name]["sysfs"]["interfaces"] != [
+            if name == "release-fault":
+                expected_fault = {**observed["held"]["sysfs"], "interfaces": [
+                    {"number": 0, "driver": None, "alternate": 0},
+                    {"number": 1, "driver": "usbfs", "alternate": 1}]}
+                if observed[name]["sysfs"] != expected_fault:
+                    raise RuntimeError("external release fault did not remove only the authorized IF0 claim")
+            elif observed[name]["sysfs"] != observed["held"]["sysfs"]:
+                raise RuntimeError("independent sysfs ownership changed before deliberate intervention")
+            if name != "release-fault" and operation != "configuration" and observed[name]["sysfs"]["interfaces"] != [
                     {"number": 0, "driver": "usbfs", "alternate": 0},
                     {"number": 1, "driver": "usbfs", "alternate": 1}]:
                 raise RuntimeError("actual alternate/clear interface claims were not retained")
@@ -208,7 +218,7 @@ def verify_gate(log, operation, nonce):
             or held["tracee_pid"] != ready["tracee_pid"] or held["tracee_starttime"] != ready["tracee_starttime"]
             or exited["monotonic_ns"] <= held["monotonic_ns"]):
         raise RuntimeError("tracer operation, node, syscall or generation correlation differs")
-    retval = -32 if operation == "clear" else 0
+    retval = {"clear": -32, "release": -22}.get(operation, 0)
     if exited.get("return_value") != retval or exited.get("is_error") != (retval < 0):
         raise RuntimeError("real syscall errno/success was not the expected model result")
     if any(entry.get("schema_version") != 1 or entry.get("event") == "failure" for entry in trace):
@@ -232,6 +242,26 @@ def verify_gate(log, operation, nonce):
                and armed["monotonic_ns"] <= entry["monotonic_ns"] < exited["monotonic_ns"]]
     if len(targets) != 1 or targets[0].get("tid") != held["tid"] or targets[0].get("fd") != held["fd"]:
         raise RuntimeError("queued operation unexpectedly reached another mutation syscall")
+    if operation == "release":
+        if any(entry.get("event") == "ioctl_entry" and entry.get("mutation") == "configuration" for entry in trace):
+            raise RuntimeError("SET_CONFIGURATION entered despite the explicit interface release failure")
+        claims = [entry for entry in trace if entry.get("event") == "ioctl_entry"
+                  and entry.get("mutation") == "claim" and entry["monotonic_ns"] > exited["monotonic_ns"]]
+        if not claims:
+            raise RuntimeError("actual configuration was not reacquired after release failure")
+        first_claim = min(entry["monotonic_ns"] for entry in claims)
+        remaining = [entry for entry in trace if entry.get("event") == "ioctl_entry"
+                     and entry.get("mutation") == "release"
+                     and exited["monotonic_ns"] < entry["monotonic_ns"] < first_claim]
+        if len(remaining) != 1 or remaining[0].get("fd") != held["fd"]:
+            raise RuntimeError("remaining IF1 did not receive exactly one explicit release before reacquisition")
+        second = remaining[0]
+        completions = [entry for entry in trace if entry.get("event") == "ioctl_exit"
+                       and entry.get("tid") == second["tid"] and entry.get("fd") == second["fd"]
+                       and entry.get("request") == REQUESTS["release"]
+                       and second["monotonic_ns"] < entry["monotonic_ns"] < first_claim]
+        if len(completions) != 1 or completions[0].get("return_value") != 0 or completions[0].get("is_error") is not False:
+            raise RuntimeError("remaining IF1 release did not actually complete successfully")
     finished = [entry for entry in trace if entry.get("event") == "finished"][0]
     if finished.get("tracee_exit_code") != 0 or trace[-1] != finished:
         raise RuntimeError("traced ordinary server did not exit cleanly")
@@ -352,6 +382,8 @@ def main():
             required["server"] += ["WITNESS"] if args.mode == "unlink" else ["ACCEPTED", "CLOSED"]
             if args.operation == "clear" and args.mode == "unlink":
                 required["server"] += ["PENDING"]
+            if args.operation == "release":
+                required["server"] += ["RELEASE_FAULT"]
             for role, markers in required.items():
                 for name in markers:
                     if f"RUSTUSB_HOST_STATE_{name}: PASS" not in logs[role]:

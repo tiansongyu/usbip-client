@@ -219,3 +219,6 @@
 
 - 上一交付54da6151已push且工作树clean，其最新四平台CI39887093631已实际全部completed/success，各216次测试与两个背压通过，精确记录`evidence/publication-host-state-docs-20261023.json`。原完整需求重新读取，Phase2其他缺口与所有后续阶段仍保留。
 - 并行核固定Linux6.8 devio/driver和nusb来源后，确认普通USBFS不能靠claim-setalt-release保证None+非零alt恢复；不擅自宣布该缺口解决。另定位产品使用best-effort release造成真实RELEASEINTERFACE错误不可见，设计见`research/usbfs-checked-release-design.md`。先保留portable API兼容，新增Linux checked释放与首errno传播，并计划来宾外部unbind产生真实EINVAL的修复前/后验证。尚无本轮实现或新测试结果。
+- 最新54da615四平台CI的四份原log和两个API响应另按原bytes归档，见`evidence/ci-host-state-docs-54da615-20261023/artifacts.sha256`。新测试只扩展四harness的release动作，原8秒门/3秒ARM后RPC保持；静态检查及新parser读取旧六clean原日志48项通过，未冒称重跑旧QEMU。
+- 旧产品dev01 UNLINK和dev02 EOF默认locked构建均真实FAIL。dev01内核EXIT marker=-22但wire seq100 status0，独立probe在cases4准确拒绝；host早停缺完整末trace。dev02持久34event前缀为release -22→下一release0→SETCONFIG entry/exit0，后续adapter快照cfg2触发RESTORED严格失败，下游clientshortframe；未持久fresh独立sysfs2或最终恢复，不能补造永久泄漏结论。两run均缺after guards，原guest退出0也不改FAIL。
+- 25份开发产物/共同dev01前置源码/静态来源已逐bytes归档，明确dev02复用同冻结快照。另一独立69项复核全部通过而原运行裁决保持FAIL；源码设计review另存。具体范围与缺失见`research/usbfs-checked-release.md`。产品实现候选在独立worktree并行完成纯测试，尚未应用本工作树；之后应用再开发与clean最终验证。
