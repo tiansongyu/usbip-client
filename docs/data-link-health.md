@@ -2,7 +2,7 @@
 
 Framed v2 measures responses on the same mutually authenticated TLS connection that carries a device's IMPORT and USB/IP traffic. Use `agent health` to inspect its latest probe, byte counters and terminal cause. A transport reply does not prove that a USB request completed or that a device has been released.
 
-This page describes the current implementation and operating interface. Validation is in progress; it does not claim completed QEMU, hardware or full Phase 3 acceptance.
+Software and dual-guest QEMU qualification are recorded in the [validation report](research/data-link-health-validation.md). Real-device and full Phase 3 acceptance remain incomplete.
 
 ## Choose a transport version
 

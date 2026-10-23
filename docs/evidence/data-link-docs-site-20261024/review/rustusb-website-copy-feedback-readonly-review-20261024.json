@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-10-23T21:44:57.763859+00:00",
+  "scope": "Read-only source and official API review after parent actual CUA observation; no browser interaction or clipboard test performed by this reviewer.",
+  "result": "UNCONFIRMED_BROWSER_COPY_OUTCOME_WITH_KNOWN_FEEDBACK_GAP",
+  "source": {
+    "path": "website/app.js",
+    "sha256": "1bf12ae90c8156642fab9c63f253db52d911b113204bc63acc2476b8ed75f4d8",
+    "head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+    "lines": "91-102"
+  },
+  "parent_reported_browser_observation": {
+    "attribution": "Root, not independently repeated",
+    "normal_iab": "Copy click left initial status text unchanged; TabClipboard read empty and console had no error.",
+    "other_ui": "Root verified desktop tab/history/keyboard, mobile width, and actual CSP-blocked NoJS separately."
+  },
+  "source_facts": [
+    "Status changes only after clipboard.writeText settles. There is no immediate progress message or timer.",
+    "A thrown TypeError (missing clipboard API) or rejected write promise reaches the existing generic manual-copy fallback.",
+    "A promise that stays pending leaves the initial status unchanged. A click not entering the handler would also do so.",
+    "The caught exception is not logged, so no console error does not prove API success.",
+    "TabClipboard empty is not a byte-for-byte proof of the browser platform clipboard outcome."
+  ],
+  "recommendation": {
+    "minimal": "Set immediate copying/manual-copy guidance before invoking writeText. Preserve resolve-only copied confirmation and catch fallback.",
+    "optional_bounded_feedback": "After 3 seconds show Copy was not confirmed. Select and copy the commands above. This is a UX observation deadline, not proof of clipboard failure or cancellation.",
+    "late_completion": "The API has no AbortSignal argument. A timeout cannot undo a later clipboard write; do not label timeout cancelled. Guard stale status updates if repeated attempts are allowed.",
+    "avoid": [
+      "Do not add deprecated execCommand fallback merely to bypass security policies.",
+      "Do not claim actual copy success based on a Node/mock promise resolving.",
+      "Do not copy clipboard contents into diagnostic logs."
+    ]
+  },
+  "verification_plan": {
+    "actual_browser_permission_denial": [
+      "Serve temporary same-source local review URL with HTTP Permissions-Policy: clipboard-write=().",
+      "Use actual user click in focused secure-context page, retain response-header provenance and status/console DOM observations.",
+      "Expected application fallback: Copy is unavailable. Select and copy the commands above.",
+      "Remove test-only response policy afterward; do not apply denial to production site."
+    ],
+    "software_branch_only": [
+      "Stub writeText with Promise.reject(new DOMException(..., NotAllowedError)) to exercise catch, explicitly label as simulated denial rather than real permission validation.",
+      "Stub a never-settling promise to test immediate and bounded manual-copy feedback; not evidence that actual browser promise hangs."
+    ],
+    "success": [
+      "Focused permitted-browser real click and exact manual paste of expected commands can demonstrate actual write; permission-query or unrelated clipboard-read surfaces alone cannot."
+    ],
+    "executed_by_reviewer": false
+  },
+  "official_sources": [
+    {
+      "url": "https://www.w3.org/TR/2026/WD-clipboard-apis-20260624/#dom-clipboard-writetext",
+      "scope": "Working Draft algorithm permission checks and asynchronous promise settlement; not proof of deployed IAB behavior."
+    },
+    {
+      "url": "https://www.w3.org/TR/2026/WD-clipboard-apis-20260624/#privacy-and-the-asychronous-clipboard-api",
+      "scope": "Focus requirement; does not establish actual document focus at tested click."
+    },
+    {
+      "url": "https://chromium.googlesource.com/chromium/src/+/177138f3b2949901bc3b79fbc90fc8966e027ffc/third_party/blink/renderer/modules/clipboard/clipboard_promise.cc",
+      "git_blob": "d4d49b0a9f766bba881167b52907de760ad107c8",
+      "scope": "Reference implementation has ClipboardWrite permissions-policy precondition; actual IAB build/version not asserted."
+    },
+    {
+      "url": "https://developer.chrome.com/docs/privacy-security/permissions-policy",
+      "scope": "HTTP response policy mechanism, temporary test only."
+    }
+  ],
+  "repository_writes": false,
+  "browser_tests_by_reviewer": false
+}

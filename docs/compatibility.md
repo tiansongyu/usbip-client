@@ -1,6 +1,8 @@
 # 兼容性与支持证据
 
-2026-10-24最新[E32共享owner](research/shared-owner-validation.md)：匹配2638a8c输入的530次软件，以及clean b45c2e8的九项QEMU/18guest0，涵盖六前台、两Native agent与原USBFS TERM，同一产品源/ELF。下面保留E31版本归属：软件196/279/20共495次与四原生平台CI归clean`eaa1936`；六前台双栈回归同版通过。Native agent两family的actual配置/权限采证在clean`cb08672`补强并通过，产品150源/ELF仍等eaa；主选八场景16guest，原两eaa agent PASS另存，不算新增设备兼容。详见[E31报告](research/application-service-validation.md)。managed virtual/USBFS agent仅软件覆盖；这些结果不扩大下表真实硬件/ISO/aarch64 USB内核支持范围。
+2026-10-24最新[E33数据链健康](research/data-link-health-validation.md)：626次软件执行、165输入映射，与clean `531e0c3` 十五QEMU/30guest0分账；六新managed Native/USBFS/virtual双栈含18个定向断流阶段及同一serial/CDC原连接I/O，九旧回归同源/ELF。virtual此新场景为HID枚举闲置与CDC echo，不是新键盘注入；Native/managedUSBFS pending/inflight、真实G1/G2及ISO仍未测。[精确531四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40029976284)每格626/39rows及原信号/背压通过，原530 CI保留历史。
+
+此前[E32共享owner](research/shared-owner-validation.md)：匹配2638a8c输入的530次软件，以及clean b45c2e8的九项QEMU/18guest0，涵盖六前台、两Native agent与原USBFS TERM，同一产品源/ELF。下面保留E31版本归属：软件196/279/20共495次与四原生平台CI归clean`eaa1936`；六前台双栈回归同版通过。Native agent两family的actual配置/权限采证在clean`cb08672`补强并通过，产品150源/ELF仍等eaa；主选八场景16guest，原两eaa agent PASS另存，不算新增设备兼容。详见[E31报告](research/application-service-validation.md)。该E31时点managed virtual/USBFS agent仅软件覆盖；E33已补其双栈QEMU子步骤；这些结果不扩大下表真实硬件/ISO/aarch64 USB内核支持范围。
 
 新增[安全broker验收](research/secure-usbip-validation.md)：clean b83c931在Linux6.8 x86_64双QEMU来宾完成Native HID/FTDI、virtual HID/CDC、USBFS HID/FTDI各自IPv4和IPv6的实际mTLS目录/IMPORT/URB，两周期I/O、SIGTERM清理和重用共六场景/12guest0。软件412次与四平台CI是独立软件证据；它不证明真实硬件、aarch64 USB内核、其他内核、ISO或任意跨配置兼容。
 

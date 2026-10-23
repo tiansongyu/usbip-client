@@ -16,7 +16,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory website
 
 Open `http://127.0.0.1:8765/`. Stop the preview with Ctrl+C. Also test a directory prefix such as `/usbip-client/`, since the public site is a GitHub project site. Assets use relative paths; documentation links point to the GitHub repository rather than assuming Markdown files are deployed.
 
-Check narrow and wide layouts, keyboard tab selection, command copying and its failure message. All content is present in the original HTML; JavaScript enhances the backend tabs and copy button. Without scripts, all three backend sections stay visible. Reduced-motion preferences disable smooth scrolling and transitions. The small-screen diagram is a separate, readable vertical layout.
+Check narrow and wide layouts, keyboard tab selection, direct `?backend=virtual#panel-virtual` links, Back/Forward, command copying and its failure message. All content is present in the original HTML; JavaScript enhances the backend tabs and copy button. Without scripts, all three backend sections stay visible. Reduced-motion preferences disable smooth scrolling and transitions. The small-screen diagram is a separate, readable vertical layout.
 
 `check-site.py` validates local files, supported Markdown anchors, repository documentation targets, SVG syntax, image metadata and duplicate HTML IDs. It is a local checker, not an external-link crawler or a browser/accessibility audit. It intentionally does not run USB operations.
 
@@ -38,3 +38,10 @@ Use $readme-site to create an English README and matching GitHub Pages showcase.
 ```
 
 Its README-only mode does not add a website. Publishing, commits and pushes still follow the authorization in the current task. Skill snapshots and validation records are kept with this delivery's evidence so the global installation is reproducible.
+
+
+## Current evidence updates
+
+README/site counts link to the [data-link report](research/data-link-health-validation.md):626 executions and fifteen QEMU runs at clean531e0c3, with their actual software-input provenance. Preserve the earlier530/shared-owner record and both development failures instead of replacing their source labels. Native CI links are updated only after the corresponding published run is observed.
+
+The tab URL/history, selected indicator and inline link cues are verified separately from USB behavior. A local CSP `script-src 'none'` response exercises initial-HTML readability; a temporary `Permissions-Policy: clipboard-write=()` response exercises the real copy-denial fallback. Those test policies are not published site settings. Record unavailable browser capabilities accurately; a DOM/layout check is not a pixel screenshot or reduced-motion emulation.

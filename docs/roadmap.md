@@ -74,6 +74,8 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 应用服务增量见[实施契约](research/application-service-design.md)、[英文操作指南](application-service-guide.md)及[E31验收](research/application-service-validation.md)：非root agent直接持有真实job、typed会话事实和Root tracked proof，managed admission、独立连接stop与有界原子audit已实现；软件196/279/20共495次、四原生CI及两Native agent双栈/六前台回归通过，版本和补强采证分别记账。后续[E32共享owner](research/shared-owner-validation.md)以匹配2638a8c的输入完成530软件、在clean b45c2e8完成九项QEMU/18guest0，消除前台owner重复并保留两模式边界。raw-v1同数据链heartbeat/RTT、持久日志轮转以及无独立root proof的Rust崩溃session协调仍未完成，不宣告完整G3。
 
+新增[E33数据链v2](research/data-link-health-validation.md)显式schema2/ALPN2提供同TLS数据连接probe/RTT及独立只读health/epoch历史，626软件与clean531十五QEMU通过（六新18方向、九旧另账）。raw1仍Unavailable，PONG不证明USB进展；短management有界FIN/EOF自然join、actualcleanup独立。此增量不完成完整G3，日志轮转、无独立root proof的Rust崩溃协调、生产/证书轮换安全矩阵及真实硬件继续保留。
+
 ## 7. Phase 4：完整 TUI
 
 使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。

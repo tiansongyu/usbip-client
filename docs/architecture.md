@@ -179,3 +179,10 @@ Native detach命令成功后，只对同一status属性两次已成功解析但�
 故障harness在已完成实际输入的连接上，由guest管理员精确中止唯一ESTABLISHED USB/IP TCP（只限隔离来宾）；核对内核端口变为NULL、旧sysfs代际消失、server AVAILABLE后，由RustUSB直接重连再验证实际输入与释放。杀usbipd进程、carrier down和本地usbip detach各有不同语义，不互相冒充。Linux普通TCP错误通常SHUTDOWN|RESET而非持久ERROR；若观测到UNKNOWN/ERROR，保留原始状态并拒绝猜测清理。此项不证明WAN黑洞检测、心跳或自动恢复存储写入。
 
 软件平台验证扩展为Ubuntu22.04/24.04 × x86_64/aarch64原生CI，运行前以uname验证实际架构并记录系统/工具链；采用[官方标准运行器](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)，结果待实际四job完成。CI不运行物理USB变更；aarch64编译/单元/只读smoke通过也不证明ARM USB/IP内核路径兼容。
+
+
+### 显式framed-v2数据链
+
+[设计](research/data-link-health-design.md)与[验收](research/data-link-health-validation.md)记录可选schema2/ALPN2。每个实际TCP/TLS连接仅一h2数据stream，driver独立poll控制帧/接收pump，metadata monitor不持设备或permit；flow credit只返还实际应用消费。真TLS DATA/FIN flush fence保留IMPORT证据，不以入队/PONG替代。Catalog和完整拒绝回复双方有界FIN/EOF并保IO至自然join；成功IMPORT继续同流URB。Raw1保持默认且heartbeat/RTT不可用。
+
+应用旧Session/Metrics/IPC1保持，新只读SessionHealth逐profile Read授权；私有disk2严格迁移/容量预留及epoch历史，probe不逐次fsync。所有actualowner停转/清理先于保留ACK等待，不把driver结束或新进程资源0当Root恢复证明。完整Phase3、pendingURB/内核active窗口和真实G1/G2未由软件626或QEMU十五项自动完成。

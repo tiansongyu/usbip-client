@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "result": "PASS_SOURCE_AND_MINIMAL_DOM",
+  "recorded_utc": "2026-10-23T21:36:48.341145+00:00",
+  "head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+  "authorization": "Root approved narrow edits only to website/app.js and website/styles.css after three read-only UI findings; root owns index/content/data updates.",
+  "owned_files": [
+    {
+      "path": "website/app.js",
+      "bytes": 3514,
+      "sha256": "1bf12ae90c8156642fab9c63f253db52d911b113204bc63acc2476b8ed75f4d8"
+    },
+    {
+      "path": "website/styles.css",
+      "bytes": 9700,
+      "sha256": "7825641f8f3d7e746d5970497ab07f994628c11da7b52b93b5f1cee1c74ef048"
+    }
+  ],
+  "changes": [
+    "Restore exact known backend from query or direct panel hash; direct hash wins and canonicalizes query via replaceState.",
+    "User clicks push shareable URL state; Arrow/Home/End replace current entry and prevent-scroll focus. Ordinary section anchors and repository subpath remain intact.",
+    "Initial restore never moves focus; history/hash restore only relocates focus from tablist or a newly hidden panel.",
+    "Inline prose links retain underlines. Selected tab uses accent border plus 3px inset underline with measured 9.42:1 contrast against selected fill."
+  ],
+  "validation": {
+    "minimal_dom": {
+      "checks": 35,
+      "passed": 35,
+      "result": "PASS",
+      "scope": "Actual app.js executed in minimal DOM/history fixture; not browser, rendering, assistive-technology, or actual scrolling verification"
+    },
+    "static_contrast": {
+      "checks": 7,
+      "passed": 7,
+      "result": "PASS"
+    },
+    "browser": {
+      "executed": false,
+      "pending": "Root will perform actual CUA/browser focus, visual, scrolling, NoJS and narrow-width checks."
+    }
+  },
+  "unchanged_scope": [
+    "No index.html, README, validation count, Rust source, QEMU script, Cargo, build, commit or push operation by this subtask.",
+    "Prior negative baseline state-review.json and initial audit report remain unchanged.",
+    "No private browser surfaces inspected."
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/state-fix-check.js",
+      "bytes": 8692,
+      "sha256": "1f3f3689736f3fbdc7384510d80a5756a36dd03d57a4939d319706af937d3243"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/state-fix-check.json",
+      "bytes": 3228,
+      "sha256": "adc5f484d606b8c0ed572e0c67c9a994d5d178136c4805ed62ae08a62b0ab16c"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/source-contrast-fix-check.json",
+      "bytes": 1319,
+      "sha256": "7dc639df894f6f0cf72e85996813fa588102aa457a418983074c5ac7c765b034"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/command.md",
+      "bytes": 8055,
+      "sha256": "d246b026f4f29b5823a9cc857f9edf3d2507002e055e32040cadeaf3b38e0234"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/guidelines-source.json",
+      "bytes": 254,
+      "sha256": "cffc621aff34d89306a802ccbcdc7cf3b2db4097df0455ef6a9a27da8e6ccdec"
+    },
+    {
+      "path": "/tmp/rustusb-website-web-guidelines-review-20261024.json",
+      "bytes": 7763,
+      "sha256": "bd7e2b93c271f0ad9f16891b197bc1e316f0716ee8aa941c347c38d8a7b32ed0"
+    }
+  ],
+  "guidelines": {
+    "url": "https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md",
+    "sha256": "d246b026f4f29b5823a9cc857f9edf3d2507002e055e32040cadeaf3b38e0234",
+    "fresh_fetch_metadata": "/tmp/rustusb-website-guidelines-review-20261024/guidelines-source.json"
+  },
+  "limitations": [
+    "Minimal DOM execution verifies application state transitions and explicit focus calls; it cannot prove browser scrolling, actual focus rendering, screen-reader behavior, layout, or computed CSS.",
+    "History URL state is static presentation state only."
+  ],
+  "source_frozen": true
+}

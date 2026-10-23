@@ -6,7 +6,7 @@
 
 当前为**分阶段开发预览**：Linux Native 管理、可选 Rust 服务和受限 helper 已实现；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、TUI、GUI、存储安全共享及完整安全验收仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
-可选[安全 broker 模式](docs/secure-guide.md)以双向 TLS 1.3 承载目录、IMPORT及后续URB；新[应用服务](docs/application-service-guide.md)独立持有job、按OS UID授权profile/action、支持连接定向停止与有界持久audit。最新共享owner的530次软件检查与clean `b45c2e8` 九项QEMU/18 guest正常退出见[新验收](docs/research/shared-owner-validation.md)：六前台安全双栈、两Native agent和原USBFS TERM回归使用同源/同产物；测试专用修订2638a8c的[四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/39999926362)每格530次和五个TLS生命周期组合通过；旧495与四原生CI按原版保留于[应用服务验收](docs/research/application-service-validation.md)。[原六项及历史FAIL](docs/research/secure-usbip-validation.md)保留原版本。旧命令仍需外部网络保护；完整Phase3与真实硬件未完成。
+可选[安全 broker 模式](docs/secure-guide.md)以双向 TLS 1.3 承载目录、IMPORT及后续URB；[应用服务](docs/application-service-guide.md)独立持有job、按OS UID授权profile/action、支持连接定向停止与有界持久audit。新增[数据连接健康观察](docs/data-link-health.md)：显式schema2启用同一TLS数据连接的探测/RTT，`agent health`独立只读查询；探测响应不等于USB进展或设备清理。最新[验收报告](docs/research/data-link-health-validation.md)记录626次软件执行及clean `531e0c3` 的15项QEMU/30guest0，其中六项新双栈场景含18个定向断流阶段，九项旧回归另账。[精确531四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40029976284)每格626次及TLS/原信号背压通过；[原530/共享owner验收](docs/research/shared-owner-validation.md)及四原生CI保留原版本，原Catalog/virtual链路就绪FAIL也完整保留。完整Phase3与真实硬件仍未完成。
 
 可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，见[虚拟服务指南](docs/rust-virtual-server.md)与干净cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)。
 

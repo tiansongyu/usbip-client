@@ -1,0 +1,128 @@
+{
+  "scope": "Local browser verification of the source files listed below; deployment is a separate later check.",
+  "checks": [
+    {
+      "name": "desktop_subpath",
+      "url": "http://127.0.0.1:4174/usbip-client/#panel-physical",
+      "viewport": [
+        1280,
+        720
+      ],
+      "document_scroll_width": 1265,
+      "deep_link_selected": "USBFS adapter"
+    },
+    {
+      "name": "click_and_history",
+      "observed": [
+        "Virtual click updates ?backend=virtual#panel-virtual",
+        "Back restores physical selection",
+        "Home selects native and focuses tab-native"
+      ]
+    },
+    {
+      "name": "inline_links",
+      "observed": "Four inspected prose links have computed underline"
+    },
+    {
+      "name": "mobile_native_and_physical",
+      "viewport": [
+        390,
+        844
+      ],
+      "document_scroll_width": 375,
+      "overflow": false
+    },
+    {
+      "name": "no_js",
+      "method": "Local CSP script-src 'none'",
+      "viewport": [
+        1280,
+        720
+      ],
+      "panels_visible": [
+        "native",
+        "virtual",
+        "physical"
+      ],
+      "tabs_hidden": true,
+      "copy_button_hidden": true,
+      "proof_numbers_visible": [
+        "626",
+        "15",
+        "18"
+      ]
+    },
+    {
+      "name": "normal_copy",
+      "initial_attempt": "Initial status remained unchanged; no failure inferred from empty clipboard observation.",
+      "final_observation": "After source reload, actual copied status observed and clipboard exactly equals build-command text.",
+      "clipboard_matches": true,
+      "console_warnings_errors": []
+    },
+    {
+      "name": "copy_denied",
+      "method": "Temporary Permissions-Policy clipboard-write=() response",
+      "actual_status": "Copy is unavailable. Select and copy the commands above."
+    },
+    {
+      "name": "viewport_reset",
+      "actual": [
+        1280,
+        720
+      ]
+    },
+    {
+      "name": "reduced_motion",
+      "actual_browser_preference": false,
+      "method": "Read actual CSSOM; valid reduced-motion rule disables smooth scroll/transitions/animation. Preference was not emulated."
+    },
+    {
+      "name": "screenshot",
+      "result": "unavailable",
+      "actual_error": "Error: Unable to capture screenshot",
+      "scope": "No pixel/screenshot verification claimed."
+    }
+  ],
+  "sources": [
+    {
+      "path": "README.md",
+      "bytes": 14501,
+      "sha256": "82a5ddabd15105cdd59f500ab81091dc46c717e82a4c681a62f07accf5811af6"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "bytes": 12639,
+      "sha256": "44aa8fc79d3e1f98edcf8a8a8813d9deb2d4f7ee5df3f8d541fcbb300518879c"
+    },
+    {
+      "path": "website/index.html",
+      "bytes": 13567,
+      "sha256": "5a9069716e4b38b42df043475f1796247e81cf72bc4de12b49fdae49bc3b7620"
+    },
+    {
+      "path": "website/styles.css",
+      "bytes": 9700,
+      "sha256": "7825641f8f3d7e746d5970497ab07f994628c11da7b52b93b5f1cee1c74ef048"
+    },
+    {
+      "path": "website/app.js",
+      "bytes": 3605,
+      "sha256": "c480aa0bce799cf078a4bdc994073a662c5fd8f17ffe5c6e443a5c99fe892f83"
+    },
+    {
+      "path": "website/assets/favicon.svg",
+      "bytes": 373,
+      "sha256": "1d0a2204e9022341120b10c18d25da7e97d221f245160bdd134bdbe92b689b0e"
+    },
+    {
+      "path": "website/assets/usbip-flow.svg",
+      "bytes": 3918,
+      "sha256": "cdc92ac84cb83a5b192584ae41ab79be4290b437334ea880ca8aa3ce3cf73aee"
+    },
+    {
+      "path": "website/assets/usbip-flow-mobile.svg",
+      "bytes": 2140,
+      "sha256": "8f0c2f9e6eeabdc905495d821cafb32747db8366dfc409c525dea3bb85f30be5"
+    }
+  ]
+}

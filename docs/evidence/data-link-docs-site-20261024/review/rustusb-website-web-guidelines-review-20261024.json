@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "result": "REVIEW_COMPLETE_3_ACTIONABLE_FINDINGS",
+  "reviewed_utc": "2026-10-23T21:30:23.293001+00:00",
+  "head": "531e0c32a4b0e7252ca771ab4f10042c71c8c195",
+  "skill": {
+    "path": "/home/ubuntu/.agents/skills/web-design-guidelines/SKILL.md",
+    "bytes": 1231,
+    "sha256": "f4647ca866a3accf763777f83e7682954f0187cd6bea7eea0399796652414e8f"
+  },
+  "fresh_guidelines": {
+    "retrieved_utc": "2026-10-23T21:27:40.064771+00:00",
+    "url": "https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md",
+    "bytes": 8055,
+    "sha256": "d246b026f4f29b5823a9cc857f9edf3d2507002e055e32040cadeaf3b38e0234"
+  },
+  "additional_primary_references": [
+    {
+      "title": "W3C Understanding SC1.4.11 Non-textContrast",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+      "scope": "3:1 for necessary state cues; decorative boundary exemption retained."
+    },
+    {
+      "title": "W3C Understanding SC1.4.1 UseofColor",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+      "scope": "Identical link/prose styling is usability issue, not a color-only SC1.4.1 failure."
+    }
+  ],
+  "files": [
+    {
+      "path": "website/index.html",
+      "bytes": 13376,
+      "sha256": "a5d58a647a0e3cc99dab1a6b2469377163ca129d28d12cf453f00e246399d440"
+    },
+    {
+      "path": "website/styles.css",
+      "bytes": 9453,
+      "sha256": "a90da2b657689c8f55b23afe9e7834681bd8f83c29a671da5d91d22092e5be30"
+    },
+    {
+      "path": "website/app.js",
+      "bytes": 1797,
+      "sha256": "727d193314413dc2dd0569e6e5638af073a6b1a4d2c2c511d1a5c6dbbfe318e6"
+    },
+    {
+      "path": "website/assets/favicon.svg",
+      "bytes": 373,
+      "sha256": "1d0a2204e9022341120b10c18d25da7e97d221f245160bdd134bdbe92b689b0e"
+    },
+    {
+      "path": "website/assets/usbip-flow-mobile.svg",
+      "bytes": 2140,
+      "sha256": "8f0c2f9e6eeabdc905495d821cafb32747db8366dfc409c525dea3bb85f30be5"
+    },
+    {
+      "path": "website/assets/usbip-flow.svg",
+      "bytes": 3918,
+      "sha256": "cdc92ac84cb83a5b192584ae41ab79be4290b437334ea880ca8aa3ce3cf73aee"
+    }
+  ],
+  "findings": [
+    {
+      "id": "WEB-01",
+      "priority": "P2",
+      "location": "website/app.js:7",
+      "related": [
+        "website/app.js:36",
+        "website/index.html:49"
+      ],
+      "issue": "Backend tab state is absent from the URL; initialisation always selects Native and hides a directly targeted #panel-physical. Reload/share/Back cannot preserve the selected backend.",
+      "minimal_fix": "Read/write a bounded known backend URL state and handle history/hash changes; preserve normal section anchors and NoJS readable panels.",
+      "evidence": "Actual app.js minimalDOM execution: hash#panel-physical selectsnative+physicalHidden; clickingvirtual leaveshashphysical and zero history calls.",
+      "rule_source": "Vercel Navigation & State, URL/deep-link state."
+    },
+    {
+      "id": "WEB-02",
+      "priority": "P2",
+      "location": "website/styles.css:2",
+      "related": [
+        "website/index.html:40",
+        "website/index.html:141"
+      ],
+      "issue": "Global a{color:inherit;text-decoration:none} leaves inline documentation links visually identical to surrounding prose until hover.",
+      "minimal_fix": "Give prose/figcaption links a persistent underline or equivalent visible affordance; keep deliberate nav/button styling.",
+      "evidence": "Both parentprose and link inheritmuted#9bafbe; theseanchors have no .text-link class or default underline override.",
+      "scope": "Concrete usability issue, not claimed SC1.4.1 failure: W3C explicitly distinguishes no-styling-difference from color-only indication."
+    },
+    {
+      "id": "WEB-03",
+      "priority": "P2",
+      "location": "website/styles.css:2",
+      "related": [
+        "website/index.html:49"
+      ],
+      "issue": "The selected-tab pill outline/state cue is low contrast: #356171 border against #132c37 fill is2.15:1; the pill fill also differs weakly from page background.",
+      "minimal_fix": "Use a state indicator/border meeting3:1 against adjacent colors, such as theexistingaccent, while retaining visiblefocus.",
+      "evidence": "Exactsourcecolors/sRGB ratios below; selected label color alone is not a sufficiently distinct non-color state cue.",
+      "rule_source": "W3C SC1.4.11 selectedstate visual indicators; no claim that all decorative borders need3:1."
+    }
+  ],
+  "contrast_source_calculations": [
+    {
+      "foreground": "#9bafbe",
+      "background": "#080d12",
+      "ratio": 8.6095059805218
+    },
+    {
+      "foreground": "#9bafbe",
+      "background": "#101a24",
+      "ratio": 7.754971243238772
+    },
+    {
+      "foreground": "#83ddf2",
+      "background": "#132c37",
+      "ratio": 9.416896912588905
+    },
+    {
+      "foreground": "#edf4f9",
+      "background": "#080d12",
+      "ratio": 17.563238451355723
+    },
+    {
+      "foreground": "#356171",
+      "background": "#132c37",
+      "ratio": 2.1479054017453816
+    },
+    {
+      "foreground": "#356171",
+      "background": "#080d12",
+      "ratio": 2.879084449199848
+    },
+    {
+      "foreground": "#132c37",
+      "background": "#080d12",
+      "ratio": 1.3404149209086735
+    },
+    {
+      "foreground": "#bcebf6",
+      "background": "#182c3a",
+      "ratio": 11.198653719240635
+    }
+  ],
+  "checks_satisfied_from_source": [
+    "Nativebutton actions and semanticanchors, explicitfocus-visible outlines withoutoutline suppression.",
+    "Tabs have rovingtabindex/ARIAselection/labelledpanels andArrowLeft/Right/Home/End behavior; actualminimalDOM Endkey selects/focusesPhysical andpreventsdefault.",
+    "NoJS keepsallthreebackendpanels visible; hiddencontrols only exposedbyJS; commands remainselectable.",
+    "Copy success/failure updates an aria-live status with useful manualcopyfallback.",
+    "LongcommandURLs havepre-wrap/overflow-wrap:anywhere andcodecontainer min-width0; mobilecolumns/footerreflow declared.",
+    "Reduced-motion disables smoothscroll/transitions;SVGs containnostartedmotion.",
+    "Bodymutedtext contrast8.61:1 onpage/7.75:1 onpanel; maintext17.56:1; SVGcode11.20:1.",
+    "Meaningfulillustrationhastextalternative andcaption, logosdecorative; SVGtitles/descriptions present."
+  ],
+  "not_flagged": [
+    "Static historical dates/testcounts/commits are evidence identifiers, not dynamiclocale formatting; no blanketIntl requirement.",
+    "No newmarketing/performance/productcompletion claims introduced.",
+    "Existing530/b45/historicalsite data is intentionallyleftforRootto reconcile afterreal15run+CI results."
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/state-review.js",
+      "bytes": 1993,
+      "sha256": "91a231bfbee9cf1ac26527a2dc18fbb50fe67fc7cc8e38eff92bd53525ad1d9e"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/state-review.json",
+      "bytes": 386,
+      "sha256": "757c395b8e4e112979770b5c84bce6f00cce392f750c2e65b1159feb84a8f1a1"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/findings.txt",
+      "bytes": 368,
+      "sha256": "8df312ea4849615d0cddc8015baccedd7190c79f3a894c27db3b38924deef842"
+    },
+    {
+      "path": "/tmp/rustusb-website-guidelines-review-20261024/command.md",
+      "bytes": 8055,
+      "sha256": "d246b026f4f29b5823a9cc857f9edf3d2507002e055e32040cadeaf3b38e0234"
+    }
+  ],
+  "validation_scope": [
+    "Actualsource/contrastmath andminimalDOM execution only, notbrowser layout/assistivetechnology/CLS certification.",
+    "No private userbrowser/tabs accessed.",
+    "No repositorywrites, build/Cargo, QEMU,USB,commit orpush.",
+    "No redesign or newframeworks/dependencies."
+  ]
+}

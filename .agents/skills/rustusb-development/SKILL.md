@@ -31,6 +31,15 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - 每台物理设备独占；串行化冲突变更。清理幂等，从内核/sysfs 恢复现实状态，不仅相信内存记录。存储断线默认人工确认。
 - 应用job/session/managed IMPORT修改前读`docs/research/application-service-design.md`，共享前台owner另读`docs/research/shared-owner-design.md`。Foreground无WAL/correlation，delivery ACK不等于持久准入；保留两模式EOF策略、原JSON/信号/背压。持久admission后才claim，停止只发合作请求、真实owner总await；softdeadline不是terminal。server Connected只证明IMPORT flush，client须VHCI receipt。Root proof全核kind/correlation/key/UID/resource，不能用新进程资源0或PID死亡恢复旧session；保留operation/cleanup独立结果，raw-v1不编造heartbeat/RTT。
 
+## 可选数据连接v2
+
+修改同数据链探测/RTT、framed stream、健康历史或短management收尾前，读`docs/research/data-link-health-design.md`与`docs/research/data-link-health-validation.md`。626软件/十五QEMU锁各自实际来源，硬件及完整Phase3未完成。
+
+- TLS schema2/ALPN2显式启用且不downgrade；schema1/raw1不伪造probe/RTT。单TLS连接只一data stream，不用Catalog活性替代设备连接。
+- driver独立于应用读取、持久ACK和stdout；metadata监视器不持设备/stream/permit。流控只按实际消费还credit，真TLS完整DATA/FIN flush不能用入队或PONG替代；全部h2 API/poll/map/drop在quiet边界内。
+- Catalog/完整flush的拒绝回复保留借用IO，经双方FIN/有界EOF后自然join；错误/停止保留outer owner并stop+join，成功IMPORT不提前FIN。e152的真实Catalog FAIL及相同函数修后PASS是回归契约，不可改成sleep/retry。
+- 新health是独立只读RPC，旧Session/Metrics/IPC1不改；私有disk2严格字段/迁移/容量/epoch历史，探测不逐次写WAL。operation、actual cleanup与recording保持独立；网络timeout不等于设备释放或driver恢复。
+
 ## 验证与文档
 
 - 单元测试覆盖字节序、描述符边界、ID、状态机、配置、认证、错误、超时与取消；网络解析加畸形包和大小边界测试及 fuzz 入口。

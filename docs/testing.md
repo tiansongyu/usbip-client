@@ -289,3 +289,17 @@ server实际运行`secure-server --backend virtual|usbfs|native --config /etc/ru
 ## 共享前台与托管owner回归（E32）
 
 匹配2638a8c输入的完整530软件通过；clean b45c2e8的六安全前台双栈、两Native agent双栈及原USBFS TERM九项QEMU/18guest0通过，见[验收](research/shared-owner-validation.md)。新软件mTLS五组合与旧本地四信号/两背压分别记账；blocked只证明退出/socket关闭。原startup证明Status可取消，helper acceptance=false，不能冒充accepted initializer或kernel内部硬阻塞验收；Resource ACK无限停顿仍未决。
+
+
+## 同数据链v2故障回归（E33）
+
+[英文验收](research/data-link-health-validation.md)记录626次软件执行与clean531e0c3十五项QEMU/30guest0。六新项分别覆盖native/usbfs/virtual与ipv4/ipv6，每项三个fresh5tuple方向（c2s/s2c/both），另九既有raw-v1回归单列。
+
+```sh
+python3 -B scripts/qemu_data_link_health/run.py --backend native --family ipv4 \
+  --kernel 6.8.0-106-generic --evidence /tmp/data-link-native-ipv4-NEW-CLEAN-SHA
+```
+
+用`--backend usbfs|virtual`、`--family ipv4|ipv6`运行其余新项；默认locked all-features构建，`--skip-build`只作显式开发选项。精确环境/权限/有界valve/源ELF/原件要求见[harness说明](../scripts/qemu_data_link_health/README.md)。宿主普通UID、私有socketpair、不操作宿主USB。双端实际carrier/operstate原件和ACK先于START及原nc-w2负向探测；不靠扩大probe时限绕过首virtual失败。
+
+完整Socketforward不等于peer收到；须以双PCAP逐原bytes复核。RTT为local enqueue至库PONG，不跨guest时钟相减；PONG不证明USB进展。Native/managed USBFS闲置活性不冒作pending/inflight，virtual仅真实CDC echo/HID枚举闲置，不虚构键盘注入。e152 Catalog和934部分矩阵FAIL保留原版，guest0不得覆盖FAIL marker。

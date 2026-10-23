@@ -89,8 +89,21 @@ Choose `--backend native` for approved kernel exports or `--backend usbfs` for t
 For supervised jobs independent of the requesting CLI, see the experimental
 [application service guide](docs/application-service-guide.md). Its nonroot agent
 provides fixed profiles, OS-UID action authorization, per-connection stop and
-bounded durable session/audit history. Native agent QEMU acceptance is recorded
-with the foreground paths in the [shared-owner validation report](docs/research/shared-owner-validation.md). Both entries use the same actual service owners; foreground output acknowledgements do not substitute for managed durable admission.
+bounded durable session/audit history. Native, virtual and USBFS managed paths
+have [QEMU evidence](docs/research/data-link-health-validation.md).
+
+To observe a device's data connection, explicitly enable TLS configuration schema 2
+on both endpoints, then read health from the running agent:
+
+```sh
+# After an administrator configures and starts the agent.
+rustusb agent --config /etc/rustusb/agent.json health lab-keyboard
+```
+
+The opt-in v2 format measures probes and RTT on the same TLS connection as IMPORT
+and USB/IP traffic. The [data-link guide](docs/data-link-health.md) covers policy,
+permissions and history. Raw v1 reports probes as unavailable. A reply confirms
+transport responsiveness, not USB progress or completed device cleanup.
 
 ## Choose a backend
 
@@ -122,11 +135,13 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The latest [shared-owner validation report](docs/research/shared-owner-validation.md) records 530 software executions on inputs matching `2638a8c`, and nine QEMU runs at clean `b45c2e8`:
+The [data-link validation report](docs/research/data-link-health-validation.md) records:
 
-- **530 software test executions** across the default, all-features and vendored suites, plus formatting, Clippy, release builds and documentation checks.
-- **Nine paired QEMU runs, eighteen successful guest exits**: six foreground virtual/USBFS/Native paths across IPv4/IPv6, two Native agent scenarios for independent task ownership, targeted stop and restart recovery, and the original USBFS TERM regression. All use the same frozen revision and release artifacts.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `2638a8c`](https://github.com/tiansongyu/usbip-client/actions/runs/39999926362) passes 530 executions, five secure-adapter signal/backpressure cases and the original local lifecycle checks on each platform.
+- **626 software test executions**: 260 default, 346 all-features and 20 vendored executions, with formatting, Clippy, release and documentation checks. All 165 build inputs match the committed source; the original run retains its actual provenance.
+- **15 paired QEMU runs at clean `531e0c3`, 30 successful guest exits**: six framed-v2 Native/USBFS/virtual runs across IPv4/IPv6, followed by nine existing regressions. The new runs cover 18 directional network-loss phases, actual sibling-device I/O, fresh attempts and cooperative cleanup. All use the same release artifacts.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `531e0c3`](https://github.com/tiansongyu/usbip-client/actions/runs/40029976284) passes 626 executions, five TLS lifecycle scenarios and the original signal/backpressure checks on each platform. Earlier CI retains its own revision and counts.
+
+The initial Catalog failure and the later virtual-network readiness failure remain in the report with their original raw evidence and fixes. The [shared-owner baseline](docs/research/shared-owner-validation.md) retains its own revisions.
 
 Earlier [secure-path tests](docs/research/secure-usbip-validation.md), [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence, including failed development runs and their fixes.
 
@@ -137,6 +152,7 @@ The report links the tested revision and raw evidence. [Native interoperability]
 - **Select the intended network mode.** `secure-*` commands require trusted mutual-TLS configuration and device rules. Legacy commands still need external network protection. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
+- **Health has a defined scope.** Probes measure the data connection, not USB completion. The private agent journal upgrades to strict disk2; older agents cannot open that upgraded journal. See the [upgrade and health rules](docs/data-link-health.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
 - **More product work remains.** TUI, GUI, packaged installers, Windows USB support and the full hardware/security acceptance gates are on the [roadmap](docs/roadmap.md).
 
@@ -148,6 +164,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 | --- | --- |
 | [Secure broker setup](docs/secure-guide.md) | Mutual TLS, dedicated broker roles, exact device authorization and supervised cleanup |
 | [Shared application service](docs/application-service-guide.md) | Nonroot jobs, authorized profiles, per-connection stop, durable sessions and bounded audit |
+| [Data-link health](docs/data-link-health.md) | Opt-in v2 probes, RTT, backpressure observations and epoch-qualified history |
 | [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
 | [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
 | [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |
