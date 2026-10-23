@@ -24,7 +24,7 @@ Check narrow and wide layouts, keyboard tab selection, command copying and its f
 
 [The Pages workflow](../.github/workflows/pages.yml) checks pull requests and deploys only from `main`. It uploads only `website/`; research logs and the rest of the repository are not part of the website artifact. Actions are pinned to verified upstream commit IDs. The deployment job alone has Pages/OIDC write permissions.
 
-The intended public address is `https://tiansongyu.github.io/usbip-client/`. A successful source commit is not proof of deployment: inspect the workflow conclusion and retrieve the live HTML and assets. Repository Pages settings must use GitHub Actions. The setup follows [GitHub's custom-workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The public site is [RustUSB](https://tiansongyu.github.io/usbip-client/). The first deployment and live verification are recorded in [the publication evidence](evidence/readme-site-publication-f87b3ad-20261023.json). A successful source commit is not proof of deployment: inspect the workflow conclusion and retrieve the live HTML and assets. Repository Pages settings must use GitHub Actions. The setup follows [GitHub's custom-workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ## Reusable global skill
 
