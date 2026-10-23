@@ -1,0 +1,154 @@
+RUSTUSB_PHYSICAL_EVIDENCE_CHANNEL: PASS role=server device=ttyS1 kernel_console=ttyS0
+RUSTUSB_PHYSICAL_BOOT role=server kernel=6.8.0-106-generic
+RUSTUSB_PHYSICAL_SERVER_MODULES: PASS usbip_host=false vhci_hcd=false
+RUSTUSB_PHYSICAL_ISOLATION role=server ip_forward=0
+2026-10-23T03:18:55.008143Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.067391Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.126469Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.185672Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.244949Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.304027Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.363017Z  INFO rustusb: local device discovery completed device_count=0
+2026-10-23T03:18:55.422960Z  INFO rustusb: local device discovery completed device_count=1
+2026-10-23T03:18:55.483551Z  INFO rustusb: local device discovery completed device_count=1
+2026-10-23T03:18:55.542828Z  INFO rustusb: local device discovery completed device_count=1
+2026-10-23T03:18:55.602110Z  INFO rustusb: local device discovery completed device_count=1
+2026-10-23T03:18:55.662075Z  INFO rustusb: local device discovery completed device_count=2
+RUSTUSB_PHYSICAL_RESULT: FAIL role=server stage=select-simulated-devices exit=1
+DIAGNOSTIC /tmp/devices.json
+[
+  {
+    "id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+    "bus_id": "1-1",
+    "vendor_id": 1575,
+    "product_id": 1,
+    "manufacturer": "QEMU",
+    "product": "QEMU USB Keyboard",
+    "serial": "68284-0000:00:04.0-1",
+    "device_address": 2,
+    "usb_version": "2.00",
+    "speed": "480",
+    "class": 0,
+    "subclass": 0,
+    "protocol": 0,
+    "topology": "devices/pci0000:00/0000:00:04.0/ports/1",
+    "driver": "usb",
+    "interfaces": [
+      {
+        "number": 0,
+        "alternate_setting": 0,
+        "class": 3,
+        "subclass": 1,
+        "protocol": 1,
+        "driver": "usbhid",
+        "endpoints": [
+          {
+            "address": 129,
+            "attributes": 3,
+            "max_packet_size": 8,
+            "interval": 7
+          }
+        ]
+      }
+    ],
+    "exported": false,
+    "occupied": null,
+    "export_blockers": []
+  },
+  {
+    "id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+    "bus_id": "1-2",
+    "vendor_id": 1027,
+    "product_id": 24577,
+    "manufacturer": "QEMU",
+    "product": "QEMU USB SERIAL",
+    "serial": "1-0000:00:04.0-2",
+    "device_address": 3,
+    "usb_version": "2.00",
+    "speed": "12",
+    "class": 0,
+    "subclass": 0,
+    "protocol": 0,
+    "topology": "devices/pci0000:00/0000:00:04.0/ports/2",
+    "driver": null,
+    "interfaces": [],
+    "exported": false,
+    "occupied": null,
+    "export_blockers": [
+      "cached_descriptors_unreadable",
+      "interface_metadata_incomplete",
+      "metadata_invalid:bNumInterfaces",
+      "metadata_unreadable:bNumInterfaces"
+    ]
+  }
+]
+[    0.236344] clk: Disabling unused clocks
+[    0.373506] ata2: found unknown device (class 0)
+[    0.374018] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    0.374731] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    0.390678] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    0.390842] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    0.396687] sr 1:0:0:0: Attached scsi CD-ROM sr0
+[    0.396802] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    0.397367] Freeing unused decrypted memory: 2028K
+[    0.397731] Freeing unused kernel image (initmem) memory: 4912K
+[    0.397872] Write protecting the kernel read-only data: 36864k
+[    0.398092] Freeing unused kernel image (rodata/data gap) memory: 348K
+[    0.419676] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    0.419835] Run /init as init process
+[    0.419926]   with arguments:
+[    0.419927]     /init
+[    0.419927]   with environment:
+[    0.419927]     HOME=/
+[    0.419928]     TERM=linux
+[    0.419928]     RUSTUSB_QEMU_GUEST=1
+[    0.423946] e1000: Intel(R) PRO/1000 Network Driver
+[    0.424069] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    0.430498] ACPI: \_SB_.LNKC: Enabled at IRQ 10
+[    0.708858] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:00:00:31
+[    0.709033] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    0.710355] hid: raw HID events driver (C) Jiri Kosina
+[    0.711460] usbcore: registered new interface driver usbhid
+[    0.711599] usbhid: USB HID core driver
+[    0.712263] usbcore: registered new interface driver usbserial_generic
+[    0.712421] usbserial: USB Serial support registered for generic
+[    0.713200] usbcore: registered new interface driver ftdi_sio
+[    0.713340] usbserial: USB Serial support registered for FTDI USB Serial Device
+[    0.720909] xhci_hcd 0000:00:04.0: xHCI Host Controller
+[    0.721046] xhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 1
+[    0.721310] xhci_hcd 0000:00:04.0: hcc params 0x00087001 hci version 0x100 quirks 0x0000000000000010
+[    0.721721] xhci_hcd 0000:00:04.0: xHCI Host Controller
+[    0.721847] xhci_hcd 0000:00:04.0: new USB bus registered, assigned bus number 2
+[    0.722024] xhci_hcd 0000:00:04.0: Host supports USB 3.0 SuperSpeed
+[    0.722201] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.08
+[    0.722394] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.722567] usb usb1: Product: xHCI Host Controller
+[    0.722686] usb usb1: Manufacturer: Linux 6.8.0-106-generic xhci-hcd
+[    0.722835] usb usb1: SerialNumber: 0000:00:04.0
+[    0.723011] hub 1-0:1.0: USB hub found
+[    0.723111] hub 1-0:1.0: 4 ports detected
+[    0.723281] usb usb2: We don't know the algorithms for LPM for this host, disabling LPM.
+[    0.723485] usb usb2: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 6.08
+[    0.723677] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    0.723845] usb usb2: Product: xHCI Host Controller
+[    0.723964] usb usb2: Manufacturer: Linux 6.8.0-106-generic xhci-hcd
+[    0.724112] usb usb2: SerialNumber: 0000:00:04.0
+[    0.724250] hub 2-0:1.0: USB hub found
+[    0.724348] hub 2-0:1.0: 4 ports detected
+[    0.960440] usb 1-1: new high-speed USB device number 2 using xhci_hcd
+[    1.086599] usb 1-1: New USB device found, idVendor=0627, idProduct=0001, bcdDevice= 0.00
+[    1.086873] usb 1-1: New USB device strings: Mfr=1, Product=4, SerialNumber=11
+[    1.087061] usb 1-1: Product: QEMU USB Keyboard
+[    1.087170] usb 1-1: Manufacturer: QEMU
+[    1.087262] usb 1-1: SerialNumber: 68284-0000:00:04.0-1
+[    1.087681] input: QEMU QEMU USB Keyboard as /devices/pci0000:00/0000:00:04.0/usb1/1-1/1-1:1.0/0003:0627:0001.0001/input/input3
+[    1.139510] hid-generic 0003:0627:0001.0001: input,hidraw0: USB HID v1.11 Keyboard [QEMU QEMU USB Keyboard] on usb-0000:00:04.0-1/input0
+[    1.253470] usb 1-2: new full-speed USB device number 3 using xhci_hcd
+[    1.379900] usb 1-2: New USB device found, idVendor=0403, idProduct=6001, bcdDevice= 4.00
+[    1.380309] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=4
+[    1.380648] usb 1-2: Product: QEMU USB SERIAL
+[    1.380760] usb 1-2: Manufacturer: QEMU
+[    1.380851] usb 1-2: SerialNumber: 1-0000:00:04.0-2
+[    1.381485] ftdi_sio 1-2:1.0: FTDI USB Serial Device converter detected
+[    1.381720] usb 1-2: Detected FT232B
+[    1.381869] usb 1-2: FTDI USB Serial Device converter now attached to ttyUSB0

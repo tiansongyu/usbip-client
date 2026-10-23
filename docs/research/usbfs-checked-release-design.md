@@ -46,3 +46,8 @@ clean `ab44a84` 的第二轮最终矩阵在第六项 alternate/EOF 的 `discover
 
 
 诊断dev01（dirty ab44a84）实际PASS，IMPORT header等待1.519263924秒，DEVLIST header约12ms；原失败准确调用依旧未知。源码可确认tracer全syscall轮询在暂时无waitpid事件时固定sleep1ms，连续entry/exit停顿可能累计额外延迟。下一步仅将tracer parent在fork之后、SEIZE之前阻塞SIGCHLD，空闲时以sigtimedwait等待该信号、上限仍1ms；子进程不继承新mask。保留waitpid的真实status处理、256事件batch、公用单调时钟、控制轮询、8秒门和所有wire/RPC期限。SIGCHLD仅作唤醒，仍必须waitpid核状态，不伪造completion；EAGAIN或EINTR只是重新检查，其他错误FAIL。通过单项guest前后观察耗时与真实stop/trace，不把该优化归因为旧失败的已证根因。
+
+
+## v3设备枚举前置等待
+
+clean19ffa11的v3十一项全部结束，前10PASS，最后physical-hot在select-simulated-devices前置FAIL：原扫描快照确有两个设备，但FTDI interfaces仍为空、bNumInterfaces尚未可读、export_blockers非空；随后dmesg显示ftdi_sio注册完成。原loop仅按length2提前退出，与紧接着的完整性断言不同。只把loop成功条件改为原最终 `length == 2 and all(.[]; (.export_blockers | length) == 0)`，仍100次、0.05秒，最终断言保留；设备稳定前只继续等待，不放行不完整数据，不改变产品scanner或授权。先以原失败/已通过快照测试旧提前退出与新等待条件，再单项hot开发验收，之后distinct v4完整冻结。

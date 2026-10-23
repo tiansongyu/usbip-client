@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Actual failed scanner snapshot plus explicitly synthetic readiness/negative fixtures; exact original final jq predicate, no USB operations or new timeout",
+  "checks": [
+    {
+      "fixture": "actual-incomplete",
+      "old_stops": true,
+      "new_stops": false,
+      "result": "PASS"
+    },
+    {
+      "fixture": "synthetic-ready",
+      "old_stops": true,
+      "new_stops": true,
+      "result": "PASS"
+    },
+    {
+      "fixture": "only-one",
+      "old_stops": false,
+      "new_stops": false,
+      "result": "PASS"
+    },
+    {
+      "fixture": "empty",
+      "old_stops": false,
+      "new_stops": false,
+      "result": "PASS"
+    }
+  ],
+  "loop_attempts": 100,
+  "sleep_seconds": 0.05,
+  "final_assertion_unchanged": true,
+  "guest_sha256": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+  "fixtures": [
+    {
+      "path": "/tmp/rustusb-physical-startup-readiness-static-20261023/actual-incomplete.json",
+      "bytes": 1622,
+      "sha256": "dab8d2ffc46497d43ffd497360dd2a444d39053c8344fdef29d4e81c529e0132"
+    },
+    {
+      "path": "/tmp/rustusb-physical-startup-readiness-static-20261023/empty.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "/tmp/rustusb-physical-startup-readiness-static-20261023/only-one.json",
+      "bytes": 902,
+      "sha256": "77291254217752f6877262ce9e1b4d6988c348534d775e5f5eb516ef71bf7606"
+    },
+    {
+      "path": "/tmp/rustusb-physical-startup-readiness-static-20261023/synthetic-ready.json",
+      "bytes": 1526,
+      "sha256": "9f380b09751364953f6875031bba33aa7def1b449ca0711212b852a43327ca97"
+    }
+  ]
+}

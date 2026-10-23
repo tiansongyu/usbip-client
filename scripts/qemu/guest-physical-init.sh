@@ -101,7 +101,9 @@ if [ "$ROLE" = server ]; then
     STAGE=select-simulated-devices
     for attempt in $(seq 1 100); do
         unpriv --json devices > /tmp/devices.json
-        [ "$(jq 'length' /tmp/devices.json)" != 2 ] || break
+        # Device entries can appear before configuration/interface sysfs files.
+        # Wait for the same complete snapshot required immediately below.
+        jq -e 'length == 2 and all(.[]; (.export_blockers | length) == 0)' /tmp/devices.json > /dev/null && break
         sleep 0.05
     done
     jq -e 'length == 2 and all(.[]; (.export_blockers | length) == 0)' /tmp/devices.json > /dev/null

@@ -1,6 +1,6 @@
 # USBFS checked release：错误传播与 QEMU 验证
 
-2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。产品修复已合入 `4e81a11`；首轮 clean 候选矩阵为 10 PASS、1 FAIL；第二轮在第六项启动阶段失败，后五项未运行，完整冻结验收仍待完成。实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
+2026-10-23。两轮旧产品基线均为 **FAIL**，已重现真实 `RELEASEINTERFACE=-EINVAL` 被吞掉的行为。产品修复已合入 `4e81a11`；首轮 clean 候选矩阵为 10 PASS、1 FAIL；第二轮在第六项启动阶段失败，后五项未运行，第三轮亦为10 PASS、1 FAIL，完整冻结验收仍待完成。实现与验证契约见[设计](usbfs-checked-release-design.md)。完整[开发索引](../evidence/checked-release-development-20261023.json)记录 25 份产物的长度、SHA256、来源和缺项。
 
 ## 测试路径与来源
 
@@ -73,3 +73,14 @@ dev02 的 [server 串口](../evidence/qemu-checked-release-old-product-eof-dev02
 有诊断的dirty单项dev01（仍固定nanosleep1ms）完整PASS；IMPORT header等待1.519263924秒。tracer现将fork之后的parent独立阻塞SIGCHLD，空闲时用 `sigtimedwait` 等待通知、上限仍1毫秒，保留全部waitpid状态、原signal转发、控制轮询、256事件batch与门8秒。child不继承新mask，信号只负责唤醒，不代替真实stop/exit。语义依据为Linux man-pages的 [sigtimedwait](https://man7.org/linux/man-pages/man2/sigwaitinfo.2.html) 和 [ptrace](https://man7.org/linux/man-pages/man2/ptrace.2.html)。
 
 该优化后的dirty单项dev02也完整PASS，IMPORT header等待9.122247毫秒。两次各7项probe、两guest exit0、恢复和source/binary guards通过；这只是两个观察值，**不是性能基准，也不能倒推旧v2失败的准确调用或唯一根因**。产品源码与clean4e81a11软件gate一致，未修改任何wire2/RPC3/gate8通过期限。[独立开发复核](../evidence/host-state-diagnostic-dev01-dev02-independent-review-20261023.json)208/208通过，包含真实trace配对和三文件源码审查。准备提交冻结后再执行distinct v3完整矩阵。
+
+
+## 第三轮与物理启动快照修正
+
+同一clean `19ffa119107e169765789ccdd071e860fca195af` 的v3十一项已全部结束，前10PASS；最后hot在select-simulated-devices前置FAIL。[v3原始索引](../evidence/checked-release-candidate-v3-20261023.json)保留整体FAIL。该轮8项host-state共64wire检查、ECM19和normal15通过；热拔未开始，不能按guest0补算15case。
+
+原始server-evidence.log的devices.json确有HID和FTDI，但FTDI interfaces为空且有cached_descriptors_unreadable/bNumInterfaces等4个blocker。原loop仅按设备数2提前退出，随后原最终完整断言拒绝；helper/IMPORT尚未执行，不是已观察的USB转发故障。
+
+只将物理guest启动loop的break改为原最终完整predicate：设备数2且全部export_blockers为空。原100次、50ms间隔和最终断言均保留，产品scanner和授权不改。实际失败快照、明确标注的synthetic ready/单设备/空列表四个fixture通过，旧谓词会提前结束，新谓词继续等待。[启动开发索引](../evidence/physical-startup-development-20261023.json)中的dirty hot dev03完整PASS（15case、140B精确FTDI、两guest0），[独立复核](../evidence/physical-startup-hot-dev03-independent-review-20261023.json)113/113通过。随后提交冻结distinct v4完整矩阵，不覆盖v3失败。
+
+`19ffa11` 的[四平台CI](../evidence/publication-checked-release-harness-20261023.json)也实际全部completed/success，每格222项、0失败/忽略及两项4096B stdout背压通过；[完整原log/API](../evidence/ci-checked-release-harness-19ffa11-20261023/artifacts.sha256)已保留。这不改写其QEMU矩阵FAIL。

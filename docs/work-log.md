@@ -234,3 +234,6 @@
 - 保持原wire2/RPC3/gate8的诊断dev01 alternate/EOF实际PASS（7case、两guest0），新增记录显示IMPORT header1.519263924秒、DEVLIST约12ms；不是旧FAIL根因证明。独立两文件诊断审查无mustfix。下一步减少tracer固定1ms轮询引入的观察开销，parent-only SIGCHLD有界等待设计先记录，仍不放宽成功期限。
 - parent-only SIGCHLD有界唤醒替换测试tracer固定idle sleep，cc -Werror和独立signal竞态审查无mustfix；dev02实际PASS（7case、两guest0、IMPORT header9.122247ms）。这是两开发观察非benchmark，原v2失败准确调用仍未知。实际runner AST四项粘住失败/grace/原overall/正常完成检查及observe_io两项原errno/单次执行测试通过。生产96软件输入保持不变。
 - v2部分矩阵63份原始/源码/sequence/清单产物及两诊断开发32份按原字节归档，root逐长度/SHA核对；独立开发复核208/208及三文件源码审查无mustfix。准备提交冻结v3，原两个FAIL均保持。
+- 诊断/通知修订与完整证据提交19ffa119107e169765789ccdd071e860fca195af并push，远端一致/clean，95份indexed Gitblob核对通过。v3从全部12脚本前置快照串行运行十一项，无repo写/并行build；前10PASS，最后physicalhot在select-simulated-devices前置FAIL，整批仍FAIL。
+- 原失败快照FTDI已出现但interfaces空、bNumInterfaces不可读和blockers非空；harness按count2提前break后被原严格完整性断言拒绝，未开始helper/IMPORT，不能说USB热拔产品故障。只计划把启动等待成功条件改为同原最终完整predicate，原100次/50ms不变。原所有FAIL保留，先fixture与单项hot后再freeze。
+- 启动完整predicate四项fixture和shell语法通过；dirty hot dev03实际完整PASS：15case/140B/两guest0，独立raw113/113；仅guest loopbreak同原最终断言，不改变100/50ms或USB断言。19ffa11四原生CI39894149759也实际全completed/success，各222项+两项背压，root核原log/平台/计数并归档，不能覆盖v3 QEMU FAIL。
