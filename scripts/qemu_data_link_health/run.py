@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Actual Native same-data TLS v2 blackhole experiment in two disposable guests.
+"""Same-data TLS v2 blackholes in two disposable guests.
 
-The initial implementation supports Native over either IP family. USBFS and
-virtual workload branches are not enabled. Existing raw-v1 runners are read only.
+Native and USBFS use actual QEMU HID/FTDI devices. The virtual branch observes
+HID enumeration and transfers CDC echo bytes, without synthetic input commands.
+Existing raw-v1 runners remain read only.
 """
 import argparse
 import base64
@@ -28,12 +29,22 @@ sys.dont_write_bytecode = True
 from valve import Binding, Valve  # noqa: E402
 from packets import Flow, digest as digest_bytes
 import audit as packet_audit
-from verify import phase_proof, verify as verify_lifecycle
+import verify as native_lifecycle
 
 REPO = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 EXPECTED_QEMU = "6.2.0"
 DATA_LINK = {"protocol": "framed_v2", "interval_millis": 1000, "response_timeout_millis": 3000}
+BACKENDS = ("native", "usbfs", "virtual")
+
+
+def lifecycle(backend):
+    if backend == "native":
+        return native_lifecycle
+    if backend in ("usbfs", "virtual"):
+        import verify_rust
+        return verify_rust
+    raise RuntimeError("unsupported data-link backend")
 
 
 def sha(path):
@@ -92,7 +103,7 @@ def plan(backend, family):
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
     status = subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO, text=True)
     result = {
-        "schema_version": 1, "result": "PLAN_ONLY", "implementation": "native_workload_written_not_yet_run",
+        "schema_version": 1, "result": "PLAN_ONLY", "implementation": "workload_source_plan_not_runtime_evidence",
         "source_head": head, "source_inputs": before, "git_status": status,
         "backend": backend, "family": family, "required_qemu_version": EXPECTED_QEMU,
         "actual_qemu_version_verified": False,
@@ -101,8 +112,8 @@ def plan(backend, family):
         "phases": ["c2s", "s2c", "both"],
         "required_each_phase": [
             "fresh actual session/attempt, paired data TCP tuple/connection identities and SYN epoch",
-            "real HID key and serial 35-byte RX/TX before fault; actual matched probe/RTT",
-            "USBFS sampled pending+inflight, or Native idle scope explicitly limited",
+            "real HID key/FTDI RX/TX, or virtual HID enumeration/CDC echo; actual matched probe/RTT",
+            "actual data-session capability, without an unobserved pending-URB claim",
             "target packet drops with both QEMU socket FDs retained",
             "other original device receipt remains and serial 35-byte RX/TX continue",
             "fresh independent Catalog succeeds while target data link fails",
@@ -111,7 +122,7 @@ def plan(backend, family):
         ],
         "dependencies_found": {name: shutil.which(name) for name in
                                ("qemu-system-x86_64", "busybox", "cpio", "openssl", "ip", "ss", "jq", "dash")},
-        "not_implemented": ["USBFS and virtual actual guest workload branches", "Native pending-URB instrumentation"],
+        "not_implemented": ["Native/managed USBFS pending-URB instrumentation", "virtual HID key injection"],
         "scope": "Preparatory source plan only. No guest, Cargo build, USB operation or runtime verdict.",
         "qemu_runs_executed": 0,
     }
@@ -138,13 +149,18 @@ def once(text, anchor):
     return text.split(anchor, 1)
 
 
-def guest_source():
+def guest_source(backend="native"):
     agent = agent_support()
     original = (REPO / "scripts/qemu/guest-agent-init.sh").read_text()
     server_anchor = 'if [ "$ROLE" = server ]; then\n    STAGE=server-devices\n'
     prefix = once(agent.guest_source(), server_anchor)[0]
     prefix = prefix.replace("RUSTUSB_AGENT_RESULT", "RUSTUSB_LINK_RESULT")
     prefix = prefix.replace("rustusb.agent=1", "rustusb.link_health=1")
+    body = (HERE / "guest-init.sh").read_text()
+    if body.count("@@SERVER_SETUP@@") != 1 or body.count("@@CLIENT_SETUP@@") != 1:
+        raise RuntimeError("new guest setup anchor changed")
+    if backend != "native":
+        return lifecycle(backend).compose_guest(prefix, body, backend)
     server = '    STAGE=server-devices\n' + once(once(original, server_anchor)[1], "    manifest; agent_start 1; denied server\n")[0]
     client = '    STAGE=client-prepare\n' + once(once(original, 'else\n    STAGE=client-prepare\n')[1], "    manifest; agent_start 1; denied hid\n")[0]
     config_anchor = "{schema_version:1,broker_uid:2000,"
@@ -152,19 +168,16 @@ def guest_source():
     for fragment in (server, client):
         if fragment.count(config_anchor) != 1:
             raise RuntimeError("shared trusted TLS config anchor changed")
-    body = (HERE / "guest-init.sh").read_text()
-    if body.count("@@SERVER_SETUP@@") != 1 or body.count("@@CLIENT_SETUP@@") != 1:
-        raise RuntimeError("new guest setup anchor changed")
     body = body.replace("@@SERVER_SETUP@@", server.replace(config_anchor, config_v2))
     body = body.replace("@@CLIENT_SETUP@@", client.replace(config_anchor, config_v2))
     return prefix + "\nLINK_COMMON=1\n" + body
 
 
-def payload(work, kernel, certificates, role):
+def payload(work, kernel, certificates, role, backend="native"):
     _, provenance = support().payload(work, kernel, certificates, role)
     root = work / "root"
     (root / "etc/rustusb/client-pin.txt").chmod(0o644)
-    (root / "init").write_text(guest_source())
+    (root / "init").write_text(guest_source(backend))
     (root / "init").chmod(0o755)
     shutil.copyfile(root / "init", work / "generated-link-init.sh")
     subprocess.run(["dash", "-n", str(root / "init")], check=True)
@@ -238,6 +251,9 @@ def bind_phase(evidence, phase):
 def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summary):
     sent, tx, active, arm_clock = set(), bytearray(), None, None
     control_log = evidence / "host-control.jsonl"
+    backend = summary["backend"]
+    virtual = backend == "virtual"
+    phase_verifier = lifecycle(backend).phase_proof
 
     def send_once(mark, role, message):
         if mark in sent:
@@ -266,7 +282,7 @@ def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summar
             (evidence / "keys.json").write_text(keys[1] + "\n")
         if "LINK_SERVER_READY\n" in logs["server"] and "keys" in sent:
             send_once("start", "client", "START")
-        while select.select([ftdi], [], [], 0)[0]:
+        while ftdi is not None and select.select([ftdi], [], [], 0)[0]:
             chunk = ftdi.recv(4096)
             if not chunk:
                 break
@@ -287,6 +303,9 @@ def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summar
             else:
                 ready = True
             if ready and f"input-{round_id}" not in sent:
+                if virtual:
+                    send_once(f"input-{round_id}", "client", f"INPUT_{round_id}")
+                    continue
                 if round_id % 2:
                     arguments = {"keys": [{"type": "qcode", "data": str(round_id)}], "hold-time": 100}
                     response = qmp.call("send-key", arguments)
@@ -308,8 +327,9 @@ def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summar
                     send_once(f"arm-{phase}-{role}", role, f"ARM_{phase}")
             if (active == phase and private.valve.quiescent()
                     and all(f"LINK_FAULT_CLOSED role={role} phase={phase}\n" in logs[role] for role in processes)
-                    and f"AGENT_CLIENT_IO round={index * 2 + 2} " in logs["client"] and len(tx) >= (index * 2 + 2) * 35):
-                bundle = phase_proof(evidence, phase, live=True)
+                    and f"AGENT_CLIENT_IO round={index * 2 + 2} " in logs["client"]
+                    and (virtual or len(tx) >= (index * 2 + 2) * 35)):
+                bundle = phase_verifier(evidence, phase, live=True)
                 raw = (json.dumps(bundle, sort_keys=True, indent=2) + "\n").encode()
                 (evidence / "bindings" / f"{phase}-terminal.json").write_bytes(raw)
                 private.valve.disarm(phase, digest_bytes(raw))
@@ -318,7 +338,7 @@ def drive(evidence, processes, connections, private, qmp, ftdi, deadline, summar
                 active, arm_clock = None, None
         if active is not None and time.monotonic() - arm_clock > 15:
             raise RuntimeError("fault did not produce real terminal proof in the 15-second observation window")
-        if "AGENT_CLIENT_IO round=7 " in logs["client"] and len(tx) == 245:
+        if "AGENT_CLIENT_IO round=7 " in logs["client"] and (virtual or len(tx) == 245):
             send_once("close-client", "client", "CLOSE")
         if "LINK_CLIENT_CLOSED\n" in logs["client"]:
             send_once("client-closed", "server", "CLIENT_CLOSED")
@@ -354,7 +374,10 @@ def run_experiment(args):
     summary = {"schema_version": 1, "result": "FAIL", "backend": args.backend, "family": args.family,
                "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "head": git("rev-parse", "HEAD"),
                "git_status_before": git("status", "--porcelain"), "source_inputs": source_inputs(),
-               "scope": "Native first slice: same data TLS v2 directional Ethernet blackholes, actual agent HID/FTDI, proof and fresh attempts; no Native pending-URB/physical hardware/complete Phase3 claim",
+               "scope": ("Same data TLS v2 directional Ethernet blackholes, actual managed sessions and fresh attempts; "
+                         + ("virtual HID enumeration/idle and CDC 35-byte echo, no key injection or host FTDI" if args.backend == "virtual"
+                            else "real QEMU HID/FTDI I/O and exact original helper cleanup proof")
+                         + "; no unobserved pending-URB/physical hardware/complete Phase3 claim"),
                "build_features": "--workspace --all-features --release --locked", "build_skipped": args.skip_build}
     processes, handles, connections = {}, [], {}
     qmp = ftdi = private = None
@@ -387,7 +410,7 @@ def run_experiment(args):
             for role in ["server", "client"]:
                 role_work = work / f"{role}-payload"
                 role_work.mkdir()
-                archives[role], summary["payload_sha256"][role] = payload(role_work, args.kernel, certs, role)
+                archives[role], summary["payload_sha256"][role] = payload(role_work, args.kernel, certs, role, args.backend)
                 shutil.copyfile(role_work / "generated-link-init.sh", evidence / f"{role}-generated-link-init.sh")
                 shutil.copyfile(role_work / "payload-dependencies.json", evidence / f"{role}-payload-dependencies.json")
                 summary["initramfs_sha256"][role] = sha(archives[role])
@@ -459,7 +482,7 @@ def run_experiment(args):
                 raise RuntimeError("missing actual privileged helper executable observations")
             summary["actual_broker_executable_receipts"] = execution_hashes
             summary["actual_helper_executable_receipts"] = helper_hashes
-            summary["facts"] = verify_lifecycle(evidence, args)
+            summary["facts"] = lifecycle(args.backend).verify(evidence, args)
             summary["result"] = "PASS"
     except Exception as error:
         summary["error"] = f"{type(error).__name__}: {error}"
@@ -510,8 +533,8 @@ def run_experiment(args):
     return 0 if summary["result"] == "PASS" else 1
 
 def main():
-    parser = argparse.ArgumentParser(description="Actual same-data TLS heartbeat blackhole QEMU (Native first slice)")
-    parser.add_argument("--backend", choices=("native",), default="native")
+    parser = argparse.ArgumentParser(description="Actual same-data TLS heartbeat blackhole QEMU")
+    parser.add_argument("--backend", choices=BACKENDS, default="native")
     parser.add_argument("--family", choices=("ipv4", "ipv6"), required=True)
     parser.add_argument("--kernel", default=os.uname().release)
     parser.add_argument("--timeout", type=int, default=480)

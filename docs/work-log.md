@@ -506,3 +506,6 @@
 
 - v2短management修复完成：共用借用IO的5秒FIN/EOF辅助；Native/Rust managed与foreground的Catalog/已flush2/4拒绝/准备失败短回复保留IO至自然driver join，取消/错误仍stop+join；成功IMPORT与raw-v1绕过新收尾。真实Native handler、client拒绝无helper、等待peer FIN时停止及publicRust engine回归均PASS；首次单项FAIL原件保持。仅service dev-dep复用既有rcgen，lock只增该dev边，158包版本未变。
 - 修后首完整`bash -x scripts/check.sh`PASS，260默认+346all-features+20vendor共626次执行、39result，0失败忽略，165输入前后不变。原run为dirty3ca，随后逐input映射新commit不伪装clean。actual10步xtrace、toolchain与最终CLIbb6fb276…/helperb4af4b5f…另收；Native-only check/tree PASS且无Rust engine/nusb/rusb，同CLI本地四signal/两背压PASS。下一步固定clean源重跑六新组及旧九组，不以旧608/e29兼容PASS冒充此修复版本。
+
+- 短management产品修复提交`6d933d2`。N独立核626新gate：366个qualified观察名、10条actualcargo xtrace、两rustdoc-Dwarnings、165输入与CLI/helper均一致；原失败test函数逐字未改，现在默认/allfeatures各PASS，608旧run与626新run另账。
+- I/H完成新harness的virtual/USBFS分派，两新增guest/verifier文件与Native原脚本隔离；三backend静态198/构造32通过，Native生成仍逐e152相同。静态审查曾把Native非空pool初始化journal类推到Rustserver，复核helper条件后撤回，不是实际运行失败且未修改冻结源。virtual仅HID枚举闲置+真实CDC echo，USBFS不把linkbuffer冒作pending；per-lease与grant最终Finish分清。即将锁单一cleanhead运行六新/九旧共15组。
