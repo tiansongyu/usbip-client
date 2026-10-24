@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "result": "NO_REMAINING_SOURCE_BLOCKER_RELEASE_FOR_FIRST_ACTUAL_RUN",
+  "scope": "Read-only source cross-review; not runtime or hardware acceptance. Reviewer authored logging record/worker and suggested startup-copy fix, but did not author this harness/verifier. No verifier/CLI/build/QEMU run.",
+  "head_observed": "44b1ef96be4524b43e9f914214fb9f3166519365",
+  "final_sources": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/run.py",
+      "bytes": 24451,
+      "sha256": "3ce898aecc92900e123aea6d2ea17dcd6255cc0e7f87a537688d97ac3eb4edc3"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/guest-init.sh",
+      "bytes": 24876,
+      "sha256": "5a6b7699ba55bdf63451b0e74758e40778077f5124a9b3c210ee46fc07a8d3db"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/gate.sh",
+      "bytes": 653,
+      "sha256": "a1997ce5d8b7b3cdd8f9d93a09a895312490c06b23119a78d0b598e6446dabf4"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/verify.py",
+      "bytes": 67072,
+      "sha256": "fc5940a2998a9df1961917161734656a1bc62c46e018a5c3f2b2a90e26328c84"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/README.md",
+      "bytes": 4178,
+      "sha256": "202a7273251f7d5b01f2975cdf2e56a5a2ee5daac5f59a6c62b3356fa7415bcc"
+    }
+  ],
+  "resolved_finding": {
+    "source": "guest-init.sh",
+    "function": "logging_started",
+    "line": 40,
+    "initial_guest_sha256": "8dffd899573e0d79d02f0a4b2b0e14ca0d818ffc0798f3c73604bf79d89b196d",
+    "final_guest_sha256": "5a6b7699ba55bdf63451b0e74758e40778077f5124a9b3c210ee46fc07a8d3db",
+    "issue": "Started is already synced, but copying entire live active segment without its access shared lock could include a concurrently incomplete later record and create a false strict-parser failure. This was a source race, not an actual run failure.",
+    "fix": "fresh independent shared-lock OFD via guest flock -s around cp, original strict jq/whole-segment parser and deadlines unchanged",
+    "prior_originals": "/tmp/rustusb-process-logging-qemu-author-20261024/ and revision2 handoff retain initial/source-only observations"
+  },
+  "reviewed_contracts": [
+    {
+      "area": "root/nonroot/log private boundary",
+      "source": "guest-init.sh",
+      "line": 6,
+      "finding": "Guest-only installed roots, UID0 helper/UID2000 agent/UID1000 operator/UID1002 refusal. Helper and agent0700 directories; files actual0600 UID/nlink checks, protected ancestor receipts. Process logging does not permit path or flags via RPC."
+    },
+    {
+      "area": "authorized pages/refusals vs metrics",
+      "source": "guest-init.sh",
+      "line": 133,
+      "finding": "UID/profile/path-shaped cursor refusals retain original helper and app identity/attempt state. Metrics-only values are excluded from resource equality; arbitrary state/attempt changes are not excluded. Path-shaped cursor is CLI prevalidation, not wire path injection proof."
+    },
+    {
+      "area": "actual committed denial flood",
+      "source": "verify.py",
+      "line": 512,
+      "finding": "Per-request actual permission response, monotonic committed audit sequence/actor/action, exact bounded64/512 counts; resource/job/session identity unchanged except metrics. No assumption audit persistence equals logger completion."
+    },
+    {
+      "area": "independent removable gate",
+      "source": "guest-init.sh",
+      "line": 245,
+      "finding": "Root fixed flock opens existing same access inode in a process created after product; private0700/FIFO0600 nonce path; actual process PID/starttime/exe/FD/locks receipts at before,before-stop,after-clean,before-release. Exact1 writerEX+2 readerSH syscall73 with FD target+same devino; no inherited product gate FD. No release before client cleanup handshake."
+    },
+    {
+      "area": "bounded worker actual saturation",
+      "source": "guest-init.sh",
+      "line": 261,
+      "finding": "Five observed UID1000 CLIs, actual Busy line, independent two blocked SH threads and one EX; no fifth-launch-equals-fifth-admitted claim. Observers really TERM+wait, actual reader syscalls retained independently."
+    },
+    {
+      "area": "TERM cleanup before gate release",
+      "source": "verify.py",
+      "line": 538,
+      "finding": "Actual root schema2 owners empty and full original exact terminal kind/correlation/key/resource/ownerUID/proof matched every original attempt; same held session/job/principal identities; complete original host driver/config baseline. Client NULL+old generation disappearance before same nonce release. Agent remains original alive; control endpoint absent and main futex associated with reviewed outer synchronous join order, not symbolic proof by futex alone."
+    },
+    {
+      "area": "failure classes/expected nonzero",
+      "source": "verify.py",
+      "line": 260,
+      "finding": "Expected fault exit1 LostRecords independent from USB cleanup. After actual gate release/reap, original complete loggerStopped must have dropped>0, healthyfalse, accepted==written, queue0; other epochs healthy. Original incomplete/error cases cannot be turned into success by collector."
+    },
+    {
+      "area": "epoch/root proof completeness",
+      "source": "verify.py",
+      "line": 198,
+      "finding": "Server4 sessions/1job per epoch and client2 sessions/2jobs per epoch, all nonempty exact unique histories/attempts. Only two exact client epoch2 originally held import IDs may retain None/Io/State operation outcomes; all still require Disconnected/Released/Verified/full original root proof."
+    },
+    {
+      "area": "actual reuse and scope",
+      "source": "run.py",
+      "line": 218,
+      "finding": "Three explicit fresh agent epochs, each requires actual key event and exact35B FTDI both directions; host actual total105 and fixture bytes checked. Helpers stop cooperatively once after epochs; helper rotation not inferred solely from retention config; no new packet-security/heartbeat/hardware claim."
+    },
+    {
+      "area": "primary failure/collector ownership",
+      "source": "run.py",
+      "line": 285,
+      "finding": "Primary FAIL snapshot before cleanup; every collection exception latches FAIL, never PASS. Failure-only200s grace accommodates removable180s lock and finally raw collection, distinct from normal600s success. Guest trap preserves original status/release-own-nonce, then base collector; host always continues owned close/wait/guards."
+    },
+    {
+      "area": "input/binary provenance",
+      "source": "run.py",
+      "line": 37,
+      "finding": "Only newrunner adds rust-toolchain.toml and scripts/check.sh so189 selected entries include all177 software inputs plus12 actual harness inputs; oldrunners untouched. Requires clean head/source/binary before-after receipts, two actual guest exits0, actual6 broker/2helper ELF receipts; default build is locked allfeatures, skip-build explicitly development."
+    }
+  ],
+  "acceptance_pending": [
+    "First actual two-guest run and its raw independently reviewed evidence.",
+    "Actual scheduling, syscall/FD snapshots, guest Busy outcomes and all strict fields must be established by run; author static77/62jq and verifier44 fixtures are source-only, not hardware/syscall proof.",
+    "Bounded removable flock is not proof permanent FS/kernel blocks can be cancelled.",
+    "Full4.11 diagnostic export, real hardwareG1/G2 and completePhase3 remain unfinished."
+  ],
+  "execution": {
+    "repo_edits": false,
+    "CLI_build_or_QEMU": false,
+    "verifier_import_or_run": false,
+    "only_tmp_review_written": true
+  },
+  "author_handoff": "/tmp/rustusb-process-logging-qemu-author-revision2-20261024/handoff.json"
+}

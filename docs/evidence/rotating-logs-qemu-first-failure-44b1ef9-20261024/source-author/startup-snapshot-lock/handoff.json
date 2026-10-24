@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "revision": 2,
+  "created_utc": "2026-10-24T02:27:04.453981+00:00",
+  "status": "SOURCE_FROZEN_STATIC_PASS_RUNTIME_NOT_EXECUTED",
+  "prior_handoff": {
+    "path": "/tmp/rustusb-process-logging-qemu-author-20261024/handoff.json",
+    "bytes": 6203,
+    "sha256": "4d3644e671eaec51e71d245d5f8f7921aefd0ab18d4f63064277cdd44e157679"
+  },
+  "scope": "One source-preflight correction before first QEMU: copy genuine Started segment under an independent shared flock while the live writer exists. No product or verifier change; no runtime or QEMU execution.",
+  "change": "logging_started invokes /usr/bin/flock -s STORE/access.lock /bin/cp CURRENT_SEGMENT SAVED_COPY. The actual command opens its own lock descriptor/OFD. Existing readiness jq, bounded polling, post-copy jq, strict host parser, deadlines and all result predicates are unchanged.",
+  "files": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/README.md",
+      "bytes": 4178,
+      "sha256": "202a7273251f7d5b01f2975cdf2e56a5a2ee5daac5f59a6c62b3356fa7415bcc",
+      "relative_path": "scripts/qemu_process_logging/README.md"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/gate.sh",
+      "bytes": 653,
+      "sha256": "a1997ce5d8b7b3cdd8f9d93a09a895312490c06b23119a78d0b598e6446dabf4",
+      "relative_path": "scripts/qemu_process_logging/gate.sh"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/guest-init.sh",
+      "bytes": 24876,
+      "sha256": "5a6b7699ba55bdf63451b0e74758e40778077f5124a9b3c210ee46fc07a8d3db",
+      "relative_path": "scripts/qemu_process_logging/guest-init.sh"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/run.py",
+      "bytes": 24451,
+      "sha256": "3ce898aecc92900e123aea6d2ea17dcd6255cc0e7f87a537688d97ac3eb4edc3",
+      "relative_path": "scripts/qemu_process_logging/run.py"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/verify.py",
+      "bytes": 67077,
+      "sha256": "56d7ba03142daef87c55b93241901a960b46e16a47eabf90301ab6023a92f0c5",
+      "relative_path": "scripts/qemu_process_logging/verify.py"
+    }
+  ],
+  "static": {
+    "report": {
+      "path": "/tmp/rustusb-process-logging-qemu-author-revision2-20261024/report.json",
+      "bytes": 21379,
+      "sha256": "d9093e809fc013338c3d9099af89266c3a9b76c1afc9c608f1772bfe0dd05ec5"
+    },
+    "checks": 77,
+    "jq_compiles": 62,
+    "all_pass": true,
+    "scope": "same77 syntax/actual-jq-compile and historical JSON predicate checks, not new USB or runtime cases"
+  },
+  "verifier_unchanged_sha256": "56d7ba03142daef87c55b93241901a960b46e16a47eabf90301ab6023a92f0c5",
+  "first_freeze_preserved": true,
+  "review": "N independent source preflight found an unlocked live-file copy could include a partial trailing record after readiness; this was a source finding, not an observed QEMU failure. N final delta review pending separately.",
+  "runtime": "pending root clean commit/default locked build/QEMU; prior complete software/local subprocess evidence is not rerun or reattributed",
+  "design_change": false
+}

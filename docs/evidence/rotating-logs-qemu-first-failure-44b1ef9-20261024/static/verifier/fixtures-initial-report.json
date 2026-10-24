@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "scope": "constructed standalone predicate checks; no real QEMU/process/helper/USB/build acceptance",
+  "source_sha256": "e26482ea89e9c4acab5d2b73c944b51580c3a728d3d954624bab11e48080c780",
+  "checks": [
+    {
+      "name": "valid bounded complete typed log",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "valid completed actual loss status",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "unknown record field",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: record exact fields"
+    },
+    {
+      "name": "missing nullable field",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: record exact fields"
+    },
+    {
+      "name": "bool schema is not integer1",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: record scalar types"
+    },
+    {
+      "name": "zero record sequence",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: record scalar types"
+    },
+    {
+      "name": "unapproved raw message",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: Audit exact fields"
+    },
+    {
+      "name": "unknown audit action",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: audit closed categories"
+    },
+    {
+      "name": "bad profile text",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: audit optional identifiers"
+    },
+    {
+      "name": "missing nullable audit field",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: Audit exact fields"
+    },
+    {
+      "name": "duplicate raw field rejected before parse loss",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: duplicate JSON field"
+    },
+    {
+      "name": "incomplete original tail rejected for successful epoch",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: bounded complete original segment"
+    },
+    {
+      "name": "oversize complete record refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: whole bounded record line"
+    },
+    {
+      "name": "duplicate sequence refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: within-segment admission sequence order"
+    },
+    {
+      "name": "header epoch mismatch refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: record belongs to actual segment epoch"
+    },
+    {
+      "name": "loss cannot claim healthy",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: healthy status cannot hide loss"
+    },
+    {
+      "name": "written cannot exceed admitted",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: consistent status fields"
+    },
+    {
+      "name": "pending cannot be Stopped",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: Stopped means drained and closed admission"
+    },
+    {
+      "name": "Stopped requires closing",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: Stopped means drained and closed admission"
+    },
+    {
+      "name": "approved numeric fixed diagnostic accepted",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "prefix spoof target",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: approved static target"
+    },
+    {
+      "name": "raw string scalar",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: approved scalar field type/range"
+    },
+    {
+      "name": "bool numeric scalar",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: approved scalar field type/range"
+    },
+    {
+      "name": "wrong bool scalar",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: approved scalar field type/range"
+    },
+    {
+      "name": "negative scalar",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: approved scalar field type/range"
+    },
+    {
+      "name": "zero-hit finite window still has progress cursor",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "missing nullable page status refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: log page exact fields"
+    },
+    {
+      "name": "noncanonical cursor refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: page metadata types"
+    },
+    {
+      "name": "overbudget scan refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: bounded page"
+    },
+    {
+      "name": "exact four original Native retirements accepted",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "wrong root UID",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server full original root proof 00000000-0000-0000-0000-000000000028"
+    },
+    {
+      "name": "later other capability is not original proof",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server full original root proof 00000000-0000-0000-0000-000000000028"
+    },
+    {
+      "name": "wrong correlation is not original proof",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server full original root proof 00000000-0000-0000-0000-000000000028"
+    },
+    {
+      "name": "wrong logical server scope",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server epoch1 retained proof has exact logical server scope"
+    },
+    {
+      "name": "missing terminal is not empty-success",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server epoch1 no root owners and exact retained terminal count"
+    },
+    {
+      "name": "unconfirmed never verified",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server actual successful owner cleanup 00000000-0000-0000-0000-000000000028"
+    },
+    {
+      "name": "unfinished server owner not complete",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: server real completed job relationship 00000000-0000-0000-0000-000000000028"
+    }
+  ],
+  "count": 37,
+  "passed": true
+}

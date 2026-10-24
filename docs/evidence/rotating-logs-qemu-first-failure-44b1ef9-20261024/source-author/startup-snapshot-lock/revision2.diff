@@ -1,0 +1,13 @@
+--- revision1/guest-init.sh
++++ revision2/guest-init.sh
+@@ -35,7 +35,9 @@
+     done
+     started_copy="/tmp/logs-$started_kind-$started_epoch-started.ndjson"
+     if [ "$started_kind" = helper ]; then started_copy=/tmp/logs-helper-started.ndjson; fi
+-    cp "$started_file" "$started_copy"
++    # The live writer can append after readiness was observed. Take an
++    # independent shared-lock OFD while copying the actual complete segment.
++    /usr/bin/flock -s "/var/log/rustusb/$started_kind/access.lock" /bin/cp "$started_file" "$started_copy"
+     jq -se 'any(.[]; .event.kind?=="started")' "$started_copy" > /dev/null
+ }
+ local_gone() {
