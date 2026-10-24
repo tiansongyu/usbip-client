@@ -158,3 +158,27 @@ were checked again without importing run verifiers. This same-author review is
 not new USB execution or an independent security audit. No private keys, ELF,
 targets or private host inventory output are archived. Test-keyboard metadata
 belongs only to the deliberately added disposable fixture.
+
+
+## Publication
+
+Content `5a3ffcdf7f07390a92c3bc483af86eb5fe3fcd3e` was normally pushed to the
+authorized SSH remote with exact remote main and clean tree.
+[Software run 40137060148](https://github.com/tiansongyu/usbip-client/actions/runs/40137060148)
+completed successfully on all four Ubuntu22.04/24.04 x86_64/aarch64 jobs. Actual
+reported architecture, quality-gate, signal, virtual-lifecycle and diagnostic
+steps also succeeded. This reports primary job/step outcomes, not downloaded CI
+binaries/full logs or invented per-platform956 recounts.
+[Pages run 40137060181](https://github.com/tiansongyu/usbip-client/actions/runs/40137060181)
+completed check and deploy successfully. Six canonical HTTPS resources returned
+200 and matched the exact Git site bytes. Seven site/four global readme-site
+files and the discovery symlink remain unchanged; no new browser/pixel/no-JS or
+reduced-motion inspection is claimed.
+
+The [publication review](../evidence/tui-interactions-publication-5a3ffcd-20261025/review.json)
+and manifest retain 30 primary responses/receipts/methods (192,761 bytes).
+Local956 and the five final QEMU invocations remain tied to clean `2dc888ce`,
+with distinct minimal/all artifacts; the original935 red remains FAIL.
+Documentation QA snapshots precede later English spacing and receipt additions.
+The receipt commit is not new USB execution. Full project/hardware/G3/Phase5–7
+completion remains unproven.

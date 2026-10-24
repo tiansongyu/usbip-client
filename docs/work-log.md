@@ -16,6 +16,8 @@
 
 - 文档QA19源495本地/仓库target、205site/Node/diff、实际TUI help exit0和默认Native normal树隔离均PASS；235软件及最终238/238/237/237/232输入、all ELF精确一致。七site/四global readme-site及正确Codex symlink保持，无新browser/pixel/noJS/reduced-motion宣称。QA保留检查时源快照，随后仅英文间距润色及发布回执追加；链接目标未变化。即将普通SSH commit/push并核精确内容四native CI/Pages，不提前标成功。
 
+- 内容5a3ffcdf普通SSH push/remote main一致/clean；software40137060148四native job121000700338/700518/700536/700584及实际arch/fullgate/signal/virtual/diagnostic步骤completed/success；Pages40137060181 check121000700702/deploy121000782823成功。六canonical HTTP资源200且逐Git一致，235软件/238/238/237/237/232最终QEMU源、restored all ELF、七site/四global与symlink一致。30原件/回执/方法192761B逐SHA归档evidence/tui-interactions-publication-5a3ffcd-20261025；不补造CI logs/ELF/逐平台956重算。原935 FAIL、完整Phase0–7/硬件/完整G3及后续阶段保持active，文档化G4的软件/仿真范围已逐项核对。发布回执只属文档；独立Phase5只读组件研究另行记账。
+
 ## 2026-10-25：终端未知启动结果与agent失联（开始）
 
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。
