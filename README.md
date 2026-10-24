@@ -107,6 +107,19 @@ Remote catalog reads now run in a bounded independent task group; see the
 [managed catalog validation](docs/research/catalog-supervisor-validation.md) for
 slow-peer responsiveness, audit and shutdown checks.
 
+With a configured application agent, an ordinary operator can refresh its
+authenticated catalog continuously:
+
+```sh
+rustusb agent --config /etc/rustusb/agent.json discover lab-keyboard --watch --json
+```
+
+Dedicated brokers can use `secure-discover --watch`. The
+[remote catalog guide](docs/remote-catalog-watch.md) explains stale data, busy
+device visibility, bounded refresh and complete JSONL batches. Observation never
+imports a device; its [validation](docs/research/remote-catalog-watch-validation.md)
+keeps local software and installed QEMU evidence separate.
+
 To observe a device's data connection, explicitly enable TLS configuration schema 2
 on both endpoints, then read health from the running agent:
 

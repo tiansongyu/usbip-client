@@ -106,3 +106,11 @@ platforms, including the new observer process step, and Pages workflow 401011759
 passed check/deploy. Six canonical HTTPS bodies match its Git blobs. Public
 desktop/mobile DOM, keyboard and responsive-image checks passed; no pixel review
 is claimed. See the [publication receipt](evidence/local-device-monitor-publication-cacb170-20261024/manifest.json).
+
+The [remote catalog update](research/remote-catalog-watch-validation.md) adds a
+shared authenticated watcher, 903 local software executions and two Native paired
+QEMU runs separately from the local-inventory figures above. The observer
+retains stale data, recognizes reserved-device visibility and never imports USB.
+Only index copy/links change; runtime styles, JavaScript and SVGs remain unchanged.
+Its publication and any new browser checks must be recorded against their actual
+content revision, without relabeling prior inventory evidence.

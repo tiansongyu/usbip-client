@@ -379,3 +379,9 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 `cargo test -p rustusb-service runtime::tests::catalog --locked`使用真实loopback TCP/mTLS和临时store：静默TLS peer下Profiles须独立返回、两个actual任务/丢waiter不还槽、授权先于容量且拒绝不新建连接、原store锁门下成功不ACK、外部stop及命令EOF关闭原socket并总join；v2反向FIN保持到service真实join后才放门。不是USB或性能测试。
 
 完整882软件、两个原Native managed双栈QEMU/4guest0及四signal/两背压锁clean b675626，复现命令与compressed raw manifest见[英文验收](research/catalog-supervisor-validation.md)。两QEMU保原三轮HID/FTDI、完整Rootproof与driver基线；不冒称QEMU新拥塞/v2专项或硬件验收。旧产品red与测试编译FAIL继续保留。
+
+## 认证远程目录观察（E43）
+
+实际代码/范围见[指南](remote-catalog-watch.md)与[验收](research/remote-catalog-watch-validation.md)。903软件锁clean ec91/223源；新9库函数和3CLI函数覆盖typed状态/边界及实际raw/v2 loopback，而非USB cases。以`python3 scripts/qemu_catalog_watch/preflight.py --output /tmp/new-point-check`测试原guest point函数的9个fixture边界，不计Cargo。
+
+[QEMU fixture](../scripts/qemu_catalog_watch/README.md)保留原Native三轮I/O/两epoch/264核验/完整Rootproof，新增同PID观察/实际CLI stdout与信号/UID拒绝，每pair69核验；clean633两family通过/4guest0。原空jq false beacon、reserved串口错误count导致的两个QEMU FAIL及first gate Clippy101保持。point必须严格一object并独立比原raw完整batch；fresh pause前目录应HID-only1，不能放宽count或修改生产busy过滤。实际O_WRONLY FIFO/caps/ELF/syscall/wait先于归档，fast denial没有liveELF不补造。原4signal2BP3local回归通过，宿主.private排除公开清单。

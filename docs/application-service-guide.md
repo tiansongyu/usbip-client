@@ -172,6 +172,14 @@ remain snapshots, not device reservations. See the
 [responsiveness validation](research/catalog-supervisor-validation.md) for the
 actual loopback and managed Native QEMU scopes.
 
+For continuous observation, add `--watch` to `agent discover PROFILE`; `--json`
+selects complete versioned batches and `--refresh-seconds 2..120` sets the delay
+after a completed request. The shared [remote catalog observer](remote-catalog-watch.md)
+retains stale data on transient failures and stops on terminal permission or
+protocol failure. Each successful refresh still commits the discovery audit.
+Busy Native entries can be hidden while their existing sessions remain active;
+catalog removal is not physical unplug or cleanup proof.
+
 The data directory contains a bounded, atomically replaced `state.json`: active jobs/sessions, minimal audit and retained request identities commit together before acknowledgement. New admission uses at most half the 2 MiB journal budget, reserving space for received capability IDs, final counters and terminal observations. Corruption or uncertain writes refuse new admission; existing owners still perform real cleanup. Preserve the directory when restarting the agent.
 
 On restart, unresolved sessions retain their original instance/session/attempt IDs and enter `Recovering`. The agent performs read-only queries for the helper's exact retained terminal proofs. The same query also runs for an unconfirmed session whose job owner has already returned in the current epoch; a live owner is never retired by this observer. A proof must match kind, correlation, stable device key, broker UID and any already recorded resource ID. Missing, evicted, legacy or no-longer-authorized records remain unknown; a new process reporting zero live resources does not resolve an old session. The agent does not adopt old handles, grant itself reconciliation privileges or automatically resume storage writes. Root coordination remains through the existing helper's pending/reconcile commands.

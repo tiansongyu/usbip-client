@@ -1,6 +1,6 @@
 # Shared authenticated remote catalog observation
 
-2026-10-24, baseline `4e6a9081`. Status: implementing. This implements automatic
+2026-10-24, baseline `4e6a9081`. Status: implemented; [local validation](remote-catalog-watch-validation.md) records actual revisions. This implements automatic
 remote-list refresh from requirement 4.3 through the shared service library. It
 does not complete Phase 3, implement remote auto-sharing, or advance the TUI/GUI
 gates. The original Phase 0–7 and hardware requirements remain intact.

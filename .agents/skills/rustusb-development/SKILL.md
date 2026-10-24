@@ -104,3 +104,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## 托管远程目录
 
 修改runtime Discover/目录并发前读`docs/research/catalog-supervisor-design.md`与`catalog-supervisor-validation.md`。clean b675626完整882/220源，两Native managed双栈QEMU/4guest0及4signal2BP各锁本次原件，旧red/开发compile FAIL保持。网络不await在session监督器内；最多2entry含已完成未消费，lost RPC不得还槽或abort owner。原UID/profile Discover授权先于容量，成功仍由原actor实际audit commit后回Catalog；无网络worker写WAL/USB/helper能力。service外部stop直接传播，队列EOF另有sticky源，总join真实raw/v2关闭树；不能将永久WAL/DNS等待说成有界可取消或外推v2 installed/完整G3/硬件。
+
+## 认证远程目录观察
+
+修改service::catalog/两watch CLI前读`docs/research/remote-catalog-watch-design.md`与`remote-catalog-watch-validation.md`。903/223软件锁ec91，221源两Native QEMU锁633；旧软件与两QEMU FAIL不重判。最多2actual本地owner，失订阅不持source/凭据/FD/quota；Drop仅stop，shutdown总join direct原FIN/driver，agent本地RPC取消不伪远端/独立resolver/USB结束。每poll真实UID/固定profile Discover和成功audit保留；2..120秒完成后轮询/指数退避，无自动import/降级。Initializing无数据为None、Stale保旧不假删除、permission/protocol终态清当前，generic handshake Permission不细分证书原因；busy可见性不当物理拔出，stable-key地址不授generation/能力。JSON完整matching end才应用，gaps/恢复resync；保持CLI owns_signal_cleanup/输出背压不持网络owner。新启动cancel仅源码、v2/地址变化仅loopback，硬件/完整G3不由此完成。

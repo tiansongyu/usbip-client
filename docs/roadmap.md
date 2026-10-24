@@ -131,3 +131,5 @@ cargo build --workspace --release
 本地设备观察E41见[验收](research/local-device-monitor-validation.md)：普通用户共用发现库、kernel触发与周期协调、只读代际/完整快照及signal总join已实现；872软件/206源锁c034，默认/all两单guest锁f66，六新进程与原4/2通过。不是两端USB/IP新矩阵、远程自动共享、全量事件历史、硬件或完整G3，后续TUI/GUI继续共用同库，原Phase0–7 gate不缩减。
 
 托管目录隔离E42见[验收](research/catalog-supervisor-validation.md)：clean b675626完整882软件/220输入、两个Native managed双栈QEMU/4guest0与原4signal2BP通过。网络不占session监督器，两实际任务至真实close/join，授权和成功audit契约不变；v2保持FIN只属loopback，真实WAL/DNS硬阻塞、硬件/完整G3及原Phase4–7仍保留。
+
+远程目录观察E43见[验收](research/remote-catalog-watch-validation.md)：要求4.3的既有认证可见目录自动刷新已增量实现，common service供两watch入口；clean ec91软件903/223源、clean633两个Native paired双栈QEMU/4guest0与旧4/2/3通过，保留首软件及两采证FAIL。busy与ACL/export可见性不同于物理热拔；v2/地址变化只属loopback，不据此完成全部4.3、硬件/G3或Phase4–7。

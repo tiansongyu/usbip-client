@@ -822,3 +822,9 @@
 - 发布与本地QA分别独立归档，最后仅文档回执/证据普通提交推送；206/213/六site不改。本轮为完整Phase0–7的实际进展：补本地kernel驱动的热插拔观察共用库、真实代际/driver和signal/output错误，并修复外层SIGINT所有权；历史失败保留，README/英文站点及已安装全局readme-site保持维护。真实G1/G2、永久OS阻塞、ENOBUFS/瞬时全事件、完整G3、远程auto-share、TUI/GUI/安装/性能/Windows及后续阶段继续未完成，goal保持active。
 
 - 远程观察第二QEMU（clean febd5e9）整体FAIL、两guest0/四guard真；严格point修复后正确拒绝空结果。原raw反复成功Current1/HID-only，但harness在serial仍独占传输时错误等待Current2，未抵达kill。已核Native Export::accepting明确过滤reserved；按既有行为严格固定pre-kill/stale为HID一条、恢复后两条，再真实stop导出2→1→0，不修改产品过滤或放宽成任意count。新增一个可见条目/错误目标count的fixture预查，原两个FAIL及源码/原件保持。
+
+- 最终clean633b2a3两family QEMU全部PASS，4guest真实0/221源/四guard，各原264加新69核验、原三轮HID/FTDI/105B每方向/完整Rootproof与driver基线保持。每pair长watch同PID/UUID/Starttime见8完整batch及2→HID-only1→stale1→恢复2→stop出口1→0，四辅助installed CLI/其中fast denial无liveELF，另外7个watcher live采样均匹配实际CLI46b2…、helper10ad…；无新硬件/虚拟USBFS矩阵宣称。旧4signal2BP3local观察同CLI通过，公开仅local archive-files清单，.private不复制。
+- 同作者不导入原runner/verifier的原件核对PASS，2627个原文件/方法逐bytes/SHA稳定，1011个Base64原块重解，软件223与四QEMU各实际head输入逐Git，所有历史FAIL原件保留。闭合raw archive约11.96MB排除ELF/私钥/宿主.private；见`evidence/remote-catalog-watch-633b2a3-20261024/manifest.json`。核对不是新USB执行或独立安全审计。
+- 新英文操作指南/专项报告及README/E43/架构/安全/兼容/测试/路线图/维护契约已同步。沿用readme-site/rstop既有结构，网站只改index的远程观察链接/事实，inventory872/f66原归属保留，不混成903的同源矩阵；CSS/JS/SVG和全局skill不改。当前尚未完成本轮新页面验证/远端CI或发布回执；完整原Phase0–7目标仍active。
+
+- E43英文guide/report、README/site与验收/架构/安全/测试/兼容/路线图/项目约定同步。15源442本地/仓库target、194site/Node/diff检查PASS；初QA脚本引用错summary文件exit1，修方法后PASS，原tool失败不改判。223软件/各221 QEMU输入及四global skill/symlink仍匹配，CSS/JS/SVG不变。实际CUA桌面1280×720/窄屏390×844、键盘ArrowRight、project subpath与CSP禁脚本内容通过；截图不可用不称pixel review，clipboard/reduced-motion未重跑。预览两tab关闭、viewport reset、owned server实际exit0。原件与检查前文档快照见`evidence/remote-catalog-watch-docs-20261024/manifest.json`；尚未宣称本次远端CI/部署成功。
