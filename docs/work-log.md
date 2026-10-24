@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
+
+- 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。
+- 沿用ui-ux-pro-max与technical-documentation，复用锁定组件不新增依赖/委派。先写tui-hotplug-permission-design.md：新单guest保持原六monitor点/真实kernel提示，增加UID1000真实TUI热插拔；同OS peer实际Read/Audit-only权限拒绝Start与原UUID RetryStart（预期child exit1），并驱动d/l真实重载及错误。无NIC/helper/USBIP驱动，仿真观察不冒充重定向/硬件。拟最小tui与all两构建分账并做G4逐项审计，尚未宣称新实现或验收通过。
+
+- 实现独立single-guest交互夹具，原monitor六点/verifier不改；独立TUI采集marker避免放宽原64文件边界。四实际UID1000 PTY计划：保持scroll详情拔插、d/l与checked文件变更、Reload权限错、真实Read/Audit-only agent两拒绝（child1）。初生成子命令因cleanup子串与插入函数重名而FAIL，外层无errexit实际0；初generator未单独冻结，已记tool观察和pre-fix runner快照，改完整行anchor后实际compose/dash首复核PASS，C严格编译PASS。尚未执行QEMU或修改产品。
+
 ## 2026-10-25：终端未知启动结果与agent失联（开始）
 
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。
