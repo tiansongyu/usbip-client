@@ -9,6 +9,8 @@
 
 - clean3f683f2d首paired实际FAIL：server在GUI session JSON生成时jq把$label视为保留词（exit3），client因原协调ABORT正常捕获失败；两guest实际0、无forced、原四guard与GUI/driver两guard全真。未启动GUI/未执行后续USB证据，不将guest0当成功；完整原件留first-ipv4。改session_label，增加从实际guest行提取并执行jq的host preflight，而不是仅dash语法检查。
 
+- clean86eac9ca第二paired实际FAIL在server native-close exit4；真实GUI/Start ACK/Running job已观察，尚未后续I/O，不能宣告USB GUI验收。两guest0/无forced/六guard真；原件second-ipv4不改。测试close补PID窗口/映射/WM_PROTOCOLS具体诊断（不猜选第一个/不fallback signal），同时close wait必须等实际wrapper wait文件，不仅等/proc消失。
+
 ## 2026-10-25：原生GUI实现（开始）
 
 - 上一轮E48与Phase5研究为实际进展；从clean7498ff40重读完整原任务、Git/AGENTS/核心skill/工作日志和固定Tauri/Linux研究。目标仍为完整Phase0–7；原英文README/展示站/全局skill保持。使用frontend-design/ui-ux-pro-max/writing-technical-design与技术文档指导，先写native-gui-design.md，保留自动规则/包/systemd/安装及硬件门槛。

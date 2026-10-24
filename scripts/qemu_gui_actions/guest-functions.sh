@@ -72,9 +72,9 @@ gui_confirm() {
     gui_js 'document.getElementById("confirm-action").click();return true;' /run/gui-confirm.json
 }
 gui_close() {
-    /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/gui-native-close "$GUI_PID" >"/tmp/gui-$GUI_LABEL-close.txt"
+    /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/gui-native-close "$GUI_PID" >"/tmp/gui-$GUI_LABEL-close.txt" 2>&1
     for gui_poll in $(seq 1 200); do
-        [ -e "/proc/$GUI_PID/status" ] || break
+        [ -e "/proc/$GUI_PID/status" ] || { [ ! -f "/tmp/gui-$GUI_LABEL.wait" ] || break; }
         sleep .05
     done
     [ ! -e "/proc/$GUI_PID/status" ] && [ "$(cat "/tmp/gui-$GUI_LABEL.wait")" = 0 ]

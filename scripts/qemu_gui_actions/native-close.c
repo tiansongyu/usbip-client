@@ -32,12 +32,18 @@ int main(int argc, char **argv) {
         Atom type; int format; unsigned long n,left; unsigned char *data=NULL;
         XWindowAttributes attrs;
         int ok=XGetWindowProperty(d,children[i],pid_atom,0,1,False,XA_CARDINAL,&type,&format,&n,&left,&data);
-        if(ok==Success && type==XA_CARDINAL && format==32 && n==1 && left==0 && data && *(unsigned long *)data==(unsigned long)pid && XGetWindowAttributes(d,children[i],&attrs) && attrs.map_state==IsViewable) {target=children[i];matches++;}
+        if(ok==Success && type==XA_CARDINAL && format==32 && n==1 && left==0 && data && *(unsigned long *)data==(unsigned long)pid && XGetWindowAttributes(d,children[i],&attrs)) {
+            char *name=NULL;XFetchName(d,children[i],&name);
+            fprintf(stderr,"pid-window=%lu mapped=%d name=%s\n",(unsigned long)children[i],attrs.map_state,name?name:"(none)");
+            if(name)XFree(name);
+            if(attrs.map_state==IsViewable) {target=children[i];matches++;}
+        }
         if(data)XFree(data);
     }
     if(children)XFree(children);
     Atom *protocols=NULL;int total=0,advertised=0;
-    if(matches!=1 || !XGetWMProtocols(d,target,&protocols,&total)) {XCloseDisplay(d);return 4;}
+    if(matches!=1) {fprintf(stderr,"mapped-pid-matches=%u\n",matches);XCloseDisplay(d);return 4;}
+    if(!XGetWMProtocols(d,target,&protocols,&total)) {fprintf(stderr,"WM_PROTOCOLS absent window=%lu\n",(unsigned long)target);XCloseDisplay(d);return 4;}
     for(int i=0;i<total;i++)if(protocols[i]==deletion)advertised=1;
     XFree(protocols);if(!advertised){XCloseDisplay(d);return 4;}
     Window stamp=XCreateSimpleWindow(d,root,0,0,1,1,0,0,0);
