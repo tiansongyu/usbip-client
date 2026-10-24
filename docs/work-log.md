@@ -9,7 +9,9 @@
 
 - clean3f683f2d首paired实际FAIL：server在GUI session JSON生成时jq把$label视为保留词（exit3），client因原协调ABORT正常捕获失败；两guest实际0、无forced、原四guard与GUI/driver两guard全真。未启动GUI/未执行后续USB证据，不将guest0当成功；完整原件留first-ipv4。改session_label，增加从实际guest行提取并执行jq的host preflight，而不是仅dash语法检查。
 
-- clean86eac9ca第二paired实际FAIL在server native-close exit4；真实GUI/Start ACK/Running job已观察，尚未后续I/O，不能宣告USB GUI验收。两guest0/无forced/六guard真；原件second-ipv4不改。测试close补PID窗口/映射/WM_PROTOCOLS具体诊断（不猜选第一个/不fallback signal），同时close wait必须等实际wrapper wait文件，不仅等/proc消失。
+- clean86eac9ca第二paired实际FAIL在server native-close exit4；当时误以为已有Start ACK/Running job，后续原件证实只是GUI session/actor已启动，jobs/requests均0（见下方更正）；尚未后续I/O，不能宣告USB GUI验收。两guest0/无forced/六guard真；原件second-ipv4不改。测试close补PID窗口/映射/WM_PROTOCOLS具体诊断（不猜选第一个/不fallback signal），同时close wait必须等实际wrapper wait文件，不仅等/proc消失。
+
+- clean901a6dac第三run同exit4/原失败保留。复核不存在admitted/close原件，第二run实际state jobs0/requests0；此前将exit4归native-close及已Start为错误推断，现明确更正。真实原因gui_js新校验对boolean的.error?输出empty令jq退出4，发生在profile事件返回true。改按value type/object error判定，补true/false/null/string/object与error对象的实际jq preflight；C诊断仅未执行的夹具增强，不当修复证据。
 
 ## 2026-10-25：原生GUI实现（开始）
 

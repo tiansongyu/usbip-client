@@ -19,7 +19,7 @@ gui_js() {
     local script=$1 dest=$2
     jq -n --arg script "$script" '{script:$script,args:[]}' >/run/gui-request.json
     gui_http POST "/session/$GUI_SESSION/execute/sync" "$(cat /run/gui-request.json)" "$dest"
-    jq -e 'has("value") and (.value.error? == null)' "$dest" >/dev/null
+    jq -e 'has("value") and ((.value|type)!="object" or (.value|has("error")|not))' "$dest" >/dev/null
 }
 gui_snapshot() {
     jq -n '{script:"const done=arguments[arguments.length-1];window.__TAURI__.core.invoke(\"gui_snapshot\").then(done,e=>done({error:String(e)}));",args:[]}' >/run/gui-request.json
