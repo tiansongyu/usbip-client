@@ -37,6 +37,7 @@ struct HealthEntry {
 }
 #[derive(Default)]
 pub(crate) struct Controls {
+    instance: Option<InstanceId>,
     jobs: BTreeMap<JobId, Control>,
     sessions: BTreeMap<SessionId, Control>,
     health: BTreeMap<SessionId, HealthEntry>,
@@ -44,6 +45,31 @@ pub(crate) struct Controls {
     shutdown_requested: bool,
 }
 impl Controls {
+    pub(crate) fn security(
+        &self,
+        config: &LoadedConfig,
+        uid: u32,
+        profile: &str,
+    ) -> Result<ResponseEnvelope> {
+        config.manifest.authorize(uid, profile, Action::Read)?;
+        let Some(Credentials::Server(server)) = config.credentials.get(profile) else {
+            return Err(Error::Unsupported(
+                "profile has no TLS server configuration".into(),
+            ));
+        };
+        Ok(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: !self.journal_unhealthy,
+            response: Response::ServerSecurity {
+                instance_id: self
+                    .instance
+                    .clone()
+                    .ok_or_else(|| Error::State("agent observation epoch unavailable".into()))?,
+                snapshot: server.tls.security_monitor().snapshot(),
+            },
+        })
+    }
+
     pub(crate) fn journal_healthy(&self) -> bool {
         !self.journal_unhealthy
     }
@@ -255,6 +281,7 @@ impl Runtime {
     fn refresh_health(&self) -> Result<()> {
         use crate::health::{HealthAvailability, SessionHealth};
         let mut controls = self.controls.lock().map_err(|_| lock_error())?;
+        controls.instance = Some(self.instance.clone());
         controls
             .health
             .retain(|id, _| self.state.sessions.iter().any(|s| &s.id == id));
@@ -595,6 +622,14 @@ impl Runtime {
                     after.as_ref(),
                 )?;
                 Ok(envelope.response)
+            }
+            Request::ServerSecurity { profile } => {
+                self.config
+                    .manifest
+                    .authorize(uid, &profile, Action::Read)?;
+                Err(Error::State(
+                    "security reads require the independent IPC path".into(),
+                ))
             }
             Request::Events { profile, after } => self.events(uid, profile, after, false),
             Request::Audit { profile, after } => self.events(uid, profile, after, true),

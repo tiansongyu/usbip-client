@@ -14,6 +14,7 @@ pub mod config;
 mod flush;
 mod link;
 mod quiet;
+mod security;
 mod tls;
 
 pub use acl::{
@@ -21,6 +22,9 @@ pub use acl::{
 };
 pub use config::{LoadedClientConfig, LoadedServerConfig, load_client, load_server};
 pub use link::{Link, LinkIo, LinkMonitor, LinkOutcome, LinkOwner, ProbePolicy};
+pub use security::{
+    FramingCounters, SecurityMonitor, SecurityScope, SecuritySnapshot, TlsCounters,
+};
 pub use tls::{
     AuthenticatedLinkIo, AuthenticatedStream, ClientLink, ClientLinkIo, ClientStream, DerIdentity,
     ServerLink, TlsClient, TlsServer, TrustRoots,

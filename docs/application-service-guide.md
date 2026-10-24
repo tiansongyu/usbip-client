@@ -4,6 +4,27 @@ The experimental Linux `rustusb agent` owns USB/IP jobs independently of the CLI
 
 Native agent ownership, targeted stop and root-proof/restart scenarios retain their [original validation](research/application-service-validation.md). Managed Native, virtual and USBFS brokers also have bounded IPv4/IPv6 [data-link QEMU coverage](research/data-link-health-validation.md); [preparation-stop validation](research/prepare-recording-shutdown-validation.md) covers delayed application records and local Native export cancellation. These reports keep software, simulated USB and hardware acceptance separate. See the [implementation contract](research/application-service-design.md) and [work log](work-log.md) for ownership rules and tested revisions.
 
+## Observe server authentication
+
+For volatile server authentication counters, use an account with the profile's
+existing Read permission:
+
+```sh
+rustusb agent --config /etc/rustusb/agent.json server-security lab-server
+```
+
+The separate `server_security` response includes the actual service instance ID
+and `scope: "loaded_tls_server_configuration"`. Clones and successive jobs using
+that loaded configuration share totals; service restart resets them. TLS outcomes,
+post-authentication framed-v2 setup and outer connection-budget refusals are
+separate. `in_flight` counts executing attempts, not connected devices. A generic
+handshake failure does not identify a particular bad certificate. Check
+`consistent` and `saturated` before interpreting arithmetic totals. Client-only
+profiles return Unsupported. Authorized reads, including Unsupported, bypass the
+business WAL; `journal_healthy` reports that journal independently. These are
+volatile observations, without persisted security history or USB cleanup proof;
+see the [contract and validation scope](research/server-security-observations-design.md).
+
 ## Prerequisites
 
 Use Linux and the repository's stable Rust toolchain. Install the root helper, explicitly authorize the test devices and provision both endpoints' TLS configurations as described in the [secure guide](secure-guide.md). The service runs as the same dedicated **nonzero broker UID** named in those configurations and the helper policy. Operators use their own accounts. The broker UID is the trust domain for the full helper pool: do not share it with operators; profile ACLs cannot isolate another process running under that same UID. Root has read/audit access; it does not implicitly gain start/stop permission.

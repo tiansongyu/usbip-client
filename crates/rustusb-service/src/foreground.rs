@@ -60,6 +60,11 @@ pub enum Control {
         /// Validated request identity.
         id: ControlId,
     },
+    /// Sample the loaded secure configuration's volatile authentication counters.
+    ServerSecurity {
+        /// Validated request identity.
+        id: ControlId,
+    },
     /// Acknowledge then request normal cooperative shutdown.
     Shutdown {
         /// Validated request identity.
@@ -76,6 +81,7 @@ enum WireControl {
     HidKey { id: ControlId, key: u8 },
     CdcEmit { id: ControlId, hex: String },
     Snapshot { id: ControlId },
+    ServerSecurity { id: ControlId },
     Shutdown { id: ControlId },
 }
 
@@ -92,6 +98,7 @@ pub fn parse_control(bytes: &[u8]) -> Result<Control> {
         WireControl::HidKey { id, key } => Control::HidKey { id, key },
         WireControl::CdcEmit { id, hex } => Control::CdcEmit { id, hex },
         WireControl::Snapshot { id } => Control::Snapshot { id },
+        WireControl::ServerSecurity { id } => Control::ServerSecurity { id },
         WireControl::Shutdown { id } => Control::Shutdown { id },
     })
 }
@@ -171,6 +178,13 @@ pub enum Event {
         /// Safe local request identity.
         id: ControlId,
     },
+    /// Loaded TLS configuration counters, separate from backend or cleanup state.
+    ServerSecurity {
+        /// Safe local request identity.
+        id: ControlId,
+        /// Volatile metadata shared with this configuration's clones.
+        snapshot: rustusb_transport::SecuritySnapshot,
+    },
     /// Fixed local error, optionally associated with a safe request identity.
     Error {
         /// Safe local request identity when available.
@@ -230,6 +244,9 @@ impl Event {
                 json!({"schema_version":1,"event":"snapshot","id":id,"snapshot":snapshot})
             }
             Self::Ack { id } => json!({"schema_version":1,"event":"ack","id":id,"ok":true}),
+            Self::ServerSecurity { id, snapshot } => {
+                json!({"schema_version":1,"event":"server_security","id":id,"snapshot":snapshot})
+            }
             Self::Error { id, code } => {
                 let code = match code {
                     ControlError::InvalidControl => "invalid_control",

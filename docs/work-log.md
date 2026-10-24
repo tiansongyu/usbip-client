@@ -5,6 +5,9 @@
 - 从干净39004dd继续，原Phase0–7目标保持active；先复核现有TLS、Native/Rust listener、共享owner、IPC和日志投影。发现握手拒绝缺少持久计数、outer budget直接跳过；本轮先实现有界volatile计数，不冒称持久审计。
 - 设计见`research/server-security-observations-design.md`：loaded TLS configuration scope、clone共享、TLS/独立framing/outer限额分类、Drop取消与饱和/一致性标记；仅metadata，不持能力，不改变真实cleanup。前台新control与agent精确Read授权读取，授权结果绕WAL，旧DTO/disk/诊断格式不改。尚未运行新增软件或QEMU。
 
+- 实现有界SecurityMonitor与闭合scope/计数DTO，Native和两secure Rust listener在真实outer拒绝时记账。新增前台server_security control和agent server-security固定Profile Read接口，配置克隆/两job启动共享，service instance明确epoch；所有授权结果绕WAL，拒绝沿原durable。无逐失败stdout/stderr或新持久审计；旧schema与真实owner不改。
+- 定向transport及三项service测试通过：真实TLS各结果、framing正常/取消/畸形/实际5秒超时、permit全回、metadata不保budget；实际16 stalled连接/第17拒绝、前台读取与重新启动；真实peer UID拒绝持久化、Store持门时Read-only成功及Unsupported不入actor。开发初compile101（helper方法/await guard）、test borrow101及首次前台3秒deadline FAIL保留为开发失败；后者按既有raw取消/v2等待5秒分别断言，未修改停止语义。尚无新clean完整gate或QEMU裁决。
+
 ## 2026-10-22：任务与环境基线
 
 - 读取完整任务并保存在 `requirements.md`。当前目录初始为空且无 Git 历史。

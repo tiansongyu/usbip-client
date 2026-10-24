@@ -21,7 +21,7 @@ use tokio::{
 pub(super) type TestResult<T = ()> =
     std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
-pub(super) fn credentials(framed: bool) -> TestResult<(TlsServer, TlsClient)> {
+pub(crate) fn credentials(framed: bool) -> TestResult<(TlsServer, TlsClient)> {
     let mut ca = CertificateParams::new(Vec::<String>::new())?;
     ca.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
     ca.key_usages = vec![KeyUsagePurpose::KeyCertSign, KeyUsagePurpose::CrlSign];
@@ -113,6 +113,102 @@ pub(super) fn device() -> Result<RemoteDevice> {
             protocol: 1,
         }],
     })
+}
+
+#[cfg(feature = "rust-backend")]
+#[tokio::test]
+async fn foreground_security_observes_real_listener_overload_cancel_and_job_restart() -> TestResult
+{
+    use crate::foreground::{Control, Event};
+    use rustusb_transport::LoadedServerConfig;
+    use tokio::net::TcpStream;
+
+    for framed in [false, true] {
+        let (tls, _) = credentials(framed)?;
+        let monitor = tls.security_monitor();
+        let config = Arc::new(LoadedServerConfig {
+            broker_uid: 2000,
+            listen: "127.0.0.1:0".parse()?,
+            devices: vec![DeviceKey::virtual_profile(VirtualProfile::Hid)],
+            tls,
+        });
+        for restart in [false, true] {
+            let (context, stop, mut frontend) = foreground_context("/unused-helper".into());
+            let running = config.clone();
+            let task = tokio::spawn(super::rust_server::virtual_server(running, context));
+            let ready = tokio::time::timeout(Duration::from_secs(3), frontend.events.recv())
+                .await?
+                .ok_or("ready missing")?;
+            let address = match &ready.event {
+                Event::Ready { address, .. } => *address,
+                _ => return Err("unexpected ready event".into()),
+            };
+            ready.complete(Ok(()));
+            let mut peers = Vec::new();
+            if !restart {
+                for _ in 0..16 {
+                    peers.push(TcpStream::connect(address).await?);
+                }
+                tokio::time::timeout(Duration::from_secs(2), async {
+                    while monitor.snapshot().tls.in_flight != 16 {
+                        tokio::task::yield_now().await;
+                    }
+                })
+                .await?;
+                let mut extra = TcpStream::connect(address).await?;
+                assert_eq!(
+                    tokio::time::timeout(Duration::from_secs(2), extra.read(&mut [0])).await??,
+                    0
+                );
+            }
+            frontend
+                .controls
+                .send(foreground::parse_control(
+                    br#"{"op":"server_security","id":"security-1"}"#,
+                )?)
+                .await?;
+            let delivery = tokio::time::timeout(Duration::from_secs(2), frontend.events.recv())
+                .await?
+                .ok_or("security reply missing")?;
+            let Event::ServerSecurity { id, snapshot } = &delivery.event else {
+                return Err("wrong security event".into());
+            };
+            assert_eq!(id.as_str(), "security-1");
+            assert_eq!(snapshot.listener_connection_limit, 1);
+            assert_eq!(snapshot.tls.attempts, 16);
+            assert_eq!(snapshot.tls.in_flight, if restart { 0 } else { 16 });
+            assert_eq!(
+                snapshot.tls.cancelled,
+                if restart && !framed { 16 } else { 0 }
+            );
+            assert_eq!(
+                snapshot.tls.timed_out,
+                if restart && framed { 16 } else { 0 }
+            );
+            let wire = delivery.event.to_json()?;
+            assert_eq!(wire["event"], "server_security");
+            assert!(serde_json::to_vec(&wire)?.len() < 1200);
+            delivery.complete(Ok(()));
+            stop.send_replace(true);
+            tokio::time::timeout(Duration::from_secs(7), task)
+                .await??
+                .into_result()?;
+            drop(peers);
+            let observed = monitor.snapshot();
+            assert_eq!(observed.tls.in_flight, 0);
+            // Existing raw listener aborts pre-authentication network tasks;
+            // cooperative v2 joins them through their five-second TLS deadline.
+            assert_eq!(observed.tls.cancelled, if framed { 0 } else { 16 });
+            assert_eq!(observed.tls.timed_out, if framed { 16 } else { 0 });
+            assert!(observed.consistent && !observed.saturated);
+            // This new control remains separate from existing backend snapshots.
+            assert!(matches!(
+                foreground::parse_control(br#"{"op":"snapshot","id":"old"}"#)?,
+                Control::Snapshot { .. }
+            ));
+        }
+    }
+    Ok(())
 }
 
 async fn catalog(io: &mut link::Io) -> Result<()> {

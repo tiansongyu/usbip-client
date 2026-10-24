@@ -1,7 +1,8 @@
 # Bounded server authentication observations
 
 2026-10-24. Baseline `39004dda3172d2945650b36023a45065bcc19a64`.
-Status: proposed implementation and validation contract; no new runtime result yet.
+Status: implemented; targeted software checks passed. Complete software and
+installed-QEMU validation remain pending at this checkpoint.
 
 The installed authentication negatives exposed missing operational information:
 Native silently skips outer connection-budget refusals, and both engines project
@@ -80,3 +81,22 @@ credential revocation evidence, or USB release proof.
 
 Retain the fixed Rust/rustls/Tokio dependencies and source-backed architecture;
 there is no new external dependency, crypto mechanism or privileged API.
+
+## Initial implementation checks
+
+Actual targeted transport tests passed: local outcome aggregation, cancellation
+and returned permits, 16 authenticated-stream budget refusal, metadata lifetime,
+saturation/poison recovery, framed success/cancellation, malformed framing and
+the real five-second setup deadline. Service checks passed for real loopback
+foreground controls/outer quota, configuration scope across two job starts,
+actual UID permission denials through durable IPC, and authorized success plus
+Unsupported while a real Store lock blocks an already-polled commit.
+
+The first foreground test used a three-second shutdown expectation and FAILED.
+Source inspection confirmed existing cooperative framed-v2 joins pre-auth TLS
+through its five-second deadline; raw-v1 aborts those network tasks. The revised
+test preserves those product paths and separately expects timeout versus
+cancellation. The first compile also found a removed helper still used by three
+callers and a mutex guard inferred across await; a test borrow later failed to
+compile. These were corrected before the targeted checks passed. These dirty
+development executions are not clean full-gate or installed USB acceptance.

@@ -1,3 +1,4 @@
+use crate::security::{Outcome, Stage};
 use crate::{
     ALPN_V1, ALPN_V2, AccessPolicy, CertificatePin, Error, HANDSHAKE_TIMEOUT, Link, LinkIo,
     MAX_CONNECTIONS, ProbePolicy, Result, TLS_BUFFER_LIMIT, VerifiedPeer, acl::MAX_CERT_BYTES,
@@ -120,6 +121,7 @@ pub struct TlsServer {
     policy: Arc<AccessPolicy>,
     limit: Arc<Semaphore>,
     link_policy: Option<ProbePolicy>,
+    security: crate::SecurityMonitor,
 }
 
 impl TlsServer {
@@ -171,6 +173,7 @@ impl TlsServer {
             policy: Arc::new(policy),
             limit: Arc::new(Semaphore::new(MAX_CONNECTIONS)),
             link_policy,
+            security: crate::SecurityMonitor::default(),
         })
     }
 
@@ -197,6 +200,12 @@ impl TlsServer {
         }
     }
 
+    /// Metadata-only observations shared by this loaded configuration's clones.
+    /// Retaining the monitor keeps no credentials, stream, permit or device alive.
+    pub fn security_monitor(&self) -> crate::SecurityMonitor {
+        self.security.clone()
+    }
+
     /// Authenticate a real TCP connection and create its owned single-stream driver.
     /// The authenticated stream retains its permit until that driver has been joined.
     pub async fn accept_link(&self, stream: TcpStream) -> Result<ServerLink> {
@@ -204,12 +213,26 @@ impl TlsServer {
         let tuple = tcp_tuple(&stream)?;
         let authenticated = self.accept_with_deadline(stream, HANDSHAKE_TIMEOUT).await?;
         let peer = authenticated.peer().clone();
-        let Link { io, owner, monitor } = tokio::time::timeout(
+        let observation = self.security.begin(Stage::Framing);
+        let setup = tokio::time::timeout(
             HANDSHAKE_TIMEOUT,
             crate::link::server(authenticated, tuple, policy),
         )
-        .await
-        .map_err(|_| Error::LinkSetupTimeout)??;
+        .await;
+        let Link { io, owner, monitor } = match setup {
+            Ok(Ok(link)) => {
+                observation.finish(Outcome::Ready);
+                link
+            }
+            Ok(Err(error)) => {
+                observation.finish(Outcome::Failed);
+                return Err(error);
+            }
+            Err(_) => {
+                observation.finish(Outcome::TimedOut);
+                return Err(Error::LinkSetupTimeout);
+            }
+        };
         Ok(Link {
             io: AuthenticatedLinkIo { inner: io, peer },
             owner,
@@ -225,36 +248,49 @@ impl TlsServer {
     where
         S: AsyncRead + AsyncWrite + Unpin,
     {
-        let permit = self
-            .limit
-            .clone()
-            .try_acquire_owned()
-            .map_err(|_| Error::ConnectionLimit)?;
-        let handshake = self.acceptor.accept_with(stream, |connection| {
-            connection.set_buffer_limit(Some(TLS_BUFFER_LIMIT));
+        let observation = self.security.begin(Stage::Tls);
+        let result = async {
+            let permit = self
+                .limit
+                .clone()
+                .try_acquire_owned()
+                .map_err(|_| Error::ConnectionLimit)?;
+            let handshake = self.acceptor.accept_with(stream, |connection| {
+                connection.set_buffer_limit(Some(TLS_BUFFER_LIMIT));
+            });
+            let inner = tokio::time::timeout(deadline, handshake)
+                .await
+                .map_err(|_| Error::Timeout)?
+                .map_err(|_| Error::HandshakeFailed)?;
+            let connection = inner.get_ref().1;
+            check_protocol(
+                connection.protocol_version(),
+                connection.alpn_protocol(),
+                alpn(self.link_policy),
+            )?;
+            let cert = connection
+                .peer_certificates()
+                .and_then(|chain| chain.first())
+                .ok_or(Error::HandshakeFailed)?;
+            let peer = self
+                .policy
+                .verified_peer(CertificatePin::from_der(cert.as_ref())?)?;
+            Ok(AuthenticatedStream {
+                inner,
+                peer,
+                _permit: permit,
+            })
+        }
+        .await;
+        observation.finish(match &result {
+            Ok(_) => Outcome::Ready,
+            Err(Error::ConnectionLimit) => Outcome::ConnectionLimit,
+            Err(Error::Timeout) => Outcome::TimedOut,
+            Err(Error::UnmappedCertificate) => Outcome::Unmapped,
+            Err(Error::ProtocolMismatch) => Outcome::ProtocolMismatch,
+            Err(_) => Outcome::Failed,
         });
-        let inner = tokio::time::timeout(deadline, handshake)
-            .await
-            .map_err(|_| Error::Timeout)?
-            .map_err(|_| Error::HandshakeFailed)?;
-        let connection = inner.get_ref().1;
-        check_protocol(
-            connection.protocol_version(),
-            connection.alpn_protocol(),
-            alpn(self.link_policy),
-        )?;
-        let cert = connection
-            .peer_certificates()
-            .and_then(|chain| chain.first())
-            .ok_or(Error::HandshakeFailed)?;
-        let peer = self
-            .policy
-            .verified_peer(CertificatePin::from_der(cert.as_ref())?)?;
-        Ok(AuthenticatedStream {
-            inner,
-            peer,
-            _permit: permit,
-        })
+        result
     }
 }
 

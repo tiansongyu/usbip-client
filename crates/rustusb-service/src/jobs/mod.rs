@@ -9,7 +9,7 @@ mod client;
 mod io;
 mod link;
 #[cfg(all(test, target_os = "linux"))]
-mod management_tests;
+pub(crate) mod management_tests;
 #[cfg(target_os = "linux")]
 mod native;
 #[cfg(any(target_os = "linux", feature = "rust-backend"))]

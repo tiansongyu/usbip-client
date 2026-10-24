@@ -332,7 +332,14 @@ async fn listen<B: ServingBackend>(
                 if !mode.permits(peer.ip()) {
                     continue;
                 }
-                let Ok(permit) = limit.clone().try_acquire_owned() else { continue };
+                let Ok(permit) = limit.clone().try_acquire_owned() else {
+                    match &mode {
+                        ListenerMode::Tls(tls) | ListenerMode::ManagedTls(tls, _) =>
+                            tls.security_monitor().listener_connection_limit(),
+                        ListenerMode::Legacy(_) => {},
+                    }
+                    continue;
+                };
                 let backend = backend.clone();
                 let mode = mode.clone();
                 let network_stopping = network_stopping.clone();

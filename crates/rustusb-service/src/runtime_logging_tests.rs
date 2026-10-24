@@ -82,6 +82,201 @@ fn read_request(after: Option<rustusb_logging::Cursor>, limit: u8) -> Request {
 }
 
 #[tokio::test]
+async fn actual_uid_security_reads_and_unsupported_bypass_a_real_blocked_store() -> TestResult {
+    let mut fixture = Fixture::new()?;
+    let (tls, _) = crate::jobs::management_tests::credentials(false)?;
+    let monitor = tls.security_monitor();
+    let config = Arc::get_mut(&mut fixture.runtime.config).ok_or("shared fixture configuration")?;
+    config.credentials.insert(
+        PROFILE.into(),
+        Credentials::Server(Arc::new(rustusb_transport::LoadedServerConfig {
+            broker_uid: config.manifest.broker_uid,
+            listen: "127.0.0.1:0".parse()?,
+            devices: vec![rustusb_core::DeviceKey::virtual_profile(
+                rustusb_core::VirtualProfile::Hid,
+            )],
+            tls,
+        })),
+    );
+    config.manifest.profiles.push(crate::config::Profile {
+        id: "client-only".into(),
+        backend: Backend::Client,
+        config: "/etc/rustusb/unused-client-test.json".into(),
+    });
+    for operator in &mut config.manifest.operators {
+        operator.profiles.insert("client-only".into());
+        if operator.uid == operator_uid() {
+            // Read permission alone suffices; no Audit/Start/Stop is needed.
+            operator.actions = std::collections::BTreeSet::from([Action::Read]);
+        }
+    }
+    fixture.runtime.refresh_health()?;
+    let controls = fixture.runtime.controls.clone();
+    {
+        let registry = controls.lock().map_err(|_| lock_error())?;
+        assert!(matches!(
+            registry.security(&fixture.runtime.config, operator_uid(), "unknown"),
+            Err(Error::Permission(_))
+        ));
+        if operator_uid() != 0 {
+            assert!(matches!(
+                registry.security(&fixture.runtime.config, u32::MAX - 1, PROFILE),
+                Err(Error::Permission(_))
+            ));
+        }
+    }
+    let config = fixture.runtime.config.clone();
+    let store = fixture.runtime.store.clone();
+    let (locked, ready) = oneshot::channel();
+    let (release, released) = std::sync::mpsc::channel();
+    let blocker = tokio::task::spawn_blocking(move || {
+        let _guard = store.lock().map_err(|_| lock_error())?;
+        let _ = locked.send(());
+        released
+            .recv_timeout(Duration::from_secs(10))
+            .map_err(|_| Error::Timeout("security store gate".into()))?;
+        Ok::<_, Error>(())
+    });
+    ready.await?;
+    let (commands, mut queued) = mpsc::channel(1);
+    let next = fixture.runtime.state.clone();
+    let result = {
+        let pending = fixture.runtime.persist(next);
+        tokio::pin!(pending);
+        assert!(
+            tokio::time::timeout(Duration::from_millis(20), &mut pending)
+                .await
+                .is_err()
+        );
+        let reads = async {
+            for count in [1, 2] {
+                monitor.listener_connection_limit();
+                let result = rpc(
+                    Request::ServerSecurity {
+                        profile: PROFILE.into(),
+                    },
+                    config.clone(),
+                    controls.clone(),
+                    None,
+                    commands.clone(),
+                )
+                .await?;
+                let Response::ServerSecurity {
+                    instance_id,
+                    snapshot,
+                } = result.response
+                else {
+                    return Err("missing server counters".into());
+                };
+                assert_eq!(instance_id, InstanceId::new(uuid(1))?);
+                assert_eq!(snapshot.listener_connection_limit, count);
+                assert_eq!(snapshot.tls.attempts, 0);
+                assert!(result.journal_healthy);
+            }
+            let unsupported = rpc(
+                Request::ServerSecurity {
+                    profile: "client-only".into(),
+                },
+                config.clone(),
+                controls.clone(),
+                None,
+                commands,
+            )
+            .await?;
+            assert!(matches!(
+                unsupported.response,
+                Response::Error {
+                    code: Failure::Unsupported
+                }
+            ));
+            assert!(
+                queued.try_recv().is_err(),
+                "authorized read entered WAL actor"
+            );
+            controls.lock().map_err(|_| lock_error())?.journal_unhealthy = true;
+            let observed = controls.lock().map_err(|_| lock_error())?.security(
+                &config,
+                operator_uid(),
+                PROFILE,
+            )?;
+            assert!(!observed.journal_healthy);
+            Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+        }
+        .await;
+        // Always release the actual store worker before propagating read errors.
+        release.send(())?;
+        pending.await?;
+        reads
+    };
+    blocker.await??;
+    result?;
+    assert_eq!(fixture.runtime.state.sequence, 0);
+    Ok(())
+}
+
+#[tokio::test]
+async fn denied_security_rpc_uses_actual_uid_and_durable_denial_without_counter_access()
+-> TestResult {
+    let mut fixture = Fixture::new()?;
+    Arc::get_mut(&mut fixture.runtime.config)
+        .ok_or("shared fixture configuration")?
+        .manifest
+        .operators
+        .clear();
+    let profiles = if operator_uid() == 0 {
+        vec!["unknown"]
+    } else {
+        vec![PROFILE, "unknown"]
+    };
+    for profile in profiles {
+        let config = fixture.runtime.config.clone();
+        let controls = fixture.runtime.controls.clone();
+        let (commands, mut queued) = mpsc::channel(1);
+        let task = tokio::spawn(rpc(
+            Request::ServerSecurity {
+                profile: profile.into(),
+            },
+            config,
+            controls,
+            None,
+            commands,
+        ));
+        let command = tokio::time::timeout(Duration::from_secs(3), queued.recv())
+            .await?
+            .ok_or("denial did not reach actor")?;
+        assert_eq!(command.uid, operator_uid());
+        let response = fixture.runtime.command(command.uid, command.request).await;
+        assert!(matches!(
+            response,
+            Response::Error {
+                code: Failure::Permission
+            }
+        ));
+        let audit = fixture
+            .runtime
+            .state
+            .audit
+            .last()
+            .ok_or("denial not persisted")?;
+        assert_eq!(audit.action, AuditAction::Denied);
+        assert_eq!(audit.actor_uid, operator_uid());
+        let _ = command.reply.send(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: true,
+            response,
+        });
+        assert!(matches!(
+            task.await??.response,
+            Response::Error {
+                code: Failure::Permission
+            }
+        ));
+        fixture.assert_committed()?;
+    }
+    Ok(())
+}
+
+#[tokio::test]
 async fn committed_audit_mirror_is_exact_once_and_failed_commit_is_not_projected() -> TestResult {
     let mut fixture = Fixture::new()?;
     let logs = Logs::open()?;

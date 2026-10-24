@@ -302,6 +302,33 @@ pub(crate) async fn request(
         .map_err(|_| Error::State("agent log response encoding".into()))?;
         return write_frame(&mut stream, &bytes).await;
     }
+    if let Request::ServerSecurity { profile } = &envelope.request
+        && config
+            .manifest
+            .authorize(uid, profile, Action::Read)
+            .is_ok()
+    {
+        // All authorized results, including client-profile Unsupported, bypass
+        // WAL. No credentials, stream or device owner enter this response.
+        let response = {
+            let controls = controls
+                .lock()
+                .map_err(|_| Error::State("agent controls lock poisoned".into()))?;
+            match controls.security(&config, uid, profile) {
+                Ok(response) => response,
+                Err(error) => ResponseEnvelope {
+                    schema_version: 1,
+                    journal_healthy: controls.journal_healthy(),
+                    response: Response::Error {
+                        code: crate::model::Failure::from_error(&error),
+                    },
+                },
+            }
+        };
+        let bytes = serde_json::to_vec(&response)
+            .map_err(|_| Error::State("agent security response encoding".into()))?;
+        return write_frame(&mut stream, &bytes).await;
+    }
     // Health reads are independent of a stalled WAL actor. Authorization and
     // the finite registry are still the same fixed-profile OS-UID boundary.
     if let Request::SessionHealth { profile, after } = &envelope.request {

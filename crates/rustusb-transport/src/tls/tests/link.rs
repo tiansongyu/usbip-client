@@ -39,6 +39,10 @@ async fn framed_tcp_mtls_preserves_authentication_flush_and_actual_tuple() -> Te
     })
     .await?;
     let (mut incoming, mut outgoing) = (incoming?, outgoing?);
+    let security = server.security_monitor().snapshot();
+    assert_eq!(security.tls.authenticated, 1);
+    assert_eq!(security.framing.ready, 1);
+    assert_eq!(security.tls.in_flight + security.framing.in_flight, 0);
     assert!(incoming.io.peer().allows(&hid()));
     assert_eq!(incoming.io.peer().principal(), "lab-a");
     assert_eq!(outgoing.io.server_certificate_pin(), fixture.server.pin()?);
@@ -165,6 +169,51 @@ async fn cancelled_authenticated_setup_has_no_detached_driver_or_permit() -> Tes
     assert_eq!(server.limit.available_permits(), MAX_CONNECTIONS - 1);
     drop(setup);
     drop(authenticated);
+    let security = server.security_monitor().snapshot();
+    assert_eq!(security.tls.authenticated, 1);
+    assert_eq!(security.framing.cancelled, 1);
+    assert_eq!(security.framing.ready + security.framing.in_flight, 0);
     assert_eq!(server.limit.available_permits(), MAX_CONNECTIONS);
+    Ok(())
+}
+
+#[tokio::test]
+async fn authenticated_invalid_and_silent_framing_have_distinct_observations() -> TestResult {
+    for silent in [false, true] {
+        let fixture = Fixture::new()?;
+        let (server, client) = endpoints(&fixture)?;
+        let (incoming, outgoing) = sockets().await?;
+        let mut setup = Box::pin(server.accept_link(incoming));
+        let mut authenticated = tokio::select! {
+            result = client.connect_authenticated("server.test", outgoing) => result?,
+            _ = &mut setup => return Err("setup ended before TLS client completion".into()),
+        };
+        if !silent {
+            authenticated
+                .write_all(b"INVALID HTTP/2 PREFACE\r\n\r\n")
+                .await?;
+            authenticated.flush().await?;
+            drop(authenticated);
+            assert!(
+                tokio::time::timeout(Duration::from_secs(2), setup)
+                    .await?
+                    .is_err()
+            );
+        } else {
+            assert!(matches!(
+                tokio::time::timeout(Duration::from_secs(7), setup).await?,
+                Err(Error::LinkSetupTimeout)
+            ));
+            drop(authenticated);
+        }
+        let security = server.security_monitor().snapshot();
+        assert_eq!(security.tls.authenticated, 1);
+        assert_eq!(security.framing.attempts, 1);
+        assert_eq!(security.framing.in_flight, 0);
+        assert_eq!(security.framing.ready + security.framing.cancelled, 0);
+        assert_eq!(security.framing.timed_out, u64::from(silent));
+        assert_eq!(security.framing.failed, u64::from(!silent));
+        assert_eq!(server.limit.available_permits(), MAX_CONNECTIONS);
+    }
     Ok(())
 }

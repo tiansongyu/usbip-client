@@ -832,13 +832,19 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
                         break result;
                     },
                     Control::Snapshot { id } => Event::Snapshot { id, snapshot: snapshot(&preparation.exports) },
+                    Control::ServerSecurity { id } => Event::ServerSecurity {
+                        id, snapshot: config.tls.security_monitor().snapshot(),
+                    },
                     _ => Event::Error { id: None, code: ControlError::InvalidControl },
                 };
                 if let Err(error) = context.emit(event).await { break Err(error); }
             },
             accepted = listener.accept() => {
                 let (network, _) = match accepted { Ok(value) => value, Err(error) => break Err(error.into()) };
-                let Ok(permit) = budget.clone().try_acquire_owned() else { continue };
+                let Ok(permit) = budget.clone().try_acquire_owned() else {
+                    config.tls.security_monitor().listener_connection_limit();
+                    continue;
+                };
                 let config = config.clone();
                 let registry = preparation.exports.clone();
                 let context = context.clone();

@@ -50,6 +50,8 @@ pub(super) enum Command {
         #[arg(long)]
         after: Option<SessionId>,
     },
+    /// Read volatile authentication and framing counters of a fixed server profile.
+    ServerSecurity { profile: String },
     /// Read retained lifecycle events; the response reports expired history.
     Events {
         profile: String,
@@ -105,6 +107,7 @@ pub(super) async fn run(
         Command::Jobs { profile, after } => Request::Jobs { profile, after },
         Command::Sessions { profile, after } => Request::Sessions { profile, after },
         Command::Health { profile, after } => Request::SessionHealth { profile, after },
+        Command::ServerSecurity { profile } => Request::ServerSecurity { profile },
         Command::Events { profile, after } => Request::Events { profile, after },
         Command::Audit { profile, after } => Request::Audit { profile, after },
         Command::Discover { profile } => Request::Discover { profile },

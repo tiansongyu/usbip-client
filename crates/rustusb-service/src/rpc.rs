@@ -56,6 +56,11 @@ pub enum Request {
         /// Exclusive session cursor; at most sixteen observations are returned.
         after: Option<SessionId>,
     },
+    /// Read volatile counters of one fixed loaded server configuration.
+    ServerSecurity {
+        /// Exact profile requiring the existing Read action.
+        profile: String,
+    },
     /// Read lifecycle observations from the bounded retained event window.
     Events {
         /// Fixed profile ID.
@@ -215,6 +220,13 @@ pub enum Response {
         sessions: Vec<crate::health::SessionHealth>,
         /// Last session returned when additional records remain.
         next_after: Option<SessionId>,
+    },
+    /// Current loaded TLS configuration observations, retained across job restarts.
+    ServerSecurity {
+        /// Actual service epoch; counters are not recovered from previous epochs.
+        instance_id: InstanceId,
+        /// Volatile metadata; never an admission, durable audit or cleanup proof.
+        snapshot: rustusb_transport::SecuritySnapshot,
     },
     /// Bounded observations with explicit history expiry.
     Events {

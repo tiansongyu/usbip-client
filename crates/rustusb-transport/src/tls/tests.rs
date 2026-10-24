@@ -11,6 +11,7 @@ use std::{
 use tokio::io::{AsyncReadExt, AsyncWriteExt, DuplexStream, duplex};
 
 mod link;
+mod security;
 
 type TestResult<T = ()> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
@@ -373,11 +374,17 @@ async fn authenticated_streams_hold_all_sixteen_permits_across_server_clones() -
         server.accept(left).await,
         Err(Error::ConnectionLimit)
     ));
+    let observed = clone.security_monitor().snapshot();
+    assert_eq!(observed.tls.attempts, 17);
+    assert_eq!(observed.tls.authenticated, 16);
+    assert_eq!(observed.tls.connection_limit, 1);
+    assert_eq!(observed.tls.in_flight, 0);
     drop(streams.pop());
     assert_eq!(server.limit.available_permits(), 1);
     streams.push(connected(&server, &client).await?);
     drop(streams);
     assert_eq!(clone.limit.available_permits(), MAX_CONNECTIONS);
+    assert_eq!(clone.security_monitor().snapshot().tls.authenticated, 17);
     Ok(())
 }
 
@@ -393,7 +400,11 @@ async fn cancelled_handshake_releases_its_already_acquired_permit() -> TestResul
     })
     .await;
     assert_eq!(server.limit.available_permits(), MAX_CONNECTIONS - 1);
+    assert_eq!(server.security_monitor().snapshot().tls.in_flight, 1);
     drop(future);
+    let observed = server.security_monitor().snapshot();
+    assert_eq!(observed.tls.cancelled, 1);
+    assert_eq!(observed.tls.in_flight, 0);
     assert_eq!(server.limit.available_permits(), MAX_CONNECTIONS);
     let mut byte = [0];
     assert_eq!(right.read(&mut byte).await?, 0);

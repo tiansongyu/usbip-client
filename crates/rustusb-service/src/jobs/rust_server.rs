@@ -277,6 +277,13 @@ impl Binding {
         }
     }
 
+    fn security(&self) -> Option<rustusb_transport::SecurityMonitor> {
+        match self {
+            Self::Secure(config) => Some(config.tls.security_monitor()),
+            Self::Legacy(_) => None,
+        }
+    }
+
     fn is_secure(&self) -> bool {
         matches!(self, Self::Secure(_))
     }
@@ -420,6 +427,10 @@ impl Owner {
                 id: None,
                 code: ControlError::InvalidControl,
             }),
+            Control::ServerSecurity { id } => Ok(Event::Error {
+                id: Some(id),
+                code: ControlError::Rejected,
+            }),
             Control::Shutdown { .. } | Control::Eof => Err(Error::State(
                 "stop control was not dispatched by owner".into(),
             )),
@@ -452,7 +463,7 @@ fn stopping(stop: &watch::Receiver<bool>) -> bool {
 async fn serving(
     server: ServerHandle,
     owner: &Owner,
-    secure: bool,
+    security: Option<rustusb_transport::SecurityMonitor>,
     monitor: Option<ServerMonitor>,
     context: RunContext,
     exports: &[Export],
@@ -503,7 +514,7 @@ async fn serving(
         context
             .emit(Event::Ready {
                 address: server.local_addr(),
-                secure,
+                secure: security.is_some(),
                 snapshot: owner.snapshot()?,
             })
             .await?;
@@ -520,6 +531,15 @@ async fn serving(
                         return Ok(());
                     }
                     Control::Eof => return Ok(()),
+                    Control::ServerSecurity { id } => {
+                        let event = match &security {
+                            Some(monitor) => Event::ServerSecurity {
+                                id, snapshot: monitor.snapshot(),
+                            },
+                            None => Event::Error { id: Some(id), code: ControlError::Rejected },
+                        };
+                        context.emit(event).await?;
+                    },
                     control => context.emit(owner.input(control)?).await?,
                 },
             }
@@ -934,7 +954,7 @@ async fn run(binding: Binding, selection: Selection, context: RunContext) -> Job
                             let served = serving(
                                 server,
                                 owner,
-                                binding.is_secure(),
+                                binding.security(),
                                 monitor,
                                 context.clone(),
                                 &exports,
@@ -1126,7 +1146,7 @@ mod tests {
                 let served = serving(
                     server,
                     &owner,
-                    false,
+                    None,
                     None,
                     context.clone(),
                     &exports,
