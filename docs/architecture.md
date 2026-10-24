@@ -101,7 +101,7 @@ Bus ID 是当前寻址，不是持久身份。持久候选 ID 将 VID/PID、可�
 
 helper 可在读取请求前拒绝未授权 UID。普通客户端首次写入失败时，仅在同一已验证 root socket 上有界读取完整拒绝响应；不得重连重发，也不能把 EPIPE 本身解释为权限拒绝。物理 FD 的 ACK 和接收仍只发生在正常成功响应之后。
 
-完整九状态业务状态机当前提供已测的转换类型；热插拔事件流、操作ID/进度事件、所有状态的持久超时记录、重启后未知端口认领和存储恢复仍属于Phase3，未冒充已实现。后续状态事件应包含操作ID、非敏感设备ID、from/to、稳定错误码和单调时间，使用有界事件队列；丢事件后客户端重新拉取权威快照。
+完整九状态业务状态机当前提供已测的转换类型；会话级热插拔/操作ID进度事件、所有状态的持久超时记录、重启后未知端口认领和存储恢复仍属于Phase3，未冒充已实现。后续状态事件应包含操作ID、非敏感设备ID、from/to、稳定错误码和单调时间，使用有界事件队列；丢事件后客户端重新拉取权威快照。
 
 ## 可选 Rust 服务：共享 engine 与 USBFS 生命周期
 
@@ -228,4 +228,4 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 
 ## 本地热插拔观察（实施中）
 
-见[实施设计](research/local-device-monitor-design.md)。实际rustusb-discovery库复用原scanner，service::discovery仅re-export；CLI一次扫描及devices --watch共用这一实现。kernel group1事件只触发重扫，当前地址/候选fingerprint/只读sysfs观察戳分开。Initializing/Stale不冒充成功空库存，丢失或慢订阅者按完整快照重新同步。两个真实blocking owner配额保留到实际完成；stdout不拥有扫描器，显式shutdown总join。该实现尚待新clean完整软件与QEMU实际热插拔验收，不以原E40代替；不增加设备授权/重连或root能力。
+见[实施设计](research/local-device-monitor-design.md)。实际rustusb-discovery库复用原scanner，service::discovery仅re-export；CLI一次扫描及devices --watch共用这一实现。kernel group1事件只触发重扫，当前地址/候选fingerprint/只读sysfs观察戳分开。Initializing/Stale不冒充成功空库存，丢失或慢订阅者按完整快照重新同步。两个真实blocking owner配额保留到实际完成；stdout不拥有扫描器，显式shutdown总join。本地观察已通过c034的872软件及f66两个单guest事件验收，见[报告](research/local-device-monitor-validation.md)，不以原E40双端I/O代替；不增加设备授权/重连或root能力。

@@ -1,0 +1,17 @@
+error[E0432]: unresolved import `rustix::time`
+   --> src/bin/safe_poll.rs:3:13
+    |
+  3 | use rustix::time::Timespec;
+    |             ^^^^ could not find `time` in `rustix`
+    |
+note: found an item that was configured out
+   --> /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.5/src/lib.rs:306:9
+    |
+304 | #[cfg(feature = "time")]
+    |       ---------------- the item is gated behind the `time` feature
+305 | #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
+306 | pub mod time;
+    |         ^^^^
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `rustusb-udev-research-probe` (bin "safe_poll") due to 1 previous error

@@ -1,0 +1,133 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "-x",
+        "scripts/check.sh"
+      ],
+      "exit_code": 0,
+      "log": "full-gate.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-check.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--edges",
+        "normal",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-tree.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-default-check.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--edges",
+        "normal",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-default-tree.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "devices",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "devices-help.log"
+    },
+    {
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "rustc.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "cargo.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-help.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb-helper",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "helper-help.log"
+    }
+  ],
+  "inputs_stable": true,
+  "selected_inputs": 206,
+  "artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "bytes": 17349472,
+      "sha256": "d048e41c7dcdc71a2643a9e7ff2c454560838560fd174c9fb2f460333ca7b96d",
+      "dev": 66306,
+      "inode": 79658254,
+      "mtime_ns": 1792846521799003820
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "bytes": 7516160,
+      "sha256": "0b68adf4a5d5e3339a05da41792956254fcdfb2e3df74749e7b463c0ae906296",
+      "dev": 66306,
+      "inode": 79658255,
+      "mtime_ns": 1792845767478114356
+    }
+  ]
+}

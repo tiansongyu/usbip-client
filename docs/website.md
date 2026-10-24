@@ -89,3 +89,14 @@ platforms, and Pages workflow 40091124270 passed check/deploy. The six canonical
 HTTPS resources match its Git blobs. Public desktop/mobile DOM and keyboard
 checks passed; no pixel review is claimed. See the
 [publication receipt](evidence/dual-stack-connect-publication-2aa9337-20261024/manifest.json).
+
+## Local inventory evidence refresh (2026-10-24)
+
+The English README and existing page now present 872 software executions, two
+independent QEMU guest runs and six local observer process cases, with the
+[local inventory guide](local-device-monitor.md) and
+[scoped report](research/local-device-monitor-validation.md). Earlier redirection
+results retain their tested revisions. Local desktop/mobile DOM, keyboard and
+CSP no-script checks passed; screenshot capture was unavailable. The six local
+HTTP resource bodies match source. Runtime assets and the installed global
+readme-site skill are unchanged. Public deployment is recorded separately.

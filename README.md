@@ -34,6 +34,11 @@ This produces `rustusb` and `rustusb-helper` in `target/release/`. Start with re
 
 `devices` lists local USB metadata without changing drivers. `doctor` reports installed tools, modules and helper availability; it does not load modules, start services or test remote USB I/O. Read its individual results: exit code 0 means the diagnostic completed, not that the machine is ready to share devices.
 
+For a live local inventory, run `./target/release/rustusb devices --watch` and stop
+with Ctrl-C. Add `--json` for complete versioned batches. The
+[local observation guide](docs/local-device-monitor.md) explains stale data,
+resynchronization and generation boundaries.
+
 For Native sharing, administrators must install the distribution's `usbip` / `usbipd` and matching kernel modules. On Ubuntu these tools are usually provided by `linux-tools-common` and `linux-tools-$(uname -r)`. The [Native setup guide](docs/native-guide.md) covers binary installation, helper policy, directory permissions and service setup.
 
 ## Use
@@ -142,14 +147,24 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The latest [hostname and dual-stack report](docs/research/dual-stack-connect-validation.md) records **842 software test executions at clean `f3bf579`** and **14 paired QEMU runs / 28 successful guest exits at clean `67d0bb0`**. A pending preferred address can be bypassed by a working alternate, while the original deadline and independent TLS service-name verification remain in force.
+The latest [local inventory report](docs/research/local-device-monitor-validation.md)
+records **872 software test executions at clean `c0346d6`** and **two separate
+QEMU guest runs at clean `f66da6b`**, covering default and all-features builds.
+An actual UID2000 CLI observes kernel USB events, interface driver changes,
+removal and a new generation at the same port, then stops its real worker.
 
-The installed scope includes six raw hostname combinations across Native, virtual and USBFS with IPv4/IPv6; one separate Native framed-v2 hostname case; six default-policy secure regressions; and one independent framed-v2 diagnostic regression. Actual emulated HID/serial I/O and complete original cleanup are required. A corrected two-candidate old-product counterfactual still times out; all earlier failed experiments remain recorded.
+Both binaries pass three actual local process cases each: SIGINT, SIGTERM while
+stdout is blocked, and an error after the output reader closes. The original
+four virtual-server signal and two backpressure cases also pass. These process
+checks are separate from the Cargo count. Current/stale quality, complete batches
+and explicit resynchronization are required; a fingerprint does not authorize reuse.
 
-The same release passes four local signal cases, two backpressure cases, and two actual CLI hostname/response-timeout cases. These process checks are separate from the Cargo count and simulated USB qualification. OS hosts-file tests do not establish wire-DNS, VPN, performance or real-device compatibility.
+These two guest runs validate local observation. Earlier USB/IP redirection
+reports retain their actual HID/serial I/O, kernel cleanup and revision boundaries.
 
 Earlier evidence remains available by capability:
 
+- [Hostname and dual-stack fallback](docs/research/dual-stack-connect-validation.md): its 14 paired runs retain their tested source and actual redirected-I/O scope.
 - [Authentication refusals and startup credential retirement](docs/research/secure-negative-qemu-validation.md), [TLS admission limits](docs/research/authentication-admission-validation.md), and [volatile server counters](docs/research/server-security-observations-validation.md).
 - [Private diagnostic export](docs/research/diagnostic-export-validation.md), [bounded process logs](docs/research/rotating-logs-validation.md), and [cleanup before delayed records](docs/research/prepare-recording-shutdown-validation.md).
 - [Data-link health](docs/research/data-link-health-validation.md), [Native interoperability](docs/research/native-qemu-matrix.md), [virtual devices](docs/research/userspace-qemu.md), and [recovery boundaries](docs/research/physical-driver-autorestore-negatives.md).
@@ -176,6 +191,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 | [Data-link health](docs/data-link-health.md) | Opt-in v2 probes, RTT, backpressure observations and epoch-qualified history |
 | [Process logs](docs/logging.md) | Private bounded rotation, authorized pages, follow and independent logging failures |
 | [Private diagnostics](docs/diagnostics.md) | Bounded JSON export, committed profile history, identity aliases and checked publication |
+| [Local USB observation](docs/local-device-monitor.md) | Live inventory, complete JSON batches, stale data and generation boundaries |
 | [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
 | [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
 | [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |

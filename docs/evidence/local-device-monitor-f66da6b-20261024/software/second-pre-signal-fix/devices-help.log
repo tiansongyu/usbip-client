@@ -1,0 +1,14 @@
+Scan local devices without changing drivers. Discovery is not compatibility validation
+
+Usage: rustusb devices [OPTIONS]
+
+Options:
+      --json                           Emit machine-readable JSON to stdout; logs remain on stderr
+      --watch                          Observe kernel USB hints and reconciled snapshots until interrupted
+      --socket <SOCKET>                Root-owned local helper socket [default: /run/rustusb/control.sock]
+      --timeout <TIMEOUT>              Discovery timeout covering DNS, connect and response [default: 10]
+      --log-json                       Emit JSON tracing logs on stderr
+      --log-directory <LOG_DIRECTORY>  Write sanitized bounded NDJSON to an existing private directory instead of stderr
+      --log-max-bytes <LOG_MAX_BYTES>  Segment byte limit (4096..=8388608); requires a file log directory
+      --log-retain <LOG_RETAIN>        Total retained segments including active (2..=16)
+  -h, --help                           Print help

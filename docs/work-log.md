@@ -1,5 +1,9 @@
 # RustUSB 工作日志
 
+## 2026-10-24：本地设备观察最终状态
+
+- clean c0346d6完整872/206稳定输入；clean f66da6b默认/all两个单guest真实UID2000/kernel events/sysfs/driver/新代际/总join验收通过，无forced。两个构建六新process及旧4signal2BP通过；旧INT负向、首完整gate失败与两QEMU采证FAIL保留。原Phase0–7/hardware/完整G3不宣告完成，详见`research/local-device-monitor-validation.md`。
+
 ## 2026-10-24：主机名双栈连接
 
 - 最终软件/仿真：clean f3bf579完整842、198输入；clean67d十四paired/28guest0（七新hostname/七回归）全部PASS，本地4signal/2BP/2legacy CLI通过。有效旧产品detached0d同NSS两候选仍timeout；前五不充分fixture FAIL与有效旧FAIL均保留。报告见`research/dual-stack-connect-validation.md`，当前仍未宣布完整G3或原Phase0–7完成。
@@ -773,3 +777,9 @@
 - 首clean47e3f63 default QEMU实际host超时/forced收回，QEMU实际wait0但ResultFAIL、四guard真；只收到启动beacon，没有CLI执行/热插拔证明。后置jq诊断actual3确认保留变量$end语法错；原件及原summary裁决保留。失败采证路径拟先冻结输出诊断、原child TERM+真实wait，辅助reader避免后台ignored INT；强制KILL必FAIL。纯jq帧检查不是新USB/软件test count。
 
 - 第二clean4cb31f4 default QEMU仍FAIL：已到final-remove，首文件beacon后明确base64 not found，PID1 EXITtrap127导致真实Kernel panic；forced收回/actualQEMU0/四guard真不改变裁决，原raw无完整解码，不补造点/执行证明。确认Native BusyBox未含base64，须独立打包及全面payload工具预查，采证错误显式FAIL且不中断收尾。
+
+- 同clean f66da6b default/all两个单guest QEMU均PASS/各actualQEMU0/无forced/四guard真，213输入含206软件源；普通UID2000同PID/start/ELF/group1socket前后两采样，六点真实hint增长、sysfs独立代际/driver、TERM真实wait与完整帧、最终虚拟设备清除均通过。仍不是USB/IP双端I/O/硬件或ENOBUFS测试。
+- 对同all CLI旧四signal/两BP回归全部PASS，原BP无逐executedELF/rawwire不补造。新三process默认与all共6项通过。为跨页大小内核保持同“实际满管道”语义，夹具改为核实并填满fcntl实际返回的4–64KiB容量，而不硬要求所有架构4KiB；本地实测仍4KiB，随后对新方法再执行两构建三项，产品/Rust206不改。
+
+- 英文指南/报告及README英中/现有展示页已同步872/2guest/6process的各自范围，旧E40十四paired保原来源。主证据2081份约54.38MB，只按显式public/research清单归档，所有.private宿主raw设备输出排除；原方法旧成功不重复计为新六项。同作者只读原件方法核486文件SHA恒同、34块B64重解码、206/213源码映射，非另一执行或独立安全审计。
+- 本地CUA桌面1280×720/窄屏390×844新指标/报告/图片/无横溢、ArrowRight/Home选中/焦点/backend query均通过；mobile先desktop SVG后实际mobile SVG360加载。独立CSP no-script预览实际1280宽三backend/commands可读，console查询均空。截图实际Unable，不称pixel，clipboard/reduced-motion未重跑。六子路径HTTP资源200且逐源bytes同，nojs同HTML/实际CSP头；临时tab23/24关，viewport实读reset1280×720，owned preview3767698实际Ctrl-C exit0。

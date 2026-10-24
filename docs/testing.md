@@ -367,3 +367,9 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 ## 主机名双栈回退（E40）
 
 [精确报告](research/dual-stack-connect-validation.md)记录clean f3软件842/198稳定输入，clean67d七新hostname与七回归共14paired/28guest0；全原I/O/Rootproof/driverbaseline保持。实际broker UID probe须确认stale与healthy两答案，缺host.conf的五早期FAIL不当有效双候选对照；有效旧source196/ELF8779…对照0d仍timeout，原FAIL保留。未改rawPCAP，严格只剔精确stale空SYN生成命名projection，原ciphertext classifier明确ALPN1/2；aggregate chronology不当逐process归因。另本地legacy CLI目录/withheld-response两场景有proc/真实wait/EOF/线程join与既有JSON error DTO，独立CI step不混入842 Cargo数；首错误stdout期待FAIL保留。
+
+## 本地设备观察
+
+见[指南](local-device-monitor.md)与[E41验收](research/local-device-monitor-validation.md)：完整软件872/206源锁clean c034；默认/all两个单guest观察锁clean f66，非paired USB/IP。`python3 -B scripts/test-device-monitor.py --binary target/release/rustusb --evidence /tmp/new-monitor-cases`运行三个实际普通用户进程用例；记录fcntl实际管道容量、UID/ELF/group1 socket/write syscall/wchan/wait，原始宿主设备stdout仅放.private，不得递归上传/归档。四平台CI新增同step，实际CI状态另记发布回执。
+
+[QEMU fixture](../scripts/qemu_device_monitor/README.md)不加载宿主模块/操作宿主USB，仅来宾root控制模拟键盘及driver，实际UID2000 watcher与独立udevadm/kernel/sysfs相互核。需base64/jq/setpriv/udevadm完整payload预查；任何collector/guest/kernel失败仍FAIL，original forced QEMU0不能当guest PASS。两历史QEMU FAIL及旧INT负向保留；不宣称ENOBUFS、永久FS/kernel阻塞或所有瞬时热插拔已测。

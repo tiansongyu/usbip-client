@@ -168,7 +168,10 @@ def case(binary, expected, root, name):
         else:
             read_fd, write_fd = os.pipe()
             size = fcntl.fcntl(write_fd, fcntl.F_SETPIPE_SZ, 4096)
-            assert size == 4096
+            # Linux rounds the requested capacity to its page-size granularity.
+            # Record and completely fill the actual bounded capacity (also on
+            # 16/64-KiB-page kernels), rather than assume every target uses 4 KiB.
+            assert 4096 <= size <= 65536
             assert os.write(write_fd, b"P" * size) == size
             try:
                 process = subprocess.Popen([str(binary), "devices", "--watch", "--json"], stdin=subprocess.DEVNULL,

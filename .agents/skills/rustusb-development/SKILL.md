@@ -96,3 +96,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## 主机名与双栈TCP回退
 
 修改前读`docs/research/dual-stack-connect-design.md`与`dual-stack-connect-validation.md`。四resolver permit持于真实blocking closure直到结束，不能由waiter cancel释放；64raw/16unique只限制保留结果，不界定std/libc内部分配或lookup时长。OS首族偏好、族内稳定顺序/去重/交错，250ms正常及100ms失败启动间隔；inline16候选无detached dial task，winner返回前drop全部loser。保留调用者原总deadline/stop，只有TCP winner进入独立TLS身份验证与USB操作，TLS失败不重试/降级。clean f3软件842/198及clean67d十四paired/28guest0分账。NSS缺multi的旧失败不能当两候选对照；正确0d旧source/ELF+UID2000两答案仍timeout。Raw capture不改，projection只排精确stale空SYN，aggregate chronology非逐process归因；probe要实际UID/ELF/候选/override缺失。不是wire-DNS/VPN/性能或完整G3。
+
+## 本地设备观察
+
+修改`rustusb-discovery`、Linux observation/hotplug或devices --watch前读`docs/research/local-device-monitor-design.md`和`local-device-monitor-validation.md`。c034872/206软件与f66两个单guest各自归属；旧INT0c09错误/两采证QEMU FAIL不重判。source pid0/groups1仅重扫提示、原scanner当前事实；candidate/Bus ID/sysfs戳不授设备能力，Stale/Initializing不假空/不假删除。两actual worker配额留至真实完成，Drop只stop，shutdown总join；watch必须绕外层helper取消分支，stdout只有限metadata帧且完整end才提交，跳号/resync重拉全量。宿主raw设备输出只留.private并从公开清单排除；硬件/ENOBUFS/永久OS阻塞/全G3继续未完成。

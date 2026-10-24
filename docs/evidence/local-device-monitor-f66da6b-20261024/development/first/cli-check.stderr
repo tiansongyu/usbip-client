@@ -1,0 +1,40 @@
+   Compiling rustix v1.1.5
+    Checking rustls-pki-types v1.15.1
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking rcgen v0.14.10
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-logging v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-logging)
+    Checking tempfile v3.27.0
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-diagnostics v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-diagnostics)
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+error[E0433]: cannot find module or crate `rustusb_service` in this scope
+ --> crates/rustusb-cli/src/device_watch.rs:5:5
+  |
+5 | use rustusb_service::discovery::{DeviceMonitor, DeviceUpdate, DiscoveryState};
+  |     ^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `rustusb_service`
+  |
+help: there is a crate or module with a similar name
+  |
+5 - use rustusb_service::discovery::{DeviceMonitor, DeviceUpdate, DiscoveryState};
+5 + use rustusb_core::discovery::{DeviceMonitor, DeviceUpdate, DiscoveryState};
+  |
+
+error[E0433]: cannot find module or crate `rustusb_service` in this scope
+   --> crates/rustusb-cli/src/main.rs:419:27
+    |
+419 |             let devices = rustusb_service::discovery::scan().await?;
+    |                           ^^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `rustusb_service`
+    |
+help: there is a crate or module with a similar name
+    |
+419 -             let devices = rustusb_service::discovery::scan().await?;
+419 +             let devices = rustusb_core::discovery::scan().await?;
+    |
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `rustusb-cli` (bin "rustusb" test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-cli` (bin "rustusb") due to 2 previous errors

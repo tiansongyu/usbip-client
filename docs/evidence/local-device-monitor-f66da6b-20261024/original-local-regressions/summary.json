@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "head": "f66da6bd64b960aa54a2878ffab0bbe232e8c85d",
+  "binary_before": "d048e41c7dcdc71a2643a9e7ff2c454560838560fd174c9fb2f460333ca7b96d",
+  "binary_after": "d048e41c7dcdc71a2643a9e7ff2c454560838560fd174c9fb2f460333ca7b96d",
+  "commands": {
+    "signals": {
+      "argv": [
+        "python3",
+        "scripts/test-server-signals.py",
+        "--skip-build",
+        "--evidence",
+        "/tmp/rustusb-hotplug-regressions-f66da6b-20261024/signal-evidence"
+      ],
+      "exit_code": 0
+    },
+    "backpressure": {
+      "argv": [
+        "python3",
+        "scripts/test-virtual-backpressure.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb"
+      ],
+      "exit_code": 0
+    }
+  },
+  "scope": "Original four signal/two backpressure cases against the same prebuilt all-features CLI, not additional Cargo or USB qualification. Old backpressure lacks per-child executed-ELF/raw-wire samples."
+}

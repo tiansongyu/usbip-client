@@ -127,3 +127,5 @@ cargo build --workspace --release
 服务端观测增量E38见[验收](research/server-security-observations-validation.md)：clean c097cf8软件808/194稳定输入，六raw认证计数paired与一独立Native-v4/v2诊断回归通过，共14guest0。前台及agent精确Read接口已实现，TLS/framing/outer限额按loaded配置累计；volatile计数不代替持久安全审计、设备释放或完整G3，安装态agent counter/v2负向counter仍待验收。原Phase0–7与TUI/GUI/真实硬件范围不变。
 
 认证准入增量E39见[验收](research/authentication-admission-validation.md)：clean47f软件824/196稳定输入，clean d619六限速/六默认/独立v2诊断共13paired与26guest0。默认64/125ms、root可选严格策略、loaded配置共享、独立Read观测已实现。按来源公平、长期DoS/性能、安装态agent/v2专项耗尽、硬件与完整G3仍未验收；不越过原Phase4–7。
+
+本地设备观察E41见[验收](research/local-device-monitor-validation.md)：普通用户共用发现库、kernel触发与周期协调、只读代际/完整快照及signal总join已实现；872软件/206源锁c034，默认/all两单guest锁f66，六新进程与原4/2通过。不是两端USB/IP新矩阵、远程自动共享、全量事件历史、硬件或完整G3，后续TUI/GUI继续共用同库，原Phase0–7 gate不缩减。

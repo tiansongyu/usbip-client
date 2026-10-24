@@ -1,0 +1,44 @@
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-logging v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-logging)
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+error: manual implementation of `Option::map`
+   --> crates/rustusb-linux/src/hotplug.rs:113:16
+    |
+113 |           } else if let Some(value) = field.strip_prefix(b"DEVPATH=") {
+    |  ________________^
+114 | |             Some((&mut path, value))
+115 | |         } else {
+116 | |             None
+117 | |         };
+    | |_________^ help: try: `{ field.strip_prefix(b"DEVPATH=").map(|value| (&mut path, value)) }`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#manual_map
+    = note: `-D clippy::manual-map` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::manual_map)]`
+
+error: this `if` statement can be collapsed
+   --> crates/rustusb-linux/src/hotplug.rs:118:9
+    |
+118 | /         if let Some((slot, value)) = target {
+119 | |             if slot.replace(value).is_some() {
+120 | |                 return Notice::Resync;
+121 | |             }
+122 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+118 ~         if let Some((slot, value)) = target
+119 ~             && slot.replace(value).is_some() {
+120 |                 return Notice::Resync;
+121 ~             }
+    |
+
+error: could not compile `rustusb-linux` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-linux` (lib test) due to 2 previous errors

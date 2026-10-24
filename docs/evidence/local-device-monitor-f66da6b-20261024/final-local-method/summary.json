@@ -1,0 +1,60 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "name": "all-cases",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/test-device-monitor.py",
+        "--binary",
+        "target/release/rustusb",
+        "--evidence",
+        "/tmp/rustusb-hotplug-local-all-final-20261024"
+      ],
+      "exit_code": 0,
+      "actual_cli_sha256_after": "d048e41c7dcdc71a2643a9e7ff2c454560838560fd174c9fb2f460333ca7b96d"
+    },
+    {
+      "name": "default-build",
+      "argv": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--release",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "actual_cli_sha256_after": "e85fa916acc9379f58598922c469092aba53726830809c382cbdd9f62e945295"
+    },
+    {
+      "name": "default-cases",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/test-device-monitor.py",
+        "--binary",
+        "target/release/rustusb",
+        "--evidence",
+        "/tmp/rustusb-hotplug-local-default-final-20261024"
+      ],
+      "exit_code": 0,
+      "actual_cli_sha256_after": "e85fa916acc9379f58598922c469092aba53726830809c382cbdd9f62e945295"
+    },
+    {
+      "name": "all-restore-build",
+      "argv": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--all-features",
+        "--release",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "actual_cli_sha256_after": "d048e41c7dcdc71a2643a9e7ff2c454560838560fd174c9fb2f460333ca7b96d"
+    }
+  ],
+  "unchanged_compilation_inputs": 206,
+  "scope": "New process method with actual returned pipe capacity; unchanged prebuilt Rust source. Worktree has documentation/method edits; not relabelled clean software or QEMU execution."
+}

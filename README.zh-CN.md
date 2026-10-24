@@ -1,5 +1,7 @@
 # RustUSB
 
+新增本地只读`devices --watch`与共享观察库：clean c0346d6完整872次软件/206稳定输入，clean f66da6b默认及all各一个Linux QEMU guest均通过（实际UID2000内核事件、driver变化与同端口新代际），两个构建共六个真实进程信号/输出用例通过。见[英文使用指南](docs/local-device-monitor.md)和[验收](docs/research/local-device-monitor-validation.md)。这两项不计为USB/IP双端转发或真实硬件通过，旧14paired保持原E40版本与范围。
+
 [English](README.md) · 中文
 
 基于 Linux USB/IP 的远程 **USB 设备级重定向**工具，Rust 管理设备、权限和连接，Linux 内核执行真实 USB 请求转发。
