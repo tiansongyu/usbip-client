@@ -83,3 +83,9 @@ capabilities retain their original reports and acceptance entries. The global
 [Local documentation/site records](evidence/dual-stack-connect-docs-site-20261024/manifest.json)
 include desktop/mobile DOM checks, keyboard navigation and a CSP no-script
 preview; screenshot capture was unavailable. Publication has its own receipt.
+
+Content `2aa9337` is live: software workflow 40091124317 passed on four native
+platforms, and Pages workflow 40091124270 passed check/deploy. The six canonical
+HTTPS resources match its Git blobs. Public desktop/mobile DOM and keyboard
+checks passed; no pixel review is claimed. See the
+[publication receipt](evidence/dual-stack-connect-publication-2aa9337-20261024/manifest.json).

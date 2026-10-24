@@ -206,3 +206,26 @@ the content commit.
 
 [Documentation and browser records](../evidence/dual-stack-connect-docs-site-20261024/manifest.json)
 preserve the checks, maintained sources and the explicit observation limits.
+
+## Publication receipt
+
+Content commit `2aa9337411ed67f4626c04425703fe09a5bcc5c7` was pushed normally
+to the authorized SSH remote. Its [software workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40091124317)
+completed successfully on all four native Ubuntu/architecture jobs, including
+the actual architecture, full software gate and new two-case hostname CLI steps.
+The [Pages workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40091124270)
+also completed successfully. These are primary API run/job/step observations;
+full CI logs and executed binaries were not fetched, and no per-platform 842
+recount is claimed. The detailed local count remains at `f3bf579`.
+
+All six canonical HTTPS resources returned 200 and matched the exact website
+Git blobs at `2aa9337`. Public desktop/mobile DOM checks observed the new metrics,
+report link, loaded responsive images and no horizontal overflow. ArrowRight/Home
+maintained selected tab, focus and the existing backend URL parameter. Initial
+mobile desktop-SVG and later mobile-SVG observations are both retained. The
+viewport reset was separately observed at 1280×720; the public tab is retained.
+
+[Publication records](../evidence/dual-stack-connect-publication-2aa9337-20261024/manifest.json)
+include initial and final API states, actual HTTPS bodies/headers, source mapping
+and the browser transcription. The final receipt changes documentation and
+evidence only; 198 software inputs and six site source files remain unchanged.

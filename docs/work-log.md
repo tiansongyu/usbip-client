@@ -742,3 +742,9 @@
 - 本地站点CUA 1280×720/390×844新842/14/28及报告链接可见，无横向溢出，ArrowRight/Home选中与焦点正确、hash保持空；手机先desktopSVG后mobileSVG360加载两观察保留。独立CSP script-src none预览在实际1280宽全部三backend/commands可读，console查询均空；截图实际Unavailable，不称pixel，clipboard/reduced-motion未重跑。本轮未单独抓本地六HTTP原bytes，后续线上逐内容Gitblob核。临时tab21/22关闭、viewport reset，owned preview3599860实际Ctrl-C exit0。
 
 - 主证据7125份约113.69MB含所有六FAIL/十四PASS及有效旧对照Gitbundle；文档链接/表格、177站点检查、Node/diff及全局四源/五assets不变另档，均按manifest逐original/bytes/SHA/staged blob核。发布状态待实际push/primary API/线上资源观察，不预写成功。
+
+## 2026-10-24：主机名回退发布回执
+
+- 内容2aa9337已普通SSH push，实际remote同本地且primary clean；198软件输入逐f3/内容Gitblob相同，36份原dirty QA源映射内容但不改来源。software40091124317四native job120863835656/835772/835847/835871全部completed/success，实际arch/fullgate与新增2hostname step通过；Pages40091124270 check120863835594/deploy120863905102均success。只核primary API状态，未fetch完整CI log/ELF或重算每格842。
+- 六canonical HTTPS资源200逐2aa Gitblob同，公开CUA1280×720/390×844新842/14/28、报告/图片/无溢出及ArrowRight/Home选中/焦点/backend URL通过，console空；mobile初desktop后mobileSVG360均留实观。reset首读仍390，随后实际1280×720确认，public tab8保deliverable。原本地截图Unavailable不补造pixel。
+- 发布原件另档dual-stack-connect-publication-2aa9337-20261024；最后仅文档回执/证据普通提交推送，198软件与六site源不改。本轮是完整Phase0–7的实际进展：共享有界主机名TCP fallback、真实NSS两候选正负及原回归、英文README/网站维护；原wire-DNS/VPN/性能/硬件G1/G2/完整G3/TUI/GUI/打包/Windows及后续阶段仍未完成，goal保持active。

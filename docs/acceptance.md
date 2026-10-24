@@ -283,3 +283,5 @@ Native局部stop保留原HID真实I/O，client detach后先等精确原server st
 ## 27. 主机名与双栈连接（E40）
 
 见[英文验收](research/dual-stack-connect-validation.md)。共享Rust connector保留OS首族偏好，64raw/16unique、四actual resolver工作，250ms正常/100ms失败间隔、inline候选仅TCP winner进原TLS/USB；原总deadline/stop/独立service name不改。clean f3bf579完整842软件、198输入稳定；同产品ELF clean67d十四QEMU/28guest0分七新主机名与七回归，本地4signal/2BP及2legacy CLI查询/超时通过。五早期不充分候选/设置FAIL与有效旧产品0d对照FAIL分开，原件不重判。Probe实际UID2000/ELF/两候选及root NSS策略有原件；不是逐process抓包归因。std/libc/OS分配/执行时间不由保留上限约束，started lookup不可假取消；wire-DNS/VPN/性能、其余v2 backend专项、硬件及完整G3/后续阶段仍未验收。
+
+内容2aa9337正常SSH push，精确software40091124317四native job与Pages40091124270检查/部署均success；新增hostname两case step亦通过。只核primary API状态，不从中重算逐平台842。六canonical HTTPS资源200且逐Gitblob同，公开desktop/mobile DOM/键盘/响应图通过。详见报告[发布原件](evidence/dual-stack-connect-publication-2aa9337-20261024/manifest.json)；最终回执不改198产品输入/六site源，原未完成项保持。
