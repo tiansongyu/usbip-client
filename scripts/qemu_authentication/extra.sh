@@ -133,7 +133,7 @@ auth_cli_refusal() {
     if broker --json secure-discover --config "$auth_config" > "/tmp/auth-$AUTH_LABEL-$auth_name.stdout" 2> "/tmp/auth-$AUTH_LABEL-$auth_name.stderr"; then auth_rc=0; else auth_rc=$?; fi
     echo "$auth_rc" > "/tmp/auth-$AUTH_LABEL-$auth_name.wait"
     [ "$auth_rc" = 1 ] && [ ! -s "/tmp/auth-$AUTH_LABEL-$auth_name.stdout" ]
-    grep -E 'TLS handshake failed|TLS certificate has no configured principal|early eof|unexpected end of file|Connection reset|connection reset|Broken pipe|broken pipe' "/tmp/auth-$AUTH_LABEL-$auth_name.stderr" > /dev/null
+    grep -E 'TLS handshake failed|TLS certificate has no configured principal|peer closed connection without sending TLS close_notify|received fatal alert: (CertificateExpired|UnsupportedCertificate|BadCertificate|UnknownCA|AccessDenied|CertificateUnknown)' "/tmp/auth-$AUTH_LABEL-$auth_name.stderr" > /dev/null
 }
 auth_wire_request() {
     local auth_operation auth_key auth_bus auth_file auth_json auth_length

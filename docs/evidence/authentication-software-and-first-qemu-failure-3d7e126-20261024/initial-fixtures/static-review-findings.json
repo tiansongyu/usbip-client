@@ -1,0 +1,17 @@
+{
+  "scope": "Source review after certificate-only preflight; no QEMU or product run.",
+  "findings": [
+    {
+      "id": "held-barrier-order",
+      "detail": "Client entered held refusal barrier before WAIT_INPUT while server awaited INJECT, so original coordinator would never release either. Add explicit early INJECT to reach barrier and a later INPUT_READY before actual virtual input."
+    },
+    {
+      "id": "per_epoch_configs",
+      "detail": "Retain actual replacement client configuration after startup credential switch, not only source-generated expected policy."
+    },
+    {
+      "id": "strict_counter_generation",
+      "detail": "Require exact occurrence counts for the per-epoch virtual counter substitutions."
+    }
+  ]
+}
