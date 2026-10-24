@@ -552,7 +552,7 @@ def verify(evidence, args):
     return facts
 
 
-def main(coordinate=None, scope=None):
+def main(coordinate=None, scope=None, phase_ready=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kernel", default=os.uname().release)
     parser.add_argument("--backend", choices=["virtual", "usbfs", "native"], required=True)
@@ -669,7 +669,7 @@ def main(coordinate=None, scope=None):
                         (evidence / "ftdi-host-rx.bin").write_bytes(tx)
                         if len(tx) > 70: raise RuntimeError("unexpected extra FTDI output")
                 for cycle in [1, 2]:
-                    if f"SECURE_CLIENT_WAIT_INPUT cycle={cycle}\n" in logs["client"]:
+                    if f"SECURE_CLIENT_WAIT_INPUT cycle={cycle}\n" in logs["client"] and (phase_ready is None or phase_ready(logs, "input", cycle)):
                         send_once(f"inject-{cycle}", "server", f"INJECT {cycle}")
                         if ftdi and f"usb-inject-{cycle}" not in sent:
                             arguments = {"keys": [{"type": "qcode", "data": str(cycle)}], "hold-time": 100}
@@ -684,7 +684,7 @@ def main(coordinate=None, scope=None):
                             sent.add(f"usb-inject-{cycle}")
                     if f"SECURE_CLIENT_IO cycle={cycle} " in logs["client"] and f"SECURE_SERVER_INJECTED cycle={cycle}\n" in logs["server"]:
                         send_once(f"io-{cycle}", "server", f"IO {cycle}")
-                    if f"SECURE_SERVER_IO cycle={cycle}\n" in logs["server"] and (not ftdi or len(tx) >= 35*cycle):
+                    if f"SECURE_SERVER_IO cycle={cycle}\n" in logs["server"] and (not ftdi or len(tx) >= 35*cycle) and (phase_ready is None or phase_ready(logs, "close", cycle)):
                         send_once(f"close-{cycle}", "client", f"CLOSE {cycle}")
                     if f"SECURE_CLIENT_RELEASED cycle={cycle} " in logs["client"]:
                         send_once(f"released-{cycle}", "server", f"RELEASED {cycle}")

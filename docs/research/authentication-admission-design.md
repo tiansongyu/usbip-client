@@ -156,3 +156,31 @@ to TLS/ring's legitimate random source. A read-only fixed-component review found
 no must-fix and verified nine captured source/build files remained unchanged;
 its first helper applied that exclusion too broadly and corrected the helper.
 Neither the component review nor library probes are product/USB acceptance.
+
+## Installed fixture sequencing
+
+Compose the existing two-epoch authentication fixture. Use a separately named
+suite and fresh evidence, with root config quota32/500ms in both epochs. After
+each existing held refusal barrier, eight UID2000 BusyBox shell workers repeatedly
+run the already-copied OpenSSL TLS1.3 client with the valid but unmapped leaf.
+Each attempt has a real bounded wait/status; each worker runs for eight guest
+uptime seconds, closes inherited control/serial descriptors, and is actually
+joined before original imports close. Fast OpenSSL leaves do not gain assumed
+per-executed-ELF receipts; long worker shells do have proc UID/start/ELF samples.
+
+The server saves real admission/TLS/device/root-journal observations, signals
+an actually increased refusal count, then permits the original QMP/CDC input.
+Client HID/serial I/O must complete while workers are still alive; later refusal
+counts must also progress. After all workers actually exit, sample drained
+counters, allow a fixed two-cell replenishment interval, and perform a real
+authorized discovery. Both original imports must still exist; its empty catalog
+means busy devices, not I/O success. Exact new-admission/TLS success deltas and
+the existing real I/O/root proofs remain separate requirements.
+
+Extend only test coordinators with optional input/close phase predicates and
+an optional authentication input-ready predicate; defaults preserve old suites.
+The new suite delays original input until observed refusal and original close
+until recovery sampling. It never rewrites raw logs, suppresses a failure,
+relaxes old predicates or changes product deadlines. Every actual worker wait,
+raw stderr/stdout, chronology, configuration and final source/ELF/clean guards
+must be retained. Default-policy secure regressions remain separate runs.

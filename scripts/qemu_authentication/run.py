@@ -154,13 +154,13 @@ def payload(work, kernel, certificates, role):
     return archive, provenance
 
 
-def coordinate(logs, send, evidence, args):
+def coordinate(logs, send, evidence, args, input_ready=None):
     for cycle in [1, 2]:
         if f"AUTH_CLIENT_WAIT label=held-{cycle}\n" in logs["client"]:
             # Reach the server's before-batch barrier. Actual QMP/CDC input must
             # still wait for the original client WAIT_INPUT marker below.
             send(f"inject-{cycle}", "server", f"INJECT {cycle}")
-        if f"SECURE_CLIENT_WAIT_INPUT cycle={cycle}\n" in logs["client"]:
+        if f"SECURE_CLIENT_WAIT_INPUT cycle={cycle}\n" in logs["client"] and (input_ready is None or input_ready(logs, cycle)):
             send(f"auth-input-ready-{cycle}", "server", f"AUTH_INPUT_READY {cycle}")
     for label in ["free-1", "held-1", "free-2", "held-2"]:
         if f"AUTH_CLIENT_WAIT label={label}\n" in logs["client"] and f"AUTH_SERVER_WAIT label={label}\n" in logs["server"]:
