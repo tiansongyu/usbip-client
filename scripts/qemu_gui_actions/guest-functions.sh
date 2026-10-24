@@ -52,7 +52,7 @@ gui_open() {
         if /usr/bin/curl -fsS http://127.0.0.1:15888/status > /run/gui-driver.json 2>/dev/null; then break; fi
         kill -0 "$GUI_DRIVER"; sleep .05
     done
-    jq -n --arg label "$GUI_LABEL" '{capabilities:{alwaysMatch:{"webkitgtk:browserOptions":{binary:"/usr/bin/gui-launcher",args:[$label,"--manifest","/etc/rustusb/agent.json","--settings-directory","/home/operator/.config/rustusb"]}}}}' >/run/gui-session-request.json
+    jq -n --arg session_label "$GUI_LABEL" '{capabilities:{alwaysMatch:{"webkitgtk:browserOptions":{binary:"/usr/bin/gui-launcher",args:[$session_label,"--manifest","/etc/rustusb/agent.json","--settings-directory","/home/operator/.config/rustusb"]}}}}' >/run/gui-session-request.json
     gui_http POST /session "$(cat /run/gui-session-request.json)" "/tmp/gui-$GUI_LABEL-session.json"
     GUI_SESSION=$(jq -er '.value.sessionId' "/tmp/gui-$GUI_LABEL-session.json")
     GUI_PID=$(cat "/tmp/gui-$GUI_LABEL.pid")
