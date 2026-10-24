@@ -15,9 +15,13 @@ WATCH_PID=
 KERNEL_PID=
 STAGE=boot
 collect() {
+    prefix=$1
+    mkdir -p /tmp/frozen-capture
     for file in /tmp/watch.jsonl /tmp/watch.stderr /tmp/kernel-events.log /tmp/kernel-events.stderr /tmp/actor-*.txt /tmp/point-*.json /tmp/stat-*.txt /tmp/*-wait.txt /tmp/independent-final.txt; do
         [ -f "$file" ] || continue
-        name=$(basename "$file")
+        name="$prefix$(basename "$file")"
+        cp "$file" "/tmp/frozen-capture/$name"
+        file="/tmp/frozen-capture/$name"
         echo "RUSTUSB_MONITOR_FILE_BEGIN name=$name bytes=$(wc -c < "$file") sha256=$(sha256sum "$file" | awk '{print $1}')"
         base64 "$file"
         echo "RUSTUSB_MONITOR_FILE_END name=$name"
@@ -26,17 +30,29 @@ collect() {
 cleanup() {
     status=$?
     trap - EXIT
-    if [ -n "$WATCH_PID" ] && [ -e "/proc/$WATCH_PID" ]; then
-        kill -TERM "$WATCH_PID" 2>/dev/null || true
-        set +e; wait "$WATCH_PID"; result=$?; set -e
-        echo "$result" >/tmp/watch-cleanup-wait.txt
-    fi
-    if [ -n "$KERNEL_PID" ] && [ -e "/proc/$KERNEL_PID" ]; then
-        kill -INT "$KERNEL_PID" 2>/dev/null || true
-        set +e; wait "$KERNEL_PID"; result=$?; set -e
-        echo "$result" >/tmp/kernel-wait.txt
-    fi
-    collect
+    # Failure diagnostics are copied before waiting for any still-live child.
+    if [ "$status" != 0 ]; then collect early-; fi
+    for pid in "$WATCH_PID" "$KERNEL_PID"; do
+        [ -n "$pid" ] || continue
+        kill -TERM "$pid" 2>/dev/null || true
+    done
+    for kind in watch kernel; do
+        if [ "$kind" = watch ]; then pid=$WATCH_PID; else pid=$KERNEL_PID; fi
+        [ -n "$pid" ] || continue
+        for attempt in $(seq 1 40); do
+            [ ! -e "/proc/$pid/status" ] && break
+            grep -q '^State:.*Z' "/proc/$pid/status" && break
+            sleep 0.05
+        done
+        if [ -e "/proc/$pid/status" ] && ! grep -q '^State:.*Z' "/proc/$pid/status"; then
+            echo "RUSTUSB_MONITOR_FORCED_CHILD: $kind pid=$pid"
+            kill -KILL "$pid" 2>/dev/null || true
+            status=1
+        fi
+        set +e; wait "$pid"; result=$?; set -e
+        echo "$result" >"/tmp/$kind-cleanup-wait.txt"
+    done
+    collect ''
     if [ "$status" = 0 ]; then echo 'RUSTUSB_MONITOR_RESULT: PASS'; else echo "RUSTUSB_MONITOR_RESULT: FAIL stage=$STAGE exit=$status"; fi
     sync
     poweroff -f

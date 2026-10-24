@@ -97,3 +97,9 @@ Devices{watch:true}必须与Logs/Diagnostics及server入口一样进入owns_sign
 ## QEMU执行约束
 
 新fixture每次单guest，default/all两个构建选择分开记账，不把它们计为两端USB/IP或hardware。guest普通UID2000实际CLI读取root创建的可控QEMU键盘；独立udevadm kernel原件、sysfs stat/address及实际proc UID/ELF/socket分开采证。受控add、接口unbind/rebind、remove/reinsert同端口后必须核hint增长及非纯Periodic发布；最终真实TERM/wait及QMP清除测试设备。四guard只核source/head/status/binary，不冒充host USB状态采样。未注入ENOBUFS/永久OS阻塞，不宣称这些通过。实际运行结果在后续报告记录。
+
+## 首次QEMU fixture失败与修订
+
+clean47e3f63 default单guest到host deadline后forced收回，actual QEMU wait0仍FAIL，四guard均真；仅启动beacon，未取得热插拔/CLI执行证明。后置只读jq编译诊断确认`$end`为保留关键字，query错误被等待循环当暂未完整而重试。原raw/summary不改，不从guest exit0或源码推断观察通过。
+
+query先改非保留变量并以完整/partial模拟帧验证采证器（不计USBcases）。失败cleanup先冻结/输出诊断，再对两个原child发TERM并有界观察；辅助kernel reader从后台SIGINT改TERM，防止继承ignored INT而无限wait。若必须KILL记录forced且判FAIL；原真实wait仍保留。正向也须真实TERM/wait，不用采证改动减弱产品断言。
