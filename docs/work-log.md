@@ -766,3 +766,6 @@
 
 - cleanbec0b51完整gate通过380/472/20=872、51rows零失败忽略、206输入稳定；默认与secure Native依赖隔离通过，default无service/transport/engine/nusb。CLI0c09/helper0b68实际hash均变化，未沿用旧值。
 - 新实际CLI首次Current后INT负向FAIL，精确cancelled helper-operation DTO证明外层execute通用ctrl_c抢先；首夹具未持久化child waitcode，不补造。fresh第二旧CLI同0c09实际wait1/真实UID/ELF再现，原raw host device输出仅私有本地保留、公开只投影无设备body。先更新设计再窄修watch owns_signal_cleanup，随后需新clean完整gate/真实进程/QEMU，旧872仍锁bec。
+
+- 窄修后的clean c0346d6完整gate872/51rows、206输入稳定通过，CLI实际d048e41c…/helper0b68adf4…；同all CLI三真实process case全部PASS（INT0、满4096B stdout管道TERM0、实际stopped/closed/continued后EPIPE exit1且错误可见），实际UID/ELF/netlink源/写syscall/wchan/EOF/wait分账。宿主raw设备输出仅私有本地，公开清单排除所有.private目录；不把3过程计入872。
+- 新单guest QEMU fixture及独立kernel/sysfs/CLI采证先固定后运行，默认与all两构建分开，非原14paired仿真；CI新增同三process step。旧bec软件872/旧0c09 INT失败保留，不以新成功改判。

@@ -93,3 +93,7 @@ clean213ab92首完整gate在默认测试失败：periodic测试把新增Initiali
 clean bec软件872通过，仍不能替代进程验收。同一实际allfeatures CLI0c09的首次Current后SIGINT，被execute外层通用ctrl_c抢先裁决为helper-operation cancelled；第一次夹具未在断言前落child waitcode，原stderr/stdout私有原件保留，不补造。修正采证后fresh旧二进制负向实际wait1/原UID/ELF与精确cancelled DTO，确认是产品入口所有权错误。
 
 Devices{watch:true}必须与Logs/Diagnostics及server入口一样进入owns_signal_cleanup；内部观察owner处理INT/TERM且总join。Devices{watch:false}及其他既有命令契约保持。流式命令错误不追加通用pretty JSON对象破坏帧格式；按原owned模式stderr/exit报告。这个窄修后须新clean完整gate，872旧结果仍锁bec，不能改成已测试新产品。
+
+## QEMU执行约束
+
+新fixture每次单guest，default/all两个构建选择分开记账，不把它们计为两端USB/IP或hardware。guest普通UID2000实际CLI读取root创建的可控QEMU键盘；独立udevadm kernel原件、sysfs stat/address及实际proc UID/ELF/socket分开采证。受控add、接口unbind/rebind、remove/reinsert同端口后必须核hint增长及非纯Periodic发布；最终真实TERM/wait及QMP清除测试设备。四guard只核source/head/status/binary，不冒充host USB状态采样。未注入ENOBUFS/永久OS阻塞，不宣称这些通过。实际运行结果在后续报告记录。
