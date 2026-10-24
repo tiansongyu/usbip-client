@@ -63,8 +63,9 @@ def case(binary,out,withhold):
         if uid!=[str(os.geteuid())]*4 or executed!=digest(binary):raise RuntimeError('actual ordinary-user executable/identity differs')
         release.set();stdout,stderr=child.communicate(timeout=8)
         (out/'stdout').write_bytes(stdout);(out/'stderr').write_bytes(stderr)
+        (out/'wait.json').write_text(json.dumps({'command':command,'actual_exit':child.returncode,'actual_executable_sha256':executed})+'\n')
         if withhold:
-            if child.returncode!=1 or stdout.strip() or b'USB/IP discovery' not in stderr or b'timed out' not in stderr:raise RuntimeError('actual original discovery deadline not reported')
+            if child.returncode!=1 or json.loads(stdout)!={'ok':False,'error':'operation timed out: USB/IP discovery'} or b'failure="timeout"' not in stderr:raise RuntimeError('actual original discovery deadline not reported')
         elif child.returncode!=0 or json.loads(stdout)!=[]:raise RuntimeError('actual hostname DEVLIST output differs')
         result=dict(case='withheld-response' if withhold else 'hostname-catalog',command=command,result='PASS',exit=child.returncode,actual_executable_sha256=executed,actual_uid=int(uid[0]),elapsed_seconds=time.monotonic()-started,scope='Loopback synthetic management reply/timeout only; no USB/kernel or multi-address-set claim.')
     finally:
@@ -75,6 +76,7 @@ def case(binary,out,withhold):
             except subprocess.TimeoutExpired:child.kill();child.wait(timeout=2)
         for listener in listeners:listener.close()
         for thread in threads:thread.join(timeout=7)
+        (out/'cleanup.json').write_text(json.dumps({'actual_child_final_exit':child.returncode if child is not None else None,'server_threads_alive':sum(thread.is_alive() for thread in threads),'stop_requested':stop.is_set()})+'\n')
     if any(thread.is_alive() for thread in threads) or errors:raise RuntimeError('actual server ownership did not finish: '+repr(errors))
     if sum('request_hex' in row for row in observations)!=1 or not any(row.get('peer_eof_observed') for row in observations):raise RuntimeError('one actual request/peer EOF required')
     result['server_observations']=observations;result['all_server_threads_joined']=True

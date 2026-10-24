@@ -726,3 +726,5 @@
 - clean b5d3e92首产品Native-v4 raw及单独v2均host FAIL/guest0/四guard真：真实secure discovery仍超时，rawcap一条stale SYN连接、healthy0。842软件不替代安装态。当前实际resolver候选列表未采到，不先归因产品或NSS；加guarded std-only guestprobe，先保持原NSS配置采真实addresses/actualprobeSHA。旧ca63超时保原裁决，但缺候选集合不能直接称有效两候选counterfactual；如需NSS修订必须新clean并补正确旧产品对照。
 
 - 新clean636efa独立root stdprobe实际RAW_COUNT1，仅staleIPv6；actualprobeSHA吻合，host.conf absent。故此前ca63/b5未证明两候选，旧FAIL不改但撤销其“有效双候选旧产品对照”推论。固定glibc源码multi-off首匹配停止与现象一致，Ubuntu精确patch源码404限制保留。新guest-only multi on在所有新lookup前安装，UID2000probe核实际UID/ELF/候选及override缺失，绝不改宿主NSS；随后补正确旧产品counterfactual。
+
+- 追加legacy CLI loopback读目录/withheld-response两场景：首30b7611目录PASS，deadline夹具FAIL因错误期待stdout为空；实际--json既有失败DTO为{ok:false,error:operation timed out: USB/IP discovery}，stderr同timeout。未持久化首负向child waitcode，保留stdout/stderr/method与这一证据边界；修正为精确既有DTO并在断言前保存wait/cleanup，非产品改动，fresh目录重跑。

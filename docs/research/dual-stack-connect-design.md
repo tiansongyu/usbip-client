@@ -190,3 +190,10 @@ a withheld-response timeout, with real proc executable/UID receipts and final
 child reap/server-thread joins. This is separate from842 Cargo executions and
 from installed USB qualification. Add the same two-case fixture to native CI;
 no host NSS/USB mutation, public listener, new permission or package is needed.
+
+The first local legacy fixture passes catalog but fails its withheld-response
+assertion: existing `--json` failures emit the structured `{ok:false,error:...}`
+DTO on stdout, whereas the new fixture expected empty stdout. Actual stdout/
+stderr and method remain; its child wait code was not separately persisted
+before that assertion. Correct the exact existing DTO expectation and save
+wait/cleanup observations before judging a fresh run. Product code unchanged.
