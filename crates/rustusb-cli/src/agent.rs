@@ -66,9 +66,13 @@ pub(super) enum Command {
     Discover { profile: String },
 }
 
-pub(super) async fn run(path: PathBuf, command: Command) -> Result<()> {
+pub(super) async fn run(
+    path: PathBuf,
+    command: Command,
+    logs: Option<rustusb_logging::LogMonitor>,
+) -> Result<()> {
     if matches!(command, Command::Run) {
-        return serve(path).await;
+        return serve(path, logs).await;
     }
     let request = match command {
         Command::Run => return Err(Error::State("invalid agent dispatch".into())),
@@ -120,7 +124,7 @@ pub(super) async fn run(path: PathBuf, command: Command) -> Result<()> {
     Ok(())
 }
 
-async fn serve(path: PathBuf) -> Result<()> {
+async fn serve(path: PathBuf, logs: Option<rustusb_logging::LogMonitor>) -> Result<()> {
     let mut signals = ShutdownSignals::new()?;
     let mut loading = tokio::task::spawn_blocking(move || LoadedConfig::load(&path));
     let config = tokio::select! {
@@ -129,7 +133,7 @@ async fn serve(path: PathBuf) -> Result<()> {
         config=&mut loading=>config.map_err(|_|Error::State("agent startup task failed".into()))??,
     };
     let (sender, receiver) = watch::channel(false);
-    let service = rustusb_service::ipc::serve(config, receiver);
+    let service = rustusb_service::ipc::serve_with_logging(config, receiver, logs);
     tokio::pin!(service);
     let mut signal_error = None;
     loop {

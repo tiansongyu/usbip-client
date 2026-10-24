@@ -70,6 +70,15 @@ pub enum Request {
         /// Exclusive monotonic cursor.
         after: u64,
     },
+    /// Read projected process-log audit records independently of the business WAL.
+    ReadLogs {
+        /// Exact configured profile, requiring Audit rather than Read permission.
+        profile: String,
+        /// Complete-line continuation only; never authorization or a filesystem path.
+        after: Option<rustusb_logging::Cursor>,
+        /// Between one and sixteen records; scanned bytes are independently bounded.
+        limit: u8,
+    },
     /// Read the authenticated catalog of a fixed client profile.
     Discover {
         /// Fixed client profile ID; endpoint/device credentials cannot be overridden.
@@ -95,6 +104,46 @@ pub struct ProfileInfo {
     pub id: String,
     /// Fixed implementation selection.
     pub backend: Backend,
+}
+
+/// Fixed logging-only failures, independent of business journal health or cleanup.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum LogReadFailure {
+    /// Invalid bounded cursor or page input.
+    InvalidInput,
+    /// The private log store failed its filesystem trust checks.
+    Permission,
+    /// Preserved log history is malformed or ambiguous.
+    Corrupt,
+    /// Actual log filesystem I/O failed.
+    Io,
+    /// The finite actual reader and queue capacity is occupied.
+    Busy,
+    /// No file logging owner is available.
+    Disabled,
+    /// Checked logging is unavailable on this platform.
+    Unsupported,
+    /// The actual log worker failed.
+    Worker,
+    /// Logging lost records; business work may nevertheless have succeeded.
+    LostRecords,
+}
+
+impl From<&rustusb_logging::Error> for LogReadFailure {
+    fn from(error: &rustusb_logging::Error) -> Self {
+        match error {
+            rustusb_logging::Error::InvalidInput(_) => Self::InvalidInput,
+            rustusb_logging::Error::Permission(_) => Self::Permission,
+            rustusb_logging::Error::Corrupt(_) => Self::Corrupt,
+            rustusb_logging::Error::Io(_) => Self::Io,
+            rustusb_logging::Error::Busy => Self::Busy,
+            rustusb_logging::Error::Disabled => Self::Disabled,
+            rustusb_logging::Error::Unsupported => Self::Unsupported,
+            rustusb_logging::Error::Worker(_) => Self::Worker,
+            rustusb_logging::Error::LostRecords => Self::LostRecords,
+        }
+    }
 }
 
 /// A payload-free bounded local result.
@@ -154,6 +203,16 @@ pub enum Response {
         oldest_available: u64,
         /// The requested cursor predates retained history.
         gap: bool,
+    },
+    /// Authorized typed audit projection; never a business acknowledgement.
+    Logs {
+        /// Bounded records, scan continuation and independent logger status.
+        page: rustusb_logging::LogPage,
+    },
+    /// An authorized log read failed without changing business journal health.
+    LogError {
+        /// Fixed logger category, never an internal error string or path.
+        code: LogReadFailure,
     },
     /// Authenticated catalog; not proof a listed device successfully redirects.
     Catalog {

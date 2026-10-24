@@ -3,10 +3,10 @@
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod agent;
 
-#[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod event_output;
 #[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod foreground;
+mod logs;
 #[cfg(all(feature = "physical-nusb", target_os = "linux"))]
 mod physical_server;
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
@@ -15,7 +15,6 @@ mod secure_client;
 mod secure_foreground_tests;
 #[cfg(feature = "secure-transport")]
 mod secure_server;
-#[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod shutdown_signals;
 #[cfg(feature = "rust-backend")]
 mod virtual_server;
@@ -54,12 +53,23 @@ struct Cli {
     /// Emit JSON tracing logs on stderr.
     #[arg(long, global = true)]
     log_json: bool,
+    /// Write sanitized bounded NDJSON to an existing private directory instead of stderr.
+    #[arg(long, global = true, conflicts_with = "log_json")]
+    log_directory: Option<PathBuf>,
+    /// Segment byte limit (4096..=8388608); requires a file log directory.
+    #[arg(long,global=true,requires="log_directory",value_parser=clap::value_parser!(u64).range(4096..=8388608))]
+    log_max_bytes: Option<u64>,
+    /// Total retained segments including active (2..=16).
+    #[arg(long,global=true,requires="log_directory",value_parser=clap::value_parser!(u8).range(2..=16))]
+    log_retain: Option<u8>,
     #[command(subcommand)]
     command: Command,
 }
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Read sanitized stored logs or authorized agent audit projections.
+    Logs(logs::Args),
     /// Run or query the nonroot shared application service using fixed profiles.
     #[cfg(all(feature = "secure-transport", target_os = "linux"))]
     Agent {
@@ -271,10 +281,15 @@ async fn invoke(cli: &Cli, req: Request) -> Result<()> {
     output(&response.data)
 }
 
-async fn run(cli: Cli) -> Result<()> {
+async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<()> {
+    #[cfg(not(all(feature = "secure-transport", target_os = "linux")))]
+    let _ = &monitor;
     match &cli.command {
+        Command::Logs(args) => logs::run(args.clone(), cli.json).await,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
-        Command::Agent { config, command } => agent::run(config.clone(), command.clone()).await,
+        Command::Agent { config, command } => {
+            agent::run(config.clone(), command.clone(), monitor.clone()).await
+        }
         #[cfg(feature = "secure-transport")]
         Command::SecureServer {
             config,
@@ -388,6 +403,11 @@ async fn run(cli: Cli) -> Result<()> {
             tracing::info!(
                 device_count = devices.len(),
                 "local device discovery completed"
+            );
+            tracing::info!(
+                event_code = "discovery_completed",
+                device_count = devices.len(),
+                "local device scan completed"
             );
             if cli.json {
                 return output(&devices);
@@ -534,30 +554,75 @@ async fn run(cli: Cli) -> Result<()> {
     }
 }
 
-#[tokio::main]
-async fn main() -> ExitCode {
-    let cli = Cli::parse();
-    let json = cli.json;
-    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
-    let initialized = if cli.log_json {
-        tracing_subscriber::fmt()
-            .with_env_filter(filter)
-            .with_writer(io::stderr)
-            .json()
-            .try_init()
-    } else {
-        tracing_subscriber::fmt()
-            .with_env_filter(filter)
-            .with_writer(io::stderr)
-            .with_ansi(false)
-            .try_init()
+fn logging_options(cli: &Cli) -> rustusb_logging::Result<Option<rustusb_logging::Options>> {
+    let Some(directory) = cli.log_directory.clone() else {
+        return Ok(None);
     };
-    if let Err(error) = initialized {
-        eprintln!("logging initialization failed: {error}");
-        return ExitCode::FAILURE;
+    if matches!(cli.command, Command::Logs(_)) {
+        return Err(rustusb_logging::Error::InvalidInput(
+            "a log observer cannot enable a file writer",
+        ));
     }
+    let mut options = rustusb_logging::Options::new(directory);
+    if let Some(bytes) = cli.log_max_bytes {
+        options.segment_bytes = bytes;
+    }
+    if let Some(retained) = cli.log_retain {
+        options.retained_segments = retained;
+    }
+    options.validate()?;
+    Ok(Some(options))
+}
+
+fn main() -> ExitCode {
+    let cli = Cli::parse();
+    let options = match logging_options(&cli) {
+        Ok(options) => options,
+        Err(error) => {
+            eprintln!("logging initialization failed: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
+    // Checked blocking log startup precedes Tokio and any USB acquisition.
+    let logger = match rustusb_logging::initialize(options, cli.log_json) {
+        Ok(logger) => logger,
+        Err(error) => {
+            eprintln!("logging initialization failed: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
+    let monitor = logger.monitor();
+    let runtime = match tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+    {
+        Ok(runtime) => runtime,
+        Err(error) => {
+            eprintln!("runtime initialization failed: {error}");
+            if let Err(error) = logger.shutdown() {
+                eprintln!("logging shutdown failed before device work: {error}");
+            }
+            return ExitCode::FAILURE;
+        }
+    };
+    let operation = runtime.block_on(execute(cli, monitor));
+    // execute preserves the existing actual-owner cleanup tree. Only then may
+    // logging close admission, drain records and join its real file workers.
+    match logger.shutdown() {
+        Ok(_) => operation,
+        Err(error) => {
+            eprintln!(
+                "logging failed after the requested operation; inspect its result before retrying: {error}"
+            );
+            ExitCode::FAILURE
+        }
+    }
+}
+
+async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> ExitCode {
+    let json = cli.json;
     let owns_signal_cleanup = match &cli.command {
+        Command::Logs(_) => true,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent {
             command: agent::Command::Run,
@@ -577,10 +642,10 @@ async fn main() -> ExitCode {
         // The server must await its connection/lease tree on shutdown signals.
         // Racing it with the helper-client cancellation branch would drop that
         // cleanup future and incorrectly return a helper-operation diagnostic.
-        run(cli).await
+        run(cli, monitor).await
     } else {
         tokio::select! {
-            result=run(cli)=>result,
+            result=run(cli, monitor)=>result,
             signal=tokio::signal::ctrl_c()=>match signal {
                 Ok(())=>Err(Error::State("cancelled; an accepted helper operation may still complete. Inspect sessions/status before retrying".into())),
                 Err(e)=>Err(Error::Io(e)),
@@ -593,7 +658,7 @@ async fn main() -> ExitCode {
             if json && !owns_signal_cleanup {
                 let _ = output(&serde_json::json!({"ok":false,"error":error.to_string()}));
             }
-            tracing::error!(error=%error,"operation failed");
+            tracing::error!(event_code="operation_failed", failure=rustusb_logging::FailureCategory::from(&error).as_str(), error=%error,"operation failed");
             ExitCode::FAILURE
         }
     }

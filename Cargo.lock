@@ -778,6 +778,7 @@ dependencies = [
  "rustusb-core",
  "rustusb-daemon",
  "rustusb-linux",
+ "rustusb-logging",
  "rustusb-native",
  "rustusb-protocol",
  "rustusb-rust-backend",
@@ -809,6 +810,7 @@ dependencies = [
  "rustix",
  "rustusb-core",
  "rustusb-linux",
+ "rustusb-logging",
  "rustusb-native",
  "rustusb-protocol",
  "serde",
@@ -826,6 +828,21 @@ dependencies = [
  "rustusb-core",
  "sha2",
  "tempfile",
+]
+
+[[package]]
+name = "rustusb-logging"
+version = "0.1.0"
+dependencies = [
+ "rustix",
+ "rustusb-core",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -877,6 +894,7 @@ dependencies = [
  "rustix",
  "rustusb-core",
  "rustusb-daemon",
+ "rustusb-logging",
  "rustusb-native",
  "rustusb-protocol",
  "rustusb-rust-backend",

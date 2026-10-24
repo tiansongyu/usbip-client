@@ -44,6 +44,10 @@ pub(crate) struct Controls {
     shutdown_requested: bool,
 }
 impl Controls {
+    pub(crate) fn journal_healthy(&self) -> bool {
+        !self.journal_unhealthy
+    }
+
     fn register_job(&mut self, id: JobId, control: Control) {
         if self.shutdown_requested {
             control.stop.send_replace(true);
@@ -165,9 +169,18 @@ pub(crate) struct Runtime {
     workers: JoinSet<(JobId, Result<()>)>,
     recoveries: JoinSet<(SessionId, Vec<BrokerOperationStatus>)>,
     recovery_cursor: usize,
+    logging: Option<rustusb_logging::LogMonitor>,
 }
 impl Runtime {
     pub async fn open(config: Arc<LoadedConfig>, controls: Arc<Mutex<Controls>>) -> Result<Self> {
+        Self::open_with_logging(config, controls, None).await
+    }
+
+    pub async fn open_with_logging(
+        config: Arc<LoadedConfig>,
+        controls: Arc<Mutex<Controls>>,
+        logging: Option<rustusb_logging::LogMonitor>,
+    ) -> Result<Self> {
         let directory = config.manifest.data_directory.clone();
         let uid = config.manifest.broker_uid;
         let store = tokio::task::spawn_blocking(move || Store::open(&directory, uid))
@@ -187,6 +200,7 @@ impl Runtime {
             workers: JoinSet::new(),
             recoveries: JoinSet::new(),
             recovery_cursor: 0,
+            logging,
         };
         let mut next = value.state.clone();
         let mut changed = false;
@@ -295,6 +309,7 @@ impl Runtime {
         }
         self.checkpoint_links(&mut next)?;
         next.preflight(false)?;
+        let previous_sequence = self.state.sequence;
         let stored = next.clone();
         let store = self.store.clone();
         let result = tokio::task::spawn_blocking(move || {
@@ -309,6 +324,19 @@ impl Runtime {
         match result {
             Ok(()) => {
                 self.state = next;
+                // This is a best-effort mirror of an already committed fact.
+                // Admission never awaits logging and log loss never poisons WAL.
+                // A later registry failure cannot suppress this actual commit.
+                if let Some(logging) = &self.logging {
+                    for event in self
+                        .state
+                        .audit
+                        .iter()
+                        .filter(|event| event.sequence > previous_sequence)
+                    {
+                        logging.audit(project_audit(&self.instance, event));
+                    }
+                }
                 self.refresh_health()
             }
             Err(error) => {
@@ -555,6 +583,16 @@ impl Runtime {
             }
             Request::Events { profile, after } => self.events(uid, profile, after, false),
             Request::Audit { profile, after } => self.events(uid, profile, after, true),
+            Request::ReadLogs { profile, .. } => {
+                // Only denied reads use this path so they retain the existing
+                // durable denial audit. Authorized reads must never await WAL.
+                self.config
+                    .manifest
+                    .authorize(uid, &profile, Action::Audit)?;
+                Err(Error::State(
+                    "log reads require the independent IPC path".into(),
+                ))
+            }
             Request::Discover { profile } => {
                 self.config
                     .manifest
@@ -1304,6 +1342,56 @@ impl Runtime {
         {
             let _ = self.persist(next).await;
         }
+    }
+}
+fn project_audit(instance: &InstanceId, event: &AuditEvent) -> rustusb_logging::AuditProjection {
+    use rustusb_logging as logging;
+    logging::AuditProjection {
+        application_instance: instance.clone(),
+        audit_sequence: event.sequence,
+        actor_uid: event.actor_uid,
+        profile: event.profile.clone(),
+        job_id: event.job_id.clone(),
+        session_id: event.session_id.clone(),
+        action: match event.action {
+            AuditAction::Start => logging::AuditAction::Start,
+            AuditAction::Denied => logging::AuditAction::Denied,
+            AuditAction::Stop => logging::AuditAction::Stop,
+            AuditAction::Admission => logging::AuditAction::Admission,
+            AuditAction::Attempt => logging::AuditAction::Attempt,
+            AuditAction::Resource => logging::AuditAction::Resource,
+            AuditAction::Observe => logging::AuditAction::Observe,
+            AuditAction::Finish => logging::AuditAction::Finish,
+            AuditAction::Recovery => logging::AuditAction::Recovery,
+            AuditAction::Discover => logging::AuditAction::Discover,
+        },
+        failure: event.failure.map(|failure| match failure {
+            Failure::Permission => logging::FailureCategory::Permission,
+            Failure::InvalidInput => logging::FailureCategory::InvalidInput,
+            Failure::Io => logging::FailureCategory::Io,
+            Failure::Timeout => logging::FailureCategory::Timeout,
+            Failure::State => logging::FailureCategory::State,
+            Failure::Unsupported => logging::FailureCategory::Unsupported,
+            Failure::Cancelled => logging::FailureCategory::Cancelled,
+            Failure::Persistence => logging::FailureCategory::Persistence,
+        }),
+        state: event.state,
+        evidence: event.evidence.map(|evidence| match evidence {
+            Evidence::Intent => logging::Evidence::Intent,
+            Evidence::Prepared => logging::Evidence::Prepared,
+            Evidence::LocalEnumeration => logging::Evidence::LocalEnumeration,
+            Evidence::ExportReady => logging::Evidence::ExportReady,
+            Evidence::ImportReplyFlushed => logging::Evidence::ImportReplyFlushed,
+            Evidence::Closing => logging::Evidence::Closing,
+            Evidence::Released => logging::Evidence::Released,
+            Evidence::Unconfirmed => logging::Evidence::Unconfirmed,
+            Evidence::RootJournalProof => logging::Evidence::RootJournalProof,
+        }),
+        cleanup: event.cleanup.map(|cleanup| match cleanup {
+            Cleanup::NotStarted => logging::Cleanup::NotStarted,
+            Cleanup::Verified => logging::Cleanup::Verified,
+            Cleanup::Unconfirmed => logging::Cleanup::Unconfirmed,
+        }),
     }
 }
 fn denied() -> Error {

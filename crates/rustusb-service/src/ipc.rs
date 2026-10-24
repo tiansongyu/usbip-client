@@ -1,7 +1,7 @@
 //! Bounded local transport authenticated with kernel Unix peer credentials.
 
 use crate::{
-    config::{LoadedConfig, Manifest},
+    config::{Action, LoadedConfig, Manifest},
     fs::Directory,
     rpc::*,
     runtime::{Command, Controls, Runtime},
@@ -101,7 +101,18 @@ fn socket_identity(directory: &File, uid: u32) -> Result<Option<(u64, u64)>> {
 
 /// Run the nonroot application service until cooperative stop and actual job cleanup.
 /// The caller must await this future; cancelling its owning task is not cleanup.
-pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Result<()> {
+pub async fn serve(config: LoadedConfig, stop: watch::Receiver<bool>) -> Result<()> {
+    serve_with_logging(config, stop, None).await
+}
+
+/// Run with a nonowning logger monitor for authorized reads and committed audit mirrors.
+/// The caller retains the actual log owner and joins it after this service's USB
+/// owners and durable records finish. Log health never substitutes for WAL health.
+pub async fn serve_with_logging(
+    config: LoadedConfig,
+    mut stop: watch::Receiver<bool>,
+    logging: Option<rustusb_logging::LogMonitor>,
+) -> Result<()> {
     if rustix::process::geteuid().as_raw() != config.manifest.broker_uid
         || config.manifest.broker_uid == 0
     {
@@ -111,7 +122,12 @@ pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Res
     }
     let config = Arc::new(config);
     let controls = Arc::new(Mutex::new(Controls::default()));
-    let runtime = Runtime::open(config.clone(), controls.clone()).await?;
+    let runtime = match logging.clone() {
+        Some(monitor) => {
+            Runtime::open_with_logging(config.clone(), controls.clone(), Some(monitor)).await?
+        }
+        None => Runtime::open(config.clone(), controls.clone()).await?,
+    };
     let endpoint = Endpoint::bind(&config.manifest).await?;
     let (sender, receiver) = mpsc::channel(16);
     let (shutdown, shutdown_receiver) = watch::channel(*stop.borrow());
@@ -133,8 +149,8 @@ pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Res
                 accepted=endpoint.listener.accept()=>{
                     let (stream,_)=match accepted{Ok(pair)=>pair,Err(error)=>{accept_error=Some(error);break;}};
                     let Ok(permit)=permits.clone().try_acquire_owned()else{drop(stream);continue;};
-                    let sender=sender.clone();let config=config.clone();let controls=controls.clone();
-                    requests.spawn(async move{let _permit=permit;let _=tokio::time::timeout(DEADLINE,request(stream,sender,config,controls)).await;});
+                    let sender=sender.clone();let config=config.clone();let controls=controls.clone();let logging=logging.clone();
+                    requests.spawn(async move{let _permit=permit;let _=tokio::time::timeout(DEADLINE,request(stream,sender,config,controls,logging)).await;});
                 },
             }
         }
@@ -190,17 +206,68 @@ pub(crate) fn request_shutdown(
     result
 }
 
-async fn request(
+pub(crate) async fn request(
     mut stream: UnixStream,
     sender: mpsc::Sender<Command>,
     config: Arc<LoadedConfig>,
     controls: Arc<Mutex<Controls>>,
+    logging: Option<rustusb_logging::LogMonitor>,
 ) -> Result<()> {
     let uid = stream.peer_cred()?.uid();
     let envelope: RequestEnvelope = serde_json::from_slice(&read_frame(&mut stream).await?)
         .map_err(|_| Error::InvalidInput("agent request schema".into()))?;
     if envelope.schema_version != 1 {
         return Err(Error::InvalidInput("agent protocol version".into()));
+    }
+    if let Request::ReadLogs {
+        profile,
+        after,
+        limit,
+    } = &envelope.request
+        && config
+            .manifest
+            .authorize(uid, profile, Action::Audit)
+            .is_ok()
+    {
+        // Authorization precedes cursor/history evaluation and reader admission.
+        // Every authorized result bypasses WAL, including Busy/disabled/errors.
+        // The logging owner retains real readers after this RPC is cancelled.
+        let result = if !(1..=rustusb_logging::MAX_PAGE_RECORDS).contains(limit) {
+            Err(rustusb_logging::Error::InvalidInput("log page limit"))
+        } else if let Some(monitor) = logging.as_ref() {
+            monitor
+                .read(
+                    rustusb_logging::ReadFilter::Audit {
+                        profile: profile.clone(),
+                        actor_uid: uid,
+                        root_admin: uid == 0,
+                    },
+                    after.clone(),
+                    *limit,
+                )
+                .await
+        } else {
+            Err(rustusb_logging::Error::Disabled)
+        };
+        let response = match result {
+            Ok(page) => Response::Logs { page },
+            Err(error) => Response::LogError {
+                code: LogReadFailure::from(&error),
+            },
+        };
+        // No Controls/Store guard is held during filesystem I/O. The envelope
+        // reports current business health, independently of the logger result.
+        let journal_healthy = controls
+            .lock()
+            .map_err(|_| Error::State("agent controls lock poisoned".into()))?
+            .journal_healthy();
+        let bytes = serde_json::to_vec(&ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy,
+            response,
+        })
+        .map_err(|_| Error::State("agent log response encoding".into()))?;
+        return write_frame(&mut stream, &bytes).await;
     }
     // Health reads are independent of a stalled WAL actor. Authorization and
     // the finite registry are still the same fixed-profile OS-UID boundary.

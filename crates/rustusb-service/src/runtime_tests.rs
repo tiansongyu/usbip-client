@@ -10,6 +10,9 @@ use std::{collections::BTreeSet, os::unix::fs::PermissionsExt, path::PathBuf};
 
 const PROFILE: &str = "fixed-profile";
 
+#[path = "runtime_logging_tests.rs"]
+mod logging;
+
 // Real production stop delivery and store await, with ordinary owned Unix
 // endpoints as resource witnesses. This is not a helper/kernel USB test.
 #[tokio::test]
@@ -267,6 +270,7 @@ impl Fixture {
             workers: JoinSet::new(),
             recoveries: JoinSet::new(),
             recovery_cursor: 0,
+            logging: None,
         };
         Ok(Self {
             root,

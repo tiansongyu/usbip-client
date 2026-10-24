@@ -572,3 +572,7 @@
 - 本轮重新读取AGENTS/项目RustUSB skill、架构及应用服务/安全契约，三agent只读并行核对无独立proof的Rust崩溃协调、4.11持久日志/轮转/诊断与G3凭据负向矩阵，root保留统一设计、Git/build/QEMU职责。当前尚未修改产品或宣告新验收；下一项按实际源码缺口选择，避免重复已通过旧矩阵或提前跳到TUI/GUI。
 
 - 已选择原4.11缺失的真实日志轮转/读取，而不是重复旧矩阵：先落rotating-logs-design.md。固定tracing-appender0.2.5与file-rotate0.8源审计表明bare guard/普通writer不满足stdout、显式错误与实际join/安全open契约，因此沿成熟tracing/subscriber加薄的checked有界sink，无新外部依赖。设计复核先明确file-only模式与--log-json互斥，避免满stderr耦合文件进度；access flock每操作fresh OFD；授权logs错误/Busy也不回WAL；audit镜像在commit/state替换后、可失败healthrefresh前，无准入或proof权力。尚无此新功能运行PASS。
+
+- 新共享rustusb-logging及CLI/helper/service接线已实现；启动file-only与--log-json互斥，外层同步main在Tokio/设备前打开logger，既有async所有者清理后实际join writer/两reader。schema1业务WAL/授权不变，新增ReadLogs/LogError仅原Audit权限；commit/state替换后再投递typed镜像。首dev actual22日志+4服务及CLIall-targets/check通过、177输入稳定；root随后加2严格JSON/游标负向及只读取消总join。
+- 首完整gate在default Clippy的reader collapsible-if FAIL，0测试执行；窄修后单独allfeatures Clippy在CLI同类样式FAIL，均177源稳定/原日志保留，不放宽lint或测试。两处style-only改完后第二完整bash-x门禁全部PASS：308default+395allfeatures+20vendor=723次、43result、零失败忽略；177输入前后恒同。Native-only check/tree通过，实际CLI6cc828f3…/helperbb0ea543…工具/ELF收据保留；actual为dirty48a4，后续逐Gitblob映射不冒充clean。锁解析仅加内部crate及三条本地依赖，外部package版本/checksum全未变，license inventory159已更新。
+- 真实subprocess runner首静态版本33317B保存；I发现finally单项采证异常可掩盖primary FAIL，H修为38064B/c876cf05，首版本、独立review、11构造采证异常与新source保留。此前静态检查不计真实CLI；下一步在隔离clean产品checkpoint运行新六场景和同ELF旧四signal/两背压，再做聚焦installed日志QEMU，不重复旧23当新增覆盖。

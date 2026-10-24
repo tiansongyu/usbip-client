@@ -43,6 +43,18 @@ impl EventOutput {
             return Err(Error::State("server event exceeds output limit".into()));
         }
         bytes.push(b'\n');
+        self.bytes(bytes).await
+    }
+
+    /// Send bounded already-rendered text through the same stdout owner/deadline.
+    pub(super) async fn text(&mut self, text: String) -> Result<()> {
+        if text.len() >= 65_536 {
+            return Err(Error::State("log text exceeds output limit".into()));
+        }
+        self.bytes(text.into_bytes()).await
+    }
+
+    async fn bytes(&mut self, bytes: Vec<u8>) -> Result<()> {
         let (complete, receipt) = oneshot::channel();
         self.in_flight = true;
         let result = tokio::time::timeout(Duration::from_secs(5), async {
