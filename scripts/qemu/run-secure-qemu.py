@@ -552,7 +552,7 @@ def verify(evidence, args):
     return facts
 
 
-def main():
+def main(coordinate=None, scope=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kernel", default=os.uname().release)
     parser.add_argument("--backend", choices=["virtual", "usbfs", "native"], required=True)
@@ -568,7 +568,7 @@ def main():
     summary = {"schema_version": 1, "result": "FAIL", "backend": args.backend, "family": args.family,
                "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "head": git("rev-parse", "HEAD"),
                "git_status_before": git("status", "--porcelain"), "source_inputs": inputs(),
-               "scope": "two disposable QEMU guests, dedicated UID2000 actual secure CLI; simulated devices only; virtual/USBFS/Native x IPv4/IPv6 are six independent runs, no hardware claim",
+               "scope": scope or "two disposable QEMU guests, dedicated UID2000 actual secure CLI; simulated devices only; virtual/USBFS/Native x IPv4/IPv6 are six independent runs, no hardware claim",
                "build_features": "--workspace --all-features --release --locked", "build_skipped": args.skip_build}
     processes, handles, connections = {}, [], {}
     qmp = ftdi = None
@@ -657,6 +657,8 @@ def main():
                     kernel = (evidence / f"{role}-serial.log").read_text(errors="replace")
                     if "Kernel panic" in kernel or "Oops:" in kernel: raise RuntimeError(f"{role} kernel fault")
                 keys = re.search(r"^SECURE_KEYS (\[.*\])$", logs["server"], re.M)
+                if coordinate is not None:
+                    coordinate(logs, send_once, evidence, args)
                 if keys: send_once("keys", "client", keys[1])
                 if "SECURE_SERVER_READY\n" in logs["server"] and "keys" in sent: send_once("start", "client", "START")
                 if ftdi:
