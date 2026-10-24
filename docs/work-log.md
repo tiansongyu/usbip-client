@@ -565,3 +565,10 @@
 - 本轮为原完整目标的可验证进展：实现准备期metadata ACK停顿下真实资源停止并补accepted initializer/local stop证据，英文README/site与全局skill保留已交付状态。真实硬件G1/G2、内核内部active/永久hardblock、无独立proof的Rust崩溃session、长期轮转及完整Phase3/后续阶段继续未完成，goal保持active。最后仅提交发布回执/引用/此日志并普通push，再核远端HEAD和clean；产品167与网站六源保持不变。
 
 - 最后发布引用补验使用全新delivery-doc-links路径，17文档399本地target/表格、145site/Node/diff全部PASS；39外链未全抓。新QA原件追加本次尚未提交的发布manifest，再逐original/bytes/SHA/staged blob核，未覆盖先前已提交396报告。只读发布方法初版保留CIinprogress，终版26状态/来源诊断另文件确认四格/Pages成功，不重算667；七份consulted原件前后SHA保持。
+
+### 2026-10-24：Phase 3 后续能力审计
+
+- 上一goal turn属于实际进展：准备期记录停止产品8ec、667软件/clean1582二十三QEMU/四原生CI及英文README/site发布，最终bd6e08b已普通push且本轮检查primary clean。已重新完整阅读原附件，原Phase0–7与真实日常USB共享目标保持；用户QEMU选择不被改写为真实硬件G1/G2通过。
+- 本轮重新读取AGENTS/项目RustUSB skill、架构及应用服务/安全契约，三agent只读并行核对无独立proof的Rust崩溃协调、4.11持久日志/轮转/诊断与G3凭据负向矩阵，root保留统一设计、Git/build/QEMU职责。当前尚未修改产品或宣告新验收；下一项按实际源码缺口选择，避免重复已通过旧矩阵或提前跳到TUI/GUI。
+
+- 已选择原4.11缺失的真实日志轮转/读取，而不是重复旧矩阵：先落rotating-logs-design.md。固定tracing-appender0.2.5与file-rotate0.8源审计表明bare guard/普通writer不满足stdout、显式错误与实际join/安全open契约，因此沿成熟tracing/subscriber加薄的checked有界sink，无新外部依赖。设计复核先明确file-only模式与--log-json互斥，避免满stderr耦合文件进度；access flock每操作fresh OFD；授权logs错误/Busy也不回WAL；audit镜像在commit/state替换后、可失败healthrefresh前，无准入或proof权力。尚无此新功能运行PASS。
