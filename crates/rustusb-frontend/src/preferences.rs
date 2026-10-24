@@ -61,7 +61,8 @@ impl Settings {
     pub fn directory(&self) -> &Path {
         &self.directory
     }
-    pub(crate) fn saved(&self) -> Option<Options> {
+    /// Last successfully checked preferences, without loading files.
+    pub fn saved(&self) -> Option<Options> {
         self.saved
     }
     pub(crate) fn save(&mut self, options: Options) -> Result<()> {

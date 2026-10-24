@@ -3,38 +3,14 @@
 //! This frontend never owns USB resources. Closing it leaves service jobs running.
 #![cfg(target_os = "linux")]
 
-mod preferences;
-pub use preferences::Settings;
-
-mod state;
+pub use rustusb_frontend::{Options, Settings};
+use rustusb_frontend::{state, worker};
 mod terminal;
-mod worker;
 
 use rustusb_core::{Error, Result};
 use rustusb_service::config::Manifest;
 use std::sync::Arc;
 use tokio::sync::{mpsc, watch};
-
-/// Frontend preferences; never administrator policy or automatic device actions.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Options {
-    /// Seconds after a completed refresh, in 2..=120.
-    pub refresh_seconds: u64,
-    /// Poll the selected profile automatically.
-    pub auto_refresh: bool,
-    /// Use text emphasis without application colors.
-    pub monochrome: bool,
-}
-impl Default for Options {
-    fn default() -> Self {
-        Self {
-            refresh_seconds: 2,
-            auto_refresh: true,
-            monochrome: false,
-        }
-    }
-}
 
 /// Run until quit, terminal failure or cooperative stop, then join actual observers.
 ///

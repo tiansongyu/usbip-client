@@ -440,7 +440,11 @@ async fn remote_next(
         None => std::future::pending().await,
     }
 }
-pub(crate) async fn run(
+/// Run the single shared worker until sticky stop or command-channel closure.
+/// Callers retain and await this future through shutdown; an issued mutation and
+/// accepted filesystem work are never discarded. Inputs must be bounded/validated
+/// by the frontend. Every actual request is independently authorized by the agent.
+pub async fn run(
     manifest: Arc<Manifest>,
     mut requests: mpsc::Receiver<Envelope>,
     sender: watch::Sender<Snapshot>,

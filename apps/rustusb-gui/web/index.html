@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RustUSB</title><link rel="stylesheet" href="app.css"><script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to device workspace</a>
+<aside class="rail" aria-label="Application navigation">
+  <div class="brand"><span class="brand-mark" aria-hidden="true">R</span><span>RustUSB<small>DEVICE CONSOLE</small></span></div>
+  <nav id="navigation" aria-label="Pages"></nav>
+  <div class="rail-foot"><span class="dot" aria-hidden="true"></span>Ordinary user<br><small>Linux · local agent</small></div>
+</aside>
+<div class="workspace">
+  <header class="toolbar">
+    <label class="profile-control">Profile <select id="profile" aria-label="Authorized service profile"><option value="">Loading…</option></select></label>
+    <span id="journal" class="quiet">Journal not sampled</span>
+    <div class="toolbar-actions"><button id="refresh">Refresh</button><button id="start" class="primary" disabled>Start profile</button></div>
+  </header>
+  <main id="main" tabindex="-1">
+    <div class="page-heading"><div><p class="eyebrow">WORKSPACE</p><h1 id="page-title">Local devices</h1></div><span id="inventory-count" class="quiet"></span></div>
+    <p id="status" class="status" role="status" aria-live="polite">Connecting to the configured agent…</p>
+    <p id="notice" class="notice" role="alert" hidden></p>
+    <div id="search-bar" class="search-bar"><label for="search">Search devices</label><input id="search" type="search" autocomplete="off" placeholder="Name, VID:PID or Bus ID"><label class="check"><input id="eligible" type="checkbox">Eligible only</label><button id="details-toggle" aria-expanded="false">Show details</button></div>
+    <div id="content"></div>
+  </main>
+  <footer><span id="section-status">Waiting for the first observation</span><span>Discovery ≠ verified redirection</span></footer>
+</div>
+<dialog id="confirmation" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+  <form method="dialog"><p class="eyebrow">CONFIRM ACTION</p><h2 id="confirm-title"></h2><p id="confirm-description"></p><div class="dialog-actions"><button value="cancel" autofocus>Cancel</button><button id="confirm-action" value="confirm" class="danger">Confirm</button></div></form>
+</dialog>
+</body></html>

@@ -1,0 +1,45 @@
+[package]
+name = "rustusb-gui"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97"
+license = "MIT"
+description = "Ordinary-user native frontend for RustUSB's authorized application service"
+repository = "https://github.com/tiansongyu/usbip-client"
+
+[workspace]
+resolver = "3"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "=2.7.4", default-features = false, features = ["config-json"] }
+
+[dependencies]
+tauri = { version = "=2.12.5", default-features = false, features = ["wry", "x11", "dbus"] }
+rustusb-discovery = { path = "../../crates/rustusb-discovery" }
+rustusb-core = { path = "../../crates/rustusb-core" }
+rustusb-service = { path = "../../crates/rustusb-service" }
+rustusb-frontend = { path = "../../crates/rustusb-frontend" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "signal"] }
+rustix = { version = "1", features = ["process"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+clap = { version = "4", features = ["derive"] }
+
+[dev-dependencies]
+glib = "=0.18.5"
+
+[patch.crates-io]
+glib = { path = "vendor/glib" }
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"

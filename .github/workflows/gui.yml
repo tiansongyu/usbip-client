@@ -1,0 +1,41 @@
+name: RustUSB native GUI checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-24.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: aarch64
+          - os: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the pinned Rust toolchain and native WebView prerequisites
+        run: |
+          rustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+      - name: Verify architecture and actual GTK/WebKit versions
+        run: |
+          test "$(uname -m)" = "${{ matrix.arch }}"
+          uname -a
+          cat /etc/os-release
+          rustc -vV
+          pkg-config --modversion gtk+-3.0 webkit2gtk-4.1
+      - name: GUI formatting, Clippy, tests, release and rustdoc
+        run: scripts/check-gui.sh

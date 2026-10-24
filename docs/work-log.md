@@ -1,5 +1,14 @@
 # RustUSB 工作日志
 
+## 2026-10-25：原生GUI实现（开始）
+
+- 上一轮E48与Phase5研究为实际进展；从clean7498ff40重读完整原任务、Git/AGENTS/核心skill/工作日志和固定Tauri/Linux研究。目标仍为完整Phase0–7；原英文README/展示站/全局skill保持。使用frontend-design/ui-ux-pro-max/writing-technical-design与技术文档指导，先写native-gui-design.md，保留自动规则/包/systemd/安装及硬件门槛。
+- 按设计skill明确要求委派独立GLib组件修复/探针，仅/tmp工作；定位0429是g_variant_get_child输出指针可变性，而非原先假设的生命周期逃逸（原/补丁均正确拒绝逃逸）。候选两行补丁与上游05dff0ee文件一致，独立测试通过，未执行旧受影响方法。将用独立GUI workspace、普通用户/真实agent API/显式ACL/有界pull/accepted work实际join，不新增USB能力。尚未声明GUI build/runtime/QEMU或完整Phase5通过。
+
+- 实际抽出rustusb-frontend共享state/worker/checked preferences，TUI保持原run/Options/Settings接口；首TUI/共享测试通过。GUI四测试首3/4：Serde内部tag的unit变体忽略额外字段，改为空struct变体后4/4；加入实际GUI依赖图的GLib6/6。独立workspace+锁定Tauri/本地GLib两行补丁/显式AppManifest与local main ACL/CSP/导航弹窗拒绝/有限操作准入/数字字符串与完整512KiB投影、64KiB详情，不新增USB权限。
+- 首native host实际GUI启动panic（runtime外求值spawn_blocking）；原driver/方法保留，修为runtime.spawn_blocking。夹具b全局日期替换误改driver路径、c将preferences放/tmp触发真实安全拒绝、d误设MiniBrowser能力不匹配均保留。e依官方driver映射不传browserName并等X socket，真实UID1000 WebView+IPC/read-only inventory成功，截图已查看，SIGTERM实际进程消失且local worker joined；此为dirty开发smoke/agent不可达，不冒充最终QEMU。首GUI gate因移入GLib集成测试缺crate文档失败，补文档后第二完整GUI gate通过；未压制原GLib34条新Rust lifetime依赖警告。
+- 六页面已实现真实共享状态、设备搜索与generation详情、原请求重试、精确stop确认、独立RTT观测、audit分页、保存/重载checked preferences；GUI自己的四Ubuntu/架构CI已加入，不让根workspace检查代替。准备native QEMU真实Read/Audit-only agent拒绝、热插拔、renderer reload保UUID、实际child wait/截图；尚未执行，不宣称完整Phase5或active-job/安装/硬件通过。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

@@ -1,0 +1,208 @@
+'use strict';
+(() => {
+  const invoke = window.__TAURI__?.core.invoke;
+  const $ = id => document.getElementById(id);
+  const pages = ['Local devices', 'Remote devices', 'Connections', 'Activity', 'System', 'Settings'];
+  let view = null, page = 0, selected = null, detail = null, detailKey = null;
+  let waiting = null, dispatching = false, query = '', eligible = false, showDetails = false, destroyed = false;
+  const node = (tag, text, className) => {
+    const element = document.createElement(tag);
+    if (text !== undefined && text !== null) element.textContent = String(text);
+    if (className) element.className = className;
+    return element;
+  };
+  const notice = message => { $('notice').textContent = String(message); $('notice').hidden = false; };
+  const busy = () => dispatching || waiting !== null;
+  async function action(command) {
+    if (busy()) { notice('An accepted action is still pending. Wait for its result.'); return; }
+    dispatching = true; updateControls(); $('notice').hidden = true;
+    try { waiting = await invoke('gui_action', { action: command }); }
+    catch (error) { notice(error); }
+    finally { dispatching = false; updateControls(); }
+  }
+  function updateControls() {
+    const disabled = busy() || !view;
+    $('refresh').disabled = disabled;
+    $('profile').disabled = disabled || !view?.profiles?.length;
+    $('start').disabled = disabled || !view?.profile;
+    $('start').textContent = view?.unresolved ? 'Resolve original start' : 'Start profile';
+    document.querySelectorAll('[data-action]').forEach(button => { button.disabled = disabled; });
+  }
+  async function confirm(title, description, command) {
+    if (busy()) return;
+    $('confirm-title').textContent = title; $('confirm-description').textContent = description;
+    const dialog = $('confirmation'); dialog.returnValue = 'cancel';
+    dialog.showModal();
+    dialog.querySelector('[value="cancel"]').focus();
+    await new Promise(resolve => dialog.addEventListener('close', resolve, { once: true }));
+    if (dialog.returnValue === 'confirm') await action(command);
+  }
+  const button = (label, callback, className) => {
+    const item = node('button', label, className); item.type = 'button'; item.dataset.action = 'true';
+    item.addEventListener('click', callback); item.disabled = busy(); return item;
+  };
+  function table(headers, rows) {
+    const result = node('table'); const head = node('thead'); const tr = node('tr');
+    headers.forEach(label => { const th = node('th', label); th.scope = 'col'; tr.append(th); });
+    head.append(tr); result.append(head); const body = node('tbody');
+    rows.forEach(row => { const tr = node('tr'); row.forEach(cell => { const td = node('td'); td.append(cell instanceof Node ? cell : node('span', cell ?? 'Unavailable')); tr.append(td); }); body.append(tr); });
+    result.append(body); return result;
+  }
+  const empty = text => node('p', text, 'empty');
+  const json = value => node('pre', JSON.stringify(value, null, 2), 'json-detail');
+  const matches = value => JSON.stringify(value).toLowerCase().includes(query.toLowerCase());
+  function renderInventory() {
+    const local = page === 0, snapshot = local ? view.local : view.remote;
+    const devices = snapshot?.devices;
+    const items = devices?.filter(d => matches(d) && (!eligible || (local && d.eligible)));
+    $('inventory-count').textContent = devices ? `${items.length} of ${devices.length} observed` : 'Not sampled';
+    const content = $('content'); const layout = node('div', null, `inventory-layout${showDetails ? ' show-details' : ''}`);
+    const list = node('div', null, 'table-wrap'); const panel = node('aside', null, 'detail'); panel.setAttribute('aria-label', 'Selected device details');
+    if (!devices) list.append(empty(local ? 'Waiting for local inventory. See the observation status below.' : 'No remote inventory sampled. A client profile and Discover permission are required.'));
+    else if (!items.length) list.append(empty(devices.length ? 'No devices match this filter.' : 'The latest completed observation contains no devices.'));
+    else {
+      const rows = items.map(d => {
+        const key = local ? d.key : `${snapshot.instance}:${d.device_key}:${d.device.bus_id}:${d.device.device_number}`;
+        const name = node('div'); const select = node('button', local ? d.name : d.device_key, 'device-name');
+        select.type = 'button'; select.dataset.focus = key; select.setAttribute('aria-pressed', String(selected === key));
+        select.addEventListener('click', () => { selected = key; detail = local ? null : d; detailKey = local ? null : key; renderPage(); if (local) loadDetail(key); });
+        name.append(select, node('span', local ? d.vid_pid : d.device_key, 'subline'));
+        const state = local ? (d.exported ? 'Exported' : d.eligible ? 'Eligible candidate' : 'Review blockers') : 'Advertised only';
+        const badge = node('span', state, `badge${local && !d.eligible ? ' warn' : ''}`);
+        return [name, local ? d.bus_id : d.device.bus_id, local ? `${d.speed} Mbit/s` : d.device.device_number, badge];
+      });
+      const grid = table(['Device', 'Bus ID', local ? 'Speed' : 'Address', 'Observation'], rows);
+      [...grid.tBodies[0].rows].forEach((row, i) => { const key = local ? items[i].key : `${snapshot.instance}:${items[i].device_key}:${items[i].device.bus_id}:${items[i].device.device_number}`; row.classList.toggle('selected', selected === key); });
+      list.append(grid);
+    }
+    panel.append(node('h2', 'Device details'));
+    const current = devices?.some(d => (local ? d.key : `${snapshot.instance}:${d.device_key}:${d.device.bus_id}:${d.device.device_number}`) === selected);
+    if (!current) { selected = null; detail = null; detailKey = null; panel.append(empty('Select an observed device to inspect its descriptors and generation.')); }
+    else if (detailKey === selected && detail) panel.append(json(detail));
+    else panel.append(empty('Reading bounded metadata…'));
+    panel.append(node('p', 'Selecting a row does not change the fixed devices in the administrator’s profile.', 'hint'));
+    layout.append(list, panel); content.append(layout);
+    $('section-status').textContent = local ? view.local_status : view.remote_status;
+    $('eligible').disabled = !local;
+  }
+  async function loadDetail(key) {
+    try {
+      const result = await invoke('gui_detail', { key });
+      if (selected === key && page === 0) { detail = result; detailKey = key; renderPage(); }
+    } catch (error) { if (selected === key) { detail = { status: String(error) }; detailKey = key; renderPage(); } }
+  }
+  function pager(section, next) {
+    const bar = node('div', null, 'pager');
+    bar.append(button('First page', () => action({ action: 'page', section, next: false })), button('Next page', () => action({ action: 'page', section, next: true })));
+    bar.lastChild.disabled = busy() || !next; return bar;
+  }
+  function renderConnections() {
+    const content = $('content');
+    for (const [title, items, section, status] of [['Jobs', view.jobs, 'jobs', view.jobs_status], ['Device sessions', view.sessions, 'sessions', view.sessions_status]]) {
+      const block = node('section', null, 'block'); block.append(node('h2', title), node('p', status, 'section-note'));
+      if (!items.length) block.append(empty('No records in this sampled page.'));
+      else block.append(table(['Identity', 'State / evidence', 'Result / cleanup', 'Action'], items.map(item => {
+        const identity = node('div', item.id, 'data-id'); identity.append(node('span', item.device_key || item.profile, 'subline'));
+        const state = node('div', item.state); if (item.evidence) state.append(node('span', `${item.role} · ${item.evidence}`, 'subline'));
+        const result = node('div', `Error: ${item.operation_error || 'none observed'}`); if (section === 'sessions') result.append(node('span', `Cleanup: ${item.cleanup || 'not reported'}`, 'subline'));
+        const stop = button('Request stop', () => confirm('Request cooperative stop?', `Exact ${section === 'jobs' ? 'job' : 'session'} ${item.id}. Acceptance does not prove device release.`, { action: section === 'jobs' ? 'stop_job' : 'stop_session', id: item.id }));
+        return [identity, state, result, stop];
+      })));
+      block.append(pager(section, section === 'jobs' ? view.next_job : view.next_session)); content.append(block);
+    }
+    const health = node('section', null, 'block'); health.append(node('h2', 'Data-link health'), node('p', 'Independent link samples; raw-v1 has no heartbeat RTT. A transport reply does not prove USB completion.', 'section-note'));
+    if (!view.health.length) health.append(empty('No link-health sample available.'));
+    else view.health.forEach(item => { const details = node('details'); details.append(node('summary', `${item.session_id} · ${item.availability}`), node('p', item.link?.last_round_trip_micros == null ? 'RTT unavailable' : `Last enqueue-to-reply RTT: ${item.link.last_round_trip_micros} µs`, 'section-note'), json(item)); health.append(details); });
+    content.append(health); $('section-status').textContent = 'Jobs, sessions and link health are sampled independently';
+  }
+  function renderActivity() {
+    const content = $('content'); content.append(node('p', view.audit_status, 'section-note'));
+    if (!view.audit.length) content.append(empty('No audit entries in this sampled page. Audit permission is required.'));
+    else content.append(table(['Sequence', 'Action', 'Actor UID', 'State / error', 'Identity'], view.audit.map(item => [item.sequence, item.action, item.actor_uid, `${item.state || '—'} / ${item.failure || '—'}`, node('span', item.session_id || item.job_id || 'No related identity', 'data-id')])));
+    content.append(pager('audit', view.next_audit)); $('section-status').textContent = view.audit_status;
+  }
+  function renderSystem() {
+    const list = node('dl', null, 'system-list');
+    const facts = [['Application', 'RustUSB · native Linux console'], ['Process privilege', 'Ordinary user; the agent independently authorizes every IPC operation'], ['Agent', view.status], ['Journal', view.journal === null ? 'Not sampled' : view.journal ? 'Last response healthy' : 'Unhealthy; new admission refused'], ['Local observation', view.local_status], ['Remote observation', view.remote_status], ['Refresh', view.options.auto_refresh ? `After completion + ${view.options.refresh_seconds}s` : 'Automatic service polling paused'], ['USB ownership', 'Agent jobs continue after this window closes'], ['Compatibility', 'Discovery is metadata. Use the documented device-specific test evidence.']];
+    facts.forEach(([term, value]) => list.append(node('dt', term), node('dd', value))); $('content').append(list); $('section-status').textContent = 'Current frontend observations; no hardware compatibility claim';
+  }
+  function renderSettings() {
+    const form = node('form', null, 'settings');
+    form.append(node('h2', 'Frontend preferences'), node('p', 'These preferences control observation only. They do not grant access, change TLS policy or start USB sharing.', 'section-note'));
+    const seconds = node('input'); seconds.type = 'number'; seconds.min = '2'; seconds.max = '120'; seconds.required = true; seconds.value = view.options.refresh_seconds;
+    const interval = node('label', 'Refresh delay (seconds)'); interval.append(seconds);
+    const automatic = node('input'); automatic.type = 'checkbox'; automatic.checked = view.options.auto_refresh;
+    const auto = node('label', 'Automatic service refresh'); auto.prepend(automatic); form.append(interval, auto);
+    const controls = node('div', null, 'settings-actions');
+    controls.append(button('Apply', () => { if (form.reportValidity()) action({ action: 'options', refresh_seconds: Number(seconds.value), auto_refresh: automatic.checked }); }), button('Save checked preferences', () => action({ action: 'save_settings' })), button('Reload', () => action({ action: 'reload_settings' })), button('Defaults', () => action({ action: 'options', refresh_seconds: 2, auto_refresh: true })));
+    form.append(controls, node('p', view.preferences_status, 'section-note'));
+    form.addEventListener('submit', event => event.preventDefault()); $('content').append(form);
+    $('content').append(node('h2', 'Access and sharing policy'), node('p', 'Profiles and permissions are administrator-managed. Automatic sharing rules are not implemented in this preview.', 'section-note'));
+    $('section-status').textContent = 'Checked user preferences are shared with the TUI; no automatic device actions';
+  }
+  function renderPage() {
+    const focusKey = document.activeElement.dataset.focus;
+    const scrollTop = $('main').scrollTop;
+    $('page-title').textContent = pages[page]; $('content').replaceChildren(); $('inventory-count').textContent = '';
+    $('search-bar').hidden = page > 1;
+    document.querySelectorAll('nav button').forEach((button, i) => { if (page === i) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current'); });
+    if (!view) { $('content').append(empty('Waiting for the native application bridge.')); return; }
+    if (view.unresolved) {
+      const warning = node('div', `Unresolved Start · ${view.unresolved.profile} · ${view.unresolved.request_id}. Only the original retry identity will be used; inspect jobs before continuing.`, 'unresolved'); $('content').append(warning);
+    }
+    if (page < 2) renderInventory(); else if (page === 2) renderConnections(); else if (page === 3) renderActivity(); else if (page === 4) renderSystem(); else renderSettings();
+    updateControls();
+    if (focusKey) {
+      const focused = [...document.querySelectorAll('[data-focus]')].find(element => element.dataset.focus === focusKey);
+      focused?.focus({ preventScroll: true });
+    }
+    $('main').scrollTop = scrollTop;
+  }
+  function apply(next) {
+    const previousSettings = JSON.stringify([view?.options, view?.preferences_status]);
+    const previousRevision = view?.local?.revision; const previousInstance = view?.local?.instance;
+    view = next;
+    if (waiting !== null && BigInt(view.acknowledged) >= BigInt(waiting)) waiting = null;
+    $('status').textContent = `${view.status}${busy() ? ' · Action pending…' : ''}`;
+    $('journal').textContent = view.journal === null ? 'Journal not sampled' : view.journal ? 'Journal healthy' : 'Journal unhealthy';
+    const selectedProfile = $('profile').value;
+    const ids = view.profiles.map(p => p.id).join('\n');
+    if ($('profile').dataset.ids !== ids) {
+      $('profile').replaceChildren();
+      if (!view.profiles.length) { const option = node('option', 'No readable profile'); option.value = ''; $('profile').append(option); }
+      view.profiles.forEach(profile => { const option = node('option', `${profile.id} · ${profile.backend}`); option.value = profile.id; $('profile').append(option); });
+      $('profile').dataset.ids = ids;
+    }
+    $('profile').value = view.profile || '';
+    if (selectedProfile && selectedProfile !== view.profile) { selected = null; detail = null; detailKey = null; }
+    // Do not destroy focused inputs or a user's current preference edits on each sample.
+    if (page !== 5 || previousSettings !== JSON.stringify([view.options, view.preferences_status])) renderPage();
+    else updateControls();
+    if (page === 0 && selected && (previousRevision !== view.local?.revision || previousInstance !== view.local?.instance)) loadDetail(selected);
+  }
+  async function poll() {
+    while (!destroyed) {
+      try { const next = await invoke('gui_snapshot'); if (next.revision !== view?.revision || waiting !== null) apply(next); }
+      catch (error) { notice(`Native bridge unavailable: ${String(error)}`); }
+      await new Promise(resolve => setTimeout(resolve, 400));
+    }
+  }
+  pages.forEach((label, index) => {
+    const item = node('button'); item.type = 'button'; item.append(node('span', `0${index + 1}`, 'nav-number'), node('span', label));
+    item.addEventListener('click', async () => {
+      if (index === page) return;
+      if (busy()) { notice('Wait for the accepted action before changing pages.'); return; }
+      const wasRemote = page === 1; page = index; selected = null; detail = null; detailKey = null; showDetails = false; renderPage();
+      if (wasRemote !== (page === 1)) await action({ action: 'remote', active: page === 1 });
+    }); $('navigation').append(item);
+  });
+  $('refresh').addEventListener('click', () => action({ action: 'refresh' }));
+  $('profile').addEventListener('change', event => action({ action: 'profile', id: event.target.value }));
+  $('start').addEventListener('click', () => confirm(view.unresolved ? 'Resolve the original Start?' : 'Start the complete profile?', view.unresolved ? `Retry only ${view.unresolved.profile}, request ${view.unresolved.request_id}. No new Start identity will be created.` : `Start all configured devices in profile ${view.profile}. The selected device row does not change the profile. Service jobs continue after this window closes.`, { action: 'start' }));
+  $('search').addEventListener('input', event => { query = event.target.value; renderPage(); });
+  $('eligible').addEventListener('change', event => { eligible = event.target.checked; renderPage(); });
+  $('details-toggle').addEventListener('click', () => { showDetails = !showDetails; $('details-toggle').textContent = showDetails ? 'Show list' : 'Show details'; $('details-toggle').setAttribute('aria-expanded', String(showDetails)); renderPage(); });
+  window.addEventListener('pagehide', () => { destroyed = true; });
+  renderPage();
+  if (invoke) poll(); else notice('This interface requires the packaged native RustUSB application.');
+})();

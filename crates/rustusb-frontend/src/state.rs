@@ -10,68 +10,119 @@ use rustusb_service::{
 use std::sync::Arc;
 
 #[derive(Debug, Clone)]
-pub(crate) enum Mutation {
+/// Fixed-profile or exact-identity service mutation; service authorization remains authoritative.
+pub enum Mutation {
+    /// Start: finite frontend operation.
     Start(String),
+    /// StopJob: finite frontend operation.
     StopJob(JobId),
+    /// StopSession: finite frontend operation.
     StopSession(SessionId),
 }
 #[derive(Debug)]
-pub(crate) enum Command {
+/// Finite frontend control; validate user-controlled strings/options before queueing.
+pub enum Command {
+    /// Refresh: finite frontend operation.
     Refresh,
+    /// Profile: finite frontend operation.
     Profile(String),
+    /// Remote: finite frontend operation.
     Remote(bool),
+    /// Options: finite frontend operation.
     Options(Options),
+    /// SaveSettings: finite frontend operation.
     SaveSettings,
+    /// ReloadSettings: finite frontend operation.
     ReloadSettings,
+    /// Next: finite frontend operation.
     Next(PageKind),
+    /// First: finite frontend operation.
     First(PageKind),
+    /// Mutate: finite frontend operation.
     Mutate(Mutation),
 }
 #[derive(Debug)]
-pub(crate) struct Envelope {
+/// One admitted command with a caller-owned monotonic sequence.
+pub struct Envelope {
+    /// Monotonic caller sequence; the worker acknowledges only after command completion.
     pub sequence: u64,
+    /// One finite operation, with no new endpoint or credential authority.
     pub command: Command,
 }
 #[derive(Debug, Clone, Copy)]
-pub(crate) enum PageKind {
+/// One bounded service result section.
+pub enum PageKind {
+    /// Jobs: finite frontend operation.
     Jobs,
+    /// Sessions: finite frontend operation.
     Sessions,
+    /// Audit: finite frontend operation.
     Audit,
 }
 #[derive(Debug, Clone)]
-pub(crate) struct Unresolved {
+/// Original issued Start identity retained until a real Started response.
+pub struct Unresolved {
+    /// Currently selected fixed profile; no device key override.
     pub profile: String,
+    /// Original opaque retry identity; never an authorization token.
     pub request_id: RequestId,
 }
 #[derive(Debug, Clone)]
-pub(crate) struct Snapshot {
+/// Latest metadata only; never USB authority or cleanup proof.
+pub struct Snapshot {
+    /// Monotonic publication revision within this frontend worker.
     pub revision: u64,
+    /// Last fully processed command sequence; queue removal alone is not completion.
     pub acknowledged: u64,
+    /// Effective frontend observation preferences, independent of service policy.
     pub options: Options,
+    /// Last successfully checked saved preferences, if present.
     pub saved_options: Option<Options>,
+    /// Last checked preference read/write result for operator display.
     pub preferences_status: String,
+    /// Read-authorized fixed profiles returned by the actual agent.
     pub profiles: Vec<ProfileInfo>,
+    /// Currently selected fixed profile; no device key override.
     pub profile: Option<String>,
+    /// Latest complete local discovery metadata, including explicit freshness.
     pub local: Option<Arc<DeviceSnapshot>>,
+    /// Latest authenticated remote catalog; not proof of successful import.
     pub remote: Option<Arc<CatalogSnapshot>>,
+    /// Current bounded job page; qualify it using jobs_status.
     pub jobs: Vec<Job>,
+    /// Current bounded session page; release requires actual cleanup evidence.
     pub sessions: Vec<Session>,
+    /// Independently sampled data-link health; empty means unavailable.
     pub health: Vec<SessionHealth>,
+    /// Current authorized retained audit page, distinct from a business acknowledgement.
     pub audit: Vec<AuditEvent>,
+    /// Exclusive continuation cursor only when another job page exists.
     pub next_job: Option<JobId>,
+    /// Exclusive continuation cursor only when another session page exists.
     pub next_session: Option<SessionId>,
+    /// Exclusive audit continuation, if the returned page advances.
     pub next_audit: Option<u64>,
+    /// Health from the last real agent reply; absent when unknown.
     pub journal: Option<bool>,
+    /// Operator-facing result of the most recent service action or refresh.
     pub status: String,
+    /// Freshness or failure qualifying retained job observations.
     pub jobs_status: String,
+    /// Freshness or failure qualifying retained session observations.
     pub sessions_status: String,
+    /// Audit availability, retention gap and oldest retained sequence.
     pub audit_status: String,
+    /// Local observer state and resynchronization information.
     pub local_status: String,
+    /// Remote observer availability and independently sampled freshness.
     pub remote_status: String,
+    /// Whether the active frontend requests remote observation.
     pub remote_page: bool,
+    /// Original issued Start intent retained until a real Started reply.
     pub unresolved: Option<Unresolved>,
 }
 impl Snapshot {
+    /// Initialize an unsampled view; no operation has been issued.
     pub fn new(options: Options) -> Self {
         Self {
             revision: 0,
@@ -101,6 +152,7 @@ impl Snapshot {
             unresolved: None,
         }
     }
+    /// Retain pages with explicit stale status and discard live-health claims.
     pub fn agent_stale(&mut self) {
         // These pages are retained observations, never a current service receipt.
         self.jobs_status = "Stale: agent unavailable; retained page".into();
@@ -109,6 +161,7 @@ impl Snapshot {
         self.journal = None;
         self.health.clear();
     }
+    /// Discard metadata/cursors from the previous selection.
     pub fn clear_profile(&mut self) {
         self.jobs.clear();
         self.sessions.clear();
@@ -124,6 +177,7 @@ impl Snapshot {
         self.remote_status = "Not sampled".into();
         self.journal = None;
     }
+    /// Retain the original Start identity before producing a request; retries never mint a new ID.
     pub fn mutation_request(
         &mut self,
         action: Mutation,
@@ -153,6 +207,7 @@ impl Snapshot {
             Mutation::StopSession(session_id) => Some(Request::StopSession { session_id }),
         }
     }
+    /// Apply the actual service reply, keeping cleanup and admission distinct.
     pub fn mutation_response(&mut self, response: rustusb_service::rpc::Response) {
         use rustusb_service::rpc::Response;
         self.status=match response {
@@ -169,6 +224,7 @@ impl Snapshot {
 }
 
 /// Finite printable text, including removal of terminal controls and bidi formatting.
-pub(crate) fn text(value: &str, limit: usize) -> String {
+/// text.
+pub fn text(value: &str, limit: usize) -> String {
     value.chars().filter(|c| !c.is_control() && !matches!(*c,'\u{061c}'|'\u{200b}'..='\u{200f}'|'\u{202a}'..='\u{202e}'|'\u{2060}'..='\u{206f}'|'\u{feff}')).take(limit).collect()
 }
