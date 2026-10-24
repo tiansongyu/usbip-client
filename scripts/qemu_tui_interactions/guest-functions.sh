@@ -58,6 +58,13 @@ frontend_setup() {
     cat "/proc/$AGENT_PID/status" "/proc/$AGENT_PID/stat" > /tmp/agent-identity.txt
     sha256sum "/proc/$AGENT_PID/exe" > /tmp/agent-exe-sha256.txt
     [ ! -e /var/lib/rustusb/agent/state.json ]
+    if /usr/bin/rustusb tui --config /etc/rustusb/agent.json --no-preferences > /tmp/tui-root.stdout 2> /tmp/tui-root.stderr; then return 1; else echo "$?" > /tmp/tui-root-wait.txt; fi
+    grep -F 'TUI must run as an ordinary user' /tmp/tui-root.stderr > /dev/null
+    if /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb --json tui --config /etc/rustusb/agent.json --no-preferences > /tmp/tui-json.stdout 2> /tmp/tui-json.stderr; then return 1; else echo "$?" > /tmp/tui-json-wait.txt; fi
+    grep -F 'TUI cannot use --json' /tmp/tui-json.stderr > /dev/null
+    if /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb tui --config /etc/rustusb/agent.json --no-preferences > /tmp/tui-notty.stdout 2> /tmp/tui-notty.stderr; then return 1; else echo "$?" > /tmp/tui-notty-wait.txt; fi
+    grep -F 'TUI requires terminal stdin and stdout' /tmp/tui-notty.stderr > /dev/null
+    [ ! -e /var/lib/rustusb/agent/state.json ]
 }
 frontend_remaining() {
     STAGE=frontend-preferences

@@ -50,7 +50,7 @@ def verify(evidence,summary):
     second=json.loads((old/'point-readded.json').read_text())['devices'][0]
     frames=rendered['hotplug'];a=first['device']['device_address'];b=second['device']['device_address'];assert a!=b
     before=[i for i,f in enumerate(frames)if f'"device_address": {a},'in f]
-    missing=[i for i,f in enumerate(frames)if 'Details'in f and 'No selected metadata'in f]
+    missing=[i for i,f in enumerate(frames)if 'Details [Esc closes]'in f and 'No selected metadata'in f]
     after=[i for i,f in enumerate(frames)if f'"device_address": {b},'in f]
     assert missing,'removed selection feedback scrolled out of the actual open details panel'
     assert any(x<y<z for x in before for y in missing for z in after),'actual first address / visible disappearance / new address sequence missing'
@@ -94,5 +94,9 @@ def verify(evidence,summary):
     assert all(re.search(r'^'+c+r':\s+0000000000000000$',agent,re.M)for c in ['CapInh','CapPrm','CapEff','CapAmb'])
     assert(out/'agent-exe-sha256.txt').read_text().split()[0]==summary['binary_sha256']['rustusb']
     assert(out/'agent-wait.txt').read_text().strip()=='0'
+    for case,message in [('root','TUI must run as an ordinary user'),('json','TUI cannot use --json'),('notty','TUI requires terminal stdin and stdout')]:
+        assert(out/f'tui-{case}-wait.txt').read_text().strip()=='1'
+        assert(out/f'tui-{case}.stdout').read_bytes()==b'' and message in (out/f'tui-{case}.stderr').read_text()
+
     checks +=['same actual TUI PID/starttime/group1 kernel socket across real hotplug','actual d defaults and l changed-file reload; denied reload preserves effective options','two real authoritative Start/retry denials; original UUID retained, zero admitted work; actual child exit1 and agent wait0']
     return {'original_monitor':base,'actual_tui_children':4,'normal_exit0':3,'expected_unresolved_exit1':1,'checks':checks,'scope':'One no-NIC guest: actual UI observation/settings/OS authorization, not USB/IP redirection or hardware proof'}

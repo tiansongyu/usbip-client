@@ -7,6 +7,8 @@
 
 - 实现独立single-guest交互夹具，原monitor六点/verifier不改；独立TUI采集marker避免放宽原64文件边界。四实际UID1000 PTY计划：保持scroll详情拔插、d/l与checked文件变更、Reload权限错、真实Read/Audit-only agent两拒绝（child1）。初生成子命令因cleanup子串与插入函数重名而FAIL，外层无errexit实际0；初generator未单独冻结，已记tool观察和pre-fix runner快照，改完整行anchor后实际compose/dash首复核PASS，C严格编译PASS。尚未执行QEMU或修改产品。
 
+- clean935bd446首all单guest整体FAIL：实际guest0/无forced/四guard真，四实际TUI生命周期均符合预期（三child0、真实拒绝child1）。原monitor六点通过，open modal原地址2→拔出空白→新地址3；首判据误把初始wide旁栏空提示列为候选，但其顺序仍正确FAIL，原summary不改。后续仅将空提示候选进一步收紧为真实open modal。产品selection身份变化时清scroll、相同身份重排保scroll；新60/120 TestBackend回归与13前端函数首PASS。补三实际root/json/nonTTY拒绝采证（无逐fast child live-proc，不冒称）。完整clean gate/最终QEMU尚待执行。
+
 ## 2026-10-25：终端未知启动结果与agent失联（开始）
 
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。

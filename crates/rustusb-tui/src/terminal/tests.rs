@@ -258,3 +258,39 @@ fn agent_outage_retains_exact_rows_but_clears_health_and_marks_each_page_stale()
     }
     Ok(())
 }
+
+#[test]
+fn detail_scroll_follows_identity_and_empty_selection_feedback_stays_visible()
+-> std::result::Result<(), Box<dyn std::error::Error>> {
+    let snapshot = Snapshot::new(Options::default());
+    let mut app = App::new(snapshot.options);
+    let first = row("candidate:old-generation", "first", "first detail");
+    let sibling = row("sibling", "second", "second detail");
+    app.selected[0] = Some(first.key.clone());
+    app.detail_scroll = 9;
+    assert_eq!(app.selection(&[sibling, first]), Some(1));
+    assert_eq!(app.detail_scroll, 9);
+    assert_eq!(
+        app.selection(&[row("candidate:new-generation", "reinserted", "new detail")]),
+        Some(0)
+    );
+    assert_eq!(app.detail_scroll, 0);
+    for width in [60, 120] {
+        app.selected[0] = Some("candidate:new-generation".into());
+        app.details = true;
+        app.detail_scroll = 8;
+        let mut terminal = Terminal::new(TestBackend::new(width, 18))?;
+        terminal.draw(|f| draw(f, &mut app, &snapshot))?;
+        let rendered = terminal
+            .backend()
+            .buffer()
+            .content()
+            .iter()
+            .map(|c| c.symbol())
+            .collect::<String>();
+        assert!(rendered.contains("No selected metadata"));
+        assert_eq!(app.selected[0], None);
+        assert_eq!(app.detail_scroll, 0);
+    }
+    Ok(())
+}

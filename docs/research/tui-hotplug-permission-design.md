@@ -43,6 +43,10 @@ phases; it is not a product Save. A separate live mode change to0644 makes `l`
 fail visibly while preserving effective options and bytes. Existing explicit
 save/override and unknown Start/normal USB-action matrices remain separate.
 
+Also verify actual root, JSON and redirected-terminal rejection commands with
+returned exit1, empty stdout and the exact supported guard error. These fast
+commands have no separate live /proc sample; do not imply that they do.
+
 Retain actual PTY wait, saved termios, raw/resize/alternate screen, live ELF and
 zero capabilities. Capture protected public configuration and private-key
 metadata only. All accepted agent/observer/PTY children are actually joined;

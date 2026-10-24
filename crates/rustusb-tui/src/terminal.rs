@@ -305,7 +305,12 @@ impl App {
             .as_ref()
             .and_then(|key| rows.iter().position(|r| &r.key == key))
             .or((!rows.is_empty()).then_some(0));
-        self.selected[self.page] = selected.map(|i| rows[i].key.clone());
+        let key = selected.map(|i| rows[i].key.clone());
+        if self.selected[self.page] != key {
+            // A disappeared/replaced identity must not hide its new detail text.
+            self.detail_scroll = 0;
+        }
+        self.selected[self.page] = key;
         selected
     }
     fn page_kind(&self) -> PageKind {
