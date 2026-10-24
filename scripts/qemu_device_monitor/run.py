@@ -66,11 +66,24 @@ def payload(work, kernel, evidence):
     (root / "init").chmod(0o755)
     shutil.copyfile(OWN / "point.jq", root / "etc/monitor-point.jq")
     (root / "etc/passwd").write_text("root:x:0:0:root:/:/bin/sh\nmonitor:x:2000:2000:observer:/:/bin/sh\n")
-    tool = shutil.which("udevadm")
-    if not tool:
-        raise RuntimeError("read-only udevadm kernel monitor required for independent guest capture")
-    native.copy_binary(tool, "/usr/bin/udevadm", root)
-    copied = {name: digest(root / "usr/bin" / name) for name in ["rustusb", "rustusb-helper", "udevadm"]}
+    for name in ["udevadm", "base64"]:
+        tool = shutil.which(name)
+        if not tool:
+            raise RuntimeError(f"required independent guest utility missing: {name}")
+        native.copy_binary(tool, f"/usr/bin/{name}", root)
+    programs = ["rustusb", "rustusb-helper", "udevadm", "base64", "jq", "setpriv"]
+    copied = {}
+    for name in programs:
+        path = root / "usr/bin" / name
+        assert path.is_file() and path.read_bytes()[:4] == b"\x7fELF" and os.access(path, os.X_OK), name
+        copied[name] = digest(path)
+    applets = ["sh", "awk", "basename", "cat", "cp", "env", "find", "grep", "insmod", "kill", "mkdir", "mount", "poweroff", "printf", "readlink", "seq", "sha256sum", "sleep", "stat", "stty", "sync", "tr", "wc"]
+    assert all((root / "bin" / name).is_file() for name in applets), "required guest applet missing"
+    fixture = b"monitor-encoder-preflight\x00\xff\n"
+    encoded = subprocess.run([str(root / "usr/bin/base64")], input=fixture, capture_output=True, check=True)
+    import base64
+    assert base64.b64decode(encoded.stdout) == fixture
+    (evidence / "payload-preflight.json").write_text(json.dumps({"copied_programs": copied, "required_applets": applets, "encoder_fixture_sha256": hashlib.sha256(fixture).hexdigest(), "scope": "Payload existence/ELF plus actual copied encoder host check, not guest execution or ABI qualification"}, indent=2) + "\n")
     (evidence / "payload-sha256.json").write_text(json.dumps(copied, indent=2) + "\n")
     archive = work / "monitor-initramfs.cpio.gz"
     names = b".\0" + b"\0".join(str(path.relative_to(root)).encode() for path in root.rglob("*")) + b"\0"

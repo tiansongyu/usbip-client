@@ -103,3 +103,5 @@ Devices{watch:true}必须与Logs/Diagnostics及server入口一样进入owns_sign
 clean47e3f63 default单guest到host deadline后forced收回，actual QEMU wait0仍FAIL，四guard均真；仅启动beacon，未取得热插拔/CLI执行证明。后置只读jq编译诊断确认`$end`为保留关键字，query错误被等待循环当暂未完整而重试。原raw/summary不改，不从guest exit0或源码推断观察通过。
 
 query先改非保留变量并以完整/partial模拟帧验证采证器（不计USBcases）。失败cleanup先冻结/输出诊断，再对两个原child发TERM并有界观察；辅助kernel reader从后台SIGINT改TERM，防止继承ignored INT而无限wait。若必须KILL记录forced且判FAIL；原真实wait仍保留。正向也须真实TERM/wait，不用采证改动减弱产品断言。
+
+第二clean4cb31f4 default guest已到final-remove，但collect调用缺失base64，EXIT trap中的PID1实际127退出引发Kernel panic；host forced回收、actualQEMU0、四guard真仍FAIL。未取得完整原文件，不以阶段beacon推断验收成功。新增独立base64打包/每个必需程序与applet预查；collect错误显式标FAIL后继续收回/关机，不让采证失败杀PID1。原panic与summary不改，新clean fresh复跑。

@@ -771,3 +771,5 @@
 - 新单guest QEMU fixture及独立kernel/sysfs/CLI采证先固定后运行，默认与all两构建分开，非原14paired仿真；CI新增同三process step。旧bec软件872/旧0c09 INT失败保留，不以新成功改判。
 
 - 首clean47e3f63 default QEMU实际host超时/forced收回，QEMU实际wait0但ResultFAIL、四guard真；只收到启动beacon，没有CLI执行/热插拔证明。后置jq诊断actual3确认保留变量$end语法错；原件及原summary裁决保留。失败采证路径拟先冻结输出诊断、原child TERM+真实wait，辅助reader避免后台ignored INT；强制KILL必FAIL。纯jq帧检查不是新USB/软件test count。
+
+- 第二clean4cb31f4 default QEMU仍FAIL：已到final-remove，首文件beacon后明确base64 not found，PID1 EXITtrap127导致真实Kernel panic；forced收回/actualQEMU0/四guard真不改变裁决，原raw无完整解码，不补造点/执行证明。确认Native BusyBox未含base64，须独立打包及全面payload工具预查，采证错误显式FAIL且不中断收尾。

@@ -20,10 +20,10 @@ collect() {
     for file in /tmp/watch.jsonl /tmp/watch.stderr /tmp/kernel-events.log /tmp/kernel-events.stderr /tmp/actor-*.txt /tmp/point-*.json /tmp/stat-*.txt /tmp/*-wait.txt /tmp/independent-final.txt; do
         [ -f "$file" ] || continue
         name="$prefix$(basename "$file")"
-        cp "$file" "/tmp/frozen-capture/$name"
+        cp "$file" "/tmp/frozen-capture/$name" || return 1
         file="/tmp/frozen-capture/$name"
         echo "RUSTUSB_MONITOR_FILE_BEGIN name=$name bytes=$(wc -c < "$file") sha256=$(sha256sum "$file" | awk '{print $1}')"
-        base64 "$file"
+        base64 "$file" || return 1
         echo "RUSTUSB_MONITOR_FILE_END name=$name"
     done
 }
@@ -31,7 +31,9 @@ cleanup() {
     status=$?
     trap - EXIT
     # Failure diagnostics are copied before waiting for any still-live child.
-    if [ "$status" != 0 ]; then collect early-; fi
+    if [ "$status" != 0 ]; then
+        if ! collect early-; then echo 'RUSTUSB_MONITOR_CAPTURE: FAIL early'; status=1; fi
+    fi
     for pid in "$WATCH_PID" "$KERNEL_PID"; do
         [ -n "$pid" ] || continue
         kill -TERM "$pid" 2>/dev/null || true
@@ -52,7 +54,7 @@ cleanup() {
         set +e; wait "$pid"; result=$?; set -e
         echo "$result" >"/tmp/$kind-cleanup-wait.txt"
     done
-    collect ''
+    if ! collect ''; then echo 'RUSTUSB_MONITOR_CAPTURE: FAIL final'; status=1; fi
     if [ "$status" = 0 ]; then echo 'RUSTUSB_MONITOR_RESULT: PASS'; else echo "RUSTUSB_MONITOR_RESULT: FAIL stage=$STAGE exit=$status"; fi
     sync
     poweroff -f
