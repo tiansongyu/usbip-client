@@ -1,0 +1,33 @@
+{
+  "schema_version": 2,
+  "data_link": {
+    "protocol": "framed_v2",
+    "interval_millis": 1000,
+    "response_timeout_millis": 3000
+  },
+  "broker_uid": 2000,
+  "listen": "[fd42:7275:7374::1]:3241",
+  "devices": [
+    "virtual:hid",
+    "virtual:cdc-acm"
+  ],
+  "principals": [
+    {
+      "id": "qemu-client",
+      "pins": [
+        "c130db2dac1104e3fc8f14efc30227796144775e9ee1a0a978a8d3f664875f61"
+      ],
+      "devices": [
+        "virtual:hid",
+        "virtual:cdc-acm"
+      ]
+    }
+  ],
+  "ca_certificates": [
+    "/etc/rustusb/ca.der"
+  ],
+  "certificate_chain": [
+    "/etc/rustusb/server.der"
+  ],
+  "private_key": "/etc/rustusb/server-key.der"
+}

@@ -1,0 +1,98 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "-x",
+        "scripts/check.sh"
+      ],
+      "exit_code": 0,
+      "log": "full-gate.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-check.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--edges",
+        "normal",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-tree.log"
+    },
+    {
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "rustc.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "cargo.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-help.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb-helper",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "helper-help.log"
+    }
+  ],
+  "inputs_stable": true,
+  "selected_inputs": 167,
+  "artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "bytes": 15223632,
+      "sha256": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+      "dev": 66306,
+      "inode": 79628976,
+      "mtime_ns": 1792798183829119864
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "bytes": 5926600,
+      "sha256": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5",
+      "dev": 66306,
+      "inode": 79629147,
+      "mtime_ns": 1792788254566469717
+    }
+  ]
+}

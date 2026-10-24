@@ -1,0 +1,953 @@
+{
+  "schema_version": 1,
+  "result": "PASS_WITH_SCOPE_LIMITATIONS",
+  "run_id": 40044605684,
+  "head": "5ffdc6cfcc0e3c2de386121d0277d7daf0ed4e9f",
+  "counts": {
+    "jobs": 4,
+    "unit_executions_each": 667,
+    "result_rows_each": 39,
+    "new_tls_lifecycle_cases_each": 5,
+    "actual_new_writer_observations_each": 3,
+    "legacy_backpressure_cases_each": 2,
+    "legacy_signal_cases_each": 4,
+    "diagnostic_checks": 121,
+    "passed": 121,
+    "failed": 0
+  },
+  "jobs": [
+    {
+      "job_id": 120723319604,
+      "platform": "check (ubuntu-22.04-arm, aarch64)",
+      "conclusion": "success",
+      "uname": "Linux runnervm94xhr 6.8.0-1064-azure #72~22.04.1-Ubuntu SMP Wed Jul 22 22:38:59 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux",
+      "rust_target": "aarch64-unknown-linux-gnu",
+      "unit_result_rows": 39,
+      "test_execution_groups": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      },
+      "total_passed_executions": 667,
+      "tls_cases": [
+        {
+          "case": "ready-int",
+          "exit": 0,
+          "elapsed_seconds": 0.006589419,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "ready-term",
+          "exit": 0,
+          "elapsed_seconds": 0.006518816,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "blocked-int",
+          "exit": 0,
+          "elapsed_seconds": 0.005396073,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "pipe_write"
+        },
+        {
+          "case": "blocked-term",
+          "exit": 0,
+          "elapsed_seconds": 0.006479423,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "pipe_write"
+        },
+        {
+          "case": "blocked-deadline",
+          "exit": 1,
+          "elapsed_seconds": 5.008404647,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "pipe_write"
+        }
+      ],
+      "actual_new_writer_wchans": [
+        "pipe_write",
+        "pipe_write",
+        "pipe_write"
+      ],
+      "legacy_backpressure_cases": 2,
+      "legacy_signal_cases": 4,
+      "source_entries": 10549,
+      "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f",
+      "signal_release_elf_sha256": "25cce7e4633906003a7e9782c71d8832c3e840c22bf292e22cfb5db88e7a268c",
+      "signal_summary_sha256": "4b43decd8f65f5cb7adc0a8130f81971a7ed50bac275192eb9d31f8e7e1bb4b4",
+      "legacy_backpressure_elf_guard": "Not present in old summary; linked preceding fixed workflow/target path only.",
+      "log_text_sha256": "378b3a2d7506d84810a97c44f31d9c5baf04ccca8b043294ed64a969772b47ca",
+      "original_runner_artifacts": "Only printed summaries/observations and artifact hashes available. Runner/tmp files and binaries not downloaded or fabricated."
+    },
+    {
+      "job_id": 120723319703,
+      "platform": "check (ubuntu-24.04-arm, aarch64)",
+      "conclusion": "success",
+      "uname": "Linux runnervmidgih 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:12:01 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux",
+      "rust_target": "aarch64-unknown-linux-gnu",
+      "unit_result_rows": 39,
+      "test_execution_groups": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      },
+      "total_passed_executions": 667,
+      "tls_cases": [
+        {
+          "case": "ready-int",
+          "exit": 0,
+          "elapsed_seconds": 0.006796394,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "ready-term",
+          "exit": 0,
+          "elapsed_seconds": 0.005836293,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "blocked-int",
+          "exit": 0,
+          "elapsed_seconds": 0.006515573,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "anon_pipe_write"
+        },
+        {
+          "case": "blocked-term",
+          "exit": 0,
+          "elapsed_seconds": 0.005602573,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "anon_pipe_write"
+        },
+        {
+          "case": "blocked-deadline",
+          "exit": 1,
+          "elapsed_seconds": 5.005128899,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "anon_pipe_write"
+        }
+      ],
+      "actual_new_writer_wchans": [
+        "anon_pipe_write",
+        "anon_pipe_write",
+        "anon_pipe_write"
+      ],
+      "legacy_backpressure_cases": 2,
+      "legacy_signal_cases": 4,
+      "source_entries": 10549,
+      "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f",
+      "signal_release_elf_sha256": "0b78704524aa08ccdded76234b84a13f0bc70a3f1326c69fdc1f542d39c67625",
+      "signal_summary_sha256": "aedc9c46d84a4a37805af8195f6ab351f0cac2b2e39235117d8575a3a7a23d92",
+      "legacy_backpressure_elf_guard": "Not present in old summary; linked preceding fixed workflow/target path only.",
+      "log_text_sha256": "255f823050a72842d3d9c0f74518291eb1143cfda69641a61cd0b5b615e8b2e6",
+      "original_runner_artifacts": "Only printed summaries/observations and artifact hashes available. Runner/tmp files and binaries not downloaded or fabricated."
+    },
+    {
+      "job_id": 120723319780,
+      "platform": "check (ubuntu-24.04, x86_64)",
+      "conclusion": "success",
+      "uname": "Linux runnervm8k3b6 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+      "rust_target": "x86_64-unknown-linux-gnu",
+      "unit_result_rows": 39,
+      "test_execution_groups": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      },
+      "total_passed_executions": 667,
+      "tls_cases": [
+        {
+          "case": "ready-int",
+          "exit": 0,
+          "elapsed_seconds": 0.006695577,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "ready-term",
+          "exit": 0,
+          "elapsed_seconds": 0.005733431,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "blocked-int",
+          "exit": 0,
+          "elapsed_seconds": 0.006626921,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "anon_pipe_write"
+        },
+        {
+          "case": "blocked-term",
+          "exit": 0,
+          "elapsed_seconds": 0.006453077,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "anon_pipe_write"
+        },
+        {
+          "case": "blocked-deadline",
+          "exit": 1,
+          "elapsed_seconds": 5.007573227,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "anon_pipe_write"
+        }
+      ],
+      "actual_new_writer_wchans": [
+        "anon_pipe_write",
+        "anon_pipe_write",
+        "anon_pipe_write"
+      ],
+      "legacy_backpressure_cases": 2,
+      "legacy_signal_cases": 4,
+      "source_entries": 10549,
+      "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f",
+      "signal_release_elf_sha256": "d7a39a5e3a1a3f60a3d6b35b79741b859ab5a2c79574f504d13d80245c7a704c",
+      "signal_summary_sha256": "46a814fa360467390938e9f6f7db32c280d2b36fa6d7e0e7ee2170bb69331ab3",
+      "legacy_backpressure_elf_guard": "Not present in old summary; linked preceding fixed workflow/target path only.",
+      "log_text_sha256": "3fa4ddd5086421604cf479266440fcfdb3de295b4144769c762b08fc03c2bc12",
+      "original_runner_artifacts": "Only printed summaries/observations and artifact hashes available. Runner/tmp files and binaries not downloaded or fabricated."
+    },
+    {
+      "job_id": 120723319787,
+      "platform": "check (ubuntu-22.04, x86_64)",
+      "conclusion": "success",
+      "uname": "Linux runnervmwhx2h 6.8.0-1064-azure #72~22.04.1-Ubuntu SMP Wed Jul 22 23:39:45 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+      "rust_target": "x86_64-unknown-linux-gnu",
+      "unit_result_rows": 39,
+      "test_execution_groups": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      },
+      "total_passed_executions": 667,
+      "tls_cases": [
+        {
+          "case": "ready-int",
+          "exit": 0,
+          "elapsed_seconds": 0.0066965,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "ready-term",
+          "exit": 0,
+          "elapsed_seconds": 0.005567267,
+          "cleanup_snapshot_observed": true,
+          "actual_wchan": null
+        },
+        {
+          "case": "blocked-int",
+          "exit": 0,
+          "elapsed_seconds": 0.006430883,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "pipe_write"
+        },
+        {
+          "case": "blocked-term",
+          "exit": 0,
+          "elapsed_seconds": 0.006532968,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "pipe_write"
+        },
+        {
+          "case": "blocked-deadline",
+          "exit": 1,
+          "elapsed_seconds": 5.010091395,
+          "cleanup_snapshot_observed": false,
+          "actual_wchan": "pipe_write"
+        }
+      ],
+      "actual_new_writer_wchans": [
+        "pipe_write",
+        "pipe_write",
+        "pipe_write"
+      ],
+      "legacy_backpressure_cases": 2,
+      "legacy_signal_cases": 4,
+      "source_entries": 10549,
+      "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f",
+      "signal_release_elf_sha256": "cd4024bbc545f5a22b5a68ba5928a91705bfceeb00d4fb4ca680a326cb1ebae1",
+      "signal_summary_sha256": "842f8c59dc8741311f4254962c0b5e622f5f46ad3854afad117a252a76583aaa",
+      "legacy_backpressure_elf_guard": "Not present in old summary; linked preceding fixed workflow/target path only.",
+      "log_text_sha256": "2fbf6dc3c4316f518ddba89bdd8bdbd5f49cff68268a1ee933afb510be404df1",
+      "original_runner_artifacts": "Only printed summaries/observations and artifact hashes available. Runner/tmp files and binaries not downloaded or fabricated."
+    }
+  ],
+  "checks": [
+    {
+      "id": "run_exact_terminal_success",
+      "passed": true
+    },
+    {
+      "id": "four_exact_terminal_jobs",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).official_decoded_raw_bytes",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).actual_steps_success",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).actual_checkout_platform_toolchain",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).667_passed_39_rows_no_failure_ignored",
+      "passed": true,
+      "detail": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).release_docs_completed_after_check_script",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).five_actual_tls_cases",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).exact_three_writer_observations",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).ready-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).ready-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).blocked-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).blocked-int.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 12885,
+        "tid": "12889",
+        "comm": "virtual-test-st",
+        "wchan": "pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).blocked-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).blocked-term.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 12891,
+        "tid": "12895",
+        "comm": "virtual-test-st",
+        "wchan": "pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).blocked-deadline.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).blocked-deadline.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 12897,
+        "tid": "12901",
+        "comm": "virtual-test-st",
+        "wchan": "pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).legacy_two_backpressure",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).legacy_four_signal_matrix",
+      "passed": true
+    },
+    {
+      "id": "logged_source_inventory_exact_git",
+      "passed": true,
+      "detail": {
+        "count": 10549,
+        "mismatches": []
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).actual_source_guard",
+      "passed": true,
+      "detail": {
+        "count": 10549,
+        "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).printed_signal_summary_matches_runtime_file_digest",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).actual_signal_elf_guard",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).external_build_honest",
+      "passed": true,
+      "detail": "Feature attribution only linked to preceding successful fixed check.sh allfeatures release build; harness reports external honestly."
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_ready_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_ready_sigint.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_ready_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_ready_sigterm.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_blocked_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_blocked_sigint.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_blocked_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04-arm, aarch64).plain_blocked_sigterm.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).official_decoded_raw_bytes",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).actual_steps_success",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).actual_checkout_platform_toolchain",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).667_passed_39_rows_no_failure_ignored",
+      "passed": true,
+      "detail": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).release_docs_completed_after_check_script",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).five_actual_tls_cases",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).exact_three_writer_observations",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).ready-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).ready-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).blocked-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).blocked-int.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13142,
+        "tid": "13146",
+        "comm": "virtual-test-st",
+        "wchan": "anon_pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).blocked-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).blocked-term.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13148,
+        "tid": "13152",
+        "comm": "virtual-test-st",
+        "wchan": "anon_pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).blocked-deadline.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).blocked-deadline.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13154,
+        "tid": "13158",
+        "comm": "virtual-test-st",
+        "wchan": "anon_pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).legacy_two_backpressure",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).legacy_four_signal_matrix",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).actual_source_guard",
+      "passed": true,
+      "detail": {
+        "count": 10549,
+        "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).printed_signal_summary_matches_runtime_file_digest",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).actual_signal_elf_guard",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).external_build_honest",
+      "passed": true,
+      "detail": "Feature attribution only linked to preceding successful fixed check.sh allfeatures release build; harness reports external honestly."
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_ready_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_ready_sigint.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_ready_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_ready_sigterm.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_blocked_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_blocked_sigint.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_blocked_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04-arm, aarch64).plain_blocked_sigterm.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).official_decoded_raw_bytes",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).actual_steps_success",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).actual_checkout_platform_toolchain",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).667_passed_39_rows_no_failure_ignored",
+      "passed": true,
+      "detail": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).release_docs_completed_after_check_script",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).five_actual_tls_cases",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).exact_three_writer_observations",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).ready-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).ready-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).blocked-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).blocked-int.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13504,
+        "tid": "13508",
+        "comm": "virtual-test-st",
+        "wchan": "anon_pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).blocked-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).blocked-term.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13510,
+        "tid": "13514",
+        "comm": "virtual-test-st",
+        "wchan": "anon_pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).blocked-deadline.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).blocked-deadline.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13516,
+        "tid": "13520",
+        "comm": "virtual-test-st",
+        "wchan": "anon_pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).legacy_two_backpressure",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).legacy_four_signal_matrix",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).actual_source_guard",
+      "passed": true,
+      "detail": {
+        "count": 10549,
+        "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f"
+      }
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).printed_signal_summary_matches_runtime_file_digest",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).actual_signal_elf_guard",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).external_build_honest",
+      "passed": true,
+      "detail": "Feature attribution only linked to preceding successful fixed check.sh allfeatures release build; harness reports external honestly."
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_ready_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_ready_sigint.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_ready_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_ready_sigterm.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_blocked_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_blocked_sigint.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_blocked_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-24.04, x86_64).plain_blocked_sigterm.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).official_decoded_raw_bytes",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).actual_steps_success",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).actual_checkout_platform_toolchain",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).667_passed_39_rows_no_failure_ignored",
+      "passed": true,
+      "detail": {
+        "default": 280,
+        "all_features": 367,
+        "vendor": 20
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).release_docs_completed_after_check_script",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).five_actual_tls_cases",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).exact_three_writer_observations",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).ready-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).ready-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).blocked-int.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).blocked-int.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13289,
+        "tid": "13293",
+        "comm": "virtual-test-st",
+        "wchan": "pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).blocked-term.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).blocked-term.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13295,
+        "tid": "13299",
+        "comm": "virtual-test-st",
+        "wchan": "pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).blocked-deadline.status_time_scope",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).blocked-deadline.actual_raw_writer_and_fullpipe",
+      "passed": true,
+      "detail": {
+        "pid": 13301,
+        "tid": "13305",
+        "comm": "virtual-test-st",
+        "wchan": "pipe_write"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).legacy_two_backpressure",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).legacy_four_signal_matrix",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).actual_source_guard",
+      "passed": true,
+      "detail": {
+        "count": 10549,
+        "source_sha256": "bd67bbb25e0c56b120855a9115c603df5fee9b0cde4142d2f534cc4a2b75a54f"
+      }
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).printed_signal_summary_matches_runtime_file_digest",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).actual_signal_elf_guard",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).external_build_honest",
+      "passed": true,
+      "detail": "Feature attribution only linked to preceding successful fixed check.sh allfeatures release build; harness reports external honestly."
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_ready_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_ready_sigint.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_ready_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_ready_sigterm.actual_stopped_snapshot",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_blocked_sigint.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_blocked_sigint.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_blocked_sigterm.pending_identity_close",
+      "passed": true
+    },
+    {
+      "id": "check (ubuntu-22.04, x86_64).plain_blocked_sigterm.fullpipe_no_drain_only_exit",
+      "passed": true
+    },
+    {
+      "id": "all_four_records_completed",
+      "passed": true
+    },
+    {
+      "id": "all_original_connector_bytes_unchanged",
+      "passed": true
+    }
+  ],
+  "official_connector_artifacts": [
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/run-final.response.json",
+      "bytes": 27128,
+      "sha256": "deecf689788687b3618cbaf9e87d2e53391ad5195bea1e0a9359fd82c136e0d3"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/jobs-final.response.json",
+      "bytes": 9454,
+      "sha256": "39d25b77ab2cb4ac068b5ebe57cfaae3a585e7c5804c8349c50b0d527efd16f2"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319604.response.json",
+      "bytes": 9284271,
+      "sha256": "0b98f1b8b1069d083a21dcef2f0c2449a6897a2a1db650921741ccb98873582b"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319604.log",
+      "bytes": 8958349,
+      "sha256": "378b3a2d7506d84810a97c44f31d9c5baf04ccca8b043294ed64a969772b47ca"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319703.response.json",
+      "bytes": 9284079,
+      "sha256": "7094774d95affce84ca03fe8e63e8974735009a2d9f0cfd864e66caa4b373793"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319703.log",
+      "bytes": 8958160,
+      "sha256": "255f823050a72842d3d9c0f74518291eb1143cfda69641a61cd0b5b615e8b2e6"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319780.response.json",
+      "bytes": 9286446,
+      "sha256": "cbca522368af510756b69ae83df7a3b312bc75ebeda63d12fd25faee67499250"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319780.log",
+      "bytes": 8960489,
+      "sha256": "3fa4ddd5086421604cf479266440fcfdb3de295b4144769c762b08fc03c2bc12"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319787.response.json",
+      "bytes": 9286883,
+      "sha256": "da9a9423eaf2aa41350006790b0e3ffeda37738231a1edc3655befc945fbd268"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-ci-5ffdc6c-20261024/job-120723319787.log",
+      "bytes": 8960920,
+      "sha256": "2fbf6dc3c4316f518ddba89bdd8bdbd5f49cff68268a1ee933afb510be404df1"
+    }
+  ],
+  "workflow_sources": {
+    "ci_yaml_sha256": "67092afdddc20ff9e8a53d4949765aa94389ee066f533ea912be52c0e3ee0bb1",
+    "check_script_sha256": "f1b64bafbb48dda4597ad7f1c44c177b6d72db2f8fb0d83f6975e8545b308c76"
+  },
+  "scope": "Original secure lifecycle/harness author, separate official API/log parsing method, not an independent implementation. Imports no root verifier, executes no CI/Cargo/product/QEMU, writes only/tmp parser/report.",
+  "limits": [
+    "667 is the sum of actual passing libtest execution rows (default280/allfeatures367/vendor20), not667 unique functions or USB/hardware cases. Five TLS scenarios/two backpressure/four signal cases are separately reported lifecycle observations; the TLS parent test is already counted in libtest.",
+    "New secure5cases use memory-DER cfg(test) actual-adapter tests. CI safe output prints precondition counts/closure/cleanup-observed flags, not full before/stopped snapshots. Do not reconstruct unavailable runner/tmp bytes or claim trusted-root loader coverage.",
+    "Three actual PID/TID/comm/wchan observations are printed. Exact accepted names are pipe_write and anon_pipe_write; actual kernel and observed names are recorded, not inferred from the Ubuntu label. Earlier CI failures are not retroactively filled.",
+    "Legacy4signals prints before/after facts, child PID/starttime/UID, actual proc-ELF receipts and full source inventories. All logged source metadata must match exact immutableGit blobs. Indexed runner/tmp artifacts and binaries were not downloaded; their contents are not reconstructed.",
+    "Legacy2backpressure prints result/status/capacity/no-drain/socketEOF only, no per-child ELF guard. Linkage is fixed preceding workflow build/source/target path with no rebuild, not upgraded to a stronger actual ELF receipt.",
+    "Four-signal build metadata remains external prebuilt; not inferred. Allfeatures attribution is from successful exact scripts/check.sh order and both release completions.",
+    "No helper, actual USB, QEMU/hardware, ARM kernel redirection or complete Phase3 claim from ordinary-user native-platform loopback CI. Ready virtual cleanup snapshots and blocked socketEOF/exit have different scopes.",
+    "No repository changes, workflow reruns or GitHub writes. Read-only git cat-file/show is used only for exact historical source verification."
+  ],
+  "parser": {
+    "path": "/tmp/rustusb-prepare-stop-ci-independent-5ffdc6c-20261024/review_ci.py",
+    "sha256": "993a636c176930ff644f59adeeaca586d16458614bb00cf679f9a166e4dd355c"
+  }
+}

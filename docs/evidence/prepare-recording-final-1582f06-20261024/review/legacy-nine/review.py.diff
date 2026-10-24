@@ -1,0 +1,58 @@
+--- /tmp/rustusb-data-link-final-lifecycle-review-20261024/compat/review.py
++++ /tmp/rustusb-prepare-stop-legacy-nine-review-20261024/review.py
+@@ -3,9 +3,9 @@
+ from pathlib import Path
+ import argparse, datetime, hashlib, json, subprocess, sys
+ HERE=Path(__file__).resolve().parent
+-BASE=Path('/tmp/rustusb-data-link-ready-531e0c3-20261024')
++BASE=Path('/tmp/rustusb-prepare-stop-final-1582f06-20261024')
+ REPO=Path('/home/ubuntu/github/usbip-client')
+-HEAD='531e0c32a4b0e7252ca771ab4f10042c71c8c195'
++HEAD='1582f06776f4c1ea50e9b5109a9ad7d0b7cdbe16'
+ NAMES=[f'secure-{backend}-{family}' for backend in ['virtual','usbfs','native'] for family in ['ipv4','ipv6']]+['agent-native-ipv4','agent-native-ipv6','sigterm']
+ def load(p):return json.loads(p.read_bytes())
+ def sha(b):return hashlib.sha256(b).hexdigest()
+@@ -14,7 +14,7 @@
+ def ready():
+  terminal=BASE/'result.json'
+  if not terminal.exists():return {'status':'WAITING_FOR_TERMINAL_BATCH','reason':'final result.json absent','completed_receipts':len(load(BASE/'results.json'))}
+- result=load(terminal);runs=[r for r in load(BASE/'results.json') if not r['case'].startswith('health-')]
++ result=load(terminal);runs=[r for r in load(BASE/'results.json') if r['case'] in NAMES]
+  if len(runs)!=9 or [x['case'] for x in runs]!=NAMES:return {'status':'WAITING_FOR_TERMINAL_BATCH','reason':'nine ordered receipts absent','completed_receipts':len(runs)}
+  return {'status':'READY_FOR_RAW_REVIEW','runtime_result':result.get('result'),'completed_receipts':9}
+ def main():
+@@ -27,14 +27,14 @@
+  def check(name,condition):
+   checks.append({'name':name,'passed':bool(condition)})
+   if not condition:raise ValueError(name)
+- report={'schema_version':1,'result':'FAIL','source_head':HEAD,'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'method':'Copied and disclosed historical independent raw parsers plus strict private disk2 checks. No runner import/verify/pcap_review, no Cargo, product process, QEMU or USB execution. Current reviewer contributed related product/harness code; independent method is not an independent author identity.','scope':'Nine old raw-v1 compatibility groups only. New framed-v2 heartbeat matrix is separate.','groups':groups,'batch_checks':checks,'boundaries':['Comparisons are predicates, not USB cases or new test executions.','ELFs and immutable Git blobs are checked against each guest receipt and frozen source, not inferred solely from a PASS summary.','Native helper tracked disk2 and private application disk2 are distinct; untracked foreground helper journals remain disk1.','Raw-v1 health is unavailable; this batch cannot prove heartbeat/RTT or timeout behavior.','USBFS foreground collector has final journal but no intermediate immutable grant journal snapshots.','Legacy SIGTERM lacks raw host FTDI sink and intermediate journals; its prior limited observation remains explicit.','Agent KILL occurs after tty closure; no claim a specific URB/ioctl was pending.','Historical FAIL runs/results are untouched. Full Phase3, hardware and accepted hardblocked initialization remain outside scope.','PCAPs are inventoried; this lifecycle audit does not independently classify their TLS records.']}
++ report={'schema_version':1,'result':'FAIL','source_head':HEAD,'created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'method':'Copied and disclosed historical independent raw parsers plus strict private disk2 checks. No runner import/verify/pcap_review, no Cargo, product process, QEMU or USB execution. Current reviewer contributed related product/harness code; independent method is not an independent author identity.','scope':'Nine old raw-v1 compatibility groups only. The eight new preparation and six framed-v2 health runs are separately reviewed; they are not counted here.','groups':groups,'batch_checks':checks,'boundaries':['Comparisons are predicates, not USB cases or new test executions.','ELFs and immutable Git blobs are checked against each guest receipt and frozen source, not inferred solely from a PASS summary.','Native helper tracked disk2 and private application disk2 are distinct; untracked foreground helper journals remain disk1.','Raw-v1 health is unavailable; this batch cannot prove heartbeat/RTT or timeout behavior.','USBFS foreground collector has final journal but no intermediate immutable grant journal snapshots.','Legacy SIGTERM lacks raw host FTDI sink and intermediate journals; its prior limited observation remains explicit.','Agent KILL occurs after tty closure; no claim a specific URB/ioctl was pending.','Historical FAIL runs/results are untouched. Full Phase3, hardware and accepted hardblocked initialization remain outside scope.','PCAPs are inventoried; this lifecycle audit does not independently classify their TLS records.']}
+  try:
+-  start=load(BASE/'start.json');end=load(BASE/'result.json');runs=[r for r in load(BASE/'results.json') if not r['case'].startswith('health-')]
++  start=load(BASE/'start.json');end=load(BASE/'result.json');runs=[r for r in load(BASE/'results.json') if r['case'] in NAMES]
+   before=load(BASE/'inputs-before.json');after=load(BASE/'inputs-after.json')
+-  check('exact_clean_start',start['head']==HEAD and start['clean'] is True and start['input_count']==213)
+-  check('completed_batch_guards',end['result']=='PASS' and end['head']==HEAD and end['inputs_unchanged'] is True and end['input_count']==213)
++  check('exact_clean_start',start['head']==HEAD and start['clean'] is True and start['input_count']==222)
++  check('completed_batch_guards',end['result']=='PASS' and end['head']==HEAD and end['inputs_unchanged'] is True and end['input_count']==222)
+   check('nine_ordered_actual_process_receipts',[r['case'] for r in runs]==NAMES and all(r['exit_code']==0 and r['unchanged'] is True and r['summary_result']=='PASS' for r in runs))
+-  check('exact_before_after_inputs',before==after and len(before)==213)
++  check('exact_before_after_inputs',before==after and len(before)==222)
+   for row in before:
+    b=subprocess.check_output(['git','show',HEAD+':'+row['path']],cwd=REPO)
+    check('gitblob:'+row['path'],len(b)==row['bytes'] and sha(b)==row['sha256'])
+@@ -53,12 +53,12 @@
+    check(name+':original_summary_unchanged',summary_hashes[name]==sha((directory/'summary.json').read_bytes()))
+    groups.append({'case':name,'summary':filemeta(directory/'summary.json'),'review':filemeta(output),'result':parsed['result'],'comparisons':parsed.get('check_count',parsed.get('group',{}).get('assertion_count')),'guest_exit_codes':summary['guest_exit_codes'],'source_inputs':len(summary.get('source_inputs',{})) or 'layered fingerprint','decoded_guest_artifacts':parsed.get('group',{}).get('redecoded_guest_artifacts',parsed.get('facts',{}).get('decoded_guest_files'))})
+   originals=[]
+-  for path in sorted(BASE.rglob('*')):
++  for path in sorted([p for n in NAMES for p in (BASE/n).rglob('*')] + [BASE/n for n in ['start.json','result.json','results.json','inputs-before.json','inputs-after.json']]):
+    if path.is_file():
+     if path.name.endswith('-key.der'):raise ValueError('unexpected private-key artifact, do not inventory: '+str(path))
+     originals.append(filemeta(path))
+   (HERE/'raw-inputs.json').write_text(json.dumps({'source_head':HEAD,'file_count':len(originals),'files':originals},indent=2)+'\n')
+-  report.update(result='PASS',binary_sha256=elf,global_source_inputs=213,completed_groups=9,guest_exit_zero=18,recorded_group_comparisons=sum(x['comparisons'] for x in groups),raw_inventory=filemeta(HERE/'raw-inputs.json'))
++  report.update(result='PASS',binary_sha256=elf,global_source_inputs=222,completed_groups=9,guest_exit_zero=18,recorded_group_comparisons=sum(x['comparisons'] for x in groups),raw_inventory=filemeta(HERE/'raw-inputs.json'))
+  except Exception as error:
+   report['error']=type(error).__name__+': '+str(error)
+  report['parser_provenance']=filemeta(HERE/'preparation.json');report['driver']=filemeta(Path(__file__))

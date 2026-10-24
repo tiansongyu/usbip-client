@@ -1,0 +1,1611 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "started_at_utc": "2026-10-24T00:29:02.688970+00:00",
+  "scope": "separate startup helper-wait and two-live-lease SIGTERM observations of ordinary USBFS servers with QEMU HID/FTDI; not SIGKILL/hardware",
+  "kernel": "6.8.0-106-generic",
+  "git_commit": "1582f06776f4c1ea50e9b5109a9ad7d0b7cdbe16",
+  "working_tree_dirty": false,
+  "host_uid": 1000,
+  "host_architecture": "x86_64",
+  "build_performed": true,
+  "build_command": [
+    "cargo",
+    "build",
+    "--workspace",
+    "--release",
+    "--locked",
+    "--all-features"
+  ],
+  "source_fingerprint_sha256": "187c6d73931a57d9497b887408a6ae1973bbc087ff0ee4b08df49d16e0d25b43",
+  "cargo_lock_sha256": "aecdd28d490d8f4414141b5a0328063c02a3ad82edaadfaaa8fd282f399a6e4f",
+  "script_sha256": {
+    "run-sigterm-qemu.py": "f649e52baeb1760eccab74115e4b3194a60d2e8abeffeebe9c3115fa42fafc16",
+    "guest-sigterm-init.sh": "0b7aeaebea6a35ef981eab69ab63f84549b84ee0d162bcd2c382c5c34663f447",
+    "run-physical-qemu.py": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+    "guest-physical-init.sh": "ddae06e4cf2494aef107b1d28250507fbd78f57bcdd44a2738b5d5f18fd80375",
+    "physical-wire-probe.rs": "8d1272525f58ce99daee5d9766c9bbb2b098f6dc8c9702639ba89f6b1912ffe3",
+    "run-native-qemu.py": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+    "guest-init.sh": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+  },
+  "qemu_version": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)\nCopyright (c) 2003-2021 Fabrice Bellard and the QEMU Project developers",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "topology": {
+    "private_socketpair": [
+      "server:192.0.2.1",
+      "client:192.0.2.2"
+    ],
+    "host_network_listener": false,
+    "ip_forward": false
+  },
+  "output_channels": {
+    "server": {
+      "kernel": "server-serial.log",
+      "program": "server-evidence.log",
+      "kernel_device": "ttyS0",
+      "program_device": "ttyS1"
+    },
+    "client": {
+      "kernel": "client-serial.log",
+      "program": "client-evidence.log",
+      "kernel_device": "ttyS0",
+      "program_device": "ttyS1"
+    }
+  },
+  "binary_sha256": {
+    "rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+    "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+  },
+  "probe_binary_sha256": "4f4f463faa0e06b8b33cfa7f7e0be2ff33b915d5f05ca59b71524b6127000369",
+  "guest_binary_sha256": {
+    "rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+    "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+  },
+  "guest_modules": {
+    "config_sha256": "a83db1b3b61ca8e4b6c76e2d247fcd9efce7aa8a78f8a7948a5c3b5169c788a4",
+    "required": {
+      "usb-common": {
+        "config": "y",
+        "sha256": null
+      },
+      "usbcore": {
+        "config": "y",
+        "sha256": null
+      },
+      "e1000": {
+        "config": "m",
+        "sha256": "9ba908b09b2248d6540136faf03a54066e03130fd2275db9cedccdc71803a79c"
+      },
+      "evdev": {
+        "config": "y",
+        "sha256": null
+      },
+      "hid": {
+        "config": "m",
+        "sha256": "b27f081f29c43b1e1b4dc14d07933bf685bda9fdbb5e39457ac3f3dc01c6b17d"
+      },
+      "hid-generic": {
+        "config": "m",
+        "sha256": "565528ba5f0106d850b276d055fd7b2a583e1162b12b44b89eb42180759d0c3d"
+      },
+      "usbhid": {
+        "config": "m",
+        "sha256": "52fff0054d622be3bbadb4d93bd26682b584a54efa6f226136161165503817e9"
+      },
+      "usbserial": {
+        "config": "m",
+        "sha256": "faa034309b9c5cd47a43de4c16256068056e90c83c6fecb9cad8ed0aef66a8c1"
+      },
+      "ftdi_sio": {
+        "config": "m",
+        "sha256": "a921ebe05178d571d894987d4fa10e27ea9820d5ccee6abe8e9f9d6917389502"
+      },
+      "xhci-hcd": {
+        "config": "y",
+        "sha256": null
+      },
+      "xhci-pci": {
+        "config": "m",
+        "sha256": "3c5fd494640c29223afdbb368a6591de808f24f743a5d0301854e6028ead4d41"
+      },
+      "usbip-core": {
+        "config": "m",
+        "sha256": "55e7dc6ab5db0bf0349a8dced6b43970eae35a930bc947259a92ebc7091bbd4d"
+      },
+      "vhci-hcd": {
+        "config": "m",
+        "sha256": "dfa3b234bb3f36ef2338a7ae02cc0add91a411f339f1ac69ae90763409eb376b"
+      },
+      "unix_diag": {
+        "config": "m",
+        "sha256": "c9a102b7249f420ef0cfd6f629d0175af88260f20a20bd46a94250fddc7624ae"
+      }
+    },
+    "copied_module_sha256": {
+      "e1000.ko": "9ba908b09b2248d6540136faf03a54066e03130fd2275db9cedccdc71803a79c",
+      "ftdi_sio.ko": "a921ebe05178d571d894987d4fa10e27ea9820d5ccee6abe8e9f9d6917389502",
+      "hid-generic.ko": "565528ba5f0106d850b276d055fd7b2a583e1162b12b44b89eb42180759d0c3d",
+      "hid.ko": "b27f081f29c43b1e1b4dc14d07933bf685bda9fdbb5e39457ac3f3dc01c6b17d",
+      "unix_diag.ko": "c9a102b7249f420ef0cfd6f629d0175af88260f20a20bd46a94250fddc7624ae",
+      "usbhid.ko": "52fff0054d622be3bbadb4d93bd26682b584a54efa6f226136161165503817e9",
+      "usbip-core.ko": "55e7dc6ab5db0bf0349a8dced6b43970eae35a930bc947259a92ebc7091bbd4d",
+      "usbip-host.ko": "00a31e0665152567efc18969ce79538f866fac85f7cde55ea2158d4dea516c08",
+      "usbserial.ko": "faa034309b9c5cd47a43de4c16256068056e90c83c6fecb9cad8ed0aef66a8c1",
+      "vhci-hcd.ko": "dfa3b234bb3f36ef2338a7ae02cc0add91a411f339f1ac69ae90763409eb376b",
+      "xhci-pci-renesas.ko": "14541a1e810a1b81f94d42e26af1eb7594df9a47595b423a1829bc96421a9760",
+      "xhci-pci.ko": "3c5fd494640c29223afdbb368a6591de808f24f743a5d0301854e6028ead4d41"
+    }
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "initramfs_sha256": "4b70914832e104832af9a6ffdd7d706960c2c86dabee8cc9b153f13e239ea711",
+  "native_tool_sha256": {
+    "usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+    "usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165"
+  },
+  "guest_utility_sha256": {
+    "busybox": "b3c1009e1b5c927e537487c80639cdf404f69e3eb49371d9be5d841672be3ff9",
+    "jq": "858a84f22b39317f13a57b4b91e535925c1b4f819d9bb2864361df4ad6acb00f",
+    "setpriv": "960ac94d6b4d095d67d44b00b9b23b3f5e5e609d4539d2223c7c70ed559108ba",
+    "ss": "082e2308ddd029bcdc8e7886380061dde66c9ab66db3c806f8db9793d2fb8a0e"
+  },
+  "acceleration": "kvm",
+  "qemu_commands": {
+    "server": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-sigterm-qemu-7095knpg/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-sigterm-qemu-7095knpg/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.sigterm_test=1 rustusb.role=server",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/sigterm/server-serial.log",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/sigterm/server-evidence.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=private,fd=3",
+      "-device",
+      "e1000,netdev=private,mac=52:54:00:00:00:61",
+      "-device",
+      "qemu-xhci,id=usb",
+      "-device",
+      "usb-kbd,id=term-kbd,bus=usb.0,port=1",
+      "-chardev",
+      "socket,id=ftdi,path=/tmp/rustusb-sigterm-qemu-7095knpg/ftdi.sock,server=on,wait=off",
+      "-device",
+      "usb-serial,id=term-ftdi,bus=usb.0,port=2,chardev=ftdi,always-plugged=on",
+      "-qmp",
+      "unix:/tmp/rustusb-sigterm-qemu-7095knpg/qmp.sock,server=on,wait=off"
+    ],
+    "client": [
+      "qemu-system-x86_64",
+      "-m",
+      "512",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-kernel",
+      "/tmp/rustusb-sigterm-qemu-7095knpg/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-sigterm-qemu-7095knpg/initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.sigterm_test=1 rustusb.role=client",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/sigterm/client-serial.log",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/sigterm/client-evidence.log",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=private,fd=4",
+      "-device",
+      "e1000,netdev=private,mac=52:54:00:00:00:62"
+    ]
+  },
+  "verification": {
+    "checks": [
+      {
+        "name": "server_one_evidence_channel",
+        "result": "PASS"
+      },
+      {
+        "name": "server_collection_complete",
+        "result": "PASS"
+      },
+      {
+        "name": "server_guest_result",
+        "result": "PASS"
+      },
+      {
+        "name": "server_integrity",
+        "result": "PASS"
+      },
+      {
+        "name": "server_isolation",
+        "result": "PASS"
+      },
+      {
+        "name": "server_schema",
+        "result": "PASS"
+      },
+      {
+        "name": "server_helper_still_alive",
+        "result": "PASS"
+      },
+      {
+        "name": "server_observation_limit",
+        "result": "PASS"
+      },
+      {
+        "name": "client_one_evidence_channel",
+        "result": "PASS"
+      },
+      {
+        "name": "client_collection_complete",
+        "result": "PASS"
+      },
+      {
+        "name": "client_guest_result",
+        "result": "PASS"
+      },
+      {
+        "name": "client_integrity",
+        "result": "PASS"
+      },
+      {
+        "name": "client_isolation",
+        "result": "PASS"
+      },
+      {
+        "name": "client_schema",
+        "result": "PASS"
+      },
+      {
+        "name": "client_helper_still_alive",
+        "result": "PASS"
+      },
+      {
+        "name": "client_observation_limit",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_schema",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_one_owned_child_term",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_real_helper_queue_not_signal_pipe",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_stopped_helper_no_ready_or_listener",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_wait_zero_within_three_seconds",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_helper_resumed",
+        "result": "PASS"
+      },
+      {
+        "name": "exactly_one_term_owned_pid",
+        "result": "PASS"
+      },
+      {
+        "name": "stdin_not_shutdown_trigger",
+        "result": "PASS"
+      },
+      {
+        "name": "actual_wait_zero",
+        "result": "PASS"
+      },
+      {
+        "name": "cooperative_observation_within_twenty_seconds",
+        "result": "PASS"
+      },
+      {
+        "name": "process_and_fds_gone",
+        "result": "PASS"
+      },
+      {
+        "name": "all_event_schemas_no_error",
+        "result": "PASS"
+      },
+      {
+        "name": "one_ready",
+        "result": "PASS"
+      },
+      {
+        "name": "snapshot_ids_unique",
+        "result": "PASS"
+      },
+      {
+        "name": "two_actual_pending_imports",
+        "result": "PASS"
+      },
+      {
+        "name": "real_control_bulk_interrupt",
+        "result": "PASS"
+      },
+      {
+        "name": "exact_independent_observations",
+        "result": "PASS"
+      },
+      {
+        "name": "startup_independent_original_sysfs_unchanged",
+        "result": "PASS"
+      },
+      {
+        "name": "original_drivers_cfg_alt",
+        "result": "PASS"
+      },
+      {
+        "name": "held_independent_claims_and_generation",
+        "result": "PASS"
+      },
+      {
+        "name": "held_actual_usb_fds",
+        "result": "PASS"
+      },
+      {
+        "name": "held_owned_ordinary_identity",
+        "result": "PASS"
+      },
+      {
+        "name": "term-pending_independent_claims_and_generation",
+        "result": "PASS"
+      },
+      {
+        "name": "term-pending_actual_usb_fds",
+        "result": "PASS"
+      },
+      {
+        "name": "term-pending_owned_ordinary_identity",
+        "result": "PASS"
+      },
+      {
+        "name": "independent_original_sysfs_restored",
+        "result": "PASS"
+      },
+      {
+        "name": "one_final_stopped",
+        "result": "PASS"
+      },
+      {
+        "name": "stopped_resources_and_drivers",
+        "result": "PASS"
+      },
+      {
+        "name": "real_pending_reaped_cancellation_counts_preserved",
+        "result": "PASS"
+      },
+      {
+        "name": "spontaneous_disconnect_before_detach",
+        "result": "PASS"
+      },
+      {
+        "name": "two_distinct_complete_receipts",
+        "result": "PASS"
+      },
+      {
+        "name": "raw_vhci_all_null_including_receipts",
+        "result": "PASS"
+      },
+      {
+        "name": "exact_serial_content_digests",
+        "result": "PASS"
+      },
+      {
+        "name": "real_key_down_and_up",
+        "result": "PASS"
+      },
+      {
+        "name": "both_actual_devices_busy",
+        "result": "PASS"
+      },
+      {
+        "name": "authorization_and_identity_gates",
+        "result": "PASS"
+      }
+    ],
+    "outcomes": {
+      "server": {
+        "schema_version": 1,
+        "event": "sigterm_outcome",
+        "role": "server",
+        "signal": 15,
+        "signal_count": 1,
+        "sender_uid": 1000,
+        "pid": 439,
+        "starttime": 301,
+        "wait_code": 0,
+        "process_exit_observed": true,
+        "pid_absent": true,
+        "fd_table_absent": true,
+        "restored_sysfs": true,
+        "within_observation_window": true,
+        "helper_alive": true,
+        "pre_snapshot_id": "pending-1",
+        "observation_centiseconds": 22,
+        "observation_limit_seconds": 20,
+        "stdin_kept_open": true,
+        "shutdown_control_sent": false
+      },
+      "client": {
+        "schema_version": 1,
+        "event": "sigterm_outcome",
+        "role": "client",
+        "spontaneous_disconnect": true,
+        "hid_generation_gone": true,
+        "ftdi_generation_gone": true,
+        "helper_alive": true,
+        "receipts": [
+          {
+            "local_bus_id": "1-1",
+            "local_device_address": 2,
+            "local_device_generation": {
+              "filesystem_device": 23,
+              "inode": 25433
+            },
+            "port": 0,
+            "product_id": 1,
+            "remote_device_id": 65538,
+            "status": 6,
+            "vendor_id": 1575
+          },
+          {
+            "local_bus_id": "1-2",
+            "local_device_address": 3,
+            "local_device_generation": {
+              "filesystem_device": 23,
+              "inode": 25667
+            },
+            "port": 1,
+            "product_id": 24577,
+            "remote_device_id": 65539,
+            "status": 6,
+            "vendor_id": 1027
+          }
+        ],
+        "sessions": [],
+        "vhci_status": "STATUS /sys/devices/platform/vhci_hcd.0/status\nhub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n",
+        "serial_in_bytes": 35,
+        "serial_out_bytes": 35,
+        "rx_sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a",
+        "tx_sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef",
+        "input_event_hex": "dbfbdb6a00000000075d040000000000040004001e000700dbfbdb6a00000000075d0400000000000100020001000000dbfbdb6a00000000075d0400000000000000000000000000dbfbdb6a000000009ce3050000000000040004001e000700dbfbdb6a000000009ce30500000000000100020000000000dbfbdb6a000000009ce30500000000000000000000000000",
+        "input_event_format": "linux_x86_64_24",
+        "observation_centiseconds": 20,
+        "observation_limit_seconds": 20,
+        "detach_before_observation": false
+      }
+    },
+    "startup_outcome": {
+      "schema_version": 1,
+      "event": "startup_term_outcome",
+      "pid": 313,
+      "starttime": 294,
+      "uid": 1000,
+      "signal": 15,
+      "signal_count": 1,
+      "sender_uid": 1000,
+      "helper_pid": 272,
+      "helper_starttime": 286,
+      "helper_stopped_before_signal": true,
+      "connected_unix_inode": "802",
+      "connected_unix_fd": 9,
+      "unix_observation": "Num       RefCount Protocol Flags    Type St Inode Path\n0000000005b77a91: 00000002 00000000 00010000 0001 01   759 /run/rustusb/control.sock\n000000009fcc5e6c: 00000003 00000000 00000000 0001 03   757\n00000000a29b2eb3: 00000003 00000000 00000000 0001 03   758\n0000000055809a38: 00000003 00000000 00000000 0001 02     0 /run/rustusb/control.sock\n0000000091e8887e: 00000003 00000000 00000000 0001 03   801\n000000000f65d0d9: 00000003 00000000 00000000 0001 03   802\n0000000024ea1ae4: 00000003 00000000 00000000 0001 03   800\n",
+      "unix_ss_observation": "u_str LISTEN 1      4096   /run/rustusb/control.sock 759 * 0   users:((\"rustusb-helper\",pid=272,fd=11)) <-> ino:4 dev:0/24 peers: 802     \nu_str ESTAB  0      0                              * 757 * 758 users:((\"rustusb-helper\",pid=272,fd=8),(\"rustusb-helper\",pid=272,fd=6)) <->\nu_str ESTAB  0      0                              * 758 * 757 users:((\"rustusb-helper\",pid=272,fd=7)) <->                                \nu_str ESTAB  0      0                              * 801 * 800 users:((\"rustusb\",pid=313,fd=7)) <->                                       \nu_str ESTAB  0      768                            * 802 * 0   users:((\"rustusb\",pid=313,fd=9)) <->                                       \nu_str ESTAB  0      0                              * 800 * 801 users:((\"rustusb\",pid=313,fd=8),(\"rustusb\",pid=313,fd=6)) <->              \n",
+      "tcp_observation": "  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     \n",
+      "tcp6_observation": "  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode\n",
+      "ready_before_signal": false,
+      "listener_before_signal": false,
+      "helper_acceptance_observed": false,
+      "wait_code": 0,
+      "process_exit_observed": true,
+      "observation_centiseconds": 0,
+      "observation_limit_seconds": 3,
+      "helper_continued": true,
+      "sysfs_unchanged": true,
+      "sysfs": [
+        {
+          "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+          "bus_id": "1-1",
+          "node": "/dev/bus/usb/001/002",
+          "generation": "23:25310",
+          "node_identity": "5:161:bd:1",
+          "node_owner_mode": "0:600",
+          "devnum": 2,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "usbhid"
+            }
+          ]
+        },
+        {
+          "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+          "bus_id": "1-2",
+          "node": "/dev/bus/usb/001/003",
+          "generation": "23:25544",
+          "node_identity": "5:164:bd:2",
+          "node_owner_mode": "0:600",
+          "devnum": 3,
+          "configuration": 1,
+          "interfaces": [
+            {
+              "number": 0,
+              "alternate": 0,
+              "driver": "ftdi_sio"
+            }
+          ]
+        }
+      ]
+    },
+    "server_events": [
+      {
+        "address": "192.0.2.1:3240",
+        "event": "ready",
+        "schema_version": 1,
+        "snapshot": {
+          "buffer_bytes_reserved": 0,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 0,
+                "bytes_out": 0,
+                "controls": 0,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 0
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 0,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 0,
+                "bytes_out": 0,
+                "controls": 0,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 2,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 0
+            }
+          ],
+          "schema_version": 1
+        }
+      },
+      {
+        "event": "snapshot",
+        "id": "baseline",
+        "schema_version": 1,
+        "snapshot": {
+          "buffer_bytes_reserved": 0,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 0,
+                "bytes_out": 0,
+                "controls": 0,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 0
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 0,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 0,
+                "bytes_out": 0,
+                "controls": 0,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 2,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 0
+            }
+          ],
+          "schema_version": 1
+        }
+      },
+      {
+        "event": "snapshot",
+        "id": "held",
+        "schema_version": 1,
+        "snapshot": {
+          "buffer_bytes_reserved": 2832,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 302,
+                "bytes_out": 1,
+                "controls": 14,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 1,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 13
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 2,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 2,
+                "bulk_out": 0,
+                "bytes_in": 162,
+                "bytes_out": 0,
+                "controls": 28,
+                "errors": 5,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 2,
+                "unlinks": 2
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 2,
+              "queued_urbs": 1,
+              "speed": 2,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 29
+            }
+          ],
+          "schema_version": 1
+        }
+      },
+      {
+        "event": "snapshot",
+        "id": "pending-1",
+        "schema_version": 1,
+        "snapshot": {
+          "buffer_bytes_reserved": 2832,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 318,
+                "bytes_out": 1,
+                "controls": 14,
+                "errors": 0,
+                "interrupt_in": 2,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 1,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 15
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 2,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 3,
+                "bulk_out": 1,
+                "bytes_in": 199,
+                "bytes_out": 35,
+                "controls": 28,
+                "errors": 5,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 2,
+                "unlinks": 2
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 2,
+              "queued_urbs": 1,
+              "speed": 2,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 31
+            }
+          ],
+          "schema_version": 1
+        }
+      },
+      {
+        "event": "stopped",
+        "schema_version": 1,
+        "snapshot": {
+          "buffer_bytes_reserved": 0,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 1,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 318,
+                "bytes_out": 1,
+                "controls": 14,
+                "errors": 1,
+                "interrupt_in": 3,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 16
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 4,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 5,
+                "bulk_out": 1,
+                "bytes_in": 199,
+                "bytes_out": 35,
+                "controls": 28,
+                "errors": 7,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 2,
+                "unlinks": 2
+              },
+              "current_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 2,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 32
+            }
+          ],
+          "schema_version": 1
+        }
+      }
+    ],
+    "server_observations": [
+      {
+        "label": "baseline",
+        "sysfs": [
+          {
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "bus_id": "1-1",
+            "node": "/dev/bus/usb/001/002",
+            "generation": "23:25310",
+            "node_identity": "5:161:bd:1",
+            "node_owner_mode": "0:600",
+            "devnum": 2,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbhid"
+              }
+            ]
+          },
+          {
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "bus_id": "1-2",
+            "node": "/dev/bus/usb/001/003",
+            "generation": "23:25544",
+            "node_identity": "5:164:bd:2",
+            "node_owner_mode": "0:600",
+            "devnum": 3,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "ftdi_sio"
+              }
+            ]
+          }
+        ],
+        "snapshot": {
+          "buffer_bytes_reserved": 0,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 0,
+                "bytes_out": 0,
+                "controls": 0,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 0
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 0,
+              "cleanup_verified": true,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 0,
+                "bytes_out": 0,
+                "controls": 0,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": false,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 0,
+              "queued_urbs": 0,
+              "speed": 2,
+              "state": "available",
+              "usbfs_inflight": 0,
+              "usbfs_reaped": 0
+            }
+          ],
+          "schema_version": 1
+        },
+        "fds": [
+          {
+            "node": "/dev/bus/usb/001/002",
+            "fd": 10,
+            "identity": "5:161:bd:1"
+          },
+          {
+            "node": "/dev/bus/usb/001/003",
+            "fd": 11,
+            "identity": "5:164:bd:2"
+          }
+        ],
+        "identity": {
+          "pid": 439,
+          "starttime": 301,
+          "exe": "/usr/bin/rustusb",
+          "uids": [
+            1000,
+            1000,
+            1000,
+            1000
+          ],
+          "cap_effective": 0,
+          "cap_permitted": 0,
+          "cap_ambient": 0,
+          "fds": [
+            {
+              "node": "/dev/bus/usb/001/002",
+              "fd": 10,
+              "identity": "5:161:bd:1"
+            },
+            {
+              "node": "/dev/bus/usb/001/003",
+              "fd": 11,
+              "identity": "5:164:bd:2"
+            }
+          ]
+        }
+      },
+      {
+        "label": "held",
+        "sysfs": [
+          {
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "bus_id": "1-1",
+            "node": "/dev/bus/usb/001/002",
+            "generation": "23:25310",
+            "node_identity": "5:161:bd:1",
+            "node_owner_mode": "0:600",
+            "devnum": 2,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbfs"
+              }
+            ]
+          },
+          {
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "bus_id": "1-2",
+            "node": "/dev/bus/usb/001/003",
+            "generation": "23:25544",
+            "node_identity": "5:164:bd:2",
+            "node_owner_mode": "0:600",
+            "devnum": 3,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbfs"
+              }
+            ]
+          }
+        ],
+        "snapshot": {
+          "buffer_bytes_reserved": 2832,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 302,
+                "bytes_out": 1,
+                "controls": 14,
+                "errors": 0,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 1,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 13
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 2,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 2,
+                "bulk_out": 0,
+                "bytes_in": 162,
+                "bytes_out": 0,
+                "controls": 28,
+                "errors": 5,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 2,
+                "unlinks": 2
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 2,
+              "queued_urbs": 1,
+              "speed": 2,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 29
+            }
+          ],
+          "schema_version": 1
+        },
+        "fds": [
+          {
+            "node": "/dev/bus/usb/001/002",
+            "fd": 10,
+            "identity": "5:161:bd:1"
+          },
+          {
+            "node": "/dev/bus/usb/001/003",
+            "fd": 11,
+            "identity": "5:164:bd:2"
+          }
+        ],
+        "identity": {
+          "pid": 439,
+          "starttime": 301,
+          "exe": "/usr/bin/rustusb",
+          "uids": [
+            1000,
+            1000,
+            1000,
+            1000
+          ],
+          "cap_effective": 0,
+          "cap_permitted": 0,
+          "cap_ambient": 0,
+          "fds": [
+            {
+              "node": "/dev/bus/usb/001/002",
+              "fd": 10,
+              "identity": "5:161:bd:1"
+            },
+            {
+              "node": "/dev/bus/usb/001/003",
+              "fd": 11,
+              "identity": "5:164:bd:2"
+            }
+          ]
+        }
+      },
+      {
+        "label": "term-pending",
+        "sysfs": [
+          {
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "bus_id": "1-1",
+            "node": "/dev/bus/usb/001/002",
+            "generation": "23:25310",
+            "node_identity": "5:161:bd:1",
+            "node_owner_mode": "0:600",
+            "devnum": 2,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbfs"
+              }
+            ]
+          },
+          {
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "bus_id": "1-2",
+            "node": "/dev/bus/usb/001/003",
+            "generation": "23:25544",
+            "node_identity": "5:164:bd:2",
+            "node_owner_mode": "0:600",
+            "devnum": 3,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbfs"
+              }
+            ]
+          }
+        ],
+        "snapshot": {
+          "buffer_bytes_reserved": 2832,
+          "devices": [
+            {
+              "bus_id": "1-1",
+              "cancelled": 0,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 0,
+                "bulk_out": 0,
+                "bytes_in": 318,
+                "bytes_out": 1,
+                "controls": 14,
+                "errors": 0,
+                "interrupt_in": 2,
+                "interrupt_out": 0,
+                "unlink_cancelled": 0,
+                "unlinks": 0
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+              "ep0_max_packet_size": 64,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "usbhid",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 1,
+              "queued_urbs": 0,
+              "speed": 3,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 15
+            },
+            {
+              "bus_id": "1-2",
+              "cancelled": 2,
+              "cleanup_verified": false,
+              "configuration": 1,
+              "counters": {
+                "bulk_in": 3,
+                "bulk_out": 1,
+                "bytes_in": 199,
+                "bytes_out": 35,
+                "controls": 28,
+                "errors": 5,
+                "interrupt_in": 0,
+                "interrupt_out": 0,
+                "unlink_cancelled": 2,
+                "unlinks": 2
+              },
+              "current_drivers": [
+                {
+                  "driver": "usbfs",
+                  "interface": 0
+                }
+              ],
+              "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+              "ep0_max_packet_size": 8,
+              "leased": true,
+              "original_drivers": [
+                {
+                  "driver": "ftdi_sio",
+                  "interface": 0
+                }
+              ],
+              "pending_urbs": 2,
+              "queued_urbs": 1,
+              "speed": 2,
+              "state": "leased",
+              "usbfs_inflight": 1,
+              "usbfs_reaped": 31
+            }
+          ],
+          "schema_version": 1
+        },
+        "fds": [
+          {
+            "node": "/dev/bus/usb/001/002",
+            "fd": 10,
+            "identity": "5:161:bd:1"
+          },
+          {
+            "node": "/dev/bus/usb/001/003",
+            "fd": 11,
+            "identity": "5:164:bd:2"
+          }
+        ],
+        "identity": {
+          "pid": 439,
+          "starttime": 301,
+          "exe": "/usr/bin/rustusb",
+          "uids": [
+            1000,
+            1000,
+            1000,
+            1000
+          ],
+          "cap_effective": 0,
+          "cap_permitted": 0,
+          "cap_ambient": 0,
+          "fds": [
+            {
+              "node": "/dev/bus/usb/001/002",
+              "fd": 10,
+              "identity": "5:161:bd:1"
+            },
+            {
+              "node": "/dev/bus/usb/001/003",
+              "fd": 11,
+              "identity": "5:164:bd:2"
+            }
+          ]
+        }
+      },
+      {
+        "label": "post-term",
+        "process_exit_observed": true,
+        "restored_sysfs": true,
+        "sysfs": [
+          {
+            "device_id": "usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+            "bus_id": "1-1",
+            "node": "/dev/bus/usb/001/002",
+            "generation": "23:25310",
+            "node_identity": "5:161:bd:1",
+            "node_owner_mode": "0:600",
+            "devnum": 2,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "usbhid"
+              }
+            ]
+          },
+          {
+            "device_id": "usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de",
+            "bus_id": "1-2",
+            "node": "/dev/bus/usb/001/003",
+            "generation": "23:25544",
+            "node_identity": "5:164:bd:2",
+            "node_owner_mode": "0:600",
+            "devnum": 3,
+            "configuration": 1,
+            "interfaces": [
+              {
+                "number": 0,
+                "alternate": 0,
+                "driver": "ftdi_sio"
+              }
+            ]
+          }
+        ],
+        "snapshot": null,
+        "snapshot_source": "see actual stopped event if present"
+      }
+    ]
+  },
+  "serial_output": {
+    "expected_bytes": 35,
+    "received_bytes": 35,
+    "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef",
+    "exact_match": true
+  },
+  "qmp_events": [],
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "injections": [
+    "key-1",
+    "serial-1"
+  ],
+  "serial_received_bytes": 35,
+  "serial_received_sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef",
+  "source_fingerprint_after_sha256": "187c6d73931a57d9497b887408a6ae1973bbc087ff0ee4b08df49d16e0d25b43",
+  "source_guard_passed": true,
+  "binary_after_sha256": {
+    "rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+    "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+  },
+  "binary_guard_passed": true,
+  "git_commit_after": "1582f06776f4c1ea50e9b5109a9ad7d0b7cdbe16",
+  "working_tree_dirty_after": false,
+  "server_checks": [
+    "RUSTUSB_SIGTERM_EVIDENCE_CHANNEL: PASS role=server device=ttyS1 kernel_console=ttyS0",
+    "RUSTUSB_SIGTERM_BOOT role=server kernel=6.8.0-106-generic",
+    "RUSTUSB_SIGTERM_ISOLATION: PASS role=server carrier=1 ip_forward=0",
+    "RUSTUSB_SIGTERM_HELPER: PASS role=server allowed_uid=1000 denied_uid=1001",
+    "RUSTUSB_PHYSICAL_HELPER_CONNECTION_CLOSED method=reset_after_frame",
+    "RUSTUSB_SIGTERM_FD_GATE: PASS direct_uid1000=denied direct_uid1001=denied helper_uid1001=denied nodes=root0600",
+    "RUSTUSB_SIGTERM_STARTUP_OUTCOME {\"schema_version\":1,\"event\":\"startup_term_outcome\",\"pid\":313,\"starttime\":294,\"uid\":1000,\"signal\":15,\"signal_count\":1,\"sender_uid\":1000,\"helper_pid\":272,\"helper_starttime\":286,\"helper_stopped_before_signal\":true,\"connected_unix_inode\":\"802\",\"connected_unix_fd\":9,\"unix_observation\":\"Num       RefCount Protocol Flags    Type St Inode Path\\n0000000005b77a91: 00000002 00000000 00010000 0001 01   759 /run/rustusb/control.sock\\n000000009fcc5e6c: 00000003 00000000 00000000 0001 03   757\\n00000000a29b2eb3: 00000003 00000000 00000000 0001 03   758\\n0000000055809a38: 00000003 00000000 00000000 0001 02     0 /run/rustusb/control.sock\\n0000000091e8887e: 00000003 00000000 00000000 0001 03   801\\n000000000f65d0d9: 00000003 00000000 00000000 0001 03   802\\n0000000024ea1ae4: 00000003 00000000 00000000 0001 03   800\\n\",\"unix_ss_observation\":\"u_str LISTEN 1      4096   /run/rustusb/control.sock 759 * 0   users:((\\\"rustusb-helper\\\",pid=272,fd=11)) <-> ino:4 dev:0/24 peers: 802     \\nu_str ESTAB  0      0                              * 757 * 758 users:((\\\"rustusb-helper\\\",pid=272,fd=8),(\\\"rustusb-helper\\\",pid=272,fd=6)) <->\\nu_str ESTAB  0      0                              * 758 * 757 users:((\\\"rustusb-helper\\\",pid=272,fd=7)) <->                                \\nu_str ESTAB  0      0                              * 801 * 800 users:((\\\"rustusb\\\",pid=313,fd=7)) <->                                       \\nu_str ESTAB  0      768                            * 802 * 0   users:((\\\"rustusb\\\",pid=313,fd=9)) <->                                       \\nu_str ESTAB  0      0                              * 800 * 801 users:((\\\"rustusb\\\",pid=313,fd=8),(\\\"rustusb\\\",pid=313,fd=6)) <->              \\n\",\"tcp_observation\":\"  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     \\n\",\"tcp6_observation\":\"  sl  local_address                         remote_address                        st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode\\n\",\"ready_before_signal\":false,\"listener_before_signal\":false,\"helper_acceptance_observed\":false,\"wait_code\":0,\"process_exit_observed\":true,\"observation_centiseconds\":0,\"observation_limit_seconds\":3,\"helper_continued\":true,\"sysfs_unchanged\":true,\"sysfs\":[{\"device_id\":\"usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6\",\"bus_id\":\"1-1\",\"node\":\"/dev/bus/usb/001/002\",\"generation\":\"23:25310\",\"node_identity\":\"5:161:bd:1\",\"node_owner_mode\":\"0:600\",\"devnum\":2,\"configuration\":1,\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"usbhid\"}]},{\"device_id\":\"usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de\",\"bus_id\":\"1-2\",\"node\":\"/dev/bus/usb/001/003\",\"generation\":\"23:25544\",\"node_identity\":\"5:164:bd:2\",\"node_owner_mode\":\"0:600\",\"devnum\":3,\"configuration\":1,\"interfaces\":[{\"number\":0,\"alternate\":0,\"driver\":\"ftdi_sio\"}]}]}",
+    "RUSTUSB_SIGTERM_STARTUP_EVENTS_BEGIN",
+    "RUSTUSB_SIGTERM_STARTUP_EVENTS_END",
+    "RUSTUSB_SIGTERM_STARTUP_STDERR_BEGIN",
+    "RUSTUSB_SIGTERM_STARTUP_STDERR_END",
+    "RUSTUSB_SIGTERM_SERVER_READY: PASS uid=1000 app_root=false capabilities=0 usbip_host=false vhci_hcd=false",
+    "RUSTUSB_SIGTERM_HELD_PENDING: PASS leases=2 each_real_inflight=true buffer_reserved=true pid=439 starttime=301",
+    "RUSTUSB_SIGTERM_SENT: PASS signal=15 count=1 sender_uid=1000 pid=439 starttime=301",
+    "RUSTUSB_SIGTERM_EVENTS_BEGIN",
+    "RUSTUSB_SIGTERM_EVENTS_END",
+    "RUSTUSB_SIGTERM_OBSERVATIONS_BEGIN",
+    "RUSTUSB_SIGTERM_OBSERVATIONS_END",
+    "RUSTUSB_SIGTERM_STDERR_BEGIN",
+    "RUSTUSB_SIGTERM_STDERR_END",
+    "RUSTUSB_SIGTERM_OUTCOME {\"schema_version\":1,\"event\":\"sigterm_outcome\",\"role\":\"server\",\"signal\":15,\"signal_count\":1,\"sender_uid\":1000,\"pid\":439,\"starttime\":301,\"wait_code\":0,\"process_exit_observed\":true,\"pid_absent\":true,\"fd_table_absent\":true,\"restored_sysfs\":true,\"within_observation_window\":true,\"helper_alive\":true,\"pre_snapshot_id\":\"pending-1\",\"observation_centiseconds\":22,\"observation_limit_seconds\":20,\"stdin_kept_open\":true,\"shutdown_control_sent\":false}",
+    "RUSTUSB_SIGTERM_COLLECTION_COMPLETE role=server",
+    "RUSTUSB_SIGTERM_RESULT: PASS role=server"
+  ],
+  "client_checks": [
+    "RUSTUSB_SIGTERM_EVIDENCE_CHANNEL: PASS role=client device=ttyS1 kernel_console=ttyS0",
+    "RUSTUSB_SIGTERM_BOOT role=client kernel=6.8.0-106-generic",
+    "RUSTUSB_SIGTERM_ISOLATION: PASS role=client carrier=1 ip_forward=0",
+    "RUSTUSB_SIGTERM_HELPER: PASS role=client allowed_uid=1000 denied_uid=1001",
+    "RUSTUSB_SIGTERM_WAIT_INPUT key=1",
+    "RUSTUSB_SIGTERM_WAIT_SERIAL bytes=35",
+    "RUSTUSB_SIGTERM_REAL_IO: PASS key_code=2 down=true up=true serial_in=35 serial_out=35 same_receipts=true readers_kept_open=true",
+    "RUSTUSB_SIGTERM_OUTCOME {\"schema_version\":1,\"event\":\"sigterm_outcome\",\"role\":\"client\",\"spontaneous_disconnect\":true,\"hid_generation_gone\":true,\"ftdi_generation_gone\":true,\"helper_alive\":true,\"receipts\":[{\"local_bus_id\":\"1-1\",\"local_device_address\":2,\"local_device_generation\":{\"filesystem_device\":23,\"inode\":25433},\"port\":0,\"product_id\":1,\"remote_device_id\":65538,\"status\":6,\"vendor_id\":1575},{\"local_bus_id\":\"1-2\",\"local_device_address\":3,\"local_device_generation\":{\"filesystem_device\":23,\"inode\":25667},\"port\":1,\"product_id\":24577,\"remote_device_id\":65539,\"status\":6,\"vendor_id\":1027}],\"sessions\":[],\"vhci_status\":\"STATUS /sys/devices/platform/vhci_hcd.0/status\\nhub port sta spd dev      sockfd local_busid\\nhs  0000 004 000 00000000 000000 0-0\\nhs  0001 004 000 00000000 000000 0-0\\nhs  0002 004 000 00000000 000000 0-0\\nhs  0003 004 000 00000000 000000 0-0\\nhs  0004 004 000 00000000 000000 0-0\\nhs  0005 004 000 00000000 000000 0-0\\nhs  0006 004 000 00000000 000000 0-0\\nhs  0007 004 000 00000000 000000 0-0\\nss  0008 004 000 00000000 000000 0-0\\nss  0009 004 000 00000000 000000 0-0\\nss  0010 004 000 00000000 000000 0-0\\nss  0011 004 000 00000000 000000 0-0\\nss  0012 004 000 00000000 000000 0-0\\nss  0013 004 000 00000000 000000 0-0\\nss  0014 004 000 00000000 000000 0-0\\nss  0015 004 000 00000000 000000 0-0\\n\",\"serial_in_bytes\":35,\"serial_out_bytes\":35,\"rx_sha256\":\"eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a\",\"tx_sha256\":\"6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef\",\"input_event_hex\":\"dbfbdb6a00000000075d040000000000040004001e000700dbfbdb6a00000000075d0400000000000100020001000000dbfbdb6a00000000075d0400000000000000000000000000dbfbdb6a000000009ce3050000000000040004001e000700dbfbdb6a000000009ce30500000000000100020000000000dbfbdb6a000000009ce30500000000000000000000000000\",\"input_event_format\":\"linux_x86_64_24\",\"observation_centiseconds\":20,\"observation_limit_seconds\":20,\"detach_before_observation\":false}",
+    "RUSTUSB_SIGTERM_COLLECTION_COMPLETE role=client",
+    "RUSTUSB_SIGTERM_RESULT: PASS role=client"
+  ]
+}

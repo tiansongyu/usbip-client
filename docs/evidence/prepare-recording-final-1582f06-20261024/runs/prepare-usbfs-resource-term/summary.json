@@ -1,0 +1,3802 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "backend": "usbfs",
+  "family": "ipv4",
+  "case": "usbfs-resource",
+  "stop": "term",
+  "started_utc": "2026-10-24T00:20:12.967309+00:00",
+  "head": "1582f06776f4c1ea50e9b5109a9ad7d0b7cdbe16",
+  "git_status_before": "",
+  "source_inputs": {
+    "Cargo.lock": {
+      "sha256": "aecdd28d490d8f4414141b5a0328063c02a3ad82edaadfaaa8fd282f399a6e4f",
+      "bytes": 36795
+    },
+    "Cargo.toml": {
+      "sha256": "8d98f3211828e32a3a097e45d3078fb010936b3a87ee105a069907027bf7c742",
+      "bytes": 1643
+    },
+    "crates/rustusb-cli/Cargo.toml": {
+      "sha256": "b9141b410452449f1ffccc4d36b864fa4a6ab6c1bfa2f37cc2dd61a59aa56c16",
+      "bytes": 1153
+    },
+    "crates/rustusb-cli/src/agent.rs": {
+      "sha256": "99207ef70d818d686fea3a66de2da8164e3933433828da1d66db433cb59bbbfd",
+      "bytes": 5212
+    },
+    "crates/rustusb-cli/src/event_output.rs": {
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6",
+      "bytes": 2400
+    },
+    "crates/rustusb-cli/src/foreground.rs": {
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82",
+      "bytes": 6074
+    },
+    "crates/rustusb-cli/src/main.rs": {
+      "sha256": "9d65ba870ee414a60d87f627bf783ecc504b0285b86d8c3edc3702a7d4b9f7b2",
+      "bytes": 25035
+    },
+    "crates/rustusb-cli/src/physical_server.rs": {
+      "sha256": "f1f2bf301727793ed00a9f187a628698832699012232eeebe79c3c6f28d16db4",
+      "bytes": 831
+    },
+    "crates/rustusb-cli/src/secure_client.rs": {
+      "sha256": "0573f7f664f7366779de335d0a80bc5d44b1aef6d8e6ed03ce66f3f21727f100",
+      "bytes": 2585
+    },
+    "crates/rustusb-cli/src/secure_foreground_tests.rs": {
+      "sha256": "bff44c6a83194e857c45b403dde80f6255e9141fbf627e32f483a7bddf6c49c8",
+      "bytes": 26643
+    },
+    "crates/rustusb-cli/src/secure_server.rs": {
+      "sha256": "b4d419722df9f21e12ae3540896e9558929659c31e1fc525017eeb1101b8ecf1",
+      "bytes": 4028
+    },
+    "crates/rustusb-cli/src/shutdown_signals.rs": {
+      "sha256": "6624e3c3751e79296e282ef9fd870378998e8032581fe7117d5e024de1223ad6",
+      "bytes": 1346
+    },
+    "crates/rustusb-cli/src/virtual_server.rs": {
+      "sha256": "aac9e558283233bd36d46d3cc7eb710df8f31fa5da23a94a8460e22e832a6b98",
+      "bytes": 780
+    },
+    "crates/rustusb-core/Cargo.toml": {
+      "sha256": "f453abb66ef2bb0d7fda890176ad9b334acb1d61b1bd6b7079630c0a9cdd5c53",
+      "bytes": 277
+    },
+    "crates/rustusb-core/src/application.rs": {
+      "sha256": "b8dc2ca4ddd4cb47e1307bfecddf4c24412dd7b5ad71839b6444b465f3050b79",
+      "bytes": 9487
+    },
+    "crates/rustusb-core/src/device_key.rs": {
+      "sha256": "636cdde09e253d9a04850fa575289a5edaabff8a6108cd1a7c51e8c5218b949f",
+      "bytes": 6347
+    },
+    "crates/rustusb-core/src/lib.rs": {
+      "sha256": "214ad243482dce59e29b9631d304c70aafb8668a481d1a95dec421cf4701cc43",
+      "bytes": 13426
+    },
+    "crates/rustusb-core/src/link_health.rs": {
+      "sha256": "9119916a63567639e742ac6ffb948370e65dffba21b5019ea346578dcc019a40",
+      "bytes": 13549
+    },
+    "crates/rustusb-core/src/server_session.rs": {
+      "sha256": "6386e869eb02960c67191ded6b2e6d4179c5662edced09a8f57f9272c2750b19",
+      "bytes": 6649
+    },
+    "crates/rustusb-daemon/Cargo.toml": {
+      "sha256": "6ffee80994175215dab640f3b42729ab96d5a91f4ea3b16bd3a881901bb7a75e",
+      "bytes": 777
+    },
+    "crates/rustusb-daemon/src/ancillary.rs": {
+      "sha256": "8ff2ea31eb1e9cd20339a50c5412060384e2e9a622cd1aae18c1aa8331cdef7d",
+      "bytes": 4238
+    },
+    "crates/rustusb-daemon/src/broker.rs": {
+      "sha256": "8104fe723fb8688ae559eda2c1a2b9631ff8250028b5a86d0d09124cf746c435",
+      "bytes": 15906
+    },
+    "crates/rustusb-daemon/src/diagnostics.rs": {
+      "sha256": "d42c145ff152ac0724d810db1f95fe368def10c03852de631f17d68b67d67a72",
+      "bytes": 13557
+    },
+    "crates/rustusb-daemon/src/journal.rs": {
+      "sha256": "047390d737c91da59ae6fba45262ee32e7fa4c6823a96dda5dc054d17b127995",
+      "bytes": 65556
+    },
+    "crates/rustusb-daemon/src/journal_tracked_tests.rs": {
+      "sha256": "de12f5cbc94dd8abbf5020f86c70c66bbcc0366597b579fa2fa59c1851130196",
+      "bytes": 16611
+    },
+    "crates/rustusb-daemon/src/lib.rs": {
+      "sha256": "14aea05b3fe18a67ee5448531cf89811d87de9160e13a97e8e989d8350f27eda",
+      "bytes": 40648
+    },
+    "crates/rustusb-daemon/src/linux.rs": {
+      "sha256": "fc7d2aec9701e80f6ece4cf2c383924bab3e4b89d4e9c4bb5b75bdca091760b4",
+      "bytes": 85131
+    },
+    "crates/rustusb-daemon/src/main.rs": {
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694",
+      "bytes": 1468
+    },
+    "crates/rustusb-daemon/src/native_channel.rs": {
+      "sha256": "bd3a3b110f831336a7f7a97cb0ba27426eba2bf33dd228f9679e34ea9ba96f45",
+      "bytes": 29317
+    },
+    "crates/rustusb-daemon/src/native_export.rs": {
+      "sha256": "3dc9e4afff7e0a95efc010c26fab2b065be7288d9f59bff0675dbebd4a8d31c7",
+      "bytes": 33218
+    },
+    "crates/rustusb-daemon/src/native_state.rs": {
+      "sha256": "e44b96f96aac1f16f15e0e819ead3e8c3078abba2a59197c2142aa6d8e7e463d",
+      "bytes": 38941
+    },
+    "crates/rustusb-daemon/src/native_tracking.rs": {
+      "sha256": "04b3911b27a37675d76a5e6dfa0d9e627a23420d7c536c68c20c79554ed7a183",
+      "bytes": 21482
+    },
+    "crates/rustusb-daemon/src/native_tracking_tests.rs": {
+      "sha256": "dbab3e7ffe099831622da4448866079e4ac2f406a47d06cf95398c53ed47abec",
+      "bytes": 9540
+    },
+    "crates/rustusb-daemon/src/physical.rs": {
+      "sha256": "2dca1afad3917b56238ae070df59af4469e951bf8e640f39056dfd7d4b214cd8",
+      "bytes": 10190
+    },
+    "crates/rustusb-daemon/src/physical_lifecycle.rs": {
+      "sha256": "6cc00541a5f172341dd2dbda4d4560a1d072e0dec3b5a1faa1d0ab24113fba5c",
+      "bytes": 15659
+    },
+    "crates/rustusb-daemon/src/physical_recovery.rs": {
+      "sha256": "6cccf9295727c1bb3a3277079c91ea4be9ad5ae8ab6a62e8da855788232a6af0",
+      "bytes": 12658
+    },
+    "crates/rustusb-linux/Cargo.toml": {
+      "sha256": "22f997eacf622c643966a35d6894582434573006b2e186ca8d2af7209cf1907e",
+      "bytes": 278
+    },
+    "crates/rustusb-linux/src/lib.rs": {
+      "sha256": "e552b1e9d40f33ab65f89f0644271e8f34343ed5497b7cac8e0cd210c9c56c06",
+      "bytes": 19082
+    },
+    "crates/rustusb-linux/tests/discovery.rs": {
+      "sha256": "73a7c7324f5dc7d363e1cedaa85974f352dd8e7134068b83e6d266e736f5a4c5",
+      "bytes": 9854
+    },
+    "crates/rustusb-native/Cargo.toml": {
+      "sha256": "0c38fc1616cc92bb4b3440093eb7b395f21a32e0561bad2ded09572be1bda210",
+      "bytes": 386
+    },
+    "crates/rustusb-native/src/channel.rs": {
+      "sha256": "3d77ff555b39ac8a9e2098a22dfb0b8e219dba9355197cbf458f038dfbea9b95",
+      "bytes": 37612
+    },
+    "crates/rustusb-native/src/channel_initial_tests.rs": {
+      "sha256": "1db8b24427d437378c38bfe18abb1561a5e4bf71490c6ff9fa3b71a6484af2c5",
+      "bytes": 10299
+    },
+    "crates/rustusb-native/src/diagnostics.rs": {
+      "sha256": "04d29734bd2164fc3cf3eef9e7a1e451fd6b935eedd00687d30f490b34c3113d",
+      "bytes": 43702
+    },
+    "crates/rustusb-native/src/export_channel.rs": {
+      "sha256": "95b3a25a27e6f73b98f29a57530c2f56079ec90a7f92dfb64e61d916e6d2aba6",
+      "bytes": 26766
+    },
+    "crates/rustusb-native/src/lib.rs": {
+      "sha256": "23891cef2654955b1e8a193a7c0294538522f43fb9ae9571dae5ce55a794af2e",
+      "bytes": 80860
+    },
+    "crates/rustusb-protocol/Cargo.toml": {
+      "sha256": "ec37c945fa2ca3d269e74ef23a0a1cd6857f6ea7d305edd7c0047fef739e901b",
+      "bytes": 287
+    },
+    "crates/rustusb-protocol/src/lib.rs": {
+      "sha256": "e60a7e79e7c62ef74b5b5d876013ecafc9c061c9867ff8a98e25a7aa2229be78",
+      "bytes": 10902
+    },
+    "crates/rustusb-protocol/src/secure.rs": {
+      "sha256": "ebadf962ebfcd6db863ad22bbeb1e68ea2693a005be4d74089d443ace95d8879",
+      "bytes": 24363
+    },
+    "crates/rustusb-protocol/src/server.rs": {
+      "sha256": "9995ba76047a63b44325852e189a0ce046bdad29d82e3def180bde73c96f191d",
+      "bytes": 4935
+    },
+    "crates/rustusb-rust-backend/Cargo.toml": {
+      "sha256": "4ca147163bb39fe7c4599dc9bec0303fd68acd04b9c82dd062fe1be4a4b553aa",
+      "bytes": 790
+    },
+    "crates/rustusb-rust-backend/src/counted.rs": {
+      "sha256": "6c59d0182b0e5136b3672a237e3f5ff7d5c08410effb9c21059429e2e6dc4eb1",
+      "bytes": 4479
+    },
+    "crates/rustusb-rust-backend/src/descriptors.rs": {
+      "sha256": "41d86b04037bc77fb5b5b5eecb5a1c13a4f9b61564cd9db2d8176faa4d0a9719",
+      "bytes": 4809
+    },
+    "crates/rustusb-rust-backend/src/device.rs": {
+      "sha256": "6e7d502fe15edb448322907d8aba09e1d3b8cade087c82da05205c02dbf05dd0",
+      "bytes": 47332
+    },
+    "crates/rustusb-rust-backend/src/lib.rs": {
+      "sha256": "809f3db7ae75996626d1d3c365ec7953c3a57878bafa036c63a8c07d80da1d84",
+      "bytes": 861
+    },
+    "crates/rustusb-rust-backend/src/link.rs": {
+      "sha256": "4811587c008de52f66a45d106959f25f9b00feb9cf4e491d051cc36555843d23",
+      "bytes": 6560
+    },
+    "crates/rustusb-rust-backend/src/managed.rs": {
+      "sha256": "44eff6a5b144bc7ab6078560e6de94279764689179c3499c21ac7880df839528",
+      "bytes": 16163
+    },
+    "crates/rustusb-rust-backend/src/monitor.rs": {
+      "sha256": "a61a62b40db7e78ac99bcd23aecfc1a0d430d021802305454d4aeec040183958",
+      "bytes": 25335
+    },
+    "crates/rustusb-rust-backend/src/physical.rs": {
+      "sha256": "235465a9d0b5be42b19ce8bbcbb7ebe19237b545b48fc9af98dca03bb79a8ee3",
+      "bytes": 32134
+    },
+    "crates/rustusb-rust-backend/src/physical/observe.rs": {
+      "sha256": "a5c249f3e4789bf46b17c87554297f27c436390765328b6a71eb28c645cfff42",
+      "bytes": 31203
+    },
+    "crates/rustusb-rust-backend/src/physical/safety.rs": {
+      "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2",
+      "bytes": 11175
+    },
+    "crates/rustusb-rust-backend/src/physical/worker.rs": {
+      "sha256": "57bc13bb18b3929e5a85e6139ef5d4455f032900d966e36ce59fe87ddc623b5a",
+      "bytes": 56375
+    },
+    "crates/rustusb-rust-backend/src/server.rs": {
+      "sha256": "db877a549213ed494c4253ddf793f24d6771cbb852f32a4b07e386ac3edb583a",
+      "bytes": 66140
+    },
+    "crates/rustusb-rust-backend/src/server_managed_tests.rs": {
+      "sha256": "c3ab240c032e3308ce2e2508d0d3c359fccf1feda748b151a9ff3c8188341882",
+      "bytes": 8470
+    },
+    "crates/rustusb-rust-backend/src/server_tls_tests.rs": {
+      "sha256": "f3ab54891c98464bd85864f4cf49df170df3d29244b06566aa3a10f5c3ccd845",
+      "bytes": 33520
+    },
+    "crates/rustusb-rust-backend/src/session.rs": {
+      "sha256": "c5b939f117d15e28c59eb4d7de5a63cd5b1580f05303cb58105e8c2748e2e8a1",
+      "bytes": 10510
+    },
+    "crates/rustusb-rust-backend/src/wire.rs": {
+      "sha256": "1c481a3a70a6e7139dc03d3d247eb20f90371ca7577954c048e368a607f1b4ed",
+      "bytes": 10758
+    },
+    "crates/rustusb-service/Cargo.toml": {
+      "sha256": "7a1dcf66585aacc8ae4f07315b1844c8ec8fcd493afdf8a32079e836005ef104",
+      "bytes": 769
+    },
+    "crates/rustusb-service/src/config.rs": {
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd",
+      "bytes": 12508
+    },
+    "crates/rustusb-service/src/context.rs": {
+      "sha256": "093cfa32978d4c307346c8bf2186f578a7057c9e3d71bf0518ede9cc4d287e9c",
+      "bytes": 6810
+    },
+    "crates/rustusb-service/src/foreground.rs": {
+      "sha256": "9bcb5d683e3750405e776ec45cc0094a1cb31fef9ad6684f31b7185ee7e760f9",
+      "bytes": 14752
+    },
+    "crates/rustusb-service/src/fs.rs": {
+      "sha256": "83315132168353c37421f0f1e1e2c4391316fcd6fd19810ece90bb51fa1b0829",
+      "bytes": 5556
+    },
+    "crates/rustusb-service/src/health.rs": {
+      "sha256": "cf51ce86f05690287cce700dccdad237e2e7800858c6667f55115ee7ec6b43e3",
+      "bytes": 9375
+    },
+    "crates/rustusb-service/src/ipc.rs": {
+      "sha256": "7bfa1dc5834fb8c4c79061a7a609719aeb9173e6cb0e51c9d087184e4fac2056",
+      "bytes": 15307
+    },
+    "crates/rustusb-service/src/jobs/client.rs": {
+      "sha256": "faee409ec2654543b3b2e1cdca5ce586e8745f108062708da05e15941843eca9",
+      "bytes": 30041
+    },
+    "crates/rustusb-service/src/jobs/io.rs": {
+      "sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2",
+      "bytes": 4446
+    },
+    "crates/rustusb-service/src/jobs/link.rs": {
+      "sha256": "d9b930c6b51920fddba044713b09d7f09b4f06001952f55477f70f7e7208a6d0",
+      "bytes": 7525
+    },
+    "crates/rustusb-service/src/jobs/management_tests.rs": {
+      "sha256": "3edeabc3c53e3f5c6a6f20fb5bdcf5432990f6ba21b1cdaf5b179d9cd5c1d9b1",
+      "bytes": 9939
+    },
+    "crates/rustusb-service/src/jobs/mod.rs": {
+      "sha256": "21e72d6d19f4b192e8ca32ad45844814bdc155959e0ef938330b83d9d909e529",
+      "bytes": 7911
+    },
+    "crates/rustusb-service/src/jobs/native.rs": {
+      "sha256": "0d0d5205c522c1e290f4b615feab8283096a91beb347e4b69dd9f54c3c73e4b5",
+      "bytes": 74087
+    },
+    "crates/rustusb-service/src/jobs/native_prepare_tests.rs": {
+      "sha256": "2d7f14a79c0bdcbe16e753e71600283817c0e3e25df17104da063d25d63e8e09",
+      "bytes": 43904
+    },
+    "crates/rustusb-service/src/jobs/recording.rs": {
+      "sha256": "47c9feb0080e90eeaa26bc7137ef3c3565f876821ec41f5d7488ebd4f7878038",
+      "bytes": 4826
+    },
+    "crates/rustusb-service/src/jobs/rust_server.rs": {
+      "sha256": "7388f08514e0817a779f3303d2a0f30e935a9c1b9ba254225478ac87ce3019b1",
+      "bytes": 60788
+    },
+    "crates/rustusb-service/src/lib.rs": {
+      "sha256": "df90d01d572bbe55fdc5ed65fed4788fcfce532f03a56cb76b604ca09bbbbef8",
+      "bytes": 1015
+    },
+    "crates/rustusb-service/src/model.rs": {
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095",
+      "bytes": 8995
+    },
+    "crates/rustusb-service/src/rpc.rs": {
+      "sha256": "07408a3c1a6793662e6bd40ba5d706ae30cad030e0efdc2f477e03ece35e6a1f",
+      "bytes": 6196
+    },
+    "crates/rustusb-service/src/run_context.rs": {
+      "sha256": "10552e7ae07f4fda1e94805f37a5dd93181df71fcdf6f2176510f096a6f9528f",
+      "bytes": 11731
+    },
+    "crates/rustusb-service/src/runtime.rs": {
+      "sha256": "2f17f75fe7ac7276711c0bccb75617e76a43f1129433076d77bb4e6b119dbf2d",
+      "bytes": 47297
+    },
+    "crates/rustusb-service/src/runtime_tests.rs": {
+      "sha256": "c1497bd9c9beb12a6bda84c001524b4deeac4f3acac9c830fcd3899b37ce0497",
+      "bytes": 32645
+    },
+    "crates/rustusb-service/src/store.rs": {
+      "sha256": "21275ae843c72624a5ac3ae099aa47f2b8cc2277116e85dd82e3bc6506f988cb",
+      "bytes": 21694
+    },
+    "crates/rustusb-transport/Cargo.toml": {
+      "sha256": "308a15883489b9b548b5d0acee02039fe1b92a43363b36a7d2fa3be428e1e799",
+      "bytes": 634
+    },
+    "crates/rustusb-transport/src/acl.rs": {
+      "sha256": "6318a42913fe077830f29c6cef9a0529bbb9fa388d88ac58181b9870937cd902",
+      "bytes": 6510
+    },
+    "crates/rustusb-transport/src/config.rs": {
+      "sha256": "a10f00e49ef8cf78b9cfdd6aecfe82eae67a567fa3c7fe9322340c4dd6db83ba",
+      "bytes": 22791
+    },
+    "crates/rustusb-transport/src/config/platform/tests.rs": {
+      "sha256": "4b0b3614367760eaaee2f41a40962bcea4c96166675f7e4a979cf2fe029ce66a",
+      "bytes": 17359
+    },
+    "crates/rustusb-transport/src/flush.rs": {
+      "sha256": "f1c1ab00c6b292b818729ab776dba09bcc2710544c7a5e14c1fdb9b66516ecb4",
+      "bytes": 11360
+    },
+    "crates/rustusb-transport/src/flush/tests.rs": {
+      "sha256": "c0c59e9995425953a80967f18cae43bf3f203c5856b075d7a723fca9ea8d56ef",
+      "bytes": 17766
+    },
+    "crates/rustusb-transport/src/lib.rs": {
+      "sha256": "dcee52f9560c78816d77f6093b266cb55c39fa9033dbf0fca0307c63e0e3192f",
+      "bytes": 4118
+    },
+    "crates/rustusb-transport/src/link.rs": {
+      "sha256": "4d348d03393566846d4da4937d0190f4a288fc0a0d6ace8405191e90d8dcf84d",
+      "bytes": 38014
+    },
+    "crates/rustusb-transport/src/link/adversarial_tests.rs": {
+      "sha256": "73c40ef0cff71de4cfd41a4bd8ef7d77a24002dac7d4928ff881d8328d3d6682",
+      "bytes": 6229
+    },
+    "crates/rustusb-transport/src/link/quiet_tests.rs": {
+      "sha256": "56808039fc432ccc0d69bbe69460de7a82168a6e13a1c269448780d0a8ee4b1a",
+      "bytes": 4048
+    },
+    "crates/rustusb-transport/src/link/tests.rs": {
+      "sha256": "8f94af0c5dce6e8f5a6aab71bac9ed2723e67bdd37531aee974caee69ec36183",
+      "bytes": 12291
+    },
+    "crates/rustusb-transport/src/quiet.rs": {
+      "sha256": "4fb83430838ab28b6ba1037349295890655a67988485680777ec2c358708ca52",
+      "bytes": 2286
+    },
+    "crates/rustusb-transport/src/tls.rs": {
+      "sha256": "bdf0a3d363dac46ad56e71e7332e2df22866c4e1a107b29408327a4787ada497",
+      "bytes": 20077
+    },
+    "crates/rustusb-transport/src/tls/tests.rs": {
+      "sha256": "8cfbc457f13e2c38297bb5a4749dff2000be20da8987a63c9a991290f9df18b9",
+      "bytes": 20557
+    },
+    "crates/rustusb-transport/src/tls/tests/link.rs": {
+      "sha256": "d86354e35e752dc5ce006c29d4190ba5b72928d5638fd7ca62d05cec791571da",
+      "bytes": 6274
+    },
+    "scripts/qemu/guest-agent-init.sh": {
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a",
+      "bytes": 21660
+    },
+    "scripts/qemu/guest-init.sh": {
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa",
+      "bytes": 16288
+    },
+    "scripts/qemu/guest-secure-init.sh": {
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16",
+      "bytes": 35715
+    },
+    "scripts/qemu/run-agent-qemu.py": {
+      "sha256": "bebd225b012afc3114ee865921ec0d6f46ce1e40d041273a8521ef7e57263352",
+      "bytes": 47091
+    },
+    "scripts/qemu/run-native-qemu.py": {
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f",
+      "bytes": 19626
+    },
+    "scripts/qemu/run-physical-qemu.py": {
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9",
+      "bytes": 29912
+    },
+    "scripts/qemu/run-secure-qemu.py": {
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38",
+      "bytes": 50549
+    },
+    "scripts/qemu_prepare_recording_shutdown/README.md": {
+      "bytes": 7712,
+      "sha256": "2d9330e6847e886389b0213dd70fa69f6c0cfcb4452afb89ea20e1a124c22364"
+    },
+    "scripts/qemu_prepare_recording_shutdown/guest-init.sh": {
+      "bytes": 21511,
+      "sha256": "8417da8331384b640d50cf6f805c38a0569398cacdf0f88f0e58f77de8751af7"
+    },
+    "scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh": {
+      "bytes": 15456,
+      "sha256": "f9ea5bd9c016f92ee7115549371a2b9425efb714f076a6102d8b9d70a5f17a5b"
+    },
+    "scripts/qemu_prepare_recording_shutdown/local.py": {
+      "bytes": 2633,
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353"
+    },
+    "scripts/qemu_prepare_recording_shutdown/prepare-gate.c": {
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909"
+    },
+    "scripts/qemu_prepare_recording_shutdown/run.py": {
+      "bytes": 20706,
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2"
+    },
+    "scripts/qemu_prepare_recording_shutdown/verify.py": {
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7"
+    },
+    "scripts/qemu_prepare_recording_shutdown/verify_local.py": {
+      "bytes": 25025,
+      "sha256": "8209c7ee2aa887ad022cece2c225d97400349ee96923836e88c469d1c1bd65cc"
+    },
+    "vendor/nusb/Cargo.toml": {
+      "sha256": "f2af75b4007e76200009ac103e5981339495108751b8aad19eca0617a89ed255",
+      "bytes": 4583
+    },
+    "vendor/nusb/examples/bulk.rs": {
+      "sha256": "e4ea05b7d65a9e2c926463165d04a631c3d30e8edbe915c8b023d2765510a556",
+      "bytes": 1154
+    },
+    "vendor/nusb/examples/bulk_io.rs": {
+      "sha256": "108b631d729eea7125895c890e20e0524b65769b1c66fb1c70745b9057c49924",
+      "bytes": 2561
+    },
+    "vendor/nusb/examples/bulk_io_smol.rs": {
+      "sha256": "5b035fd8930f5de293744bd095ac2900d136af7c9169893e8f2069ec41f1d929",
+      "bytes": 2893
+    },
+    "vendor/nusb/examples/bulk_io_tokio.rs": {
+      "sha256": "7ba2889e22d358139e978efcea93e6f9e63ac3e6c51124b455355778fe43b76d",
+      "bytes": 2586
+    },
+    "vendor/nusb/examples/buses.rs": {
+      "sha256": "9b332b0b95f08f731b92cda8c5549402652a09562665a477acd7427a4c653805",
+      "bytes": 152
+    },
+    "vendor/nusb/examples/control.rs": {
+      "sha256": "d1539fd9fd4f0ae29bdd4016d7a8eed40c01f2c231707540c5430fa72eadf504",
+      "bytes": 2447
+    },
+    "vendor/nusb/examples/descriptors.rs": {
+      "sha256": "b9b365c2cddd03a539fde1e9735e03884f83b5005f05eee9122e3fa073ce6d33",
+      "bytes": 1053
+    },
+    "vendor/nusb/examples/detach.rs": {
+      "sha256": "57453d05019f9713f91738f8b37eeee71587d1a7ef58b5cc342fbfbdfba2999a",
+      "bytes": 531
+    },
+    "vendor/nusb/examples/detach_claim.rs": {
+      "sha256": "3671f8008ac161794d4bfa34172094e324830cbb65f682081d1ce65f631b814e",
+      "bytes": 565
+    },
+    "vendor/nusb/examples/hotplug.rs": {
+      "sha256": "4953ed2ecfcaa8457be4014f197af6e7acb76a5bc05a4800bee77f1e0b30b541",
+      "bytes": 173
+    },
+    "vendor/nusb/examples/list.rs": {
+      "sha256": "b493a0ebca72f8647ae165cfaa17a2ef1c63d43edc30d0e4f8da6728ea391423",
+      "bytes": 154
+    },
+    "vendor/nusb/examples/string_descriptors.rs": {
+      "sha256": "2d9f1394a3b5da789016851ec5b2508430098db2ea4f2633bf1104e5befae052",
+      "bytes": 3218
+    },
+    "vendor/nusb/src/bitset.rs": {
+      "sha256": "c2e653f425bc186e6a0beffb971d7359e16b3d1b2380bc68812f3238f3db32c3",
+      "bytes": 565
+    },
+    "vendor/nusb/src/descriptors.rs": {
+      "sha256": "ee215896f2434a8cdd7c752cb3d8de731d24c42063641a24466f34d5ce8bd6ac",
+      "bytes": 37550
+    },
+    "vendor/nusb/src/device.rs": {
+      "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289",
+      "bytes": 40877
+    },
+    "vendor/nusb/src/enumeration.rs": {
+      "sha256": "6acc0021cfcf90b643904eeb13e4c6816e3b15a64ff0f3ce7c4c91783a3d9662",
+      "bytes": 30495
+    },
+    "vendor/nusb/src/error.rs": {
+      "sha256": "23072fc2b1b6e2695629577fc60570d27e8c5acddf5f4b9031e613d89c2c685f",
+      "bytes": 4845
+    },
+    "vendor/nusb/src/hotplug.rs": {
+      "sha256": "3705d6b683eabd5c78873ac5f4cebb677b81dad905035b493246a214e143d539",
+      "bytes": 1139
+    },
+    "vendor/nusb/src/io/mod.rs": {
+      "sha256": "822eeb8a278adb29bc208a6919423e3a240b24b4f08ebe4bd12346e279353724",
+      "bytes": 1346
+    },
+    "vendor/nusb/src/io/read.rs": {
+      "sha256": "9d4e2734b32d3cd11c84380f778d8ea384e18dcb82b705646ba0495dc9552bf9",
+      "bytes": 18301
+    },
+    "vendor/nusb/src/io/write.rs": {
+      "sha256": "5277f2ea5b4363ab0f1b13aeb5531ce26fe7fbe45e87966572656194cdaf4141",
+      "bytes": 12340
+    },
+    "vendor/nusb/src/lib.rs": {
+      "sha256": "3be5f69a741894d7d0f23b44fac258ce1f9c62ee1ca0f8eda848489b37d3a855",
+      "bytes": 15033
+    },
+    "vendor/nusb/src/maybe_future.rs": {
+      "sha256": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e",
+      "bytes": 8277
+    },
+    "vendor/nusb/src/platform/linux_usbfs/device.rs": {
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e",
+      "bytes": 46376
+    },
+    "vendor/nusb/src/platform/linux_usbfs/enumeration.rs": {
+      "sha256": "378e3f422a2e8e462c9bc2e7809a4c49dc12db29cb0803a178f627839485a98c",
+      "bytes": 9367
+    },
+    "vendor/nusb/src/platform/linux_usbfs/events.rs": {
+      "sha256": "41bb15c95986744c66d8c14863c16a8266d144818306e55fe4b41f86365efa46",
+      "bytes": 4631
+    },
+    "vendor/nusb/src/platform/linux_usbfs/hotplug.rs": {
+      "sha256": "4fb3b2d2c62935c79aa3bc0a566ec50a2c72434c421dc5a05dd33f8a5d48a7f2",
+      "bytes": 4941
+    },
+    "vendor/nusb/src/platform/linux_usbfs/mod.rs": {
+      "sha256": "79d055e137240004852ee6ee63adc2250d307b3da3a67f4ceff9a689bd05f30d",
+      "bytes": 3367
+    },
+    "vendor/nusb/src/platform/linux_usbfs/transfer.rs": {
+      "sha256": "e86a87ef5202f18798a607bff6de4f1521838d0de475df74938872770dfaf00c",
+      "bytes": 5696
+    },
+    "vendor/nusb/src/platform/linux_usbfs/usbfs.rs": {
+      "sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011",
+      "bytes": 7670
+    },
+    "vendor/nusb/src/platform/macos_iokit/device.rs": {
+      "sha256": "0e3da8e10f830b967c509f02294c6aebcc57812fb44ffd6be15c4b8926566781",
+      "bytes": 23236
+    },
+    "vendor/nusb/src/platform/macos_iokit/enumeration.rs": {
+      "sha256": "83756d12a4d6a4d489411faa482c3c47d4c6f086a2c055bb7c84ef13ef69e384",
+      "bytes": 12317
+    },
+    "vendor/nusb/src/platform/macos_iokit/events.rs": {
+      "sha256": "3504d9bb500cb16694c2e9ca802b362cab75f8e10a7f81e5124cfa75f9222fa9",
+      "bytes": 2321
+    },
+    "vendor/nusb/src/platform/macos_iokit/hotplug.rs": {
+      "sha256": "0ee322f9f96bca1883a52ace10764714181e4c64c64bb76b32e45e54d479608c",
+      "bytes": 5481
+    },
+    "vendor/nusb/src/platform/macos_iokit/iokit.rs": {
+      "sha256": "1ce59fd235e72422ddb0438d3cc1baf85c2ff2e50d86922e14037a42fbfbbc40",
+      "bytes": 3354
+    },
+    "vendor/nusb/src/platform/macos_iokit/iokit_c.rs": {
+      "sha256": "5e135448f66e3a4fddd401b9a3af601806fdda914e00f48e48c633665e5e3f39",
+      "bytes": 41091
+    },
+    "vendor/nusb/src/platform/macos_iokit/iokit_usb.rs": {
+      "sha256": "900df5766f774f7171065432d3e8285160b1b1c96f46c5642bf66e068e9a8a1c",
+      "bytes": 12466
+    },
+    "vendor/nusb/src/platform/macos_iokit/mod.rs": {
+      "sha256": "74b150fd46f984313142c2d85929e98a60ff61efd65f91e90648a8d7e12346c9",
+      "bytes": 1669
+    },
+    "vendor/nusb/src/platform/macos_iokit/transfer.rs": {
+      "sha256": "30e95c949b4c48a19a4680ddfbb7b7d6a071ecb073dcdf3f024f493f93c41e6b",
+      "bytes": 2395
+    },
+    "vendor/nusb/src/platform/mod.rs": {
+      "sha256": "33ff54e027f3bbca69beca75028dbea748a5fcf3f91c8855acb941e9c5b10471",
+      "bytes": 917
+    },
+    "vendor/nusb/src/platform/webusb/device.rs": {
+      "sha256": "c4c338f4fc49129cf5b6ef217a7ea9c2979e1ac5a70b9e971a592f5ef509dafc",
+      "bytes": 19603
+    },
+    "vendor/nusb/src/platform/webusb/enumeration.rs": {
+      "sha256": "5e331b677188dab89a6c67d7ffcf36131140b27dea2673766dbe1ffb19f5f443",
+      "bytes": 4482
+    },
+    "vendor/nusb/src/platform/webusb/hotplug.rs": {
+      "sha256": "08c4b2f926b20dd37def7630fe484a4d4b301b6b7f8d98d1b8cb940c0247dcf1",
+      "bytes": 2893
+    },
+    "vendor/nusb/src/platform/webusb/mod.rs": {
+      "sha256": "3abe26f3cd8500c43c55de3d6e78a7f722ab02b68ddac96067cf86c2d1a767d2",
+      "bytes": 3722
+    },
+    "vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs": {
+      "sha256": "319a163c6233bcea1606995447eb31e4cbd6b14f356741c5b862b7986b4b15b1",
+      "bytes": 7638
+    },
+    "vendor/nusb/src/platform/windows_winusb/device.rs": {
+      "sha256": "4e96b7da7a055d6c4d9581c36c9c7f43e8e922fe2c182c879d98b5f06a2b9c97",
+      "bytes": 31445
+    },
+    "vendor/nusb/src/platform/windows_winusb/enumeration.rs": {
+      "sha256": "b0a596f3a97b4815d9ec4f03d088748fbf738f96ffde45d8424174c3ec1cbeb1",
+      "bytes": 14867
+    },
+    "vendor/nusb/src/platform/windows_winusb/hotplug.rs": {
+      "sha256": "b7a7fd868088cc288f65cd9cf635d9061c072fe8d78e09b04a1905b59bb18c4b",
+      "bytes": 5658
+    },
+    "vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs": {
+      "sha256": "d0a7e791add8a3a44c3772c40cab6bde8b75dedf360d46c58474b85b5c392b04",
+      "bytes": 526
+    },
+    "vendor/nusb/src/platform/windows_winusb/hub.rs": {
+      "sha256": "e3da370b594c97801a3f5fd7bdf814c5b47a845a7789f4f2d7cb00a552e1ac25",
+      "bytes": 9957
+    },
+    "vendor/nusb/src/platform/windows_winusb/mod.rs": {
+      "sha256": "6c1d403e150c1615f85aeb9266b86776fda05eddcee9b0b9dc2589ecc14c9df2",
+      "bytes": 1011
+    },
+    "vendor/nusb/src/platform/windows_winusb/registry.rs": {
+      "sha256": "59ad436a255bf63ab8485b414d22640c9924f1c4995097ba64a775f8208ae30e",
+      "bytes": 2404
+    },
+    "vendor/nusb/src/platform/windows_winusb/threadpool.rs": {
+      "sha256": "5878d09f04fc69e12c2bbf8727de60b4f8de499c6f91b2adcbb9225fde62e101",
+      "bytes": 2011
+    },
+    "vendor/nusb/src/platform/windows_winusb/transfer.rs": {
+      "sha256": "edc9936990cdd3be01506fe3444b9ca3e09e2fbee7bfeebfddce6baf25ba95c6",
+      "bytes": 3559
+    },
+    "vendor/nusb/src/platform/windows_winusb/util.rs": {
+      "sha256": "d81c10a0a2d15f45f4ea8f1d4b0ccb21956476ad21444b746dc4386fd73f39ca",
+      "bytes": 4404
+    },
+    "vendor/nusb/src/transfer/buffer.rs": {
+      "sha256": "032d73a85281115aada917dd8ab046dc47b86593d4ace33248d074abdbc15e1a",
+      "bytes": 9626
+    },
+    "vendor/nusb/src/transfer/control.rs": {
+      "sha256": "c897832b372c69962b2b984423bb59ee217ef3c5b888c46dafaf45b4a080ca0e",
+      "bytes": 4744
+    },
+    "vendor/nusb/src/transfer/internal.rs": {
+      "sha256": "32495a2f7971513d6da152395bf0ab1d140477f5f346cd9b89613a73dddf792d",
+      "bytes": 9803
+    },
+    "vendor/nusb/src/transfer/mod.rs": {
+      "sha256": "4cd09ea81c16f75de0f785d7f85108814b8489bf37a71e0136fb055c84727963",
+      "bytes": 5070
+    }
+  },
+  "scope": "two disposable QEMU guests; actual UID2000 agent and helper; same-job two-device preparation; selected fsync or GET_CONFIGURATION syscall ENTRY; no kernel-active or pre-listener I/O claim; old-product RED remains FAIL",
+  "build_features": "--workspace --all-features --release --locked",
+  "build_skipped": false,
+  "binary_sha256": {
+    "rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+    "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+  },
+  "probe_sha256": "83fdef1408afe4e8e82c7c493b6e0a2d8a2df94d57620c090b9f22943ccdb588",
+  "payload_sha256": {
+    "server": {
+      "init": "893dc31e22984cb684eaff2f300dd7b050b385082f84c9d31e8ee9661bbe943f",
+      "usr/bin/ip": "a3b067353a88e64f78ca18abddfa2bdcc38a85db408ada6aaf0544ce75614488",
+      "usr/bin/setpriv": "960ac94d6b4d095d67d44b00b9b23b3f5e5e609d4539d2223c7c70ed559108ba",
+      "usr/bin/rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5",
+      "usr/bin/nc-openbsd": "0e10c84da5f1b48ebf5c283adfa5391a828cf5868320f02081c03e22f8d9b0fa",
+      "usr/bin/usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+      "usr/bin/jq": "858a84f22b39317f13a57b4b91e535925c1b4f819d9bb2864361df4ad6acb00f",
+      "usr/bin/rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+      "usr/bin/base64": "c7d7e2f49d3f8c1cc8d04e19191b6e01ff2a2146ce29228be2c8059ee460d363",
+      "usr/bin/usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165",
+      "modules/usbip-host.ko": "00a31e0665152567efc18969ce79538f866fac85f7cde55ea2158d4dea516c08",
+      "modules/vhci-hcd.ko": "dfa3b234bb3f36ef2338a7ae02cc0add91a411f339f1ac69ae90763409eb376b",
+      "modules/xhci-pci-renesas.ko": "14541a1e810a1b81f94d42e26af1eb7594df9a47595b423a1829bc96421a9760",
+      "modules/hid.ko": "b27f081f29c43b1e1b4dc14d07933bf685bda9fdbb5e39457ac3f3dc01c6b17d",
+      "modules/xhci-pci.ko": "3c5fd494640c29223afdbb368a6591de808f24f743a5d0301854e6028ead4d41",
+      "modules/usbip-core.ko": "55e7dc6ab5db0bf0349a8dced6b43970eae35a930bc947259a92ebc7091bbd4d",
+      "modules/usbhid.ko": "52fff0054d622be3bbadb4d93bd26682b584a54efa6f226136161165503817e9",
+      "modules/hid-generic.ko": "565528ba5f0106d850b276d055fd7b2a583e1162b12b44b89eb42180759d0c3d",
+      "modules/ftdi_sio.ko": "a921ebe05178d571d894987d4fa10e27ea9820d5ccee6abe8e9f9d6917389502",
+      "modules/cdc-acm.ko": "00d8b3658398532dfc9514839c4071bee8e34f499a1ad1f7c5746904afe11e58",
+      "modules/e1000.ko": "9ba908b09b2248d6540136faf03a54066e03130fd2275db9cedccdc71803a79c",
+      "modules/usbserial.ko": "faa034309b9c5cd47a43de4c16256068056e90c83c6fecb9cad8ed0aef66a8c1",
+      "usr/bin/prepare-gate": "83fdef1408afe4e8e82c7c493b6e0a2d8a2df94d57620c090b9f22943ccdb588"
+    },
+    "client": {
+      "init": "893dc31e22984cb684eaff2f300dd7b050b385082f84c9d31e8ee9661bbe943f",
+      "usr/bin/ip": "a3b067353a88e64f78ca18abddfa2bdcc38a85db408ada6aaf0544ce75614488",
+      "usr/bin/setpriv": "960ac94d6b4d095d67d44b00b9b23b3f5e5e609d4539d2223c7c70ed559108ba",
+      "usr/bin/rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5",
+      "usr/bin/nc-openbsd": "0e10c84da5f1b48ebf5c283adfa5391a828cf5868320f02081c03e22f8d9b0fa",
+      "usr/bin/usbip": "597641cb4ac331429027d7c69d5415d6a6edb5127fe955e815a7406d4a6a747e",
+      "usr/bin/jq": "858a84f22b39317f13a57b4b91e535925c1b4f819d9bb2864361df4ad6acb00f",
+      "usr/bin/rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+      "usr/bin/base64": "c7d7e2f49d3f8c1cc8d04e19191b6e01ff2a2146ce29228be2c8059ee460d363",
+      "usr/bin/usbipd": "0bdcba9635ff4f166742f18052bd845498fb6d64fafa2dd5b0c3b9b771e0b165",
+      "modules/usbip-host.ko": "00a31e0665152567efc18969ce79538f866fac85f7cde55ea2158d4dea516c08",
+      "modules/vhci-hcd.ko": "dfa3b234bb3f36ef2338a7ae02cc0add91a411f339f1ac69ae90763409eb376b",
+      "modules/xhci-pci-renesas.ko": "14541a1e810a1b81f94d42e26af1eb7594df9a47595b423a1829bc96421a9760",
+      "modules/hid.ko": "b27f081f29c43b1e1b4dc14d07933bf685bda9fdbb5e39457ac3f3dc01c6b17d",
+      "modules/xhci-pci.ko": "3c5fd494640c29223afdbb368a6591de808f24f743a5d0301854e6028ead4d41",
+      "modules/usbip-core.ko": "55e7dc6ab5db0bf0349a8dced6b43970eae35a930bc947259a92ebc7091bbd4d",
+      "modules/usbhid.ko": "52fff0054d622be3bbadb4d93bd26682b584a54efa6f226136161165503817e9",
+      "modules/hid-generic.ko": "565528ba5f0106d850b276d055fd7b2a583e1162b12b44b89eb42180759d0c3d",
+      "modules/ftdi_sio.ko": "a921ebe05178d571d894987d4fa10e27ea9820d5ccee6abe8e9f9d6917389502",
+      "modules/cdc-acm.ko": "00d8b3658398532dfc9514839c4071bee8e34f499a1ad1f7c5746904afe11e58",
+      "modules/e1000.ko": "9ba908b09b2248d6540136faf03a54066e03130fd2275db9cedccdc71803a79c",
+      "modules/usbserial.ko": "faa034309b9c5cd47a43de4c16256068056e90c83c6fecb9cad8ed0aef66a8c1"
+    }
+  },
+  "initramfs_sha256": {
+    "server": "55838be53444329e03f15c91e2ee4e5d4f08fc3d8125e1167f43daa81738ec18",
+    "client": "57b26f932b372ea87b740258f094e2bce32d5340a05808610da6e074d2d0ef71"
+  },
+  "credential_payloads": {
+    "server": [
+      "ca.der",
+      "client-pin.txt",
+      "client.der",
+      "host-created-epoch.txt",
+      "server-key.der",
+      "server.der"
+    ],
+    "client": [
+      "ca.der",
+      "client-key.der",
+      "client-pin.txt",
+      "client.der",
+      "host-created-epoch.txt",
+      "server.der"
+    ]
+  },
+  "kernel_image_sha256": "ac8edf636f7c5fa494195c644c1dbbdbb98b1e7893bbaa6af86bc1e0e2a118f8",
+  "kernel_config_sha256": "a83db1b3b61ca8e4b6c76e2d247fcd9efce7aa8a78f8a7948a5c3b5169c788a4",
+  "kernel": "6.8.0-106-generic",
+  "qemu_commands": {
+    "server": [
+      "qemu-system-x86_64",
+      "-m",
+      "768",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-rtc",
+      "base=utc,clock=host",
+      "-kernel",
+      "/tmp/rustusb-prepare-ajfgmkwz/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-prepare-ajfgmkwz/server-payload/prepare-initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.agent=1 rustusb.prepare_stop=1 rustusb.role=server rustusb.backend=usbfs rustusb.family=ipv4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/prepare-usbfs-resource-term/server-serial.log",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/prepare-usbfs-resource-term/server-evidence.log",
+      "-chardev",
+      "socket,id=control,path=/tmp/rustusb-prepare-ajfgmkwz/server-control.sock,server=on,wait=off",
+      "-serial",
+      "chardev:control",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=external,fd=3",
+      "-device",
+      "e1000,netdev=external,mac=52:54:00:00:00:61",
+      "-object",
+      "filter-dump,id=capture,netdev=external,file=/tmp/rustusb-prepare-stop-final-1582f06-20261024/prepare-usbfs-resource-term/server-external.pcap",
+      "-device",
+      "qemu-xhci,id=usb",
+      "-device",
+      "usb-kbd,id=secure-kbd,bus=usb.0,port=1",
+      "-chardev",
+      "socket,id=ftdi,path=/tmp/rustusb-prepare-ajfgmkwz/ftdi.sock,server=on,wait=off",
+      "-device",
+      "usb-serial,id=secure-ftdi,bus=usb.0,port=2,chardev=ftdi,always-plugged=on",
+      "-qmp",
+      "unix:/tmp/rustusb-prepare-ajfgmkwz/qmp.sock,server=on,wait=off"
+    ],
+    "client": [
+      "qemu-system-x86_64",
+      "-m",
+      "768",
+      "-smp",
+      "2",
+      "-enable-kvm",
+      "-cpu",
+      "host",
+      "-rtc",
+      "base=utc,clock=host",
+      "-kernel",
+      "/tmp/rustusb-prepare-ajfgmkwz/vmlinuz",
+      "-initrd",
+      "/tmp/rustusb-prepare-ajfgmkwz/client-payload/prepare-initramfs.cpio.gz",
+      "-append",
+      "console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.agent=1 rustusb.prepare_stop=1 rustusb.role=client rustusb.backend=usbfs rustusb.family=ipv4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/prepare-usbfs-resource-term/client-serial.log",
+      "-serial",
+      "file:/tmp/rustusb-prepare-stop-final-1582f06-20261024/prepare-usbfs-resource-term/client-evidence.log",
+      "-chardev",
+      "socket,id=control,path=/tmp/rustusb-prepare-ajfgmkwz/client-control.sock,server=on,wait=off",
+      "-serial",
+      "chardev:control",
+      "-monitor",
+      "none",
+      "-no-reboot",
+      "-nic",
+      "none",
+      "-netdev",
+      "socket,id=external,fd=4",
+      "-device",
+      "e1000,netdev=external,mac=52:54:00:00:00:62",
+      "-object",
+      "filter-dump,id=capture,netdev=external,file=/tmp/rustusb-prepare-stop-final-1582f06-20261024/prepare-usbfs-resource-term/client-external.pcap"
+    ]
+  },
+  "guest_artifacts": {
+    "server": {
+      "actual-agent.json": {
+        "bytes": 515,
+        "sha256": "72a36ebcabaaf98cf71188255adbe371068262a2e9096305e54b77da119d8d41"
+      },
+      "actual-ca.der": {
+        "bytes": 831,
+        "sha256": "a60ddb84735e4c3cc8a842a291c7d039566206c79a2a9855ed6df070f5b5be37"
+      },
+      "actual-client-pin.txt": {
+        "bytes": 65,
+        "sha256": "2770a931ab2b47132fe135ee948f98d7c38d2eb1657a14b2cf0e32dd9228eba6"
+      },
+      "actual-client.der": {
+        "bytes": 834,
+        "sha256": "453c129feb2ee560c25a78871e1a35792572eefea67f0cb463cadab1000656b4"
+      },
+      "actual-policy.json": {
+        "bytes": 434,
+        "sha256": "ab6c3566f3beb33f35050f0c41107b58de175d2cdfe2be81602ebfef9c8c9c6a"
+      },
+      "actual-server-pool.json": {
+        "bytes": 795,
+        "sha256": "2c809367eb7dbb334b185a756e30d876979ffacff7ef3367dcc0a212d1665409"
+      },
+      "actual-server.der": {
+        "bytes": 872,
+        "sha256": "e5ecab87af25c39ad779e264d665270dd73807e60f941d52350bba0eec9b3c3b"
+      },
+      "agent-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-1.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-2.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-2.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-after-release.json": {
+        "bytes": 5499,
+        "sha256": "1f28b14ec99c916ab11d7a80a4ef15b1948dcbb21acc77fb3c2e61e0c08f7b2a"
+      },
+      "agent-before-release.json": {
+        "bytes": 3539,
+        "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+      },
+      "agent-final.json": {
+        "bytes": 21409,
+        "sha256": "ae131af1d7eefc93febc7d791300c604fd3c67d612764863e81eeba810dfe63b"
+      },
+      "agent-held.json": {
+        "bytes": 3539,
+        "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+      },
+      "agent-identity-2.txt": {
+        "bytes": 64,
+        "sha256": "75f5d635f1cda786c30ceacdb23b630c3fc8761fd14b62a9647d148274176649"
+      },
+      "agent-manifest.json": {
+        "bytes": 515,
+        "sha256": "72a36ebcabaaf98cf71188255adbe371068262a2e9096305e54b77da119d8d41"
+      },
+      "agent-observe-1.json": {
+        "bytes": 3539,
+        "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+      },
+      "agent-observe-2.json": {
+        "bytes": 3539,
+        "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+      },
+      "agent-profiles.json": {
+        "bytes": 75,
+        "sha256": "22d8217adc864bc008fe248a1d5b772547050931d026e7e15f8f9aecac89cd84"
+      },
+      "agent-reuse-ready.json": {
+        "bytes": 9725,
+        "sha256": "f5fa3c775e0766dc3218ad3b7ab5f6292d4bc8cf71f2d95dca4908a9ca8c59dd"
+      },
+      "baseline-rows.jsonl": {
+        "bytes": 859,
+        "sha256": "5ae42f7b79b1341ac6609a45875c4d8ec072bb143116c522a538680ecaa8bda8"
+      },
+      "clock-observation.txt": {
+        "bytes": 53,
+        "sha256": "fe0607a41e56bab2e2c0f44d3891c2238e328aadf205f1c7ad5c61c01f855628"
+      },
+      "config-mode.txt": {
+        "bytes": 770,
+        "sha256": "8d9178d0996ef29ca64e243df49ddd1e6eb6f245ac68c2a3f660346436d0af26"
+      },
+      "devices.json": {
+        "bytes": 1948,
+        "sha256": "42fa6e45643cb3b8cc1918f09846bc405451a770d2e80ea998eeb7499da08fa3"
+      },
+      "draft-1.json": {
+        "bytes": 611,
+        "sha256": "044073ce50b4c31a2832404d6b56206d183a49f11251dda71f2d13f8c7d777a1"
+      },
+      "draft-2.json": {
+        "bytes": 1472,
+        "sha256": "6c8159433cfb5b17438b8113ba1d23b7bc14493d1f1efe7fdea61f053ad50289"
+      },
+      "draft-3.json": {
+        "bytes": 2336,
+        "sha256": "bf53bd4a0f3fdcac8a6ef5da5f50001b0108690734a749516656a4ec85bc7ff8"
+      },
+      "draft-4.json": {
+        "bytes": 2801,
+        "sha256": "20a86c386f1ae4206b96a9ba510814a386f8ae4464ca1ec843855b9aeea58a5d"
+      },
+      "draft-5.json": {
+        "bytes": 3074,
+        "sha256": "20a2de35e90c6a617a38718856c0ea5eb9477e0da2654a08b5f07f96c9d6b0ff"
+      },
+      "draft-6.json": {
+        "bytes": 3539,
+        "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+      },
+      "draft-7.json": {
+        "bytes": 3812,
+        "sha256": "d9ac2a76d42c92eb30b8032f640cac02adea7d7cf6a7b747f68036447debe813"
+      },
+      "executable-agent-1.txt": {
+        "bytes": 80,
+        "sha256": "1f02de5601abb899e506c87ba48b47c98fe7cb0b805d3ec4974a593901afe7bf"
+      },
+      "executable-agent-2.txt": {
+        "bytes": 81,
+        "sha256": "6e7088fc3c2fde350b7e9283f2ed82cfffd98f4cbc016cdb15fc97480c205b97"
+      },
+      "executable-gate.txt": {
+        "bytes": 80,
+        "sha256": "e8fcf8875d84953332480f9d0739867ccb0d5f323ebb063961d615268fc34085"
+      },
+      "executable-helper.txt": {
+        "bytes": 80,
+        "sha256": "b6065a9935644f0930c8f20ae41c082ec38a76890786cd0282f8d66199f061f1"
+      },
+      "failure-agent-state.json": {
+        "bytes": 21409,
+        "sha256": "ae131af1d7eefc93febc7d791300c604fd3c67d612764863e81eeba810dfe63b"
+      },
+      "failure-agent-state.read.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "failure-agent-state.status.txt": {
+        "bytes": 101,
+        "sha256": "1976d80b2cd5bd8a0054476c571d12631ab7400ecb24cab0b242290e8ea518b1"
+      },
+      "failure-dmesg.log": {
+        "bytes": 34408,
+        "sha256": "4acc7d88d5981e59e61220235bd64a59d9b08845c5210f445438a1cc20866cc5"
+      },
+      "failure-native-channels.status.txt": {
+        "bytes": 79,
+        "sha256": "1110866930eb5572bfcb867157dfd118b6a7ddffed47eafcccdc3b16dc8d8500"
+      },
+      "failure-physical-journal.json": {
+        "bytes": 1632,
+        "sha256": "e6eeb64645b2cc289c2c6a49539b36031b4fa29e71537057e43e63f79ddb3a3a"
+      },
+      "failure-physical-journal.read.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "failure-physical-journal.status.txt": {
+        "bytes": 105,
+        "sha256": "34e5fe0ae65b1b5b9e3faa024d58f781033f377e955d033f3506b6adad62194a"
+      },
+      "fds-before-release.json": {
+        "bytes": 1779,
+        "sha256": "4eb8a1cfc007d3b4d6082ca8b3d035f8c0cf1ab4dd68e20858dc31938713df5f"
+      },
+      "fds-before-release.jsonl": {
+        "bytes": 1236,
+        "sha256": "3f956d8771b631d82cbc16d3337728683b69e60353099ab2081dc33ff1acd946"
+      },
+      "fds-held.json": {
+        "bytes": 2021,
+        "sha256": "d6061a909485ff96e844b61ce0330042474f0af7be559f50f270bb407f3ebdb9"
+      },
+      "fds-held.jsonl": {
+        "bytes": 1406,
+        "sha256": "c1893acc9c4ba2604fe326646aefcb8ff0e6cdf82f59e9db3d122515b987562c"
+      },
+      "fds-idle.json": {
+        "bytes": 1646,
+        "sha256": "4415c6175947f0a74a4d43b1019e84ed2135714b5545874600cb7a8fdc88a68d"
+      },
+      "fds-idle.jsonl": {
+        "bytes": 1139,
+        "sha256": "29f693f690f0624a2461547ee25eeca0d0a748eb202cbd795a444a1a364495f5"
+      },
+      "fds-observe-1.json": {
+        "bytes": 1779,
+        "sha256": "4eb8a1cfc007d3b4d6082ca8b3d035f8c0cf1ab4dd68e20858dc31938713df5f"
+      },
+      "fds-observe-1.jsonl": {
+        "bytes": 1236,
+        "sha256": "3f956d8771b631d82cbc16d3337728683b69e60353099ab2081dc33ff1acd946"
+      },
+      "fds-observe-2.json": {
+        "bytes": 1779,
+        "sha256": "4eb8a1cfc007d3b4d6082ca8b3d035f8c0cf1ab4dd68e20858dc31938713df5f"
+      },
+      "fds-observe-2.jsonl": {
+        "bytes": 1236,
+        "sha256": "3f956d8771b631d82cbc16d3337728683b69e60353099ab2081dc33ff1acd946"
+      },
+      "gate-arm": {
+        "bytes": 9,
+        "sha256": "533513c1397cb8ccec05852b52514becd5fd8c9c21509f7bc2f5d460c6143dd8"
+      },
+      "gate-armed.json": {
+        "bytes": 357,
+        "sha256": "f5a7b2e706f48f424eab3cb0eb176920efaa0206d6693868671d27634a2212b1"
+      },
+      "gate-candidate-1.json": {
+        "bytes": 392,
+        "sha256": "8d7a364e6be5d6ee1a9dfaade2f257d9d41653bf458bb64dc201863ed40f665f"
+      },
+      "gate-candidate-2.json": {
+        "bytes": 392,
+        "sha256": "ff9f9984b8f5a236683d6252e526592e302d8b1014570233a1bc134722460411"
+      },
+      "gate-candidate-3.json": {
+        "bytes": 392,
+        "sha256": "33f86ec630e629a69b08beb8a79a35b6a2a2daa475f869c2bdc1a5598f41fab4"
+      },
+      "gate-candidate-4.json": {
+        "bytes": 392,
+        "sha256": "918b481d0db6629705e4bd6b5ce866d9caa1e1e20737b26f8368c4b219a6ec41"
+      },
+      "gate-candidate-5.json": {
+        "bytes": 392,
+        "sha256": "153ef3e50b2b6ae4737b8ccb3bb8c88d64e8b46111d60a04a60a11b9a99847eb"
+      },
+      "gate-candidate-6.json": {
+        "bytes": 392,
+        "sha256": "75d185c0db0afdc5f54b9f743ae28a0c31db65c92ceb2e178891a44af6e90c70"
+      },
+      "gate-candidate-7.json": {
+        "bytes": 392,
+        "sha256": "5f319564f23b217183f58c4dea150be9b1a23f392a14316fde12835486a68d7b"
+      },
+      "gate-decision-1": {
+        "bytes": 5,
+        "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+      },
+      "gate-decision-2": {
+        "bytes": 5,
+        "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+      },
+      "gate-decision-3": {
+        "bytes": 5,
+        "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+      },
+      "gate-decision-4": {
+        "bytes": 5,
+        "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+      },
+      "gate-decision-5": {
+        "bytes": 5,
+        "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+      },
+      "gate-decision-6": {
+        "bytes": 5,
+        "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+      },
+      "gate-decision-7": {
+        "bytes": 7,
+        "sha256": "3be326473610e616ccddabfee05380d844fc5c01116946a24ab8e620d2713ba7"
+      },
+      "gate-events.jsonl": {
+        "bytes": 20712,
+        "sha256": "8201c0743da8be4f640214a8fb5613076b0df2a5254d417c4422d5bf4e7ae6cf"
+      },
+      "gate-exit-1.json": {
+        "bytes": 426,
+        "sha256": "5d1cd7fc62060c7aa470d07477c574e0eaca1328d76804083856c657a7d0f75c"
+      },
+      "gate-exit-2.json": {
+        "bytes": 426,
+        "sha256": "859f205f62b0d951b64418fbd66e2c5718e70ff2c22449341a3d7b4be671d9e8"
+      },
+      "gate-exit-3.json": {
+        "bytes": 426,
+        "sha256": "4307965fe9a599e9f25097fbe8f4770599a97fff4155a4896ce5f13d765e3097"
+      },
+      "gate-exit-4.json": {
+        "bytes": 426,
+        "sha256": "f7983e8733eae9daec6509295d08b45c2cddbcb9d956b24872435e1e25830092"
+      },
+      "gate-exit-5.json": {
+        "bytes": 426,
+        "sha256": "6ef5638a962d46b61febbcc5b2fd1c1da49f499f8ca3c415b42218e19f94b718"
+      },
+      "gate-exit-6.json": {
+        "bytes": 426,
+        "sha256": "4a4665dbcdf0f30825596680a79a42933c480acbed9ba8f4bfe669057ada474b"
+      },
+      "gate-exit-7.json": {
+        "bytes": 426,
+        "sha256": "1328e04ae5e708944a0ae9a70c20e73a0870aba6d7818de7d2bac7f55175b2c8"
+      },
+      "gate-held-after.json": {
+        "bytes": 158,
+        "sha256": "b61902ac00701a7630f30d52c0bf2b38d7a59cf44a5100f9b2e2bed765b68e63"
+      },
+      "gate-held-before.json": {
+        "bytes": 158,
+        "sha256": "5454cdf70bf98fccbb0a6047bcc89d3b9725aa8e4ea5cbc31445eb2769907cc0"
+      },
+      "gate-observe": {
+        "bytes": 6,
+        "sha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+      },
+      "gate-ready.json": {
+        "bytes": 214,
+        "sha256": "74e6eaee67f826d17c7350c0134aba01ca78ac7a140f6180fa560f59de0f3738"
+      },
+      "gate-release-7": {
+        "bytes": 8,
+        "sha256": "3933e3274b63dc01fd286d6d939a626867c83a4603fc4347e0f8b8856f1b98fd"
+      },
+      "gate-tracee.pid": {
+        "bytes": 4,
+        "sha256": "c11eae0cc2e648efe410effd75e64dfca8f6b6532b51f6cfa29e5c03503be0d7"
+      },
+      "held-observations.jsonl": {
+        "bytes": 259,
+        "sha256": "146521231f0427788fb0d214e51f3433d98929b69e66f04e3aa770cc03e88652"
+      },
+      "held-outcome.json": {
+        "bytes": 113,
+        "sha256": "d8b6d18c346287faa668a4c3a33b4f1922c0d9e0f30c1d8ebd5dc70e8c06d988"
+      },
+      "helper-policy.json": {
+        "bytes": 434,
+        "sha256": "ab6c3566f3beb33f35050f0c41107b58de175d2cdfe2be81602ebfef9c8c9c6a"
+      },
+      "helper.log": {
+        "bytes": 2045,
+        "sha256": "1f7df3017f60e449c16ea803cbe916f3951a66a892a52985f44d9fed068b85d8"
+      },
+      "host-after-release.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-before-release.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-before.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-final.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-held.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-observe-1.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-observe-2.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "host-reuse-ready.json": {
+        "bytes": 1244,
+        "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+      },
+      "identity-agent-1.txt": {
+        "bytes": 1486,
+        "sha256": "501621e659a0aff444a70bee835f9ed90032cf33baf1fe8a431da24807b2426b"
+      },
+      "identity-agent-2.txt": {
+        "bytes": 1484,
+        "sha256": "e8eb7e87d4e616e98cdd4b75e045017108b392e9523cd74d58bfb8c4b1429a89"
+      },
+      "identity-gate.txt": {
+        "bytes": 1464,
+        "sha256": "99819987b139bc3e62c908e27f65fd6917186fea401a5fd2faae2c2df8c10e0a"
+      },
+      "identity-helper.txt": {
+        "bytes": 1463,
+        "sha256": "371369d26c77bdc2c12bb145ea13c0cecfdd047838db46212f8135482a311fb4"
+      },
+      "interfaces.jsonl": {
+        "bytes": 109,
+        "sha256": "2511ac57403f6ed6ec63ff93dfd78710139a9dfffabaa0996435e36a8deb6381"
+      },
+      "keys.json": {
+        "bytes": 162,
+        "sha256": "23ed161402be58086ef00570d396bfd1284406cde00ba1f02f201736b639a677"
+      },
+      "listeners-held.txt": {
+        "bytes": 295,
+        "sha256": "6b214f9a98c85370bf22cc7720612a0142905a772a50cdf5b6ad4a2721084def"
+      },
+      "network-ready.txt": {
+        "bytes": 407,
+        "sha256": "c4f543e3c287234d798a38ed0b3d48125a91419810452be97f0e677a04204bf0"
+      },
+      "network.txt": {
+        "bytes": 315,
+        "sha256": "d1de2891cc8ce427b5d33cd47d4a9426ee4f45185a7774381dd1c1fd08fa9252"
+      },
+      "owner-stat-before-release.txt": {
+        "bytes": 301,
+        "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+      },
+      "owner-stat-held.txt": {
+        "bytes": 301,
+        "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+      },
+      "owner-stat-idle.txt": {
+        "bytes": 301,
+        "sha256": "30bc7c1ba7fd105b6c3a278179645852cb78060757185803ac0a94e27b801418"
+      },
+      "owner-stat-observe-1.txt": {
+        "bytes": 301,
+        "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+      },
+      "owner-stat-observe-2.txt": {
+        "bytes": 301,
+        "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+      },
+      "profiles-1.json": {
+        "bytes": 122,
+        "sha256": "16c1c2555e45965fc1265966e0d7a4724fab7db5a11373950eb5099952c333d0"
+      },
+      "profiles-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "profiles-2.json": {
+        "bytes": 122,
+        "sha256": "16c1c2555e45965fc1265966e0d7a4724fab7db5a11373950eb5099952c333d0"
+      },
+      "profiles-2.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "random-ready.txt": {
+        "bytes": 38,
+        "sha256": "decc92dcb11a63f63fc2e1027f00107943e4f3bc32c6fda1b7c4fcef8d5737fd"
+      },
+      "reuse-ready.json": {
+        "bytes": 3204,
+        "sha256": "80b7b5ec85810029a0fd43caea969c9cfcf6dec82bda24336d7e3c8f1150c82d"
+      },
+      "root-after-release.json": {
+        "bytes": 840,
+        "sha256": "930606b38d7ee2ef25c02c765fc8a3ba7fc8655c94ea42d4e8cee67f08ff04b3"
+      },
+      "root-before-release.json": {
+        "bytes": 840,
+        "sha256": "930606b38d7ee2ef25c02c765fc8a3ba7fc8655c94ea42d4e8cee67f08ff04b3"
+      },
+      "root-final.json": {
+        "bytes": 1632,
+        "sha256": "e6eeb64645b2cc289c2c6a49539b36031b4fa29e71537057e43e63f79ddb3a3a"
+      },
+      "root-held.json": {
+        "bytes": 1370,
+        "sha256": "bcdb320f14817d0ce70a217d65f20a0d85765417e9cb61f063c953c48114e46b"
+      },
+      "root-observe-1.json": {
+        "bytes": 1370,
+        "sha256": "bcdb320f14817d0ce70a217d65f20a0d85765417e9cb61f063c953c48114e46b"
+      },
+      "root-observe-2.json": {
+        "bytes": 840,
+        "sha256": "930606b38d7ee2ef25c02c765fc8a3ba7fc8655c94ea42d4e8cee67f08ff04b3"
+      },
+      "root-reuse-ready.json": {
+        "bytes": 2163,
+        "sha256": "86946f27ce4bffc0e31154d1823e070f7a36791c994fd7ea8405f73195852606"
+      },
+      "rtc.txt": {
+        "bytes": 360,
+        "sha256": "c8a0621b200a9c895f2e9e76a48eb960473e65f36c6dd36686a6755b4b6267f4"
+      },
+      "selected-attempts.json": {
+        "bytes": 526,
+        "sha256": "ec4eaa65511647c3fb10daa64bbdf8c2d3af07cf71680c1907339b681b572417"
+      },
+      "selected-sessions.json": {
+        "bytes": 1534,
+        "sha256": "506a21f7ced9dfb65be412a29007ddc5b47c6ae4759c9eb914a7e1b824ba143c"
+      },
+      "selected-state.json": {
+        "bytes": 3812,
+        "sha256": "d9ac2a76d42c92eb30b8032f640cac02adea7d7cf6a7b747f68036447debe813"
+      },
+      "selection.json": {
+        "bytes": 99,
+        "sha256": "8342d601a43d133c58770fb018879ddee535ef01468cfe175bf9d7a2315761fb"
+      },
+      "start-pool-1.json": {
+        "bytes": 300,
+        "sha256": "6a1b6382af1136c20d69783727da0887f40e83e5d1bead98ec9e3a3933a47091"
+      },
+      "start-pool-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "start-pool-2.json": {
+        "bytes": 300,
+        "sha256": "5ee6861877f36e1394b02328ec202accffbea03883ead1110c8a2fcdecaccbe3"
+      },
+      "start-pool-2.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state-before-ack.json": {
+        "bytes": 3539,
+        "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+      },
+      "unix-before-release.txt": {
+        "bytes": 460,
+        "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+      },
+      "unix-held.txt": {
+        "bytes": 460,
+        "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+      },
+      "unix-idle.txt": {
+        "bytes": 460,
+        "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+      },
+      "unix-observe-1.txt": {
+        "bytes": 460,
+        "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+      },
+      "unix-observe-2.txt": {
+        "bytes": 460,
+        "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+      },
+      "usb-nodes-before.json": {
+        "bytes": 537,
+        "sha256": "7415945ae2831911050d41e41cdcc1b5374c6d1403f9ef42e12f4f56cfe07659"
+      },
+      "usb-nodes-before.jsonl": {
+        "bytes": 390,
+        "sha256": "590e24ec7f4a36c1aa426878f9291a8aaa57bb006e35c67d7ada127f9964721a"
+      },
+      "wait-agent-2.txt": {
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "wait-tracer.txt": {
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    "client": {
+      "actual-agent.json": {
+        "bytes": 643,
+        "sha256": "8cf29a3f54641ab242d6eaa546e94d4432cc0840f3b9db7c70a39db1469b9a88"
+      },
+      "actual-ca.der": {
+        "bytes": 831,
+        "sha256": "a60ddb84735e4c3cc8a842a291c7d039566206c79a2a9855ed6df070f5b5be37"
+      },
+      "actual-client-hid.json": {
+        "bytes": 434,
+        "sha256": "a2d57f022e2812c646c10bbb6ce721da80853ae34ea4d1bbb2587424f1c2a113"
+      },
+      "actual-client-pin.txt": {
+        "bytes": 65,
+        "sha256": "2770a931ab2b47132fe135ee948f98d7c38d2eb1657a14b2cf0e32dd9228eba6"
+      },
+      "actual-client-serial.json": {
+        "bytes": 434,
+        "sha256": "9493e71e29b058bda56ecf149897ec70669538e1f2d5b43c4f92aea5f1bdd5fd"
+      },
+      "actual-client.der": {
+        "bytes": 834,
+        "sha256": "453c129feb2ee560c25a78871e1a35792572eefea67f0cb463cadab1000656b4"
+      },
+      "actual-policy.json": {
+        "bytes": 417,
+        "sha256": "bc40d02507b9bd9200d0599722be2f8327e5decc059f9957438c40785b6e7fa5"
+      },
+      "actual-server.der": {
+        "bytes": 872,
+        "sha256": "e5ecab87af25c39ad779e264d665270dd73807e60f941d52350bba0eec9b3c3b"
+      },
+      "agent-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-1.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-final.json": {
+        "bytes": 8280,
+        "sha256": "1d6cdeb97edee2eacd5c58ecbffa9f5557c8fb3338ea98732d4f7dfc17f7943d"
+      },
+      "agent-identity-1.txt": {
+        "bytes": 63,
+        "sha256": "3c329e75a09679648bac91d2648a6c829c3c57e6acd113a126e3ae1fac93738e"
+      },
+      "agent-manifest.json": {
+        "bytes": 643,
+        "sha256": "8cf29a3f54641ab242d6eaa546e94d4432cc0840f3b9db7c70a39db1469b9a88"
+      },
+      "agent-profiles.json": {
+        "bytes": 152,
+        "sha256": "a971197c93f79551b99831670dd9424f9df102b0595b9eb7ad665c8b6b6fc140"
+      },
+      "agent-reused.json": {
+        "bytes": 6411,
+        "sha256": "8966f491b26abf84a8a9f2cc689c7326b1e0614922a8a7bdfe8f74b1477ad714"
+      },
+      "client-hid-connected.json": {
+        "bytes": 892,
+        "sha256": "ec36563b4637931ee1e6e06645b086a03f338daa3bf7c81b625739f0d86280e3"
+      },
+      "client-hid-final.json": {
+        "bytes": 893,
+        "sha256": "3e306f1deb7ea2e4294413a743e43ecc3b6838b6ab5e9a467e53e05870a5def2"
+      },
+      "client-receipts-reuse.json": {
+        "bytes": 2622,
+        "sha256": "8a0900ab91b3eee735d286427c26a17880131f9db8d96bf42994c78bf7e900e9"
+      },
+      "client-serial-connected.json": {
+        "bytes": 895,
+        "sha256": "46feb48113de55e14edf90c841f382fa2608a9dd1ada8d1645a998b5e726d952"
+      },
+      "client-serial-final.json": {
+        "bytes": 897,
+        "sha256": "618920f03deca3506cef59ae1f68fa42e62818e0401fa981dfc530c08f699e14"
+      },
+      "clock-observation.txt": {
+        "bytes": 53,
+        "sha256": "4230fcaa32a9d070542e383ce3154edb550eafe1caf89ae63fd4fd0e5baf8a92"
+      },
+      "config-mode.txt": {
+        "bytes": 834,
+        "sha256": "ca40391d6576363a2f7dac1b45c8df7d272d362409778a408adba859e176bcb8"
+      },
+      "dd-1.log": {
+        "bytes": 33,
+        "sha256": "58a5a26b081356495149528d3ab5f1341f441dc775e96eec564b70422ff71663"
+      },
+      "executable-agent-1.txt": {
+        "bytes": 80,
+        "sha256": "008d1eb3e6a4e88bed6ed3d792f484db289780acc52da6ec631dff69e813a0f2"
+      },
+      "executable-helper.txt": {
+        "bytes": 80,
+        "sha256": "8eaa1c7bc9f2d6a3fd5ee0fd8b005ce6a6e1f1b63ea88f30ea30a0ba4b71c3a7"
+      },
+      "expected-rx-1.bin": {
+        "bytes": 35,
+        "sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a"
+      },
+      "failure-agent-state.json": {
+        "bytes": 8280,
+        "sha256": "1d6cdeb97edee2eacd5c58ecbffa9f5557c8fb3338ea98732d4f7dfc17f7943d"
+      },
+      "failure-agent-state.read.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "failure-agent-state.status.txt": {
+        "bytes": 100,
+        "sha256": "78b18bdb33103ee3e29c8a3c0560d6cb56320fb1e7d1ccdee8fec7af3e167c8a"
+      },
+      "failure-dmesg.log": {
+        "bytes": 34755,
+        "sha256": "a239992e0f5aee0974dc83635685dabf392fbd4e219c6087c517f421393b7a71"
+      },
+      "failure-native-channels.json": {
+        "bytes": 926,
+        "sha256": "e6a615c5b6aa9feab75e331ac01327db50810b9dfb1366a06a69623394c19237"
+      },
+      "failure-native-channels.read.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "failure-native-channels.status.txt": {
+        "bytes": 103,
+        "sha256": "1ef18357cbaf623388a727c50fb1f9e88789651b6b7b5c13fa7b2ac3ab6905ab"
+      },
+      "failure-physical-journal.status.txt": {
+        "bytes": 80,
+        "sha256": "eea92b149a199166788018e81137ea0bdd389f0841411d34042b9b2eea60ca91"
+      },
+      "held-connect.stderr": {
+        "bytes": 76,
+        "sha256": "99dd5ac3bb9e98d098447a722badd7fccf69414edc11ebc6a42a30d688f4cbe6"
+      },
+      "held-connect.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "held-connect.wait": {
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "helper-policy.json": {
+        "bytes": 417,
+        "sha256": "bc40d02507b9bd9200d0599722be2f8327e5decc059f9957438c40785b6e7fa5"
+      },
+      "helper.log": {
+        "bytes": 177,
+        "sha256": "94c60d3bf250ed4a3a3ed3d1ac0849f5e3365300717199cb42299055ec1c397b"
+      },
+      "identity-agent-1.txt": {
+        "bytes": 1480,
+        "sha256": "311bda0603c2caf6656545f8d5971bd0ebb08d03ad7baaf1cda046bac37b3d0b"
+      },
+      "identity-helper.txt": {
+        "bytes": 1463,
+        "sha256": "309debd54d2ecea3f3539713ede01af34ae04ce1caa2e196a0c0d378b6ca3c00"
+      },
+      "input-1.bin": {
+        "bytes": 144,
+        "sha256": "0376d2982609254ac606720315c4fb78546b627eca5df9f5cd7767cb22756dbf"
+      },
+      "keys.json": {
+        "bytes": 162,
+        "sha256": "23ed161402be58086ef00570d396bfd1284406cde00ba1f02f201736b639a677"
+      },
+      "local-identities-reuse.json": {
+        "bytes": 88,
+        "sha256": "f59bdffba9f4535c75efefc0f81dabaf9f30c1abec3784b6923a1a827a9eb0d6"
+      },
+      "network-ready.txt": {
+        "bytes": 407,
+        "sha256": "16d92148197783af00329b92dea1b00cf1f40f53f3475df7568cb949f13a1b5c"
+      },
+      "network.txt": {
+        "bytes": 315,
+        "sha256": "97ac987294fc47f61e4574d03b451bc10cd27a88007332d11231771a501d9117"
+      },
+      "profiles-1.json": {
+        "bytes": 157,
+        "sha256": "53aa38a507087fd9d058b55a847eaf53da93a02f1ce87aa88440e7e652a1e2f3"
+      },
+      "profiles-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "random-ready.txt": {
+        "bytes": 38,
+        "sha256": "5aad52af64ec25bd2daf80b9ec83e8dc55e18cb3e86f55ceb373e20fbaa3b483"
+      },
+      "root-final.json": {
+        "bytes": 926,
+        "sha256": "e6a615c5b6aa9feab75e331ac01327db50810b9dfb1366a06a69623394c19237"
+      },
+      "root-reused.json": {
+        "bytes": 2622,
+        "sha256": "8a0900ab91b3eee735d286427c26a17880131f9db8d96bf42994c78bf7e900e9"
+      },
+      "rtc.txt": {
+        "bytes": 360,
+        "sha256": "c8a0621b200a9c895f2e9e76a48eb960473e65f36c6dd36686a6755b4b6267f4"
+      },
+      "rx-1.bin": {
+        "bytes": 35,
+        "sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a"
+      },
+      "start-hid-1.json": {
+        "bytes": 299,
+        "sha256": "7211463d674e5856b3a62ef99c349ee101e371300801b017e9540b87254604ae"
+      },
+      "start-hid-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "start-serial-1.json": {
+        "bytes": 302,
+        "sha256": "b36ab6a9136b5838067ba92f53268b4f75c112862d91358314de4519f24b6ec2"
+      },
+      "start-serial-1.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tx-1.bin": {
+        "bytes": 35,
+        "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef"
+      },
+      "vhci-final.txt": {
+        "bytes": 682,
+        "sha256": "5e975a7c4a48a87920eef7e2af2f4671bca44068d7941b5a1ed2e54374ce420a"
+      },
+      "vhci-reused.txt": {
+        "bytes": 682,
+        "sha256": "1f744b1fe90cf8ec720742287d2277aae089f232b263acc515f04f2067b5e2ac"
+      },
+      "wait-agent-1.txt": {
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  },
+  "facts": {
+    "checks": [
+      {
+        "check": "actual selected gate mode",
+        "passed": true
+      },
+      {
+        "check": "two real export sessions in the same preparing job",
+        "passed": true
+      },
+      {
+        "check": "two distinct accepted resource receipts",
+        "passed": true
+      },
+      {
+        "check": "actual unpublished/accepted state contains only the initial preparing pool",
+        "passed": true
+      },
+      {
+        "check": "same actual TID/FD/syscall and file identity before and after held observation and exit",
+        "passed": true
+      },
+      {
+        "check": "tracer confirms held on both sides of cleanup evidence before explicit release",
+        "passed": true
+      },
+      {
+        "check": "actual unique tracer armed receipt is saved before start",
+        "passed": true
+      },
+      {
+        "check": "same actual owner armed before the selected syscall entry",
+        "passed": true
+      },
+      {
+        "check": "guest observes armed before entering the selected hold",
+        "passed": true
+      },
+      {
+        "check": "exactly one selected release, after held-after receipt",
+        "passed": true
+      },
+      {
+        "check": "same resumed syscall returns actual success without fabricated result",
+        "passed": true
+      },
+      {
+        "check": "normal trace completed without emergency release or ptrace failure",
+        "passed": true
+      },
+      {
+        "check": "actual traced agent reaped successfully and tracer reaped once",
+        "passed": true
+      },
+      {
+        "check": "bounded actual selected gate duration",
+        "passed": true
+      },
+      {
+        "check": "actual SIGTERM delivery while the original syscall remains held",
+        "passed": true
+      },
+      {
+        "check": "root held store contains exactly both live grants",
+        "passed": true
+      },
+      {
+        "check": "held root correlation 6343114d-6bd8-4aeb-b5fe-274f1683448b",
+        "passed": true
+      },
+      {
+        "check": "actual accepted owner PID/starttime/UID 6343114d-6bd8-4aeb-b5fe-274f1683448b",
+        "passed": true
+      },
+      {
+        "check": "held root correlation bdbde968-9941-472a-9937-f94a85a8d24f",
+        "passed": true
+      },
+      {
+        "check": "actual accepted owner PID/starttime/UID bdbde968-9941-472a-9937-f94a85a8d24f",
+        "passed": true
+      },
+      {
+        "check": "nonempty original HID and FTDI driver baseline",
+        "passed": true
+      },
+      {
+        "check": "complete original active configuration/interface baseline",
+        "passed": true
+      },
+      {
+        "check": "original two hardware generations unchanged while preparing",
+        "passed": true
+      },
+      {
+        "check": "USBFS prepare/initializer does not claim or change either original interface",
+        "passed": true
+      },
+      {
+        "check": "two actual agent USBFS character capabilities after SCM_RIGHTS delivery",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: exact two FD/receipt/host/node observations",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: distinct actual hardware buses",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: one original host/node for 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: one actual received node path 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: protected actual character node 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: FD actual filesystem identity matches original node inode 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: FD/node/sysfs actual major and minor 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original receipt node_device is actual st_rdev 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original bus and USB address 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original full sysfs directory generation 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original configuration and complete interface/driver baseline 1-2",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: one original host/node for 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: one actual received node path 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: protected actual character node 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: FD actual filesystem identity matches original node inode 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: FD/node/sysfs actual major and minor 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original receipt node_device is actual st_rdev 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original bus and USB address 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original full sysfs directory generation 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: original configuration and complete interface/driver baseline 1-1",
+        "passed": true
+      },
+      {
+        "check": "USBFS accepted FD mapping: bijection of the two actual accepted character capabilities",
+        "passed": true
+      },
+      {
+        "check": "USBFS original device key matches the exact accepted resource 6343114d-6bd8-4aeb-b5fe-274f1683448b",
+        "passed": true
+      },
+      {
+        "check": "USBFS original device key matches the exact accepted resource bdbde968-9941-472a-9937-f94a85a8d24f",
+        "passed": true
+      },
+      {
+        "check": "nonempty actual held-window observations",
+        "passed": true
+      },
+      {
+        "check": "held observation 1 recomputed from raw root/sysfs/FD files",
+        "passed": true
+      },
+      {
+        "check": "held observation 2 recomputed from raw root/sysfs/FD files",
+        "passed": true
+      },
+      {
+        "check": "both actual resources released and exact root proofs recorded before stalled Resource ACK is released",
+        "passed": true
+      },
+      {
+        "check": "actual protected state.next fsync entry",
+        "passed": true
+      },
+      {
+        "check": "selected Resource is unpublished next durable transition",
+        "passed": true
+      },
+      {
+        "check": "first owner Resource acknowledged, second actual owner ACK still pending",
+        "passed": true
+      },
+      {
+        "check": "guest held-phase result is actual PASS; RED never relabelled",
+        "passed": true
+      },
+      {
+        "check": "after-release root active records empty",
+        "passed": true
+      },
+      {
+        "check": "after-release complete original two-device baseline restored",
+        "passed": true
+      },
+      {
+        "check": "after-release original exact two resource terminal proofs preserved",
+        "passed": true
+      },
+      {
+        "check": "final root active records empty",
+        "passed": true
+      },
+      {
+        "check": "final complete original two-device baseline restored",
+        "passed": true
+      },
+      {
+        "check": "final original exact two resource terminal proofs preserved",
+        "passed": true
+      },
+      {
+        "check": "fresh two-device real grant uses new resource/attempt identities",
+        "passed": true
+      },
+      {
+        "check": "fresh actual two-device kernel VHCI receipt",
+        "passed": true
+      },
+      {
+        "check": "actual imported devices are the originally gated pool",
+        "passed": true
+      },
+      {
+        "check": "actual fresh FTDI receive exact 35 bytes",
+        "passed": true
+      },
+      {
+        "check": "actual fresh FTDI transmit exact 35 bytes",
+        "passed": true
+      },
+      {
+        "check": "actual evdev complete records",
+        "passed": true
+      },
+      {
+        "check": "actual fresh KEY1 down and up",
+        "passed": true
+      },
+      {
+        "check": "actual no-listener refusal while same pool prepares",
+        "passed": true
+      },
+      {
+        "check": "actual server TCP tables show no 3241 listener while gate is held",
+        "passed": true
+      },
+      {
+        "check": "server final exact active root records empty",
+        "passed": true
+      },
+      {
+        "check": "server both actual jobs durably finished",
+        "passed": true
+      },
+      {
+        "check": "server exact complete session history and verified cleanup",
+        "passed": true
+      },
+      {
+        "check": "server exact nonempty root terminal/attempt cardinality",
+        "passed": true
+      },
+      {
+        "check": "server final terminal exact identity 6343114d-6bd8-4aeb-b5fe-274f1683448b",
+        "passed": true
+      },
+      {
+        "check": "server final terminal exact identity bdbde968-9941-472a-9937-f94a85a8d24f",
+        "passed": true
+      },
+      {
+        "check": "server final terminal exact identity 060725a5-21cd-4789-95c6-b6c68099a4f5",
+        "passed": true
+      },
+      {
+        "check": "server final terminal exact identity 2cfd5692-28a9-4e90-a871-2b7b2b45db7b",
+        "passed": true
+      },
+      {
+        "check": "server actual terminal guest PASS",
+        "passed": true
+      },
+      {
+        "check": "server final full S0 panic/Oops scan",
+        "passed": true
+      },
+      {
+        "check": "server actual helper UIDs",
+        "passed": true
+      },
+      {
+        "check": "server actual executed helper frozen ELF",
+        "passed": true
+      },
+      {
+        "check": "server actual agent-1 UIDs",
+        "passed": true
+      },
+      {
+        "check": "server actual nonroot agent-1 no capabilities",
+        "passed": true
+      },
+      {
+        "check": "server actual executed agent-1 frozen ELF",
+        "passed": true
+      },
+      {
+        "check": "server actual agent-2 UIDs",
+        "passed": true
+      },
+      {
+        "check": "server actual nonroot agent-2 no capabilities",
+        "passed": true
+      },
+      {
+        "check": "server actual executed agent-2 frozen ELF",
+        "passed": true
+      },
+      {
+        "check": "server exact executed init payload SHA",
+        "passed": true
+      },
+      {
+        "check": "client final exact active root records empty",
+        "passed": true
+      },
+      {
+        "check": "client both actual jobs durably finished",
+        "passed": true
+      },
+      {
+        "check": "client exact complete session history and verified cleanup",
+        "passed": true
+      },
+      {
+        "check": "client exact nonempty root terminal/attempt cardinality",
+        "passed": true
+      },
+      {
+        "check": "client final terminal exact identity 0e272678-ce38-4831-99d9-ef47ae85a10f",
+        "passed": true
+      },
+      {
+        "check": "client final terminal exact identity d93c9af2-096c-4314-bcad-a70261044a43",
+        "passed": true
+      },
+      {
+        "check": "client actual terminal guest PASS",
+        "passed": true
+      },
+      {
+        "check": "client final full S0 panic/Oops scan",
+        "passed": true
+      },
+      {
+        "check": "client actual helper UIDs",
+        "passed": true
+      },
+      {
+        "check": "client actual executed helper frozen ELF",
+        "passed": true
+      },
+      {
+        "check": "client actual agent-1 UIDs",
+        "passed": true
+      },
+      {
+        "check": "client actual nonroot agent-1 no capabilities",
+        "passed": true
+      },
+      {
+        "check": "client actual executed agent-1 frozen ELF",
+        "passed": true
+      },
+      {
+        "check": "client exact executed init payload SHA",
+        "passed": true
+      },
+      {
+        "check": "actual guest-only root tracer ELF",
+        "passed": true
+      },
+      {
+        "check": "actual fresh server/client agents both reaped with exit zero",
+        "passed": true
+      },
+      {
+        "check": "all actual final VHCI ports NULL",
+        "passed": true
+      }
+    ],
+    "check_count": 107,
+    "failures": [],
+    "scope": "one selected syscall-entry gate, two actual accepted resources, real explicit release and join, subsequent fresh HID/FTDI reuse; no in-kernel-active blockage, pre-listener I/O, independent sibling I/O, ARM or hardware claim",
+    "held_cleanup_observations": [
+      2
+    ],
+    "selected_candidate": 7,
+    "raw_gate_elapsed_ns": 946166112
+  },
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "head_after": "1582f06776f4c1ea50e9b5109a9ad7d0b7cdbe16",
+  "git_status_after": "",
+  "source_guard": true,
+  "binary_guard": true,
+  "head_guard": true,
+  "clean_guard": true,
+  "completed_utc": "2026-10-24T00:20:37.107734+00:00",
+  "artifact_manifest": {
+    "build.log": {
+      "bytes": 139,
+      "sha256": "87b05541c343c930d865df060d030a9301197fa377e25db973d4a7654b23b66f"
+    },
+    "probe-build.log": {
+      "bytes": 217,
+      "sha256": "5731100c26a077a40e126f570aceebe1dd4c9237609622b67f04e7d0b065d1bb"
+    },
+    "ftdi-host-rx.bin": {
+      "bytes": 35,
+      "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef"
+    },
+    "ftdi-host-injected-1.bin": {
+      "bytes": 35,
+      "sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a"
+    },
+    "ca-public.der": {
+      "bytes": 831,
+      "sha256": "a60ddb84735e4c3cc8a842a291c7d039566206c79a2a9855ed6df070f5b5be37"
+    },
+    "server-evidence.log": {
+      "bytes": 318527,
+      "sha256": "77753acfa396eb5f585150ebca65fad297545fc7bf7420929168228f908b0299"
+    },
+    "server-payload-dependencies.json": {
+      "bytes": 10430,
+      "sha256": "639fb507a85cd9c7b777c69567fbadd0af8b464879799477be6aa2ccb17bc32b"
+    },
+    "qmp-input.json": {
+      "bytes": 113,
+      "sha256": "bc069b23b872e0278763677f94f36fc194eccbb416f2ac2f60a63d7b3a63f2aa"
+    },
+    "certificate-generation.log": {
+      "bytes": 8827,
+      "sha256": "4ad7f2c4e33e640ef5250904fd4f0ca84a79dc652c74c6c180cea48e2caaddfe"
+    },
+    "client-public.der": {
+      "bytes": 834,
+      "sha256": "453c129feb2ee560c25a78871e1a35792572eefea67f0cb463cadab1000656b4"
+    },
+    "server-generated-init.sh": {
+      "bytes": 46453,
+      "sha256": "893dc31e22984cb684eaff2f300dd7b050b385082f84c9d31e8ee9661bbe943f"
+    },
+    "server-external.pcap": {
+      "bytes": 39375,
+      "sha256": "687148b2bc49af387155d4ab63cc90ca805f992294bb639edf3d0f173dd635e4"
+    },
+    "server-serial.log": {
+      "bytes": 34193,
+      "sha256": "2dc0b7e25a95c5701965cb875004abaf2927bcc44ebbb93dcd1126cccfb7a0d7"
+    },
+    "client-generated-init.sh": {
+      "bytes": 46453,
+      "sha256": "893dc31e22984cb684eaff2f300dd7b050b385082f84c9d31e8ee9661bbe943f"
+    },
+    "server-public.der": {
+      "bytes": 872,
+      "sha256": "e5ecab87af25c39ad779e264d665270dd73807e60f941d52350bba0eec9b3c3b"
+    },
+    "server-qemu.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-serial.log": {
+      "bytes": 34554,
+      "sha256": "6fa921da8f3a6643daa7c62202395dbbc2ab3af2ba187f8f6f3ce28558c1aded"
+    },
+    "tool-versions.log": {
+      "bytes": 400,
+      "sha256": "d3607e8fa51a31ee7111163b10a3939e311bd8420619e2ca97fe28fbcaba4c41"
+    },
+    "client-payload-dependencies.json": {
+      "bytes": 10063,
+      "sha256": "26636959213e100128de80730b99bb0a19ddaa8f3ebd7a9b9e1ae62be08f90c7"
+    },
+    "client-external.pcap": {
+      "bytes": 39289,
+      "sha256": "773b220f7fc12509671df69eeab6a08a897ed5bd4904533dda6ec830a263a2a0"
+    },
+    "kernel.config": {
+      "bytes": 287201,
+      "sha256": "a83db1b3b61ca8e4b6c76e2d247fcd9efce7aa8a78f8a7948a5c3b5169c788a4"
+    },
+    "client-qemu.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "host-control.jsonl": {
+      "bytes": 1021,
+      "sha256": "4294b283a5453ba9c39b0219e48a36a8e7b8d51229087d824af43a6c727990b7"
+    },
+    "qmp-events.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "client-evidence.log": {
+      "bytes": 117369,
+      "sha256": "f89fba91a212c76c4c0fcfba923011b37621c9c9b3abc34f7c7c1ce5c9572a18"
+    },
+    "server-artifacts/gate-decision-4": {
+      "bytes": 5,
+      "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+    },
+    "server-artifacts/root-reuse-ready.json": {
+      "bytes": 2163,
+      "sha256": "86946f27ce4bffc0e31154d1823e070f7a36791c994fd7ea8405f73195852606"
+    },
+    "server-artifacts/random-ready.txt": {
+      "bytes": 38,
+      "sha256": "decc92dcb11a63f63fc2e1027f00107943e4f3bc32c6fda1b7c4fcef8d5737fd"
+    },
+    "server-artifacts/gate-exit-5.json": {
+      "bytes": 426,
+      "sha256": "6ef5638a962d46b61febbcc5b2fd1c1da49f499f8ca3c415b42218e19f94b718"
+    },
+    "server-artifacts/failure-agent-state.status.txt": {
+      "bytes": 101,
+      "sha256": "1976d80b2cd5bd8a0054476c571d12631ab7400ecb24cab0b242290e8ea518b1"
+    },
+    "server-artifacts/root-final.json": {
+      "bytes": 1632,
+      "sha256": "e6eeb64645b2cc289c2c6a49539b36031b4fa29e71537057e43e63f79ddb3a3a"
+    },
+    "server-artifacts/unix-observe-2.txt": {
+      "bytes": 460,
+      "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+    },
+    "server-artifacts/start-pool-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/draft-7.json": {
+      "bytes": 3812,
+      "sha256": "d9ac2a76d42c92eb30b8032f640cac02adea7d7cf6a7b747f68036447debe813"
+    },
+    "server-artifacts/gate-exit-3.json": {
+      "bytes": 426,
+      "sha256": "4307965fe9a599e9f25097fbe8f4770599a97fff4155a4896ce5f13d765e3097"
+    },
+    "server-artifacts/gate-held-after.json": {
+      "bytes": 158,
+      "sha256": "b61902ac00701a7630f30d52c0bf2b38d7a59cf44a5100f9b2e2bed765b68e63"
+    },
+    "server-artifacts/failure-agent-state.read.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/devices.json": {
+      "bytes": 1948,
+      "sha256": "42fa6e45643cb3b8cc1918f09846bc405451a770d2e80ea998eeb7499da08fa3"
+    },
+    "server-artifacts/actual-server-pool.json": {
+      "bytes": 795,
+      "sha256": "2c809367eb7dbb334b185a756e30d876979ffacff7ef3367dcc0a212d1665409"
+    },
+    "server-artifacts/agent-observe-2.json": {
+      "bytes": 3539,
+      "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+    },
+    "server-artifacts/host-before.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/gate-armed.json": {
+      "bytes": 357,
+      "sha256": "f5a7b2e706f48f424eab3cb0eb176920efaa0206d6693868671d27634a2212b1"
+    },
+    "server-artifacts/wait-tracer.txt": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "server-artifacts/agent-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/draft-3.json": {
+      "bytes": 2336,
+      "sha256": "bf53bd4a0f3fdcac8a6ef5da5f50001b0108690734a749516656a4ec85bc7ff8"
+    },
+    "server-artifacts/host-held.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/gate-candidate-6.json": {
+      "bytes": 392,
+      "sha256": "75d185c0db0afdc5f54b9f743ae28a0c31db65c92ceb2e178891a44af6e90c70"
+    },
+    "server-artifacts/fds-idle.jsonl": {
+      "bytes": 1139,
+      "sha256": "29f693f690f0624a2461547ee25eeca0d0a748eb202cbd795a444a1a364495f5"
+    },
+    "server-artifacts/host-observe-2.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/held-observations.jsonl": {
+      "bytes": 259,
+      "sha256": "146521231f0427788fb0d214e51f3433d98929b69e66f04e3aa770cc03e88652"
+    },
+    "server-artifacts/root-before-release.json": {
+      "bytes": 840,
+      "sha256": "930606b38d7ee2ef25c02c765fc8a3ba7fc8655c94ea42d4e8cee67f08ff04b3"
+    },
+    "server-artifacts/reuse-ready.json": {
+      "bytes": 3204,
+      "sha256": "80b7b5ec85810029a0fd43caea969c9cfcf6dec82bda24336d7e3c8f1150c82d"
+    },
+    "server-artifacts/host-before-release.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/failure-physical-journal.json": {
+      "bytes": 1632,
+      "sha256": "e6eeb64645b2cc289c2c6a49539b36031b4fa29e71537057e43e63f79ddb3a3a"
+    },
+    "server-artifacts/fds-observe-2.json": {
+      "bytes": 1779,
+      "sha256": "4eb8a1cfc007d3b4d6082ca8b3d035f8c0cf1ab4dd68e20858dc31938713df5f"
+    },
+    "server-artifacts/gate-release-7": {
+      "bytes": 8,
+      "sha256": "3933e3274b63dc01fd286d6d939a626867c83a4603fc4347e0f8b8856f1b98fd"
+    },
+    "server-artifacts/actual-client.der": {
+      "bytes": 834,
+      "sha256": "453c129feb2ee560c25a78871e1a35792572eefea67f0cb463cadab1000656b4"
+    },
+    "server-artifacts/gate-decision-2": {
+      "bytes": 5,
+      "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+    },
+    "server-artifacts/gate-exit-1.json": {
+      "bytes": 426,
+      "sha256": "5d1cd7fc62060c7aa470d07477c574e0eaca1328d76804083856c657a7d0f75c"
+    },
+    "server-artifacts/gate-decision-7": {
+      "bytes": 7,
+      "sha256": "3be326473610e616ccddabfee05380d844fc5c01116946a24ab8e620d2713ba7"
+    },
+    "server-artifacts/agent-1.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/network-ready.txt": {
+      "bytes": 407,
+      "sha256": "c4f543e3c287234d798a38ed0b3d48125a91419810452be97f0e677a04204bf0"
+    },
+    "server-artifacts/profiles-2.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/root-observe-2.json": {
+      "bytes": 840,
+      "sha256": "930606b38d7ee2ef25c02c765fc8a3ba7fc8655c94ea42d4e8cee67f08ff04b3"
+    },
+    "server-artifacts/failure-native-channels.status.txt": {
+      "bytes": 79,
+      "sha256": "1110866930eb5572bfcb867157dfd118b6a7ddffed47eafcccdc3b16dc8d8500"
+    },
+    "server-artifacts/agent-held.json": {
+      "bytes": 3539,
+      "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+    },
+    "server-artifacts/usb-nodes-before.jsonl": {
+      "bytes": 390,
+      "sha256": "590e24ec7f4a36c1aa426878f9291a8aaa57bb006e35c67d7ada127f9964721a"
+    },
+    "server-artifacts/identity-agent-1.txt": {
+      "bytes": 1486,
+      "sha256": "501621e659a0aff444a70bee835f9ed90032cf33baf1fe8a431da24807b2426b"
+    },
+    "server-artifacts/helper.log": {
+      "bytes": 2045,
+      "sha256": "1f7df3017f60e449c16ea803cbe916f3951a66a892a52985f44d9fed068b85d8"
+    },
+    "server-artifacts/keys.json": {
+      "bytes": 162,
+      "sha256": "23ed161402be58086ef00570d396bfd1284406cde00ba1f02f201736b639a677"
+    },
+    "server-artifacts/unix-held.txt": {
+      "bytes": 460,
+      "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+    },
+    "server-artifacts/failure-dmesg.log": {
+      "bytes": 34408,
+      "sha256": "4acc7d88d5981e59e61220235bd64a59d9b08845c5210f445438a1cc20866cc5"
+    },
+    "server-artifacts/executable-gate.txt": {
+      "bytes": 80,
+      "sha256": "e8fcf8875d84953332480f9d0739867ccb0d5f323ebb063961d615268fc34085"
+    },
+    "server-artifacts/host-final.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/executable-helper.txt": {
+      "bytes": 80,
+      "sha256": "b6065a9935644f0930c8f20ae41c082ec38a76890786cd0282f8d66199f061f1"
+    },
+    "server-artifacts/agent-manifest.json": {
+      "bytes": 515,
+      "sha256": "72a36ebcabaaf98cf71188255adbe371068262a2e9096305e54b77da119d8d41"
+    },
+    "server-artifacts/agent-2.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/gate-exit-4.json": {
+      "bytes": 426,
+      "sha256": "f7983e8733eae9daec6509295d08b45c2cddbcb9d956b24872435e1e25830092"
+    },
+    "server-artifacts/agent-final.json": {
+      "bytes": 21409,
+      "sha256": "ae131af1d7eefc93febc7d791300c604fd3c67d612764863e81eeba810dfe63b"
+    },
+    "server-artifacts/rtc.txt": {
+      "bytes": 360,
+      "sha256": "c8a0621b200a9c895f2e9e76a48eb960473e65f36c6dd36686a6755b4b6267f4"
+    },
+    "server-artifacts/agent-2.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/owner-stat-held.txt": {
+      "bytes": 301,
+      "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+    },
+    "server-artifacts/gate-decision-5": {
+      "bytes": 5,
+      "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+    },
+    "server-artifacts/gate-exit-6.json": {
+      "bytes": 426,
+      "sha256": "4a4665dbcdf0f30825596680a79a42933c480acbed9ba8f4bfe669057ada474b"
+    },
+    "server-artifacts/identity-helper.txt": {
+      "bytes": 1463,
+      "sha256": "371369d26c77bdc2c12bb145ea13c0cecfdd047838db46212f8135482a311fb4"
+    },
+    "server-artifacts/root-observe-1.json": {
+      "bytes": 1370,
+      "sha256": "bcdb320f14817d0ce70a217d65f20a0d85765417e9cb61f063c953c48114e46b"
+    },
+    "server-artifacts/unix-idle.txt": {
+      "bytes": 460,
+      "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+    },
+    "server-artifacts/agent-before-release.json": {
+      "bytes": 3539,
+      "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+    },
+    "server-artifacts/usb-nodes-before.json": {
+      "bytes": 537,
+      "sha256": "7415945ae2831911050d41e41cdcc1b5374c6d1403f9ef42e12f4f56cfe07659"
+    },
+    "server-artifacts/identity-gate.txt": {
+      "bytes": 1464,
+      "sha256": "99819987b139bc3e62c908e27f65fd6917186fea401a5fd2faae2c2df8c10e0a"
+    },
+    "server-artifacts/profiles-1.json": {
+      "bytes": 122,
+      "sha256": "16c1c2555e45965fc1265966e0d7a4724fab7db5a11373950eb5099952c333d0"
+    },
+    "server-artifacts/owner-stat-observe-2.txt": {
+      "bytes": 301,
+      "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+    },
+    "server-artifacts/fds-held.jsonl": {
+      "bytes": 1406,
+      "sha256": "c1893acc9c4ba2604fe326646aefcb8ff0e6cdf82f59e9db3d122515b987562c"
+    },
+    "server-artifacts/listeners-held.txt": {
+      "bytes": 295,
+      "sha256": "6b214f9a98c85370bf22cc7720612a0142905a772a50cdf5b6ad4a2721084def"
+    },
+    "server-artifacts/interfaces.jsonl": {
+      "bytes": 109,
+      "sha256": "2511ac57403f6ed6ec63ff93dfd78710139a9dfffabaa0996435e36a8deb6381"
+    },
+    "server-artifacts/clock-observation.txt": {
+      "bytes": 53,
+      "sha256": "fe0607a41e56bab2e2c0f44d3891c2238e328aadf205f1c7ad5c61c01f855628"
+    },
+    "server-artifacts/gate-candidate-1.json": {
+      "bytes": 392,
+      "sha256": "8d7a364e6be5d6ee1a9dfaade2f257d9d41653bf458bb64dc201863ed40f665f"
+    },
+    "server-artifacts/selected-attempts.json": {
+      "bytes": 526,
+      "sha256": "ec4eaa65511647c3fb10daa64bbdf8c2d3af07cf71680c1907339b681b572417"
+    },
+    "server-artifacts/gate-candidate-5.json": {
+      "bytes": 392,
+      "sha256": "153ef3e50b2b6ae4737b8ccb3bb8c88d64e8b46111d60a04a60a11b9a99847eb"
+    },
+    "server-artifacts/gate-candidate-2.json": {
+      "bytes": 392,
+      "sha256": "ff9f9984b8f5a236683d6252e526592e302d8b1014570233a1bc134722460411"
+    },
+    "server-artifacts/gate-observe": {
+      "bytes": 6,
+      "sha256": "7b9a72466d3960eb2aacccfc848939453490db0678bd4725def3f789b891c919"
+    },
+    "server-artifacts/gate-tracee.pid": {
+      "bytes": 4,
+      "sha256": "c11eae0cc2e648efe410effd75e64dfca8f6b6532b51f6cfa29e5c03503be0d7"
+    },
+    "server-artifacts/executable-agent-1.txt": {
+      "bytes": 80,
+      "sha256": "1f02de5601abb899e506c87ba48b47c98fe7cb0b805d3ec4974a593901afe7bf"
+    },
+    "server-artifacts/agent-profiles.json": {
+      "bytes": 75,
+      "sha256": "22d8217adc864bc008fe248a1d5b772547050931d026e7e15f8f9aecac89cd84"
+    },
+    "server-artifacts/gate-events.jsonl": {
+      "bytes": 20712,
+      "sha256": "8201c0743da8be4f640214a8fb5613076b0df2a5254d417c4422d5bf4e7ae6cf"
+    },
+    "server-artifacts/agent-after-release.json": {
+      "bytes": 5499,
+      "sha256": "1f28b14ec99c916ab11d7a80a4ef15b1948dcbb21acc77fb3c2e61e0c08f7b2a"
+    },
+    "server-artifacts/profiles-2.json": {
+      "bytes": 122,
+      "sha256": "16c1c2555e45965fc1265966e0d7a4724fab7db5a11373950eb5099952c333d0"
+    },
+    "server-artifacts/gate-exit-7.json": {
+      "bytes": 426,
+      "sha256": "1328e04ae5e708944a0ae9a70c20e73a0870aba6d7818de7d2bac7f55175b2c8"
+    },
+    "server-artifacts/wait-agent-2.txt": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "server-artifacts/start-pool-2.json": {
+      "bytes": 300,
+      "sha256": "5ee6861877f36e1394b02328ec202accffbea03883ead1110c8a2fcdecaccbe3"
+    },
+    "server-artifacts/fds-observe-2.jsonl": {
+      "bytes": 1236,
+      "sha256": "3f956d8771b631d82cbc16d3337728683b69e60353099ab2081dc33ff1acd946"
+    },
+    "server-artifacts/start-pool-1.json": {
+      "bytes": 300,
+      "sha256": "6a1b6382af1136c20d69783727da0887f40e83e5d1bead98ec9e3a3933a47091"
+    },
+    "server-artifacts/host-after-release.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/failure-physical-journal.read.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/selection.json": {
+      "bytes": 99,
+      "sha256": "8342d601a43d133c58770fb018879ddee535ef01468cfe175bf9d7a2315761fb"
+    },
+    "server-artifacts/state-before-ack.json": {
+      "bytes": 3539,
+      "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+    },
+    "server-artifacts/gate-exit-2.json": {
+      "bytes": 426,
+      "sha256": "859f205f62b0d951b64418fbd66e2c5718e70ff2c22449341a3d7b4be671d9e8"
+    },
+    "server-artifacts/fds-before-release.json": {
+      "bytes": 1779,
+      "sha256": "4eb8a1cfc007d3b4d6082ca8b3d035f8c0cf1ab4dd68e20858dc31938713df5f"
+    },
+    "server-artifacts/root-after-release.json": {
+      "bytes": 840,
+      "sha256": "930606b38d7ee2ef25c02c765fc8a3ba7fc8655c94ea42d4e8cee67f08ff04b3"
+    },
+    "server-artifacts/fds-observe-1.jsonl": {
+      "bytes": 1236,
+      "sha256": "3f956d8771b631d82cbc16d3337728683b69e60353099ab2081dc33ff1acd946"
+    },
+    "server-artifacts/gate-held-before.json": {
+      "bytes": 158,
+      "sha256": "5454cdf70bf98fccbb0a6047bcc89d3b9725aa8e4ea5cbc31445eb2769907cc0"
+    },
+    "server-artifacts/baseline-rows.jsonl": {
+      "bytes": 859,
+      "sha256": "5ae42f7b79b1341ac6609a45875c4d8ec072bb143116c522a538680ecaa8bda8"
+    },
+    "server-artifacts/profiles-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/actual-client-pin.txt": {
+      "bytes": 65,
+      "sha256": "2770a931ab2b47132fe135ee948f98d7c38d2eb1657a14b2cf0e32dd9228eba6"
+    },
+    "server-artifacts/fds-idle.json": {
+      "bytes": 1646,
+      "sha256": "4415c6175947f0a74a4d43b1019e84ed2135714b5545874600cb7a8fdc88a68d"
+    },
+    "server-artifacts/gate-candidate-3.json": {
+      "bytes": 392,
+      "sha256": "33f86ec630e629a69b08beb8a79a35b6a2a2daa475f869c2bdc1a5598f41fab4"
+    },
+    "server-artifacts/unix-before-release.txt": {
+      "bytes": 460,
+      "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+    },
+    "server-artifacts/actual-ca.der": {
+      "bytes": 831,
+      "sha256": "a60ddb84735e4c3cc8a842a291c7d039566206c79a2a9855ed6df070f5b5be37"
+    },
+    "server-artifacts/draft-6.json": {
+      "bytes": 3539,
+      "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+    },
+    "server-artifacts/actual-server.der": {
+      "bytes": 872,
+      "sha256": "e5ecab87af25c39ad779e264d665270dd73807e60f941d52350bba0eec9b3c3b"
+    },
+    "server-artifacts/failure-agent-state.json": {
+      "bytes": 21409,
+      "sha256": "ae131af1d7eefc93febc7d791300c604fd3c67d612764863e81eeba810dfe63b"
+    },
+    "server-artifacts/agent-reuse-ready.json": {
+      "bytes": 9725,
+      "sha256": "f5fa3c775e0766dc3218ad3b7ab5f6292d4bc8cf71f2d95dca4908a9ca8c59dd"
+    },
+    "server-artifacts/draft-5.json": {
+      "bytes": 3074,
+      "sha256": "20a2de35e90c6a617a38718856c0ea5eb9477e0da2654a08b5f07f96c9d6b0ff"
+    },
+    "server-artifacts/held-outcome.json": {
+      "bytes": 113,
+      "sha256": "d8b6d18c346287faa668a4c3a33b4f1922c0d9e0f30c1d8ebd5dc70e8c06d988"
+    },
+    "server-artifacts/gate-ready.json": {
+      "bytes": 214,
+      "sha256": "74e6eaee67f826d17c7350c0134aba01ca78ac7a140f6180fa560f59de0f3738"
+    },
+    "server-artifacts/failure-physical-journal.status.txt": {
+      "bytes": 105,
+      "sha256": "34e5fe0ae65b1b5b9e3faa024d58f781033f377e955d033f3506b6adad62194a"
+    },
+    "server-artifacts/unix-observe-1.txt": {
+      "bytes": 460,
+      "sha256": "e622ef812a6d820123fad0b0d5632383939ca823748c182144e66a65f81c9d68"
+    },
+    "server-artifacts/selected-state.json": {
+      "bytes": 3812,
+      "sha256": "d9ac2a76d42c92eb30b8032f640cac02adea7d7cf6a7b747f68036447debe813"
+    },
+    "server-artifacts/gate-candidate-7.json": {
+      "bytes": 392,
+      "sha256": "5f319564f23b217183f58c4dea150be9b1a23f392a14316fde12835486a68d7b"
+    },
+    "server-artifacts/executable-agent-2.txt": {
+      "bytes": 81,
+      "sha256": "6e7088fc3c2fde350b7e9283f2ed82cfffd98f4cbc016cdb15fc97480c205b97"
+    },
+    "server-artifacts/gate-decision-3": {
+      "bytes": 5,
+      "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+    },
+    "server-artifacts/draft-4.json": {
+      "bytes": 2801,
+      "sha256": "20a86c386f1ae4206b96a9ba510814a386f8ae4464ca1ec843855b9aeea58a5d"
+    },
+    "server-artifacts/agent-observe-1.json": {
+      "bytes": 3539,
+      "sha256": "41ff6a7c89e4b46bf9ce2493ec2a42ff2ada11be71ff6747d9381a21da978284"
+    },
+    "server-artifacts/host-observe-1.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/config-mode.txt": {
+      "bytes": 770,
+      "sha256": "8d9178d0996ef29ca64e243df49ddd1e6eb6f245ac68c2a3f660346436d0af26"
+    },
+    "server-artifacts/gate-arm": {
+      "bytes": 9,
+      "sha256": "533513c1397cb8ccec05852b52514becd5fd8c9c21509f7bc2f5d460c6143dd8"
+    },
+    "server-artifacts/agent-identity-2.txt": {
+      "bytes": 64,
+      "sha256": "75f5d635f1cda786c30ceacdb23b630c3fc8761fd14b62a9647d148274176649"
+    },
+    "server-artifacts/draft-1.json": {
+      "bytes": 611,
+      "sha256": "044073ce50b4c31a2832404d6b56206d183a49f11251dda71f2d13f8c7d777a1"
+    },
+    "server-artifacts/network.txt": {
+      "bytes": 315,
+      "sha256": "d1de2891cc8ce427b5d33cd47d4a9426ee4f45185a7774381dd1c1fd08fa9252"
+    },
+    "server-artifacts/fds-observe-1.json": {
+      "bytes": 1779,
+      "sha256": "4eb8a1cfc007d3b4d6082ca8b3d035f8c0cf1ab4dd68e20858dc31938713df5f"
+    },
+    "server-artifacts/gate-candidate-4.json": {
+      "bytes": 392,
+      "sha256": "918b481d0db6629705e4bd6b5ce866d9caa1e1e20737b26f8368c4b219a6ec41"
+    },
+    "server-artifacts/identity-agent-2.txt": {
+      "bytes": 1484,
+      "sha256": "e8eb7e87d4e616e98cdd4b75e045017108b392e9523cd74d58bfb8c4b1429a89"
+    },
+    "server-artifacts/gate-decision-6": {
+      "bytes": 5,
+      "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+    },
+    "server-artifacts/root-held.json": {
+      "bytes": 1370,
+      "sha256": "bcdb320f14817d0ce70a217d65f20a0d85765417e9cb61f063c953c48114e46b"
+    },
+    "server-artifacts/actual-agent.json": {
+      "bytes": 515,
+      "sha256": "72a36ebcabaaf98cf71188255adbe371068262a2e9096305e54b77da119d8d41"
+    },
+    "server-artifacts/owner-stat-observe-1.txt": {
+      "bytes": 301,
+      "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+    },
+    "server-artifacts/helper-policy.json": {
+      "bytes": 434,
+      "sha256": "ab6c3566f3beb33f35050f0c41107b58de175d2cdfe2be81602ebfef9c8c9c6a"
+    },
+    "server-artifacts/start-pool-2.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-artifacts/fds-held.json": {
+      "bytes": 2021,
+      "sha256": "d6061a909485ff96e844b61ce0330042474f0af7be559f50f270bb407f3ebdb9"
+    },
+    "server-artifacts/draft-2.json": {
+      "bytes": 1472,
+      "sha256": "6c8159433cfb5b17438b8113ba1d23b7bc14493d1f1efe7fdea61f053ad50289"
+    },
+    "server-artifacts/fds-before-release.jsonl": {
+      "bytes": 1236,
+      "sha256": "3f956d8771b631d82cbc16d3337728683b69e60353099ab2081dc33ff1acd946"
+    },
+    "server-artifacts/selected-sessions.json": {
+      "bytes": 1534,
+      "sha256": "506a21f7ced9dfb65be412a29007ddc5b47c6ae4759c9eb914a7e1b824ba143c"
+    },
+    "server-artifacts/owner-stat-before-release.txt": {
+      "bytes": 301,
+      "sha256": "bca13e5ad7505c3ea637228b3783c38a6e2801828c2460ed174da70f9cdc9da5"
+    },
+    "server-artifacts/actual-policy.json": {
+      "bytes": 434,
+      "sha256": "ab6c3566f3beb33f35050f0c41107b58de175d2cdfe2be81602ebfef9c8c9c6a"
+    },
+    "server-artifacts/host-reuse-ready.json": {
+      "bytes": 1244,
+      "sha256": "e85f2aff4848494dceb6bf610bd810d7892a713eef29754336c6b15f4d47a256"
+    },
+    "server-artifacts/owner-stat-idle.txt": {
+      "bytes": 301,
+      "sha256": "30bc7c1ba7fd105b6c3a278179645852cb78060757185803ac0a94e27b801418"
+    },
+    "server-artifacts/gate-decision-1": {
+      "bytes": 5,
+      "sha256": "355f3c228007ad997a7fa03ea7b42d8f6f49b93f9aed41bbba87e2ddb6580b4e"
+    },
+    "client-artifacts/random-ready.txt": {
+      "bytes": 38,
+      "sha256": "5aad52af64ec25bd2daf80b9ec83e8dc55e18cb3e86f55ceb373e20fbaa3b483"
+    },
+    "client-artifacts/failure-agent-state.status.txt": {
+      "bytes": 100,
+      "sha256": "78b18bdb33103ee3e29c8a3c0560d6cb56320fb1e7d1ccdee8fec7af3e167c8a"
+    },
+    "client-artifacts/root-final.json": {
+      "bytes": 926,
+      "sha256": "e6a615c5b6aa9feab75e331ac01327db50810b9dfb1366a06a69623394c19237"
+    },
+    "client-artifacts/vhci-final.txt": {
+      "bytes": 682,
+      "sha256": "5e975a7c4a48a87920eef7e2af2f4671bca44068d7941b5a1ed2e54374ce420a"
+    },
+    "client-artifacts/held-connect.wait": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "client-artifacts/failure-agent-state.read.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/client-receipts-reuse.json": {
+      "bytes": 2622,
+      "sha256": "8a0900ab91b3eee735d286427c26a17880131f9db8d96bf42994c78bf7e900e9"
+    },
+    "client-artifacts/agent-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/start-hid-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/actual-client-hid.json": {
+      "bytes": 434,
+      "sha256": "a2d57f022e2812c646c10bbb6ce721da80853ae34ea4d1bbb2587424f1c2a113"
+    },
+    "client-artifacts/actual-client.der": {
+      "bytes": 834,
+      "sha256": "453c129feb2ee560c25a78871e1a35792572eefea67f0cb463cadab1000656b4"
+    },
+    "client-artifacts/actual-client-serial.json": {
+      "bytes": 434,
+      "sha256": "9493e71e29b058bda56ecf149897ec70669538e1f2d5b43c4f92aea5f1bdd5fd"
+    },
+    "client-artifacts/agent-1.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/network-ready.txt": {
+      "bytes": 407,
+      "sha256": "16d92148197783af00329b92dea1b00cf1f40f53f3475df7568cb949f13a1b5c"
+    },
+    "client-artifacts/client-serial-connected.json": {
+      "bytes": 895,
+      "sha256": "46feb48113de55e14edf90c841f382fa2608a9dd1ada8d1645a998b5e726d952"
+    },
+    "client-artifacts/failure-native-channels.json": {
+      "bytes": 926,
+      "sha256": "e6a615c5b6aa9feab75e331ac01327db50810b9dfb1366a06a69623394c19237"
+    },
+    "client-artifacts/failure-native-channels.status.txt": {
+      "bytes": 103,
+      "sha256": "1ef18357cbaf623388a727c50fb1f9e88789651b6b7b5c13fa7b2ac3ab6905ab"
+    },
+    "client-artifacts/identity-agent-1.txt": {
+      "bytes": 1480,
+      "sha256": "311bda0603c2caf6656545f8d5971bd0ebb08d03ad7baaf1cda046bac37b3d0b"
+    },
+    "client-artifacts/helper.log": {
+      "bytes": 177,
+      "sha256": "94c60d3bf250ed4a3a3ed3d1ac0849f5e3365300717199cb42299055ec1c397b"
+    },
+    "client-artifacts/keys.json": {
+      "bytes": 162,
+      "sha256": "23ed161402be58086ef00570d396bfd1284406cde00ba1f02f201736b639a677"
+    },
+    "client-artifacts/failure-dmesg.log": {
+      "bytes": 34755,
+      "sha256": "a239992e0f5aee0974dc83635685dabf392fbd4e219c6087c517f421393b7a71"
+    },
+    "client-artifacts/wait-agent-1.txt": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "client-artifacts/agent-reused.json": {
+      "bytes": 6411,
+      "sha256": "8966f491b26abf84a8a9f2cc689c7326b1e0614922a8a7bdfe8f74b1477ad714"
+    },
+    "client-artifacts/executable-helper.txt": {
+      "bytes": 80,
+      "sha256": "8eaa1c7bc9f2d6a3fd5ee0fd8b005ce6a6e1f1b63ea88f30ea30a0ba4b71c3a7"
+    },
+    "client-artifacts/agent-manifest.json": {
+      "bytes": 643,
+      "sha256": "8cf29a3f54641ab242d6eaa546e94d4432cc0840f3b9db7c70a39db1469b9a88"
+    },
+    "client-artifacts/dd-1.log": {
+      "bytes": 33,
+      "sha256": "58a5a26b081356495149528d3ab5f1341f441dc775e96eec564b70422ff71663"
+    },
+    "client-artifacts/agent-final.json": {
+      "bytes": 8280,
+      "sha256": "1d6cdeb97edee2eacd5c58ecbffa9f5557c8fb3338ea98732d4f7dfc17f7943d"
+    },
+    "client-artifacts/rtc.txt": {
+      "bytes": 360,
+      "sha256": "c8a0621b200a9c895f2e9e76a48eb960473e65f36c6dd36686a6755b4b6267f4"
+    },
+    "client-artifacts/identity-helper.txt": {
+      "bytes": 1463,
+      "sha256": "309debd54d2ecea3f3539713ede01af34ae04ce1caa2e196a0c0d378b6ca3c00"
+    },
+    "client-artifacts/profiles-1.json": {
+      "bytes": 157,
+      "sha256": "53aa38a507087fd9d058b55a847eaf53da93a02f1ce87aa88440e7e652a1e2f3"
+    },
+    "client-artifacts/held-connect.stderr": {
+      "bytes": 76,
+      "sha256": "99dd5ac3bb9e98d098447a722badd7fccf69414edc11ebc6a42a30d688f4cbe6"
+    },
+    "client-artifacts/input-1.bin": {
+      "bytes": 144,
+      "sha256": "0376d2982609254ac606720315c4fb78546b627eca5df9f5cd7767cb22756dbf"
+    },
+    "client-artifacts/agent-identity-1.txt": {
+      "bytes": 63,
+      "sha256": "3c329e75a09679648bac91d2648a6c829c3c57e6acd113a126e3ae1fac93738e"
+    },
+    "client-artifacts/expected-rx-1.bin": {
+      "bytes": 35,
+      "sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a"
+    },
+    "client-artifacts/clock-observation.txt": {
+      "bytes": 53,
+      "sha256": "4230fcaa32a9d070542e383ce3154edb550eafe1caf89ae63fd4fd0e5baf8a92"
+    },
+    "client-artifacts/root-reused.json": {
+      "bytes": 2622,
+      "sha256": "8a0900ab91b3eee735d286427c26a17880131f9db8d96bf42994c78bf7e900e9"
+    },
+    "client-artifacts/local-identities-reuse.json": {
+      "bytes": 88,
+      "sha256": "f59bdffba9f4535c75efefc0f81dabaf9f30c1abec3784b6923a1a827a9eb0d6"
+    },
+    "client-artifacts/executable-agent-1.txt": {
+      "bytes": 80,
+      "sha256": "008d1eb3e6a4e88bed6ed3d792f484db289780acc52da6ec631dff69e813a0f2"
+    },
+    "client-artifacts/agent-profiles.json": {
+      "bytes": 152,
+      "sha256": "a971197c93f79551b99831670dd9424f9df102b0595b9eb7ad665c8b6b6fc140"
+    },
+    "client-artifacts/client-serial-final.json": {
+      "bytes": 897,
+      "sha256": "618920f03deca3506cef59ae1f68fa42e62818e0401fa981dfc530c08f699e14"
+    },
+    "client-artifacts/profiles-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/actual-client-pin.txt": {
+      "bytes": 65,
+      "sha256": "2770a931ab2b47132fe135ee948f98d7c38d2eb1657a14b2cf0e32dd9228eba6"
+    },
+    "client-artifacts/rx-1.bin": {
+      "bytes": 35,
+      "sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a"
+    },
+    "client-artifacts/start-serial-1.json": {
+      "bytes": 302,
+      "sha256": "b36ab6a9136b5838067ba92f53268b4f75c112862d91358314de4519f24b6ec2"
+    },
+    "client-artifacts/actual-ca.der": {
+      "bytes": 831,
+      "sha256": "a60ddb84735e4c3cc8a842a291c7d039566206c79a2a9855ed6df070f5b5be37"
+    },
+    "client-artifacts/failure-native-channels.read.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/held-connect.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/actual-server.der": {
+      "bytes": 872,
+      "sha256": "e5ecab87af25c39ad779e264d665270dd73807e60f941d52350bba0eec9b3c3b"
+    },
+    "client-artifacts/failure-agent-state.json": {
+      "bytes": 8280,
+      "sha256": "1d6cdeb97edee2eacd5c58ecbffa9f5557c8fb3338ea98732d4f7dfc17f7943d"
+    },
+    "client-artifacts/failure-physical-journal.status.txt": {
+      "bytes": 80,
+      "sha256": "eea92b149a199166788018e81137ea0bdd389f0841411d34042b9b2eea60ca91"
+    },
+    "client-artifacts/tx-1.bin": {
+      "bytes": 35,
+      "sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef"
+    },
+    "client-artifacts/start-serial-1.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "client-artifacts/config-mode.txt": {
+      "bytes": 834,
+      "sha256": "ca40391d6576363a2f7dac1b45c8df7d272d362409778a408adba859e176bcb8"
+    },
+    "client-artifacts/network.txt": {
+      "bytes": 315,
+      "sha256": "97ac987294fc47f61e4574d03b451bc10cd27a88007332d11231771a501d9117"
+    },
+    "client-artifacts/client-hid-final.json": {
+      "bytes": 893,
+      "sha256": "3e306f1deb7ea2e4294413a743e43ecc3b6838b6ab5e9a467e53e05870a5def2"
+    },
+    "client-artifacts/actual-agent.json": {
+      "bytes": 643,
+      "sha256": "8cf29a3f54641ab242d6eaa546e94d4432cc0840f3b9db7c70a39db1469b9a88"
+    },
+    "client-artifacts/helper-policy.json": {
+      "bytes": 417,
+      "sha256": "bc40d02507b9bd9200d0599722be2f8327e5decc059f9957438c40785b6e7fa5"
+    },
+    "client-artifacts/vhci-reused.txt": {
+      "bytes": 682,
+      "sha256": "1f744b1fe90cf8ec720742287d2277aae089f232b263acc515f04f2067b5e2ac"
+    },
+    "client-artifacts/start-hid-1.json": {
+      "bytes": 299,
+      "sha256": "7211463d674e5856b3a62ef99c349ee101e371300801b017e9540b87254604ae"
+    },
+    "client-artifacts/client-hid-connected.json": {
+      "bytes": 892,
+      "sha256": "ec36563b4637931ee1e6e06645b086a03f338daa3bf7c81b625739f0d86280e3"
+    },
+    "client-artifacts/actual-policy.json": {
+      "bytes": 417,
+      "sha256": "bc40d02507b9bd9200d0599722be2f8327e5decc059f9957438c40785b6e7fa5"
+    },
+    "source/Cargo.lock": {
+      "bytes": 36795,
+      "sha256": "aecdd28d490d8f4414141b5a0328063c02a3ad82edaadfaaa8fd282f399a6e4f"
+    },
+    "source/Cargo.toml": {
+      "bytes": 1643,
+      "sha256": "8d98f3211828e32a3a097e45d3078fb010936b3a87ee105a069907027bf7c742"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh": {
+      "bytes": 15456,
+      "sha256": "f9ea5bd9c016f92ee7115549371a2b9425efb714f076a6102d8b9d70a5f17a5b"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/verify.py": {
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/prepare-gate.c": {
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/README.md": {
+      "bytes": 7712,
+      "sha256": "2d9330e6847e886389b0213dd70fa69f6c0cfcb4452afb89ea20e1a124c22364"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/verify_local.py": {
+      "bytes": 25025,
+      "sha256": "8209c7ee2aa887ad022cece2c225d97400349ee96923836e88c469d1c1bd65cc"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/local.py": {
+      "bytes": 2633,
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/run.py": {
+      "bytes": 20706,
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2"
+    },
+    "source/scripts/qemu_prepare_recording_shutdown/guest-init.sh": {
+      "bytes": 21511,
+      "sha256": "8417da8331384b640d50cf6f805c38a0569398cacdf0f88f0e58f77de8751af7"
+    },
+    "source/scripts/qemu/run-secure-qemu.py": {
+      "bytes": 50549,
+      "sha256": "514e9fadecd36bd2f7156d45d3ed804751a1803184420b8292748ebe38f12b38"
+    },
+    "source/scripts/qemu/guest-agent-init.sh": {
+      "bytes": 21660,
+      "sha256": "4a1ef4c50b0c6bb3d7e441821a2ccfbe85019bf334c48022a107470bebdc413a"
+    },
+    "source/scripts/qemu/run-physical-qemu.py": {
+      "bytes": 29912,
+      "sha256": "71f9efa83a5ebc8f2e932489914b9308aa37d11e7f3825ecf0b39c8ded78bfe9"
+    },
+    "source/scripts/qemu/guest-secure-init.sh": {
+      "bytes": 35715,
+      "sha256": "c3ab74413d68528ef4733a8bf53215c7b11c4e7d050a9c6f07e1d5dccc141c16"
+    },
+    "source/scripts/qemu/run-native-qemu.py": {
+      "bytes": 19626,
+      "sha256": "2aa720b459305df5f6ccbd2764df9ee228e4c1db1a1a555f8150c3214a14708f"
+    },
+    "source/scripts/qemu/run-agent-qemu.py": {
+      "bytes": 47091,
+      "sha256": "bebd225b012afc3114ee865921ec0d6f46ce1e40d041273a8521ef7e57263352"
+    },
+    "source/scripts/qemu/guest-init.sh": {
+      "bytes": 16288,
+      "sha256": "58b842e5874d5b5a466337a97dbd79efb5ffc994a2bc91bdd47822ca9820bbaa"
+    },
+    "source/vendor/nusb/Cargo.toml": {
+      "bytes": 4583,
+      "sha256": "f2af75b4007e76200009ac103e5981339495108751b8aad19eca0617a89ed255"
+    },
+    "source/vendor/nusb/src/bitset.rs": {
+      "bytes": 565,
+      "sha256": "c2e653f425bc186e6a0beffb971d7359e16b3d1b2380bc68812f3238f3db32c3"
+    },
+    "source/vendor/nusb/src/descriptors.rs": {
+      "bytes": 37550,
+      "sha256": "ee215896f2434a8cdd7c752cb3d8de731d24c42063641a24466f34d5ce8bd6ac"
+    },
+    "source/vendor/nusb/src/hotplug.rs": {
+      "bytes": 1139,
+      "sha256": "3705d6b683eabd5c78873ac5f4cebb677b81dad905035b493246a214e143d539"
+    },
+    "source/vendor/nusb/src/maybe_future.rs": {
+      "bytes": 8277,
+      "sha256": "b0ffdd4b9b6bbd3862bac7cef86b7545a1c0d905b2295ebc0079cfa13878dc3e"
+    },
+    "source/vendor/nusb/src/lib.rs": {
+      "bytes": 15033,
+      "sha256": "3be5f69a741894d7d0f23b44fac258ce1f9c62ee1ca0f8eda848489b37d3a855"
+    },
+    "source/vendor/nusb/src/error.rs": {
+      "bytes": 4845,
+      "sha256": "23072fc2b1b6e2695629577fc60570d27e8c5acddf5f4b9031e613d89c2c685f"
+    },
+    "source/vendor/nusb/src/enumeration.rs": {
+      "bytes": 30495,
+      "sha256": "6acc0021cfcf90b643904eeb13e4c6816e3b15a64ff0f3ce7c4c91783a3d9662"
+    },
+    "source/vendor/nusb/src/device.rs": {
+      "bytes": 40877,
+      "sha256": "027347f03e95cc060d7ea602cd5acb5ed0041b53fcee82115034dfc485774289"
+    },
+    "source/vendor/nusb/src/transfer/control.rs": {
+      "bytes": 4744,
+      "sha256": "c897832b372c69962b2b984423bb59ee217ef3c5b888c46dafaf45b4a080ca0e"
+    },
+    "source/vendor/nusb/src/transfer/internal.rs": {
+      "bytes": 9803,
+      "sha256": "32495a2f7971513d6da152395bf0ab1d140477f5f346cd9b89613a73dddf792d"
+    },
+    "source/vendor/nusb/src/transfer/mod.rs": {
+      "bytes": 5070,
+      "sha256": "4cd09ea81c16f75de0f785d7f85108814b8489bf37a71e0136fb055c84727963"
+    },
+    "source/vendor/nusb/src/transfer/buffer.rs": {
+      "bytes": 9626,
+      "sha256": "032d73a85281115aada917dd8ab046dc47b86593d4ace33248d074abdbc15e1a"
+    },
+    "source/vendor/nusb/src/platform/mod.rs": {
+      "bytes": 917,
+      "sha256": "33ff54e027f3bbca69beca75028dbea748a5fcf3f91c8855acb941e9c5b10471"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/transfer.rs": {
+      "bytes": 3559,
+      "sha256": "edc9936990cdd3be01506fe3444b9ca3e09e2fbee7bfeebfddce6baf25ba95c6"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs": {
+      "bytes": 7638,
+      "sha256": "319a163c6233bcea1606995447eb31e4cbd6b14f356741c5b862b7986b4b15b1"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/hotplug.rs": {
+      "bytes": 5658,
+      "sha256": "b7a7fd868088cc288f65cd9cf635d9061c072fe8d78e09b04a1905b59bb18c4b"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs": {
+      "bytes": 526,
+      "sha256": "d0a7e791add8a3a44c3772c40cab6bde8b75dedf360d46c58474b85b5c392b04"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/mod.rs": {
+      "bytes": 1011,
+      "sha256": "6c1d403e150c1615f85aeb9266b86776fda05eddcee9b0b9dc2589ecc14c9df2"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/registry.rs": {
+      "bytes": 2404,
+      "sha256": "59ad436a255bf63ab8485b414d22640c9924f1c4995097ba64a775f8208ae30e"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/enumeration.rs": {
+      "bytes": 14867,
+      "sha256": "b0a596f3a97b4815d9ec4f03d088748fbf738f96ffde45d8424174c3ec1cbeb1"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/hub.rs": {
+      "bytes": 9957,
+      "sha256": "e3da370b594c97801a3f5fd7bdf814c5b47a845a7789f4f2d7cb00a552e1ac25"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/util.rs": {
+      "bytes": 4404,
+      "sha256": "d81c10a0a2d15f45f4ea8f1d4b0ccb21956476ad21444b746dc4386fd73f39ca"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/threadpool.rs": {
+      "bytes": 2011,
+      "sha256": "5878d09f04fc69e12c2bbf8727de60b4f8de499c6f91b2adcbb9225fde62e101"
+    },
+    "source/vendor/nusb/src/platform/windows_winusb/device.rs": {
+      "bytes": 31445,
+      "sha256": "4e96b7da7a055d6c4d9581c36c9c7f43e8e922fe2c182c879d98b5f06a2b9c97"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/iokit.rs": {
+      "bytes": 3354,
+      "sha256": "1ce59fd235e72422ddb0438d3cc1baf85c2ff2e50d86922e14037a42fbfbbc40"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/transfer.rs": {
+      "bytes": 2395,
+      "sha256": "30e95c949b4c48a19a4680ddfbb7b7d6a071ecb073dcdf3f024f493f93c41e6b"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/hotplug.rs": {
+      "bytes": 5481,
+      "sha256": "0ee322f9f96bca1883a52ace10764714181e4c64c64bb76b32e45e54d479608c"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/mod.rs": {
+      "bytes": 1669,
+      "sha256": "74b150fd46f984313142c2d85929e98a60ff61efd65f91e90648a8d7e12346c9"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/events.rs": {
+      "bytes": 2321,
+      "sha256": "3504d9bb500cb16694c2e9ca802b362cab75f8e10a7f81e5124cfa75f9222fa9"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/iokit_c.rs": {
+      "bytes": 41091,
+      "sha256": "5e135448f66e3a4fddd401b9a3af601806fdda914e00f48e48c633665e5e3f39"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/enumeration.rs": {
+      "bytes": 12317,
+      "sha256": "83756d12a4d6a4d489411faa482c3c47d4c6f086a2c055bb7c84ef13ef69e384"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/iokit_usb.rs": {
+      "bytes": 12466,
+      "sha256": "900df5766f774f7171065432d3e8285160b1b1c96f46c5642bf66e068e9a8a1c"
+    },
+    "source/vendor/nusb/src/platform/macos_iokit/device.rs": {
+      "bytes": 23236,
+      "sha256": "0e3da8e10f830b967c509f02294c6aebcc57812fb44ffd6be15c4b8926566781"
+    },
+    "source/vendor/nusb/src/platform/webusb/hotplug.rs": {
+      "bytes": 2893,
+      "sha256": "08c4b2f926b20dd37def7630fe484a4d4b301b6b7f8d98d1b8cb940c0247dcf1"
+    },
+    "source/vendor/nusb/src/platform/webusb/mod.rs": {
+      "bytes": 3722,
+      "sha256": "3abe26f3cd8500c43c55de3d6e78a7f722ab02b68ddac96067cf86c2d1a767d2"
+    },
+    "source/vendor/nusb/src/platform/webusb/enumeration.rs": {
+      "bytes": 4482,
+      "sha256": "5e331b677188dab89a6c67d7ffcf36131140b27dea2673766dbe1ffb19f5f443"
+    },
+    "source/vendor/nusb/src/platform/webusb/device.rs": {
+      "bytes": 19603,
+      "sha256": "c4c338f4fc49129cf5b6ef217a7ea9c2979e1ac5a70b9e971a592f5ef509dafc"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/transfer.rs": {
+      "bytes": 5696,
+      "sha256": "e86a87ef5202f18798a607bff6de4f1521838d0de475df74938872770dfaf00c"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/hotplug.rs": {
+      "bytes": 4941,
+      "sha256": "4fb3b2d2c62935c79aa3bc0a566ec50a2c72434c421dc5a05dd33f8a5d48a7f2"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/mod.rs": {
+      "bytes": 3367,
+      "sha256": "79d055e137240004852ee6ee63adc2250d307b3da3a67f4ceff9a689bd05f30d"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/events.rs": {
+      "bytes": 4631,
+      "sha256": "41bb15c95986744c66d8c14863c16a8266d144818306e55fe4b41f86365efa46"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/enumeration.rs": {
+      "bytes": 9367,
+      "sha256": "378e3f422a2e8e462c9bc2e7809a4c49dc12db29cb0803a178f627839485a98c"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/usbfs.rs": {
+      "bytes": 7670,
+      "sha256": "14003b5f2f95d6481baa7459f6a1f67a051a36ef22ce64773ce4f1ca1958d011"
+    },
+    "source/vendor/nusb/src/platform/linux_usbfs/device.rs": {
+      "bytes": 46376,
+      "sha256": "43c46fe259198e942c6b2986f06b290a0fa81feeb62d74add537e43b39e6855e"
+    },
+    "source/vendor/nusb/src/io/mod.rs": {
+      "bytes": 1346,
+      "sha256": "822eeb8a278adb29bc208a6919423e3a240b24b4f08ebe4bd12346e279353724"
+    },
+    "source/vendor/nusb/src/io/write.rs": {
+      "bytes": 12340,
+      "sha256": "5277f2ea5b4363ab0f1b13aeb5531ce26fe7fbe45e87966572656194cdaf4141"
+    },
+    "source/vendor/nusb/src/io/read.rs": {
+      "bytes": 18301,
+      "sha256": "9d4e2734b32d3cd11c84380f778d8ea384e18dcb82b705646ba0495dc9552bf9"
+    },
+    "source/vendor/nusb/examples/detach.rs": {
+      "bytes": 531,
+      "sha256": "57453d05019f9713f91738f8b37eeee71587d1a7ef58b5cc342fbfbdfba2999a"
+    },
+    "source/vendor/nusb/examples/bulk_io_smol.rs": {
+      "bytes": 2893,
+      "sha256": "5b035fd8930f5de293744bd095ac2900d136af7c9169893e8f2069ec41f1d929"
+    },
+    "source/vendor/nusb/examples/bulk.rs": {
+      "bytes": 1154,
+      "sha256": "e4ea05b7d65a9e2c926463165d04a631c3d30e8edbe915c8b023d2765510a556"
+    },
+    "source/vendor/nusb/examples/control.rs": {
+      "bytes": 2447,
+      "sha256": "d1539fd9fd4f0ae29bdd4016d7a8eed40c01f2c231707540c5430fa72eadf504"
+    },
+    "source/vendor/nusb/examples/detach_claim.rs": {
+      "bytes": 565,
+      "sha256": "3671f8008ac161794d4bfa34172094e324830cbb65f682081d1ce65f631b814e"
+    },
+    "source/vendor/nusb/examples/descriptors.rs": {
+      "bytes": 1053,
+      "sha256": "b9b365c2cddd03a539fde1e9735e03884f83b5005f05eee9122e3fa073ce6d33"
+    },
+    "source/vendor/nusb/examples/hotplug.rs": {
+      "bytes": 173,
+      "sha256": "4953ed2ecfcaa8457be4014f197af6e7acb76a5bc05a4800bee77f1e0b30b541"
+    },
+    "source/vendor/nusb/examples/bulk_io_tokio.rs": {
+      "bytes": 2586,
+      "sha256": "7ba2889e22d358139e978efcea93e6f9e63ac3e6c51124b455355778fe43b76d"
+    },
+    "source/vendor/nusb/examples/string_descriptors.rs": {
+      "bytes": 3218,
+      "sha256": "2d9f1394a3b5da789016851ec5b2508430098db2ea4f2633bf1104e5befae052"
+    },
+    "source/vendor/nusb/examples/bulk_io.rs": {
+      "bytes": 2561,
+      "sha256": "108b631d729eea7125895c890e20e0524b65769b1c66fb1c70745b9057c49924"
+    },
+    "source/vendor/nusb/examples/list.rs": {
+      "bytes": 154,
+      "sha256": "b493a0ebca72f8647ae165cfaa17a2ef1c63d43edc30d0e4f8da6728ea391423"
+    },
+    "source/vendor/nusb/examples/buses.rs": {
+      "bytes": 152,
+      "sha256": "9b332b0b95f08f731b92cda8c5549402652a09562665a477acd7427a4c653805"
+    },
+    "source/crates/rustusb-linux/Cargo.toml": {
+      "bytes": 278,
+      "sha256": "22f997eacf622c643966a35d6894582434573006b2e186ca8d2af7209cf1907e"
+    },
+    "source/crates/rustusb-linux/src/lib.rs": {
+      "bytes": 19082,
+      "sha256": "e552b1e9d40f33ab65f89f0644271e8f34343ed5497b7cac8e0cd210c9c56c06"
+    },
+    "source/crates/rustusb-linux/tests/discovery.rs": {
+      "bytes": 9854,
+      "sha256": "73a7c7324f5dc7d363e1cedaa85974f352dd8e7134068b83e6d266e736f5a4c5"
+    },
+    "source/crates/rustusb-native/Cargo.toml": {
+      "bytes": 386,
+      "sha256": "0c38fc1616cc92bb4b3440093eb7b395f21a32e0561bad2ded09572be1bda210"
+    },
+    "source/crates/rustusb-native/src/diagnostics.rs": {
+      "bytes": 43702,
+      "sha256": "04d29734bd2164fc3cf3eef9e7a1e451fd6b935eedd00687d30f490b34c3113d"
+    },
+    "source/crates/rustusb-native/src/lib.rs": {
+      "bytes": 80860,
+      "sha256": "23891cef2654955b1e8a193a7c0294538522f43fb9ae9571dae5ce55a794af2e"
+    },
+    "source/crates/rustusb-native/src/export_channel.rs": {
+      "bytes": 26766,
+      "sha256": "95b3a25a27e6f73b98f29a57530c2f56079ec90a7f92dfb64e61d916e6d2aba6"
+    },
+    "source/crates/rustusb-native/src/channel_initial_tests.rs": {
+      "bytes": 10299,
+      "sha256": "1db8b24427d437378c38bfe18abb1561a5e4bf71490c6ff9fa3b71a6484af2c5"
+    },
+    "source/crates/rustusb-native/src/channel.rs": {
+      "bytes": 37612,
+      "sha256": "3d77ff555b39ac8a9e2098a22dfb0b8e219dba9355197cbf458f038dfbea9b95"
+    },
+    "source/crates/rustusb-cli/Cargo.toml": {
+      "bytes": 1153,
+      "sha256": "b9141b410452449f1ffccc4d36b864fa4a6ab6c1bfa2f37cc2dd61a59aa56c16"
+    },
+    "source/crates/rustusb-cli/src/secure_server.rs": {
+      "bytes": 4028,
+      "sha256": "b4d419722df9f21e12ae3540896e9558929659c31e1fc525017eeb1101b8ecf1"
+    },
+    "source/crates/rustusb-cli/src/shutdown_signals.rs": {
+      "bytes": 1346,
+      "sha256": "6624e3c3751e79296e282ef9fd870378998e8032581fe7117d5e024de1223ad6"
+    },
+    "source/crates/rustusb-cli/src/agent.rs": {
+      "bytes": 5212,
+      "sha256": "99207ef70d818d686fea3a66de2da8164e3933433828da1d66db433cb59bbbfd"
+    },
+    "source/crates/rustusb-cli/src/foreground.rs": {
+      "bytes": 6074,
+      "sha256": "70e6f623bb27ee97c54581119708d484ef78d9d8c282a56571fda765a963be82"
+    },
+    "source/crates/rustusb-cli/src/physical_server.rs": {
+      "bytes": 831,
+      "sha256": "f1f2bf301727793ed00a9f187a628698832699012232eeebe79c3c6f28d16db4"
+    },
+    "source/crates/rustusb-cli/src/main.rs": {
+      "bytes": 25035,
+      "sha256": "9d65ba870ee414a60d87f627bf783ecc504b0285b86d8c3edc3702a7d4b9f7b2"
+    },
+    "source/crates/rustusb-cli/src/secure_client.rs": {
+      "bytes": 2585,
+      "sha256": "0573f7f664f7366779de335d0a80bc5d44b1aef6d8e6ed03ce66f3f21727f100"
+    },
+    "source/crates/rustusb-cli/src/secure_foreground_tests.rs": {
+      "bytes": 26643,
+      "sha256": "bff44c6a83194e857c45b403dde80f6255e9141fbf627e32f483a7bddf6c49c8"
+    },
+    "source/crates/rustusb-cli/src/virtual_server.rs": {
+      "bytes": 780,
+      "sha256": "aac9e558283233bd36d46d3cc7eb710df8f31fa5da23a94a8460e22e832a6b98"
+    },
+    "source/crates/rustusb-cli/src/event_output.rs": {
+      "bytes": 2400,
+      "sha256": "240f3839026aaf519535085458416f7a92898bd1dfca90f4c14fd0f32700cba6"
+    },
+    "source/crates/rustusb-protocol/Cargo.toml": {
+      "bytes": 287,
+      "sha256": "ec37c945fa2ca3d269e74ef23a0a1cd6857f6ea7d305edd7c0047fef739e901b"
+    },
+    "source/crates/rustusb-protocol/src/server.rs": {
+      "bytes": 4935,
+      "sha256": "9995ba76047a63b44325852e189a0ce046bdad29d82e3def180bde73c96f191d"
+    },
+    "source/crates/rustusb-protocol/src/lib.rs": {
+      "bytes": 10902,
+      "sha256": "e60a7e79e7c62ef74b5b5d876013ecafc9c061c9867ff8a98e25a7aa2229be78"
+    },
+    "source/crates/rustusb-protocol/src/secure.rs": {
+      "bytes": 24363,
+      "sha256": "ebadf962ebfcd6db863ad22bbeb1e68ea2693a005be4d74089d443ace95d8879"
+    },
+    "source/crates/rustusb-transport/Cargo.toml": {
+      "bytes": 634,
+      "sha256": "308a15883489b9b548b5d0acee02039fe1b92a43363b36a7d2fa3be428e1e799"
+    },
+    "source/crates/rustusb-transport/src/tls.rs": {
+      "bytes": 20077,
+      "sha256": "bdf0a3d363dac46ad56e71e7332e2df22866c4e1a107b29408327a4787ada497"
+    },
+    "source/crates/rustusb-transport/src/acl.rs": {
+      "bytes": 6510,
+      "sha256": "6318a42913fe077830f29c6cef9a0529bbb9fa388d88ac58181b9870937cd902"
+    },
+    "source/crates/rustusb-transport/src/lib.rs": {
+      "bytes": 4118,
+      "sha256": "dcee52f9560c78816d77f6093b266cb55c39fa9033dbf0fca0307c63e0e3192f"
+    },
+    "source/crates/rustusb-transport/src/flush.rs": {
+      "bytes": 11360,
+      "sha256": "f1c1ab00c6b292b818729ab776dba09bcc2710544c7a5e14c1fdb9b66516ecb4"
+    },
+    "source/crates/rustusb-transport/src/config.rs": {
+      "bytes": 22791,
+      "sha256": "a10f00e49ef8cf78b9cfdd6aecfe82eae67a567fa3c7fe9322340c4dd6db83ba"
+    },
+    "source/crates/rustusb-transport/src/link.rs": {
+      "bytes": 38014,
+      "sha256": "4d348d03393566846d4da4937d0190f4a288fc0a0d6ace8405191e90d8dcf84d"
+    },
+    "source/crates/rustusb-transport/src/quiet.rs": {
+      "bytes": 2286,
+      "sha256": "4fb83430838ab28b6ba1037349295890655a67988485680777ec2c358708ca52"
+    },
+    "source/crates/rustusb-transport/src/config/platform/tests.rs": {
+      "bytes": 17359,
+      "sha256": "4b0b3614367760eaaee2f41a40962bcea4c96166675f7e4a979cf2fe029ce66a"
+    },
+    "source/crates/rustusb-transport/src/link/tests.rs": {
+      "bytes": 12291,
+      "sha256": "8f94af0c5dce6e8f5a6aab71bac9ed2723e67bdd37531aee974caee69ec36183"
+    },
+    "source/crates/rustusb-transport/src/link/quiet_tests.rs": {
+      "bytes": 4048,
+      "sha256": "56808039fc432ccc0d69bbe69460de7a82168a6e13a1c269448780d0a8ee4b1a"
+    },
+    "source/crates/rustusb-transport/src/link/adversarial_tests.rs": {
+      "bytes": 6229,
+      "sha256": "73c40ef0cff71de4cfd41a4bd8ef7d77a24002dac7d4928ff881d8328d3d6682"
+    },
+    "source/crates/rustusb-transport/src/flush/tests.rs": {
+      "bytes": 17766,
+      "sha256": "c0c59e9995425953a80967f18cae43bf3f203c5856b075d7a723fca9ea8d56ef"
+    },
+    "source/crates/rustusb-transport/src/tls/tests.rs": {
+      "bytes": 20557,
+      "sha256": "8cfbc457f13e2c38297bb5a4749dff2000be20da8987a63c9a991290f9df18b9"
+    },
+    "source/crates/rustusb-transport/src/tls/tests/link.rs": {
+      "bytes": 6274,
+      "sha256": "d86354e35e752dc5ce006c29d4190ba5b72928d5638fd7ca62d05cec791571da"
+    },
+    "source/crates/rustusb-service/Cargo.toml": {
+      "bytes": 769,
+      "sha256": "7a1dcf66585aacc8ae4f07315b1844c8ec8fcd493afdf8a32079e836005ef104"
+    },
+    "source/crates/rustusb-service/src/context.rs": {
+      "bytes": 6810,
+      "sha256": "093cfa32978d4c307346c8bf2186f578a7057c9e3d71bf0518ede9cc4d287e9c"
+    },
+    "source/crates/rustusb-service/src/health.rs": {
+      "bytes": 9375,
+      "sha256": "cf51ce86f05690287cce700dccdad237e2e7800858c6667f55115ee7ec6b43e3"
+    },
+    "source/crates/rustusb-service/src/ipc.rs": {
+      "bytes": 15307,
+      "sha256": "7bfa1dc5834fb8c4c79061a7a609719aeb9173e6cb0e51c9d087184e4fac2056"
+    },
+    "source/crates/rustusb-service/src/model.rs": {
+      "bytes": 8995,
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095"
+    },
+    "source/crates/rustusb-service/src/rpc.rs": {
+      "bytes": 6196,
+      "sha256": "07408a3c1a6793662e6bd40ba5d706ae30cad030e0efdc2f477e03ece35e6a1f"
+    },
+    "source/crates/rustusb-service/src/fs.rs": {
+      "bytes": 5556,
+      "sha256": "83315132168353c37421f0f1e1e2c4391316fcd6fd19810ece90bb51fa1b0829"
+    },
+    "source/crates/rustusb-service/src/runtime.rs": {
+      "bytes": 47297,
+      "sha256": "2f17f75fe7ac7276711c0bccb75617e76a43f1129433076d77bb4e6b119dbf2d"
+    },
+    "source/crates/rustusb-service/src/store.rs": {
+      "bytes": 21694,
+      "sha256": "21275ae843c72624a5ac3ae099aa47f2b8cc2277116e85dd82e3bc6506f988cb"
+    },
+    "source/crates/rustusb-service/src/foreground.rs": {
+      "bytes": 14752,
+      "sha256": "9bcb5d683e3750405e776ec45cc0094a1cb31fef9ad6684f31b7185ee7e760f9"
+    },
+    "source/crates/rustusb-service/src/lib.rs": {
+      "bytes": 1015,
+      "sha256": "df90d01d572bbe55fdc5ed65fed4788fcfce532f03a56cb76b604ca09bbbbef8"
+    },
+    "source/crates/rustusb-service/src/config.rs": {
+      "bytes": 12508,
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd"
+    },
+    "source/crates/rustusb-service/src/runtime_tests.rs": {
+      "bytes": 32645,
+      "sha256": "c1497bd9c9beb12a6bda84c001524b4deeac4f3acac9c830fcd3899b37ce0497"
+    },
+    "source/crates/rustusb-service/src/run_context.rs": {
+      "bytes": 11731,
+      "sha256": "10552e7ae07f4fda1e94805f37a5dd93181df71fcdf6f2176510f096a6f9528f"
+    },
+    "source/crates/rustusb-service/src/jobs/recording.rs": {
+      "bytes": 4826,
+      "sha256": "47c9feb0080e90eeaa26bc7137ef3c3565f876821ec41f5d7488ebd4f7878038"
+    },
+    "source/crates/rustusb-service/src/jobs/rust_server.rs": {
+      "bytes": 60788,
+      "sha256": "7388f08514e0817a779f3303d2a0f30e935a9c1b9ba254225478ac87ce3019b1"
+    },
+    "source/crates/rustusb-service/src/jobs/native.rs": {
+      "bytes": 74087,
+      "sha256": "0d0d5205c522c1e290f4b615feab8283096a91beb347e4b69dd9f54c3c73e4b5"
+    },
+    "source/crates/rustusb-service/src/jobs/mod.rs": {
+      "bytes": 7911,
+      "sha256": "21e72d6d19f4b192e8ca32ad45844814bdc155959e0ef938330b83d9d909e529"
+    },
+    "source/crates/rustusb-service/src/jobs/management_tests.rs": {
+      "bytes": 9939,
+      "sha256": "3edeabc3c53e3f5c6a6f20fb5bdcf5432990f6ba21b1cdaf5b179d9cd5c1d9b1"
+    },
+    "source/crates/rustusb-service/src/jobs/native_prepare_tests.rs": {
+      "bytes": 43904,
+      "sha256": "2d7f14a79c0bdcbe16e753e71600283817c0e3e25df17104da063d25d63e8e09"
+    },
+    "source/crates/rustusb-service/src/jobs/io.rs": {
+      "bytes": 4446,
+      "sha256": "8664a28f52f4bf603af194cd6eee7d5597220019fcf322ecc4d264ba0704c5f2"
+    },
+    "source/crates/rustusb-service/src/jobs/link.rs": {
+      "bytes": 7525,
+      "sha256": "d9b930c6b51920fddba044713b09d7f09b4f06001952f55477f70f7e7208a6d0"
+    },
+    "source/crates/rustusb-service/src/jobs/client.rs": {
+      "bytes": 30041,
+      "sha256": "faee409ec2654543b3b2e1cdca5ce586e8745f108062708da05e15941843eca9"
+    },
+    "source/crates/rustusb-core/Cargo.toml": {
+      "bytes": 277,
+      "sha256": "f453abb66ef2bb0d7fda890176ad9b334acb1d61b1bd6b7079630c0a9cdd5c53"
+    },
+    "source/crates/rustusb-core/src/device_key.rs": {
+      "bytes": 6347,
+      "sha256": "636cdde09e253d9a04850fa575289a5edaabff8a6108cd1a7c51e8c5218b949f"
+    },
+    "source/crates/rustusb-core/src/lib.rs": {
+      "bytes": 13426,
+      "sha256": "214ad243482dce59e29b9631d304c70aafb8668a481d1a95dec421cf4701cc43"
+    },
+    "source/crates/rustusb-core/src/link_health.rs": {
+      "bytes": 13549,
+      "sha256": "9119916a63567639e742ac6ffb948370e65dffba21b5019ea346578dcc019a40"
+    },
+    "source/crates/rustusb-core/src/server_session.rs": {
+      "bytes": 6649,
+      "sha256": "6386e869eb02960c67191ded6b2e6d4179c5662edced09a8f57f9272c2750b19"
+    },
+    "source/crates/rustusb-core/src/application.rs": {
+      "bytes": 9487,
+      "sha256": "b8dc2ca4ddd4cb47e1307bfecddf4c24412dd7b5ad71839b6444b465f3050b79"
+    },
+    "source/crates/rustusb-rust-backend/Cargo.toml": {
+      "bytes": 790,
+      "sha256": "4ca147163bb39fe7c4599dc9bec0303fd68acd04b9c82dd062fe1be4a4b553aa"
+    },
+    "source/crates/rustusb-rust-backend/src/server.rs": {
+      "bytes": 66140,
+      "sha256": "db877a549213ed494c4253ddf793f24d6771cbb852f32a4b07e386ac3edb583a"
+    },
+    "source/crates/rustusb-rust-backend/src/counted.rs": {
+      "bytes": 4479,
+      "sha256": "6c59d0182b0e5136b3672a237e3f5ff7d5c08410effb9c21059429e2e6dc4eb1"
+    },
+    "source/crates/rustusb-rust-backend/src/descriptors.rs": {
+      "bytes": 4809,
+      "sha256": "41d86b04037bc77fb5b5b5eecb5a1c13a4f9b61564cd9db2d8176faa4d0a9719"
+    },
+    "source/crates/rustusb-rust-backend/src/session.rs": {
+      "bytes": 10510,
+      "sha256": "c5b939f117d15e28c59eb4d7de5a63cd5b1580f05303cb58105e8c2748e2e8a1"
+    },
+    "source/crates/rustusb-rust-backend/src/server_tls_tests.rs": {
+      "bytes": 33520,
+      "sha256": "f3ab54891c98464bd85864f4cf49df170df3d29244b06566aa3a10f5c3ccd845"
+    },
+    "source/crates/rustusb-rust-backend/src/lib.rs": {
+      "bytes": 861,
+      "sha256": "809f3db7ae75996626d1d3c365ec7953c3a57878bafa036c63a8c07d80da1d84"
+    },
+    "source/crates/rustusb-rust-backend/src/wire.rs": {
+      "bytes": 10758,
+      "sha256": "1c481a3a70a6e7139dc03d3d247eb20f90371ca7577954c048e368a607f1b4ed"
+    },
+    "source/crates/rustusb-rust-backend/src/physical.rs": {
+      "bytes": 32134,
+      "sha256": "235465a9d0b5be42b19ce8bbcbb7ebe19237b545b48fc9af98dca03bb79a8ee3"
+    },
+    "source/crates/rustusb-rust-backend/src/link.rs": {
+      "bytes": 6560,
+      "sha256": "4811587c008de52f66a45d106959f25f9b00feb9cf4e491d051cc36555843d23"
+    },
+    "source/crates/rustusb-rust-backend/src/server_managed_tests.rs": {
+      "bytes": 8470,
+      "sha256": "c3ab240c032e3308ce2e2508d0d3c359fccf1feda748b151a9ff3c8188341882"
+    },
+    "source/crates/rustusb-rust-backend/src/monitor.rs": {
+      "bytes": 25335,
+      "sha256": "a61a62b40db7e78ac99bcd23aecfc1a0d430d021802305454d4aeec040183958"
+    },
+    "source/crates/rustusb-rust-backend/src/managed.rs": {
+      "bytes": 16163,
+      "sha256": "44eff6a5b144bc7ab6078560e6de94279764689179c3499c21ac7880df839528"
+    },
+    "source/crates/rustusb-rust-backend/src/device.rs": {
+      "bytes": 47332,
+      "sha256": "6e7d502fe15edb448322907d8aba09e1d3b8cade087c82da05205c02dbf05dd0"
+    },
+    "source/crates/rustusb-rust-backend/src/physical/safety.rs": {
+      "bytes": 11175,
+      "sha256": "7e341177c4d3bbd9b29ffb01c8fe1dd8e78bdba87b0a333d7ed0df17cfb507d2"
+    },
+    "source/crates/rustusb-rust-backend/src/physical/observe.rs": {
+      "bytes": 31203,
+      "sha256": "a5c249f3e4789bf46b17c87554297f27c436390765328b6a71eb28c645cfff42"
+    },
+    "source/crates/rustusb-rust-backend/src/physical/worker.rs": {
+      "bytes": 56375,
+      "sha256": "57bc13bb18b3929e5a85e6139ef5d4455f032900d966e36ce59fe87ddc623b5a"
+    },
+    "source/crates/rustusb-daemon/Cargo.toml": {
+      "bytes": 777,
+      "sha256": "6ffee80994175215dab640f3b42729ab96d5a91f4ea3b16bd3a881901bb7a75e"
+    },
+    "source/crates/rustusb-daemon/src/native_export.rs": {
+      "bytes": 33218,
+      "sha256": "3dc9e4afff7e0a95efc010c26fab2b065be7288d9f59bff0675dbebd4a8d31c7"
+    },
+    "source/crates/rustusb-daemon/src/physical_recovery.rs": {
+      "bytes": 12658,
+      "sha256": "6cccf9295727c1bb3a3277079c91ea4be9ad5ae8ab6a62e8da855788232a6af0"
+    },
+    "source/crates/rustusb-daemon/src/broker.rs": {
+      "bytes": 15906,
+      "sha256": "8104fe723fb8688ae559eda2c1a2b9631ff8250028b5a86d0d09124cf746c435"
+    },
+    "source/crates/rustusb-daemon/src/native_tracking.rs": {
+      "bytes": 21482,
+      "sha256": "04b3911b27a37675d76a5e6dfa0d9e627a23420d7c536c68c20c79554ed7a183"
+    },
+    "source/crates/rustusb-daemon/src/physical_lifecycle.rs": {
+      "bytes": 15659,
+      "sha256": "6cc00541a5f172341dd2dbda4d4560a1d072e0dec3b5a1faa1d0ab24113fba5c"
+    },
+    "source/crates/rustusb-daemon/src/native_state.rs": {
+      "bytes": 38941,
+      "sha256": "e44b96f96aac1f16f15e0e819ead3e8c3078abba2a59197c2142aa6d8e7e463d"
+    },
+    "source/crates/rustusb-daemon/src/native_channel.rs": {
+      "bytes": 29317,
+      "sha256": "bd3a3b110f831336a7f7a97cb0ba27426eba2bf33dd228f9679e34ea9ba96f45"
+    },
+    "source/crates/rustusb-daemon/src/diagnostics.rs": {
+      "bytes": 13557,
+      "sha256": "d42c145ff152ac0724d810db1f95fe368def10c03852de631f17d68b67d67a72"
+    },
+    "source/crates/rustusb-daemon/src/journal.rs": {
+      "bytes": 65556,
+      "sha256": "047390d737c91da59ae6fba45262ee32e7fa4c6823a96dda5dc054d17b127995"
+    },
+    "source/crates/rustusb-daemon/src/journal_tracked_tests.rs": {
+      "bytes": 16611,
+      "sha256": "de12f5cbc94dd8abbf5020f86c70c66bbcc0366597b579fa2fa59c1851130196"
+    },
+    "source/crates/rustusb-daemon/src/lib.rs": {
+      "bytes": 40648,
+      "sha256": "14aea05b3fe18a67ee5448531cf89811d87de9160e13a97e8e989d8350f27eda"
+    },
+    "source/crates/rustusb-daemon/src/native_tracking_tests.rs": {
+      "bytes": 9540,
+      "sha256": "dbab3e7ffe099831622da4448866079e4ac2f406a47d06cf95398c53ed47abec"
+    },
+    "source/crates/rustusb-daemon/src/physical.rs": {
+      "bytes": 10190,
+      "sha256": "2dca1afad3917b56238ae070df59af4469e951bf8e640f39056dfd7d4b214cd8"
+    },
+    "source/crates/rustusb-daemon/src/linux.rs": {
+      "bytes": 85131,
+      "sha256": "fc7d2aec9701e80f6ece4cf2c383924bab3e4b89d4e9c4bb5b75bdca091760b4"
+    },
+    "source/crates/rustusb-daemon/src/ancillary.rs": {
+      "bytes": 4238,
+      "sha256": "8ff2ea31eb1e9cd20339a50c5412060384e2e9a622cd1aae18c1aa8331cdef7d"
+    },
+    "source/crates/rustusb-daemon/src/main.rs": {
+      "bytes": 1468,
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694"
+    }
+  }
+}
