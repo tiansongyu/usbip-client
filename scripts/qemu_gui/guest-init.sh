@@ -21,6 +21,13 @@ collect() {
 }
 cleanup() {
     code=$?; trap - EXIT; set +e
+    # New-session HTTP can fail after the driver has already launched the GUI.
+    if [ -z "$GUI" ] && [ -f /tmp/gui-pid.txt ]; then
+        candidate=$(cat /tmp/gui-pid.txt)
+        case "$candidate" in ''|*[!0-9]*) ;; *)
+            if [ "$(readlink "/proc/$candidate/exe")" = /usr/bin/rustusb-gui ]; then GUI=$candidate; fi ;;
+        esac
+    fi
     for pid in "$GUI" "$DRIVER" "$AGENT" "$XVFB"; do
         [ -n "$pid" ] || continue
         kill -TERM "$pid" 2>/dev/null
@@ -63,7 +70,7 @@ done
 jq -e '.journal_healthy and (.response.profiles|length)==1' /tmp/gui-profiles.json >/dev/null
 /usr/bin/Xvfb :88 -screen 0 1280x900x24 -nolisten tcp >/tmp/gui-xvfb.stdout 2>/tmp/gui-xvfb.stderr & XVFB=$!
 for attempt in $(seq 1 100); do [ ! -S /tmp/.X11-unix/X88 ] || break; sleep .05; done
-export DISPLAY=:88 GDK_BACKEND=x11 TAURI_WEBVIEW_AUTOMATION=true LIBGL_ALWAYS_SOFTWARE=1 HOME=/home/operator XDG_RUNTIME_DIR=/run/user/1000
+export DISPLAY=:88 GDK_BACKEND=x11 TAURI_WEBVIEW_AUTOMATION=true LIBGL_ALWAYS_SOFTWARE=1 HOME=/home/operator XDG_RUNTIME_DIR=/run/user/1000 XDG_CACHE_HOME=/home/operator/.cache
 /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/WebKitWebDriver --host=127.0.0.1 --port=15888 >/tmp/gui-driver.stdout 2>/tmp/gui-driver.stderr & DRIVER=$!
 http() {
     method=$1; route=$2; body=$3; output=$4

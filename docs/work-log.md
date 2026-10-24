@@ -13,6 +13,8 @@
 
 - clean7c4eb3cd GUI完整gate11/0/0与全部guard通过，核心输入/CLI/helper保持b15软件956结果（不重复归为7c新执行）。第二QEMU实际建立wry0.57.1本地会话、UID1000真实GUI；夹具替换shot误命中snapshot，出现snapshot:not found，整体FAIL。新finally实际wait0/无forced/四guard真；app.stderr另有EGL_BAD_PARAMETER，按dlopen路径补Mesa vendor/软件DRI及其ldd依赖。保留两个原FAIL，不外推USB支持。
 
+- cleanb1eb97e9第三QEMU FAIL session/curl28，实际wait0/无forced/四guard真；新原件明确缺dlopen libGLESv2.so.2，非cargo/IPC成功。补标准EGL/GLES/GL入口闭包并将guest passwd HOME修为真正operator目录。还修测试清理：session HTTP可在GUI已launch后失败，必须从该私有guest已知pid文件验证exe后stop实际GUI，不能只凭未赋值的父shell变量漏收。原第三次未观察GUI实际wait，不当成功cleanup。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

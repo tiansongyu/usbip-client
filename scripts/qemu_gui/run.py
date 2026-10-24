@@ -43,10 +43,11 @@ def payload(work,kernel,driver,evidence):
             target=root/tree.lstrip('/');target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,target)
     # EGL vendors/software DRI are dlopen dependencies, absent from ordinary ldd output.
     copy_tree('/usr/share/glvnd/egl_vendor.d',root)
-    for library in ['/usr/lib/x86_64-linux-gnu/libEGL_mesa.so.0','/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0','/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so']:
+    for library in ['/usr/lib/x86_64-linux-gnu/libEGL_mesa.so.0','/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0','/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so','/usr/lib/x86_64-linux-gnu/libEGL.so.1','/usr/lib/x86_64-linux-gnu/libGLESv2.so.2','/usr/lib/x86_64-linux-gnu/libGL.so.1','/usr/lib/x86_64-linux-gnu/libglapi.so.0']:
         native.copy_binary(library,library,root)
     # Fontconfig's relative includes need their dereferenced conf.avail targets.
     copy_tree('/usr/share/fontconfig',root)
+    (root/'etc/passwd').write_text('root:x:0:0:root:/:/bin/sh\noperator:x:1000:1000:operator:/home/operator:/bin/sh\nbroker:x:2000:2000:broker:/:/sbin/nologin\n')
     (root/'init').write_bytes((OWN/'guest-init.sh').read_bytes());(root/'init').chmod(0o755)
     (root/'usr/bin/gui-launcher').write_text('''#!/bin/sh
 /usr/bin/rustusb-gui "$@" >/tmp/gui-app.stdout 2>/tmp/gui-app.stderr &
