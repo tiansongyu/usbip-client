@@ -42,6 +42,8 @@ flowchart LR
 | rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、transport、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
 | rustusb-transport | 有界mTLS stream、证书principal/device ACL、可信配置；接入安全broker及USB/IP engine | core、rustls、tokio-rustls、Tokio、sha2、serde、serde_json、rustix、thiserror；rcgen仅测试 |
 
+托管远程目录的网络阶段由service监督的独立JoinSet持有，最多两个entry；慢peer不占单session/WAL监督器，成功审计仍回原监督器提交后回应。lost RPC不提前还槽，外部stop/命令EOF停止并总join原网络owner，不能abort framed driver。见[设计](research/catalog-supervisor-design.md)及[E42验收](research/catalog-supervisor-validation.md)。真实WAL提交仍可等待，不承诺永久FS/DNS阻塞下有界退出。
+
 没有为未来 TUI/GUI 建立空壳 crate。CLI 的 `rust-backend` feature 选择虚拟服务；`physical-nusb` 另启用物理 adapter 和 daemon 的 `physical-usb` FD 授权接口。默认 Native 和纯虚拟构建不承担 nusb 依赖。设计分别见[虚拟服务端](research/rust-virtual-backend-design.md)与[物理 adapter](research/rust-physical-backend-design.md)；物理路径正在验证，完整 G2 尚未完成。
 
 安全broker已接Native、虚拟及USBFS：`secure-transport`可单独构建Native CLI，`rust-backend`同时启用安全虚拟服务，`physical-nusb`启USBFS。clean b83c931六个双guest场景覆盖实际IPv4/IPv6及I/O/清理/复用，412次软件与精确f9558fc四平台CI另有版本记录；完整Phase3、真实硬件仍未完成。配置中的trusted_network声明、库存在或doctor成功都不能代替该路径的实际验收。

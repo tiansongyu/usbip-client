@@ -100,3 +100,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## 本地设备观察
 
 修改`rustusb-discovery`、Linux observation/hotplug或devices --watch前读`docs/research/local-device-monitor-design.md`和`local-device-monitor-validation.md`。c034872/206软件与f66两个单guest各自归属；旧INT0c09错误/两采证QEMU FAIL不重判。source pid0/groups1仅重扫提示、原scanner当前事实；candidate/Bus ID/sysfs戳不授设备能力，Stale/Initializing不假空/不假删除。两actual worker配额留至真实完成，Drop只stop，shutdown总join；watch必须绕外层helper取消分支，stdout只有限metadata帧且完整end才提交，跳号/resync重拉全量。宿主raw设备输出只留.private并从公开清单排除；硬件/ENOBUFS/永久OS阻塞/全G3继续未完成。
+
+## 托管远程目录
+
+修改runtime Discover/目录并发前读`docs/research/catalog-supervisor-design.md`与`catalog-supervisor-validation.md`。clean b675626完整882/220源，两Native managed双栈QEMU/4guest0及4signal2BP各锁本次原件，旧red/开发compile FAIL保持。网络不await在session监督器内；最多2entry含已完成未消费，lost RPC不得还槽或abort owner。原UID/profile Discover授权先于容量，成功仍由原actor实际audit commit后回Catalog；无网络worker写WAL/USB/helper能力。service外部stop直接传播，队列EOF另有sticky源，总join真实raw/v2关闭树；不能将永久WAL/DNS等待说成有界可取消或外推v2 installed/完整G3/硬件。

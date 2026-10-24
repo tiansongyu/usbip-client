@@ -103,6 +103,9 @@ For supervised jobs independent of the requesting CLI, see the experimental
 provides fixed profiles, OS-UID action authorization, per-connection stop and
 bounded durable session/audit history. Native, virtual and USBFS managed paths
 have [QEMU evidence](docs/research/data-link-health-validation.md).
+Remote catalog reads now run in a bounded independent task group; see the
+[managed catalog validation](docs/research/catalog-supervisor-validation.md) for
+slow-peer responsiveness, audit and shutdown checks.
 
 To observe a device's data connection, explicitly enable TLS configuration schema 2
 on both endpoints, then read health from the running agent:

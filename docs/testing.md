@@ -373,3 +373,9 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 见[指南](local-device-monitor.md)与[E41验收](research/local-device-monitor-validation.md)：完整软件872/206源锁clean c034；默认/all两个单guest观察锁clean f66，非paired USB/IP。`python3 -B scripts/test-device-monitor.py --binary target/release/rustusb --evidence /tmp/new-monitor-cases`运行三个实际普通用户进程用例；记录fcntl实际管道容量、UID/ELF/group1 socket/write syscall/wchan/wait，原始宿主设备stdout仅放.private，不得递归上传/归档。四平台CI新增同step，实际CI状态另记发布回执。
 
 [QEMU fixture](../scripts/qemu_device_monitor/README.md)不加载宿主模块/操作宿主USB，仅来宾root控制模拟键盘及driver，实际UID2000 watcher与独立udevadm/kernel/sysfs相互核。需base64/jq/setpriv/udevadm完整payload预查；任何collector/guest/kernel失败仍FAIL，original forced QEMU0不能当guest PASS。两历史QEMU FAIL及旧INT负向保留；不宣称ENOBUFS、永久FS/kernel阻塞或所有瞬时热插拔已测。
+
+## 托管远程目录监督器（E42）
+
+`cargo test -p rustusb-service runtime::tests::catalog --locked`使用真实loopback TCP/mTLS和临时store：静默TLS peer下Profiles须独立返回、两个actual任务/丢waiter不还槽、授权先于容量且拒绝不新建连接、原store锁门下成功不ACK、外部stop及命令EOF关闭原socket并总join；v2反向FIN保持到service真实join后才放门。不是USB或性能测试。
+
+完整882软件、两个原Native managed双栈QEMU/4guest0及四signal/两背压锁clean b675626，复现命令与compressed raw manifest见[英文验收](research/catalog-supervisor-validation.md)。两QEMU保原三轮HID/FTDI、完整Rootproof与driver基线；不冒称QEMU新拥塞/v2专项或硬件验收。旧产品red与测试编译FAIL继续保留。

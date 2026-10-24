@@ -1,6 +1,7 @@
 # Independent managed catalog requests
 
-2026-10-24; baseline `30fb57a7`. Status: implementing. This is a Phase 3
+2026-10-24; baseline `30fb57a7`. Status: implemented and locally validated at
+`b6756265`; see the [actual validation](catalog-supervisor-validation.md). This is a Phase 3
 responsiveness fix for the existing authenticated application service. It does
 not complete G3, add remote auto-sharing, or advance the TUI/GUI phases.
 

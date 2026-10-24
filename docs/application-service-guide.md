@@ -161,6 +161,17 @@ rustusb agent --config /etc/rustusb/agent.json audit lab-keyboard
 rustusb agent --config /etc/rustusb/agent.json discover lab-keyboard
 ```
 
+Authenticated discovery uses two independent supervisor-owned network slots, so
+a slow remote catalog does not hold up unrelated session commands. The original
+four-second network deadline applies. A slot remains occupied after its caller
+exits until the actual network owner returns and the supervisor consumes it.
+Capacity or unhealthy-journal refusal uses the existing `state` category;
+authorization is checked first. A successful catalog is acknowledged only after
+its discovery audit commit. Shutdown stops and joins accepted reads. Catalogs
+remain snapshots, not device reservations. See the
+[responsiveness validation](research/catalog-supervisor-validation.md) for the
+actual loopback and managed Native QEMU scopes.
+
 The data directory contains a bounded, atomically replaced `state.json`: active jobs/sessions, minimal audit and retained request identities commit together before acknowledgement. New admission uses at most half the 2 MiB journal budget, reserving space for received capability IDs, final counters and terminal observations. Corruption or uncertain writes refuse new admission; existing owners still perform real cleanup. Preserve the directory when restarting the agent.
 
 On restart, unresolved sessions retain their original instance/session/attempt IDs and enter `Recovering`. The agent performs read-only queries for the helper's exact retained terminal proofs. The same query also runs for an unconfirmed session whose job owner has already returned in the current epoch; a live owner is never retired by this observer. A proof must match kind, correlation, stable device key, broker UID and any already recorded resource ID. Missing, evicted, legacy or no-longer-authorized records remain unknown; a new process reporting zero live resources does not resolve an old session. The agent does not adopt old handles, grant itself reconciliation privileges or automatically resume storage writes. Root coordination remains through the existing helper's pending/reconcile commands.

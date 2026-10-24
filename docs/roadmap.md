@@ -129,3 +129,5 @@ cargo build --workspace --release
 认证准入增量E39见[验收](research/authentication-admission-validation.md)：clean47f软件824/196稳定输入，clean d619六限速/六默认/独立v2诊断共13paired与26guest0。默认64/125ms、root可选严格策略、loaded配置共享、独立Read观测已实现。按来源公平、长期DoS/性能、安装态agent/v2专项耗尽、硬件与完整G3仍未验收；不越过原Phase4–7。
 
 本地设备观察E41见[验收](research/local-device-monitor-validation.md)：普通用户共用发现库、kernel触发与周期协调、只读代际/完整快照及signal总join已实现；872软件/206源锁c034，默认/all两单guest锁f66，六新进程与原4/2通过。不是两端USB/IP新矩阵、远程自动共享、全量事件历史、硬件或完整G3，后续TUI/GUI继续共用同库，原Phase0–7 gate不缩减。
+
+托管目录隔离E42见[验收](research/catalog-supervisor-validation.md)：clean b675626完整882软件/220输入、两个Native managed双栈QEMU/4guest0与原4signal2BP通过。网络不占session监督器，两实际任务至真实close/join，授权和成功audit契约不变；v2保持FIN只属loopback，真实WAL/DNS硬阻塞、硬件/完整G3及原Phase4–7仍保留。

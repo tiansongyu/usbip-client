@@ -165,3 +165,5 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 [主机名验收](research/dual-stack-connect-validation.md)不把DNS映射当身份：仅选TCP winner，原service_name/PKI/ALPN/pin/设备ACL和helper授权保持，TLS失败不换地址重试或降级。请求不能覆盖endpoint。四actual resolver工作/64raw/16unique及候选inline释放约束RustUSB资源；真实lookup可超过waiter生命周期，不能假称取消或bounded libc。六raw与一Native/v2 hostname仿真只用guest hosts/multi-on策略和实际UID2000探针，不外推wire-DNS/VPN/长期DoS/性能、其他v2专项或完整G3。
 
 本地观察E41见[设计](research/local-device-monitor-design.md)与[验收](research/local-device-monitor-validation.md)：kernel实际source pid0/groups1只产生重扫提示，root可合成通知但不能由通知授予设备能力；OS用户读取自身可见sysfs，无新helper/agent宽权限RPC。candidate/Bus ID/观察stamp不认证硬件或继承授权，Current不等于可导出/兼容。stale/容量错误不伪空，worker配额至实际完成，stdout metadata不持USB能力。显式devices JSON含serial须脱敏；本地测试raw只留.private且公开清单排除。两个单guest与六新process不完成ENOBUFS/永久OS阻塞或完整安全G3。
+
+托管目录E42见[验收](research/catalog-supervisor-validation.md)：两个actual read任务不持USB/helper能力或写WAL，原OS UID/profile Discover授权先于容量；endpoint/凭据不可由RPC覆盖。丢RPC不abort已接受网络owner，stop/EOF总join，成功audit仍提交后才回应。容量与unhealthy journal沿旧state类别拒绝；该界限不保证公平/长期DoS安全，真实WAL/DNS硬阻塞与完整G3继续未验收。

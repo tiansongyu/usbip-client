@@ -10,6 +10,12 @@
 - 实现最多两个受监督目录任务；lost RPC不释放槽，原授权先于容量、成功audit提交先于Catalog响应。服务外部stop直接传给实际网络owner，命令队列EOF另有独立sticky停止源，shutdown总join且不abort；原USB job/Rootproof和schema均未改变。
 - 新fixture开发第二轮exit101为测试pin future借用作用域过长，缩小实际recording future作用域，未改产品契约；第三轮4test与第四轮最终5test均exit0。定向all-feature Clippy -D warnings exit0。覆盖raw/v2真实mTLS成功、原store锁门下未ACK、两槽/已退出waiter/拒绝不连接、外部stop与队列EOF真实socket EOF、v2 reverse-FIN保持下监督器响应与actualjoin、unhealthy journal不发网络。无helper或USB操作。完整质量gate和QEMU尚待本提交后的clean运行。
 
+- clean b675626完整十项质量命令全0，默认385/all477/vendor20共882执行、0失败/忽略；220选定源/manifest/toolchain/vendor/check输入前后稳定并逐Git匹配。all CLI1c547bf2…/helper0b68adf4…，默认CLI e85fa916…未变；每次release实际hash单独保留。新5函数循环子场景不另计Cargo/USBcase。
+- 同clean b675626两个既有Native managed IPv4/IPv6 QEMU默认locked allfeatures构建均PASS，4guest真实exit0、各212输入及四guard；每pair四live broker/两helper ELF receipt匹配软件产物，原三轮HID/FTDI I/O/264核验、原完整Rootproof/driverbaseline保持。v2新负向/FIN只属loopback，未伪作installed v2矩阵。原四signal/两BP同CLI通过；BP旧fixture没有逐child liveELF，不补造。
+- 同作者不导入原runner/verifier的原件核对PASS：1168文件/方法逐bytes/SHA稳定，软件220/QEMU212逐Git，原manifest及实际liveELF/exit核对；不是新增USB执行或独立安全审计。闭合raw-evidence.tar.gz约8.53MB含全部6开发日志/软件/QEMU/信号/BP方法，逐member核并排除ELF/private key/.private；索引见`evidence/catalog-supervisor-b675626-20261024/manifest.json`。旧red未单独冻结整份pre-format fixture/执行ELF，明确不称clean；原FAIL不改判。
+- 英文验收/应用指南、README及E42/架构/安全/测试/路线图/项目约定同步，网站六源不改，保留inventory872/f66历史归属。全局readme-site沿原rstop固定参考/四文件与Codex发现symlink复核；本轮另用skill-creator快速校验，详细实际退出待下文。原Phase0–7、硬件G1/G2/完整G3/永久OS阻塞/TUI/GUI等目标继续active，尚未将本次文档/代码宣称远端CI或部署成功。
+- 实际全局skill quick_validate exit0/Skill is valid，四源快照和正确Codex symlink记入QA。12文档379本地/仓库映射target、188site/Node/diff均PASS，35外链未全fetch；220软件/各212QEMU源仍匹配b675，网站七文件（六HTTP资源加空.nojekyll）逐30fb不变，无新browser/pixel/noJS执行宣称。QA保存检查时文档源快照，此后的本段只追加回执；见`evidence/catalog-supervisor-docs-20261024/manifest.json`。接下来仅普通commit/push并观察精确内容revision的CI；未提前宣称成功。
+
 ## 2026-10-24：本地设备观察最终状态
 
 - clean c0346d6完整872/206稳定输入；clean f66da6b默认/all两个单guest真实UID2000/kernel events/sysfs/driver/新代际/总join验收通过，无forced。两个构建六新process及旧4signal2BP通过；旧INT负向、首完整gate失败与两QEMU采证FAIL保留。原Phase0–7/hardware/完整G3不宣告完成，详见`research/local-device-monitor-validation.md`。
