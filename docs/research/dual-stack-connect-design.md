@@ -163,3 +163,20 @@ reclassify the earlier old-product failure as a proven two-candidate experiment.
 The probe's compiler/source/copied-executable provenance remains separate from
 product ELF receipts. Any eventual NSS correction requires a fresh clean run
 and a valid old-product counterfactual with the corrected candidate set.
+
+The fresh clean636efa guarded root std probe returns exactly one address, the
+stale IPv6 candidate; its actual executable SHA matches its build receipt and
+host.conf is observed absent. This supports the NSS explanation: the captured
+fixed glibc2.35 source stops after the first matching hosts entry with multi off.
+The exact Ubuntu patched source fetch was unavailable, so that attribution is
+source-backed inference plus actual probe behavior, not a claim of exact Ubuntu
+source identity. The earlier ca63/b5 experiments did not establish two eligible
+candidates and cannot validate the two-address race counterfactual. Their FAIL
+verdicts remain; the original real-loopback sequential probe remains separate.
+
+Install explicit guest-only `host.conf` multi on before any fresh lookup, with
+root0644 policy receipts and no RESOLV_HOST_CONF/RESOLV_MULTI overrides. Run the
+new guarded probe as actual UID2000 and capture its proc UID/executable before
+product work. It must report the stale and healthy addresses in order. A valid
+old-product comparison must use this corrected environment; no host NSS file is
+changed. The first root-only probe's narrower scope is retained.

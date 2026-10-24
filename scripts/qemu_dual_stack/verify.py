@@ -89,6 +89,11 @@ def verify(evidence,args,framed_v2=False):
     probe=(client/'dual-resolver.txt').read_text().splitlines()
     receipt=json.loads((evidence/'resolver-probe-build.json').read_text())
     if not probe or not probe[0].startswith('RESOLVER_ACTUAL_EXE '+receipt['executable_sha256']+' '):raise RuntimeError('actual resolver probe ELF receipt absent')
+    if 'RESOLVER_ACTUAL_UID 2000 2000 2000 2000' not in probe:raise RuntimeError('actual broker UID resolver observation absent')
+    if any('RESOLVER_ENV '+key+' absent' not in probe for key in ['RESOLV_HOST_CONF','RESOLV_MULTI']):raise RuntimeError('resolver environment not isolated')
+    if (client/'dual-host-conf.txt').read_text()!='multi on\n':raise RuntimeError('explicit multi-record hosts policy absent')
+    metadata=(client/'dual-resolver-policy-metadata.txt').read_text().splitlines()
+    if len(metadata)!=4 or any(not line.startswith('0 0 644 1 ') for line in metadata):raise RuntimeError('root protected readable resolver policy absent')
     raw=[line.split(' ',2)[2] for line in probe if line.startswith('RESOLVER_CANDIDATE ')]
     unique=list(dict.fromkeys(raw))
     expected=[f'[{expected_bad}]:3241' if ':' in expected_bad else expected_bad+':3241',f'[{expected_good}]:3241' if ':' in expected_good else expected_good+':3241']

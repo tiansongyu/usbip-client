@@ -10,7 +10,7 @@ python3 -B scripts/qemu_dual_stack/run.py --backend native --family ipv4 \
 `--family` names the healthy family; the hostname's preferred candidate uses the
 opposite family and a permanent nonexistent MAC on the isolated guest link.
 `native|virtual|usbfs` and `ipv4|ipv6` are six separate runs. The guest alone gets
-protected hosts/gai/NSS/neighbor inputs. No host network/USB mutation, DNS server,
+protected hosts/gai/NSS/host.conf/neighbor inputs. No host network/USB mutation, DNS server,
 TAP or public listener is used. Never execute generated PID1 on the host.
 
 The original secure suite still requires both real HID/serial cycles, helper
@@ -31,3 +31,10 @@ Use `--framed-v2` only for a separately recorded v2 run: both TLS configurations
 then explicitly require schema2/data_link and ALPN2. The original classifier's
 default remains ALPN1; the new wrapper passes exactly ALPN2 without rewriting
 TLS bytes. This option alone does not imply an installed v2 PASS.
+
+An independent std-only guarded probe runs as actual UID2000 before product
+connections. It records its live executable SHA, actual UID, absence of resolver
+overrides, and raw addresses. Explicit `host.conf` multi on is essential in the
+minimal guest; the default missing-file behavior previously returned only one
+hosts entry. Keep those earlier setup/single-candidate failures separate from a
+valid old-product two-candidate counterfactual.

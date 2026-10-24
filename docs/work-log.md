@@ -724,3 +724,5 @@
 - clean f3bf579完整gate通过365/457/20=842、47rows、零失败忽略；198source/build稳定、Native-only隔离通过。CLI29d0d476…、helper75e3de91…均用新实际ELF，未沿用旧hash。安装态前补独立framed-v2选项/Native-v4一项，schema2与明确ALPN2 classifier，原默认raw分支/原I/O/proof不改。
 
 - clean b5d3e92首产品Native-v4 raw及单独v2均host FAIL/guest0/四guard真：真实secure discovery仍超时，rawcap一条stale SYN连接、healthy0。842软件不替代安装态。当前实际resolver候选列表未采到，不先归因产品或NSS；加guarded std-only guestprobe，先保持原NSS配置采真实addresses/actualprobeSHA。旧ca63超时保原裁决，但缺候选集合不能直接称有效两候选counterfactual；如需NSS修订必须新clean并补正确旧产品对照。
+
+- 新clean636efa独立root stdprobe实际RAW_COUNT1，仅staleIPv6；actualprobeSHA吻合，host.conf absent。故此前ca63/b5未证明两候选，旧FAIL不改但撤销其“有效双候选旧产品对照”推论。固定glibc源码multi-off首匹配停止与现象一致，Ubuntu精确patch源码404限制保留。新guest-only multi on在所有新lookup前安装，UID2000probe核实际UID/ELF/候选及override缺失，绝不改宿主NSS；随后补正确旧产品counterfactual。

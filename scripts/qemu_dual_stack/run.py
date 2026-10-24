@@ -55,13 +55,16 @@ def generated_init():
     fi
     printf '127.0.0.1 localhost\\n::1 localhost\\n%s rustusb-dual-stack.test\\n%s rustusb-dual-stack.test\\n' "$BAD" "$GOOD" > /etc/hosts
     printf 'hosts: files\\n' > /etc/nsswitch.conf
+    printf 'multi on\\n' > /etc/host.conf
+    chmod 644 /etc/hosts /etc/gai.conf /etc/nsswitch.conf /etc/host.conf
+    stat -c '%u %g %a %h %F' /etc/hosts /etc/gai.conf /etc/nsswitch.conf /etc/host.conf > /tmp/dual-resolver-policy-metadata.txt
     cp /etc/hosts /tmp/dual-hosts.txt
     cp /etc/gai.conf /tmp/dual-gai.txt
     cp /etc/nsswitch.conf /tmp/dual-nsswitch.txt
     /usr/bin/ip -4 neigh show dev eth0 > /tmp/dual-neighbors4.txt
     /usr/bin/ip -6 neigh show dev eth0 > /tmp/dual-neighbors6.txt
     if [ -f /etc/host.conf ]; then cp /etc/host.conf /tmp/dual-host-conf.txt; else printf 'absent\\n' > /tmp/dual-host-conf.txt; fi
-    timeout 5 /usr/bin/dual-stack-resolve > /tmp/dual-resolver.txt 2> /tmp/dual-resolver.stderr
+    timeout 5 /usr/bin/setpriv --reuid=2000 --regid=2000 --clear-groups /usr/bin/dual-stack-resolve > /tmp/dual-resolver.txt 2> /tmp/dual-resolver.stderr
     HOST=rustusb-dual-stack.test
     echo "DUAL_STACK_READY healthy=$FAMILY stale=$BAD mac=52:54:00:00:00:99"
 fi
