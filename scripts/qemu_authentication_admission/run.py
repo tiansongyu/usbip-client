@@ -67,6 +67,7 @@ def payload(work, kernel, certificates, role):
     archive.write_bytes(gzip.compress(packed.stdout))
     provenance = {str(path.relative_to(root)): base.digest(path) for path in root.rglob("*") if path.is_file() and not path.is_symlink() and
                   (str(path.relative_to(root)).startswith(("usr/bin/", "modules/")) or path in [root / "init", worker, root / "bin/busybox"])}
+    (auth.run_evidence / f"{role}-admission-payload-provenance.json").write_text(json.dumps(provenance, indent=2) + "\n")
     return archive, provenance
 
 def phase_ready(logs, phase, cycle):

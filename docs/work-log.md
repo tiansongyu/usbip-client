@@ -687,3 +687,6 @@
 
 - 认证quota产品已接raw/v2、root schema1/2可选有界配置、独立server_admission前台control及agent Read读取；E38旧SecuritySnapshot/Session/Metrics/disk/bundle不改。Governor显式MonotonicClock不受后续feature union切换，monitor仅持metadata不保limiter；poison拒新auth，quota失败/取消不退。
 - 定向8项transport/config、3项扩展service通过及all-feature编译/all-target Clippy通过。首次Store扩展断言仍期待零TLS、实际64而FAIL；夹具新增80真实失败duplex连接后应核admitted+limited=80及TLS=admitted，已修正并通过，非产品故障或旧记录重判。独立component源审查9文件稳定/no must-fix；初helper把getrandom禁用范围误扩至TLS全树，留原错改为Governor子树。新锁14packages、实际导出174全目标/feature包license元数据，无missing；无新installed结果或完整gate声明。
+
+- clean47fcb75完整gate实际全部通过：356默认/448all/20vendor共824执行、47rows零失败忽略，196source/build稳定及Native-only隔离通过，admission/security CLI help与Governor stdfeature图保存。新CLI877946fd…/helper仍7c690c；尚不作为安装态准入耗尽验收。
+- 首actual Native-v4 admission QEMU clean9561133两guest0、四guard真，但host因Verifier在base最终落summary之前读取payload_sha256而KeyError/FAIL。原文件保留，不补写该run缺少的独立receipt、不改判PASS；先补设计再在packing阶段保存固定payload hash原件、校验器读取此原件。观察已有两轮rate计数/真实guest路径，但其新host验收仍须新clean/fresh实际执行。Rust196源不改，旧824不重标新执行。

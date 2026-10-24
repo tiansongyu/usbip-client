@@ -184,3 +184,13 @@ until recovery sampling. It never rewrites raw logs, suppresses a failure,
 relaxes old predicates or changes product deadlines. Every actual worker wait,
 raw stderr/stdout, chronology, configuration and final source/ELF/clean guards
 must be retained. Default-policy secure regressions remain separate runs.
+
+The first installed clean `9561133` Native IPv4 run ended with both guest exits
+zero and all four guards true, but host validation FAILED with
+`KeyError: 'payload_sha256'`. The base coordinator writes its final in-memory
+payload metadata to summary.json only after calling the verifier; the new
+verifier incorrectly read that field from the initial on-disk summary. Preserve
+this FAIL. Record a dedicated installed-payload hash receipt during packing,
+before verification, and read that receipt directly. Do not fabricate a missing
+receipt in the first run or relabel it PASS. Product Rust inputs remain unchanged;
+another clean revision/fresh directory must execute the final fixture.

@@ -38,8 +38,7 @@ def verify(evidence, args, base, authentication_checker):
     logs = {role:(evidence / f"{role}-evidence.log").read_text() for role in ["server","client"]}
     controls = [json.loads(line) for line in (evidence / "host-control.jsonl").read_text().splitlines()]
     by_mark = {row["mark"]:row for row in controls}
-    summary=obj(evidence,"summary.json")
-    busybox=summary["payload_sha256"]["client"]["bin/busybox"]
+    busybox=obj(evidence,"client-admission-payload-provenance.json")["bin/busybox"]
     require(len(by_mark)==len(controls), "host sends each exact command once")
     facts=[]
     for cycle in [1,2]:
