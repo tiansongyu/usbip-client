@@ -189,7 +189,13 @@ js 'document.querySelectorAll(".settings-actions button")[1].click();return true
 wait_view '.preferences_status=="Saved preferences"' /tmp/gui-settings-saved.json
 cp /home/operator/.config/rustusb/preferences.json /tmp/gui-saved-preferences.json
 stat -c '%u:%a:%h' /home/operator/.config/rustusb/preferences.json >/tmp/gui-preferences-stat.txt
+js 'document.querySelectorAll("nav button")[0].click();return true;' /tmp/gui-narrow-page.json
 http POST "/session/$SESSION/window/rect" '{"width":800,"height":600}' /tmp/gui-narrow-rect.json
+wait_dom 'getComputedStyle(document.querySelector(".detail")).display==="none"'
+js 'document.querySelector(".device-name").click();return true;' /tmp/gui-narrow-select.json
+wait_dom 'document.querySelector(".detail").innerText.includes("device_address")'
+js 'document.getElementById("details-toggle").click();return {expanded:document.getElementById("details-toggle").getAttribute("aria-expanded"),visible:getComputedStyle(document.querySelector(".detail")).display!=="none"};' /tmp/gui-narrow-details.json
+jq -e '.value=={expanded:"true",visible:true}' /tmp/gui-narrow-details.json >/dev/null
 shot narrow
 STAGE=shutdown
 actor before-stop

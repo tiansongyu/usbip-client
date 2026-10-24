@@ -15,6 +15,8 @@
 
 - cleanb1eb97e9第三QEMU FAIL session/curl28，实际wait0/无forced/四guard真；新原件明确缺dlopen libGLESv2.so.2，非cargo/IPC成功。补标准EGL/GLES/GL入口闭包并将guest passwd HOME修为真正operator目录。还修测试清理：session HTTP可在GUI已launch后失败，必须从该私有guest已知pid文件验证exe后stop实际GUI，不能只凭未赋值的父shell变量漏收。原第三次未观察GUI实际wait，不当成功cleanup。
 
+- clean9b6fe13b第四native QEMU guest标PASS、actualwait0/无forced/四guard真；实际63文件385948B，GUI child因unresolved正确wait1/localjoin，agent继续真实Profiles并wait0。parent把合法tauri://localhost误设必须尾斜线而FAIL，原summary不改；候选只修该判据的/tmp诊断通过全部余项，不当新原运行PASS。改用URL结构精确scheme/host/port/userinfo及限定入口path，补窄窗真实列表/详情toggle验证后重跑。同期原TUI guest标PASS但宿主python缺pyte，parent FAIL；改用原锁版本qa venv重跑，不将原结果改判。两个实际VM均已结束后才修改tracked源。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

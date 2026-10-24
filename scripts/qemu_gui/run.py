@@ -2,6 +2,7 @@
 """Native Tauri/WebKit IPC and real agent refusal in a disposable, NIC-free QEMU guest."""
 import argparse,base64,datetime,gzip,hashlib,importlib.util,json,os,re,shutil,subprocess,sys,tempfile,time
 from pathlib import Path
+from urllib.parse import urlsplit
 sys.dont_write_bytecode=True
 REPO=Path(__file__).resolve().parents[2];OWN=Path(__file__).resolve().parent
 
@@ -75,7 +76,9 @@ def verify(evidence,summary):
         assert len(records)<100 and len(data)==int(size)<=2097152 and total<=16*1024*1024 and digest_bytes(data)==sha
         assert not (out/name).exists();(out/name).write_bytes(data);records.append({'name':name,'bytes':len(data),'sha256':sha})
     read=lambda name:json.loads((out/('gui-'+name+'.json')).read_text())['value']
-    assert read('initial-dom')['bridge']and read('initial-dom')['url'].startswith('tauri://localhost/')
+    origin=urlsplit(read('initial-dom')['url'])
+    assert read('initial-dom')['bridge'] and (origin.scheme,origin.hostname,origin.port,origin.username,origin.password)==('tauri','localhost',None,None,None)
+    assert origin.path in ('','/','/index.html')
     assert read('strict-input')['rejected']
     before,after=read('added')['local']['devices'][0],read('readded')['local']['devices'][0]
     assert before['key']!=after['key'] and before['address']!=after['address']
