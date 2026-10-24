@@ -597,3 +597,9 @@
 - 内容7640efb已普通SSH push、remote main同SHA且当时primary clean；177软件source逐Git/current原bytes匹配。精确7640 CI40056501727四native job及Pages40056501893 check/deploy均completed/success；这是后续状态核验，不重算详细89ef的723或重归属clean48c QEMU。线上六canonical HTTPS资源全部200且逐7640 Gitblob同bytes；实际CUA1280×720/390×844无页面横溢、723/6/4与48c/旧1582/23、两响应图及报告链接正确，ArrowRight/Home/focus/URL/console0；初favicon/换viewport图pending与后续加载均保留，实际截图尝试Unable to capture screenshot，不称pixel/emulation。已回默认1280×720、public tab8 deliverable。
 - 7640发布初/终态官方API、六实际原资源bytes/headers、push/source映射、CUA转录及N只读211诊断/初208inprogress/错误文件参数原件共35份约0.57MB归档rotating-logs-publication-7640efb-20261024，逐original/bytes/SHA/staged blob核；post-reference十九文档439本地/映射target与表格PASS、49外链未全抓，独立checker/原件另名追加不覆盖437。N只核状态与raw，不补runner/tmp或重算723；贡献者身份仍明示方法独立非独立实现。
 - 本轮为完整Phase0–7目标的实际进展：完成4.11中的可选有界文件日志/授权读取与installed可移除阻塞顺序验证，并更新英文README/展示页，已安装的全局readme-site保持四源与固定rstop参考。诊断导出/年龄保留、永久FS/kernel硬阻塞、无独立proof的Rust崩溃协调、完整安全G3、真实G1/G2、TUI/GUI及后续阶段仍未完成，goal保持active。最后只提交发布回执/两文档引用和日志，产品177及网站六源不变，再普通push核远端与clean。
+
+### 2026-10-24：诊断导出与独立已提交视图（设计中）
+
+- 上一goal turn是实际进展：4.11有界文件日志/授权读取、723软件/本地6及旧4/2、clean48c installed一场景三epoch、四原生CI及英文README/site发布；最终46cd950普通push，当前primary clean。完整重读原附件（含末尾Phase0起步与最终日常可用目标）、AGENTS/项目skill及架构/应用服务/日志契约，原Phase0–7不缩成README或已完成部分。
+- 本轮选原4.11剩余的诊断信息导出；三agent只读源码/固定库研究，Root独占设计/Git/构建/实际运行。Native现DTO的路径/任意版本文本不能直接导出；operator也不能借LoadedConfig读取broker私钥。现Jobs/Sessions/Audit受WAL actor阻塞，简单串RPC不能提供停顿时有用诊断，因此先设计postcommit immutable view+Read/Audit双授权、有限一致快照分页，health/log独立标采样，不读私有state文件。
+- 先落diagnostic-export-design.md proposed契约：默认Native/helper与可选单profile历史/health/log完整投影，身份alias/闭合字段、4MiB单JSON、private EXCL staging/NOREPLACE与真实worker总join；旧doctor保留，新增export probe实际child reap模式与专用runtime处理内部TokioFS所有权。没有新实现/编译/运行PASS，不将方案当验收；硬件和完整G3仍未完成。
