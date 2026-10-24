@@ -13,8 +13,8 @@ python3 scripts/qemu_diagnostic_export/run.py \
 ```
 
 Run as an ordinary x86_64 host user. The runner performs the locked all-features
-release build, compiles the existing guest-only `prepare-gate.c` with strict C11
-warnings, prepares separate server/client credential payloads, and starts exactly
+release build, compiles a generated guest-only `prepare-gate.c` variant with strict
+C11 warnings, prepares separate server/client credential payloads, and starts exactly
 two disposable Native IPv4 VMs. It never opens host USB nodes. Root-owned helper,
 nonroot broker and operator are actual guest UIDs 0, 2000 and 1000.
 
@@ -32,7 +32,13 @@ process UID/starttime/ELF/FD observations. Twenty real unknown-profile denials m
 the authorized retained audit and log histories exceed one page. Permission
 refusals leave the original jobs and Root capabilities unchanged.
 
-The original prepare gate is reused unchanged. After its actual `armed` receipt,
+The original prepare gate's selectors, FD/ptrace/cleanup logic and time limits are
+reused byte-for-byte. A generated variant changes only its strict15-argument
+launch allowlist to21 arguments, adding the exact private file-log flags shown in
+the guest source. Reverse substitution must reconstruct the original source
+exactly; generated C/provenance are saved. The initial clean `bde3aa9` launch FAIL
+from passing21 arguments to the unchanged15-argument gate remains separate.
+After its actual `armed` receipt,
 a new UID1000 unknown-profile request waits at the real `state.next` fsync syscall
 entry. Candidate/draft/previous committed bytes are saved, and the selected
 candidate must be exactly the next Denied audit. The gate retains the original

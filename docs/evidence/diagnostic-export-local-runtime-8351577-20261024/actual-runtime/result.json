@@ -1,0 +1,81 @@
+{
+  "result": "PASS",
+  "before": {
+    "head": "8351577459d25ae36d7ac8924cfdae7880e5292f",
+    "clean": true,
+    "source_matches": true,
+    "binary_hashes": {
+      "/home/ubuntu/github/usbip-client/target/release/rustusb": "9708a50ee836378cd64f8726dae36caded96d4fca39faae215aa30658ef49b48",
+      "/tmp/rustusb-diagnostic-default-build-second-20261024/target/release/rustusb": "88c00373baab4e25b6df149dbe74d4009fbe1b2932ffe7039b1fcf1ff55ffdb0"
+    }
+  },
+  "after": {
+    "head": "8351577459d25ae36d7ac8924cfdae7880e5292f",
+    "clean": true,
+    "source_matches": true,
+    "binary_hashes": {
+      "/home/ubuntu/github/usbip-client/target/release/rustusb": "9708a50ee836378cd64f8726dae36caded96d4fca39faae215aa30658ef49b48",
+      "/tmp/rustusb-diagnostic-default-build-second-20261024/target/release/rustusb": "88c00373baab4e25b6df149dbe74d4009fbe1b2932ffe7039b1fcf1ff55ffdb0"
+    }
+  },
+  "guards_unchanged": true,
+  "commands": [
+    {
+      "name": "diagnostic-all",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test-diagnostic-export.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--evidence",
+        "/tmp/rustusb-diagnostic-local-fixed-20261024/all-features"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "diagnostic-default",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test-diagnostic-export.py",
+        "--binary",
+        "/tmp/rustusb-diagnostic-default-build-second-20261024/target/release/rustusb",
+        "--evidence",
+        "/tmp/rustusb-diagnostic-local-fixed-20261024/default",
+        "--cases",
+        "refusals",
+        "local",
+        "agent-unavailable",
+        "stderr-success"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "server-signals",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test-server-signals.py",
+        "--skip-build",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--evidence",
+        "/tmp/rustusb-diagnostic-local-fixed-20261024/server-signals"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "server-backpressure",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test-virtual-backpressure.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "remaining_unrun": []
+}

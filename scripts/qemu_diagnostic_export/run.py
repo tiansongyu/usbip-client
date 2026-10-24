@@ -46,6 +46,27 @@ def inputs():
 
 once,replace_once=logging_support.once,logging_support.replace_once
 
+def diagnostic_gate_source():
+    # Reuse the actual preparation gate; adapt only its fixed launch allowlist.
+    # The original file and every ptrace/timeout/FD/cleanup byte stay unchanged.
+    original=(REPO/"scripts/qemu_prepare_recording_shutdown/prepare-gate.c").read_bytes().decode("utf-8")
+    old='''        strcmp(argv[11], "agent") != 0 || strcmp(argv[12], "--config") != 0 ||
+        strcmp(argv[13], "/etc/rustusb/agent.json") != 0 || strcmp(argv[14], "run") != 0) {'''
+    new='''        strcmp(argv[11], "--log-directory") != 0 ||
+        strcmp(argv[12], "/var/log/rustusb/agent") != 0 ||
+        strcmp(argv[13], "--log-max-bytes") != 0 || strcmp(argv[14], "262144") != 0 ||
+        strcmp(argv[15], "--log-retain") != 0 || strcmp(argv[16], "4") != 0 ||
+        strcmp(argv[17], "agent") != 0 || strcmp(argv[18], "--config") != 0 ||
+        strcmp(argv[19], "/etc/rustusb/agent.json") != 0 || strcmp(argv[20], "run") != 0) {'''
+    generated=replace_once(replace_once(original,'if (argc != 15 ||','if (argc != 21 ||'),old,new)
+    restored=replace_once(replace_once(generated,'if (argc != 21 ||','if (argc != 15 ||'),new,old)
+    if restored!=original: raise RuntimeError("diagnostic gate changed outside its fixed argv template")
+    provenance={"original_path":"scripts/qemu_prepare_recording_shutdown/prepare-gate.c",
+                "original_sha256":hashlib.sha256(original.encode()).hexdigest(),
+                "generated_sha256":hashlib.sha256(generated.encode()).hexdigest(),
+                "reverse_substitution_exact":True,"changed_scope":"fixed argc15 to21 and six exact logging arguments only"}
+    return generated,provenance
+
 def guest_source():
     # Reuse audited boot/helper/config/real-I/O collectors; no old test verdict.
     prefix=once(logging_support.guest_source(),"# This always releases our removable test lock before the base failure collector.\n")[0]
@@ -68,7 +89,11 @@ def payload(work,kernel,certificates,role):
     native.copy_binary(Path(shutil.which("flock") or "/usr/bin/flock"),"/usr/bin/flock",root)
     if role=="server":
         gate=work/"prepare-gate"
-        command(["cc","-std=c11","-O2","-Wall","-Wextra","-Werror",str(REPO/"scripts/qemu_prepare_recording_shutdown/prepare-gate.c"),"-o",str(gate)],work/"gate-build.log")
+        source,gate_provenance=diagnostic_gate_source()
+        gate_source=work/"generated-diagnostic-gate.c"
+        gate_source.write_text(source)
+        (work/"gate-source-provenance.json").write_text(json.dumps(gate_provenance,indent=2)+"\n")
+        command(["cc","-std=c11","-O2","-Wall","-Wextra","-Werror",str(gate_source),"-o",str(gate)],work/"gate-build.log")
         native.copy_binary(gate,"/usr/bin/prepare-gate",root)
         provenance["usr/bin/prepare-gate"]=digest(gate)
     (root/"init").write_text(guest_source());(root/"init").chmod(0o755)
@@ -146,7 +171,9 @@ def main():
                 shutil.copyfile(role_work / "payload-dependencies.json", evidence / f"{role}-payload-dependencies.json")
                 summary["initramfs_sha256"][role] = digest(archives[role])
                 summary["credential_payloads"][role] = sorted(path.name for path in (role_work / "root/etc/rustusb").iterdir())
-                if role == "server": shutil.copyfile(role_work/"gate-build.log", evidence/"gate-build.log")
+                if role == "server":
+                    for name in ["gate-build.log","generated-diagnostic-gate.c","gate-source-provenance.json"]:
+                        shutil.copyfile(role_work/name,evidence/name)
                 for name, sha in summary["binary_sha256"].items():
                     if summary["payload_sha256"][role][f"usr/bin/{name}"] != sha:
                         raise RuntimeError("ELF changed during role-specific payload copy")

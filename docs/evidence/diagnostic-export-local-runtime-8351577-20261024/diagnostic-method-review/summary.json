@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "result": "PASS_WITH_EXPLICIT_EVIDENCE_SCOPE",
+  "head": "8351577459d25ae36d7ac8924cfdae7880e5292f",
+  "new_diagnostic_runtime": {
+    "allfeatures_groups": 9,
+    "allfeatures_children": 13,
+    "default_groups": 4,
+    "default_children": 6,
+    "total_groups": 13,
+    "total_children": 19,
+    "actual_proc_scope": {
+      "identity_only_no_elf": 9,
+      "sampled_exe_hash_and_raw_proc": 5,
+      "wrapper_preexec_only": 5
+    }
+  },
+  "source_counts_are_distinct": {
+    "compiled": 192,
+    "diagnostic_runtime_each": 205,
+    "legacy_signal_runtime": 210
+  },
+  "gates": [
+    {
+      "group": "sigint",
+      "pid": 3109434,
+      "tid": 3109443,
+      "fd": 9,
+      "syscall": 91,
+      "result": 0,
+      "is_error": 0,
+      "hold_after_forward_ns": 500148418,
+      "actual_wait_status": 256,
+      "returncode": 1,
+      "capture": "cancelled",
+      "publication": "partial",
+      "original_inode": [
+        66306,
+        61359241
+      ]
+    },
+    {
+      "group": "sigterm",
+      "pid": 3109465,
+      "tid": 3109470,
+      "fd": 9,
+      "syscall": 91,
+      "result": 0,
+      "is_error": 0,
+      "hold_after_forward_ns": 500481820,
+      "actual_wait_status": 256,
+      "returncode": 1,
+      "capture": "cancelled",
+      "publication": "partial",
+      "original_inode": [
+        66306,
+        61359449
+      ]
+    },
+    {
+      "group": "publication-race",
+      "pid": 3109486,
+      "tid": 3109500,
+      "fd": 9,
+      "syscall": 74,
+      "result": 0,
+      "is_error": 0,
+      "hold_after_forward_ns": 501577065,
+      "actual_wait_status": 0,
+      "returncode": 0,
+      "capture": "complete",
+      "publication": "published",
+      "original_inode": [
+        66306,
+        61359461
+      ]
+    }
+  ],
+  "legacy": {
+    "reviewer": "/root/journal_integration_review",
+    "path": "/tmp/rustusb-diagnostic-local-legacy-cross-review-20261024/report.json",
+    "sha256": "6756b96b24403efd0e2c97f1bf918297f924c083bcd5e8f68d3b69bd48ab1e9b",
+    "result": "PASS",
+    "counts": {
+      "signals": 4,
+      "legacy_backpressure": 2,
+      "diagnostic_predicates": 38,
+      "original_files": 41,
+      "signal_source_inventory_not_compiled_count": 210
+    },
+    "limits": [
+      "Signals actual /proc PID/UID/start/ELF metadata are captured receipts, not retained full raw proc filesystem files.",
+      "Ready two cases have real stopped resource snapshots; blocked two have no stopped output or backend resource proof while stdout stays unread, only actual exit and two TCP EOF observations.",
+      "Both scripts sample data EOF after process wait; do not claim EOF timestamp before exit.",
+      "Old BP two cases expose only stdout summary and exact wrapper command/binary guard, not perchild PID/proc ELF or raw protocol frames. Do not borrow signal perchild evidence for BP.",
+      "Pure ordinary-user virtual loopback, no physical/kernel USB, hardware or QEMU.",
+      "This parser does not independently remap Git or rebuild the binaries; source receipt and read-only frozen script hashes are checked. Diagnostic 9+4 cases are separately reviewed by N."
+    ]
+  },
+  "scope": [
+    "Independent raw method, not complete implementation-independent author.",
+    "Only5 of19 diagnostic children have full executedELF+rawproc capture;9 identity-only,5 wrapper-preexec.",
+    "Three gates are before kernel syscall execution; no kernel hardblock/USB hardware proof.",
+    "BP actualwait1/deadline/finalJSON independently parsed;4096 padding/no-drain/EOF are frozen-source successful assertions without saved raw padding.",
+    "stderr-success has raw[]/16stderr/wait1; no raw controlled-DEVLIST frame artifact was saved.",
+    "Original clean2ca FAIL/old differential/earlierdirty cases are not merged or relabeled.",
+    "No product/CLI/Cargo/QEMU/ptrace/Git execution or original mutations by reviewer."
+  ],
+  "method_check_counts_not_cases": {
+    "own_raw_parser": 1284,
+    "delegated_legacy": 38
+  },
+  "raw_artifacts_before_after_equal": true,
+  "report": {
+    "path": "/tmp/rustusb-diagnostic-local-fixed-independent-review-20261024/report.json",
+    "bytes": 119084,
+    "sha256": "44bf6ac4432249d7505b57e2cc9fa6616aab48689d7f4d91473c5d6aef18c1a2"
+  },
+  "parser": {
+    "path": "/tmp/rustusb-diagnostic-local-fixed-independent-review-20261024/review.py",
+    "bytes": 19635,
+    "sha256": "a1909b65dea1c8fd8c98b957ec898023eb9d1e4653862d89d7532e797e51ab42"
+  }
+}

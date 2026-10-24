@@ -622,3 +622,8 @@
 
 - stderr修复与原件提交8351577后，独立clean835工作树不build，选同192源allCLI9708/default88c运行完整本地matrix实际exec56166终态0：新allfeatures9case/13child、default4case/6child及旧4signal/2BP均通过；四guards不变、无forced/secondary。三真实ptrace entry为两fchmod91/一fsync74，实际signal转发后仍held，原syscall均return0/is_error0，最终原inode：INT/TERM取消留有效Cancelled partial，已接受publication的signal保Complete Published+cancel_observed true。原clean2ca FAIL不改判；新source797仍actualdirty2ca，仅192逐Git835映射，不假称软件clean运行。
 - 四native CI新增同一actual diagnostic runner九场景；default四场景目前只属于本地x86运行，不冒称四native已执行。新QEMU源码初80静态后，I发现expected插入顺序/实际broker identity绑定/late terminal marker三缺口；H revision2仅run/verify窄修并27构造通过，原完整Rootproof/基线/NULL/Gone及State/Protocol窄匹配字节不变。未有新QEMU运行，Root先读实际生成与采证流程再建立clean首次run checkpoint。
+
+- 首actual QEMU cleanbde3aa9 exec30936终态FAIL、两guest0、四guards真，同CLI9708/helper7c69。原件表明server在traced_agent前收到旧C的`invalid fixed test invocation`：原prepare-gate严格argc15，logging launch额外六参数实际21，非产品USB失败。helper均已正常启动，client完成准备后随host失败收尾，尚无成功export/USB I/O验收。保留原FAIL与Source-only80/27审查边界。设计先补独立generated C variant，仅固定argc/logflag白名单变化，原C/selector/30s/120s/FD/proof规则不动；新clean提交与新目录再实际运行，不通过禁用文件日志绕开完整导出。
+
+- 已实现test-only generated C，原2b032df5逐字节不改、生成8f7dc401；两唯一替换与反向重建证明仅argc/六固定日志参数变化，所有device/ptrace/FD/return/cleanup/时限保持。实际29 host commands为3cc（完整gate只编译、不在host执行）及26隔离C字符串白名单谓词，正确21放行、旧15/全部20位置变更/多缺参数拒绝；不是产品CLI或USB验收。H只读20方法无阻断，source→generated C/provenance→compiled payload→actual guest ELF链已接通。
+- 新clean835本地原件/两审查与早期读取KeyError173份约1.03MB、首QEMU FAIL/源变体/实际编译与argv验证/只读方法354份约4.45MB逐original/bytes/SHA/暂存blob核后保留。新诊断19child采证为5完整proc+exe/9identity-only/5wrapper-preexec，BP原padding与空DEVLIST wire未独立落raw的边界明确；旧blocked只有pipe_write/wait后EOF，无stopped快照/旧BP逐childELF不补造。下一次QEMU必须新clean revision与fresh目录，旧797的192源仍不变。
