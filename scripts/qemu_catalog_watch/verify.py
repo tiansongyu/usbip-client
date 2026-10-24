@@ -36,6 +36,8 @@ def verify(evidence,args):
     names=['ready','before-pause','stale','recovered','one','empty'];points=[]
     for name in names:
         point=get(client,'catalog-'+name+'.json');require(point in closed,'saved projection equals original full raw batch '+name);points.append(point)
+    prior=get(client,'catalog-latest-before-pause.json')
+    require(prior in closed and points[1]['head']['revision']>prior['head']['revision']==get(client,'catalog-before-pause-revision.json'),'pause follows a fresh completed publication, not a racy raw prefix read')
     require(len({p['head']['instance'] for p in points})==1,'same original observer through outage and list changes')
     require(all(a['head']['revision']<b['head']['revision'] for a,b in zip(points,points[1:])),'strictly increasing actual point revisions')
     for point,count in zip(points,[2,2,2,2,1,0]):require(point['head']['device_count']==count,'actual count '+str(count))

@@ -113,7 +113,8 @@ catalog_watch_start() {
 }
 catalog_pause_before_kill() {
     # Force a fresh completed response, then stop all watcher threads during idle.
-    jq -s '[.[]|select(.event=="catalog_begin")|.revision]|max' /tmp/catalog-watch.stdout.txt > /tmp/catalog-before-pause-revision.json
+    catalog_point /tmp/catalog-watch.stdout.txt latest-before-pause current 2 -1
+    jq '.head.revision' /tmp/catalog-latest-before-pause.json > /tmp/catalog-before-pause-revision.json
     catalog_point /tmp/catalog-watch.stdout.txt before-pause current 2 "$(cat /tmp/catalog-before-pause-revision.json)"
     kill -STOP "$CATALOG_WATCH_PID"
     for c_stop in $(seq 1 100); do
