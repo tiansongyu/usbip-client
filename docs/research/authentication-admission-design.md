@@ -1,8 +1,9 @@
 # Bounded TLS authentication admission
 
 2026-10-24. Baseline `30481f05ceb7d7dc3c48a61afe2f50d021cae520`.
-Status: implemented, targeted development tests passed; complete clean software
-and installed validation remain pending at this checkpoint.
+Status: implemented and validated within the scopes in the
+[validation report](authentication-admission-validation.md): clean software 824
+executions and thirteen paired QEMU runs. Full G3 remains open.
 
 The existing sixteen connection permits bound simultaneous work, but a peer can
 immediately replace a failed handshake. The security model explicitly leaves

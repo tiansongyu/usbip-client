@@ -1,0 +1,28 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "name": "fixed_governor_version_checksum",
+      "passed": true
+    },
+    {
+      "name": "resolved_governor_features_std_only",
+      "passed": true
+    },
+    {
+      "name": "no_quanta_dashmap_rand_getrandom_in_governor_subtree",
+      "passed": true
+    },
+    {
+      "name": "max_quota_tau_15300000000000ns_below_u64",
+      "passed": true
+    },
+    {
+      "name": "max_full_burst_span15360000000000ns_below_u64",
+      "passed": true
+    }
+  ],
+  "captured_source_files": 9,
+  "changed_during_review": [],
+  "scope": "Static source/package graph and arithmetic checks, not product tests/QEMU/DoS qualification. Earlier broad helper assertion rejected existing TLS getrandom in transport-wide tree; corrected governor-only scope without changing product."
+}

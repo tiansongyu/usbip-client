@@ -216,3 +216,7 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 ## 服务端安全观测
 
 [设计](research/server-security-observations-design.md)和[验收](research/server-security-observations-validation.md)限定volatile loaded-TLS-configuration scope；clone共享计数，TLS/独立framing/outer budget分开，Drop取消、饱和与一致性显式。短metadata锁不做日志/FS/await，不持凭据、stream、permit或USB owner；计数不参与准入或cleanup。前台server_security control与agent固定Profile Read读取使用单独variant，授权所有结果绕WAL、拒绝仍durable，service instance明确重启。旧Session/Metrics/disk/诊断bundle不变；此接口不是持久安全审计或前epoch恢复证明。
+
+## TLS认证准入配额
+
+[设计](research/authentication-admission-design.md)与[验收](research/authentication-admission-validation.md)定义独立于durable USB准入的时间配额。固定Governor0.10.4/std-only、显式MonotonicClock；先try连接permit，再原子metadata锁内check+计数，随后原TLS阶段。refusal不读写IO、不等待、不持USB owner；失败不退款，已建立数据流不重复过门。loaded配置共享实际gate，独立monitor只持数值，poison拒绝新准入；旧TLS/framing/outer计数方程不改。Read授权新RPC/control绕WAL，拒绝仍durable。

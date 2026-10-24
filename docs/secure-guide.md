@@ -131,14 +131,14 @@ Limit network access to the configured TLS endpoint and verify both address fami
 
 Secure servers now share a nonwaiting authentication quota across clones and
 successive jobs of one loaded configuration. The default allows an initial
-burst of64 and replenishes one admission every125ms. Both server configuration
-schema1 and2 accept an optional administrator-controlled object:
+burst of 64 and replenishes one admission every 125ms. Both server configuration
+schemas 1 and 2 accept an optional administrator-controlled object:
 
 ```json
 "authentication_limit": { "burst": 64, "interval_millis": 125 }
 ```
 
-Burst must be1–256 and the one-cell interval1–60000ms. Omission uses the default;
+Burst must be 1–256 and the one-cell interval 1–60000ms. Omission uses the default;
 null, zero, unknown fields and client-side overrides are rejected. Provision it
 with the same protected file/ancestor rules as the other server settings. A
 cooperative stop/restart loads a changed quota; an operator request cannot alter
@@ -154,5 +154,8 @@ cancelled handshake consumes authentication quota. The shared quota does not
 guarantee per-source fairness, and is not qualification for arbitrary public
 exposure or complete denial-of-service resistance. Counts are volatile, without
 credentials/addresses or USB cleanup proof. See the
-[implementation and validation contract](research/authentication-admission-design.md);
-new installed exhaustion validation is still pending at this checkpoint.
+[design](research/authentication-admission-design.md) and
+[validation report](research/authentication-admission-validation.md) for the six
+raw-v1 exhaustion runs, six default-policy regressions and separate framed-v2
+diagnostic regression. Installed managed-agent RPC and framed-specific exhaustion
+remain untested.

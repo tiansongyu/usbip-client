@@ -1,0 +1,42 @@
+    Updating crates.io index
+     Locking 38 packages to latest Rust 1.97.1 compatible versions
+ Downloading crates ...
+  Downloaded spinning_top v0.3.0
+  Downloaded futures-timer v3.0.4
+  Downloaded smallvec v1.16.4
+  Downloaded nonzero_ext v0.3.0
+  Downloaded governor v0.10.4
+   Compiling libc v0.2.191
+   Compiling scopeguard v1.2.0
+   Compiling parking_lot_core v0.9.12
+   Compiling portable-atomic v1.15.0
+   Compiling smallvec v1.16.4
+   Compiling cfg-if v1.0.5
+   Compiling futures-sink v0.3.34
+   Compiling futures-task v0.3.34
+   Compiling futures-core v0.3.34
+   Compiling equivalent v1.0.3
+   Compiling pin-project-lite v0.2.17
+   Compiling foldhash v0.2.0
+   Compiling slab v0.4.12
+   Compiling allocator-api2 v0.2.21
+   Compiling futures-timer v3.0.4
+   Compiling web-time v1.1.0
+   Compiling nonzero_ext v0.3.0
+   Compiling lock_api v0.4.14
+   Compiling futures-util v0.3.34
+   Compiling spinning_top v0.3.0
+   Compiling hashbrown v0.16.1
+   Compiling parking_lot v0.12.5
+   Compiling governor v0.10.4
+   Compiling rustusb-governor-research-probe v0.0.0 (/tmp/rustusb-auth-rate-governor-research-20261024/probe)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.25s
+     Running `/tmp/rustusb-auth-rate-governor-research-20261024/probe/target/debug/rustusb-governor-research-probe`
+quota exact;64 immediate checks;101 noncharging refusals;125ms boundary recovery: PASS
+100 concurrent Arc clones share exactly64 initial decisions: PASS
+clock reversal before limiter start does not mint cells: PASS
+
+thread 'main' (3356664) panicked at /home/ubuntu/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/governor-0.10.4/src/nanos.rs:53:15:
+attempt to add with overflow
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+near_u64_nanos_limit_panicked=true

@@ -1,0 +1,1912 @@
+//! Linux USB/IP tool adapter with bounded subprocesses and authoritative sysfs checks.
+//!
+//! This crate does not authorize callers or determine whether storage is safe to export.
+//! The privileged helper must perform those checks before calling mutation methods.
+//! Dropping an operation future kills an active child, but cannot undo a kernel write;
+//! callers must reconcile kernel state after cancellation. No method guesses a rollback.
+
+/// Anonymous kernel channels for a separately authorized secure broker.
+#[cfg(target_os = "linux")]
+pub mod channel;
+/// Read-only Linux tools, modules, and kernel-interface diagnosis.
+pub mod diagnostics;
+/// Strong original-attribute Native server channels for an authorized broker.
+#[cfg(target_os = "linux")]
+pub mod export_channel;
+
+use rustusb_core::{BusId, Error, ExportBackend, ImportBackend, Peer, Result, VhciPort};
+use rustusb_protocol::RemoteDevice;
+use serde::{Deserialize, Serialize};
+use std::{
+    collections::{BTreeMap, HashSet},
+    io,
+    path::{Path, PathBuf},
+    process::Stdio,
+    sync::Arc,
+    time::Duration,
+};
+use tokio::{
+    fs,
+    io::{AsyncRead, AsyncReadExt},
+    process::Command,
+    sync::Mutex,
+    time::{Instant, sleep},
+};
+
+const MAX_ATTRIBUTE: usize = 65_536;
+const MAX_OUTPUT: usize = 65_536;
+const NULL: u32 = 4;
+const USED: u32 = 6;
+const HEADER: &str = "hub port sta spd dev sockfd local_busid";
+
+// Parallel temporary-executable fixtures have produced Linux ETXTBSY at spawn.
+// Keep script creation through child cleanup in one test-only critical section.
+#[cfg(all(test, unix))]
+static PROCESS_FIXTURE_LOCK: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
+
+/// Identity of one local sysfs USB directory observed during enumeration.
+/// This receipt is scoped to the current kernel and is not a durable device identity.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct LocalDeviceGeneration {
+    /// Filesystem device number of the dereferenced sysfs USB directory.
+    pub filesystem_device: u64,
+    /// Inode number of that same directory; a replacement directory is a new generation.
+    pub inode: u64,
+}
+
+/// One authoritative VHCI port observation, not a durable session or caller identity.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NativeSession {
+    /// Global kernel port, bounded to the native utility's unsigned-byte API.
+    pub port: VhciPort,
+    /// Kernel status: 4 unused, 5 enumerating, 6 used, 7 error.
+    pub status: u32,
+    /// Local enumerated USB bus ID, available only for status 6.
+    pub local_bus_id: Option<BusId>,
+    /// Remote `(busnum << 16) | devnum`, available only for status 6.
+    pub remote_device_id: Option<u32>,
+    /// Enumerated vendor ID; missing devices or unreadable attributes are errors.
+    pub vendor_id: Option<u16>,
+    /// Enumerated product ID; this is metadata, not a cryptographic identity.
+    pub product_id: Option<u16>,
+    /// Local USB device address read consistently with the sysfs generation.
+    /// Missing on non-USED ports and in older serialized observations.
+    #[serde(default)]
+    pub local_device_address: Option<u32>,
+    /// Kernel-local sysfs receipt preventing ownership transfer across re-enumeration.
+    /// An observation without this receipt cannot authorize destructive operations.
+    #[serde(default)]
+    pub local_device_generation: Option<LocalDeviceGeneration>,
+}
+
+#[derive(Debug)]
+struct Configuration {
+    usbip: PathBuf,
+    devices: PathBuf,
+    platform: PathBuf,
+    records: PathBuf,
+    command_timeout: Duration,
+    settle_timeout: Duration,
+    poll_interval: Duration,
+    require_root_tool: bool,
+}
+
+/// Fixed-tool native backend. Clones serialize mutations through the same lock.
+#[derive(Debug, Clone)]
+pub struct NativeBackend {
+    configuration: Arc<Configuration>,
+    mutation: Arc<Mutex<()>>,
+}
+
+impl Default for NativeBackend {
+    fn default() -> Self {
+        Self {
+            configuration: Arc::new(Configuration {
+                usbip: PathBuf::from("/usr/bin/usbip"),
+                devices: PathBuf::from("/sys/bus/usb/devices"),
+                platform: PathBuf::from("/sys/devices/platform"),
+                records: PathBuf::from("/var/run/vhci_hcd"),
+                command_timeout: Duration::from_secs(15),
+                settle_timeout: Duration::from_secs(10),
+                poll_interval: Duration::from_millis(100),
+                require_root_tool: true,
+            }),
+            mutation: Arc::new(Mutex::new(())),
+        }
+    }
+}
+
+impl NativeBackend {
+    /// Read active kernel ports. An unloaded/unavailable VHCI is reported explicitly.
+    /// User-space `/var/run/vhci_hcd` records are never the source of liveness.
+    pub async fn sessions(&self) -> Result<Vec<NativeSession>> {
+        Ok(self
+            .port_states()
+            .await?
+            .into_iter()
+            .filter(|s| s.status != NULL)
+            .collect())
+    }
+
+    /// Read all VHCI ports, including unused ports, validating every status table.
+    /// Every `status.N` is consumed and the row count must agree with `nports`.
+    pub async fn port_states(&self) -> Result<Vec<NativeSession>> {
+        tokio::time::timeout(Duration::from_secs(5), self.observe_port_states())
+            .await
+            .map_err(|_| Error::Timeout("VHCI sysfs snapshot exceeded deadline".into()))??
+            .ok_or_else(|| {
+                Error::State(
+                    "VHCI status changed during device observation; reconciliation required".into(),
+                )
+            })
+    }
+
+    // None is restricted to two successfully parsed, unequal reads of the same
+    // status attribute. Missing metadata, changed local generations and malformed
+    // snapshots remain errors; they must not be treated as an ordinary transition.
+    async fn observe_port_states(&self) -> Result<Option<Vec<NativeSession>>> {
+        let configuration = &self.configuration;
+        let mut directories = fs::read_dir(&configuration.platform).await?;
+        let mut owners = Vec::new();
+        let mut checked = 0;
+        while let Some(entry) = directories.next_entry().await? {
+            checked += 1;
+            if checked > 4096 {
+                return Err(Error::State(
+                    "platform directory entry limit exceeded".into(),
+                ));
+            }
+            let name = entry.file_name();
+            let Some(name) = name.to_str() else { continue };
+            if name.strip_prefix("vhci_hcd.").is_some_and(decimal_name)
+                && fs::try_exists(entry.path().join("status")).await?
+            {
+                owners.push(entry.path());
+            }
+        }
+        if owners.is_empty() {
+            return Err(Error::Unsupported(
+                "VHCI sysfs is unavailable; administrator must load vhci_hcd".into(),
+            ));
+        }
+        if owners.len() != 1 {
+            return Err(Error::State(
+                "ambiguous VHCI status owners; reconciliation required".into(),
+            ));
+        }
+        let owner = &owners[0];
+        let count = read_text(&owner.join("nports"))
+            .await?
+            .trim()
+            .parse::<usize>()
+            .map_err(|_| Error::State("invalid VHCI nports".into()))?;
+        if count == 0 || count > 256 {
+            return Err(Error::Unsupported(
+                "native usbip adapter requires 1..=256 VHCI ports (utility uses u8)".into(),
+            ));
+        }
+        let mut attributes = fs::read_dir(owner).await?;
+        let mut names = Vec::new();
+        let mut entries = 0;
+        while let Some(entry) = attributes.next_entry().await? {
+            entries += 1;
+            if entries > 1024 {
+                return Err(Error::State("VHCI attribute limit exceeded".into()));
+            }
+            let name = entry.file_name();
+            let Some(name) = name.to_str() else { continue };
+            if name == "status" || name.strip_prefix("status.").is_some_and(decimal_name) {
+                names.push(entry.path());
+            }
+        }
+        names.sort();
+        let mut ports = BTreeMap::new();
+        for name in names {
+            let observed = parse_status(&read_text(&name).await?)?;
+            for mut session in observed.iter().cloned() {
+                if usize::from(session.port.0) >= count {
+                    return Err(Error::State("VHCI port exceeds nports".into()));
+                }
+                if session.status == USED {
+                    let bus_id = session
+                        .local_bus_id
+                        .as_ref()
+                        .ok_or_else(|| Error::State("used VHCI port has no local bus ID".into()))?;
+                    let path = configuration.devices.join(bus_id.as_str());
+                    observe_local_device(&path, &mut session).await?;
+                }
+                if ports.insert(session.port.0, session).is_some() {
+                    return Err(Error::State(
+                        "duplicate VHCI port across status attributes".into(),
+                    ));
+                }
+            }
+            if parse_status(&read_text(&name).await?)? != observed {
+                return Ok(None);
+            }
+        }
+        if ports.len() != count {
+            return Err(Error::State(
+                "incomplete VHCI status snapshot; reconciliation required".into(),
+            ));
+        }
+        Ok(Some(ports.into_values().collect()))
+    }
+
+    /// Import and return the uniquely identified, enumerated session created by this operation.
+    /// Checks DEVLIST metadata, an initially free port, kernel devid, local VID/PID,
+    /// and the native utility's endpoint record. Failure never claims or detaches an uncertain port.
+    pub async fn attach_session(&self, peer: Peer, bus_id: BusId) -> Result<NativeSession> {
+        let _lock = self.mutation.lock().await;
+        if format!("{} {} {}\n", peer.host, peer.port, bus_id).len() >= 100 {
+            return Err(Error::InvalidInput(
+                "endpoint metadata exceeds the native utility's 100-byte record buffer".into(),
+            ));
+        }
+        let advertised =
+            rustusb_protocol::discover(&peer, self.configuration.command_timeout).await?;
+        let remote = advertised
+            .into_iter()
+            .find(|d| d.bus_id == bus_id)
+            .ok_or_else(|| {
+                Error::State("requested device is absent from remote export list".into())
+            })?;
+        // The official attach library narrows both busnum and devnum to u8.
+        if remote.bus_number == 0
+            || remote.bus_number > 255
+            || remote.device_number == 0
+            || remote.device_number > 255
+            || !(1..=6).contains(&remote.speed)
+        {
+            return Err(Error::Unsupported(
+                "remote addressing/speed exceeds the audited native utility API".into(),
+            ));
+        }
+        let before = self.port_states().await?;
+        if before.iter().all(|s| s.status != NULL) {
+            return Err(Error::State("no free VHCI port".into()));
+        }
+        if self.configuration.require_root_tool {
+            preflight_records(&self.configuration.records, &before).await?;
+        }
+        let args = vec![
+            "--tcp-port".into(),
+            peer.port.to_string(),
+            "attach".into(),
+            "--remote".into(),
+            peer.host.to_string(),
+            "--busid".into(),
+            bus_id.to_string(),
+        ];
+        tracing::info!(operation = "attach", bus_id = %bus_id, "native operation started");
+        if let Err(error) = self.run_tool(&args).await {
+            return Err(self.reconciliation_error("attach", error).await);
+        }
+        let deadline = Instant::now() + self.configuration.settle_timeout;
+        loop {
+            let after = self
+                .port_states()
+                .await
+                .map_err(|e| uncertain("attach", e))?;
+            let candidates = matched_new_sessions(&before, &after, &remote);
+            if candidates.len() > 1 {
+                return Err(Error::State(
+                    "attach created ambiguous matching ports; reconciliation required".into(),
+                ));
+            }
+            if let Some(session) = candidates.first() {
+                if self.record_matches(session.port, &peer, &bus_id).await? {
+                    tracing::info!(
+                        operation = "attach",
+                        port = session.port.0,
+                        "kernel enumeration verified"
+                    );
+                    return Ok((*session).clone());
+                }
+                return Err(Error::State("kernel attached but native endpoint record is missing or mismatched; reconciliation required".into()));
+            }
+            if Instant::now() >= deadline {
+                return Err(Error::Timeout("attach tool completed but no unique matching enumerated port appeared; reconciliation required".into()));
+            }
+            sleep(self.configuration.poll_interval).await;
+        }
+    }
+
+    /// Release a previously claimed session only if its current identity still matches.
+    /// An unused port succeeds only once the previously observed generation has disappeared.
+    /// A replacement session is never detached.
+    /// After one successful detach command, changing status snapshots are reobserved
+    /// within the existing cleanup deadline without repeating the command.
+    pub async fn detach_session(&self, expected: &NativeSession) -> Result<()> {
+        self.detach_checked(expected.port, Some(expected)).await
+    }
+
+    /// Check without changing devices whether an observed session has been fully released.
+    /// Both a NULL kernel port and disappearance of the old sysfs generation are required.
+    /// A replacement at the same path does not keep the old generation alive. Missing
+    /// receipts, incomplete snapshots and unknown ports are errors, never proof of release.
+    pub async fn session_cleanup_complete(&self, expected: &NativeSession) -> Result<bool> {
+        let _lock = self.mutation.lock().await;
+        let generation = expected_generation(&self.configuration.devices, expected)?;
+        let before = self.port_states().await?;
+        if !port_is_null(&before, expected.port)? {
+            return Ok(false);
+        }
+        if same_generation_present(&generation).await? {
+            return Ok(false);
+        }
+        Ok(port_is_null(&self.port_states().await?, expected.port)?
+            && !same_generation_present(&generation).await?)
+    }
+
+    async fn detach_checked(&self, port: VhciPort, expected: Option<&NativeSession>) -> Result<()> {
+        let _lock = self.mutation.lock().await;
+        let before = self.port_states().await?;
+        let state = before
+            .iter()
+            .find(|s| s.port == port)
+            .ok_or_else(|| Error::State("VHCI port is outside current nports".into()))?;
+        if state.status == NULL {
+            if let Some(expected) = expected {
+                let generation = expected_generation(&self.configuration.devices, expected)?;
+                let deadline = Instant::now() + self.configuration.settle_timeout;
+                while same_generation_present(&generation).await? {
+                    if Instant::now() >= deadline {
+                        return Err(Error::State("port is unused but the prior local device generation remains; reconciliation required".into()));
+                    }
+                    sleep(self.configuration.poll_interval).await;
+                }
+            }
+            return Ok(());
+        }
+        if expected.is_some_and(|identity| !same_identity(identity, state)) {
+            return Err(Error::Permission(
+                "VHCI port identity changed; replacement session will not be detached".into(),
+            ));
+        }
+        // Even the low-level port-only adapter refuses unknown ERROR/enumerating
+        // ownership. A complete USED observation is the minimum cleanup receipt.
+        let old_generation = expected_generation(&self.configuration.devices, state)?;
+        tracing::info!(
+            operation = "detach",
+            port = port.0,
+            "native operation started"
+        );
+        if let Err(error) = self
+            .run_tool(&["detach".into(), "--port".into(), port.0.to_string()])
+            .await
+        {
+            return Err(self.reconciliation_error("detach", error).await);
+        }
+        let deadline = Instant::now() + self.configuration.settle_timeout;
+        let unsettled = || {
+            Error::Timeout(
+                "detach tool completed but port or old local device generation is still present; reconciliation required"
+                    .into(),
+            )
+        };
+        loop {
+            let released = tokio::time::timeout_at(deadline, async {
+                let Some(after) = self
+                    .observe_port_states()
+                    .await
+                    .map_err(|error| uncertain("detach", error))?
+                else {
+                    return Ok(false);
+                };
+                let current = after
+                    .iter()
+                    .find(|session| session.port == port)
+                    .ok_or_else(|| Error::State("VHCI port is outside current nports".into()))?;
+                if current.status == USED && !same_identity(state, current) {
+                    return Err(Error::Permission(
+                        "VHCI port identity changed after detach; replacement session will not be detached"
+                            .into(),
+                    ));
+                }
+                let old_device_removed = !same_generation_present(&old_generation)
+                    .await
+                    .map_err(|error| uncertain("detach generation verification", error))?;
+                Ok(current.status == NULL && old_device_removed)
+            })
+            .await
+            .map_err(|_| unsettled())??;
+            if released {
+                tracing::info!(
+                    operation = "detach",
+                    port = port.0,
+                    "kernel port cleanup verified"
+                );
+                return Ok(());
+            }
+            if Instant::now() >= deadline {
+                return Err(unsettled());
+            }
+            tokio::time::sleep_until(
+                (Instant::now() + self.configuration.poll_interval).min(deadline),
+            )
+            .await;
+        }
+    }
+
+    async fn record_matches(&self, port: VhciPort, peer: &Peer, bus_id: &BusId) -> Result<bool> {
+        let path = self.configuration.records.join(format!("port{}", port.0));
+        let content = if self.configuration.require_root_tool {
+            read_trusted_record(&self.configuration.records, port).await
+        } else {
+            read_text(&path).await
+        };
+        let text = match content {
+            Ok(text) => text,
+            Err(Error::Io(error)) if error.kind() == io::ErrorKind::NotFound => return Ok(false),
+            Err(error) => return Err(uncertain("attach record verification", error)),
+        };
+        let fields = text.split_whitespace().collect::<Vec<_>>();
+        Ok(fields.len() == 3
+            && fields[0] == peer.host.as_str()
+            && fields[1] == peer.port.to_string()
+            && fields[2] == bus_id.as_str())
+    }
+
+    async fn device_binding(&self, bus_id: &BusId) -> Result<Binding> {
+        let path = self.configuration.devices.join(bus_id.as_str());
+        fs::metadata(&path).await?;
+        let driver = match fs::read_link(path.join("driver")).await {
+            Ok(link) => Some(
+                link.file_name()
+                    .and_then(|s| s.to_str())
+                    .ok_or_else(|| Error::State("invalid USB driver link".into()))?
+                    .to_owned(),
+            ),
+            Err(error) if error.kind() == io::ErrorKind::NotFound => None,
+            Err(error) => return Err(error.into()),
+        };
+        let status = if driver.as_deref() == Some("usbip-host") {
+            Some(
+                read_text(&path.join("usbip_status"))
+                    .await?
+                    .trim()
+                    .parse::<u32>()
+                    .map_err(|_| Error::State("invalid usbip_status".into()))?,
+            )
+        } else {
+            None
+        };
+        // Distinguish a genuinely unbound device from a removal while reading its attributes.
+        fs::metadata(&path).await?;
+        Ok(Binding { driver, status })
+    }
+
+    async fn reconciliation_error(&self, operation: &str, error: Error) -> Error {
+        let observation = match self.port_states().await {
+            Ok(ports) => format!(
+                "{} active kernel ports observed",
+                ports.iter().filter(|s| s.status != NULL).count()
+            ),
+            Err(_) => "kernel port snapshot unavailable".into(),
+        };
+        match error {
+            Error::Timeout(message) => Error::Timeout(format!(
+                "{operation}: {message}; {observation}; reconciliation required"
+            )),
+            other => Error::Command(format!(
+                "{operation}: {other}; {observation}; reconciliation required"
+            )),
+        }
+    }
+
+    async fn binding_error(&self, bus_id: &BusId, operation: &str, error: Error) -> Error {
+        let observation = match self.device_binding(bus_id).await {
+            Ok(binding) => format!(
+                "driver={}, usbip_status={:?}",
+                binding.driver.as_deref().unwrap_or("none"),
+                binding.status
+            ),
+            Err(_) => "device binding snapshot unavailable".into(),
+        };
+        match error {
+            Error::Timeout(message) => Error::Timeout(format!(
+                "{operation}: {message}; {observation}; reconciliation required"
+            )),
+            other => Error::Command(format!(
+                "{operation}: {other}; {observation}; reconciliation required"
+            )),
+        }
+    }
+
+    async fn run_tool(&self, args: &[String]) -> Result<()> {
+        let executable = self.verify_tool().await?;
+        let mut command = Command::new(executable);
+        command
+            .args(args)
+            .env_clear()
+            .env("PATH", "/usr/sbin:/usr/bin:/sbin:/bin")
+            .env("LANG", "C")
+            .env("LC_ALL", "C")
+            .current_dir("/")
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .kill_on_drop(true);
+        let mut child = command.spawn()?;
+        let stdout = child
+            .stdout
+            .take()
+            .ok_or_else(|| Error::Command("stdout pipe missing".into()))?;
+        let stderr = child
+            .stderr
+            .take()
+            .ok_or_else(|| Error::Command("stderr pipe missing".into()))?;
+        let outcome = tokio::time::timeout(self.configuration.command_timeout, async {
+            let (status, _, _) =
+                tokio::try_join!(child.wait(), drain_bounded(stdout), drain_bounded(stderr))?;
+            Ok::<_, io::Error>(status)
+        })
+        .await;
+        match outcome {
+            Ok(Ok(status)) if status.success() => Ok(()),
+            Ok(Ok(status)) => Err(Error::Command(format!(
+                "fixed usbip exited {status}; kernel side effects may already exist"
+            ))),
+            Ok(Err(error)) => {
+                let cleanup = kill_and_reap(&mut child).await;
+                Err(Error::Command(format!(
+                    "usbip output/wait failed: {error}; {cleanup}"
+                )))
+            }
+            Err(_) => {
+                let cleanup = kill_and_reap(&mut child).await;
+                Err(Error::Timeout(format!(
+                    "fixed usbip exceeded deadline; {cleanup}"
+                )))
+            }
+        }
+    }
+
+    async fn verify_tool(&self) -> Result<PathBuf> {
+        if !self.configuration.require_root_tool {
+            return Ok(self.configuration.usbip.clone());
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::MetadataExt;
+            let canonical = fs::canonicalize(&self.configuration.usbip).await?;
+            // Validate both the configured path and the resolved path. A root-owned
+            // executable can still be replaced when an ancestor is user-writable.
+            for executable in [&self.configuration.usbip, &canonical] {
+                let leaf = fs::metadata(executable).await?;
+                if !leaf.is_file() || leaf.mode() & 0o111 == 0 {
+                    return Err(Error::Permission(
+                        "native tool must be an executable regular file".into(),
+                    ));
+                }
+                let mut path = Some(executable.as_path());
+                while let Some(current) = path {
+                    let metadata = fs::metadata(current).await?;
+                    if metadata.uid() != 0 || metadata.mode() & 0o022 != 0 {
+                        return Err(Error::Permission("fixed native tool, symlink target and all parents must be root-owned and not group/world-writable".into()));
+                    }
+                    path = current.parent();
+                }
+            }
+            Ok(canonical)
+        }
+        #[cfg(not(unix))]
+        {
+            Err(Error::Unsupported(
+                "Linux native USB/IP requires Unix permissions".into(),
+            ))
+        }
+    }
+}
+
+impl NativeBackend {
+    /// Bind only a genuinely fresh unexported device. Existing bindings are never adopted.
+    /// The caller separately authorizes and verifies the strong original hardware generation.
+    pub async fn export_fresh(&self, bus_id: BusId) -> Result<()> {
+        let _lock = self.mutation.lock().await;
+        self.export_locked(bus_id, false).await
+    }
+    async fn export_locked(&self, bus_id: BusId, allow_existing: bool) -> Result<()> {
+        let before = self.device_binding(&bus_id).await?;
+        if before.driver.as_deref() == Some("usbip-host") {
+            if !allow_existing {
+                return Err(Error::Permission(
+                    "fresh Native export cannot adopt an existing binding".into(),
+                ));
+            }
+            return match before.status {
+                Some(1) => Ok(()),
+                Some(2) => Err(Error::State(
+                    "device is already occupied by a remote client".into(),
+                )),
+                _ => Err(Error::State(
+                    "exported device has an invalid/error state".into(),
+                )),
+            };
+        }
+        tracing::info!(operation = "export", bus_id = %bus_id, "native operation started");
+        if let Err(error) = self
+            .run_tool(&["bind".into(), "--busid".into(), bus_id.to_string()])
+            .await
+        {
+            return Err(self.binding_error(&bus_id, "export", error).await);
+        }
+        let deadline = Instant::now() + self.configuration.settle_timeout;
+        loop {
+            let binding = self
+                .device_binding(&bus_id)
+                .await
+                .map_err(|e| uncertain("export", e))?;
+            if binding.driver.as_deref() == Some("usbip-host")
+                && matches!(binding.status, Some(1 | 2))
+            {
+                tracing::info!(operation = "export", bus_id = %bus_id, "kernel export binding verified");
+                return Ok(());
+            }
+            if Instant::now() >= deadline {
+                return Err(Error::Timeout(
+                    "bind completed but export binding was not verified; reconciliation required"
+                        .into(),
+                ));
+            }
+            sleep(self.configuration.poll_interval).await;
+        }
+    }
+}
+
+impl ExportBackend for NativeBackend {
+    async fn export(&self, bus_id: BusId) -> Result<()> {
+        let _lock = self.mutation.lock().await;
+        self.export_locked(bus_id, true).await
+    }
+
+    async fn unexport(&self, bus_id: BusId) -> Result<()> {
+        let _lock = self.mutation.lock().await;
+        let before = self.device_binding(&bus_id).await?;
+        if before.driver.as_deref() != Some("usbip-host") {
+            return Ok(());
+        }
+        if before.status != Some(1) {
+            return Err(Error::State(
+                "device is occupied or not in the available state; coordinate release or administrator recovery before unexport".into(),
+            ));
+        }
+        tracing::info!(operation = "unexport", bus_id = %bus_id, "native operation started");
+        if let Err(error) = self
+            .run_tool(&["unbind".into(), "--busid".into(), bus_id.to_string()])
+            .await
+        {
+            return Err(self.binding_error(&bus_id, "unexport", error).await);
+        }
+        let deadline = Instant::now() + self.configuration.settle_timeout;
+        loop {
+            let binding = self
+                .device_binding(&bus_id)
+                .await
+                .map_err(|e| uncertain("unexport", e))?;
+            if binding
+                .driver
+                .as_deref()
+                .is_some_and(|driver| driver != "usbip-host")
+            {
+                tracing::info!(operation = "unexport", bus_id = %bus_id, "replacement device driver observed");
+                return Ok(());
+            }
+            if Instant::now() >= deadline {
+                return Err(Error::Timeout("unbind completed but replacement driver was not observed; reconciliation required".into()));
+            }
+            sleep(self.configuration.poll_interval).await;
+        }
+    }
+}
+
+impl ImportBackend for NativeBackend {
+    async fn attach(&self, peer: Peer, bus_id: BusId) -> Result<()> {
+        self.attach_session(peer, bus_id).await.map(|_| ())
+    }
+
+    async fn detach(&self, port: VhciPort) -> Result<()> {
+        self.detach_checked(port, None).await
+    }
+}
+
+#[derive(Debug)]
+struct LocalGeneration {
+    path: PathBuf,
+    identity: LocalDeviceGeneration,
+}
+
+async fn capture_generation(path: PathBuf) -> Result<Option<LocalGeneration>> {
+    let metadata = match fs::metadata(&path).await {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(error.into()),
+    };
+    Ok(Some(LocalGeneration {
+        path,
+        identity: metadata_identity(&metadata)?,
+    }))
+}
+
+async fn same_generation_present(generation: &LocalGeneration) -> Result<bool> {
+    Ok(capture_generation(generation.path.clone())
+        .await?
+        .is_some_and(|current| current.identity == generation.identity))
+}
+
+fn expected_generation(devices: &Path, session: &NativeSession) -> Result<LocalGeneration> {
+    let bus_id = session.local_bus_id.as_ref().ok_or_else(|| {
+        Error::State("session has no local device identity; reconciliation required".into())
+    })?;
+    if !session
+        .local_device_address
+        .is_some_and(|address| (1..=255).contains(&address))
+    {
+        return Err(Error::State(
+            "session has no verified local device address; reconciliation required".into(),
+        ));
+    }
+    let identity = session.local_device_generation.ok_or_else(|| {
+        Error::State(
+            "session has no local device generation receipt; reconciliation required".into(),
+        )
+    })?;
+    Ok(LocalGeneration {
+        path: devices.join(bus_id.as_str()),
+        identity,
+    })
+}
+
+async fn observe_local_device(path: &Path, session: &mut NativeSession) -> Result<()> {
+    let before = capture_generation(path.to_owned())
+        .await?
+        .ok_or_else(|| Error::State("enumerated USB device disappeared".into()))?;
+    let address = read_device_address(path).await?;
+    let vendor = read_hex_u16(&path.join("idVendor")).await?;
+    let product = read_hex_u16(&path.join("idProduct")).await?;
+    let after_address = read_device_address(path).await?;
+    let after = capture_generation(path.to_owned()).await?.ok_or_else(|| {
+        Error::State("enumerated USB device disappeared during observation".into())
+    })?;
+    if before.identity != after.identity || address != after_address {
+        return Err(Error::State(
+            "local USB device generation changed during observation; reconciliation required"
+                .into(),
+        ));
+    }
+    session.vendor_id = Some(vendor);
+    session.product_id = Some(product);
+    session.local_device_address = Some(address);
+    session.local_device_generation = Some(before.identity);
+    Ok(())
+}
+
+async fn read_device_address(path: &Path) -> Result<u32> {
+    let address = read_text(&path.join("devnum"))
+        .await?
+        .trim()
+        .parse::<u32>()
+        .map_err(|_| Error::State("invalid local USB device address".into()))?;
+    if !(1..=255).contains(&address) {
+        return Err(Error::State(
+            "local USB device address is outside 1..=255".into(),
+        ));
+    }
+    Ok(address)
+}
+
+fn port_is_null(sessions: &[NativeSession], port: VhciPort) -> Result<bool> {
+    sessions
+        .iter()
+        .find(|session| session.port == port)
+        .map(|session| session.status == NULL)
+        .ok_or_else(|| Error::State("VHCI port is outside current nports".into()))
+}
+
+fn metadata_identity(metadata: &std::fs::Metadata) -> Result<LocalDeviceGeneration> {
+    if !metadata.is_dir() {
+        return Err(Error::State(
+            "local USB sysfs entry is not a directory".into(),
+        ));
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        Ok(LocalDeviceGeneration {
+            filesystem_device: metadata.dev(),
+            inode: metadata.ino(),
+        })
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = metadata;
+        Err(Error::Unsupported(
+            "native device generations require Unix metadata".into(),
+        ))
+    }
+}
+
+#[derive(Debug)]
+struct Binding {
+    driver: Option<String>,
+    status: Option<u32>,
+}
+
+fn decimal_name(value: &str) -> bool {
+    !value.is_empty() && value.bytes().all(|byte| byte.is_ascii_digit()) && value.len() <= 5
+}
+
+fn uncertain(operation: &str, error: Error) -> Error {
+    Error::State(format!(
+        "{operation}: {error}; kernel may have changed; reconciliation required"
+    ))
+}
+
+fn parse_status(text: &str) -> Result<Vec<NativeSession>> {
+    let mut lines = text.lines();
+    let header = lines
+        .next()
+        .ok_or_else(|| Error::State("empty VHCI status".into()))?;
+    if header.split_whitespace().collect::<Vec<_>>().join(" ") != HEADER {
+        return Err(Error::State("unsupported VHCI status header".into()));
+    }
+    let mut result = Vec::new();
+    let mut seen = HashSet::new();
+    for line in lines {
+        if result.len() >= 256 {
+            return Err(Error::State("VHCI row limit exceeded".into()));
+        }
+        let columns = line.split_whitespace().collect::<Vec<_>>();
+        if columns.len() != 7 || !matches!(columns[0], "hs" | "ss") {
+            return Err(Error::State("malformed VHCI row".into()));
+        }
+        let parse = |field: &str| {
+            field
+                .parse::<u32>()
+                .map_err(|_| Error::State("invalid VHCI numeric field".into()))
+        };
+        let raw_port = parse(columns[1])?;
+        let port = u8::try_from(raw_port)
+            .map_err(|_| Error::Unsupported("VHCI port exceeds usbip utility's u8 API".into()))?;
+        if !seen.insert(port) {
+            return Err(Error::State("duplicate VHCI port".into()));
+        }
+        let status = parse(columns[2])?;
+        if !(4..=7).contains(&status) {
+            return Err(Error::State("unknown VHCI status".into()));
+        }
+        let speed = parse(columns[3])?;
+        let remote = u32::from_str_radix(columns[4], 16)
+            .map_err(|_| Error::State("invalid remote device ID".into()))?;
+        let _historical_fd = columns[5]
+            .parse::<u64>()
+            .map_err(|_| Error::State("invalid VHCI socket field".into()))?;
+        let local = if status == USED {
+            if !(1..=6).contains(&speed) || remote == 0 {
+                return Err(Error::State("used port has invalid identity/speed".into()));
+            }
+            Some(
+                BusId::new(columns[6])
+                    .map_err(|_| Error::State("invalid local USB bus ID".into()))?,
+            )
+        } else {
+            if columns[6] != "0-0" {
+                return Err(Error::State(
+                    "inactive port has unexpected local identity".into(),
+                ));
+            }
+            None
+        };
+        result.push(NativeSession {
+            port: VhciPort(port),
+            status,
+            local_bus_id: local,
+            remote_device_id: (status == USED).then_some(remote),
+            vendor_id: None,
+            product_id: None,
+            local_device_address: None,
+            local_device_generation: None,
+        });
+    }
+    Ok(result)
+}
+
+fn matched_new_sessions<'a>(
+    before: &[NativeSession],
+    after: &'a [NativeSession],
+    remote: &RemoteDevice,
+) -> Vec<&'a NativeSession> {
+    let expected = (remote.bus_number << 16) | remote.device_number;
+    after
+        .iter()
+        .filter(|session| {
+            session.status == USED
+                && session.remote_device_id == Some(expected)
+                && session.vendor_id == Some(remote.vendor_id)
+                && session.product_id == Some(remote.product_id)
+                && before
+                    .iter()
+                    .any(|old| old.port == session.port && old.status == NULL)
+        })
+        .collect()
+}
+
+#[cfg(unix)]
+async fn verify_root_chain(path: &Path) -> Result<()> {
+    use std::os::unix::fs::MetadataExt;
+    let mut cursor = Some(path);
+    while let Some(current) = cursor {
+        let metadata = fs::metadata(current).await?;
+        if metadata.uid() != 0 || metadata.mode() & 0o022 != 0 {
+            return Err(Error::Permission("native record and parent directories must be root-owned and not group/world-writable".into()));
+        }
+        cursor = current.parent();
+    }
+    Ok(())
+}
+
+async fn preflight_records(directory: &Path, ports: &[NativeSession]) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        let canonical = match fs::canonicalize(directory).await {
+            Ok(path) => path,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                // usbip creates this directory itself. Its fixed parent must be trusted.
+                let parent = directory
+                    .parent()
+                    .ok_or_else(|| Error::Permission("native record parent is absent".into()))?;
+                let canonical_parent = fs::canonicalize(parent).await?;
+                verify_root_chain(parent).await?;
+                verify_root_chain(&canonical_parent).await?;
+                // A dangling directory symlink must not be mistaken for a missing directory.
+                match fs::symlink_metadata(directory).await {
+                    Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
+                    Err(error) => return Err(error.into()),
+                    Ok(_) => {
+                        return Err(Error::Permission(
+                            "native record directory is a dangling symlink".into(),
+                        ));
+                    }
+                }
+            }
+            Err(error) => return Err(error.into()),
+        };
+        verify_root_chain(directory).await?;
+        verify_root_chain(&canonical).await?;
+        if !fs::metadata(&canonical).await?.is_dir() {
+            return Err(Error::Permission(
+                "native record directory is not a directory".into(),
+            ));
+        }
+        for port in ports.iter().filter(|port| port.status == NULL) {
+            let metadata =
+                match fs::symlink_metadata(canonical.join(format!("port{}", port.port.0))).await {
+                    Ok(metadata) => metadata,
+                    Err(error) if error.kind() == io::ErrorKind::NotFound => continue,
+                    Err(error) => return Err(error.into()),
+                };
+            if !metadata.is_file() || metadata.uid() != 0 || metadata.mode() & 0o022 != 0 {
+                return Err(Error::Permission("pre-existing native record must be a root-owned regular file without group/world write".into()));
+            }
+        }
+        Ok(())
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = (directory, ports);
+        Err(Error::Unsupported(
+            "trusted native records require Unix permissions".into(),
+        ))
+    }
+}
+
+async fn read_trusted_record(directory: &Path, port: VhciPort) -> Result<String> {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        let canonical = fs::canonicalize(directory).await?;
+        verify_root_chain(directory).await?;
+        verify_root_chain(&canonical).await?;
+        let file = fs::OpenOptions::new()
+            .read(true)
+            .custom_flags(rustix::fs::OFlags::NOFOLLOW.bits() as i32)
+            .open(canonical.join(format!("port{}", port.0)))
+            .await?;
+        let metadata = file.metadata().await?;
+        if !metadata.is_file() || metadata.uid() != 0 || metadata.mode() & 0o022 != 0 {
+            return Err(Error::Permission("native endpoint record must be a root-owned regular file without group/world write".into()));
+        }
+        tokio::time::timeout(Duration::from_secs(2), read_open_file(file))
+            .await
+            .map_err(|_| Error::Timeout("native record read exceeded deadline".into()))?
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = (directory, port);
+        Err(Error::Unsupported(
+            "trusted native records require Unix permissions".into(),
+        ))
+    }
+}
+
+async fn read_text(path: &Path) -> Result<String> {
+    tokio::time::timeout(Duration::from_secs(2), read_text_inner(path))
+        .await
+        .map_err(|_| Error::Timeout("sysfs/record read exceeded deadline".into()))?
+}
+
+async fn read_text_inner(path: &Path) -> Result<String> {
+    read_open_file(fs::File::open(path).await?).await
+}
+
+async fn read_open_file(file: fs::File) -> Result<String> {
+    let mut bytes = Vec::new();
+    file.take((MAX_ATTRIBUTE + 1) as u64)
+        .read_to_end(&mut bytes)
+        .await?;
+    if bytes.len() > MAX_ATTRIBUTE {
+        return Err(Error::State(
+            "sysfs/record attribute exceeds size limit".into(),
+        ));
+    }
+    String::from_utf8(bytes).map_err(|_| Error::State("non-UTF8 sysfs/record attribute".into()))
+}
+
+async fn read_hex_u16(path: &Path) -> Result<u16> {
+    u16::from_str_radix(read_text(path).await?.trim(), 16)
+        .map_err(|_| Error::State("invalid USB VID/PID attribute".into()))
+}
+
+async fn drain_bounded(mut reader: impl AsyncRead + Unpin) -> io::Result<()> {
+    let mut total = 0;
+    let mut buffer = [0_u8; 4096];
+    loop {
+        let count = reader.read(&mut buffer).await?;
+        if count == 0 {
+            return Ok(());
+        }
+        total += count;
+        if total > MAX_OUTPUT {
+            return Err(io::Error::other("native output exceeds byte limit"));
+        }
+    }
+}
+
+async fn kill_and_reap(child: &mut tokio::process::Child) -> String {
+    let kill_result = child.start_kill();
+    match tokio::time::timeout(Duration::from_secs(2), child.wait()).await {
+        Ok(Ok(_)) => match kill_result {
+            Ok(()) => "child killed and reaped".into(),
+            Err(error) => format!("child reaped (kill reported {error})"),
+        },
+        Ok(Err(error)) => format!("child cleanup could not be verified: {error}; reconciliation required"),
+        Err(_) => "child termination/reaping deadline exceeded; kernel operation may still complete; reconciliation required".into(),
+    }
+}
+
+fn same_identity(left: &NativeSession, right: &NativeSession) -> bool {
+    left.port == right.port
+        && left.local_bus_id.is_some()
+        && left.remote_device_id.is_some()
+        && left.local_bus_id == right.local_bus_id
+        && left.remote_device_id == right.remote_device_id
+        && left.vendor_id == right.vendor_id
+        && left.product_id == right.product_id
+        && left.local_device_address.is_some()
+        && left.local_device_address == right.local_device_address
+        && left.local_device_generation.is_some()
+        && left.local_device_generation == right.local_device_generation
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use super::*;
+    use rustusb_core::Host;
+    use std::{
+        num::NonZeroU16,
+        os::unix::fs::{PermissionsExt, symlink},
+    };
+    use tempfile::TempDir;
+    use tokio::io::AsyncWriteExt;
+
+    const EMPTY: &str = "hub port sta spd dev sockfd local_busid\nhs 0000 004 000 00000000 000000 0-0\nss 0001 004 000 00000000 000000 0-0\n";
+    const ATTACHED: &str = "hub port sta spd dev sockfd local_busid\nhs 0000 006 003 00010002 000007 9-1\nss 0001 004 000 00000000 000000 0-0\n";
+
+    struct Fixture {
+        directory: TempDir,
+        backend: NativeBackend,
+    }
+    impl Fixture {
+        fn new(body: &str) -> Result<Self> {
+            let directory = tempfile::tempdir()?;
+            let root = directory.path();
+            std::fs::create_dir_all(root.join("devices/1-2"))?;
+            std::fs::create_dir_all(root.join("devices/9-1"))?;
+            std::fs::write(root.join("devices/9-1/idVendor"), "1234\n")?;
+            std::fs::write(root.join("devices/9-1/idProduct"), "abcd\n")?;
+            std::fs::write(root.join("devices/9-1/devnum"), "2\n")?;
+            std::fs::create_dir_all(root.join("platform/vhci_hcd.0"))?;
+            std::fs::write(root.join("platform/vhci_hcd.0/nports"), "2\n")?;
+            std::fs::write(root.join("platform/vhci_hcd.0/status"), EMPTY)?;
+            std::fs::create_dir_all(root.join("records"))?;
+            let tool = root.join("usbip");
+            std::fs::write(
+                &tool,
+                format!(
+                    "#!/bin/sh\nBASE=${{0%/*}}\nprintf '%s\\n' \"$@\" >\"$BASE/argv\"\nprintf '%s\\n' \"$$\" >\"$BASE/pid\"\n{body}\n"
+                ),
+            )?;
+            std::fs::set_permissions(&tool, std::fs::Permissions::from_mode(0o700))?;
+            let backend = NativeBackend {
+                configuration: Arc::new(Configuration {
+                    usbip: tool,
+                    devices: root.join("devices"),
+                    platform: root.join("platform"),
+                    records: root.join("records"),
+                    // Most fixtures exercise state/identity rather than process
+                    // scheduling. Timeout-specific tests select their own limit.
+                    command_timeout: Duration::from_secs(5),
+                    settle_timeout: Duration::from_millis(150),
+                    poll_interval: Duration::from_millis(5),
+                    require_root_tool: false,
+                }),
+                mutation: Arc::new(Mutex::new(())),
+            };
+            Ok(Self { directory, backend })
+        }
+        fn path(&self, name: &str) -> PathBuf {
+            self.directory.path().join(name)
+        }
+        fn binding(&self, driver: &str, status: u32) -> Result<()> {
+            symlink(driver, self.path("devices/1-2/driver"))?;
+            std::fs::write(self.path("devices/1-2/usbip_status"), status.to_string())?;
+            Ok(())
+        }
+    }
+
+    fn rendezvous_fifo_writer(path: &Path) -> io::Result<std::fs::File> {
+        use std::os::unix::fs::{FileTypeExt, OpenOptionsExt};
+
+        let deadline = std::time::Instant::now() + Duration::from_secs(3);
+        let nonblocking = i32::try_from(rustix::fs::OFlags::NONBLOCK.bits())
+            .map_err(|_| io::Error::other("nonblocking flag exceeds native API"))?;
+        loop {
+            if std::time::Instant::now() >= deadline {
+                return Err(io::Error::new(
+                    io::ErrorKind::TimedOut,
+                    "fixture FIFO reader did not rendezvous",
+                ));
+            }
+            match std::fs::metadata(path) {
+                Ok(metadata) if metadata.file_type().is_fifo() => {
+                    match std::fs::OpenOptions::new()
+                        .write(true)
+                        .custom_flags(nonblocking)
+                        .open(path)
+                    {
+                        Ok(writer) => return Ok(writer),
+                        Err(error)
+                            if error.raw_os_error()
+                                == Some(rustix::io::Errno::NXIO.raw_os_error()) => {}
+                        Err(error) => return Err(error),
+                    }
+                }
+                Ok(_) => {}
+                Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+                Err(error) => return Err(error),
+            }
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    async fn remote_peer() -> Result<(Peer, tokio::task::JoinHandle<io::Result<()>>)> {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
+        let port = NonZeroU16::new(listener.local_addr()?.port())
+            .ok_or_else(|| Error::State("test listener returned zero port".into()))?;
+        let task = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await?;
+            let mut request = [0_u8; 8];
+            stream.read_exact(&mut request).await?;
+            assert_eq!(request, rustusb_protocol::DEVLIST_REQUEST);
+            let mut reply = vec![1, 0x11, 0, 5, 0, 0, 0, 0];
+            reply.extend(1_u32.to_be_bytes());
+            let mut device = [0_u8; 312];
+            device[..4].copy_from_slice(b"/usb");
+            device[256..259].copy_from_slice(b"1-2");
+            device[288..292].copy_from_slice(&1_u32.to_be_bytes());
+            device[292..296].copy_from_slice(&2_u32.to_be_bytes());
+            device[296..300].copy_from_slice(&3_u32.to_be_bytes());
+            device[300..302].copy_from_slice(&0x1234_u16.to_be_bytes());
+            device[302..304].copy_from_slice(&0xabcd_u16.to_be_bytes());
+            reply.extend(device);
+            // Exercise a fragmented response rather than treating TCP as messages.
+            for chunk in reply.chunks(17) {
+                stream.write_all(chunk).await?;
+            }
+            Ok(())
+        });
+        Ok((
+            Peer {
+                host: Host::new("127.0.0.1")?,
+                port,
+            },
+            task,
+        ))
+    }
+
+    #[test]
+    fn status_is_strict_and_does_not_call_enumerating_ports_connected() -> Result<()> {
+        let sessions = parse_status(ATTACHED)?;
+        assert_eq!(sessions[0].remote_device_id, Some(0x10002));
+        assert_eq!(sessions[0].local_bus_id, Some(BusId::new("9-1")?));
+        let pending = "hub port sta spd dev sockfd local_busid\nhs 0 5 0 00000000 0000 0-0\n";
+        assert_eq!(parse_status(pending)?[0].local_bus_id, None);
+        for text in [
+            "",
+            "port status\n",
+            "hub port sta spd dev sockfd local_busid\nhs 256 4 0 0 0 0-0\n",
+            "hub port sta spd dev sockfd local_busid\nhs 0 6 3 10002 1 ../x\n",
+            "hub port sta spd dev sockfd local_busid\nhs 0 8 0 0 0 0-0\n",
+            "hub port sta spd dev sockfd local_busid\nhs 0 4 0 0 0 0-0\nhs 0 4 0 0 0 0-0\n",
+        ] {
+            assert!(parse_status(text).is_err(), "{text}");
+        }
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn snapshots_cover_every_status_attribute_and_reject_missing_rows() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 0")?;
+        let owner = fixture.path("platform/vhci_hcd.0");
+        std::fs::write(
+            owner.join("status"),
+            "hub port sta spd dev sockfd local_busid\nhs 0 4 0 0 0 0-0\n",
+        )?;
+        std::fs::write(
+            owner.join("status.1"),
+            "hub port sta spd dev sockfd local_busid\nss 1 4 0 0 0 0-0\n",
+        )?;
+        assert_eq!(fixture.backend.port_states().await?.len(), 2);
+        assert!(fixture.backend.sessions().await?.is_empty());
+        std::fs::remove_file(owner.join("status.1"))?;
+        assert!(fixture.backend.port_states().await.is_err());
+        std::fs::write(
+            owner.join("status.1"),
+            "hub port sta spd dev sockfd local_busid\nss 0 4 0 0 0 0-0\n",
+        )?;
+        assert!(fixture.backend.port_states().await.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn export_and_unexport_require_observed_driver_changes() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new(
+            "if [ \"$1\" = bind ]; then\nln -s usbip-host \"$BASE/devices/1-2/driver\"\nprintf 1 >\"$BASE/devices/1-2/usbip_status\"\nelse\nrm \"$BASE/devices/1-2/driver\"\nln -s usb \"$BASE/devices/1-2/driver\"\nfi",
+        )?;
+        fixture.backend.export(BusId::new("1-2")?).await?;
+        let argv = std::fs::read_to_string(fixture.path("argv"))?;
+        assert_eq!(argv, "bind\n--busid\n1-2\n");
+        assert_eq!(
+            fixture
+                .backend
+                .device_binding(&BusId::new("1-2")?)
+                .await?
+                .status,
+            Some(1)
+        );
+        fixture.backend.unexport(BusId::new("1-2")?).await?;
+        assert_eq!(
+            fixture
+                .backend
+                .device_binding(&BusId::new("1-2")?)
+                .await?
+                .driver
+                .as_deref(),
+            Some("usb")
+        );
+        // A lying successful executable does not prove a kernel mutation.
+        let unchanged = Fixture::new("exit 0")?;
+        assert!(matches!(
+            unchanged.backend.export(BusId::new("1-2")?).await,
+            Err(Error::Timeout(_))
+        ));
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn failed_tool_can_leave_exported_state_and_busy_export_is_rejected() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new(
+            "ln -s usbip-host \"$BASE/devices/1-2/driver\"\nprintf 1 >\"$BASE/devices/1-2/usbip_status\"\nexit 1",
+        )?;
+        let result = fixture.backend.export(BusId::new("1-2")?).await;
+        assert!(
+            matches!(result, Err(Error::Command(ref message)) if message.contains("reconciliation required") && message.contains("usbip-host"))
+        );
+        assert_eq!(
+            fixture
+                .backend
+                .device_binding(&BusId::new("1-2")?)
+                .await?
+                .status,
+            Some(1)
+        );
+        let busy = Fixture::new("exit 99")?;
+        busy.binding("usbip-host", 2)?;
+        assert!(busy.backend.unexport(BusId::new("1-2")?).await.is_err());
+        assert!(!busy.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn subprocess_timeout_is_killed_and_reaped_and_output_is_bounded() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let mut fixture = Fixture::new("exec /bin/sleep 5")?;
+        Arc::get_mut(&mut fixture.backend.configuration)
+            .ok_or_else(|| Error::State("fixture configuration unexpectedly shared".into()))?
+            .command_timeout = Duration::from_millis(200);
+        let result = fixture.backend.run_tool(&["bind".into()]).await;
+        assert!(matches!(result, Err(Error::Timeout(_))), "{result:?}");
+        let pid = std::fs::read_to_string(fixture.path("pid"))?;
+        assert!(!PathBuf::from(format!("/proc/{}", pid.trim())).exists());
+        let noisy = Fixture::new("exec /usr/bin/head -c 1000000 /dev/zero")?;
+        let result = noisy.backend.run_tool(&["bind".into()]).await;
+        assert!(
+            matches!(result, Err(Error::Command(ref message)) if message.contains("byte limit"))
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn attach_claims_only_verified_session_and_failure_does_not_hide_side_effects()
+    -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let body = format!(
+            "cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{ATTACHED}STATE\nprintf '%s %s %s\\n' \"$5\" \"$2\" \"$7\" >\"$BASE/records/port0\""
+        );
+        let fixture = Fixture::new(&body)?;
+        let (peer, server) = remote_peer().await?;
+        let session = fixture
+            .backend
+            .attach_session(peer.clone(), BusId::new("1-2")?)
+            .await?;
+        assert_eq!(session.port, VhciPort(0));
+        assert_eq!(session.vendor_id, Some(0x1234));
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("argv"))?,
+            format!(
+                "--tcp-port\n{}\nattach\n--remote\n127.0.0.1\n--busid\n1-2\n",
+                peer.port
+            )
+        );
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        let failed = Fixture::new(&format!("{body}\nexit 1"))?;
+        let (peer, server) = remote_peer().await?;
+        let result = failed
+            .backend
+            .attach_session(peer, BusId::new("1-2")?)
+            .await;
+        assert!(
+            matches!(result, Err(Error::Command(ref message)) if message.contains("reconciliation required"))
+        );
+        assert_eq!(failed.backend.sessions().await?.len(), 1);
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn attach_does_not_claim_missing_record_wrong_metadata_or_existing_port() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let body =
+            format!("cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{ATTACHED}STATE\n");
+        let fixture = Fixture::new(&body)?;
+        let (peer, server) = remote_peer().await?;
+        assert!(
+            fixture
+                .backend
+                .attach_session(peer, BusId::new("1-2")?)
+                .await
+                .is_err()
+        );
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        let mismatch = Fixture::new(&body)?;
+        std::fs::write(mismatch.path("devices/9-1/idVendor"), "5678")?;
+        let (peer, server) = remote_peer().await?;
+        assert!(matches!(
+            mismatch
+                .backend
+                .attach_session(peer, BusId::new("1-2")?)
+                .await,
+            Err(Error::Timeout(_))
+        ));
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        let existing = Fixture::new("exit 0")?;
+        std::fs::write(existing.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let (peer, server) = remote_peer().await?;
+        assert!(
+            existing
+                .backend
+                .attach_session(peer, BusId::new("1-2")?)
+                .await
+                .is_err()
+        );
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detach_is_idempotent_and_waits_for_actual_kernel_release() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let body = format!(
+            "cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\nmv \"$BASE/devices/9-1\" \"$BASE/released\"\n"
+        );
+        let fixture = Fixture::new(&body)?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        fixture.backend.detach(VhciPort(0)).await?;
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("argv"))?,
+            "detach\n--port\n0\n"
+        );
+        fixture.backend.detach(VhciPort(0)).await?;
+        let unchanged = Fixture::new("exit 0")?;
+        std::fs::write(unchanged.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        assert!(matches!(
+            unchanged.backend.detach(VhciPort(0)).await,
+            Err(Error::Timeout(_))
+        ));
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detach_reobserves_changed_status_without_repeating_the_command() -> Result<()> {
+        use std::io::Write;
+
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new(
+            "set -e\nprintf 'detach\\n' >>\"$BASE/calls\"\nrm \"$BASE/devices/9-1/idProduct\"\nmkfifo \"$BASE/devices/9-1/idProduct\"",
+        )?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let expected = fixture.backend.sessions().await?.remove(0);
+        let path = fixture.path("devices/9-1");
+        let product = path.join("idProduct");
+        let status = fixture.path("platform/vhci_hcd.0/status");
+        let nports = fixture.path("platform/vhci_hcd.0/nports");
+        let removed = fixture.path("released");
+        let transition = tokio::task::spawn_blocking(move || -> io::Result<()> {
+            // The tool installs this FIFO only after the authorization snapshot.
+            // Its reader has already read USED and the original device receipt.
+            let mut product_writer = rendezvous_fifo_writer(&product)?;
+            std::fs::write(status, EMPTY)?;
+            std::fs::remove_file(&nports)?;
+            rustix::fs::mkfifoat(
+                rustix::fs::CWD,
+                &nports,
+                rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+            )
+            .map_err(io::Error::from)?;
+            product_writer.write_all(b"abcd\n")?;
+            drop(product_writer);
+
+            // This rendezvous is reached only by a subsequent full snapshot,
+            // after the first snapshot has observed USED -> NULL. Keep the old
+            // directory until then so missing local metadata cannot mimic it.
+            let mut count_writer = rendezvous_fifo_writer(&nports)?;
+            std::fs::rename(path, removed)?;
+            std::fs::remove_file(&nports)?;
+            std::fs::write(nports, "2\n")?;
+            count_writer.write_all(b"2\n")
+        });
+        let result = fixture.backend.detach_session(&expected).await;
+        let transition_result = transition
+            .await
+            .map_err(|error| Error::State(error.to_string()))?;
+        assert!(result.is_ok(), "detach result: {result:?}");
+        transition_result?;
+        assert_eq!(std::fs::read_to_string(fixture.path("calls"))?, "detach\n");
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("argv"))?,
+            "detach\n--port\n0\n"
+        );
+        assert!(fixture.backend.session_cleanup_complete(&expected).await?);
+        assert!(!fixture.path("devices/9-1").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn public_snapshot_still_rejects_status_changed_during_observation() -> Result<()> {
+        use std::io::Write;
+
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let product = fixture.path("devices/9-1/idProduct");
+        std::fs::remove_file(&product)?;
+        rustix::fs::mkfifoat(
+            rustix::fs::CWD,
+            &product,
+            rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+        )
+        .map_err(io::Error::from)?;
+        let status = fixture.path("platform/vhci_hcd.0/status");
+        let transition = tokio::task::spawn_blocking(move || -> io::Result<()> {
+            let mut writer = rendezvous_fifo_writer(&product)?;
+            std::fs::write(status, EMPTY)?;
+            writer.write_all(b"abcd\n")
+        });
+        let result = fixture.backend.port_states().await;
+        transition
+            .await
+            .map_err(|error| Error::State(error.to_string()))??;
+        assert!(
+            matches!(result, Err(Error::State(ref message)) if message.contains("VHCI status changed")),
+            "snapshot result: {result:?}"
+        );
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detach_rejects_post_command_replacement_and_unknown_generation() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new(
+            "set -e\nprintf 'detach\\n' >>\"$BASE/calls\"\nmv \"$BASE/devices/9-1\" \"$BASE/released\"\nmkdir \"$BASE/devices/9-1\"\nprintf '1234\\n' >\"$BASE/devices/9-1/idVendor\"\nprintf 'abcd\\n' >\"$BASE/devices/9-1/idProduct\"\nprintf '2\\n' >\"$BASE/devices/9-1/devnum\"",
+        )?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let expected = fixture.backend.sessions().await?.remove(0);
+        let mut unknown = expected.clone();
+        unknown.local_device_generation = None;
+        assert!(matches!(
+            fixture.backend.detach_session(&unknown).await,
+            Err(Error::Permission(_))
+        ));
+        assert!(!fixture.path("argv").exists());
+        let result = fixture.backend.detach_session(&expected).await;
+        assert!(matches!(result, Err(Error::Permission(_))), "{result:?}");
+        assert_eq!(std::fs::read_to_string(fixture.path("calls"))?, "detach\n");
+        assert!(fixture.path("devices/9-1").is_dir());
+        assert!(!fixture.backend.session_cleanup_complete(&expected).await?);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn checked_detach_rejects_a_reused_port_without_running_tool() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let mut expected = fixture.backend.sessions().await?.remove(0);
+        expected.remote_device_id = Some(0x20003);
+        assert!(matches!(
+            fixture.backend.detach_session(&expected).await,
+            Err(Error::Permission(_))
+        ));
+        assert!(!fixture.path("argv").exists());
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), EMPTY)?;
+        assert!(fixture.backend.detach_session(&expected).await.is_err());
+        std::fs::rename(fixture.path("devices/9-1"), fixture.path("released"))?;
+        fixture.backend.detach_session(&expected).await?;
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn same_device_on_reused_port_requires_the_original_generation_receipt() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let owned = fixture.backend.sessions().await?.remove(0);
+        assert_eq!(owned.local_device_address, Some(2));
+        assert!(owned.local_device_generation.is_some());
+
+        // Simulate an external release and import of the identical device,
+        // preserving its port, bus IDs, VID/PID and even the local USB address.
+        std::fs::rename(fixture.path("devices/9-1"), fixture.path("released"))?;
+        std::fs::create_dir(fixture.path("devices/9-1"))?;
+        for (name, value) in [("idVendor", "1234"), ("idProduct", "abcd"), ("devnum", "2")] {
+            std::fs::write(fixture.path(&format!("devices/9-1/{name}")), value)?;
+        }
+        let replacement = fixture.backend.sessions().await?.remove(0);
+        assert_eq!(owned.local_bus_id, replacement.local_bus_id);
+        assert_eq!(owned.remote_device_id, replacement.remote_device_id);
+        assert_eq!(owned.vendor_id, replacement.vendor_id);
+        assert_eq!(owned.local_device_address, replacement.local_device_address);
+        assert_ne!(
+            owned.local_device_generation,
+            replacement.local_device_generation
+        );
+        assert!(!same_identity(&owned, &replacement));
+        assert!(matches!(
+            fixture.backend.detach_session(&owned).await,
+            Err(Error::Permission(_))
+        ));
+        assert!(!fixture.backend.session_cleanup_complete(&owned).await?);
+        assert!(!fixture.path("argv").exists());
+
+        // A NULL port plus disappearance of the original receipt is sufficient.
+        // The replacement directory at the same address must not be touched.
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), EMPTY)?;
+        assert!(fixture.backend.session_cleanup_complete(&owned).await?);
+        fixture.backend.detach_session(&owned).await?;
+        assert!(fixture.path("devices/9-1").is_dir());
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn missing_receipts_and_incomplete_local_metadata_never_authorize_cleanup() -> Result<()>
+    {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let original = fixture.backend.sessions().await?.remove(0);
+        for missing_address in [false, true] {
+            let mut incomplete = original.clone();
+            if missing_address {
+                incomplete.local_device_address = None;
+            } else {
+                incomplete.local_device_generation = None;
+            }
+            assert!(fixture.backend.detach_session(&incomplete).await.is_err());
+            assert!(
+                fixture
+                    .backend
+                    .session_cleanup_complete(&incomplete)
+                    .await
+                    .is_err()
+            );
+            std::fs::write(fixture.path("platform/vhci_hcd.0/status"), EMPTY)?;
+            assert!(fixture.backend.detach_session(&incomplete).await.is_err());
+            std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        }
+        assert!(!fixture.path("argv").exists());
+        for invalid in ["0", "256", "invalid"] {
+            std::fs::write(fixture.path("devices/9-1/devnum"), invalid)?;
+            assert!(fixture.backend.sessions().await.is_err());
+        }
+        std::fs::remove_file(fixture.path("devices/9-1/devnum"))?;
+        assert!(fixture.backend.sessions().await.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn snapshot_rejects_replacement_between_usb_attribute_reads() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        use std::{io::Write, os::unix::fs::OpenOptionsExt};
+
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let path = fixture.path("devices/9-1");
+        let product = path.join("idProduct");
+        std::fs::remove_file(&product)?;
+        rustix::fs::mkfifoat(
+            rustix::fs::CWD,
+            &product,
+            rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+        )
+        .map_err(io::Error::from)?;
+        let removed = fixture.path("released");
+        let replacement = tokio::task::spawn_blocking(move || -> io::Result<()> {
+            // The FIFO rendezvous places replacement after the initial inode
+            // and address reads, while the product attribute is being read.
+            // Nonblocking opens plus a deadline also bound the failure path.
+            let deadline = std::time::Instant::now() + Duration::from_secs(3);
+            let nonblocking = i32::try_from(rustix::fs::OFlags::NONBLOCK.bits())
+                .map_err(|_| io::Error::other("nonblocking flag exceeds native API"))?;
+            let mut writer = loop {
+                match std::fs::OpenOptions::new()
+                    .write(true)
+                    .custom_flags(nonblocking)
+                    .open(&product)
+                {
+                    Ok(writer) => break writer,
+                    Err(error)
+                        if error.raw_os_error() == Some(rustix::io::Errno::NXIO.raw_os_error())
+                            && std::time::Instant::now() < deadline =>
+                    {
+                        std::thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => return Err(error),
+                }
+            };
+            std::fs::rename(&path, removed)?;
+            std::fs::create_dir(&path)?;
+            for (name, value) in [("idVendor", "1234"), ("idProduct", "abcd"), ("devnum", "2")] {
+                std::fs::write(path.join(name), value)?;
+            }
+            writer.write_all(b"abcd\n")
+        });
+        let result = fixture.backend.sessions().await;
+        replacement
+            .await
+            .map_err(|error| Error::State(error.to_string()))??;
+        assert!(
+            matches!(result, Err(Error::State(message)) if message.contains("generation changed"))
+        );
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn native_record_limit_is_rejected_before_network_or_kernel_mutations() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 99")?;
+        let host = format!("{}.{}.example", "a".repeat(63), "b".repeat(63));
+        let peer = Peer {
+            host: Host::new(host)?,
+            port: NonZeroU16::new(3240).ok_or_else(|| Error::State("zero test port".into()))?,
+        };
+        assert!(matches!(
+            fixture
+                .backend
+                .attach_session(peer, BusId::new("1-2")?)
+                .await,
+            Err(Error::InvalidInput(_))
+        ));
+        assert!(!fixture.path("argv").exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn dropping_future_terminates_child_but_never_claims_kernel_rollback() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exec /bin/sleep 5")?;
+        let backend = fixture.backend.clone();
+        let operation = tokio::spawn(async move { backend.run_tool(&[]).await });
+        let deadline = Instant::now() + Duration::from_secs(1);
+        while !fixture.path("pid").exists() && Instant::now() < deadline {
+            sleep(Duration::from_millis(2)).await;
+        }
+        let pid = std::fs::read_to_string(fixture.path("pid"))?;
+        let process = PathBuf::from(format!("/proc/{}", pid.trim()));
+        operation.abort();
+        assert!(operation.await.is_err_and(|error| error.is_cancelled()));
+        let deadline = Instant::now() + Duration::from_secs(1);
+        while process.exists() && Instant::now() < deadline {
+            sleep(Duration::from_millis(5)).await;
+        }
+        assert!(!process.exists());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn executable_verification_rejects_writable_configured_parent_chain() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let fixture = Fixture::new("exit 0")?;
+        let mut configuration = Configuration {
+            usbip: fixture.path("redirect"),
+            devices: fixture.path("devices"),
+            platform: fixture.path("platform"),
+            records: fixture.path("records"),
+            command_timeout: Duration::from_millis(100),
+            settle_timeout: Duration::from_millis(100),
+            poll_interval: Duration::from_millis(5),
+            require_root_tool: true,
+        };
+        // Target is a normal trusted system executable, but this symlink's
+        // configured parent is not trusted for privileged execution.
+        symlink("/usr/bin/true", &configuration.usbip)?;
+        let backend = NativeBackend {
+            configuration: Arc::new(configuration),
+            mutation: Arc::new(Mutex::new(())),
+        };
+        assert!(matches!(
+            backend.verify_tool().await,
+            Err(Error::Permission(_))
+        ));
+        configuration = Configuration {
+            usbip: PathBuf::from("/usr/bin/true"),
+            devices: fixture.path("devices"),
+            platform: fixture.path("platform"),
+            records: fixture.path("records"),
+            command_timeout: Duration::from_millis(100),
+            settle_timeout: Duration::from_millis(100),
+            poll_interval: Duration::from_millis(5),
+            require_root_tool: true,
+        };
+        let backend = NativeBackend {
+            configuration: Arc::new(configuration),
+            mutation: Arc::new(Mutex::new(())),
+        };
+        assert_eq!(
+            backend.verify_tool().await?,
+            fs::canonicalize("/usr/bin/true").await?
+        );
+        Ok(())
+    }
+    #[tokio::test]
+    async fn unknown_export_state_and_untrusted_endpoint_records_are_rejected() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        for status in [2, 3, 99] {
+            let fixture = Fixture::new("exit 99")?;
+            fixture.binding("usbip-host", status)?;
+            assert!(matches!(
+                fixture.backend.unexport(BusId::new("1-2")?).await,
+                Err(Error::State(_))
+            ));
+            assert!(!fixture.path("argv").exists());
+        }
+        let fixture = Fixture::new("exit 99")?;
+        std::fs::write(fixture.path("records/port0"), "127.0.0.1 3240 1-2\n")?;
+        assert!(matches!(
+            read_trusted_record(&fixture.path("records"), VhciPort(0)).await,
+            Err(Error::Permission(_))
+        ));
+        Ok(())
+    }
+    #[tokio::test]
+    async fn detach_waits_for_old_sysfs_generation_after_port_becomes_null() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let body = format!("cat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\n");
+        let fixture = Fixture::new(&body)?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let path = fixture.path("devices/9-1");
+        let removed = fixture.path("released");
+        let argv = fixture.path("argv");
+        let removal = tokio::spawn(async move {
+            while !fs::try_exists(&argv).await? {
+                sleep(Duration::from_millis(2)).await;
+            }
+            sleep(Duration::from_millis(40)).await;
+            fs::rename(path, removed).await
+        });
+        fixture.backend.detach(VhciPort(0)).await?;
+        assert!(!fixture.path("devices/9-1").exists());
+        removal
+            .await
+            .map_err(|error| Error::State(error.to_string()))??;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detach_does_not_wait_for_replacement_generation_at_same_path() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        // Complete the fake kernel transition before usbip returns. Wall-clock
+        // sleeps race both command scheduling and the generation observation.
+        let body = format!(
+            "printf 'called\\n' >>\"$BASE/detach-calls\"\ncat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\nmv \"$BASE/devices/9-1\" \"$BASE/released\" || exit 1\nmkdir \"$BASE/devices/9-1\""
+        );
+        let fixture = Fixture::new(&body)?;
+        std::fs::write(fixture.path("platform/vhci_hcd.0/status"), ATTACHED)?;
+        let path = fixture.path("devices/9-1");
+        let original = capture_generation(path.clone())
+            .await?
+            .ok_or_else(|| Error::State("missing fixture generation".into()))?;
+        fixture.backend.detach(VhciPort(0)).await?;
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("argv"))?,
+            "detach\n--port\n0\n"
+        );
+        assert_eq!(
+            std::fs::read_to_string(fixture.path("detach-calls"))?,
+            "called\n"
+        );
+        assert!(fixture.path("devices/9-1").exists());
+        assert!(fixture.path("released").exists());
+        assert!(!same_generation_present(&original).await?);
+        Ok(())
+    }
+    #[tokio::test]
+    async fn unsafe_record_directory_is_rejected_before_running_attach_tool() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let mut fixture = Fixture::new("exit 99")?;
+        Arc::get_mut(&mut fixture.backend.configuration)
+            .ok_or_else(|| Error::State("fixture configuration unexpectedly shared".into()))?
+            .require_root_tool = true;
+        let (peer, server) = remote_peer().await?;
+        let result = fixture
+            .backend
+            .attach_session(peer, BusId::new("1-2")?)
+            .await;
+        assert!(
+            matches!(result, Err(Error::Permission(ref message)) if message.contains("record"))
+        );
+        assert!(!fixture.path("argv").exists());
+        server
+            .await
+            .map_err(|error| Error::State(error.to_string()))??;
+        Ok(())
+    }
+}

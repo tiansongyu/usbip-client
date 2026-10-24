@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "broker_uid": 2000,
+  "listen": "[fd42:7275:7374::1]:3241",
+  "devices": [
+    "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+    "physical:usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de"
+  ],
+  "principals": [
+    {
+      "id": "replacement",
+      "pins": [
+        "6b43d764f07bf34488b7595e2c33eebbcd2f036c6f949b4eaad52325c5672224"
+      ],
+      "devices": [
+        "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "physical:usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de"
+      ]
+    },
+    {
+      "id": "restricted",
+      "pins": [
+        "e550284b28eeb39e8697e4ad3a77ea1e3276251fdc0e5e595e5cf71c379983e8"
+      ],
+      "devices": [
+        "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6"
+      ]
+    },
+    {
+      "id": "expired",
+      "pins": [
+        "97822df86c0b366bf4ba6350762b4abf4c3dcb2203424081423c42bd5cbaabe9"
+      ],
+      "devices": [
+        "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "physical:usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de"
+      ]
+    },
+    {
+      "id": "badeku",
+      "pins": [
+        "2d3382ccad8b4b1e89b772c3486343ec9698d59a91511de7d3d71cee59f2f550"
+      ],
+      "devices": [
+        "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "physical:usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de"
+      ]
+    },
+    {
+      "id": "unknown-ca",
+      "pins": [
+        "9d50ba7944a826fa942eb3ba7dead62de279c26b861cee0cc7ae19e297162dcc"
+      ],
+      "devices": [
+        "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "physical:usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de"
+      ]
+    },
+    {
+      "id": "old-client",
+      "pins": [
+        "318d8e0b2132615eb24ac491e5530972471538a8fbdd29f5b6d9653caacc6d81"
+      ],
+      "devices": [
+        "physical:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+        "physical:usb-75a369afdc1fe0e4bc9052c1e8210d080824cccb4bbcb128962e3a3feb6ef6de"
+      ]
+    }
+  ],
+  "ca_certificates": [
+    "/etc/rustusb/ca.der"
+  ],
+  "certificate_chain": [
+    "/etc/rustusb/server.der"
+  ],
+  "private_key": "/etc/rustusb/server-key.der",
+  "authentication_limit": {
+    "burst": 32,
+    "interval_millis": 500
+  }
+}

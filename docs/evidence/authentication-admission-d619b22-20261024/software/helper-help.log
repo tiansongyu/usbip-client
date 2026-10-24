@@ -1,0 +1,23 @@
+Restricted local Linux USB/IP helper; never starts usbipd or creates encryption
+
+Usage: rustusb-helper [OPTIONS]
+
+Options:
+      --config <CONFIG>
+          Root-owned, non-writable-by-others policy file [default: /etc/rustusb/policy.json]
+      --socket <SOCKET>
+          Socket in a root-owned, non-writable-by-others directory [default: /run/rustusb/control.sock]
+      --physical-state-dir <PHYSICAL_STATE_DIR>
+          Root-only persistent physical grant journal, kept across helper restarts [default: /var/lib/rustusb/physical]
+      --native-state-dir <NATIVE_STATE_DIR>
+          Separate root-only secure Native channel intents, retained across restarts [default: /var/lib/rustusb/native]
+      --log-directory <LOG_DIRECTORY>
+          Write bounded sanitized NDJSON to an existing root-owned mode0700 directory
+      --log-max-bytes <LOG_MAX_BYTES>
+          Maximum bytes per segment; requires --log-directory
+      --log-retain <LOG_RETAIN>
+          Total retained segments including active
+      --log-json
+          Use JSON stderr tracing in legacy mode; file logs are always JSON
+  -h, --help
+          Print help

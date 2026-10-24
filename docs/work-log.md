@@ -690,3 +690,10 @@
 
 - clean47fcb75完整gate实际全部通过：356默认/448all/20vendor共824执行、47rows零失败忽略，196source/build稳定及Native-only隔离通过，admission/security CLI help与Governor stdfeature图保存。新CLI877946fd…/helper仍7c690c；尚不作为安装态准入耗尽验收。
 - 首actual Native-v4 admission QEMU clean9561133两guest0、四guard真，但host因Verifier在base最终落summary之前读取payload_sha256而KeyError/FAIL。原文件保留，不补写该run缺少的独立receipt、不改判PASS；先补设计再在packing阶段保存固定payload hash原件、校验器读取此原件。观察已有两轮rate计数/真实guest路径，但其新host验收仍须新clean/fresh实际执行。Rust196源不改，旧824不重标新执行。
+
+## 2026-10-24：认证准入最终QEMU与证据冻结
+
+- fresh clean d619b22 Native-v4第二轮PASS；其余五后端/IP组合均PASS，六项raw-v1保留原两credential epoch/四认证屏障/实际HID和串口I/O/fullRootproof及原driverbaseline。原worker实际UID/start/BusyBox ELF、全部wait、quota/refill真实观测与准入/旧TLS/outer分账。
+- 同clean d619六原secure默认配置回归、独立Native-v4/framed-v2诊断回归全部PASS，共13paired/26guest0，默认locked all-features release。软件824仍属clean47f的196输入；未把harness修订称为软件复跑。本地4signal/2BP属clean956的同一CLI。
+- 首956 Native-v4仍host FAIL/guest0，原因是尚未持久化summary的payload_sha256；d619在真实pack时先落独立receipt，新目录重跑通过，旧证据未补写或重判。
+- 沿用technical-documentation/readme-site维护英文README、对应静态站和验收链接，保留此前参考rstop的独立设计/全局skill。原Phase0–7 goal继续active；安装态agent/v2专项限速、公平/长期DoS/性能、硬件G1/G2及完整G3仍未完成。

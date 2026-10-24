@@ -57,3 +57,12 @@ The tab URL/history, selected indicator and inline link cues are verified separa
 The [authentication-refusal update](research/secure-negative-qemu-validation.md) adds six paired runs / 12 guest exits at clean `25870c6`, with two startup credential epochs per pair. Its original four failed host verifications remain preserved. Keep this raw-v1 result separate from the older all-positive security, framed-v2 health and diagnostic matrices. New source text requires its own Pages/live verification; the `94e0d07` receipt above describes the preceding published site.
 
 That update is published at `52627d8`, with [exact-content deployment and live-byte receipts](evidence/authentication-publication-52627d8-20261024/manifest.json). All four native software jobs and Pages check/deploy succeeded. Six canonical HTTPS resources match its Git blobs; actual live desktop/mobile layout, responsive images and keyboard state were checked. Detailed 797-execution software remains at clean `3d7e126`, and all six new QEMU runs remain at clean `25870c6`.
+
+The [authentication-admission update](research/authentication-admission-validation.md)
+adds the 824-execution clean software and thirteen-paired-QEMU scope separately
+from the earlier results. Six local project-prefix resources match source bytes;
+actual desktop/narrow-screen layout, loaded images and tab keyboard behavior
+pass. A local CSP `script-src 'none'` response retains all initial instructions.
+The screenshot API remains unavailable, so this is DOM/layout verification.
+Runtime CSS/JS/images and the four global `readme-site` files are unchanged.
+Publication is recorded against its actual pushed content revision.

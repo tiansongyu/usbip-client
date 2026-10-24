@@ -88,3 +88,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - 未授权direct IMPORT须经真实TLS到server返回4，authorized duplicate返回2；catalog隐藏或client先拒绝不能代替它。before/after保原owner并随后实际I/O，不能只做echo/新catalog。
 - TLS1.3 mapping拒绝可在client完成握手后表现为缺close_notify或精确Linux104；只该类认可此观察，不泛放IO或叫cleanEOF/已trace reset。其他证书/服务端校验保固定TLS/service类别；VHCI004按严格有界十进制解释NULL4。
 - 201harness输入含192source/build；实测raw-v1、fast负向无逐executedELF、混合PCAP无旧正向classifier裁决、同作者raw方法非独立实现审计。所有实际owner/原proof/driverbaseline、guest0不能覆盖hostFAIL的规则保持。
+
+## TLS认证准入限速
+
+修改此路径前读`docs/research/authentication-admission-design.md`与`authentication-admission-validation.md`。固定Governor0.10.4/std-only+显式MonotonicClock，root严格policy；原连接permit先于非等待gate，TLS/verifier/IO在其后，失败/取消不退还，已建立stream/URB不再过门。配置clone/job共用gate；monitor仅metadata不持实际limiter/凭据/能力，短锁无日志/FS/await，poison拒绝新decision、饱和显式。旧TLS/framing/outer方程不变，独立Read RPC/control授权绕WAL、拒绝durable。这不是设备持久准入。软件824/196属clean47f，十三paired/26guest0属clean d619；首956采证FAIL不重判。安装态agent/v2专项限速、公平/长期DoS/性能、硬件及完整G3仍待验收。

@@ -123,3 +123,5 @@ cargo build --workspace --release
 
 
 服务端观测增量E38见[验收](research/server-security-observations-validation.md)：clean c097cf8软件808/194稳定输入，六raw认证计数paired与一独立Native-v4/v2诊断回归通过，共14guest0。前台及agent精确Read接口已实现，TLS/framing/outer限额按loaded配置累计；volatile计数不代替持久安全审计、设备释放或完整G3，安装态agent counter/v2负向counter仍待验收。原Phase0–7与TUI/GUI/真实硬件范围不变。
+
+认证准入增量E39见[验收](research/authentication-admission-validation.md)：clean47f软件824/196稳定输入，clean d619六限速/六默认/独立v2诊断共13paired与26guest0。默认64/125ms、root可选严格策略、loaded配置共享、独立Read观测已实现。按来源公平、长期DoS/性能、安装态agent/v2专项耗尽、硬件与完整G3仍未验收；不越过原Phase4–7。

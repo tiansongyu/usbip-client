@@ -1,0 +1,137 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "-x",
+        "scripts/check.sh"
+      ],
+      "exit_code": 0,
+      "log": "full-gate.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-check.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--edges",
+        "normal",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-tree.log"
+    },
+    {
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "rustc.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "cargo.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-help.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "--workspace",
+        "--all-features",
+        "--edges",
+        "features",
+        "--invert",
+        "governor",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "governor-features.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "agent",
+        "--config",
+        "/etc/rustusb/unused.json",
+        "server-admission",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "agent-admission-help.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "agent",
+        "--config",
+        "/etc/rustusb/unused.json",
+        "server-security",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "agent-security-help.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb-helper",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "helper-help.log"
+    }
+  ],
+  "inputs_stable": true,
+  "selected_inputs": 196,
+  "artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "bytes": 17105224,
+      "sha256": "877946fd141c6acee5e30b930cd49bdf77ba9f7573333cd4f19f87b1431ef9fd",
+      "dev": 66306,
+      "inode": 79646115,
+      "mtime_ns": 1792832842612401886
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "bytes": 7464240,
+      "sha256": "7c690c62dbc02b7e08b224e2f3cfe773c77bebc6a8e6c10ebd716b2696806322",
+      "dev": 66306,
+      "inode": 79641322,
+      "mtime_ns": 1792816939275444399
+    }
+  ]
+}

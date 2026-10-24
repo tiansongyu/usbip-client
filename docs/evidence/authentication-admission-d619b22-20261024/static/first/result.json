@@ -1,0 +1,42 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "sh",
+        "-n"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "sh",
+        "-n",
+        "scripts/qemu_authentication_admission/worker.sh"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "sh",
+        "-n",
+        "scripts/qemu_authentication_admission/extra.sh"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "env",
+        "RUSTUSB_QEMU_GUEST=1",
+        "sh",
+        "scripts/qemu_authentication_admission/worker.sh",
+        "1",
+        "1",
+        "ipv4"
+      ],
+      "exit": 2
+    }
+  ],
+  "generated_sha256": "1669623c25081897be658004a6461484ddc0c0ac8d7f7b852bdafa1f6983280c",
+  "scope": "Generated POSIX shell syntax,worker real-host refusal before network,Python compilation and pure phase-predicate branches only; no guest/product/USB execution."
+}

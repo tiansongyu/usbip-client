@@ -155,3 +155,7 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 
 
 服务端现在提供[有界安全计数](research/server-security-observations-validation.md)：只含loaded TLS配置的固定数值/枚举/标记，区分TLS、framing与outer限额。agent逐实际UID/profile Read授权，授权全部结果绕WAL、拒绝仍durable；无peer地址、pin、principal、USB内容或原始错误文本。它是volatile观测，不是持久安全审计、实时撤销、设备cleanup或完整G3证明。安装态负向计数只验raw-v1六组合；framed-v2与agent IPC的软件测试/独立诊断回归不冒充安装态counter验收。
+
+## 有界认证准入
+
+[认证准入限速验收](research/authentication-admission-validation.md)覆盖默认64初始/125ms补充与root可选严格策略。每个已加载TLS服务配置的clone/job共用Governor direct gate，连接permit先于rate decision，verifier/IO在其后；失败/取消不退配额，原有设备数据流不重复检查。新计数只有policy/固定数值/一致性，无peer/key/principal；授权读取不等WAL。六raw-v1 QEMU在实际拒绝期间完成原HID/串口I/O，并在补充后成功新认证；六默认配置及独立v2诊断回归分账。不是按来源公平、持续攻击/性能或公网部署资格；安装态agent/v2专项耗尽、持久安全历史与完整G3仍未完成。

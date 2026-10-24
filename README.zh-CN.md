@@ -44,7 +44,9 @@ target/release/rustusb doctor
 
 新增[installed认证负向与启动pin退休验收](docs/research/secure-negative-qemu-validation.md)：clean `25870c6` 的Native/virtual/USBFS × IPv4/IPv6六paired run全部通过，12guest0；每pair同guest/helper内两credential epoch、四拒绝前后屏障及两轮实际HID/Serial I/O。各44条目标负向client退出记录包含错误证书/用途/名称/信任、缺cert/ALPN、直接未授权IMPORT4/duplicate2及旧pin移除后拒绝；264条进程记录不计USBcases。clean3d7软件797次仍同192源；前四hostFAIL均保留。这是raw-v1合作停止后startup pin退休，不是热吊销/CRL、崩溃恢复或完整G3。
 
-更新的[服务端观测版本](docs/research/server-security-observations-validation.md)在干净`c097cf8`通过808次软件测试和七次双QEMU：六组认证拒绝/计数组合，以及独立的framed-v2诊断回归。前台control与`agent server-security PROFILE`提供有界TLS/framing/限额计数；它们按已加载配置累计、服务重启归零，不是持久审计或USB清理证明。
+新的[认证准入限速](docs/research/authentication-admission-validation.md)默认初始64次、每125ms补充一次，按已加载TLS配置共享，可由root配置。干净`47fcb75`通过824次软件测试；干净`d619b22`通过13次双QEMU（六项限速、六项默认配置及一项独立v2诊断回归），26个guest退出0。所测限速期间原有HID/串口I/O保持正常；全局配额不承诺按来源公平或完整抗拒绝服务。
+
+此前的[服务端观测版本](docs/research/server-security-observations-validation.md)在干净`c097cf8`通过808次软件测试和七次双QEMU：六组认证拒绝/计数组合，以及独立的framed-v2诊断回归。前台control与`agent server-security PROFILE`提供有界TLS/framing/限额计数；它们按已加载配置累计、服务重启归零，不是持久审计或USB清理证明。
 
 ## 本机诊断
 

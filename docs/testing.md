@@ -359,3 +359,7 @@ python3 -B scripts/qemu_authentication/run.py --backend native --family ipv4 \
 ## 服务端认证计数回归
 
 E38见[精确运行报告](research/server-security-observations-validation.md)：clean c097cf8完整808软件、194输入前后稳定；六认证观测QEMU沿原负向夹具在四屏障前后保存server_security，不放宽原实际I/O/owner/proof。独立第七Native-v4/framed-v2诊断回归复用原WAL门/导出/第二I/O；不把它当新v2负向计数或安装态agent counter验收。所有实际来源/ELF/四guard与未完成项在报告分账。
+
+## 认证准入限速（E39）
+
+[精确验收](research/authentication-admission-validation.md)记录clean47f完整824次软件及196源码输入；clean d619默认locked build的六`qemu_authentication_admission` raw-v1组合、六原secure默认策略回归、独立Native-v4/v2诊断回归共13paired/26guest0。新夹具只在观察到实际limited后允许原输入、实际worker退出/补充认证采样后允许原close，不重写rawlog；原四认证屏障、实际I/O、完整Rootproof与driverbaseline保持。首956的host采证FAIL与新clean重跑分开，waitrow不当软件/USBcase。安装态agent RPC/v2专项限速与真实硬件继续待做。
