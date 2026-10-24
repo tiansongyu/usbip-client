@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-24：托管远程目录与监督器隔离（开始）
+
+- 从clean30fb57a继续，已重读完整Phase0–7原任务、AGENTS/核心skill、工作日志和当前应用服务。英文README、展示站与全局readme-site已交付，原goal保持active。
+- 实际源码定位`Runtime::dispatch(Discover)`在单监督器内等待远端最多4秒，阻塞其他命令、job事实和owner完成记账。先写`research/catalog-supervisor-design.md`，拟采用原有Tokio JoinSet/watch、最多2个实际目录任务，原UID/profile Discover授权、成功后审计、取消后真实close/join及USB owner契约不变。不是远程自动共享、完整G3或TUI/GUI完成。
+- 应用rustusb-development、writing-technical-design和technical-documentation。只使用既有栈普通API，按设计skill研究例外不新增组件技能/无关委派。固定Tokio docs.rs实际不可访问，采用锁定本地源码并明确记录；尚未运行新测试或修改产品代码。
+
 ## 2026-10-24：本地设备观察最终状态
 
 - clean c0346d6完整872/206稳定输入；clean f66da6b默认/all两个单guest真实UID2000/kernel events/sysfs/driver/新代际/总join验收通过，无forced。两个构建六新process及旧4signal2BP通过；旧INT负向、首完整gate失败与两QEMU采证FAIL保留。原Phase0–7/hardware/完整G3不宣告完成，详见`research/local-device-monitor-validation.md`。
