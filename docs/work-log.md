@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-25：离线证书撤销列表（开始）
+
+- 上一轮为实际进展：E43持续远端目录/903软件/双栈QEMU/四原生CI及发布，最终clean e6177063。重读完整Phase0–7原任务、当前Git/AGENTS/核心skill/架构与阶段gate；原目标保持active。本轮补Phase3尚缺的CRL凭据撤销，不以此完成G3/硬件或后续UI阶段。
+- 应用rustusb-development、writing-technical-design和technical-documentation。按设计skill显式要求，三个独立只读组件研究分别检查锁定rustls/webpki、rcgen/RFC与x509-parser；不委派产品编辑、不扩大为无关组件技能。实际研究探针重现future thisUpdate被接受、同issuer旧空CRL先置可遮蔽新撤销；故先写`research/offline-crl-design.md`，采用标准全链验证加有界元数据/单issuer完整CRL和每次握手实际TimeProvider窗口保护，不写自定义密码学/ASN.1，不改USB/helper/schema会话能力。尚未修改产品或宣称新验收。
+
 ## 2026-10-24：远程目录自动刷新（开始）
 
 - 上一轮为实际进展：E42独立目录owner/882软件/双栈managed QEMU/四平台CI与发布完成。本轮先读完整原任务并核clean4e6a9081/AGENTS/核心skill/架构和实际catalog/IPC/CLI；原Phase0–7 goal保持active。
