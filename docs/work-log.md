@@ -722,3 +722,5 @@
 - 组件/策略只读复核最终11/12文件稳定、无剩余must-fix，未执行产品测试。根线程完成8+1定向及最终all-feature all-target Clippy。依赖清单仍174且lock/清单无diff；test-util仅protocol dev feature。冻结产品后运行clean完整gate，所有新QEMU待实际来源再记账。
 
 - clean f3bf579完整gate通过365/457/20=842、47rows、零失败忽略；198source/build稳定、Native-only隔离通过。CLI29d0d476…、helper75e3de91…均用新实际ELF，未沿用旧hash。安装态前补独立framed-v2选项/Native-v4一项，schema2与明确ALPN2 classifier，原默认raw分支/原I/O/proof不改。
+
+- clean b5d3e92首产品Native-v4 raw及单独v2均host FAIL/guest0/四guard真：真实secure discovery仍超时，rawcap一条stale SYN连接、healthy0。842软件不替代安装态。当前实际resolver候选列表未采到，不先归因产品或NSS；加guarded std-only guestprobe，先保持原NSS配置采真实addresses/actualprobeSHA。旧ca63超时保原裁决，但缺候选集合不能直接称有效两候选counterfactual；如需NSS修订必须新clean并补正确旧产品对照。

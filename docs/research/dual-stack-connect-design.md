@@ -146,3 +146,20 @@ checks the exact v2 ClientHello offer on the same strict healthy projection.
 No raw packet/log substitution is allowed. This supplements six raw hostname
 cases and six original raw default-policy regressions; it does not label all
 backends' installed v2 fallback or wire-DNS/VPN as qualified.
+
+## First installed product observations
+
+Both clean b5d3e92 Native/IPv4 raw and separate framed-v2 product runs FAIL at
+secure discovery timeout, with both guest exits zero and all four guards true.
+The raw client capture has one stale connection's SYNs and no healthy-family
+SYN. No installed success is inferred from the842 software results. These files
+remain unchanged; the failure is not yet assigned to NSS or the race scheduler.
+
+The original stale-name fixture had not captured the actual std resolver answer
+list. Instrument the same guest configuration with an independent guarded
+std-only Rust probe, recording actual executed probe SHA and raw SocketAddr
+answers before product work. Do not change hosts/NSS policy yet or silently
+reclassify the earlier old-product failure as a proven two-candidate experiment.
+The probe's compiler/source/copied-executable provenance remains separate from
+product ELF receipts. Any eventual NSS correction requires a fresh clean run
+and a valid old-product counterfactual with the corrected candidate set.

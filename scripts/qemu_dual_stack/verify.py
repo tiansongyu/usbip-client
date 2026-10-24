@@ -86,6 +86,13 @@ def verify(evidence,args,framed_v2=False):
         if config['schema_version']!=(2 if framed_v2 else 1):raise RuntimeError('actual TLS schema differs')
         if framed_v2 and config.get('data_link')!={'protocol':'framed_v2','interval_millis':5000,'response_timeout_millis':15000}:raise RuntimeError('actual framed policy differs')
         if not framed_v2 and 'data_link' in config:raise RuntimeError('unexpected framed policy on raw case')
+    probe=(client/'dual-resolver.txt').read_text().splitlines()
+    receipt=json.loads((evidence/'resolver-probe-build.json').read_text())
+    if not probe or not probe[0].startswith('RESOLVER_ACTUAL_EXE '+receipt['executable_sha256']+' '):raise RuntimeError('actual resolver probe ELF receipt absent')
+    raw=[line.split(' ',2)[2] for line in probe if line.startswith('RESOLVER_CANDIDATE ')]
+    unique=list(dict.fromkeys(raw))
+    expected=[f'[{expected_bad}]:3241' if ':' in expected_bad else expected_bad+':3241',f'[{expected_good}]:3241' if ':' in expected_good else expected_good+':3241']
+    if unique!=expected:raise RuntimeError('actual std resolver did not return stale then healthy candidates')
     _,facts=project(evidence/'client-external.pcap',args.family)
     stale=facts['stale_first_syn_micros'];healthy=facts['healthy_first_syn_micros']
     if not (len(stale)==len(healthy) and len(healthy)>=7):raise RuntimeError('each actual healthy TCP connection must follow one actual stale candidate')

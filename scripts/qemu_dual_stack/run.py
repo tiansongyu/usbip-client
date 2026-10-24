@@ -28,7 +28,7 @@ framed_v2 = False
 def inputs():
     result = original_inputs()
     for p in [ROOT/'rust-toolchain.toml', ROOT/'scripts/check.sh', *sorted(HERE.glob('*'))]:
-        if p.is_file() and (p.suffix in ['.py','.md'] or p.name in ['rust-toolchain.toml','check.sh']):
+        if p.is_file() and (p.suffix in ['.py','.md','.rs'] or p.name in ['rust-toolchain.toml','check.sh']):
             result[str(p.relative_to(ROOT))] = {'sha256':base.digest(p),'bytes':p.stat().st_size}
     return dict(sorted(result.items()))
 
@@ -60,6 +60,8 @@ def generated_init():
     cp /etc/nsswitch.conf /tmp/dual-nsswitch.txt
     /usr/bin/ip -4 neigh show dev eth0 > /tmp/dual-neighbors4.txt
     /usr/bin/ip -6 neigh show dev eth0 > /tmp/dual-neighbors6.txt
+    if [ -f /etc/host.conf ]; then cp /etc/host.conf /tmp/dual-host-conf.txt; else printf 'absent\\n' > /tmp/dual-host-conf.txt; fi
+    timeout 5 /usr/bin/dual-stack-resolve > /tmp/dual-resolver.txt 2> /tmp/dual-resolver.stderr
     HOST=rustusb-dual-stack.test
     echo "DUAL_STACK_READY healthy=$FAMILY stale=$BAD mac=52:54:00:00:00:99"
 fi
@@ -76,6 +78,17 @@ def payload(work, kernel, credentials, role):
     root=work/'root'
     (root/'init').write_text(generated_init())
     (run_evidence/f'{role}-generated-dual-init.sh').write_bytes((root/'init').read_bytes())
+    if role=='client':
+        executable=work/'dual-stack-resolve'
+        command=['rustc','--edition=2024','-O',str(HERE/'resolve-probe.rs'),'-o',str(executable)]
+        compiled=subprocess.run(command,cwd=ROOT,capture_output=True)
+        (run_evidence/'resolver-probe-build.stdout').write_bytes(compiled.stdout)
+        (run_evidence/'resolver-probe-build.stderr').write_bytes(compiled.stderr)
+        if compiled.returncode:raise RuntimeError('guest resolver probe compilation failed')
+        base.native.copy_binary(executable,'/usr/bin/dual-stack-resolve',root)
+        compiler=subprocess.check_output(['rustc','--version','--verbose'],cwd=ROOT,text=True)
+        (run_evidence/'resolver-probe-build.json').write_text(json.dumps({'command':command,'compiler':compiler,'source_sha256':base.digest(HERE/'resolve-probe.rs'),'executable_sha256':base.digest(executable),'executable_bytes':executable.stat().st_size},indent=2)+'\n')
+        (work/'payload-dependencies.json').write_text(json.dumps(base.validate_payload(root),indent=2)+'\n')
     names=b'.\0'+b'\0'.join(str(p.relative_to(root)).encode() for p in root.rglob('*'))+b'\0'
     packed=subprocess.run(['cpio','--null','-o','--format=newc','--owner=0:0'],input=names,cwd=root,capture_output=True,check=True)
     archive=work/'dual-stack-initramfs.cpio.gz';archive.write_bytes(gzip.compress(packed.stdout))
