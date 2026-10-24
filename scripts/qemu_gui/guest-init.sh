@@ -189,7 +189,9 @@ js 'document.querySelectorAll(".settings-actions button")[1].click();return true
 wait_view '.preferences_status=="Saved preferences"' /tmp/gui-settings-saved.json
 cp /home/operator/.config/rustusb/preferences.json /tmp/gui-saved-preferences.json
 stat -c '%u:%a:%h' /home/operator/.config/rustusb/preferences.json >/tmp/gui-preferences-stat.txt
+wait_dom '!document.querySelector(".settings-actions button").disabled'
 js 'document.querySelectorAll("nav button")[0].click();return true;' /tmp/gui-narrow-page.json
+wait_dom 'document.getElementById("page-title").textContent==="Local devices" && document.querySelector(".detail")'
 http POST "/session/$SESSION/window/rect" '{"width":800,"height":600}' /tmp/gui-narrow-rect.json
 wait_dom 'getComputedStyle(document.querySelector(".detail")).display==="none"'
 js 'document.querySelector(".device-name").click();return true;' /tmp/gui-narrow-select.json
