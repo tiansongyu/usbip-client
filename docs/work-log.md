@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-24：远程目录自动刷新（开始）
+
+- 上一轮为实际进展：E42独立目录owner/882软件/双栈managed QEMU/四平台CI与发布完成。本轮先读完整原任务并核clean4e6a9081/AGENTS/核心skill/架构和实际catalog/IPC/CLI；原Phase0–7 goal保持active。
+- 继续实现要求4.3的远程列表自动刷新。先写`research/remote-catalog-watch-design.md`：同一service观察器支持普通operator固定agent profile与dedicated broker已加载TLS源，最多两个actual owner、最新完整视图/过期保留/授权失败清空、stable-key地址变化、真实stop/join；不自动导入、不改helper/RPC/disk schema或阶段gate。
+- 采用rustusb-development、writing-technical-design与technical-documentation；只复用既有锁定Tokio/codec/IPC普通API，按设计skill既有栈例外不新增组件技能或委派。CLI拟加agent discover/secure-discover --watch，原one-shot保持；轮询成功仍使用既有audit，公开WAL成本，停止本地IPC观察不冒称远端owner已退休。尚未修改产品或执行新验收。
+
 ## 2026-10-24：托管远程目录与监督器隔离（E42）
 
 - 从clean30fb57a继续，已重读完整Phase0–7原任务、AGENTS/核心skill、工作日志和当前应用服务。英文README、展示站与全局readme-site已交付，原goal保持active。
