@@ -186,3 +186,11 @@ Native detach命令成功后，只对同一status属性两次已成功解析但�
 [设计](research/data-link-health-design.md)与[验收](research/data-link-health-validation.md)记录可选schema2/ALPN2。每个实际TCP/TLS连接仅一h2数据stream，driver独立poll控制帧/接收pump，metadata monitor不持设备或permit；flow credit只返还实际应用消费。真TLS DATA/FIN flush fence保留IMPORT证据，不以入队/PONG替代。Catalog和完整拒绝回复双方有界FIN/EOF并保IO至自然join；成功IMPORT继续同流URB。Raw1保持默认且heartbeat/RTT不可用。
 
 应用旧Session/Metrics/IPC1保持，新只读SessionHealth逐profile Read授权；私有disk2严格迁移/容量预留及epoch历史，probe不逐次fsync。所有actualowner停转/清理先于保留ACK等待，不把driver结束或新进程资源0当Root恢复证明。完整Phase3、pendingURB/内核active窗口和真实G1/G2未由软件626或QEMU十五项自动完成。
+
+## 准备期停止与记录等待（E34）
+
+[设计](research/prepare-recording-shutdown-design.md)与[英文验收](research/prepare-recording-shutdown-validation.md)区分实际资源、操作结果与原记录事务。Native每个已收到export在Resource ACK前注册唯一actual-close watcher；后续设备的Begin/Attempt/Resource与Available记录不阻挡此前owner关闭。局部StopSession只关闭目标，Catalog/直接IMPORT立即拒绝已停目标，保留其他export；全局stop或真实资源失败才关闭所有owner。全部局部停完仍保留原job/listener及空Catalog。
+
+USBFS先释放全部sources或实际server/backend，完成所有已收到grant的Finish，再等原ACK；accepted initializer保留至真实返回。client远端IMPORT后的Attempt等待被停止/断链中断时先join网络，晚ACK不触发新helper申请。共享私有pending future仅持metadata，不能持FD、stream、permit或helper能力；原Begin/Attempt的注册结果不能丢弃。
+
+agent shutdown由独立supervisor路径在Runtime persist之外sticky fanout；晚注册job/session继承stop。实际owner总await后仍等待原记录，故设备已释放时job仍可能pending。保守reserved-unsent仍Unconfirmed，不造NotStarted/Verified，也不借此关闭safe sibling。永久文件系统/内核阻塞、内核内部active窗口与真实硬件仍单列限制。

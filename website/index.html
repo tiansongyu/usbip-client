@@ -134,10 +134,10 @@ sudo /usr/local/bin/rustusb \
       </div>
       <div class="status-layout">
         <div class="verified">
-          <h3>Data-link validation</h3>
-          <dl><div><dt>626</dt><dd>software test executions</dd></div><div><dt>15</dt><dd>QEMU runs · 30 guests</dd></div><div><dt>18</dt><dd>directional fault phases</dd></div></dl>
-          <p>Clean <code>531e0c3</code> covers six opt-in framed-v2 runs across three backends and both IP families, plus nine existing regressions. The target connection times out while a sibling device continues actual I/O. Transport replies do not prove USB completion.</p>
-          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/data-link-health-validation.md">Read the tested revisions and evidence <span aria-hidden="true">↗</span></a>
+          <h3>Preparation-stop validation</h3>
+          <dl><div><dt>667</dt><dd>software test executions</dd></div><div><dt>23</dt><dd>QEMU runs · 46 guests</dd></div><div><dt>18</dt><dd>directional fault phases</dd></div></dl>
+          <p>Clean <code>1582f06</code> covers eight preparation-stop scenarios, six framed-v2 directional-loss runs and nine existing regressions. Actual cleanup proceeds before a delayed application record; local Native stop preserves a sibling device. A stuck filesystem or kernel call can still delay exit. Transport replies do not prove USB completion.</p>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/prepare-recording-shutdown-validation.md">Read the tested revisions and evidence <span aria-hidden="true">↗</span></a>
           <p>The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/application-service-guide.md">application service guide</a> covers authorized profiles, independent jobs and bounded session audit. The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/secure-guide.md">secure setup guide</a> covers credentials and exact device rules. Earlier <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/physical-driver-autorestore.md">recovery evidence</a> retains its own tested revision.</p>
         </div>
         <div class="boundaries">

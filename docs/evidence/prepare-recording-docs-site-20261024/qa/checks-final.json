@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "name": "site-final",
+      "command": [
+        "python3",
+        "scripts/check-site.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "node-final",
+      "command": [
+        "node",
+        "--check",
+        "website/app.js"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "diff-final",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "local_links": 396,
+  "source_files": 17
+}

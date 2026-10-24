@@ -40,6 +40,16 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - Catalog/完整flush的拒绝回复保留借用IO，经双方FIN/有界EOF后自然join；错误/停止保留outer owner并stop+join，成功IMPORT不提前FIN。e152的真实Catalog FAIL及相同函数修后PASS是回归契约，不可改成sleep/retry。
 - 新health是独立只读RPC，旧Session/Metrics/IPC1不改；私有disk2严格字段/迁移/容量/epoch历史，探测不逐次写WAL。operation、actual cleanup与recording保持独立；网络timeout不等于设备释放或driver恢复。
 
+## 准备期记录与停止
+
+修改prepare/ready记录、Native局部export stop或agent shutdown前读`docs/research/prepare-recording-shutdown-design.md`及`docs/research/prepare-recording-shutdown-validation.md`。667软件的167输入映射不等于clean运行；仿真只按各实际source/ELF归属。
+
+- received Native export须在Resource ACK前注册唯一actual-close watcher；后来设备的记录不能保留已收owner。已知identity错误跨Ready/Interrupted保留，actual-close先于记录finalize/解锁。
+- 局部StopSession不升级为wholejob stop；Catalog/直接IMPORT检查session stop并保留busy2。全局停止才关所有safe sibling，全局错误须传播。全局未停时空catalog仍保留原listener/job。
+- pending记录仅持metadata，不持能力/FD/stream/permit；保留原已poll future及Begin/Attempt注册结果。USBFS先总join实际server/backend/accepted initializer、释放全部FD并尝试所有grant Finish，再等原ACK。client lateAttempt后不得发新helper。
+- agent shutdown在Runtime persist之外sticky fanout，并覆盖晚注册control/继承parent stop；实际supervisor总join。reserved-unsent仍Unconfirmed，不伪proof/NotStarted，不以metadata局部未决关sibling。
+- 采证proof必须读取对应saved snapshot，禁止以live journal补写旧观察。bounded门/采样不证明永久FS/kernel阻塞可取消；原FAIL与未运行项保持原裁决。
+
 ## 验证与文档
 
 - 单元测试覆盖字节序、描述符边界、ID、状态机、配置、认证、错误、超时与取消；网络解析加畸形包和大小边界测试及 fuzz 入口。

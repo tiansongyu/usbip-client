@@ -2,7 +2,7 @@
 
 The experimental Linux `rustusb agent` owns USB/IP jobs independently of the CLI that starts or observes them. Foreground secure commands and managed jobs share the same actual service owners, with explicit ephemeral versus durable tracking; see the [shared-owner validation](research/shared-owner-validation.md). Operators select administrator-defined profiles; they cannot replace a profile's endpoint, TLS identity, device pool or helper policy. The library runs the actual client/server tasks in its process and retains their cleanup owners. This is the service entry point for future TUI and GUI clients.
 
-Native agent ownership, targeted stop and root-proof/restart scenarios have software and paired IPv4/IPv6 QEMU evidence; the optional managed Rust runners currently have software coverage. See the [validation report](research/application-service-validation.md), [implementation contract](research/application-service-design.md) and [work log](work-log.md) for exact scope. Existing foreground `secure-attach` and `secure-server` commands remain separate adapters in this revision; consolidating their implementations is unfinished.
+Native agent ownership, targeted stop and root-proof/restart scenarios retain their [original validation](research/application-service-validation.md). Managed Native, virtual and USBFS brokers also have bounded IPv4/IPv6 [data-link QEMU coverage](research/data-link-health-validation.md); [preparation-stop validation](research/prepare-recording-shutdown-validation.md) covers delayed application records and local Native export cancellation. These reports keep software, simulated USB and hardware acceptance separate. See the [implementation contract](research/application-service-design.md) and [work log](work-log.md) for ownership rules and tested revisions.
 
 ## Prerequisites
 
@@ -112,6 +112,10 @@ rustusb agent --config /etc/rustusb/agent.json sessions lab-keyboard
 
 SIGINT/SIGTERM stop the entire service cooperatively. The service continues processing owner facts while its actual task/lease tree finishes. Repeated signals do not abort that wait. SIGKILL and crashes do not provide a cleanup receipt.
 
+Stop reaches actual owners independently of a delayed application-journal acknowledgement, including during preparation. The service retains the original transaction and joins real cleanup before waiting for that acknowledgement. The stop command, job or session can therefore remain pending after the device has been released. A stuck filesystem or kernel call can still prevent process exit; elapsed time is not release proof. See the [preparation-stop validation](research/prepare-recording-shutdown-validation.md) for the exact tested boundaries.
+
+Stopping one Native export during preparation leaves other exports available. If all exports are individually stopped, the same job and listener continue with an empty catalog until the job is stopped. An admitted attempt that was never sent to the helper remains conservatively `unconfirmed`; cancelling it does not authorize closing another export or inventing a release receipt.
+
 ## Observe and recover
 
 ```sh
@@ -128,4 +132,4 @@ An intent-only job with no admitted session has no possible helper acquisition u
 
 Minimal audit records contain fixed action/error categories, OS UIDs, profile/job/session IDs and role-specific state/cleanup evidence. They exclude raw USB content, serial numbers, private keys, certificate bodies and arbitrary internal error strings. The retained ring has at most 1,024 events and is not permanent log archival or log rotation. Audit reads may include unscoped permission denials for the requesting UID; root can read all such denials through an authorized profile query.
 
-Counters are actual post-IMPORT USB/IP application bytes, including protocol headers and partial successful writes. They are neither USB payload bytes nor TLS wire bytes. Raw USB/IP v1 has no inserted heartbeat or measured RTT; those remain unavailable pending versioned data framing and independent validation.
+Counters are actual post-IMPORT USB/IP application bytes, including protocol headers and partial successful writes. They are neither USB payload bytes nor TLS wire bytes. Raw USB/IP v1 has no inserted heartbeat or measured RTT. Opt-in framed v2 provides separate [data-link observations](data-link-health.md); transport responsiveness does not prove USB completion.

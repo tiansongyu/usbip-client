@@ -135,13 +135,13 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The [data-link validation report](docs/research/data-link-health-validation.md) records:
+The [preparation-stop validation report](docs/research/prepare-recording-shutdown-validation.md) records:
 
-- **626 software test executions**: 260 default, 346 all-features and 20 vendored executions, with formatting, Clippy, release and documentation checks. All 165 build inputs match the committed source; the original run retains its actual provenance.
-- **15 paired QEMU runs at clean `531e0c3`, 30 successful guest exits**: six framed-v2 Native/USBFS/virtual runs across IPv4/IPv6, followed by nine existing regressions. The new runs cover 18 directional network-loss phases, actual sibling-device I/O, fresh attempts and cooperative cleanup. All use the same release artifacts.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `531e0c3`](https://github.com/tiansongyu/usbip-client/actions/runs/40029976284) passes 626 executions, five TLS lifecycle scenarios and the original signal/backpressure checks on each platform. Earlier CI retains its own revision and counts.
+- **667 software test executions**: 280 default, 367 all-features and 20 vendored executions, with formatting, Clippy, release and documentation checks. All 167 selected inputs match the product commits; the original modified-worktree run retains its actual provenance.
+- **23 paired QEMU runs at clean `1582f06`, 46 successful guest exits**: eight new preparation-stop scenarios, six framed-v2 directional-loss runs and nine existing regressions, all using the same release artifacts. The new cases check actual cleanup before a delayed application record, retained accepted initialization and local Native stop with sibling I/O and an empty catalog.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `5ffdc6c`](https://github.com/tiansongyu/usbip-client/actions/runs/40044605684) passes 667 executions and the existing TLS, signal and backpressure checks on each platform. Earlier runs keep their own revisions and counts.
 
-The initial Catalog failure and the later virtual-network readiness failure remain in the report with their original raw evidence and fixes. The [shared-owner baseline](docs/research/shared-owner-validation.md) retains its own revisions.
+Stopping actual resources and completing their durable records are separate steps. A delayed application-journal acknowledgement no longer blocks received owners from cleaning up, but a stuck filesystem or kernel call can still prevent process exit. Earlier product failures and the first revised-product sampling failure retain their original evidence. The [data-link](docs/research/data-link-health-validation.md) and [shared-owner](docs/research/shared-owner-validation.md) reports retain their historical baselines.
 
 Earlier [secure-path tests](docs/research/secure-usbip-validation.md), [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence, including failed development runs and their fixes.
 

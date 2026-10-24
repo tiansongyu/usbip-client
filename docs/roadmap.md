@@ -76,6 +76,8 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 新增[E33数据链v2](research/data-link-health-validation.md)显式schema2/ALPN2提供同TLS数据连接probe/RTT及独立只读health/epoch历史，626软件与clean531十五QEMU通过（六新18方向、九旧另账）。raw1仍Unavailable，PONG不证明USB进展；短management有界FIN/EOF自然join、actualcleanup独立。此增量不完成完整G3，日志轮转、无独立root proof的Rust崩溃协调、生产/证书轮换安全矩阵及真实硬件继续保留。
 
+新增[E34准备记录停止](research/prepare-recording-shutdown-validation.md)使应用journal ACK停顿不阻挡已收到owner的真实清理；Native局部stop保留sibling及同job空Catalog，agent shutdown在persist之外sticky传播。667软件通过，仿真与CI仅按专项报告实测版本记账；accepted initializer始终保留到真实返回，不承诺任意永久FS/kernel阻塞下有界退出，也不完成完整G3。
+
 ## 7. Phase 4：完整 TUI
 
 使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。

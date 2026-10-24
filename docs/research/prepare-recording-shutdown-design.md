@@ -1,6 +1,6 @@
 # Shutdown while preparation recording is stalled
 
-2026-10-24. Baseline clean `e10b5fbe9df89216c0002ea11a51d41837fd9b03`. Status: implemented with software evidence; final QEMU validation in progress. The preceding goal turn made verified progress: framed-v2 data-link health, 626 software executions, clean `531e0c3` fifteen-run QEMU validation and the English README/site publication. The original Phase 0–7 objective remains active.
+2026-10-24. Baseline clean `e10b5fbe9df89216c0002ea11a51d41837fd9b03`. Status: implemented and validated within the bounded software/QEMU scope in the [validation report](prepare-recording-shutdown-validation.md). The preceding goal turn made verified progress: framed-v2 data-link health, 626 software executions, clean `531e0c3` fifteen-run QEMU validation and the English README/site publication. The original Phase 0–7 objective remains active.
 
 This change addresses requirements 4.5 and 4.11: cooperative stop must reach actual owners while a preparation/ready journal acknowledgement is delayed. It does not make a stuck filesystem or kernel syscall cancellable, promise bounded process exit, or complete Phase 3. Hardware G1/G2 remains unexecuted.
 
@@ -49,7 +49,7 @@ Add deterministic regressions with independent job and local stop senders: two r
 
 ## Software checkpoint before final QEMU
 
-The revised complete `bash -x scripts/check.sh` run passes 280 default + 367 all-features + 20 vendor executions: 667 total, 39 result rows, zero failures/ignored tests. Its actual source is dirty `b1de034`; all 167 selected inputs remain stable. Native-only check/tree passes. The same all-features CLI SHA-256 `72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2` passes the original four local signal and two output-backpressure checks. Helper bytes remain `b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5`. Commit-input reconciliation will be recorded separately; it does not relabel this dirty run as clean.
+The revised complete `bash -x scripts/check.sh` run passes 280 default + 367 all-features + 20 vendor executions: 667 total, 39 result rows, zero failures/ignored tests. Its actual source is dirty `b1de034`; all 167 selected inputs remain stable. Native-only check/tree passes. The same all-features CLI SHA-256 `72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2` passes the original four local signal and two output-backpressure checks. Helper bytes remain `b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5`. All 167 inputs individually match product 8ec570a and clean QEMU 1582f06; this reconciliation does not relabel the actual dirty software run as clean.
 
 The actual earlier 655-execution candidate and five later failing local/identity assertions remain separate. The repaired assertions retain their cleanup/ACK/isolation conditions. A new actual TCP/memory-DER mTLS fixture explicitly authorizes both Native keys and checks stopped direct IMPORT status 4, live reserved status 2 and repeated empty catalogs on the same listener, in raw-v1 and framed-v2. This is ordinary-user production-handler evidence, not trusted-file/helper/kernel evidence.
 

@@ -259,7 +259,7 @@ clean4565f7a首次三项全部PASS/6guest0，318/293/313项host检查。L尾部�
 
 实际验证operator RPC进程退出后I/O、定向停HID而原serial继续、client SIGKILL/wait137后的NULL/Gone与精确Rootterminal、保留旧instance/session/attempt及新attempt真实I/O、server TERM完整driverbaseline。SIGKILL时只证明Connected/持能力，不外推pending URB。collector每epoch就绪后采实际TLS JSON/public DER/pin/policy及权限，私钥仅metadata不归档内容。host核完整原件/base64、ELF/UID及source/HEAD/clean/二进制guards，失败亦完整收集。
 
-这是Native agent场景；旧virtual/USBFS/Native安全六矩阵仍是前台入口。managed Rust两路有软件覆盖但未作agent双QEMU验收。软件495、版本分开的两Native及六前台运行、独立raw审计及保留限制见[应用服务验收](research/application-service-validation.md)。不以仿真或有界audit宣告完整G3/硬件。
+这是Native agent场景；旧virtual/USBFS/Native安全六矩阵仍是前台入口。该E31版本managed Rust两路仅有软件覆盖，后续E33补齐受限agent双栈场景。软件495、版本分开的两Native及六前台运行、独立raw审计及保留限制见[应用服务验收](research/application-service-validation.md)。不以仿真或有界audit宣告完整G3/硬件。
 
 ## 安全 USB/IP 双栈矩阵
 
@@ -288,7 +288,7 @@ server实际运行`secure-server --backend virtual|usbfs|native --config /etc/ru
 
 ## 共享前台与托管owner回归（E32）
 
-匹配2638a8c输入的完整530软件通过；clean b45c2e8的六安全前台双栈、两Native agent双栈及原USBFS TERM九项QEMU/18guest0通过，见[验收](research/shared-owner-validation.md)。新软件mTLS五组合与旧本地四信号/两背压分别记账；blocked只证明退出/socket关闭。原startup证明Status可取消，helper acceptance=false，不能冒充accepted initializer或kernel内部硬阻塞验收；Resource ACK无限停顿仍未决。
+匹配2638a8c输入的完整530软件通过；clean b45c2e8的六安全前台双栈、两Native agent双栈及原USBFS TERM九项QEMU/18guest0通过，见[验收](research/shared-owner-validation.md)。新软件mTLS五组合与旧本地四信号/两背压分别记账；blocked只证明退出/socket关闭。原startup证明Status可取消，helper acceptance=false，不能冒充accepted initializer或kernel内部硬阻塞验收；该E32版本未验证Resource ACK停顿；后续范围见E34。
 
 
 ## 同数据链v2故障回归（E33）
@@ -303,3 +303,18 @@ python3 -B scripts/qemu_data_link_health/run.py --backend native --family ipv4 \
 用`--backend usbfs|virtual`、`--family ipv4|ipv6`运行其余新项；默认locked all-features构建，`--skip-build`只作显式开发选项。精确环境/权限/有界valve/源ELF/原件要求见[harness说明](../scripts/qemu_data_link_health/README.md)。宿主普通UID、私有socketpair、不操作宿主USB。双端实际carrier/operstate原件和ACK先于START及原nc-w2负向探测；不靠扩大probe时限绕过首virtual失败。
 
 完整Socketforward不等于peer收到；须以双PCAP逐原bytes复核。RTT为local enqueue至库PONG，不跨guest时钟相减；PONG不证明USB进展。Native/managed USBFS闲置活性不冒作pending/inflight，virtual仅真实CDC echo/HID枚举闲置，不虚构键盘注入。e152 Catalog和934部分矩阵FAIL保留原版，guest0不得覆盖FAIL marker。
+
+
+## 准备记录门与定向停止（E34）
+
+[英文验收](research/prepare-recording-shutdown-validation.md)记录实际667软件/167输入与clean1582f06二十三QEMU/46guest0（八新、六health、九旧分账）。新harness在一次性x86_64 guest内暂停第二Resource的真实state.next fsync syscall-entry，或已接受USBFS initializer的GET_CONFIGURATION syscall-entry；不修改宿主USB，也不宣称内核内部active硬阻塞可取消。
+
+```sh
+python3 -B scripts/qemu_prepare_recording_shutdown/run.py \
+  --case native-resource --stop job --kernel 6.8.0-106-generic \
+  --evidence /tmp/prepare-native-resource-job-NEW-CLEAN-SHA
+```
+
+六global组合为`native-resource|usbfs-resource|usbfs-initializer`各配`--stop job|term`；两local组合为`native-resource|native-available --stop session`。必须使用新目录、clean已提交源和默认locked all-features build。依赖、门限、真正的syscall release/FD映射与原件规则见[harness说明](../scripts/qemu_prepare_recording_shutdown/README.md)。
+
+Resource门要求所有相关实际资源在原ACK放行前关闭；initializer门要求保持同一accepted工作至真实返回后总join/清理。Local门要求目标退休而原HID export保持，原同job/listener继续实际I/O；client detach后须先有服务端精确stub退休和完整原profile，才停最后export并验证真实空Catalog。每份proof必须从同份saved sample重算，不能重读live journal补旧状态。原FAIL即使尾部释放/再用成功也保持FAIL，未执行项不计PASS；23项整体结果与旧15/9矩阵不可相加冒作独立case。
