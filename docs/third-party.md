@@ -12,6 +12,7 @@ RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件�
 | rustls / tokio-rustls | 精确0.23.46 / 0.26.6，[来源与设计](research/secure-transport-design.md) | rustls Apache-2.0 OR ISC OR MIT；tokio-rustls MIT OR Apache-2.0。官方crate checksum已核，显式ring/std、关闭默认features，仅TLS1.3；现已接入安全USB/IP broker，实际范围见[验收报告](research/secure-usbip-validation.md) |
 | ring / rustls-webpki / rustls-pki-types | 实际解析0.17.14 / 0.103.16 / 1.15.1 | Cargo元数据分别为Apache-2.0 AND ISC、ISC、MIT OR Apache-2.0；ring完整`LICENSE`另列BoringSSL及历史来源条款，须按各crate完整许可分发。不能把密码库和底层unsafe表述为自有MIT实现或FIPS认证 |
 | rcgen | 精确0.14.10，仅新transport测试生成内存证书 | MIT OR Apache-2.0；关闭默认features、启ring，不提交测试私钥，不作为产品证书签发工具 |
+| x509-parser | 精确0.18.1，[CRL设计](research/offline-crl-design.md)，checksum锁定 | MIT OR Apache-2.0；关闭默认features，仅解析有界完整CRL元数据，签名/链/实际撤销仍由rustls/webpki。该版本和子树已在旧lock中，但此前不是工作区实际normal依赖；本次启用不将其结构解析当成密码认证或无panic证明 |
 | governor | 精确0.10.4，固定VCS `9f3a79dd47dd32acd589c562b8d4fefe99b93372`，[设计与源码](research/authentication-admission-design.md) | MIT；仅std features，显式MonotonicClock、direct非等待GCRA，不使用keyed map、quanta或jitter。新认证quota与原16连接owner预算分开；内部约584年ns horizon保留为依赖边界，所测quota与真实验收见专项报告，不宣称无限运行或完整DoS防护 |
 | OpenSSL CLI | QEMU认证负向使用发行版3.0系列工具，实际版本、ELF及动态库哈希随每次运行记录 | Apache-2.0；仅测试签发一次性证书和独立TLS客户端，不是产品Rust依赖。临时guest镜像不发布，私钥不归档；用法与边界见[测试设计](research/secure-negative-qemu-design.md) |
 | h2 / http / bytes | h2精确0.4.20，[固定源码b0e89084](https://github.com/hyperium/h2/tree/b0e890842ac16d3c76836fd4fcc06421acb15fa7)；本轮lock实际http1.5.0、bytes1.12.1 | h2 MIT，http/bytes MIT OR Apache-2.0。v2候选复用单stream流控及PING/PONG，不修改或复制上游实现，不启实验feature；实际TLS flush另由本项目安全wrapper跟踪，不能把h2入队当发送完成 |
@@ -28,3 +29,5 @@ QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造�
 主机名回退未新增外部依赖或改变Cargo.lock，清单保持174包。复用固定Tokio1.54.1 TCP/actual blocking pool和平台std/NSS，test-util仅新增protocol dev feature。固定Tokio、Rust1.97.1与glibc2.35源码只读研究原件及各自许可保存在[E40证据](research/dual-stack-connect-validation.md)，未将glibc源码移入MIT产品；Ubuntu精确patch源码404的审查限制保留。
 
 本地发现观察新增内部MIT包rustusb-discovery（完整实现，service re-export），现有锁定rustix1.1.5增用net/event安全API；未引入udev/tokio-udev/libudev或新外部package/version。175包清单中的增量仅这一内部包。固定Linux/systemd源码只作研究，不复制其GPL/LGPL实现进入MIT产品。研究许可及实际零宿主事件探针另按清单保留，未作为热插拔产品验收。
+
+离线CRL把锁定x509-parser0.18.1提升为transport直接normal依赖，未改变任何外部package/version/checksum，重新导出的全feature清单仍175包且无缺失license metadata。独立实际构建为parser features=[]、normal子树30包（含自身），不是30个新增锁包或全产品无密码库；此前Cargo metadata宽resolver包含未实际编入的optional/dev feature，不能用它冒充编译证据。固定源码、许可、探针及失败按CRL专项报告归档。

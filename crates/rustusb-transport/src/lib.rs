@@ -15,6 +15,7 @@ pub mod config;
 mod flush;
 mod link;
 mod quiet;
+mod revocation;
 mod security;
 mod tls;
 

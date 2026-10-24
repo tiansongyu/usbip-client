@@ -14,7 +14,10 @@ static NEXT_FIXTURE: AtomicU64 = AtomicU64::new(1);
 // These are ordinary-UID filesystem fixtures. Their private Context explicitly
 // substitutes a fixture administrator and trust root; a passing fixture never
 // asserts that /tmp or an ordinary-owned directory is trusted in production.
+mod revocation;
+
 struct Fixture {
+    issuer: Issuer<'static, KeyPair>,
     root: PathBuf,
     context: Context,
 }
@@ -34,15 +37,20 @@ impl Fixture {
             administrator_uid: owner,
             fixture_root: Some(root.clone()),
         };
-        let fixture = Self { root, context };
         let mut params = CertificateParams::new(Vec::<String>::new())?;
         params.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
         let ca_key = KeyPair::generate()?;
         let ca = params.self_signed(&ca_key)?;
+        let fixture = Self {
+            root,
+            context,
+            issuer: Issuer::new(params, ca_key),
+        };
         fixture.write("ca.der", ca.der().as_ref(), 0o644)?;
-        let issuer = Issuer::new(params, ca_key);
         let key = KeyPair::generate()?;
-        let leaf = CertificateParams::new(vec!["server.test".into()])?.signed_by(&key, &issuer)?;
+        let mut leaf_params = CertificateParams::new(vec!["server.test".into()])?;
+        leaf_params.serial_number = Some(101_u64.into());
+        let leaf = leaf_params.signed_by(&key, &fixture.issuer)?;
         fixture.write("leaf.der", leaf.der().as_ref(), 0o644)?;
         fixture.write("private.der", &key.serialize_der(), 0o600)?;
         Ok(fixture)

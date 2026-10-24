@@ -46,7 +46,8 @@ cryptographic implementation is introduced.
 
 For all configured lists, compute the common window
 `max(thisUpdate) <= now < min(nextUpdate)`. Both TLS configs install a small
-`rustls::time_provider::TimeProvider` wrapper around their actual default clock.
+`rustls::time_provider::TimeProvider` wrapper around a checked actual SystemTime clock (pre-epoch/unavailable returns
+None; no upstream panic-prone time conversion).
 It returns no time outside that window, so the standard verifiers fail closed
 at each new certificate verification, including after clock rollback. Startup
 rejects a set with no currently valid common window before listener/device use.

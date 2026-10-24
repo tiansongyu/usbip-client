@@ -6,6 +6,7 @@ use crate::{
 use rustls::{
     ClientConfig, RootCertStore, ServerConfig,
     pki_types::{CertificateDer, PrivateKeyDer, ServerName},
+    time_provider::TimeProvider as _,
 };
 use rustusb_core::link_health::{LinkProtocol, TcpTuple};
 use std::{
@@ -93,7 +94,10 @@ impl fmt::Debug for DerIdentity {
 }
 
 /// A bounded set of explicitly supplied trust anchors; no operating-system roots are added.
-pub struct TrustRoots(RootCertStore);
+pub struct TrustRoots {
+    store: RootCertStore,
+    revocation: Option<crate::revocation::Revocation>,
+}
 
 impl TrustRoots {
     /// Load 1..32 distinct DER certificates, each at most 16 KiB and at most 64 KiB total.
@@ -103,7 +107,30 @@ impl TrustRoots {
         for cert in certificates(roots, MAX_ROOTS)? {
             store.add(cert).map_err(|_| Error::InvalidCredentials)?;
         }
-        Ok(Self(store))
+        Ok(Self {
+            store,
+            revocation: None,
+        })
+    }
+
+    /// Require complete, direct DER CRLs for the peer's full certification path.
+    ///
+    /// Accept 1..16 lists, at most 64 KiB each and 256 KiB total, with one list
+    /// per raw issuer name and a currently valid common thisUpdate/nextUpdate
+    /// window. Reject malformed, overlapping, scoped, indirect and delta lists.
+    /// This metadata admission does not authenticate signatures: the standard
+    /// rustls verifier does so at each new certificate verification, also denying
+    /// missing issuer coverage. The trust anchor itself is not checked.
+    ///
+    /// This immutable set can be configured once. No online retrieval, hot
+    /// reload, persistent CRL-number rollback protection or active-stream
+    /// revocation is provided. Omission retains the original PKI-only policy.
+    pub fn with_crls(mut self, crls: Vec<Vec<u8>>) -> Result<Self> {
+        if self.revocation.is_some() {
+            return Err(Error::InvalidInput("CRLs already configured"));
+        }
+        self.revocation = Some(crate::revocation::Revocation::new(crls)?);
+        Ok(self)
     }
 }
 
@@ -186,12 +213,24 @@ impl TlsServer {
         admission: crate::AdmissionPolicy,
     ) -> Result<Self> {
         let provider = Arc::new(rustls::crypto::ring::default_provider());
-        let verifier = rustls::server::WebPkiClientVerifier::builder_with_provider(
-            Arc::new(roots.0),
+        let mut verifier = rustls::server::WebPkiClientVerifier::builder_with_provider(
+            Arc::new(roots.store),
             provider.clone(),
-        )
-        .build()
-        .map_err(|_| Error::InvalidCredentials)?;
+        );
+        let clock = match roots.revocation {
+            Some(revocation) => {
+                if revocation.clock.current_time().is_none() {
+                    return Err(Error::InvalidCredentials);
+                }
+                verifier = verifier.with_crls(revocation.der);
+                Some(revocation.clock)
+            }
+            None => None,
+        };
+        let verifier = verifier
+            .enforce_revocation_expiration()
+            .build()
+            .map_err(|_| Error::InvalidCredentials)?;
         let mut config = ServerConfig::builder_with_provider(provider)
             .with_protocol_versions(&[&rustls::version::TLS13])
             .map_err(|_| Error::InvalidCredentials)?
@@ -199,6 +238,9 @@ impl TlsServer {
             .with_single_cert(identity.chain, identity.key)
             .map_err(|_| Error::InvalidCredentials)?;
         config.alpn_protocols = vec![alpn(link_policy).to_vec()];
+        if let Some(clock) = clock {
+            config.time_provider = clock;
+        }
         config.session_storage = Arc::new(rustls::server::NoServerSessionStorage {});
         config.send_tls13_tickets = 0;
         config.max_early_data_size = 0;
@@ -380,14 +422,35 @@ impl TlsClient {
         identity: DerIdentity,
         link_policy: Option<ProbePolicy>,
     ) -> Result<Self> {
-        let mut config =
-            ClientConfig::builder_with_provider(Arc::new(rustls::crypto::ring::default_provider()))
-                .with_protocol_versions(&[&rustls::version::TLS13])
-                .map_err(|_| Error::InvalidCredentials)?
-                .with_root_certificates(roots.0)
-                .with_client_auth_cert(identity.chain, identity.key)
-                .map_err(|_| Error::InvalidCredentials)?;
+        let provider = Arc::new(rustls::crypto::ring::default_provider());
+        let mut verifier = rustls::client::WebPkiServerVerifier::builder_with_provider(
+            Arc::new(roots.store),
+            provider.clone(),
+        );
+        let clock = match roots.revocation {
+            Some(revocation) => {
+                if revocation.clock.current_time().is_none() {
+                    return Err(Error::InvalidCredentials);
+                }
+                verifier = verifier.with_crls(revocation.der);
+                Some(revocation.clock)
+            }
+            None => None,
+        };
+        let verifier = verifier
+            .enforce_revocation_expiration()
+            .build()
+            .map_err(|_| Error::InvalidCredentials)?;
+        let mut config = ClientConfig::builder_with_provider(provider)
+            .with_protocol_versions(&[&rustls::version::TLS13])
+            .map_err(|_| Error::InvalidCredentials)?
+            .with_webpki_verifier(verifier)
+            .with_client_auth_cert(identity.chain, identity.key)
+            .map_err(|_| Error::InvalidCredentials)?;
         config.alpn_protocols = vec![alpn(link_policy).to_vec()];
+        if let Some(clock) = clock {
+            config.time_provider = clock;
+        }
         config.resumption = rustls::client::Resumption::disabled();
         config.enable_early_data = false;
         config.cert_compressors.clear();

@@ -143,6 +143,8 @@ mod platform {
         devices: Vec<DeviceKey>,
         principals: Vec<PrincipalFile>,
         ca_certificates: Vec<PathBuf>,
+        #[serde(default, deserialize_with = "crl_paths")]
+        certificate_revocation_lists: Vec<PathBuf>,
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
         #[serde(default)]
@@ -159,6 +161,8 @@ mod platform {
         server_name: String,
         device: DeviceKey,
         ca_certificates: Vec<PathBuf>,
+        #[serde(default, deserialize_with = "crl_paths")]
+        certificate_revocation_lists: Vec<PathBuf>,
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
     }
@@ -199,6 +203,8 @@ mod platform {
         devices: Vec<DeviceKey>,
         principals: Vec<PrincipalFile>,
         ca_certificates: Vec<PathBuf>,
+        #[serde(default, deserialize_with = "crl_paths")]
+        certificate_revocation_lists: Vec<PathBuf>,
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
         data_link: DataLinkFile,
@@ -216,9 +222,24 @@ mod platform {
         server_name: String,
         device: DeviceKey,
         ca_certificates: Vec<PathBuf>,
+        #[serde(default, deserialize_with = "crl_paths")]
+        certificate_revocation_lists: Vec<PathBuf>,
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
         data_link: DataLinkFile,
+    }
+
+    // Missing means the prior policy; a present null/empty value is not allowed
+    // to silently disable the administrator's requested revocation checks.
+    fn crl_paths<'de, D>(deserializer: D) -> std::result::Result<Vec<PathBuf>, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let paths = Vec::<PathBuf>::deserialize(deserializer)?;
+        if paths.is_empty() || paths.len() > crate::revocation::MAX_CRLS {
+            return Err(serde::de::Error::custom("CRL path count"));
+        }
+        Ok(paths)
     }
 
     fn version(bytes: &[u8]) -> Result<u32> {
@@ -244,6 +265,7 @@ mod platform {
                         devices: file.devices,
                         principals: file.principals,
                         ca_certificates: file.ca_certificates,
+                        certificate_revocation_lists: file.certificate_revocation_lists,
                         certificate_chain: file.certificate_chain,
                         private_key: file.private_key,
                         authentication_limit: file.authentication_limit,
@@ -273,6 +295,7 @@ mod platform {
                         server_name: file.server_name,
                         device: file.device,
                         ca_certificates: file.ca_certificates,
+                        certificate_revocation_lists: file.certificate_revocation_lists,
                         certificate_chain: file.certificate_chain,
                         private_key: file.private_key,
                     },
@@ -491,12 +514,32 @@ mod platform {
 
     fn credentials(
         roots: &[PathBuf],
+        crls: &[PathBuf],
         chain: &[PathBuf],
         key: &Path,
         broker_uid: u32,
         context: &Context,
     ) -> Result<(TrustRoots, DerIdentity)> {
-        let roots = TrustRoots::new(certificates(roots, 32, "CA certificate", context)?)?;
+        let mut roots = TrustRoots::new(certificates(roots, 32, "CA certificate", context)?)?;
+        if !crls.is_empty() {
+            let mut bytes = Vec::with_capacity(crls.len());
+            let mut total = 0;
+            for path in crls {
+                let crl = read_file(
+                    path,
+                    Kind::Public,
+                    crate::revocation::MAX_CRL_BYTES,
+                    "certificate revocation list",
+                    context,
+                )?;
+                total += crl.len();
+                if total > crate::revocation::MAX_CRL_TOTAL {
+                    return Err(Error::InvalidInput("CRL total size"));
+                }
+                bytes.push(crl);
+            }
+            roots = roots.with_crls(bytes)?;
+        }
         let chain = certificates(chain, 4, "certificate chain", context)?;
         let key = read_file(
             key,
@@ -560,6 +603,7 @@ mod platform {
         let policy = AccessPolicy::new(rules)?;
         let (roots, identity) = credentials(
             &file.ca_certificates,
+            &file.certificate_revocation_lists,
             &file.certificate_chain,
             &file.private_key,
             file.broker_uid,
@@ -617,6 +661,7 @@ mod platform {
         }
         let (roots, identity) = credentials(
             &file.ca_certificates,
+            &file.certificate_revocation_lists,
             &file.certificate_chain,
             &file.private_key,
             file.broker_uid,

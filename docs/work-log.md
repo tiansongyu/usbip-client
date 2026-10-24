@@ -4,6 +4,8 @@
 
 - 上一轮为实际进展：E43持续远端目录/903软件/双栈QEMU/四原生CI及发布，最终clean e6177063。重读完整Phase0–7原任务、当前Git/AGENTS/核心skill/架构与阶段gate；原目标保持active。本轮补Phase3尚缺的CRL凭据撤销，不以此完成G3/硬件或后续UI阶段。
 - 应用rustusb-development、writing-technical-design和technical-documentation。按设计skill显式要求，三个独立只读组件研究分别检查锁定rustls/webpki、rcgen/RFC与x509-parser；不委派产品编辑、不扩大为无关组件技能。实际研究探针重现future thisUpdate被接受、同issuer旧空CRL先置可遮蔽新撤销；故先写`research/offline-crl-design.md`，采用标准全链验证加有界元数据/单issuer完整CRL和每次握手实际TimeProvider窗口保护，不写自定义密码学/ASN.1，不改USB/helper/schema会话能力。尚未修改产品或宣称新验收。
+- 实现TrustRoots::with_crls与两角色schema1/2受保护路径，1..16/每64KiB/总256KiB，拒null/空/重复issuer及不完整scope；x509-parser只供元数据，标准WebPki全链/unknown-deny/expiration/pin/ACL保持，安全with_webpki_verifier无自定义密码校验。Checked SystemTime+CrlClock在每次真实新证书验证检查共同窗口，原resumption/early-data禁用；不重验已有stream，不自动下载/热更新或持久CRL序号抗回滚。
+- 开发首次check E0277因Oid无Ord，改存有界OID编码；首次TLS fixture E0277为tuple async中的?，以及后续json重复数组宏、补充extension单元的错误Oid导出/构造参数编译失败均保留。第一check仅tool原回执与失败源快照，后续原stderr/stdout有文件。第二check0；先8再11新test通过，最终transport全部测试与allworkspace/alltargets/allfeatures Clippy -D warnings通过。真实raw/v2 TLS含同pin撤销、全中间链、坏签名/issuer、实际clock过期/回退（包括无关list共同窗口）及已有stream继续I/O，配置测试实际加载后双schema握手/文件更新旧快照与新load拒绝；完整clean gate及installed QEMU尚待执行，不将开发PASS替代它们。
 
 ## 2026-10-24：远程目录自动刷新（开始）
 

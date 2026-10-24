@@ -12,6 +12,7 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt, DuplexStream, duplex};
 
 mod admission;
 mod link;
+mod revocation;
 mod security;
 
 type TestResult<T = ()> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
@@ -224,7 +225,7 @@ async fn absent_client_certificate_cannot_produce_authenticated_stream() -> Test
     let mut config =
         ClientConfig::builder_with_provider(Arc::new(rustls::crypto::ring::default_provider()))
             .with_protocol_versions(&[&rustls::version::TLS13])?
-            .with_root_certificates(fixture.ca.roots()?.0)
+            .with_root_certificates(fixture.ca.roots()?.store)
             .with_no_client_auth();
     config.alpn_protocols = vec![ALPN.to_vec()];
     let connector = TlsConnector::from(Arc::new(config));
