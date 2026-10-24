@@ -120,3 +120,6 @@ cargo build --workspace --release
 ```
 
 核心公共 API 有文档；外部输入有长度 / 资源上限；关键业务有有效测试；错误不静默丢弃；异步 worker 不执行长时间阻塞 I/O；资源确定性释放；依赖和许可证清单随变更更新；所有功能注明平台 / 内核限制。过程记录覆盖变更目的、测试、失败原因、修复、遗留项和对应 commit。任何未通过的硬件、安全或互操作 gate 都不能被绿色 CI 覆盖。
+
+
+服务端观测增量E38见[验收](research/server-security-observations-validation.md)：clean c097cf8软件808/194稳定输入，六raw认证计数paired与一独立Native-v4/v2诊断回归通过，共14guest0。前台及agent精确Read接口已实现，TLS/framing/outer限额按loaded配置累计；volatile计数不代替持久安全审计、设备释放或完整G3，安装态agent counter/v2负向counter仍待验收。原Phase0–7与TUI/GUI/真实硬件范围不变。

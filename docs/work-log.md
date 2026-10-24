@@ -674,3 +674,7 @@
 - 同作者独立raw方法无原runner/verifier import，4427原件SHA前后同、2673B64块重解码，203/211选定harness输入逐Git c097映射且含194软件输入，非独立安全审计或新case。安装态agent counter/v2负向counter、持久安全历史与完整G3/硬件仍未完成。设计/报告、主README与项目页已按范围更新，完整目标继续active。
 
 - 本地文档/站点：30源543链接/表格与Node/git检查通过，56外链未全fetch；6子路径HTTP资源逐源bytes同，5运行assets/全局readme-site四源与symlink保持。CUA桌面1280×720及手机390×844 DOM无横向溢出，新链接/图片/键盘ArrowRight/Home正确；去单script tag临时variant保commands/evidence，非浏览器禁JS。截图接口实际Unable to capture screenshot留原错，不称pixel审查；reduced-motion/clipboard未重跑。preview原PID3329044实际Ctrl-C退出0/proc absent、tab18关闭/viewport reset。
+
+- 正常SSH推送dfd2b83后，primary API确认CI40077177969四原生job（120822947404/947561/947564/947643）全部completed/success，实际native architecture step成功；Pages40077177869 check120822947125/deploy120823004551成功。仅核最终API/job/step状态，未fetch完整CI logs/ELF或重算每格808；808仍归clean c097本地。公开6资源HTTP200逐dfd Git blob同，CUA public desktop新链接/图片/无溢出，tab8保deliverable。最终receipt保194软件输入及6site bytes同，不改QEMU来源。local check-site另173项通过；全局skill保持既有四源与symlink。
+
+- 最终publication文档复核30源545链接/表格无错，59外链未全fetch；旧543-source snapshot原件不改。发布记录只增报告/路线图/安全说明/工作日志与API、HTTP、方法原件，194软件和六site源仍锁dfd/c097的实际证据。

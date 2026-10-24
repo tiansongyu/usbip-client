@@ -152,3 +152,6 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 | S6 实机隔离 | 目标 Ubuntu / 内核 / 架构的 helper 策略、systemd 限制与设备测试记录 | 对应组合标记未验证 |
 
 详细执行和结果格式见 [测试手册](testing.md)，分阶段发布门槛见 [开发计划](roadmap.md)。当前文档不证明任何 gate 已通过。不能因编译、单元测试或模拟 USB 设备成功而宣称真实硬件重定向、安全存储写入、摄像头 / 音频等时序敏感设备或 Windows 已支持。
+
+
+服务端现在提供[有界安全计数](research/server-security-observations-validation.md)：只含loaded TLS配置的固定数值/枚举/标记，区分TLS、framing与outer限额。agent逐实际UID/profile Read授权，授权全部结果绕WAL、拒绝仍durable；无peer地址、pin、principal、USB内容或原始错误文本。它是volatile观测，不是持久安全审计、实时撤销、设备cleanup或完整G3证明。安装态负向计数只验raw-v1六组合；framed-v2与agent IPC的软件测试/独立诊断回归不冒充安装态counter验收。

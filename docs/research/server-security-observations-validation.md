@@ -136,3 +136,26 @@ screenshot, so no new pixel review is claimed. Reduced-motion and clipboard
 behavior were not rerun; their source assets are unchanged. The owned preview
 server exited zero and its original PID is absent. Publishing/CI is recorded
 separately after a real push, not inferred from these local checks.
+
+
+## Published revision and CI
+
+Normal SSH push published `dfd2b83bc5e7d843b515c2fa187f277603487e91`. Its
+[four native CI jobs](https://github.com/tiansongyu/usbip-client/actions/runs/40077177969)
+all completed successfully, including the actual native-architecture check. The
+[Pages check/deployment](https://github.com/tiansongyu/usbip-client/actions/runs/40077177869)
+also completed successfully. These are primary final API job/step statuses; full
+CI logs and CI ELFs were not fetched or independently recounted. The 808 count
+above remains the local clean-c097 execution. All 194 software inputs match dfd
+byte-for-byte; the QEMU results remain locked to their actual clean c097 runs.
+
+All six [public site](https://tiansongyu.github.io/usbip-client/) resources returned
+HTTP 200 with exact dfd source bytes. CUA also observed the new evidence link,
+loaded images and no horizontal overflow at the public desktop viewport. The
+final documentation/publication receipt changes no software input or site
+resource and is not an additional software, CI or QEMU acceptance run. Local
+`check-site.py` separately passed 173 asset/link/SVG checks.
+
+Final publication review passes 545 local/repository-mapped links across the same
+30 maintained sources, with no table errors; 59 external links were not all
+fetched. This later review preserves the earlier 543-link source snapshot.
