@@ -1,0 +1,166 @@
+{
+  "whole_result": "FAIL",
+  "coordinator_exit": 1,
+  "cases": [
+    {
+      "name": "refusals",
+      "result": "PASS"
+    },
+    {
+      "name": "local",
+      "result": "PASS"
+    },
+    {
+      "name": "logs",
+      "result": "PASS"
+    },
+    {
+      "name": "write-failure",
+      "result": "FAIL"
+    }
+  ],
+  "children_actual_returncodes": [
+    {
+      "name": "existing-destination",
+      "pid": 3054067,
+      "returncode": 1,
+      "waited_monotonic_ns": 317146836388844,
+      "forced_cleanup": false
+    },
+    {
+      "name": "symlink-parent",
+      "pid": 3054072,
+      "returncode": 1,
+      "waited_monotonic_ns": 317146853336828,
+      "forced_cleanup": false
+    },
+    {
+      "name": "local-capture",
+      "pid": 3054077,
+      "returncode": 0,
+      "waited_monotonic_ns": 317146869806395,
+      "forced_cleanup": false
+    },
+    {
+      "name": "create-real-local-log",
+      "pid": 3054092,
+      "returncode": 0,
+      "waited_monotonic_ns": 317146885977988,
+      "forced_cleanup": false
+    },
+    {
+      "name": "local-log-capture",
+      "pid": 3054113,
+      "returncode": 0,
+      "waited_monotonic_ns": 317146901395431,
+      "forced_cleanup": false
+    },
+    {
+      "name": "corrupt-log-capture",
+      "pid": 3054129,
+      "returncode": 1,
+      "waited_monotonic_ns": 317146917053610,
+      "forced_cleanup": false
+    },
+    {
+      "name": "write-limit-16",
+      "pid": 3054144,
+      "returncode": 101,
+      "waited_monotonic_ns": 317146931655818,
+      "forced_cleanup": false
+    }
+  ],
+  "collection_errors": [],
+  "forced_cleanup": [],
+  "source_unchanged": true,
+  "binary_unchanged": true,
+  "reported_before": {
+    "head": "2ca5f5bfe395f97d06807d00a1d97201d94ebe5d",
+    "clean": true,
+    "source_matches": true,
+    "binary_hashes": {
+      "/home/ubuntu/github/usbip-client/target/release/rustusb": "67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419",
+      "/tmp/rustusb-diagnostic-default-build-20261024/target/release/rustusb": "a6d12305506c97fda617be0f11f7fceb28d7d3469ac8e33c498a97ca5807a99f"
+    }
+  },
+  "reported_after": {
+    "head": "2ca5f5bfe395f97d06807d00a1d97201d94ebe5d",
+    "clean": true,
+    "source_matches": true,
+    "binary_hashes": {
+      "/home/ubuntu/github/usbip-client/target/release/rustusb": "67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419",
+      "/tmp/rustusb-diagnostic-default-build-20261024/target/release/rustusb": "a6d12305506c97fda617be0f11f7fceb28d7d3469ac8e33c498a97ca5807a99f"
+    }
+  },
+  "wrapper_guards_unchanged": true,
+  "failure_receipt": {
+    "cancel_observed": false,
+    "capture": "complete",
+    "event": "diagnostic_export",
+    "file": {
+      "failure": {
+        "errno": 27,
+        "kind": "io",
+        "partial_name": ".rustusb-diagnostic-5c9563f6-ab6a-46e4-96b7-91f4c1913dd7.partial",
+        "publication": "partial",
+        "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd",
+        "written_bytes": 16
+      },
+      "result": "failed"
+    },
+    "schema_version": 1,
+    "summary": {
+      "complete": true,
+      "sections": [
+        {
+          "failure": null,
+          "observed_at_millis": 2,
+          "outcome": "complete",
+          "stage": "native"
+        },
+        {
+          "failure": null,
+          "observed_at_millis": 2,
+          "outcome": "complete",
+          "stage": "helper"
+        },
+        {
+          "failure": null,
+          "observed_at_millis": null,
+          "outcome": "not_requested",
+          "stage": "agent"
+        },
+        {
+          "failure": null,
+          "observed_at_millis": null,
+          "outcome": "not_requested",
+          "stage": "health"
+        },
+        {
+          "failure": null,
+          "observed_at_millis": null,
+          "outcome": "not_requested",
+          "stage": "logs"
+        }
+      ]
+    }
+  },
+  "partial": {
+    "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/final-write-failure/.rustusb-diagnostic-5c9563f6-ab6a-46e4-96b7-91f4c1913dd7.partial",
+    "bytes": 16,
+    "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd"
+  },
+  "stderr": {
+    "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/write-limit-16/stderr.bin",
+    "bytes": 16,
+    "sha256": "9d0f2e99864e6fd021daf7bf26536b02e901bc39195425237a7d18b3d9ba3d4c",
+    "actual_bytes_ascii": "2026-10-24T04:23",
+    "stacktrace_present": false
+  },
+  "unrun": [
+    "diagnostic-default",
+    "server-signals",
+    "server-backpressure"
+  ],
+  "first_failure_preserved": true
+}

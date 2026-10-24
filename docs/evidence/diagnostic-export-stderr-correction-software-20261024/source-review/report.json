@@ -1,0 +1,384 @@
+{
+  "schema_version": 1,
+  "result": "SOURCE_REVIEW_NO_SPECIFIC_MUSTFIX",
+  "scope": "Root-authored minimal stderr I/O correction; current candidate source only. Reviewer authored earlier logging worker/output module, not this console correction.",
+  "checks": [
+    {
+      "id": "first_returned_io",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          26
+        ],
+        "needle": "first.get_or_insert(Failure"
+      },
+      "conclusion": "Only the first actual returned ErrorKind and errno are retained; no Display/Debug original message is formatted or stored."
+    },
+    {
+      "id": "no_lock_over_io",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          85
+        ],
+        "needle": "let result = self.inner.write_all(bytes);"
+      },
+      "conclusion": "Inner IO occurs before taking the metadata lock; result is returned unchanged, including partial/error behavior."
+    },
+    {
+      "id": "normal_write_all",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          85
+        ],
+        "needle": "let result = self.inner.write_all(bytes);"
+      },
+      "conclusion": "Delegation preserves stderr write_all locking, formatting bytes and real failure rather than implementing a fake successful count."
+    },
+    {
+      "id": "write_and_flush",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          90
+        ],
+        "needle": "let result = self.inner.flush();"
+      },
+      "conclusion": "write, write_all and flush all pass real returned results through the same observer; a later success cannot clear an earlier failure."
+    },
+    {
+      "id": "poison",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          37
+        ],
+        "needle": "console error state poisoned"
+      },
+      "conclusion": "A poisoned metadata mutex makes check fail Worker rather than claim healthy logging."
+    },
+    {
+      "id": "shutdown_errno",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          41
+        ],
+        "needle": "Some(errno) => io::Error::from_raw_os_error(errno)"
+      },
+      "conclusion": "Shutdown recreates the original raw errno; non-OS errors retain kind with a fixed message, never private arbitrary text."
+    },
+    {
+      "id": "global_metadata",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+        "lines": [
+          49
+        ],
+        "needle": "pub(crate) struct ConsoleWriter"
+      },
+      "conclusion": "Global MakeWriter retains a bounded metadata Arc only; no extra file, IO worker, queue, USB capability, permit or device lock is created."
+    },
+    {
+      "id": "console_default_finish",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+        "lines": [
+          403
+        ],
+        "needle": "if let Some(console) = self.console.take()"
+      },
+      "conclusion": "Default-mode finish consumes/checks console state; normal status remainsNone. Explicit shutdown propagates ErrorIo; subsequent Drop sees no console and does not reprint or panic."
+    },
+    {
+      "id": "drop_no_recursion",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+        "lines": [
+          478
+        ],
+        "needle": "let _ = self.finish();"
+      },
+      "conclusion": "Destructor uses the existing best-effort result boundary; it neither recursively logs failure nor pretends that ignoring explicit shutdown reports an error."
+    },
+    {
+      "id": "file_mode_separate",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+        "lines": [
+          363
+        ],
+        "needle": "console: None,"
+      },
+      "conclusion": "File owners start with consoleNone and keep prior finite file writer/reader queues, metrics, actual joins and loss results. Monitor still depends only on fileShared."
+    },
+    {
+      "id": "disable_internal",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+        "lines": [
+          512,
+          520
+        ],
+        "needle": ".log_internal_errors(false)"
+      },
+      "conclusion": "Both default human and JSON subscribers use checked writer and disable recursive subscriber stderr fallback."
+    },
+    {
+      "id": "normal_format",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+        "lines": [
+          514,
+          521
+        ],
+        "needle": ".with_ansi(false)"
+      },
+      "conclusion": "Existing EnvFilter, human/JSON formatter and ANSI-off selection are retained; no stdout tee or new output shape is introduced."
+    },
+    {
+      "id": "cli_owner_order",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/main.rs",
+        "lines": [
+          616
+        ],
+        "needle": "let operation = runtime.block_on(execute(cli, monitor));"
+      },
+      "conclusion": "Existing actual command/cleanup owner returns before logger shutdown. Logger failure changes exit toFailure without rewriting USB/artifact operation outcome."
+    },
+    {
+      "id": "cli_last_report",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/main.rs",
+        "lines": [
+          633
+        ],
+        "needle": "let _ = writeln!(io::stderr().lock(), \"{message}\");"
+      },
+      "conclusion": "All owned CLI error reports now use fallible best-effort stderr, without eprintln panic, recursive tracing or stdout fallback."
+    },
+    {
+      "id": "helper_owner_order",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/main.rs",
+        "lines": [
+          78
+        ],
+        "needle": "let result = runtime.block_on(rustusb_daemon::serve_with_state"
+      },
+      "conclusion": "Helper actual mutation/connection tree completes before logger shutdown; failure flag remains independent and nonzero."
+    },
+    {
+      "id": "helper_last_report",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/main.rs",
+        "lines": [
+          108
+        ],
+        "needle": "let _ = writeln!(std::io::stderr().lock(), \"{message}\");"
+      },
+      "conclusion": "Helper initialization/runtime/operation/shutdown error text is retained via fallible reporter and existing failure exit."
+    },
+    {
+      "id": "success_without_logging",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          313,
+          637
+        ],
+        "needle": "successful_operation_with_console_failure"
+      },
+      "conclusion": "New runner source uses one controlled empty local DEVLIST for human/JSON stderr modes, requires actual request/reply and stdout[], then exit1 under regular-stderr limit. It does not scan or import real devices."
+    },
+    {
+      "id": "old_fail_kept",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/docs/research/stderr-write-failure-design.md",
+        "lines": [
+          7
+        ],
+        "needle": "Preserve that FAIL."
+      },
+      "conclusion": "Design retains original strict101 failure; no change of stderr toPIPE or RUST_LOGoff is proposed as acceptance workaround."
+    },
+    {
+      "id": "scope_limits",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/docs/research/stderr-write-failure-design.md",
+        "lines": [
+          15
+        ],
+        "needle": "Rust's special handling of a closed stderr FD"
+      },
+      "conclusion": "Design explicitly excludes std closedFD suppression, arbitrary formatter panic immunity and cancellable permanent stderr blocking."
+    }
+  ],
+  "current_source_files": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/docs/research/stderr-write-failure-design.md",
+      "bytes": 4349,
+      "sha256": "f2c71b04619806646c534e037a3de4b877db32e644c4d1ff85f3b0b60f0a1cc5"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/console.rs",
+      "bytes": 4507,
+      "sha256": "a7a26569584b248da69a04adeb6a4cfb4d874e54110383ad07045cc3f6bc9d2a"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+      "bytes": 43569,
+      "sha256": "e5d94282ac6b448da85ea094bc38b4059167f4660436638ae13f9bba1d4214d3"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/lib.rs",
+      "bytes": 847,
+      "sha256": "156c8038d0d899d02904a1eada09ca28d5239b8c64e27603cf8573ad684a4a18"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/types.rs",
+      "bytes": 23062,
+      "sha256": "374a69e4f7f929ded4448d954100dbd56db81edcb50a6008c4613675c3d228d3"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/main.rs",
+      "bytes": 28516,
+      "sha256": "dfdd3b18a9fe257fa429f3ae8104c422cebe5988ce140a56a7163b6001951a71"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/main.rs",
+      "bytes": 4156,
+      "sha256": "01e1f3dfde34e0162ddb192613a26336efb8fc269152e49bf3aabac5acea3e5d"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+      "bytes": 37100,
+      "sha256": "6704d5118c2f633cd31407327dbfb1143bef17961d649858412be2420dd0b82c"
+    }
+  ],
+  "current_source_unchanged_during_final_capture": true,
+  "old_product_differential": {
+    "scope": "Existing two old-ELF diagnostic children only; diagnostic comparison, not product-fix acceptance.",
+    "reported_result": "REPRODUCED_OLD_PRODUCT_DIFFERENTIAL",
+    "old_elf_actual_hash_matches_report": true,
+    "cases": [
+      {
+        "level": "debug",
+        "reported_actual_exit": 101,
+        "stderr_bytes": 16,
+        "output_file_errno": 27,
+        "partial_bytes": 16,
+        "stdout_and_partial_match_saved_result": true
+      },
+      {
+        "level": "off",
+        "reported_actual_exit": 1,
+        "stderr_bytes": 0,
+        "output_file_errno": 27,
+        "partial_bytes": 16,
+        "stdout_and_partial_match_saved_result": true
+      }
+    ],
+    "raw_before": [
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/result.json",
+        "bytes": 4128,
+        "sha256": "a8f442394c26430e58d4c2230bf877a1c476ad54bba5d444d332b15b74614c1b"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/original-rustusb",
+        "bytes": 16973360,
+        "sha256": "67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/debug/stdout.bin",
+        "bytes": 809,
+        "sha256": "630ab6749334116f47481e978f14e97e743fde7af2c0630eb0700d8eadf37b57"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/debug/stderr.bin",
+        "bytes": 16,
+        "sha256": "ff94458eb026c0b2f46c5e883f495b9f6875ed732b22afd56ef470b8ef1412f5"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/debug/partial.bin",
+        "bytes": 16,
+        "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/off/stdout.bin",
+        "bytes": 809,
+        "sha256": "2abdc2fd3efc504d968c1e2463f27bd000821509d772c06fe47e3ded70964d62"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/off/stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/off/partial.bin",
+        "bytes": 16,
+        "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd"
+      }
+    ],
+    "raw_after": [
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/result.json",
+        "bytes": 4128,
+        "sha256": "a8f442394c26430e58d4c2230bf877a1c476ad54bba5d444d332b15b74614c1b"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/original-rustusb",
+        "bytes": 16973360,
+        "sha256": "67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/debug/stdout.bin",
+        "bytes": 809,
+        "sha256": "630ab6749334116f47481e978f14e97e743fde7af2c0630eb0700d8eadf37b57"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/debug/stderr.bin",
+        "bytes": 16,
+        "sha256": "ff94458eb026c0b2f46c5e883f495b9f6875ed732b22afd56ef470b8ef1412f5"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/debug/partial.bin",
+        "bytes": 16,
+        "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/off/stdout.bin",
+        "bytes": 809,
+        "sha256": "2abdc2fd3efc504d968c1e2463f27bd000821509d772c06fe47e3ded70964d62"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/off/stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "/tmp/rustusb-diagnostic-stderr-differential-20261024/off/partial.bin",
+        "bytes": 16,
+        "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd"
+      }
+    ],
+    "raw_bytes_unchanged": true
+  },
+  "remaining_boundaries": [
+    "Only IO errors actually returned by std writer are latched; EBADF special treatment stays outside claim.",
+    "log_internal_errors(false) does not remove every unconditional fallback in third-party span-format failure or prevent arbitrary user Display code from panicking.",
+    "Default stderr remains synchronous; unrelated concurrently logging threads are not a newly joined/closed console task tree. Callers must quiesce their actual owned operations before explicit shutdown.",
+    "Global console state Arc intentionally contains metadata only and may outlive LogOwner; no memory/resource proof beyond this bounded state is inferred.",
+    "Implicit Drop cannot return IO errors. Explicit shutdown is required for a caller-visible Result; Drop does not panic/print.",
+    "Actual new-source software, human/JSON runtime and unchanged regular-stderr RLIMIT regression are pending root execution. Old differential RUST_LOGoff exit1 is not a workaround PASS."
+  ],
+  "validation_boundary": {
+    "reviewer_source_edits": 0,
+    "reviewer_cli_build_cargo_ptrace_qemu_git_executions": 0,
+    "new_source_runtime_test_result": null,
+    "method": "Read actual design/source, compare fixed-library behavior from prior research, parse existing differential raw bytes only."
+  }
+}

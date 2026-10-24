@@ -1,0 +1,32 @@
+{
+  "scope": "Pure parser correction, no raw or product change",
+  "initial_parser": {
+    "path": "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/review-root-logs.py",
+    "sha256": "a1b3a6049f86317098e23cba49e35767102e542fe78772f2e978a6fdf4cb9d99"
+  },
+  "initial_result": {
+    "path": "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/final-first/report.json",
+    "sha256": "aa96c291d25735757fcf302effe78b914d6147167d9101f19e2a00f2e0cce543"
+  },
+  "correction": "Cargo stderr label order is separate from stdout libtest block order. Preserve each ordered sequence and require 47 labels + 47 running counts + 47 results; each block actual named executions and count must equal passed. No test predicate removed.",
+  "observed_interleavings": [
+    {
+      "job": 120774457956,
+      "next_label_line": 1232,
+      "preceding_result_line": 1234,
+      "next_running_line": 1237,
+      "next_result_line": 1336
+    },
+    {
+      "job": 120774457965,
+      "next_label_line": 1376,
+      "preceding_result_line": 1378,
+      "next_running_line": 1381,
+      "next_result_line": 1391
+    }
+  ],
+  "revision2": {
+    "path": "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/review-root-logs-revision2.py",
+    "sha256": "340103de1ba19aa190245bd884245dc3fce477e63b9a91947ce48267a290b81e"
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "result": "FIRST_RUN_FAIL_PRESERVED_SOURCE_MECHANISM_RESEARCH_COMPLETE",
+  "actual_case_scope": [
+    {
+      "name": "refusals",
+      "result": "PASS"
+    },
+    {
+      "name": "local",
+      "result": "PASS"
+    },
+    {
+      "name": "logs",
+      "result": "PASS"
+    },
+    {
+      "name": "write-failure",
+      "result": "FAIL"
+    }
+  ],
+  "actual_write_failure": {
+    "returncode": 101,
+    "expected": 1,
+    "output_errno": 27,
+    "output_partial_bytes": 16,
+    "stderr_bytes": 16,
+    "stderr_stacktrace_available": false
+  },
+  "mechanism": "Source-derived inference: selected fmt SubscriberBuilder enables internal errors; original stderr write error invokes unchecked eprintln fallback; Rust print_to panics on returned stderr error. Exact stderr errno/panic frame was not directly traced.",
+  "recommended_fix": "Checked stderr MakeWriter retains actual first IO kind/errno; disable only unchecked internal fallback; LogOwner default-mode shutdown reports it after actual operation cleanup; best-effort non-panicking entrypoint reporting.",
+  "additional_boundaries": [
+    "std StderrRaw suppresses EBADF; select safe direct Linux write if claiming closed-FD error detection.",
+    "fmt span-field error fallback is separately unchecked; no universal arbitrary formatter panic immunity.",
+    "Permanent stderr blocking remains a legacy synchronous-I/O limitation.",
+    "No change to file-only logging, monitorNone contract, artifact outcome or USB cleanup proof."
+  ],
+  "sources_current_at_research": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+      "bytes": 43133,
+      "sha256": "e4213d8c2e05ab2badc8d8c4b36c1399f0154e29f84465388fafbb126631e214"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/main.rs",
+      "bytes": 28121,
+      "sha256": "e83c977a82477281c402b3db0ecc86d7bf87433278bdcfaeadc5bf429bcc7009"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/main.rs",
+      "bytes": 3816,
+      "sha256": "8f718266821ba4682a8fc2c7977c143a09f076dadeed7b5e628e9f6237a98ca6"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/Cargo.lock",
+      "bytes": 37321,
+      "sha256": "7f7184d72f123b69a6a4098662ba52154a80a07e3a0f084e67622b3642b3512d"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/rust-toolchain.toml",
+      "bytes": 86,
+      "sha256": "559f488c181e0e9e77cf17c29de663977f036ec7ff2e2060585714bf53c52d62"
+    }
+  ],
+  "raw_files_before_after_equal": true,
+  "raw_consulted_files": [
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/result.json",
+      "bytes": 1381,
+      "sha256": "cce6840c4a823fa74728de7078792f54d3efc1ea9d225e1b41a34c109e7ce102"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/start.json",
+      "bytes": 647,
+      "sha256": "ddb94e1de3ab46d00068c9b67aaee76de8ae694c396811e2762b970696fff789"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/summary.json",
+      "bytes": 107418,
+      "sha256": "c861438a5cb4180974266fd7687142fb6fac2969bdb9d35563ecd6a62725cb3d"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/write-failure.json",
+      "bytes": 1047,
+      "sha256": "1555f190a647bdf2e05c705230fbbf96a22aebca450084b383bc7bb50a36d150"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/write-limit-16/process.json",
+      "bytes": 590,
+      "sha256": "36d29ab507e85ad621de1e376ed4cdfc7e8e721808239c9f574285b8f4e2fd1f"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/write-limit-16/stdout.bin",
+      "bytes": 809,
+      "sha256": "272513dc5efea6f1ecd97a3827ed6699216b6734dc59b9c0595ad1501cca28ac"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/write-limit-16/stderr.bin",
+      "bytes": 16,
+      "sha256": "9d0f2e99864e6fd021daf7bf26536b02e901bc39195425237a7d18b3d9ba3d4c"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/selected-runner.py",
+      "bytes": 33730,
+      "sha256": "27d33c8bc0bd748b0b015ba1417cfad905558dad82a38c6eb7961ae0c37ddbf5"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-local-third-20261024/all-features/final-write-failure/.rustusb-diagnostic-5c9563f6-ab6a-46e4-96b7-91f4c1913dd7.partial",
+      "bytes": 16,
+      "sha256": "2be76224ab89386889fc9acf211eeda2f32518379b7bbb27bdfb4701069b0efd"
+    }
+  ],
+  "source_edits": 0,
+  "cargo_cli_ptrace_qemu_git_executions": 0,
+  "artifacts": [
+    {
+      "path": "/tmp/rustusb-diagnostic-stderr-first-failure-research-20261024/consulted-raw-sha.json",
+      "bytes": 3907,
+      "sha256": "162b5a8463293d22dd45877a38c2f7a7de556beeaad9403b7809d3b84ddf5867"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-stderr-first-failure-research-20261024/first-run-facts.json",
+      "bytes": 4574,
+      "sha256": "8c5617077995f1f3fa5e6fdaa23522559b86c1a24f4a911696b457620e1bed33"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-stderr-first-failure-research-20261024/fixed-source-provenance.json",
+      "bytes": 3218,
+      "sha256": "345a4a89ed9ff655406863c5361379a80c7d4365dcd5552bf94a61703d8f8b44"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-stderr-first-failure-research-20261024/recommendation.md",
+      "bytes": 10151,
+      "sha256": "0fd21699060b9341c0ee1e66e90b3e6a4dd322aa988d92ae7012ef49b5030a50"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-stderr-first-failure-research-20261024/rust-1.97.1-library_std_src_io_stdio.rs",
+      "bytes": 44163,
+      "sha256": "e302f4b2fa83f2d703e1d3211368dc01860b4a602765b62238d8303bba357879"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-stderr-first-failure-research-20261024/rust-1.97.1-library_std_src_sys_stdio_unix.rs",
+      "bytes": 2524,
+      "sha256": "c5b0a649c25c0db0bf85dcbe953f849fa14e5c64806e5991b5a4ccec8825b019"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+usage: test-diagnostic-export.py [-h] --binary BINARY --evidence EVIDENCE
+                                 [--cases {refusals,local,logs,write-failure,sigint,sigterm,publication-race,backpressure} [{refusals,local,logs,write-failure,sigint,sigterm,publication-race,backpressure} ...]]
+
+Actual private diagnostic CLI lifecycle checks; no builds or host USB. Linux
+x86_64/aarch64 ordinary-UID subprocesses. A ptrace syscall-entry gate holds
+one actual fresh partial-file fchmod or fsync without altering registers,
+results or file bytes. It tests removable observer delays, not kernel
+hardblock.
+
+options:
+  -h, --help            show this help message and exit
+  --binary BINARY
+  --evidence EVIDENCE
+  --cases {refusals,local,logs,write-failure,sigint,sigterm,publication-race,backpressure} [{refusals,local,logs,write-failure,sigint,sigterm,publication-race,backpressure} ...]

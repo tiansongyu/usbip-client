@@ -1,7 +1,7 @@
 //! Entry point for the administrator-installed RustUSB privileged helper.
 
 use clap::Parser;
-use std::path::PathBuf;
+use std::{io::Write, path::PathBuf};
 
 #[derive(Parser)]
 #[command(
@@ -51,7 +51,9 @@ fn main() -> std::process::ExitCode {
     let logger = match rustusb_logging::initialize(options, args.log_json) {
         Ok(logger) => logger,
         Err(error) => {
-            eprintln!("rustusb-helper logging initialization failed: {error}");
+            report_stderr(format_args!(
+                "rustusb-helper logging initialization failed: {error}"
+            ));
             return std::process::ExitCode::FAILURE;
         }
     };
@@ -62,9 +64,13 @@ fn main() -> std::process::ExitCode {
     {
         Ok(runtime) => runtime,
         Err(error) => {
-            eprintln!("rustusb-helper runtime initialization failed: {error}");
+            report_stderr(format_args!(
+                "rustusb-helper runtime initialization failed: {error}"
+            ));
             if let Err(error) = logger.shutdown() {
-                eprintln!("rustusb-helper logging shutdown failed before device work: {error}");
+                report_stderr(format_args!(
+                    "rustusb-helper logging shutdown failed before device work: {error}"
+                ));
             }
             return std::process::ExitCode::FAILURE;
         }
@@ -81,17 +87,23 @@ fn main() -> std::process::ExitCode {
         if file_mode || args.log_json {
             tracing::error!(event_code="operation_failed", failure=rustusb_logging::FailureCategory::from(&error).as_str(), error=%error, "restricted helper failed");
         } else {
-            eprintln!("rustusb-helper: {error}");
+            report_stderr(format_args!("rustusb-helper: {error}"));
         }
     }
     // The helper has joined its actual mutation/connection work before logging.
     if let Err(error) = logger.shutdown() {
         failed = true;
-        eprintln!("rustusb-helper logging failed after operation cleanup: {error}");
+        report_stderr(format_args!(
+            "rustusb-helper logging failed after operation cleanup: {error}"
+        ));
     }
     if failed {
         std::process::ExitCode::FAILURE
     } else {
         std::process::ExitCode::SUCCESS
     }
+}
+
+fn report_stderr(message: std::fmt::Arguments<'_>) {
+    let _ = writeln!(std::io::stderr().lock(), "{message}");
 }

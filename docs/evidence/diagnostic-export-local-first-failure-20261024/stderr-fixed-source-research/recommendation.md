@@ -1,0 +1,50 @@
+# First diagnostic RLIMIT failure: stderr I/O and shutdown
+
+2026-10-24. Read-only source research and limited raw verification; no implementation, application/CLI, ptrace, Cargo/build, QEMU or Git execution. The original clean2ca run remains **FAIL**. This reviewer authored the output module and earlier logging worker; this is independent source/statistical method, not independent authorship of the full product.
+
+## Actual first-run evidence
+
+`/tmp/rustusb-diagnostic-local-third-20261024/result.json` reports clean `2ca5f5bfe395f97d06807d00a1d97201d94ebe5d`, unchanged source/binary guards, and all-features CLI SHA256 `67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419`. The first three configured groups—refusals, local, logs—passed; write-failure failed because its original child was actually waited with returncode101 rather than1. Seven children have wait receipts, with no forced cleanup or collection errors. Later signal/publication/backpressure/default and old runtime groups did not run; do not backfill them.
+
+The write-failure stdout is one valid diagnostic receipt with actual output-file errno27/EFBIG, Partial, written_bytes16, and a matching SHA256 of the archived16-byte prefix. It is not a lost file receipt or false overwrite result. The regular stderr evidence file is also exactly16 bytes, containing `2026-10-24T04:23`. There is **no stack trace**. The output-file errno is directly observed; a second stderr EFBIG and exact panic stack are source/limit-based inferences, not independently traced stderr-syscall evidence. `first-run-facts.json` and `consulted-raw-sha.json` retain the actual values and unchanged before/after hashes.
+
+## Fixed-source causal path
+
+1. The fixed `tracing-subscriber0.3.23` generic Layer default is false for internal-error reporting (`fmt/fmt_layer.rs:741–754`), but the **SubscriberBuilder default used by `tracing_subscriber::fmt()` explicitly enables it** (`fmt/mod.rs:466–475`). Therefore the Layer-default value is not the selected CLI behavior. The actual configuration in `crates/rustusb-logging/src/worker.rs:481–526` chooses that builder, stderr writer, human/JSON formatter and ANSI off, without disabling internal errors.
+2. `fmt_layer::on_event` formats an event into a string and calls the selected writer's `write_all`; if it fails while internal errors are enabled, it invokes a separate `eprintln!` (`fmt_layer.rs:1040–1064`). The correct builder API is **`.log_internal_errors(false)`**, not `with_internal_errors` (`fmt/mod.rs:667–676`). [Fixed subscriber builder](https://github.com/tokio-rs/tracing/blob/54ede4d5d85a536aed5485c5213011d9ec961935/tracing-subscriber/src/fmt/mod.rs#L466), [fixed event-write fallback](https://github.com/tokio-rs/tracing/blob/54ede4d5d85a536aed5485c5213011d9ec961935/tracing-subscriber/src/fmt/fmt_layer.rs#L1040)
+3. In exact Rust1.97.1 `stdio.rs`, `_eprint` goes through `print_to`; when the actual write returns an error, `print_to` panics (`1156–1167,1286–1287`). Thus a regular stderr at the same RLIMIT16 can turn a normal operation-error log into a panic when the fallback also cannot write. [Fixed standard-library implementation](https://github.com/rust-lang/rust/blob/8bab26f4f68e0e26f0bb7960be334d5b520ea452/library/std/src/io/stdio.rs#L1156)
+4. The diagnostic CLI returns an operation error after emitting the correct file-failure receipt. `main::execute` then emits its normal `tracing::error!` (`crates/rustusb-cli/src/main.rs:659–668`), which selects this fallback path. The timestamp prefix and101 are consistent with that source-derived mechanism. They do not themselves identify a captured panic frame.
+
+This is a real product error-handling weakness. Changing only the harness's stderr to a pipe would avoid the failing sink rather than fix it; preserve this first failure and rerun a fixed product against the same regular-stderr RLIMIT semantics later.
+
+## Minimum product fix
+
+Keep the existing default stderr formatter, EnvFilter, human/JSON layout, ANSI disabled and stdout receipt behavior. Introduce a **private checked stderr MakeWriter**, plus a small owner-visible failure latch. No new thread, queue, file mode, public monitor or dependency is required.
+
+* A checked writer returns the underlying real write/flush result unchanged. Do not return `Ok(buf.len())` on a real error to placate the formatter. Record the first I/O `ErrorKind` and optional OS errno in bounded metadata, without formatting arbitrary Display/Debug/error text. A short mutex over this metadata performs no I/O/await; poisoning must not become healthy success.
+* Both default human and JSON builders use the checked writer and `.log_internal_errors(false)`. This suppresses the recursive **internal fallback**; the owner latch makes the original failure visible instead of discarding it. Disabling fallback alone is insufficient because the current default `LogOwner::finish` returns `Ok(ShutdownReport{status:None})` immediately when file `Shared` is absent (`worker.rs:399–403`).
+* Preserve `owner.monitor()==None` and the healthy default `ShutdownReport.status==None`. Store console failure separately from the file Shared/worker/status; do not expose a fictitious file logger to ReadLogs or acquire file/USB resources.
+* `LogOwner::shutdown`, after the caller has awaited all actual device/network work, returns the retained first `Error::Io` (or a distinct fixed observation failure on poisoned metadata). Never relabel it as a USB cleanup failure or change a published/partial artifact into an absent result. File-only logging remains independent and unchanged.
+* The outer CLI/helper must not use `tracing` or `eprintln!` to report this shutdown error. Use best-effort `let _ = writeln!(std::io::stderr().lock(), fixed_template, ...)`, preserve nonzero exit, and avoid a stdout fallback or second machine JSON. Their earlier initialization/runtime failure paths also contain `eprintln!`; replacing those at the same entrypoint boundary avoids another failure-report panic. A broken sink cannot reliably report its own breakage, but the library Result and exit failure must remain real.
+
+The main source ordering is already appropriate: execute/serve returns after operation cleanup, then logger shutdown. Keep that order (`cli/main.rs:614–625`, `daemon/main.rs:75–100`). The fix must not cause an I/O error to abort a still-owned USB cleanup tree.
+
+## Closed stderr and other limits
+
+A wrapper around **std::io::Stderr** observes errors that std actually returns, including the EFBIG at issue. It does not guarantee every OS failure is returned: Rust1.97.1 `StderrRaw` intentionally maps EBADF to apparent successful writes (`stdio.rs:172–206`). If closed-FD detection/no fake written bytes is part of this increment, the Linux writer can instead use the existing safe `rustix::io::write` with stderr's `AsFd`, retaining actual kernel counts/errors without new unsafe. Preserve stderr locking/record behavior and interrupted/partial-write handling. Otherwise explicitly scope the fix to errors returned by the standard writer, and do not claim closed FD coverage. A Unix stderr flush is normally a no-op, not a file durability fence (`sys/stdio/unix.rs:73–89`).
+
+The subscriber also has an unconditional `eprintln!` in `on_new_span` when its field formatter returns an error (`fmt_layer.rs:889`). Turning off internal event errors does not make every arbitrary third-party formatter panic-free. EFBIG alone does not make the preceding String field formatting fail, so this does not block the targeted sink fix. Keep the claim specific to actual stderr I/O and controlled RustUSB formatting, without catch-unwind or pretending arbitrary user Display code cannot panic.
+
+Legacy stderr writes remain synchronous. A permanently blocked stderr can still block its calling thread; the latch is not cancellation, async backpressure or a hard shutdown bound. After actual-owner quiescence, shutdown may report the observed console error, but cannot manufacture a successful join of unrelated foreign logging threads. No new claims about real hardware, kernel cancellation or device recovery arise here.
+
+## Required meaningful validation, not performed here
+
+* Exercise the real checked writer with an actual failing descriptor and assert first raw errno/ErrorKind survives; a safe software-injected secondary error must not replace it. Partial successful counts must stay real. Verify poison yields failure rather than healthy status.
+* Build a private scoped subscriber using the actual MakeWriter and normal error event. A writer error must not trigger a second unchecked stderr print. Test human and JSON branches; healthy bytes/filter/ANSI/stdout stay unchanged. If closed stderr is selected, use a real closed/read-only FD and actual OS result, not only a mock returning EBADF.
+* Keep default monitor/status absent, but owner shutdown must return the retained I/O failure; healthy default shutdown stays successful. File mode and actual file worker joins/loss status must retain their own semantics.
+* Rerun the **original** actual diagnostic write-failure scenario with stdout pipe and regular stderr under RLIMIT_FSIZE16, ignored child SIGXFSZ. Expect the same real output-file EFBIG/Partial16/digest and exit1, rather than101. Preserve original first FAIL, selected ELFs and source scopes. Do not replace the raw stderr file with PIPE to make it pass.
+* On an operation with real resource owners, cleanup ordering must remain before console-failure shutdown reporting. Run only root's authorized validation; these suggested tests were not executed by this reviewer.
+
+## Provenance
+
+`fixed-source-provenance.json` checks the tracing-subscriber0.3.23 crate archive against Cargo.lock, then six consulted cache source/metadata/license files against that archive. VCS commit is `54ede4d5d85a536aed5485c5213011d9ec961935`, MIT license. Exact Rust1.97.1 stdio sources are fetched from immutable commit `8bab26f4f68e0e26f0bb7960be334d5b520ea452` (Rust MIT/Apache-2.0) and stored with hashes. No source was copied into the product. No code changes or test execution were performed in this task.

@@ -1,5 +1,6 @@
 //! Private bounded process logs; these records never authorize USB operations.
 
+mod console;
 mod record;
 mod storage;
 mod types;

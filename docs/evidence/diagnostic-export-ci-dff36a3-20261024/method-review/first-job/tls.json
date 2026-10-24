@@ -1,0 +1,104 @@
+{
+  "scope": "five real mTLS CLI adapter cases; no trusted loader, helper or USB; blocked cases prove exit/socket closure only",
+  "result": "PASS",
+  "failed_case": null,
+  "error": null,
+  "cases": [
+    {
+      "case": "ready-int",
+      "result": "PASS",
+      "mutual_tls": true,
+      "authenticated_imports": 2,
+      "pending_in_per_import": 1,
+      "blocked": null,
+      "exit": 0,
+      "elapsed_seconds": 0.006360497,
+      "data_connection_closure": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "backend_cleanup_snapshot_observed": true
+    },
+    {
+      "case": "ready-term",
+      "result": "PASS",
+      "mutual_tls": true,
+      "authenticated_imports": 2,
+      "pending_in_per_import": 1,
+      "blocked": null,
+      "exit": 0,
+      "elapsed_seconds": 0.006368168,
+      "data_connection_closure": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "backend_cleanup_snapshot_observed": true
+    },
+    {
+      "case": "blocked-int",
+      "result": "PASS",
+      "mutual_tls": true,
+      "authenticated_imports": 2,
+      "pending_in_per_import": 1,
+      "blocked": {
+        "blocked_writer_comm": "virtual-test-st\n",
+        "blocked_writer_task": "15144",
+        "blocked_writer_wchan": "pipe_write",
+        "capacity": 4096,
+        "stdout_drained_after_fill": false,
+        "synthetic_fill": 4096
+      },
+      "exit": 0,
+      "elapsed_seconds": 0.006247107,
+      "data_connection_closure": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "backend_cleanup_snapshot_observed": false
+    },
+    {
+      "case": "blocked-term",
+      "result": "PASS",
+      "mutual_tls": true,
+      "authenticated_imports": 2,
+      "pending_in_per_import": 1,
+      "blocked": {
+        "blocked_writer_comm": "virtual-test-st\n",
+        "blocked_writer_task": "15150",
+        "blocked_writer_wchan": "pipe_write",
+        "capacity": 4096,
+        "stdout_drained_after_fill": false,
+        "synthetic_fill": 4096
+      },
+      "exit": 0,
+      "elapsed_seconds": 0.006247366,
+      "data_connection_closure": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "backend_cleanup_snapshot_observed": false
+    },
+    {
+      "case": "blocked-deadline",
+      "result": "PASS",
+      "mutual_tls": true,
+      "authenticated_imports": 2,
+      "pending_in_per_import": 1,
+      "blocked": {
+        "blocked_writer_comm": "virtual-test-st\n",
+        "blocked_writer_task": "15156",
+        "blocked_writer_wchan": "pipe_write",
+        "capacity": 4096,
+        "stdout_drained_after_fill": false,
+        "synthetic_fill": 4096
+      },
+      "exit": 1,
+      "elapsed_seconds": 5.00430774,
+      "data_connection_closure": [
+        "transport_closed:UnexpectedEof",
+        "transport_closed:UnexpectedEof"
+      ],
+      "backend_cleanup_snapshot_observed": false
+    }
+  ]
+}

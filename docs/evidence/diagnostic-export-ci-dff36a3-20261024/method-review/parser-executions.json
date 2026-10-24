@@ -1,0 +1,39 @@
+{
+  "executions": [
+    {
+      "command": [
+        "python3",
+        "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/review-root-logs.py",
+        "--output",
+        "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/final-first"
+      ],
+      "process_exit_observed": 0,
+      "report_result": "FAIL",
+      "report": {
+        "path": "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/final-first/report.json",
+        "bytes": 97522,
+        "sha256": "aa96c291d25735757fcf302effe78b914d6147167d9101f19e2a00f2e0cce543"
+      },
+      "reason": "Two ARM executable labels lost due to mixed stderr/stdout interleaving; actual counts and source comparisons passed."
+    },
+    {
+      "command": [
+        "python3",
+        "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/review-root-logs-revision2.py",
+        "--output",
+        "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/final-revision2"
+      ],
+      "process_exit_observed": 0,
+      "report_result": "PASS",
+      "report": {
+        "path": "/tmp/rustusb-diagnostic-ci-dff36a3-20261024/final-revision2/report.json",
+        "bytes": 98225,
+        "sha256": "155ba1ffdba471bad3877507c8edf87f844faf846e0a156f7c4eca504d23498a"
+      }
+    }
+  ],
+  "unchanged_original_sets": {
+    "official": 13,
+    "full_gate_and_initial": 207
+  }
+}

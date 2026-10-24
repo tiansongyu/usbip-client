@@ -16,7 +16,7 @@ pub enum Error {
     /// Preserved history is malformed or has ambiguous identity.
     #[error("logging history corrupt: {0}")]
     Corrupt(&'static str),
-    /// An actual filesystem operation failed.
+    /// An actual output or filesystem operation failed.
     #[error("logging I/O: {0}")]
     Io(#[from] std::io::Error),
     /// The finite reader/admission resource is busy.

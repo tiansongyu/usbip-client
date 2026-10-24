@@ -16,11 +16,13 @@ import json
 import os
 from pathlib import Path
 import signal
+import socket
 import stat
 import struct
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -308,6 +310,67 @@ def file_failure(run, base):
     return {"receipt": value, "partial": metadata(partial), "sha256": sha(partial)}
 
 
+def successful_operation_with_console_failure(run, base):
+    # A controlled empty DEVLIST proves the requested operation succeeded. No
+    # real device scan, server engine or host USB identity enters the evidence.
+    results = []
+    for json_console in [False, True]:
+        listener = socket.socket()
+        listener.bind(("127.0.0.1", 0))
+        listener.listen(1)
+        listener.settimeout(5)
+        port = listener.getsockname()[1]
+        served, failures = [], []
+
+        def serve():
+            try:
+                connection, _ = listener.accept()
+                with connection:
+                    connection.settimeout(5)
+                    request = b""
+                    while len(request) < 8:
+                        block = connection.recv(8 - len(request))
+                        require(block, "empty local DEVLIST request")
+                        request += block
+                    require(request == bytes.fromhex("0111800500000000"), "unexpected actual DEVLIST request")
+                    connection.sendall(struct.pack("!HHII", 0x0111, 0x0005, 0, 0))
+                    served.append({"request_hex": request.hex(), "reply_device_count": 0})
+            except Exception as error:
+                failures.append(support.error_fact(error))
+            finally:
+                listener.close()
+
+        owner = threading.Thread(target=serve, name="diagnostic-empty-catalog")
+        owner.start()
+        primary = None
+        try:
+            args = (["--log-json"] if json_console else []) + ["discover", "127.0.0.1", "--port", str(port), "--json", "--timeout", "3"]
+            name = "successful-discovery-console-" + ("json" if json_console else "human")
+            child = run.spawn(name, args, wrapper=LIMIT_WRAPPER)
+            raw, _ = child["process"].communicate(timeout=10)
+            (child["directory"] / "stdout.bin").write_bytes(raw)
+            require(run.wait(child) == 1, "console loss after successful operation was not exit1")
+            require(json.loads(raw) == [], "actual successful empty DEVLIST result changed")
+            require((child["directory"] / "stderr.bin").stat().st_size == 16,
+                    "actual regular stderr did not reach the injected boundary")
+            results.append({"json_console": json_console, "actual_operation": "successful_empty_DEVLIST",
+                            "exit_code": child["process"].returncode, "stdout_sha256": hashlib.sha256(raw).hexdigest(),
+                            "stderr": metadata(child["directory"] / "stderr.bin")})
+        except BaseException as error:
+            primary = error
+            raise
+        finally:
+            def finish_catalog():
+                owner.join(timeout=6)
+                require(not owner.is_alive(), "actual local catalog responder did not join")
+                require(not failures and len(served) == 1, "actual local catalog response failed")
+            if primary is None:
+                finish_catalog()
+            else:
+                run.collect("console-success:secondary-responder-cleanup", finish_catalog)
+    return {"cases": results, "scope": "read-only controlled loopback response; no real USB metadata"}
+
+
 def blocked_output(run, base):
     parent = private(base, "blocked-output")
     final = parent / "final.json"
@@ -547,8 +610,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
-    parser.add_argument("--cases", nargs="+", choices=["refusals", "local", "logs", "write-failure", "sigint", "sigterm", "publication-race", "backpressure", "agent-unavailable"],
-                        default=["refusals", "local", "logs", "write-failure", "sigint", "sigterm", "publication-race", "backpressure"])
+    parser.add_argument("--cases", nargs="+", choices=["refusals", "local", "logs", "write-failure", "stderr-success", "sigint", "sigterm", "publication-race", "backpressure", "agent-unavailable"],
+                        default=["refusals", "local", "logs", "write-failure", "stderr-success", "sigint", "sigterm", "publication-race", "backpressure"])
     args = parser.parse_args()
     require(sys.platform == "linux" and os.getuid() != 0 and os.getuid() == os.geteuid()
             and os.uname().machine in {"x86_64", "aarch64"}, "ordinary non-setuid Linux native caller required")
@@ -571,6 +634,7 @@ def main():
         actions = {"refusals": lambda: refusals(run, base), "local": lambda: local_capture(run, base),
                    "agent-unavailable": lambda: agent_unavailable(run, base),
                    "logs": lambda: log_captures(run, base), "write-failure": lambda: file_failure(run, base),
+                   "stderr-success": lambda: successful_operation_with_console_failure(run, base),
                    "sigint": lambda: trace_gate(run, base, "prepare-sigint", "prepare", signal.SIGINT),
                    "sigterm": lambda: trace_gate(run, base, "prepare-sigterm", "prepare", signal.SIGTERM),
                    "publication-race": lambda: trace_gate(run, base, "accepted-publication-signal", "publish", signal.SIGTERM),

@@ -1,0 +1,42 @@
+{
+  "result": "FAIL",
+  "before": {
+    "head": "2ca5f5bfe395f97d06807d00a1d97201d94ebe5d",
+    "clean": true,
+    "source_matches": true,
+    "binary_hashes": {
+      "/home/ubuntu/github/usbip-client/target/release/rustusb": "67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419",
+      "/tmp/rustusb-diagnostic-default-build-20261024/target/release/rustusb": "a6d12305506c97fda617be0f11f7fceb28d7d3469ac8e33c498a97ca5807a99f"
+    }
+  },
+  "after": {
+    "head": "2ca5f5bfe395f97d06807d00a1d97201d94ebe5d",
+    "clean": true,
+    "source_matches": true,
+    "binary_hashes": {
+      "/home/ubuntu/github/usbip-client/target/release/rustusb": "67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419",
+      "/tmp/rustusb-diagnostic-default-build-20261024/target/release/rustusb": "a6d12305506c97fda617be0f11f7fceb28d7d3469ac8e33c498a97ca5807a99f"
+    }
+  },
+  "guards_unchanged": true,
+  "commands": [
+    {
+      "name": "diagnostic-all",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test-diagnostic-export.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--evidence",
+        "/tmp/rustusb-diagnostic-local-third-20261024/all-features"
+      ],
+      "exit_code": 1
+    }
+  ],
+  "remaining_unrun": [
+    "diagnostic-default",
+    "server-signals",
+    "server-backpressure"
+  ]
+}

@@ -585,7 +585,7 @@ fn main() -> ExitCode {
     let options = match logging_options(&cli) {
         Ok(options) => options,
         Err(error) => {
-            eprintln!("logging initialization failed: {error}");
+            report_stderr(format_args!("logging initialization failed: {error}"));
             return ExitCode::FAILURE;
         }
     };
@@ -593,7 +593,7 @@ fn main() -> ExitCode {
     let logger = match rustusb_logging::initialize(options, cli.log_json) {
         Ok(logger) => logger,
         Err(error) => {
-            eprintln!("logging initialization failed: {error}");
+            report_stderr(format_args!("logging initialization failed: {error}"));
             return ExitCode::FAILURE;
         }
     };
@@ -604,9 +604,11 @@ fn main() -> ExitCode {
     {
         Ok(runtime) => runtime,
         Err(error) => {
-            eprintln!("runtime initialization failed: {error}");
+            report_stderr(format_args!("runtime initialization failed: {error}"));
             if let Err(error) = logger.shutdown() {
-                eprintln!("logging shutdown failed before device work: {error}");
+                report_stderr(format_args!(
+                    "logging shutdown failed before device work: {error}"
+                ));
             }
             return ExitCode::FAILURE;
         }
@@ -617,12 +619,18 @@ fn main() -> ExitCode {
     match logger.shutdown() {
         Ok(_) => operation,
         Err(error) => {
-            eprintln!(
+            report_stderr(format_args!(
                 "logging failed after the requested operation; inspect its result before retrying: {error}"
-            );
+            ));
             ExitCode::FAILURE
         }
     }
+}
+
+fn report_stderr(message: std::fmt::Arguments<'_>) {
+    // This is the last error path, possibly after stderr itself failed. Keep
+    // the caller's failure status without another panic or stdout fallback.
+    let _ = writeln!(io::stderr().lock(), "{message}");
 }
 
 async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> ExitCode {

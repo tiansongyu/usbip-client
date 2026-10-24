@@ -303,6 +303,7 @@ impl LogMonitor {
 /// cleanup. A hard-blocked filesystem can also block this real join. Drop performs
 /// the same join rather than detaching threads.
 pub struct LogOwner {
+    console: Option<Arc<crate::console::ConsoleState>>,
     shared: Option<Arc<Shared>>,
     writer: Option<JoinHandle<Result<()>>>,
     readers: Vec<JoinHandle<()>>,
@@ -359,6 +360,7 @@ impl LogOwner {
         )?;
         shared.synced(store.append(&started)?);
         let mut owner = Self {
+            console: None,
             shared: Some(shared.clone()),
             writer: None,
             readers: Vec::new(),
@@ -398,6 +400,9 @@ impl LogOwner {
 
     fn finish(&mut self) -> Result<ShutdownReport> {
         let Some(shared) = self.shared.take() else {
+            if let Some(console) = self.console.take() {
+                console.check()?;
+            }
             return Ok(ShutdownReport { status: None });
         };
         shared.closing.store(true, Ordering::Release);
@@ -498,22 +503,27 @@ pub fn initialize(options: Option<Options>, json_console: bool) -> Result<LogOwn
             .map_err(|_| Error::Worker("subscriber could not be installed"))?;
         Ok(owner)
     } else {
+        let console = Arc::new(crate::console::ConsoleState::default());
+        let writer = crate::console::ConsoleWriter(console.clone());
         let initialized = if json_console {
             tracing_subscriber::fmt()
                 .with_env_filter(filter)
-                .with_writer(std::io::stderr)
+                .with_writer(writer)
+                .log_internal_errors(false)
                 .json()
                 .with_ansi(false)
                 .try_init()
         } else {
             tracing_subscriber::fmt()
                 .with_env_filter(filter)
-                .with_writer(std::io::stderr)
+                .with_writer(writer)
+                .log_internal_errors(false)
                 .with_ansi(false)
                 .try_init()
         };
         initialized.map_err(|_| Error::Worker("subscriber could not be installed"))?;
         Ok(LogOwner {
+            console: Some(console),
             shared: None,
             writer: None,
             readers: Vec::new(),

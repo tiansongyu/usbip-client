@@ -1,0 +1,429 @@
+{
+  "schema_version": 1,
+  "result": "SOURCE_REVIEW_NO_REMAINING_SPECIFIC_BLOCKER",
+  "scope": "Read-only preflight of Root-authored diagnostic subprocess harness. No harness, CLI, ptrace, Cargo, build, QEMU or Git execution by reviewer; no repository/source modifications.",
+  "author_boundary": "Reviewer previously authored output.rs/logging components and a narrow support-script cache fix. Root authored this new runner; this is cross-source review, not complete independent product implementation acceptance.",
+  "initial_findings_resolved": [
+    "FD must be statted through its proc magiclink; resolved pathname is independently compared. Held/final same-inode proof added.",
+    "Check80-byte syscall entry/33-byte exit plus audit ABI and actual error bit.",
+    "Preserve primary gate failure before secondary cleanup; retain pidfd and do not let generic Popen.poll interpret ptrace stop as exit.",
+    "Handle pidfd initialization failure and early terminal bootstrap wait; bound startup wait.",
+    "Distinguish clone/exec event stops, identify newborn SIGSTOP via GETEVENTMSG, forward genuine signals.",
+    "Measure hold after actual requested-signal forwarding; keep original same-syscall result."
+  ],
+  "static_checks": [
+    {
+      "kind": "native_ordinary_uid",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          554
+        ],
+        "needle": "ordinary non-setuid Linux native caller required"
+      },
+      "conclusion": "Requires Linux x86_64/aarch64 with nonzero equal real/effective UID; no root/hostUSB/module/backend mutation by the test."
+    },
+    {
+      "kind": "owned_executable",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          68
+        ],
+        "needle": "process = subprocess.Popen"
+      },
+      "conclusion": "Only the explicitly selected prebuilt ELF and two fixed same-PID exec wrappers are launched. PIPE/stdin/close_fds/env/cwd are explicit."
+    },
+    {
+      "kind": "pidfd_lifetime",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          83
+        ],
+        "needle": "child[\"pidfd\"] = os.pidfd_open"
+      },
+      "conclusion": "Retain the original traced Popen child pidfd; normal and emergency traced signals use that kernel identity. Proc PID/starttime/fourUID/actualELF sampling precedes requested signals."
+    },
+    {
+      "kind": "startup_pidfd_error",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          92
+        ],
+        "needle": "os.WEXITED | os.WSTOPPED | os.WNOHANG | os.WNOWAIT"
+      },
+      "conclusion": "When pidfd initialization itself fails, WNOWAIT checks the original still-unreaped child before the narrowly scoped PID fallback; ECHILD does not permit a PID signal. Actual reap or unconfirmed failure is retained."
+    },
+    {
+      "kind": "startup_bounds",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          384
+        ],
+        "needle": "bounded owned TRACEME startup stop expired"
+      },
+      "conclusion": "Initial stop is observed with bounded WNOHANG wait; an early exited child has its raw wait status recorded and terminal() applied before refusal."
+    },
+    {
+      "kind": "syscall_info",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          437
+        ],
+        "needle": "require(length >= 80"
+      },
+      "conclusion": "ABI is the UAPI layout: op0, audit-arch4, common union24; entry number24/arg0fd32; require80 entry bytes,33 exit bytes, native audit arch, retval0/is_error0. Buffer88 is sufficient for the largest union."
+    },
+    {
+      "kind": "no_payload_peek",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          34
+        ],
+        "needle": "TRACEME, SYSCALL, SETOPTIONS, GETMESSAGE, GETINFO"
+      },
+      "conclusion": "Only TRACEME/options/syscall continuation/clone scalar event/syscall-info are used; no register rewriting, PEEK/POKE, syscall substitution or return-value modification."
+    },
+    {
+      "kind": "actual_fd",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          172
+        ],
+        "needle": "value = descriptor.stat()"
+      },
+      "conclusion": "Stat follows the /proc FD magiclink itself; requires actual regular file. A separate resolved namespace lstat must match actual FD dev/ino, not substitute for it."
+    },
+    {
+      "kind": "held_original_inode",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          406
+        ],
+        "needle": "held actual output FD changed"
+      },
+      "conclusion": "Original FD identity is re-observed while its one TID remains at the same syscall entry; no final name exists before release."
+    },
+    {
+      "kind": "stage",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          456
+        ],
+        "needle": "held output stage does not match actual byte progress"
+      },
+      "conclusion": "Only the private generated partial file is selected: zero bytes for prepare fchmod, positive actual progress for file fsync. File mode0600/callerUID/singlelink are required."
+    },
+    {
+      "kind": "signal_before_release",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          401
+        ],
+        "needle": "time.monotonic() - delivered_at >= 0.5"
+      },
+      "conclusion": "Release is later than actual requested-signal forwarding by at least0.5s, not merely later than signal enqueue. Other traced TIDs continue so CLI cooperative stop can run."
+    },
+    {
+      "kind": "same_syscall_result",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          466
+        ],
+        "needle": "same_syscall_returned"
+      },
+      "conclusion": "Release resumes the same held TID; its next syscall exit records real signed retval and error bit. Required successful return is zero/noerror."
+    },
+    {
+      "kind": "clone_events",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          471
+        ],
+        "needle": "ptrace(GETMESSAGE, tid"
+      },
+      "conclusion": "Known clone/exec events are separate from signal delivery. Parent/newborn order can vary; unmatched initial stops remain held until an actual clone message identifies them."
+    },
+    {
+      "kind": "real_signal",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          495
+        ],
+        "needle": "unknown ptrace event; refusing to hide it"
+      },
+      "conclusion": "Unknown events fail closed; genuine eventcode0 SIGTRAP and other signals are forwarded. Unmatched SIGSTOP is held and cannot silently become a successful run."
+    },
+    {
+      "kind": "actual_reap",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          373
+        ],
+        "needle": "actual ptrace waitpid(__WALL) reaped original child"
+      },
+      "conclusion": "The tracer records leader terminal waitpid status and sets cached Popen returncode only from that actual terminal result. Its later run.wait is not represented as a second actual kernel wait."
+    },
+    {
+      "kind": "final_same_inode",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          517
+        ],
+        "needle": "final artifact is not the originally held actual descriptor inode"
+      },
+      "conclusion": "The final or cancelled-partial receipt document must be the original held FD inode, with actual bytes/hash/mode/owner/nlink verified."
+    },
+    {
+      "kind": "primary_failure",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          522,
+          523
+        ],
+        "needle": "child[\"row\"][\"primary_gate_error\"]"
+      },
+      "conclusion": "Gate exception is saved before finally; every emergency wait/resume/terminal/event-save operation is secondary-safe through run.collect."
+    },
+    {
+      "kind": "unreaped_traced",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          143
+        ],
+        "needle": "cleanup_unconfirmed"
+      },
+      "conclusion": "Generic Popen polling is excluded for unresolved traced children, avoiding stop-as-exit confusion. Unconfirmed cleanup and forced cleanup latch FAIL, never cooperative PASS."
+    },
+    {
+      "kind": "pipe_wait_before_drain",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          330
+        ],
+        "needle": "no_drain_until_actual_wait"
+      },
+      "conclusion": "Backpressure case fills an otherwise blocking4096-byte pipe, keeps the reader open, waits for actual process exit1 before draining, then checks exactly the padding and EOF. File remains complete despite receipt delivery failure."
+    },
+    {
+      "kind": "actual_write_failure",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          302
+        ],
+        "needle": "failure[\"errno\"] == errno.EFBIG"
+      },
+      "conclusion": "RLIMIT_FSIZE16 plus child-only ignored SIGXFSZ requires actual EFBIG/16-byte receipt and matching retained prefix digest, with no final destination."
+    },
+    {
+      "kind": "controlled_source_corruption",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          281,
+          287
+        ],
+        "needle": "SENSITIVE_CORRUPT_INPUT"
+      },
+      "conclusion": "The deliberate malformed log fixture is distinct from archived original logs; diagnostic output must remain valid incomplete JSON and omit both marker strings."
+    },
+    {
+      "kind": "original_not_overwritten",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          224
+        ],
+        "needle": "existing output changed"
+      },
+      "conclusion": "Existing bytes/inode/metadata and symlink-parent refusal are checked without silently removing or repairing targets."
+    },
+    {
+      "kind": "source_binary_guards",
+      "source": {
+        "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+        "lines": [
+          601,
+          612
+        ],
+        "needle": "summary[\"source_unchanged\"]"
+      },
+      "conclusion": "Before/after repository support inventory and selected prebuilt ELF are compared; no build or feature inference is performed. Actual proc ELF may be unavailable for fast nontraced children and is not invented."
+    }
+  ],
+  "ast_parse": "PASS; parse only, no module import/execution",
+  "wrapper_ast_checks": [
+    {
+      "name": "TRACE_WRAPPER",
+      "ast_only": true,
+      "executed": false
+    },
+    {
+      "name": "LIMIT_WRAPPER",
+      "ast_only": true,
+      "executed": false
+    }
+  ],
+  "ptrace_calls": [
+    {
+      "line": 111,
+      "request": "SYSCALL"
+    },
+    {
+      "line": 363,
+      "request": "SYSCALL"
+    },
+    {
+      "line": 388,
+      "request": "SETOPTIONS"
+    },
+    {
+      "line": 433,
+      "request": "GETINFO"
+    },
+    {
+      "line": 471,
+      "request": "GETMESSAGE"
+    }
+  ],
+  "configured_default_case_names_not_executions": [
+    "refusals",
+    "local",
+    "logs",
+    "write-failure",
+    "sigint",
+    "sigterm",
+    "publication-race",
+    "backpressure"
+  ],
+  "optional_case": "agent-unavailable is explicitly selected for a default-feature ELF only; it is not counted in default8 or inferred from --skip-build.",
+  "source_inventory_scope": "support.sources scans crate Rust/TOML and vendor files plus Cargo.toml/Cargo.lock and support scripts; own diagnostic_runner is added. This is its stated prebuilt-runtime inventory, not a claim that an independent software/check/toolchain manifest is identical.",
+  "fixed_linux_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.8/include/uapi/linux/ptrace.h",
+      "status": 200,
+      "path_in_upstream": "include/uapi/linux/ptrace.h",
+      "bytes": 5516,
+      "sha256": "e0a5a2bac8fc8c287342daccaaa484d22d9332c75013d454c54bf51b646b53b3",
+      "content_git_blob_sha1": "72c038fc71d093514e010fdc4a833cb95285053e",
+      "matched_line_numbers": {
+        "struct ptrace_syscall_info": [
+          82
+        ],
+        "__u32 arch": [
+          85
+        ],
+        "__u64 nr": [
+          90,
+          98
+        ],
+        "__s64 rval": [
+          94
+        ],
+        "__u8 is_error": [
+          95
+        ],
+        "PTRACE_O_EXITKILL": [
+          177,
+          181
+        ],
+        "PTRACE_O_TRACECLONE": [
+          170
+        ],
+        "PTRACE_O_TRACEEXEC": [
+          171
+        ]
+      },
+      "body_archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.8/arch/x86/entry/syscalls/syscall_64.tbl",
+      "status": 200,
+      "path_in_upstream": "arch/x86/entry/syscalls/syscall_64.tbl",
+      "bytes": 15278,
+      "sha256": "4c30abea9a4b69f3409bea7a0c910a8c8feb9a44b22a448b5c82f2bfdd8249c8",
+      "content_git_blob_sha1": "7e8d46f4147f574111962c214119af2dd2b62b4a",
+      "matched_line_numbers": {
+        "74\tcommon\tfsync": [
+          85
+        ],
+        "91\tcommon\tfchmod": [
+          102
+        ]
+      },
+      "body_archived": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.8/include/uapi/asm-generic/unistd.h",
+      "status": 200,
+      "path_in_upstream": "include/uapi/asm-generic/unistd.h",
+      "bytes": 31189,
+      "sha256": "2807c5c2e1ad8128b37438f81cf9776b52fb664b48d93e2ea8edb06846eda90d",
+      "content_git_blob_sha1": "75f00965ab1586cd64d00928217596de5034bd25",
+      "matched_line_numbers": {
+        "#define __NR_fchmod 52": [
+          150
+        ],
+        "#define __NR_fsync 82": [
+          218
+        ]
+      },
+      "body_archived": false
+    }
+  ],
+  "consulted_sources": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/test-diagnostic-export.py",
+      "bytes": 33730,
+      "sha256": "27d33c8bc0bd748b0b015ba1417cfad905558dad82a38c6eb7961ae0c37ddbf5"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/test-process-logging.py",
+      "bytes": 39143,
+      "sha256": "957d1a407366632f8130764ac010574129066cfcf878d7899bcbbb248bf6c2b4"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/test-server-signals.py",
+      "bytes": 29123,
+      "sha256": "bd8d3c40f174aea0a1dee208a81c0234f01c161e66500766c21b11b328b8fce9"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-diagnostics/src/output.rs",
+      "bytes": 19027,
+      "sha256": "7e5e1aefb89f3efb28673e10ae870b339966c7be795cccd10d2645f3eb8ea3fb"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/diagnostics.rs",
+      "bytes": 4597,
+      "sha256": "d16d023ddfb98fcfe54e736ae5a7f815d3997dfd3c9d0aab453c33632bcdc41a"
+    }
+  ],
+  "runtime_limits": [
+    "Actual root first execution remains pending. AST/source checks are not ptrace/runtime or kernel-version acceptance.",
+    "Held fchmod/fsync is a removable syscall-entry stop before kernel execution, not kernel-internal hardblock or USB-driver concurrency proof.",
+    "Only observed own-child actual terminal status is reaping evidence. Forced cleanup/unconfirmed is FAIL. Descendant processes are not generally covered by this harness signal identity.",
+    "Full stdout/no-drain assertion belongs to the backpressure case. Ordinary bounded-receipt commands use communicate; they are not claimed as no-drain tests.",
+    "Fast nontraced child /proc identity can be absent; selected argv and before/after ELF only do not become per-child sampled-ELF proof.",
+    "The source helper inventory is distinct from full software evidence. No diagnostics/subprocess count is a USB/hardware case count."
+  ],
+  "consulted_sources_unchanged_during_final_capture": true,
+  "missing_citations": []
+}
