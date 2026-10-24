@@ -18,6 +18,10 @@
 
 - 内容5a3ffcdf普通SSH push/remote main一致/clean；software40137060148四native job121000700338/700518/700536/700584及实际arch/fullgate/signal/virtual/diagnostic步骤completed/success；Pages40137060181 check121000700702/deploy121000782823成功。六canonical HTTP资源200且逐Git一致，235软件/238/238/237/237/232最终QEMU源、restored all ELF、七site/四global与symlink一致。30原件/回执/方法192761B逐SHA归档evidence/tui-interactions-publication-5a3ffcd-20261025；不补造CI logs/ELF/逐平台956重算。原935 FAIL、完整Phase0–7/硬件/完整G3及后续阶段保持active，文档化G4的软件/仿真范围已逐项核对。发布回执只属文档；独立Phase5只读组件研究另行记账。
 
+- 等待E48 CI时，按writing-technical-design及DEEP-RESEARCH显式并行要求委派两个独立只读组件研究（Tauri与Linux GTK/WebKit/打包），没有产品编辑/安装/上游脚本执行。当前Tauri2.12.5/993038c、Rust1.90；精确API/ACL/退出与uncapped channels、JSON预解析边界、Ubuntu更新包/GLib0429/已撤回0415与0413等依据已记录。主线程重核89+225=314原payload SHA/字节，25份选择性摘要/API/元数据/许可证427929B与review入库；完整公开源快照留原/tmp路径，不称已随仓库归档。首license路径404、Ubuntu500/timeouts保留。Phase5研究草案已写，仍无GUI/依赖变更/安装/接受架构；下一轮从GLib修复/隔离native原型推进，不将研究标成实现。
+
+- Phase5研究文档另做52本地target与25选录文件hash检查PASS（实际数量以evidence/gui-phase5-research-20261025/docs-check.json为准），没有native GUI/包安装测试；source metadata/digest留独立research commit，E48实际956/五QEMU仍锁2dc，CI只锁内容5a3ffcdf。最后普通push全部文档回执/研究并重核remote main、clean及现有软件/QEMU/站点/全局skill输入，不将最后commit冒充新USB或GUI验收。
+
 ## 2026-10-25：终端未知启动结果与agent失联（开始）
 
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。

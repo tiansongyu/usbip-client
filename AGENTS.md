@@ -64,3 +64,6 @@ TLS认证准入E39见`docs/research/authentication-admission-design.md`与`authe
 
 
 终端E48见`docs/research/tui-hotplug-permission-validation.md`：clean2dc888ce完整956软件/235源，两single238/238加三托管237/237/232，8guest0、56实际PTY（54child0/两预期unresolved child1）；minimal与all ELF分账。实际同TUI kernel socket/PID下地址2→open modal空提示→地址3，Read/Audit-only agent两真实拒绝/0准入及d/l/Reload错通过。Root/json/nonTTY快负向无逐live-proc，不补造。选择消失/代际变化清detail scroll、相同identity重排保留；原935整体FAIL与首template失败保留。文档化G4软件/仿真逐项覆盖不扩大硬件/完整G3/发布或Phase5–7；普通用户设置不编辑管理员策略，确认不授予权限，拒绝后原UUID仍保守保留。
+
+
+Phase5候选研究见`docs/research/gui-installation-research.md`：固定Tauri2.12.5/993038c，MSRV1.90；Linux直接GTK/WebKit依赖、AppManifest显式ACL、异步handle不能靠Promise丢弃取消、bounded pull与真实exit join是设计约束。glib0.18.5的0429实际reachability/兼容修复尚未解决，GTK0415及ATK0413的旧unmaintained advisory已withdrawn，不误传仍在归档。研究314原payload hash核对、选择性摘要/API/metadata入库；无GUI/新依赖/安装/验收、无已接受架构。下一步须沿原完整Phase5要求完成GUI和包生命周期，不用原生Chrome mock或bundler输出替代native IPC/Ubuntu安装实测。
