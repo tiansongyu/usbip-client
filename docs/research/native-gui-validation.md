@@ -153,3 +153,26 @@ sharing rules, `.deb`, systemd, configuration/install/upgrade/uninstall/reboot a
 four-platform native GUI qualification remain Phase5 requirements. GUI CI is a
 separate four-platform software gate; compilation is not native I/O evidence.
 Hardware G1/G2, full G3, broader compatibility/performance and Windows remain open.
+
+
+## Publication receipt
+
+Final content3aafa2c0 was pushed by normal SSH with exact remote main and a clean
+worktree. Primary API confirms root software
+[40142928056](https://github.com/tiansongyu/usbip-client/actions/runs/40142928056)
+and native GUI
+[40142928072](https://github.com/tiansongyu/usbip-client/actions/runs/40142928072):
+four Ubuntu22.04/24.04 × x86_64/aarch64 jobs each completed/success, including
+actual architecture and full gate steps. Pages
+[40142928094](https://github.com/tiansongyu/usbip-client/actions/runs/40142928094)
+check121018248988/deploy121018320543 completed/success. Seven canonical HTTPS
+bodies, including the native capture, returned200 and exactly matched the Git
+content.222 core inputs,138 GUI non-README inputs, all release ELFs, eight site
+files and four global readme-site files/discovery symlink were preserved.
+
+[Publication originals and methods](../evidence/native-gui-publication-3aafa2c0-20261025/manifest.json)
+and [receipt](../evidence/native-gui-publication-3aafa2c0-20261025/receipt.json)
+retain the earlier776 and final content observations independently. API step
+success is not a per-platform test recount or fetched CI ELF/log archive. The
+native QEMU and open acceptance boundaries above remain unchanged. This receipt
+only adds documentation; it is not a new product build or hardware result.
