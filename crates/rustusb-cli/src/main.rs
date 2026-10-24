@@ -647,7 +647,7 @@ fn report_stderr(message: std::fmt::Arguments<'_>) {
 async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> ExitCode {
     let json = cli.json;
     let owns_signal_cleanup = match &cli.command {
-        Command::Logs(_) | Command::Diagnostics(_) => true,
+        Command::Logs(_) | Command::Diagnostics(_) | Command::Devices { watch: true } => true,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent {
             command: agent::Command::Run,

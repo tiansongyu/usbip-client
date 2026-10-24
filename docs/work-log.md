@@ -763,3 +763,6 @@
 - 依赖实际导出175包；比原174只新增内部rustusb-discovery，外部name/version/source/checksum不变，Native CLI不无条件引入TLS/job服务或nusb。此实现仍未获新QEMU/hardware验证。
 
 - clean213ab92首完整gate实际FAIL101，206选定source/build前后稳定；默认测试在periodic case失败（Initializing后仍在途Current被错当下一失败scan），全allfeatures/release尚未执行，不冒称完整通过。只改fixture总3s有界等待首个Current，再注入read失败/恢复；保留原初始化质量及不假删除契约。
+
+- cleanbec0b51完整gate通过380/472/20=872、51rows零失败忽略、206输入稳定；默认与secure Native依赖隔离通过，default无service/transport/engine/nusb。CLI0c09/helper0b68实际hash均变化，未沿用旧值。
+- 新实际CLI首次Current后INT负向FAIL，精确cancelled helper-operation DTO证明外层execute通用ctrl_c抢先；首夹具未持久化child waitcode，不补造。fresh第二旧CLI同0c09实际wait1/真实UID/ELF再现，原raw host device输出仅私有本地保留、公开只投影无设备body。先更新设计再窄修watch owns_signal_cleanup，随后需新clean完整gate/真实进程/QEMU，旧872仍锁bec。

@@ -87,3 +87,9 @@ CLI保持原`devices [--json]`一次扫描兼容，新增`devices --watch`。JSO
 编码复核：最多512条变化若集中于begin帧会超过既有64KiB上限；变化改用独立device_change帧，begin/end给定计数。丢失分别给定QueueOverflow/Truncated/Malformed固定原因计数，不把来源未知的非USB跳号当丢失。初次全目标Clippy101（manual_map/collapsible_if）保留后按style修正。
 
 clean213ab92首完整gate在默认测试失败：periodic测试把新增Initializing视作首个成功库存，修改fixture后读取到尚在途Current而非预期Stale。206输入前后稳定，原FAIL保留；测试须在原总3s内循环等待首个Current，再进行失败/恢复注入，不加sleep、不弱化质量/库存断言。产品行为不变，新clean重跑完整gate。
+
+## 实际CLI SIGINT负向后的入口修订
+
+clean bec软件872通过，仍不能替代进程验收。同一实际allfeatures CLI0c09的首次Current后SIGINT，被execute外层通用ctrl_c抢先裁决为helper-operation cancelled；第一次夹具未在断言前落child waitcode，原stderr/stdout私有原件保留，不补造。修正采证后fresh旧二进制负向实际wait1/原UID/ELF与精确cancelled DTO，确认是产品入口所有权错误。
+
+Devices{watch:true}必须与Logs/Diagnostics及server入口一样进入owns_signal_cleanup；内部观察owner处理INT/TERM且总join。Devices{watch:false}及其他既有命令契约保持。流式命令错误不追加通用pretty JSON对象破坏帧格式；按原owned模式stderr/exit报告。这个窄修后须新clean完整gate，872旧结果仍锁bec，不能改成已测试新产品。
