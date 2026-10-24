@@ -115,3 +115,14 @@ real owner waits and IPv4/IPv6 encryption/isolation. Add CRL refusal/restart che
 without replacing original assertions. Every failed collector/run remains FAIL;
 guest exit 0 does not repair missing evidence. Do not extend real-device support
 or call G3 complete from this slice.
+
+The installed extension preserves each original authentication barrier unchanged
+and adds a separate CRL barrier afterwards, so original counter equations remain
+valid. Eleven additional actual CLI waits per barrier distinguish six loading
+failures from five network attempts. An always-revoked and a newly-revoked leaf
+remain exactly pinned/authorized in both policies. The active file is replaced
+before the original server exits; the old actual generation must still accept
+the latter leaf, and only the real next generation after original cleanup denies
+it. Counter deltas, original resource snapshots and real USB I/O remain separate.
+The initial installed CRL extension is raw-v1; local framed tests are not an
+installed framed refusal matrix.
