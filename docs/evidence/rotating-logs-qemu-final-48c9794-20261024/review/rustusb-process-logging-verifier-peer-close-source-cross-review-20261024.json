@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "result": "NO_SPECIFIC_SOURCE_BLOCKER",
+  "scope": "Read-only review of verifier-only peer-close classification delta. Not a runtime PASS and no reinterpretation of original44b1 FAIL. No producer/verifier import or execution, no source/build/QEMU mutation.",
+  "source": {
+    "path": "/home/ubuntu/github/usbip-client/scripts/qemu_process_logging/verify.py",
+    "bytes": 76480,
+    "sha256": "4e97327ebba1b96eac38111fe174c9504d3124e0da663c1df39dcce1cec7038b"
+  },
+  "previous_original": "First44b1 strict verifier and failing summary remain saved in originalrun/source; whitespace-only fc594... baseline remains separate from this semanticdelta.",
+  "reviewed": [
+    {
+      "line": 198,
+      "finding": "Only normal1/fresh3 exact held incoming2/import2 IDs. Original roles, admission evidence, principals and complete resource attempts are retained. Connection identity stable before/after, client TCP tuple exactly reversed, peer actual local_stop/operationNone/Disconnected/Released/Verified. Original evdev down/up and exact35B both ways plus actualclientwait0/marker and hostCLOSE beforeSTOP are required."
+    },
+    {
+      "line": 315,
+      "finding": "Only cohort IDs can retain operationState, and only with actual final LinkEndProtocol; none other State/Io/Timeout. Rechecking historicalsessions revalidates exact IDs/principal/attempt and same complete terminal health. Cohortepoch3 cannot apply whileverifying epoch1/2."
+    },
+    {
+      "line": 330,
+      "finding": "Every session still needs Disconnected+Released+Verified and exact original Rootterminal kind/correlation/resource/key/UID/proof. Server epoch2 incoming remains baselineoperationNone. Existing client exception remains only exact epoch2 heldimports."
+    }
+  ],
+  "source_semantics": "LinkEndProtocol covers typed h2 poll/send/stream errors as well as protocol-invalid input; h2 cancellation can produce a reset. This is a source explanation for preserving an observed category, not proof of a particular wire reset or cleanEOF. Model::Failure::from_error maps CoreProtocol to State.",
+  "fixed_h2_reference": {
+    "version": "0.4.20",
+    "function": "proto::streams::streams::maybe_cancel",
+    "lines": "1699-1718",
+    "fact": "canceled interest schedules implicit reset; server early response can useNO_ERROR, otherwiseCANCEL. No claim this specific branch was observed on-wire in firstQEMU."
+  },
+  "original_raw_review": "/tmp/rustusb-process-logging-qemu-first-log-review-20261024/handoff.json",
+  "author_fixture_scope": "44prior+35new constructedfixtures only, author reports PASS; reviewer did not run them or apply newverifier to originalFAIL."
+}

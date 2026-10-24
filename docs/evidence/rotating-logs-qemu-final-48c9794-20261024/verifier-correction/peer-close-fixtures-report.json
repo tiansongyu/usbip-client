@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "scope": "constructed metadata and byte predicates only; no actual guest/USB/CLI acceptance, no original QEMU verifier rerun",
+  "source_sha256": "4e97327ebba1b96eac38111fe174c9504d3124e0da663c1df39dcce1cec7038b",
+  "count": 35,
+  "passed": true,
+  "checks": [
+    {
+      "name": "normal two exact StateProtocol errors accepted with complete original proof",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "fresh epoch3 metadata uses original connection not any earlier ID",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "none outcome remains distinct and allowed",
+      "expected_accept": true,
+      "passed": true,
+      "actual_error": null
+    },
+    {
+      "name": "fault epoch2 cannot get this allowance",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: only normal/fresh client-first epochs"
+    },
+    {
+      "name": "terminalID replacement",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: one exact original incoming terminal"
+    },
+    {
+      "name": "changed instance",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server exact original peer-close identity/attempt"
+    },
+    {
+      "name": "changed role",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server exact original peer-close identity/attempt"
+    },
+    {
+      "name": "changed principal",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server exact original peer-close identity/attempt"
+    },
+    {
+      "name": "missing actual importflush evidence",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server original actual admission and connection evidence"
+    },
+    {
+      "name": "preclose already terminal",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 only exact original two incoming/import IDs"
+    },
+    {
+      "name": "new finalconnection",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server same preclose and terminal connection, no PONG backfill"
+    },
+    {
+      "name": "changed finaltuple",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server same preclose and terminal connection, no PONG backfill"
+    },
+    {
+      "name": "peer not LocalStop",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 exact reversed TCP peer independently completes local stop"
+    },
+    {
+      "name": "State cannot hide Io end",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 only recorded State with its actual Protocol terminal may qualify"
+    },
+    {
+      "name": "State cannot hide timeout",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 only recorded State with its actual Protocol terminal may qualify"
+    },
+    {
+      "name": "Protocol end does not permit Io category",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 only recorded State with its actual Protocol terminal may qualify"
+    },
+    {
+      "name": "Protocol end does not permit arbitrarycategory",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 only recorded State with its actual Protocol terminal may qualify"
+    },
+    {
+      "name": "client peer must have successful operation",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 exact reversed TCP peer independently completes local stop"
+    },
+    {
+      "name": "original attempt replaced",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server exact original peer-close identity/attempt"
+    },
+    {
+      "name": "incorrect original attemptkind",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server original actual admission and connection evidence"
+    },
+    {
+      "name": "unknown Rootproof cannot establish cleanup",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: server full original root proof 00000000-0000-0000-0000-000000000003"
+    },
+    {
+      "name": "different RootUID",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: server full original root proof 00000000-0000-0000-0000-000000000003"
+    },
+    {
+      "name": "different Rootcorrelation",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 server exact original peer-close identity/attempt"
+    },
+    {
+      "name": "missing Rootterminal",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: server epoch1 no root owners and exact retained terminal count"
+    },
+    {
+      "name": "unconfirmed stays failure",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: server actual verified cleanup with retained operation outcome 00000000-0000-0000-0000-000000000003"
+    },
+    {
+      "name": "clientwaitfailure",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 client actual wait0/retirement marker gates later host server stop"
+    },
+    {
+      "name": "missing actual serial bytes",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 peer-close prerequisite has actual HID/35-byte bidirectional I/O"
+    },
+    {
+      "name": "missing actual keyrelease",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 peer-close prerequisite has actual HID/35-byte bidirectional I/O"
+    },
+    {
+      "name": "exports cannot reuse incomingexception",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: server actual verified cleanup with retained operation outcome 00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "name": "host serverstop before clientclose refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 original client close precedes server stop"
+    },
+    {
+      "name": "hostclose command wrongrole refused",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 original client close precedes server stop"
+    },
+    {
+      "name": "internallystable clienttuple still must reverse server",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: epoch1 exact reversed TCP peer independently completes local stop"
+    },
+    {
+      "name": "retained operation error cannot silently disappear",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: retained exact client-first incoming history 00000000-0000-0000-0000-000000000003"
+    },
+    {
+      "name": "later held+root edits cannot substitute original cohort capability",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: retained exact client-first incoming history 00000000-0000-0000-0000-000000000003"
+    },
+    {
+      "name": "wrongcohort epoch cannot qualify",
+      "expected_accept": false,
+      "passed": true,
+      "actual_error": "RuntimeError: process logging evidence: retained exact client-first incoming history 00000000-0000-0000-0000-000000000003"
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+--- verify-before-fc5940.py
++++ verify.py
+@@ -195,7 +195,95 @@
+         require(condition, label)
+ 
+ 
+-def check_root_history(originals, role, epoch, current, root, held, jobs_finished=True, peer_close_ids=frozenset()):
++def client_first_peer_closes(originals, epoch):
++    """Bind recorded transport errors to original client-first data connections.
++
++    This accounts for the observed Protocol/State category; it neither calls it
++    clean EOF nor identifies the on-wire reason. Full root cleanup stays below.
++    """
++    require(epoch in (1, 3), "only normal/fresh client-first epochs")
++    server_held = originals.data("server", f"agent-held-{epoch}.json")
++    client_held = originals.data("client", f"agent-held-{epoch}.json")
++    server_end = originals.data("server", f"agent-stopped-{epoch}.json")
++    client_end = originals.data("client", f"agent-stopped-{epoch}.json")
++    controls = [decode(line) for line in (originals.evidence / "host-control.jsonl").read_bytes().splitlines()]
++    close = one(controls, lambda r: r["command"] == f"CLOSE{epoch}", "client-first close command")
++    stop = one(controls, lambda r: r["command"] == f"STOP{epoch}", "later server stop command")
++    originals.check(close["role"] == "client" and stop["role"] == "server"
++                    and close["mark"] == f"close{epoch}" and stop["mark"] == f"stop{epoch}"
++                    and controls.index(close) < controls.index(stop) and close["monotonic"] < stop["monotonic"],
++                    f"epoch{epoch} original client close precedes server stop")
++    client_log = (originals.evidence / "client-evidence.log").read_text()
++    originals.check(client_log.count(f"LOG_CLIENT_STOPPED epoch={epoch}\n") == 1
++                    and originals.raw("client", f"wait-agent-{epoch}.txt") == b"0\n",
++                    f"epoch{epoch} client actual wait0/retirement marker gates later host server stop")
++    # The fixed host loop waits for that marker before sending STOP. Actual I/O
++    # is a separate prerequisite, never inferred from Connected or a PONG.
++    rx = f"RUSTUSB-RX-{epoch}-0001:0123456789abcdef\n".encode()
++    tx = f"RUSTUSB-TX-{epoch}-0001:fedcba9876543210\n".encode()
++    event_bytes = originals.raw("client", f"input-{epoch}.bin")
++    originals.check(bool(event_bytes) and len(event_bytes) % 24 == 0,
++                    f"epoch{epoch} peer-close prerequisite has complete evdev records")
++    events = [struct.unpack("<qqHHi", event_bytes[i:i + 24])[2:] for i in range(0, len(event_bytes), 24)]
++    originals.check((1, epoch + 1, 1) in events and (1, epoch + 1, 0) in events
++                    and originals.raw("client", f"rx-{epoch}.bin") == rx
++                    and originals.raw("client", f"tx-{epoch}.bin") == tx
++                    and (originals.evidence / f"ftdi-host-injected-{epoch}.bin").read_bytes() == rx
++                    and (originals.evidence / "ftdi-host-rx.bin").read_bytes()[(epoch - 1) * 35:epoch * 35] == tx,
++                    f"epoch{epoch} peer-close prerequisite has actual HID/35-byte bidirectional I/O")
++    incoming = [s for s in server_held["sessions"] if not s["terminal"] and s["role"] == "incoming"]
++    imports = [s for s in client_held["sessions"] if not s["terminal"] and s["role"] == "import"]
++    originals.check(len(incoming) == len(imports) == 2 and len({s["id"] for s in incoming}) == 2
++                    and len({s["id"] for s in imports}) == 2, f"epoch{epoch} only exact original two incoming/import IDs")
++    facts = {}
++    for original in incoming:
++        peer = one(imports, lambda s: s["device_key"] == original["device_key"], "original client device peer")
++        ended = one(server_end["sessions"], lambda s: s["id"] == original["id"], "original incoming terminal")
++        peer_end = one(client_end["sessions"], lambda s: s["id"] == peer["id"], "original client terminal")
++        links = []
++        for role, before, after, held_state, final_state, kind, evidence in (
++                ("server", original, ended, server_held, server_end, "native_stub", "import_reply_flushed"),
++                ("client", peer, peer_end, client_held, client_end, "native_import", "local_enumeration")):
++            originals.check(before["state"] == "Connected" and before["evidence"] == evidence
++                            and before["operation_error"] is None and len(before["attempts"]) == 1
++                            and before["attempts"][0]["kind"] == kind,
++                            f"epoch{epoch} {role} original actual admission and connection evidence")
++            originals.check(all(after[k] == before[k] for k in
++                            ("id", "instance_id", "job_id", "profile", "role", "device_key", "principal"))
++                            and [{k: v for k, v in a.items() if k != "proof"} for a in after["attempts"]]
++                            == [{k: v for k, v in a.items() if k != "proof"} for a in before["attempts"]],
++                            f"epoch{epoch} {role} exact original peer-close identity/attempt")
++            first = one(held_state["link_history"], lambda h: h["session_id"] == before["id"]
++                        and h["instance_id"] == before["instance_id"], "held data connection")["link"]
++            last = one(final_state["link_history"], lambda h: h["session_id"] == before["id"]
++                       and h["instance_id"] == before["instance_id"], "final same data connection")["link"]
++            originals.check(first is not None and last is not None and first["protocol"] == last["protocol"] == "framed_v2"
++                            and first["phase"] == "open" and first["end"] is None
++                            and last["phase"] == "ended" and first["identity"] == last["identity"],
++                            f"epoch{epoch} {role} same preclose and terminal connection, no PONG backfill")
++            links.append((first, last))
++        first, last = links[0]
++        peer_first, peer_last = links[1]
++        originals.check(first["identity"]["tcp"] == {"local": peer_first["identity"]["tcp"]["peer"],
++                                                     "peer": peer_first["identity"]["tcp"]["local"]}
++                        and peer_last["end"] == "local_stop" and peer_end["operation_error"] is None
++                        and peer_end["terminal"] is True and peer_end["state"] == "Disconnected"
++                        and peer_end["evidence"] == "released" and peer_end["cleanup"] == "verified",
++                        f"epoch{epoch} exact reversed TCP peer independently completes local stop")
++        originals.check(ended["operation_error"] is None or
++                        (ended["operation_error"] == "state" and last["end"] == "protocol"),
++                        f"epoch{epoch} only recorded State with its actual Protocol terminal may qualify")
++        facts[original["id"]] = {"epoch": epoch, "server_session": ended, "server_link": last,
++                                  "observed_operation_error": ended["operation_error"], "observed_link_end": last["end"],
++                                  "client_session_id": peer["id"], "client_instance_id": peer["instance_id"],
++                                  "client_link": peer_last, "held_server_probe": first["probe"],
++                                  "held_client_probe": peer_first["probe"],
++                                  "scope": "recorded peer-stop transport outcome; not clean EOF or a traced reset cause"}
++    return facts
++
++
++def check_root_history(originals, role, epoch, current, root, held, jobs_finished=True, peer_close_ids=frozenset(),
++                       server_peer_closes=None):
+     count = (4 if role == "server" else 2) * epoch
+     originals.check(current["schema_version"] == 2 and root["schema_version"] == 2,
+                     f"{role} epoch{epoch} actual private state/root schema2")
+@@ -224,9 +312,24 @@
+                     f"{role} epoch{epoch} retained proof has exact logical server scope")
+     for session in current["sessions"]:
+         allowed_error = {None, "io", "state"} if role == "client" and session["id"] in peer_close_ids else {None}
++        if role == "server" and session["id"] in (server_peer_closes or {}):
++            fact = server_peer_closes[session["id"]]
++            expected = fact["server_session"]
++            link = one(current["link_history"], lambda h: h["session_id"] == session["id"]
++                       and h["instance_id"] == session["instance_id"], "retained original peer-close link")["link"]
++            originals.check(fact["epoch"] in (1, 3) and fact["epoch"] <= epoch
++                            and session["role"] == expected["role"] == "incoming"
++                            and all(session[k] == expected[k] for k in
++                                    ("id", "instance_id", "job_id", "profile", "device_key", "principal", "operation_error"))
++                            and [{k: v for k, v in a.items() if k != "proof"} for a in session["attempts"]]
++                            == [{k: v for k, v in a.items() if k != "proof"} for a in expected["attempts"]]
++                            and link == fact["server_link"], "retained exact client-first incoming history " + session["id"])
++            if session["operation_error"] == "state":
++                originals.check(link["end"] == "protocol", "State retains actual Protocol end " + session["id"])
++                allowed_error = {"state"}
+         originals.check(session["terminal"] is True and session["state"] == "Disconnected" and session["evidence"] == "released"
+                         and session["cleanup"] == "verified" and session["operation_error"] in allowed_error
+-                        and len(session["attempts"]) == 1, f"{role} actual successful owner cleanup {session['id']}")
++                        and len(session["attempts"]) == 1, f"{role} actual verified cleanup with retained operation outcome {session['id']}")
+         attempt = session["attempts"][0]
+         originals.check(terminals.count(expected_proof(session, attempt)) == 1,
+                         f"{role} full original root proof {session['id']}")
+@@ -348,7 +451,7 @@
+     return rows
+ 
+ 
+-def check_epoch(originals, epoch, keys, baseline):
++def check_epoch(originals, epoch, keys, baseline, server_peer_closes=None):
+     """Same exact capabilities perform I/O and later acquire matching root proof."""
+     for role in ("server", "client"):
+         held = originals.data(role, f"agent-held-{epoch}.json")
+@@ -394,7 +497,8 @@
+                         else (root["exports"] == [] and len(root["records"]) == 2), f"{role} exact held resource classes")
+         peer_close_ids = {s["id"] for s in originals.data("client", "agent-held-2.json")["sessions"]
+                           if s["role"] == "import" and not s["terminal"]} if role == "client" and epoch >= 2 else set()
+-        check_root_history(originals, role, epoch, stopped, released, held, peer_close_ids=peer_close_ids)
++        check_root_history(originals, role, epoch, stopped, released, held, peer_close_ids=peer_close_ids,
++                           server_peer_closes=server_peer_closes)
+         current_ids = {s["id"] for s in active}
+         health = [row for row in stopped["link_history"] if row["session_id"] in current_ids]
+         originals.check(len(health) == len(active), f"{role} epoch{epoch} actual final health observations retained")
+@@ -477,7 +581,9 @@
+             "client_resources": [r["channel_id"] for r in receipts],
+             "client_generations": [r["state"]["receipt"]["session"]["local_device_generation"] for r in receipts],
+             "actual_client_operation_errors": {s["id"]: s["operation_error"] for s in client_end["sessions"]},
+-            "peer_close_scope": "Only the exact epoch2 original two imports may retain Io/State from peer TERM or helper invalidation; all cleanup remains actual Verified/Disconnected with exact Root proof"}
++            "client_first_server_outcomes": {key: value for key, value in (server_peer_closes or {}).items()
++                                               if value["epoch"] == epoch},
++            "peer_close_scope": "Client exception remains only the exact epoch2 original two imports with Io/State from peer TERM or helper invalidation. Separately listed normal1/fresh3 server incoming outcomes require original client-first connection evidence; State requires actual Protocol end. Neither is clean EOF; all cleanup remains actual Verified/Disconnected with exact Root proof"}
+ 
+ 
+ def lines(originals, role, name):
+@@ -535,7 +641,7 @@
+     return {"requests": count, "first_sequence": receipts[0]["sequence"], "last_sequence": previous}
+ 
+ 
+-def check_lock_fault(originals, summary, baseline):
++def check_lock_fault(originals, summary, baseline, server_peer_closes=None):
+     stages = ("before", "before-stop", "after-clean", "before-release")
+     snapshots = [originals.data("server", f"gate-{stage}.json") for stage in stages]
+     first = snapshots[0]
+@@ -607,7 +713,7 @@
+     held = originals.data("server", "agent-held-2.json")
+     clean = originals.data("server", "agent-clean-held.json")
+     root = originals.data("server", "root-clean-held.json")
+-    check_root_history(originals, "server", 2, clean, root, held)
++    check_root_history(originals, "server", 2, clean, root, held, server_peer_closes=server_peer_closes)
+     originals.check(originals.data("server", "host-clean-held.json") == baseline,
+                     "saved full original driver/configuration baseline while lock owner and agent remain alive")
+     client_clean = originals.data("client", "agent-eof-held.json")
+@@ -817,7 +923,12 @@
+     originals.check(len(baseline) == 2 and {r["vendor"] for r in baseline} == {"0627", "0403"}
+                     and {i["driver"] for r in baseline for i in r["interfaces"]} == {"usbhid", "ftdi_sio"},
+                     "actual complete original HID and FTDI driver baselines")
+-    epochs = [check_epoch(originals, epoch, keys, baseline) for epoch in (1, 2, 3)]
++    server_peer_closes = {}
++    for epoch in (1, 3):
++        cohort = client_first_peer_closes(originals, epoch)
++        originals.check(not (server_peer_closes.keys() & cohort.keys()), "client-first epochs never share session IDs")
++        server_peer_closes.update(cohort)
++    epochs = [check_epoch(originals, epoch, keys, baseline, server_peer_closes) for epoch in (1, 2, 3)]
+     resources = [resource for epoch in epochs for resource in epoch["client_resources"]]
+     generations = [json.dumps(generation, sort_keys=True) for epoch in epochs for generation in epoch["client_generations"]]
+     originals.check(len(set(resources)) == 6 and len(set(generations)) == 6,
+@@ -880,7 +991,7 @@
+                             role + " actual selected executable payload " + program)
+     configuration = check_configuration(originals, keys)
+     floods = {mark: check_flood(originals, mark, count) for mark, count in (("normal", 64), ("blocked", 512))}
+-    gate = check_lock_fault(originals, summary, baseline)
++    gate = check_lock_fault(originals, summary, baseline, server_peer_closes)
+     pages = check_pages_and_audit(originals, stores)
+     sensitive = [b"unknown-profile", b"RUSTUSB-RX-", b"RUSTUSB-TX-", b"-----BEGIN", b"PRIVATE KEY", b"/etc/rustusb/"]
+     sensitive.extend(configuration["public_certificate_sha256"][name].encode() for name in ("ca", "server", "client"))
