@@ -1,7 +1,8 @@
 # Bounded dual-stack TCP fallback
 
 2026-10-24. Baseline `9c9506fad514d016e5353fd4711a44f1c06a97e2`.
-Status: implementation contract; product validation pending.
+Status: implemented; targeted8 connector tests and one raw/framed hostname/TLS
+service-name test pass. Complete clean software and installed validation pending.
 
 The original goal explicitly requires hostname, IPv4/IPv6, timeout/cancellation
 and real encrypted device data connections. The current shared secure connector
@@ -49,7 +50,7 @@ Add `rustusb_protocol::connect::connect(&Peer) -> Result<TcpStream>`:
 - Inspect at most 65 raw resolver entries, rejecting more than 64. Stably
   deduplicate, reject more than 16 unique addresses or an empty result, preserve
   full SocketAddr values and each family's order. These bounds cover retained
-  RustUSB results, not libc/OS internal allocation or lookup duration.
+  RustUSB results, not std/libc/OS internal allocation or lookup duration.
 - Start with the platform's first family and alternate while both remain.
   Start the first candidate immediately; normal later starts are at least250ms
   apart. A definitive TCP failure may shorten the next interval to100ms.
@@ -81,8 +82,9 @@ ownership are unchanged. Requests gain no endpoint override or new privilege.
    cycles, real wait/cleanup, original root journals and full driver baselines.
    A new strict capture method accepts only empty SYN attempts to the exact
    stale candidate; it records a derived healthy projection for the original
-   ciphertext classifier without changing raw captures. Healthy-family TLS
-   must follow earlier stale-candidate SYNs. This is OS hostname resolution
+   ciphertext classifier without changing raw captures. Exact healthy client/server tuples must
+   follow earlier stale-candidate SYNs with equal-count sorted chronology; this
+   is aggregate evidence without per-process/per-operation attribution. This is OS hostname resolution
    via guest hosts files, not wire-DNS or VPN qualification.
 3. Meaningful software tests cover ordering/duplicates/limits, actual loopback
    fallback, launch timing with deterministic clocks, failure acceleration,
@@ -107,3 +109,23 @@ No DUAL_STACK_READY or product hostname dial occurs. Both guest exits zero and
 all four provenance guards true do not turn that host FAIL into a sequential-
 connector reproduction. Use the already copied `/usr/bin/ip` explicitly for the
 new neighbor mutation and observation, then rerun clean/fresh. Product unchanged.
+
+The fresh cleanca63bc4 Native/IPv4 run reaches DUAL_STACK_READY and then
+FAILS at the first real secure discovery with its original connection timeout.
+Raw client PCAP shows stale IPv6 SYNs and zero healthy IPv4/3241 SYN connections.
+Both guest exits zero/all four guards true are preserved separately from the
+host FAIL. A post-run named derived classification does not change that verdict.
+This is the installed original-product reproduction, distinct from the earlier
+BusyBox setup failure; no device I/O or full successful cleanup suite is claimed.
+
+## Implementation review checkpoint
+
+Two read-only component reviews find no remaining must-fix after corrections.
+Final selected sets of11/12 files remain stable, and the fixed Tokio timer
+source confirms its upward millisecond rounding. The reviews ran no product
+tests. The first Clippy redundant closure correction and test unbounded-accept
+correction are preserved separately. Actual localhost results are platform-
+dependent; installed QEMU, not a local dual-listener assumption, must prove
+two-family behavior. Synthetic ready-resource timing and socket WouldBlock/EOF
+observations retain their exact scope. No external dependency or lockfile changes;
+174-package inventory remains unchanged.

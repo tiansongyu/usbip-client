@@ -54,8 +54,7 @@ pub(super) struct Connection {
 pub(super) async fn connect(
     config: &rustusb_transport::config::LoadedClientConfig,
 ) -> Result<Connection> {
-    let tcp =
-        TcpStream::connect((config.endpoint.host.as_str(), config.endpoint.port.get())).await?;
+    let tcp = rustusb_protocol::connect::connect(&config.endpoint).await?;
     tcp.set_nodelay(true)?;
     if config.tls.protocol() == LinkProtocol::FramedV2 {
         let link = config

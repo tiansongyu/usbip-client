@@ -19,8 +19,9 @@ original driver restoration. The TLS service name stays independent of the
 endpoint hostname. A strict named healthy PCAP projection removes only exact
 empty client SYNs to the stale address/nonexistent MAC, then passes every other
 packet record unchanged to the original classifier. Raw PCAP is never rewritten.
-Actual client capture must show each stale first attempt before its healthy
-opposite-family connection within the existing ten-second deadline.
+Actual client capture must show equal counts of stale and healthy first SYNs
+in that chronological order within the existing ten-second deadline. This is
+aggregate capture evidence, without per-process/per-operation attribution.
 
 Old sequential failure and later clean product runs must retain their actual
 verdicts and source/ELF guards. This is OS hostname resolution using hosts files;

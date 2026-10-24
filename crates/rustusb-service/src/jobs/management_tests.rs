@@ -362,3 +362,64 @@ async fn discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver() -> T
     .await??;
     Ok(())
 }
+
+#[tokio::test]
+async fn hostname_endpoint_does_not_replace_independent_tls_service_name() -> TestResult {
+    for framed in [false, true] {
+        for wrong_name in [false, true] {
+            let (server, client) = credentials(framed)?;
+            let listener = TcpListener::bind("127.0.0.1:0").await?;
+            let mut config = loaded(client, listener.local_addr()?)?;
+            config.endpoint.host = Host::new("localhost")?;
+            if wrong_name {
+                config.server_name = "wrong.test".into();
+            }
+            let owner = tokio::spawn(async move {
+                let (tcp, _) =
+                    tokio::time::timeout(Duration::from_secs(5), listener.accept()).await??;
+                let connection =
+                    tokio::time::timeout(Duration::from_secs(5), link::accept(&server, tcp))
+                        .await?;
+                if wrong_name {
+                    assert!(connection.is_err());
+                } else {
+                    let (mut connection, _) = connection?;
+                    let written =
+                        tokio::time::timeout(Duration::from_secs(5), catalog(&mut connection.io))
+                            .await;
+                    let result = match written {
+                        Ok(Ok(())) => link::complete_management(
+                            &mut connection.io,
+                            &mut connection.owner,
+                            async {
+                                tokio::time::sleep(Duration::from_secs(5)).await;
+                                Err(Error::Timeout("test hostname catalog close".into()))
+                            },
+                        )
+                        .await
+                        .map(|_| ()),
+                        other => {
+                            let _ = link::finish(&mut connection.owner).await;
+                            match other {
+                                Ok(Err(error)) => Err(error),
+                                _ => Err(Error::Timeout("test hostname catalog".into())),
+                            }
+                        }
+                    };
+                    result?;
+                }
+                Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+            });
+            let result = discover(&config, Duration::from_secs(5)).await;
+            owner.await??;
+            if wrong_name {
+                assert!(matches!(result, Err(Error::Permission(_))));
+            } else {
+                assert_eq!(result?.len(), 1);
+            }
+        }
+    }
+    // The actual localhost answer set is platform-dependent. This tests actual
+    // hostname/TLS-name separation; QEMU supplies explicit two-family evidence.
+    Ok(())
+}

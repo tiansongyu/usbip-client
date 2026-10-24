@@ -54,6 +54,10 @@ def project(path,family):
                 special=True;stale.setdefault(key,stamp)
                 excluded.append({'packet':packets,'sha256':hashlib.sha256(data[start:offset]).hexdigest(),'timestamp_micros':stamp,'flow':list(key)})
             elif version==healthy_version and dport==3241 and flags&2 and not flags&16:
+                expected_src='192.0.2.2' if healthy_version==4 else 'fd42:7275:7374::2'
+                expected_dst='192.0.2.1' if healthy_version==4 else 'fd42:7275:7374::1'
+                if src!=expected_src or dst!=expected_dst or frame[:6]!=bytes.fromhex('525400000061') or frame[6:12]!=CLIENT_MAC:
+                    raise RuntimeError('healthy SYN differs from exact private client/server endpoint')
                 healthy.setdefault(key,stamp)
         if not special:output.extend(data[start:offset])
     derived=path.with_name(path.stem+'-healthy-projection.pcap');derived.write_bytes(output)
@@ -79,4 +83,4 @@ def verify(evidence,args):
     stale=facts['stale_first_syn_micros'];healthy=facts['healthy_first_syn_micros']
     if not (len(stale)==len(healthy) and len(healthy)>=7):raise RuntimeError('each actual healthy TCP connection must follow one actual stale candidate')
     if not all(a<b and b-a<10_000_000 for a,b in zip(stale,healthy)):raise RuntimeError('healthy connection did not begin after stale SYN within original ten-second deadline')
-    return {'hostname':'rustusb-dual-stack.test','independent_tls_name':'rustusb-qemu.test','healthy_family':args.family,'stale_address':expected_bad,'actual_connection_pairs':len(healthy),'projection':facts,'limits':['hosts-file OS resolution, not wire DNS','no VPN/hardware/performance/fullG3 claim','strict original USB/root proof remains independently required']}
+    return {'hostname':'rustusb-dual-stack.test','independent_tls_name':'rustusb-qemu.test','healthy_family':args.family,'stale_address':expected_bad,'chronological_syn_pairs':len(healthy),'projection':facts,'limits':['equal-count sorted chronology is aggregate evidence, not per-process/per-operation attribution','hosts-file OS resolution, not wire DNS','no VPN/hardware/performance/fullG3 claim','strict original USB/root proof remains independently required']}

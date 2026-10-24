@@ -1,15 +1,13 @@
 //! Bounded Linux USB/IP DEVLIST client. URB transport remains in the native kernel backend.
 
+pub mod connect;
 pub mod secure;
 pub mod server;
 
 use rustusb_core::{BusId, Error, Peer, Result};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, time::Duration};
-use tokio::{
-    io::{AsyncRead, AsyncReadExt, AsyncWriteExt},
-    net::TcpStream,
-};
+use tokio::io::{AsyncRead, AsyncReadExt, AsyncWriteExt};
 
 /// USB/IP protocol version used by Linux.
 pub const VERSION: u16 = 0x0111;
@@ -152,10 +150,11 @@ pub async fn read_devlist(reader: &mut (impl AsyncRead + Unpin)) -> Result<Vec<R
 }
 
 /// Query a remote server. A single deadline covers DNS, connect, write and the full response.
-/// Dropping this future closes its socket; Phase 1 requires an administrator-managed trusted network.
+/// Dropping closes all TCP candidates; started system lookup may outlive its waiter,
+/// retaining its actual-work quota. This path requires an administrator-managed trusted network.
 pub async fn discover(peer: &Peer, timeout: Duration) -> Result<Vec<RemoteDevice>> {
     tokio::time::timeout(timeout, async {
-        let mut stream = TcpStream::connect((peer.host.as_str(), peer.port.get())).await?;
+        let mut stream = connect::connect(peer).await?;
         stream.set_nodelay(true)?;
         stream.write_all(&DEVLIST_REQUEST).await?;
         read_devlist(&mut stream).await

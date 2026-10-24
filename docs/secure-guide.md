@@ -159,3 +159,30 @@ credentials/addresses or USB cleanup proof. See the
 raw-v1 exhaustion runs, six default-policy regressions and separate framed-v2
 diagnostic regression. Installed managed-agent RPC and framed-specific exhaustion
 remain untested.
+
+## Hostname and dual-stack connection fallback
+
+The endpoint host may be a system-resolved hostname or an IP literal. Its value
+does not replace `server_name`: certificate verification always uses that
+independently configured service name. TLS failure does not retry another
+address or an insecure protocol.
+
+The shared Rust connector preserves the system resolver's first-family preference
+and interleaves IPv4/IPv6 candidates. It normally starts another TCP attempt
+after 250ms while earlier attempts remain pending; a definitive failure may
+shorten that interval to 100ms. Only the selected TCP stream proceeds to TLS and
+USB work. Every losing socket is closed; the original total DNS/TCP/TLS/catalog/
+IMPORT deadline and cancellation source remain in force.
+
+At most four actual system-lookup jobs run or wait on the blocking pool per
+process, including jobs whose caller was cancelled. Capacity exhaustion returns
+a fixed resolver-capacity error. Numeric IP endpoints bypass that budget. At
+most 64 raw answers and 16 unique socket addresses are retained/accepted; larger
+answers fail before TCP rather than silently ignoring a potentially usable tail.
+These limits do not bound std/libc/OS resolver allocation or duration. A started
+lookup cannot generally be cancelled and may delay runtime exit.
+
+This uses the administrator's existing NSS/DNS/VPN policy; it does not supply a
+separate resolver or endpoint override. The external Linux usbip utility keeps
+its own connection behavior. The [design and validation contract](research/dual-stack-connect-design.md)
+records the exact scope; installed product validation is pending at this checkpoint.

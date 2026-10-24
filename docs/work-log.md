@@ -713,3 +713,10 @@
 - 新增独立publication archive并写验收/网站维护记录；随后仅文档回执提交，不改实际产品或site bytes。最后核本地/远端一致与工作区clean；原长期goal继续active。
 
 - 双栈首clean5b26bba Native-v4 host FAIL，client在dual-stack-hostname阶段报BusyBox ip invalid argument replace，尚未连接；两guest0/四guard真不重判。新增邻居命令须显式用已复制/usr/bin/ip；源/设计先记录，再新clean/fresh复跑，产品未改。
+
+- 新clean ca63bc4旧产品真实复现：DUAL_STACK_READY后首次secure-discover原deadline超时，client rawcap有stale IPv6 SYN且healthy IPv4/3241 SYN为0；原summary保host FAIL/guest0/四guard真，后置派生分类单独标明不改判。开始实施inline race及真实resolver配额，未把两个失败合并或视为旧I/O验收。
+
+- 新增shared protocol connector与secure/legacy DEVLIST接入，生产无新依赖；4真实resolver工作permit在closure内持有，16inline TCP futures仅winner进TLS，原deadline/证书服务名/权限保持。8项connector测试及raw/v2实际hostname独立TLS名正负共一项service测试通过。初Clippy redundant_closure101按style修正；组件研究审查提示whole join! accept需总超时，已补并重跑。实际socket取消前WouldBlock/取消后EOF保持。
+- PCAP verifier补exact healthy IP/MAC tuple，sorted SYN配对只称aggregate chronology，不冒充逐process/operation归因；localhost实际answer集合由OS决定，不用本地多listener暗示实际两族。实现/测试仍待clean完整gate和产品QEMU，原旧产品QEMU FAIL不改。
+
+- 组件/策略只读复核最终11/12文件稳定、无剩余must-fix，未执行产品测试。根线程完成8+1定向及最终all-feature all-target Clippy。依赖清单仍174且lock/清单无diff；test-util仅protocol dev feature。冻结产品后运行clean完整gate，所有新QEMU待实际来源再记账。

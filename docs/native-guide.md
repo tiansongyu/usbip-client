@@ -68,3 +68,14 @@ CLI 普通权限运行；只有受限的 `rustusb-helper` 作为系统管理员�
 示例地址 `192.0.2.1` 仅用于文档/隔离仿真。请使用实际受管地址和扫描得到的Bus ID。所有命令支持 `--json`，日志写 stderr，`--log-json` 启用 JSON tracing，`RUST_LOG=info` 配置级别。普通用户不使用 `sudo rustusb` 代替 helper。
 
 helper 的所有允许 UID 共同管理已批准设备和本实例建立的连接；这不是多租户隔离。仅能自动断开本运行实例准确认领的端口、取消本实例成功创建并验证的导出绑定。重启后的未知端口和导出、外部工具建立的导出均拒绝自动接管，需管理员核对。设备操作失败、超时或取消不代表没有副作用，也不保证驱动或资源已经恢复；请检查 `devices/sessions/status` 和内核，避免盲目重试。失败后来源不明的绑定不会自动认领或撤销。卸载/重启不自动强制断开未知设备。详见 [安全边界](security.md)。
+
+## Hostnames with multiple addresses
+
+RustUSB's read-only `discover HOST` uses the same bounded address connector as
+the secure client: preserve system preference, interleave families, and race
+pending TCP candidates within the original discovery deadline. At most four
+actual system lookups and 16 unique addresses are admitted; IP literals bypass
+lookup. The limits do not make the OS resolver cancellable. This command still
+requires administrator-managed network protection. Native `attach` through the
+external distribution usbip tool retains that tool's address behavior. See the
+[connection design](research/dual-stack-connect-design.md).
