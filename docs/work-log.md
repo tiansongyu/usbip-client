@@ -581,3 +581,4 @@
 
 - 固定上游/设计/依赖/作者交接59份约1.33MB、两次样式FAIL及最终723软件761份约11.34MB、实际本地runtime与runner历次/方法复核323份约16.19MB，分别归档rotating-logs-research/software/local-runtime-20261024；共1143份逐original/bytes/SHA及暂存Git blob核验。N复核986诊断不计USB cases，其本人为record/worker作者，仅原件/统计方法独立；38新child只有11实际/proc ELF采样，27fast缺采保持。初始review parser两次错误原件与更正版分别保留。
 - 精确41fce的CI40052402641四原生job均FAIL：官方完整日志显示新六场景前置检查要求HOME/.cache已存在，而运行器缺少该目录，新增case尚未执行。软件723与原四signal/两背压在此前步骤通过，不把整job称success。保留四官方response与逐UTF8原文，准备仅修runner安全创建缺失cache（不改已有目录mode、不降低产品路径检查）后另提交/另run验证。Pages40052402588为旧网站内容发布，和此次软件FAIL分开记账。
+- runner缺失cache修复为39143B/957d1a40：先lstat完整受保护HOME祖先，再仅在缺失时mkdir0700，已有安全0755目录不chmod；symlink/不可信owner/可被他人写/并发恶意赢家均拒绝。N在普通UID1000的12个真实临时FS函数fixture及AST检查通过；没有执行CLI/Cargo/QEMU，未变HOME环境或真实HOME元数据，产品Rust177源与ELF不变。原38064B及静态记录单独保留；下一四原生CI按新提交另账。

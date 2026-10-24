@@ -81,6 +81,34 @@ def metadata(path):
             "gid": value.st_gid, "nlink": value.st_nlink, "bytes": value.st_size}
 
 
+def prepare_cache(home):
+    require(home.is_absolute() and ".." not in home.parts, "HOME must be an absolute nontraversing path")
+    uid = os.getuid()
+    # Validate before creating anything. Never follow a symlink or repair an
+    # existing ancestor/cache; the actual product retains its own checked opens.
+    for path in reversed((home, *home.parents)):
+        value = path.lstat()
+        require(stat.S_ISDIR(value.st_mode) and value.st_uid in {0, uid}
+                and stat.S_IMODE(value.st_mode) & 0o022 == 0,
+                "HOME ancestry must be owned and protected directories")
+    cache = home / ".cache"
+    created = False
+    try:
+        value = cache.lstat()
+    except FileNotFoundError:
+        try:
+            cache.mkdir(mode=0o700)
+            created = True
+        except FileExistsError:
+            pass  # A concurrent caller still has to pass the same checks.
+        value = cache.lstat()
+    mode = stat.S_IMODE(value.st_mode)
+    require(stat.S_ISDIR(value.st_mode) and value.st_uid == uid
+            and mode & 0o022 == 0 and (not created or mode == 0o700),
+            "HOME/.cache must be an owned protected directory")
+    return cache
+
+
 def binary_receipt(path):
     return {**metadata(path), "sha256": sha(path)}
 
@@ -641,8 +669,7 @@ def main():
     try:
         summary["sources_before"] = sources()
         summary["binary_before"] = binary_receipt(binary)
-        cache = Path.home() / ".cache"
-        require(cache.is_dir() and not cache.is_symlink(), "private HOME/.cache parent must already exist")
+        cache = prepare_cache(Path.home())
         base = Path(tempfile.mkdtemp(prefix="rustusb-process-logs-", dir=cache))
         base.chmod(0o700)
         summary["private_log_root"] = str(base)
