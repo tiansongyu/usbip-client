@@ -13,6 +13,8 @@
 
 - 文档QA17源483本地/仓库target、205site/Node/diff/实际CLI help与默认Native normal树隔离均PASS；235软件/两237及两233最终QEMU输入与all release ELF仍一致。七website/四global readme-site及Codex发现symlink不变，无新browser/pixel/noJS/reduced-motion宣称。QA保存检查时source快照，后续仅回执追加。即将普通SSH commit/push并核精确内容四native CI/Pages，不提前宣称成功。
 
+- 内容49b52a14普通SSH push/remote main一致/clean；software40133491308四native job120990006849/006968/007109/007149及实际arch/fullgate/signal/virtual/diagnostic步骤均completed/success；Pages40133491228 check120990006751/deploy120990092618成功。六canonical HTTPS资源在部署结果前后均200且逐Git内容相同，七site/四global及symlink、235软件/两237及两233最终QEMU输入与实际all ELF一致。51原件/回执/方法共326454B逐SHA归档evidence/tui-failure-publication-49b52a1-20261025；不补造CI full logs/ELF/各平台952重算或新browser验证。原384 FAIL、完整Phase0–7、UI热插拔/权威拒绝/G4、硬件/完整G3与后续阶段保持active。最后仅commit/push发布回执并核remote/clean及原输入，不当新USB验收。
+
 ## 2026-10-25：终端持久设置与实际确认动作（开始）
 
 - 上一轮E45为实际进展：六页TUI、937软件/双栈QEMU/四CI与发布，最终clean1ed3baa4。本轮先重读完整Phase0–7原任务、Git/AGENTS/核心skill、实际TUI/CLI/worker与原QEMU，原goal保持active。

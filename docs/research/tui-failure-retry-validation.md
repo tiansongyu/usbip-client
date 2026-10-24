@@ -109,3 +109,29 @@ Installed UI hotplug and authoritative action-denial scenarios, full G4,
 hardware G1/G2, full G3, GUI/install, performance and Windows remain unfinished.
 The existing English README, static showcase and global readme-site skill remain
 separate documentation deliverables; the showcase is not the Phase 5 GUI.
+
+
+## Publication
+
+Content commit `49b52a14a2a71a16df8b8fa6ab3bd7a791dc5962` was normally
+pushed over the authorized SSH remote, with an exact remote main and clean tree.
+[Software run 40133491308](https://github.com/tiansongyu/usbip-client/actions/runs/40133491308)
+completed successfully on Ubuntu 22.04/24.04, x86_64/aarch64. Actual reported
+architecture, full quality gate, signal, virtual lifecycle and diagnostic steps
+also completed successfully. This reports the primary job/step outcomes, not
+fetched CI binaries, full logs or invented per-platform test recounts.
+[Pages run 40133491228](https://github.com/tiansongyu/usbip-client/actions/runs/40133491228)
+completed both check and deploy successfully.
+
+Six canonical HTTPS resources returned 200 and matched the exact Git site
+bytes, both before and after the deployment result. Seven website files and
+four global readme-site files plus the Codex discovery symlink are unchanged.
+No new browser/pixel/no-JavaScript/reduced-motion inspection is claimed.
+
+The [publication review](../evidence/tui-failure-publication-49b52a1-20261025/review.json)
+and its manifest preserve 51 original responses/receipts/methods (326,454 bytes).
+Local 952 software executions and the four final QEMU pairs remain tied to
+clean `4ee6be3e`; the original `38477360` experiment remains FAIL. The final
+receipt commit records publication only. Documentation QA snapshots precede
+these receipt paragraphs. The original full goal and outstanding gates remain
+open.
