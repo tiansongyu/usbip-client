@@ -145,3 +145,10 @@ Three separate raw-review methods passed for the eight preparation cases, six he
 - Root, sysfs and application files are sequential read snapshots, not one atomic cross-filesystem transaction. A predicate must be bound to the exact saved input it describes.
 - VHCI NULL is directly sampled. Original local-generation disappearance is supported by the exact root cleanup proof and frozen helper checks where no separate final sysfs-stat artifact was collected.
 - QEMU emulated HID/FTDI and ordinary-user software tests do not establish physical hardware G1/G2, Windows USB support, or completion of all Phase 3 requirements. The broader project objective remains open.
+
+
+## README and website publication
+
+The English README and showcase update is published at `ac4e802848257e1a36767137e2e56bef4dda6683`. Its [software workflow 40045915202](https://github.com/tiansongyu/usbip-client/actions/runs/40045915202) has four successful native jobs, and [Pages workflow 40045915200](https://github.com/tiansongyu/usbip-client/actions/runs/40045915200) has successful check/deploy jobs. This is a later exact-head status check: detailed 667-execution logs remain attributed to `5ffdc6c`, and the 23-run QEMU evidence remains attributed to clean `1582f06`. All 167 selected software inputs individually match the content commit.
+
+All six live HTTPS resources return 200 and exactly equal that content commit's Git blobs. Actual browser observations confirm 667/23/46/18 text, loaded diagrams, keyboard/URL state, desktop/mobile layouts without horizontal page overflow, and no console warnings/errors. These are DOM/layout observations; screenshot capture is unavailable and reduced-motion preference was not emulated. The [publication bundle](../evidence/prepare-recording-publication-ac4e802-20261024/manifest.json) preserves official workflow status, live bytes and supplementary reconciliation. The global `readme-site` skill remains installed with its Codex discovery symlink; its four-source snapshot and local QA are in the [documentation/site bundle](../evidence/prepare-recording-docs-site-20261024/manifest.json).

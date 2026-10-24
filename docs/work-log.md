@@ -560,3 +560,8 @@
 - README英中、site及维护契约同步667/clean1582二十三/CI5ff；全局readme-site原四源与Codex symlink重核保持。site145静态/Node检查通过，实际CUA本地项目子路径1280×800与390×844无页面横溢、两响应图加载、new667/23/46/18/报告链接、ArrowRight/Home及URL同步、console0。CSS/JS/资产逐f095相同，旧noJS/clipboard验证不冒称本轮重跑；截图不可用、reducedmotion未模拟。临时tab已关、viewport reset，owned preview57329 Ctrl-C后实际PID消失；线上部署仍待后续观察。
 
 - 最终QEMU9536原件约117.68MB与CI44原件约94.53MB逐original/bytes/SHA/staged blob核后提交910a0d8，未改变产品或已测HTML。N文档14份/18一致性诊断/338本地target无阻断，root修正三处E31/E20过时“latest/未完成”并留历史归属；I专项英文147行最终停止写入。最终17文档396本地/仓库映射链接与表格、145site/Node/diff全部通过，37外链未全抓。本地QA/global skill快照与两作者交接另归档prepare-recording-docs-site-20261024；下一提交为最终英文README/site/契约与QA，线上状态不提前标成功。
+
+- 内容提交ac4e802已普通push并核远端同head/primary clean，167实际软件输入逐ac4/current一致。精确ac4的软件CI40045915202四原生job120727480755/929/952/965全部completed/success；Pages40045915200 check/deploy成功。这里只核后续状态，详细667仍锁5ff、QEMU23仍锁clean1582，不重计执行或重归属。线上六资源HTTPS200逐ac4 Gitblob字节同，实际CUA1280×720/390×844无页面横溢、667/23/46/18与新报告、图加载、ArrowRight/Home/URL及console0；viewport reset下一读取实观1280×720，public tab标deliverable。发布初/终态官方回执、实际live原bytes、DOM观测与只读独立复核另档prepare-recording-publication-ac4e802-20261024。
+- 本轮为原完整目标的可验证进展：实现准备期metadata ACK停顿下真实资源停止并补accepted initializer/local stop证据，英文README/site与全局skill保留已交付状态。真实硬件G1/G2、内核内部active/永久hardblock、无独立proof的Rust崩溃session、长期轮转及完整Phase3/后续阶段继续未完成，goal保持active。最后仅提交发布回执/引用/此日志并普通push，再核远端HEAD和clean；产品167与网站六源保持不变。
+
+- 最后发布引用补验使用全新delivery-doc-links路径，17文档399本地target/表格、145site/Node/diff全部PASS；39外链未全抓。新QA原件追加本次尚未提交的发布manifest，再逐original/bytes/SHA/staged blob核，未覆盖先前已提交396报告。只读发布方法初版保留CIinprogress，终版26状态/来源诊断另文件确认四格/Pages成功，不重算667；七份consulted原件前后SHA保持。
