@@ -1,0 +1,87 @@
+{
+  "result": "PASS",
+  "scope": "AST parse and imported pure cache function over newly created disposable ordinary-user FS fixtures. No CLI/build/QEMU/USB operation, HOME environment or preexisting path mode changed. Existing-owner mismatch branch source checked; no false root ownership fixture.",
+  "uid": 1000,
+  "source": {
+    "path": "/home/ubuntu/github/usbip-client/scripts/test-process-logging.py",
+    "bytes": 39143,
+    "sha256": "957d1a407366632f8130764ac010574129066cfcf878d7899bcbbb248bf6c2b4"
+  },
+  "fixtures": [
+    {
+      "fixture": "missing cache creates actual owned0700",
+      "pass": true,
+      "detail": {
+        "actual_mode": "0o700",
+        "actual_uid": 1000
+      }
+    },
+    {
+      "fixture": "existing safe0755 unchanged",
+      "pass": true,
+      "detail": {
+        "actual_existing_mode_preserved": "0o755"
+      }
+    },
+    {
+      "fixture": "cache symlink refused without following or repairing",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "fixture": "cache regular file refused",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "fixture": "writable existing cache refused not chmodded",
+      "pass": true,
+      "detail": {
+        "unsafe_existing_mode_unmodified": "0o775"
+      }
+    },
+    {
+      "fixture": "writable ancestor refused before creation",
+      "pass": true,
+      "detail": {
+        "actual_ancestor_mode": "0o775",
+        "nothing_created": true
+      }
+    },
+    {
+      "fixture": "HOME symlink refused before creation",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "fixture": "ancestor symlink refused before creation",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "fixture": "relative HOME refused",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "fixture": "parent traversal HOME refused",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "fixture": "concurrent existing safe cache revalidated not chmodded",
+      "pass": true,
+      "detail": {
+        "actual_concurrent_mode_preserved": "0o755"
+      }
+    },
+    {
+      "fixture": "concurrent symlink replacement refused",
+      "pass": true,
+      "detail": true
+    }
+  ],
+  "fixture_count": 12,
+  "HOME_env_unchanged": true,
+  "existing_HOME_identity_owner_mode_unchanged": true
+}
