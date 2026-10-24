@@ -78,6 +78,8 @@ impl Worker {
                     self.view.profiles.clear();
                     self.view.profile = None;
                     self.reset().await;
+                } else {
+                    self.view.agent_stale();
                 }
                 return;
             }

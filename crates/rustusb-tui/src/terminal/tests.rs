@@ -162,3 +162,99 @@ fn search_is_bounded_and_control_c_exits_even_in_search() {
         &tx
     ));
 }
+
+#[test]
+fn agent_outage_retains_exact_rows_but_clears_health_and_marks_each_page_stale()
+-> std::result::Result<(), Box<dyn std::error::Error>> {
+    use rustusb_core::{DeviceKey, SessionState, VirtualProfile, application::*};
+    use rustusb_service::{
+        health::{HealthAvailability, SessionHealth},
+        model::{AuditAction, AuditEvent, Evidence, Job, JobState, Metrics, Session, SessionRole},
+    };
+    let job_id = JobId::new("00000000-0000-4000-8000-000000000001")?;
+    let session_id = SessionId::new("00000000-0000-4000-8000-000000000002")?;
+    let epoch = InstanceId::new("00000000-0000-4000-8000-000000000003")?;
+    let mut snapshot = Snapshot::new(Options::default());
+    snapshot.jobs = vec![Job {
+        id: job_id.clone(),
+        instance_id: epoch.clone(),
+        profile: "test".into(),
+        operator_uid: 1000,
+        state: JobState::Running,
+        stop_requested: false,
+        operation_error: None,
+    }];
+    snapshot.sessions = vec![Session {
+        id: session_id.clone(),
+        instance_id: epoch.clone(),
+        job_id: job_id.clone(),
+        profile: "test".into(),
+        role: SessionRole::Import,
+        device_key: DeviceKey::virtual_profile(VirtualProfile::Hid),
+        principal: None,
+        state: SessionState::Connected,
+        evidence: Evidence::LocalEnumeration,
+        stop_requested: false,
+        terminal: false,
+        operation_error: None,
+        cleanup: None,
+        metrics: Metrics::default(),
+        attempts: vec![],
+    }];
+    snapshot.audit = vec![AuditEvent {
+        sequence: 7,
+        actor_uid: 1000,
+        profile: Some("test".into()),
+        job_id: Some(job_id.clone()),
+        session_id: Some(session_id.clone()),
+        action: AuditAction::Start,
+        failure: None,
+        state: None,
+        evidence: None,
+        cleanup: None,
+    }];
+    snapshot.health = vec![SessionHealth {
+        session_id: session_id.clone(),
+        instance_id: epoch,
+        role: SessionRole::Import,
+        availability: HealthAvailability::Live,
+        link: None,
+    }];
+    snapshot.journal = Some(true);
+    snapshot.local_status = "local independent".into();
+    snapshot.remote_status = "remote independent".into();
+    snapshot.next_job = Some(job_id.clone());
+    snapshot.next_session = Some(session_id.clone());
+    snapshot.next_audit = Some(8);
+    snapshot.agent_stale();
+    assert_eq!(snapshot.jobs[0].id, job_id);
+    assert_eq!(snapshot.sessions[0].id, session_id);
+    assert!(!snapshot.sessions[0].terminal);
+    assert_eq!(snapshot.audit[0].sequence, 7);
+    assert!(snapshot.health.is_empty());
+    assert_eq!(snapshot.journal, None);
+    assert_eq!(snapshot.local_status, "local independent");
+    assert_eq!(snapshot.remote_status, "remote independent");
+    assert_eq!(snapshot.next_job, Some(job_id));
+    assert_eq!(snapshot.next_session, Some(session_id));
+    assert_eq!(snapshot.next_audit, Some(8));
+    let mut app = App::new(snapshot.options);
+    for width in [60, 120] {
+        let mut terminal = Terminal::new(TestBackend::new(width, 18))?;
+        for (page, jobs) in [(2, false), (2, true), (4, false)] {
+            app.page = page;
+            app.jobs = jobs;
+            terminal.draw(|f| draw(f, &mut app, &snapshot))?;
+            let rendered = terminal
+                .backend()
+                .buffer()
+                .content()
+                .iter()
+                .map(|c| c.symbol())
+                .collect::<String>();
+            assert!(rendered.contains("Stale: agent unavailable"));
+            assert!(!rendered.contains("Current page"));
+        }
+    }
+    Ok(())
+}

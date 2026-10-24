@@ -101,6 +101,14 @@ impl Snapshot {
             unresolved: None,
         }
     }
+    pub fn agent_stale(&mut self) {
+        // These pages are retained observations, never a current service receipt.
+        self.jobs_status = "Stale: agent unavailable; retained page".into();
+        self.sessions_status = "Stale: agent unavailable; retained page".into();
+        self.audit_status = "Stale: agent unavailable; retained page".into();
+        self.journal = None;
+        self.health.clear();
+    }
     pub fn clear_profile(&mut self) {
         self.jobs.clear();
         self.sessions.clear();

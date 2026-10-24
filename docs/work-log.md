@@ -5,6 +5,9 @@
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。
 - 使用ui-ux-pro-max与technical-documentation，复用锁定组件不新增依赖/委派。先写tui-failure-retry-design.md：隔离guest暂停同agent，实际UI Start超时后恢复并仅重试原UUID；另检查job页失联/恢复。源码发现Profiles早期失败保留Current section/journal/health的显示缺口，拟修正为显式stale。UI热插拔/服务权威拒绝仍单独未完成。尚未修改产品或宣称新验收通过。
 
+- clean38477360首Native IPv4故障场景整体FAIL：2guest实际0、四guard真、19真实PTY均正常退出；两端实际unknown/原UUID确认/Resolved original且无Admitted ACK，真实请求/job没有重复。原件保留，失败为exact job没有current/stale/current，原页仍Current。事后仅原base verifier诊断返回264核验/三I/O，不改原summary或称新增USB执行。C严格编译/生成dash preflight首过，无本轮夹具失败。
+- 产品只在Profiles初次读取非权限/协议失败时将三section标stale，清旧journal/health，保留原rows/cursor和独立local/remote源；不改变Start/Retry/授权或USB owner。新增TestBackend实际60/120列验证保留精确job/session/audit、未伪terminal/cleanup、health清除及三页显式过期，12frontend函数首PASS。完整clean gate与双栈新场景/原E46回归尚待执行。
+
 ## 2026-10-25：终端持久设置与实际确认动作（开始）
 
 - 上一轮E45为实际进展：六页TUI、937软件/双栈QEMU/四CI与发布，最终clean1ed3baa4。本轮先重读完整Phase0–7原任务、Git/AGENTS/核心skill、实际TUI/CLI/worker与原QEMU，原goal保持active。
