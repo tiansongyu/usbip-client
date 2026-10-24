@@ -254,6 +254,50 @@ async fn catalog(io: &mut link::Io) -> Result<()> {
     Ok(())
 }
 
+// Shared test peer, not a product operation: one real authenticated exchange
+// with the original management FIN/EOF close and actual framed owner join.
+pub(crate) async fn serve_one_catalog(tls: TlsServer, listener: TcpListener) -> TestResult {
+    let (tcp, _) = tokio::time::timeout(Duration::from_secs(3), listener.accept()).await??;
+    let (mut connection, _) =
+        tokio::time::timeout(Duration::from_secs(3), link::accept(&tls, tcp)).await??;
+    if let Err(error) = catalog(&mut connection.io).await {
+        let _ = link::finish(&mut connection.owner).await;
+        return Err(error.into());
+    }
+    assert!(
+        link::complete_management(&mut connection.io, &mut connection.owner, async {
+            tokio::time::sleep(Duration::from_secs(3)).await;
+            Err(Error::Timeout("catalog test peer close".into()))
+        },)
+        .await?
+    );
+    Ok(())
+}
+
+pub(crate) async fn serve_held_catalog(
+    tls: TlsServer,
+    listener: TcpListener,
+    client_fin: oneshot::Sender<()>,
+    released: oneshot::Receiver<()>,
+) -> TestResult {
+    let (tcp, _) = tokio::time::timeout(Duration::from_secs(3), listener.accept()).await??;
+    let (mut connection, _) = link::accept(&tls, tcp).await?;
+    catalog(&mut connection.io).await?;
+    let mut byte = [0];
+    assert_eq!(connection.io.read(&mut byte).await?, 0);
+    client_fin
+        .send(())
+        .map_err(|_| "catalog FIN observer gone")?;
+    // The reverse half remains open until the caller observes service shutdown.
+    // Actual peer driver completion is checked and joined during teardown.
+    released.await?;
+    let (_, sample) = link::finish(&mut connection.owner).await;
+    assert!(
+        sample.is_some_and(|sample| sample.phase == rustusb_core::link_health::LinkPhase::Ended)
+    );
+    Ok(())
+}
+
 #[tokio::test]
 async fn actual_client_refusal_keeps_original_failure_without_helper_attempt() -> TestResult {
     // Two independent authenticated connections: catalog, then an IMPORT that

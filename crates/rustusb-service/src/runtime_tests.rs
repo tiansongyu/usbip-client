@@ -16,6 +16,9 @@ mod logging;
 #[path = "runtime_diagnostics_tests.rs"]
 mod diagnostics;
 
+#[path = "runtime_catalog_tests.rs"]
+mod catalog;
+
 // Real production stop delivery and store await, with ordinary owned Unix
 // endpoints as resource witnesses. This is not a helper/kernel USB test.
 #[tokio::test]
@@ -272,6 +275,7 @@ impl Fixture {
             fact_sender,
             workers: JoinSet::new(),
             recoveries: JoinSet::new(),
+            discoveries: JoinSet::new(),
             recovery_cursor: 0,
             logging: None,
             diagnostics: Arc::new(crate::diagnostics::Registry::new(

@@ -6,6 +6,10 @@
 - 实际源码定位`Runtime::dispatch(Discover)`在单监督器内等待远端最多4秒，阻塞其他命令、job事实和owner完成记账。先写`research/catalog-supervisor-design.md`，拟采用原有Tokio JoinSet/watch、最多2个实际目录任务，原UID/profile Discover授权、成功后审计、取消后真实close/join及USB owner契约不变。不是远程自动共享、完整G3或TUI/GUI完成。
 - 应用rustusb-development、writing-technical-design和technical-documentation。只使用既有栈普通API，按设计skill研究例外不新增组件技能/无关委派。固定Tokio docs.rs实际不可访问，采用锁定本地源码并明确记录；尚未运行新测试或修改产品代码。
 
+- 真实loopback旧产品red测试exit101：远端已收到TLS ClientHello，随后保持静默，另一个Profiles请求200ms内无响应；先释放peer并实际join原监督器，再执行失败断言。初步独立任务实现同测试exit0。保留原old-red.log，不将它改判。
+- 实现最多两个受监督目录任务；lost RPC不释放槽，原授权先于容量、成功audit提交先于Catalog响应。服务外部stop直接传给实际网络owner，命令队列EOF另有独立sticky停止源，shutdown总join且不abort；原USB job/Rootproof和schema均未改变。
+- 新fixture开发第二轮exit101为测试pin future借用作用域过长，缩小实际recording future作用域，未改产品契约；第三轮4test与第四轮最终5test均exit0。定向all-feature Clippy -D warnings exit0。覆盖raw/v2真实mTLS成功、原store锁门下未ACK、两槽/已退出waiter/拒绝不连接、外部stop与队列EOF真实socket EOF、v2 reverse-FIN保持下监督器响应与actualjoin、unhealthy journal不发网络。无helper或USB操作。完整质量gate和QEMU尚待本提交后的clean运行。
+
 ## 2026-10-24：本地设备观察最终状态
 
 - clean c0346d6完整872/206稳定输入；clean f66da6b默认/all两个单guest真实UID2000/kernel events/sysfs/driver/新代际/总join验收通过，无forced。两个构建六新process及旧4signal2BP通过；旧INT负向、首完整gate失败与两QEMU采证FAIL保留。原Phase0–7/hardware/完整G3不宣告完成，详见`research/local-device-monitor-validation.md`。

@@ -219,10 +219,24 @@ pub(crate) struct Runtime {
     fact_sender: mpsc::Sender<JobMessage>,
     workers: JoinSet<(JobId, Result<()>)>,
     recoveries: JoinSet<(SessionId, Vec<BrokerOperationStatus>)>,
+    discoveries: JoinSet<CatalogCompletion>,
     recovery_cursor: usize,
     logging: Option<rustusb_logging::LogMonitor>,
     diagnostics: Arc<crate::diagnostics::Registry>,
 }
+
+// This is metadata plus the original response channel, never a USB capability.
+// A slot remains occupied until the actual network owner has returned and the
+// supervisor has consumed the completion. Losing the RPC waiter cannot free it.
+struct CatalogCompletion {
+    uid: u32,
+    profile: String,
+    reply: oneshot::Sender<ResponseEnvelope>,
+    result: Result<Option<Vec<rustusb_protocol::secure::CatalogDevice>>>,
+}
+
+const MAX_DISCOVERIES: usize = 2;
+
 impl Runtime {
     pub async fn open(config: Arc<LoadedConfig>, controls: Arc<Mutex<Controls>>) -> Result<Self> {
         Self::open_with_logging(config, controls, None).await
@@ -256,6 +270,7 @@ impl Runtime {
             fact_sender: sender,
             workers: JoinSet::new(),
             recoveries: JoinSet::new(),
+            discoveries: JoinSet::new(),
             recovery_cursor: 0,
             logging,
             diagnostics,
@@ -422,12 +437,17 @@ impl Runtime {
         mut stop: watch::Receiver<bool>,
     ) -> Result<()> {
         let mut stopping = *stop.borrow();
+        let (requests_closed, requests_closing) = watch::channel(stopping);
         let mut tick = tokio::time::interval(Duration::from_secs(1));
         if stopping && let Ok(mut controls) = self.controls.lock() {
             controls.begin_shutdown();
         }
         loop {
-            if stopping && self.workers.is_empty() && self.recoveries.is_empty() {
+            if stopping
+                && self.workers.is_empty()
+                && self.recoveries.is_empty()
+                && self.discoveries.is_empty()
+            {
                 break;
             }
             tokio::select! {
@@ -435,10 +455,20 @@ impl Runtime {
                 fact=self.facts.recv()=>{if let Some(fact)=fact{self.fact(fact).await;}},
                 result=self.workers.join_next(),if !self.workers.is_empty()=>{if let Some(result)=result{match result{Ok((id,result))=>self.job_finished(id,result).await,Err(_)=>{self.healthy=false;tracing::error!("application owner task ended abnormally; cleanup remains unproven");}}}},
                 result=self.recoveries.join_next(),if !self.recoveries.is_empty()=>{if let Some(Ok((id,proofs)))=result{self.recovered(id,proofs).await;}},
+                result=self.discoveries.join_next(),if !self.discoveries.is_empty()=>{
+                    match result {
+                        Some(Ok(completed))=>self.catalog_finished(completed).await,
+                        Some(Err(_))=>{
+                            self.healthy=false;
+                            if let Ok(mut controls)=self.controls.lock(){controls.journal_unhealthy=true;}
+                            tracing::error!("application catalog task ended abnormally");
+                        },
+                        None=>{},
+                    }
+                },
                 command=commands.recv(),if !stopping=>{match command {Some(command)=>{
-                    let response=self.command(command.uid,command.request).await;
-                    let _=command.reply.send(ResponseEnvelope{schema_version:1,journal_healthy:self.healthy,response});
-                },None=>{stopping=true;if let Ok(mut controls)=self.controls.lock(){controls.begin_shutdown();}else{self.healthy=false;}}}},
+                    self.receive_command(command,stop.clone(),requests_closing.clone()).await;
+                },None=>{stopping=true;requests_closed.send_replace(true);if let Ok(mut controls)=self.controls.lock(){controls.begin_shutdown();}else{self.healthy=false;}}}},
                 _=tick.tick(),if !stopping&&self.healthy&&self.recoveries.is_empty()=>self.start_recovery(),
             }
         }
@@ -454,20 +484,118 @@ impl Runtime {
     async fn command(&mut self, uid: u32, request: Request) -> Response {
         match self.dispatch(uid, request).await {
             Ok(response) => response,
-            Err(error) => {
-                let category = Failure::from_error(&error);
-                if category == Failure::Permission && self.healthy {
-                    let mut next = self.state.clone();
-                    if next
-                        .audit(uid, None, None, None, AuditAction::Denied, Some(category))
-                        .is_ok()
-                    {
-                        let _ = self.persist(next).await;
-                    }
-                }
-                Response::Error { code: category }
+            Err(error) => self.command_error(uid, error).await,
+        }
+    }
+
+    async fn command_error(&mut self, uid: u32, error: Error) -> Response {
+        let category = Failure::from_error(&error);
+        if category == Failure::Permission && self.healthy {
+            let mut next = self.state.clone();
+            if next
+                .audit(uid, None, None, None, AuditAction::Denied, Some(category))
+                .is_ok()
+            {
+                let _ = self.persist(next).await;
             }
         }
+        Response::Error { code: category }
+    }
+
+    fn catalog_config(
+        &self,
+        uid: u32,
+        profile: &str,
+    ) -> Result<Arc<rustusb_transport::config::LoadedClientConfig>> {
+        self.config
+            .manifest
+            .authorize(uid, profile, Action::Discover)?;
+        let config = match self.config.credentials.get(profile) {
+            Some(Credentials::Client(config)) => config.clone(),
+            _ => return Err(denied()),
+        };
+        if !self.healthy || self.discoveries.len() >= MAX_DISCOVERIES {
+            return Err(Error::State(
+                "agent catalog capacity/journal unavailable".into(),
+            ));
+        }
+        Ok(config)
+    }
+
+    async fn receive_command(
+        &mut self,
+        command: Command,
+        mut stop: watch::Receiver<bool>,
+        mut requests_closing: watch::Receiver<bool>,
+    ) {
+        let Command {
+            uid,
+            request,
+            reply,
+        } = command;
+        let response = if let Request::Discover { profile } = request {
+            match self.catalog_config(uid, &profile) {
+                Ok(config) => {
+                    let deadline = tokio::time::Instant::now() + Duration::from_secs(4);
+                    self.discoveries.spawn(async move {
+                        let result = crate::jobs::discover_until(&config, deadline, async {
+                            tokio::select! {
+                                _ = crate::context::stopped(&mut stop) => {},
+                                _ = crate::context::stopped(&mut requests_closing) => {},
+                            }
+                        })
+                        .await;
+                        CatalogCompletion {
+                            uid,
+                            profile,
+                            reply,
+                            result,
+                        }
+                    });
+                    return;
+                }
+                Err(error) => self.command_error(uid, error).await,
+            }
+        } else {
+            self.command(uid, request).await
+        };
+        let _ = reply.send(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: self.healthy,
+            response,
+        });
+    }
+
+    async fn catalog_finished(&mut self, completed: CatalogCompletion) {
+        let CatalogCompletion {
+            uid,
+            profile,
+            reply,
+            result,
+        } = completed;
+        let response = match result {
+            Ok(Some(devices)) => {
+                let mut next = self.state.clone();
+                let committed =
+                    match next.audit(uid, Some(profile), None, None, AuditAction::Discover, None) {
+                        Ok(()) => self.persist(next).await,
+                        Err(error) => Err(error),
+                    };
+                match committed {
+                    Ok(()) => Response::Catalog { devices },
+                    Err(error) => self.command_error(uid, error).await,
+                }
+            }
+            Ok(None) => Response::Error {
+                code: Failure::Cancelled,
+            },
+            Err(error) => self.command_error(uid, error).await,
+        };
+        let _ = reply.send(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: self.healthy,
+            response,
+        });
     }
 
     async fn dispatch(&mut self, uid: u32, request: Request) -> Result<Response> {
@@ -687,17 +815,9 @@ impl Runtime {
                 self.config
                     .manifest
                     .authorize(uid, &profile, Action::Discover)?;
-                let config = match self.config.credentials.get(&profile) {
-                    Some(Credentials::Client(config)) => config.clone(),
-                    _ => return Err(denied()),
-                };
-                // Pure discovery has no kernel ownership. Its request may time out
-                // without dropping a prepare, commit or cleanup owner.
-                let devices = crate::jobs::discover(&config, Duration::from_secs(4)).await?;
-                let mut next = self.state.clone();
-                next.audit(uid, Some(profile), None, None, AuditAction::Discover, None)?;
-                self.persist(next).await?;
-                Ok(Response::Catalog { devices })
+                Err(Error::State(
+                    "catalog reads require the supervised network path".into(),
+                ))
             }
         }
     }
