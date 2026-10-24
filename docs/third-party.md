@@ -31,3 +31,5 @@ QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造�
 本地发现观察新增内部MIT包rustusb-discovery（完整实现，service re-export），现有锁定rustix1.1.5增用net/event安全API；未引入udev/tokio-udev/libudev或新外部package/version。175包清单中的增量仅这一内部包。固定Linux/systemd源码只作研究，不复制其GPL/LGPL实现进入MIT产品。研究许可及实际零宿主事件探针另按清单保留，未作为热插拔产品验收。
 
 离线CRL把锁定x509-parser0.18.1提升为transport直接normal依赖，未改变任何外部package/version/checksum，重新导出的全feature清单仍175包且无缺失license metadata。独立实际构建为parser features=[]、normal子树30包（含自身），不是30个新增锁包或全产品无密码库；此前Cargo metadata宽resolver包含未实际编入的optional/dev feature，不能用它冒充编译证据。固定源码、许可、探针及失败按CRL专项报告归档。
+
+可选终端前端新增内部MIT crate rustusb-tui，固定Ratatui0.30.2及Crossterm0.29.0（两者MIT/MSRV1.88和1.63）。全feature inventory为221包（增46含内部1）；旧版本/source/checksum不变，mio/time/hashbrown原锁包的依赖边受新feature/多版本名称消歧影响，不声称整个旧package块不变。新增包license metadata无缺失，包含Apache-2.0 OR BSL-1.0等表达式，仍需完整发布许可审查。Ratatui关闭facade默认仍经backend启用Crossterm默认features及core layout-cache；不可称实际只有events。默认Native CLI normal依赖树仍需实核不含UI/TLS。组件精确来源/许可/探针见终端设计与后续验证报告；不复制上游渲染实现，不将传递unsafe或全依赖漏洞审查说成已消除。

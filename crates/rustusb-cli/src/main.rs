@@ -2,6 +2,8 @@
 
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod agent;
+#[cfg(all(feature = "tui", target_os = "linux"))]
+mod tui;
 
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod catalog_watch;
@@ -73,6 +75,9 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Open the ordinary-user terminal frontend of the existing application service.
+    #[cfg(all(feature = "tui", target_os = "linux"))]
+    Tui(tui::Args),
     /// Export bounded private diagnostics without changing or stopping USB devices.
     Diagnostics(diagnostics::Args),
     /// Read sanitized stored logs or authorized agent audit projections.
@@ -302,6 +307,8 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
     #[cfg(not(all(feature = "secure-transport", target_os = "linux")))]
     let _ = &monitor;
     match &cli.command {
+        #[cfg(all(feature = "tui", target_os = "linux"))]
+        Command::Tui(args) => tui::run(args.clone(), cli.json).await,
         Command::Diagnostics(args) => {
             diagnostics::run(args.clone(), cli.socket.clone(), cli.json).await
         }
@@ -667,6 +674,8 @@ fn report_stderr(message: std::fmt::Arguments<'_>) {
 async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> ExitCode {
     let json = cli.json;
     let owns_signal_cleanup = match &cli.command {
+        #[cfg(all(feature = "tui", target_os = "linux"))]
+        Command::Tui(_) => true,
         Command::Logs(_) | Command::Diagnostics(_) | Command::Devices { watch: true } => true,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent {
