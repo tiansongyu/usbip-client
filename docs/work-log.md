@@ -14,6 +14,8 @@
 
 - 文档QA15源468本地/仓库target，205site检查/Node/diff/实际CLI help exit0与默认Native normal树隔离均通过；235软件/两233及两232 QEMU输入与实际all ELF仍逐hash一致。七website、四global readme-site及Codex symlink保持，不重跑browser/pixel/noJS/reduced-motion或把E45不可截图情况改判。检查时源快照/方法见evidence/tui-settings-docs-20261024，后续仅回执追加。即将普通commit/push并核精确内容四平台CI/Pages，不预先声明成功。
 
+- 内容627e5712普通SSH push/remote main一致/clean。software40130778364四native job120981836729/836944/836982/837128及实际arch/fullgate/signal/virtual/diagnostic步骤均completed/success；Pages40130778339 check120981836592/deploy120981915937成功。六canonical HTTPS资源200且逐Git内容字节同；235软件、四QEMU233/233/232/232、实际all ELF、七site/四global和symlink仍一致。29原件/方法198664B逐SHA归档evidence/tui-settings-publication-627e571-20261024；不补造full CI logs/各平台ELF或950重算，不重跑browser/pixel。原Phase0–7、UI专项异常/unknown reply/完整G4、硬件G1/G2/完整G3、GUI/安装/性能/Windows保持active。最终仅提交文档回执并普通push再核remote/clean与原sources/ELF/skill/site，不把回执当新USB验收。
+
 ## 2026-10-25：普通用户终端前端（开始）
 
 - 从clean fa766375重读完整Phase0–7原任务、Git/AGENTS/核心skill及服务实际RPC/两metadata owner；上一轮E44为实际进展，原goal保持active。英文README/展示站/全局readme-site已交付，继续维护。

@@ -122,3 +122,24 @@ protected and is provisioned outside the ordinary-user preferences editor.
 Hardware G1/G2, full G3, permanent blocking, GUI/installers, storage expansion,
 performance and Windows remain unproven or later work. The full Phase0–7 goal
 stays active.
+
+## Publication
+
+Content `627e5712b1de2d88797e2347862cc38d352e4b97` was normally pushed to the
+requested SSH remote with exact remote main/clean verification.
+[Software CI](https://github.com/tiansongyu/usbip-client/actions/runs/40130778364)
+completed successfully on Ubuntu22.04/24.04 × native x86_64/aarch64; actual
+reported architecture, full-gate, signal, virtual/backpressure and diagnostic
+steps also succeeded. These primary statuses are not fetched full logs,
+per-platform live ELF or a new recount of950 for every job.
+[Pages](https://github.com/tiansongyu/usbip-client/actions/runs/40130778339)
+completed check and deployment. All six canonical HTTPS resources returned200
+and matched the exact content bytes. Website source remained unchanged, so this
+is not a new browser/pixel/no-JS/reduced-motion validation.
+
+The235 software inputs, four QEMU233/233/232/232 input sets, all-feature release
+ELF, seven site files and four global readme-site files/discovery symlink were
+rechecked. The [publication index](../evidence/tui-settings-publication-627e571-20261024/manifest.json)
+closes29 original files/methods,198,664bytes copied/hash-verified against their
+originals. The final receipt changes documentation only; no new USB execution
+or complete G4/G3/hardware claim is assigned to it.
