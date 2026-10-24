@@ -88,7 +88,7 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 ## 7. Phase 4：完整 TUI
 
-已提供[六页可选普通用户预览](tui.md)，[E45](research/tui-validation.md)记录937软件与两Native双栈/20实际PTY/原I/O清理回归。后续[E46](research/tui-settings-actions-validation.md)补充持久三偏好及Native双栈installed确认操作，950软件/四paired/58真实PTY；UI专项异常/未知启动应答等仍未完成，G4不标通过。之前G1/G2/完整G3门槛保留，不以开发前端重判历史验收。
+已提供[六页可选普通用户预览](tui.md)，[E45](research/tui-validation.md)记录937软件与两Native双栈/20实际PTY/原I/O清理回归。后续[E46](research/tui-settings-actions-validation.md)补充持久三偏好及Native双栈installed确认操作，950软件/四paired/58真实PTY；后续[E47](research/tui-failure-retry-validation.md)在暂停同agent的真实PTY验证未知启动重试和失联显示；UI热插拔/权威拒绝等仍未完成，G4不标通过。之前G1/G2/完整G3门槛保留，不以开发前端重判历史验收。
 
 使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。
 
@@ -137,3 +137,9 @@ cargo build --workspace --release
 远程目录观察E43见[验收](research/remote-catalog-watch-validation.md)：要求4.3的既有认证可见目录自动刷新已增量实现，common service供两watch入口；clean ec91软件903/223源、clean633两个Native paired双栈QEMU/4guest0与旧4/2/3通过，保留首软件及两采证FAIL。busy与ACL/export可见性不同于物理热拔；v2/地址变化只属loopback，不据此完成全部4.3、硬件/G3或Phase4–7。
 
 离线CRL E44见[验收](research/offline-crl-validation.md)：两角色/两TLS schema支持有界完整列表、全链实际撤销/unknown-deny和每次新证书验证的共同时间窗口。clean fcb软件927/226；clean e441六CRL/六默认/一v2诊断共13paired/26guest0，旧47IPv6 FAIL和开发compile失败保留。静态新握手撤销不等于已建立连接热撤销/OCSP/在线下载/CRL序号抗回滚；agent全实例重启才重载，v2诊断不冒称安装态CRL负向。硬件G1/G2/完整G3/后续Phase4–7不变。
+
+
+## E47终端故障子步骤
+
+
+终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。

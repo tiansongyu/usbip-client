@@ -8,6 +8,11 @@
 - clean38477360首Native IPv4故障场景整体FAIL：2guest实际0、四guard真、19真实PTY均正常退出；两端实际unknown/原UUID确认/Resolved original且无Admitted ACK，真实请求/job没有重复。原件保留，失败为exact job没有current/stale/current，原页仍Current。事后仅原base verifier诊断返回264核验/三I/O，不改原summary或称新增USB执行。C严格编译/生成dash preflight首过，无本轮夹具失败。
 - 产品只在Profiles初次读取非权限/协议失败时将三section标stale，清旧journal/health，保留原rows/cursor和独立local/remote源；不改变Start/Retry/授权或USB owner。新增TestBackend实际60/120列验证保留精确job/session/audit、未伪terminal/cleanup、health清除及三页显式过期，12frontend函数首PASS。完整clean gate与双栈新场景/原E46回归尚待执行。
 
+- clean4ee6be3e完整十项gate全0：418/default、514/all、20/vendor共952执行/零失败忽略、235源前后稳定。新故障Native双栈两pair首PASS：实际unknown/original UUID retry、同job current/stale/current；原E46正常确认双栈回归两pair首PASS，均19实际PTY/原264核验/三I/O/完整Rootproof，共8guest0/76PTY，同software all CLI0b4a3c40…/helper83c53d52…。首384红例仍FAIL；未重跑全历史backend/v2/CRL或旧E45 invocation/signal专项。
+- 同作者无import原verifier的raw/source/Git/ELF/UID/PID/termios/原请求和最终journal核对通过，封闭3685原件/方法、2015 guest Base64及7569167B archive逐member/hash。不是新USB执行或独立安全审计；无key/ELF/target/host.private。英文报告/README/guide及维护文档同步，website与global skill沿用；文档QA和精确内容CI/Pages尚待执行。
+
+- 文档QA17源483本地/仓库target、205site/Node/diff/实际CLI help与默认Native normal树隔离均PASS；235软件/两237及两233最终QEMU输入与all release ELF仍一致。七website/四global readme-site及Codex发现symlink不变，无新browser/pixel/noJS/reduced-motion宣称。QA保存检查时source快照，后续仅回执追加。即将普通SSH commit/push并核精确内容四native CI/Pages，不提前宣称成功。
+
 ## 2026-10-25：终端持久设置与实际确认动作（开始）
 
 - 上一轮E45为实际进展：六页TUI、937软件/双栈QEMU/四CI与发布，最终clean1ed3baa4。本轮先重读完整Phase0–7原任务、Git/AGENTS/核心skill、实际TUI/CLI/worker与原QEMU，原goal保持active。

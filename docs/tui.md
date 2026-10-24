@@ -47,10 +47,16 @@ Accepted stop is not proof of release: inspect actual cleanup before reuse.
 A lost start response retains the original UUID and blocks new start intents.
 `e` uses only `RetryStart`; expired retry history does not prove the old start
 never ran. Exit reports the retained profile/UUID for reconciliation.
+[Installed fault validation](research/tui-failure-retry-validation.md) exercises
+this with a paused/resumed QEMU agent and the real operator terminal.
 
 Search/sort/filter cover only the displayed finite page (up to 16 service rows).
 Section snapshots are independent samples. Read failures retain visibly stale
-data; permission/protocol failures clear the affected view. Remote discovery
+data. Failure of the initial agent read marks job/session/audit pages stale,
+clears the previous journal-health indication and drops old link samples. It
+does not remove the retained jobs or prove any device was released. A successful
+read makes only its own section current again. Permission/protocol failures
+clear the affected view. Remote discovery
 runs only on its page for a client profile with Discover permission, and joins
 on pause/profile/page change. Local kernel observation continues while profile
 polling is paused. Joining the local catalog observer does not cancel an already

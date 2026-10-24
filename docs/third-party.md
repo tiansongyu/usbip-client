@@ -35,3 +35,6 @@ QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造�
 可选终端前端新增内部MIT crate rustusb-tui，固定Ratatui0.30.2及Crossterm0.29.0（两者MIT/MSRV1.88和1.63）。全feature inventory为221包（增46含内部1）；旧版本/source/checksum不变，mio/time/hashbrown原锁包的依赖边受新feature/多版本名称消歧影响，不声称整个旧package块不变。新增包license metadata无缺失，包含Apache-2.0 OR BSL-1.0等表达式，仍需完整发布许可审查。Ratatui关闭facade默认仍经backend启用Crossterm默认features及core layout-cache；不可称实际只有events。默认Native CLI normal依赖树仍需实核不含UI/TLS。组件精确来源/许可/探针见终端设计与后续验证报告；不复制上游渲染实现，不将传递unsafe或全依赖漏洞审查说成已消除。
 
 前端偏好复用既有serde/Rustix/Tokio/std，无新外部runtime依赖；tempfile仅加到TUI dev依赖，所有外部version/source/checksum不变，inventory仍221且无缺失license metadata。XDG配置位置按官方0.8核对，未复制外部配置库或新增组件技能。QEMU屏幕解码沿E45的外部test-only pyte0.8.2/LGPLv3和wcwidth0.2.13/MIT，二者未随MIT Rust产品或证据打包为依赖实现。
+
+
+E47终端故障验证复用现有Ratatui/Crossterm/Tokio/Rustix与test-only pyte0.8.2/wcwidth0.2.13；未新增或升级任何外部依赖，库存仍221。新增guest-only C控制夹具为本仓库MIT代码，不进入产品数据通路。详见[验证报告](research/tui-failure-retry-validation.md)。

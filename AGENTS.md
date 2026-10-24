@@ -58,3 +58,6 @@ TLS认证准入E39见`docs/research/authentication-admission-design.md`与`authe
 终端E45：clean ba0cedc9软件937/233源，clean d181665b Native双栈QEMU/4guest0、每pair10实际UID1000产品PTY及原264核验/三轮I/O。只用原agent RPC/metadata owner，普通用户、不读私钥、不调用helper变更；Unknown Start保原UUID且只能RetryStart，stop accepted不当cleanup，退出不停止service job。terminal同blocking线程/Fixed240x100/control清理/显式各项恢复，INT/TERM/quit后真实join两观察器。原f131 raw文字误判FAIL保留，解码差量屏幕后实际重跑；不把terminal coverage当confirmed USB动作或完整G4/G3/硬件。
 
 终端E46见`docs/research/tui-settings-actions-design.md`与`docs/research/tui-settings-actions-validation.md`：clean5584c5b3完整950软件/235输入，四Native双栈paired/8guest0、58实际UID1000 PTY通过。新38确认为三偏好save/重启load/CLI override/可见save错误、6Start/1定向stop/4jobstop每pair，另20原invocation-only回归；均原264核验/三I/O/完整Rootproof。真实Start回执是原UI已ACK后的CLI RetryStart readback，非新CLI Start/合成JSON或lost-ACK UI验收。用户文件strict1/4KiB/无权限/凭据/endpoint/自动Start、0700/0600/NOFOLLOW/nlink1/独立锁/own临时/sync/重核rename；accepted FS task总join、不假取消OS硬阻塞。旧开发5fixture FAIL/C告警及历史失败保留；完整G4/UI专项异常、硬件/完整G3与后续阶段保持。
+
+
+终端E47见[未知启动/失联验收](docs/research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。

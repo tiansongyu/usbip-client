@@ -1,6 +1,7 @@
 # Terminal start uncertainty and agent outage
 
-Status: scoped design, 2026-10-25. This extends E45/E46; it does not complete
+Status: scoped implementation verified at clean `4ee6be3e`, 2026-10-25; see the
+[validation report](tui-failure-retry-validation.md). This extends E45/E46; it does not complete
 G4, hardware acceptance, GUI or installation. No new dependency or authority.
 
 ## Product behavior

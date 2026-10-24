@@ -58,3 +58,9 @@
 新增[持久物理授权与协调](research/physical-journal-recovery.md)在clean933e720通过五项QEMU：journal184host检查、原物理正常/热拔各15probe、ECM19probe、TERM52host检查，十guest均0；本地四信号和两背压通过。软件default89/allfeatures142/vendor19共250次、全部质量gate通过，检查输入与最终提交相同。新journal包括管理员恢复后的第三轮实际HID/FTDI I/O，原同代际基线/未决记录跨helper重启保留；不扩大设备类型/平台支持，不提供自动驱动恢复、FD撤销或断电耐久实测。真实硬件G1/G2及完整Phase2/Phase3仍未完成。
 
 同一933e720的[CI39908004666](evidence/publication-journal-933e720-20261023.json)四个原生OS/arch均通过，每格250次测试、两背压及四信号；这不提供aarch64 USB内核或新增硬件证据。
+
+
+## E47终端故障范围
+
+
+终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。

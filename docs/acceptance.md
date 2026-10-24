@@ -321,3 +321,9 @@ E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native 
 ## 33. E46：持久设置与实际终端确认
 
 [报告](research/tui-settings-actions-validation.md)锁clean5584c5b3：417/default+513/all+20/vendor共950次/235源；两新UI动作Native双栈各19实际PTY/233源、两旧invocation-only各10PTY/232源，四paired/8guest0/原264核验/三HID-FTDI I/O与完整Rootproof保持。新Start只来自UID1000真实界面，真实RetryStart返回replayed metadata且不增加requests；指定UUID stop与wholejob stop实际释放，未制造Started/StopAccepted。文件实际save/重启load/启动flag覆盖/权限错误可见；公开存储仅三偏好不授权限。完整G4专项异常/未知启动应答、硬件/完整G3及Phase5–7继续未完成。
+
+
+## 34. E47：未知启动结果与失联显示
+
+
+终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。
