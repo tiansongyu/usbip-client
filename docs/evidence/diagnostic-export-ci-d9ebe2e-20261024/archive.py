@@ -1,0 +1,18 @@
+from pathlib import Path
+common = Path('/tmp/archive-rustusb-rotating-logs-initial-20261024.py').read_text().split('\narchive(', 1)[0]
+exec(compile(common, '<exact-copy archive helper>', 'exec'))
+archive('diagnostic-export-ci-d9ebe2e-20261024', [
+ ('/tmp/rustusb-diagnostic-ci-d9ebe2e-root-20261024','official'),
+ ('/tmp/rustusb-diagnostic-ci-d9ebe2e-method-review-20261024','method-review'),
+], [], [], dict(result='PASS',run_id=40067501829,head='d9ebe2eadf8490081035199c91d17bbba41bc57e',
+ jobs=[120793716138,120793716286,120793716316,120793716335],
+ platforms='Ubuntu22.04/24.04 x native x86_64/aarch64',per_platform_executions=797,
+ per_platform_default=343,per_platform_all_features=434,per_platform_vendor=20,result_rows=47,failed=0,ignored=0,
+ diagnostic_groups=9,diagnostic_children=13,diagnostic_child_proc_scopes={'full':4,'identity_only':6,'wrapper_before_exec':3},
+ notes=['Full official decoded content strings copied exactly as UTF8 in24000-character chunks, protecting shell arguments, preserving BOM/newlines; no patch or log reconstruction.',
+ 'Initial in_progress run metadata retained, then separate official final completed/success metadata. Four actual jobs all completed/success.',
+ 'Each actual native job records old5TLS/4signal/2backpressure/6logging and new9diagnostic13children; default-only4groups are localx86 only.',
+ '192 selected source/build inputs match Gitd9; runtime16033paths/398blobs include historical evidence, not compiler source count.',
+ 'CI selected ELF hashes and sampled process exe receipts do not supply missing runner ELF bodies or temporary artifact bytes.',
+ 'Method first617predicates PASS; predicates are not USB or extra software cases. Review authored by implementation participant, not independent implementation audit.',
+ 'Official8 files and oldfullgate205 files unchanged before/after readonly method. Earlier dff793CI remains separately scoped; local797 was an actual modified2ca run.']))

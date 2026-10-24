@@ -1,0 +1,285 @@
+{
+  "result": "FAIL",
+  "scope": "Independent raw parsing method by original harness author; not independently implemented harness, not another USB execution. Original1300 host assertions are not USB case count. No imports of original runner/verifier, no product/compiler/QEMU/Git commands. Network/projection review delegated separately.",
+  "error": null,
+  "checks": [
+    {
+      "check": "original terminal source scope remains exact",
+      "passed": true,
+      "head": "d9ebe2eadf8490081035199c91d17bbba41bc57e",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "check": "all manifest originals and 209 captured source inputs match their own bytes/SHA",
+      "passed": true,
+      "source_files": 209,
+      "manifest_files": 520,
+      "all_original_files": 521
+    },
+    {
+      "check": "complete server base64/raw artifact identity and final S0/S1 markers",
+      "passed": true,
+      "artifacts": 200
+    },
+    {
+      "check": "complete client base64/raw artifact identity and final S0/S1 markers",
+      "passed": true,
+      "artifacts": 83
+    },
+    {
+      "check": "actual root helper, nonroot brokers, UID1000 exporter and root tracer share expected ELF/UID receipts",
+      "passed": true,
+      "actors": {
+        "server": {
+          "helper_pid": 403,
+          "broker": {
+            "pid": 440,
+            "starttime": 370,
+            "uid": 2000
+          }
+        },
+        "client": {
+          "helper_pid": 262,
+          "broker": {
+            "pid": 291,
+            "starttime": 404,
+            "uid": 2000
+          }
+        }
+      },
+      "exporter": {
+        "pid": 1282,
+        "starttime": 611,
+        "uid": 1000
+      },
+      "tracer": {
+        "pid": 438,
+        "starttime": 370,
+        "uid": 0
+      },
+      "product_sha256": {
+        "rustusb": "9708a50ee836378cd64f8726dae36caded96d4fca39faae215aa30658ef49b48",
+        "rustusb-helper": "7c690c62dbc02b7e08b224e2f3cfe773c77bebc6a8e6c10ebd716b2696806322"
+      }
+    },
+    {
+      "check": "real original WAL entry remains held across exporter wait and independent observations until exact successful return",
+      "passed": true,
+      "identity": {
+        "candidate": 1,
+        "tracee_pid": 440,
+        "tracee_starttime": 370,
+        "tid": 447,
+        "fd": 27,
+        "request": 74,
+        "file_device": 2,
+        "file_inode": 413
+      },
+      "nonce": "prepare-stop-v1",
+      "tracer_pid": 438,
+      "ordered_monotonic_ns": [
+        5768712799,
+        5768738076,
+        5798040317,
+        6795548300,
+        6806170277,
+        6806202527
+      ],
+      "held_ns": 1037464451,
+      "committed_sequence": 46,
+      "withheld_sequence": 47,
+      "export_uptime": [
+        "6.11",
+        "6.16"
+      ]
+    },
+    {
+      "check": "same paired run performs KEY1/KEY2 and exactly 70 bytes in each serial direction",
+      "passed": true,
+      "rounds": [
+        {
+          "round": 1,
+          "linux_key_code": 2,
+          "evdev_records": 6,
+          "rx_bytes": 35,
+          "tx_bytes": 35,
+          "rx_sha256": "eb58198abff4b20dec7ba4f4803295f269447053590d403c1d75d2840693b36a",
+          "tx_sha256": "6700819642ef02548015a4447a0f0444027fc66e05b52351337a2bc9b5297bef"
+        },
+        {
+          "round": 2,
+          "linux_key_code": 3,
+          "evdev_records": 6,
+          "rx_bytes": 35,
+          "tx_bytes": 35,
+          "rx_sha256": "cd0f2df238a0b41d3b51c612fa3eaa6273974f11d1a781f77f5d5f0bdec9014a",
+          "tx_sha256": "355c7c5ed87e15b4cb17580535c41b3e4c2aa4080b205770ebba8d4b592970a8"
+        }
+      ],
+      "host_control_order": [
+        "OBSERVE1",
+        "IO2",
+        "IO2_COMPLETE",
+        "CLOSE1",
+        "STOP1"
+      ],
+      "scope": "cross-guest order uses actual host handshakes; guest boot clocks are not compared to each other; no claim about a specific pending URB"
+    },
+    {
+      "check": "all six original capabilities have exact same-attempt root retirement proofs",
+      "passed": true,
+      "retirements": {
+        "server": [
+          {
+            "session_id": "5ec8c76b-659a-4935-8a1e-fff70d592116",
+            "role": "export",
+            "resource_id": "64b3a899-ca49-43b0-be35-b0b441e088c7",
+            "proof": "native_export_restored",
+            "operation_error": null,
+            "cleanup": "verified"
+          },
+          {
+            "session_id": "c2e63cd3-ef4d-4316-bac7-4602a14292de",
+            "role": "export",
+            "resource_id": "c64f36b8-4a3b-498f-9fec-dd09876bb1af",
+            "proof": "native_export_restored",
+            "operation_error": null,
+            "cleanup": "verified"
+          },
+          {
+            "session_id": "d5d32e72-34ed-40a8-8d56-c5f6ad212755",
+            "role": "incoming",
+            "resource_id": "a07ea0aa-c4af-417f-a532-0eb0e594fedb",
+            "proof": "native_stub_available",
+            "operation_error": "state",
+            "cleanup": "verified"
+          },
+          {
+            "session_id": "a365ed5d-d346-410c-9222-7b71f33df77c",
+            "role": "incoming",
+            "resource_id": "f8630dd1-f2fb-4a1f-8e85-f84c364bd3fe",
+            "proof": "native_stub_available",
+            "operation_error": "state",
+            "cleanup": "verified"
+          }
+        ],
+        "client": [
+          {
+            "session_id": "4aeeb48b-5a53-49ef-995d-8c5e0d9c2ece",
+            "role": "import",
+            "resource_id": "3b497c5e-ef61-4686-9898-9d763a2600e6",
+            "proof": "native_import_released",
+            "operation_error": null,
+            "cleanup": "verified"
+          },
+          {
+            "session_id": "f66c4971-f728-48e4-8e2f-aa6b9179dda1",
+            "role": "import",
+            "resource_id": "1d438ff4-a327-4edc-894b-d5243af1cd5b",
+            "proof": "native_import_released",
+            "operation_error": null,
+            "cleanup": "verified"
+          }
+        ]
+      }
+    },
+    {
+      "check": "whole original driver/configuration/interface baseline and actual VHCI NULL/Gone independently restored",
+      "passed": true,
+      "local_generations": {
+        "hid": "1-1",
+        "serial": "1-2",
+        "hid_generation": "23:25585",
+        "serial_generation": "23:25819"
+      },
+      "baseline_drivers": [
+        "usbhid",
+        "ftdi_sio"
+      ],
+      "vhci_ports": 16
+    },
+    {
+      "check": "both incoming State/Protocol outcomes remain correlated to original client-first local stop",
+      "passed": true,
+      "outcomes": [
+        {
+          "server_session": "d5d32e72-34ed-40a8-8d56-c5f6ad212755",
+          "client_session": "4aeeb48b-5a53-49ef-995d-8c5e0d9c2ece",
+          "server_operation_error": "state",
+          "server_link_end": "protocol",
+          "client_operation_error": null,
+          "client_link_end": "local_stop",
+          "cleanup": "verified",
+          "server_connection": {
+            "connection": 3,
+            "tcp": {
+              "local": "192.0.2.1:3241",
+              "peer": "192.0.2.2:38730"
+            }
+          },
+          "client_connection": {
+            "connection": 3,
+            "tcp": {
+              "local": "192.0.2.2:38730",
+              "peer": "192.0.2.1:3241"
+            }
+          }
+        },
+        {
+          "server_session": "a365ed5d-d346-410c-9222-7b71f33df77c",
+          "client_session": "f66c4971-f728-48e4-8e2f-aa6b9179dda1",
+          "server_operation_error": "state",
+          "server_link_end": "protocol",
+          "client_operation_error": null,
+          "client_link_end": "local_stop",
+          "cleanup": "verified",
+          "server_connection": {
+            "connection": 5,
+            "tcp": {
+              "local": "192.0.2.1:3241",
+              "peer": "192.0.2.2:38746"
+            }
+          },
+          "client_connection": {
+            "connection": 5,
+            "tcp": {
+              "local": "192.0.2.2:38746",
+              "peer": "192.0.2.1:3241"
+            }
+          }
+        }
+      ],
+      "scope": "not clean EOF; no inference about untraced packet-reset cause"
+    },
+    {
+      "check": "first launch failure remains a separate unchanged terminal FAIL",
+      "passed": true,
+      "head": "bde3aa922086592a6982da3f60e946d21ed58995",
+      "result": "FAIL"
+    }
+  ],
+  "facts": {
+    "kernel_warnings": {
+      "server": [],
+      "client": []
+    },
+    "gate_hold_ns": 1037464451,
+    "USB_scope": {
+      "paired_runs": 1,
+      "epochs": 1,
+      "guests": 2,
+      "io_rounds": 2,
+      "serial_bytes_each_direction": 70,
+      "original_capabilities_retired": 6
+    },
+    "control_flow": "actual host IO2 after exported-held marker; IO2_COMPLETE only after actual second HID/FTDI bytes; final held receipt before explicit release; client local stop before server TERM",
+    "end_and_projection_scope": "Artifact alias/pagination/permission and metadata End details reviewed separately by N. This review checks actual complete export wait/byte receipt and its placement inside the same held syscall interval, not a raw trace of old End token."
+  },
+  "input_evidence": "/tmp/rustusb-diagnostic-qemu-second-d9ebe2e-20261024",
+  "source_revision": "d9ebe2eadf8490081035199c91d17bbba41bc57e",
+  "originals_unchanged": false,
+  "first_failure_unchanged": true
+}

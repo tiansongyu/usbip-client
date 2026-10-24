@@ -598,7 +598,7 @@
 - 7640发布初/终态官方API、六实际原资源bytes/headers、push/source映射、CUA转录及N只读211诊断/初208inprogress/错误文件参数原件共35份约0.57MB归档rotating-logs-publication-7640efb-20261024，逐original/bytes/SHA/staged blob核；post-reference十九文档439本地/映射target与表格PASS、49外链未全抓，独立checker/原件另名追加不覆盖437。N只核状态与raw，不补runner/tmp或重算723；贡献者身份仍明示方法独立非独立实现。
 - 本轮为完整Phase0–7目标的实际进展：完成4.11中的可选有界文件日志/授权读取与installed可移除阻塞顺序验证，并更新英文README/展示页，已安装的全局readme-site保持四源与固定rstop参考。诊断导出/年龄保留、永久FS/kernel硬阻塞、无独立proof的Rust崩溃协调、完整安全G3、真实G1/G2、TUI/GUI及后续阶段仍未完成，goal保持active。最后只提交发布回执/两文档引用和日志，产品177及网站六源不变，再普通push核远端与clean。
 
-### 2026-10-24：诊断导出与独立已提交视图（设计中）
+### 2026-10-24：诊断导出与独立已提交视图
 
 - 上一goal turn是实际进展：4.11有界文件日志/授权读取、723软件/本地6及旧4/2、clean48c installed一场景三epoch、四原生CI及英文README/site发布；最终46cd950普通push，当前primary clean。完整重读原附件（含末尾Phase0起步与最终日常可用目标）、AGENTS/项目skill及架构/应用服务/日志契约，原Phase0–7不缩成README或已完成部分。
 - 本轮选原4.11剩余的诊断信息导出；三agent只读源码/固定库研究，Root独占设计/Git/构建/实际运行。Native现DTO的路径/任意版本文本不能直接导出；operator也不能借LoadedConfig读取broker私钥。现Jobs/Sessions/Audit受WAL actor阻塞，简单串RPC不能提供停顿时有用诊断，因此先设计postcommit immutable view+Read/Audit双授权、有限一致快照分页，health/log独立标采样，不读私有state文件。
@@ -627,3 +627,7 @@
 
 - 已实现test-only generated C，原2b032df5逐字节不改、生成8f7dc401；两唯一替换与反向重建证明仅argc/六固定日志参数变化，所有device/ptrace/FD/return/cleanup/时限保持。实际29 host commands为3cc（完整gate只编译、不在host执行）及26隔离C字符串白名单谓词，正确21放行、旧15/全部20位置变更/多缺参数拒绝；不是产品CLI或USB验收。H只读20方法无阻断，source→generated C/provenance→compiled payload→actual guest ELF链已接通。
 - 新clean835本地原件/两审查与早期读取KeyError173份约1.03MB、首QEMU FAIL/源变体/实际编译与argv验证/只读方法354份约4.45MB逐original/bytes/SHA/暂存blob核后保留。新诊断19child采证为5完整proc+exe/9identity-only/5wrapper-preexec，BP原padding与空DEVLIST wire未独立落raw的边界明确；旧blocked只有pipe_write/wait后EOF，无stopped快照/旧BP逐childELF不补造。下一次QEMU必须新clean revision与fresh目录，旧797的192源仍不变。
+
+- 第二actual clean d9ebe2e QEMU exec30911实际wait0、两guest0及四guards真，209选定harness输入含同192source/build输入，默认locked allfeatures build同CLI9708/helper7c69。一个Native-v4/framed-v2 paired run/一epoch两轮实际KEY及FTDI每向70B；原state.next candidate1同PID440/start370/TID447/FD27/dev2ino413持门1.037464451秒，完整导出seq46/排除draft47、第二轮I/O和原能力保持均早于同门release/原fsync实际return0。完整26173B/f433247d产物含1job/4session/44audit与3页44log，health独立；六原Rootterm/fullbaseline/16VHCI NULL/Gone通过。原两incoming State/Protocol与Verified分开，不称cleanEOF或已trace reset原因；首bde FAIL不改判。
+- H/N分别以新raw解析复核521原件前后SHA不变，参与实现/harness身份明示，11组/4516方法谓词与host1300断言不计USBcase。UID1000 exporter有完整proc/exe/caps0，1002/1003由fixed setpriv/rootmanifest/actual kernelActorUID否决支持但无各自proc；原tokenEnd只属源码/收据+同UID Begin2/End复用，不伪造token1包。existing拒绝核inode/len/guest cmp，非并发rename fault。H首parser变量shadow导致inventory假FAIL另存后窄修；原raw不变。最终QEMU及两方法537份约6.31MB逐original/bytes/SHA/staged blob核后保留。
+- 精确d9 CI40067501829四native job120793716138/286/316/335全部completed/success；官方完整decoded log按UTF8原BOM/newline直写，初inprogress与finalsuccess分别保存。I纯方法617谓词核每格343/434/20=797、47rows零失败忽略、旧5TLS/4signal/2BP/6logging及新9诊断组13child；新child每格4完整proc/6identity/3preexec，default4只属本地x86。192选定source/build逐Git d9，16033inventory paths/398blobs非编译数，无runner ELF/tmp缺件补造。官方与方法43份约101.32MB逐original/bytes/SHA/staged blob通过；旧dff793/失败与旧矩阵仍原归属。
