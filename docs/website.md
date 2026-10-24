@@ -100,3 +100,9 @@ results retain their tested revisions. Local desktop/mobile DOM, keyboard and
 CSP no-script checks passed; screenshot capture was unavailable. The six local
 HTTP resource bodies match source. Runtime assets and the installed global
 readme-site skill are unchanged. Public deployment is recorded separately.
+
+Content `cacb170` is live: software workflow 40101176031 passed on four native
+platforms, including the new observer process step, and Pages workflow 40101175998
+passed check/deploy. Six canonical HTTPS bodies match its Git blobs. Public
+desktop/mobile DOM, keyboard and responsive-image checks passed; no pixel review
+is claimed. See the [publication receipt](evidence/local-device-monitor-publication-cacb170-20261024/manifest.json).

@@ -290,3 +290,5 @@ Native局部stop保留原HID真实I/O，client detach后先等精确原server st
 ## 28. 本地热插拔观察（E41）
 
 共享rustusb-discovery由service原样re-export，默认CLI一次发现与devices --watch共用实现，两个实际worker配额不因awaiter取消提前归还。kernel group1提示+原scanner权威重扫，Current/Stale/Initializing、candidate ID/Bus ID/stamp分开；无成功库存为null，容量/读取失败保旧，不假删除。慢订阅者按完整快照resync，实际owner总join，stdout不持scanner。最终872软件锁c034/206源，默认/all两个单guest锁f66/213源，各真实UID2000/ELF/socket两采样、六点driver/代际、SIGTERM/wait、完整帧及最终虚拟设备清空。新本地6process和原4/2通过；宿主原始设备输出保持私有，公开闭合投影。详见报告与[原件](evidence/local-device-monitor-f66da6b-20261024/manifest.json)，不完成硬件/远程自动共享/永久OS阻塞、ENOBUFS或完整G3。
+
+内容cacb170正常SSH push，software40101176031四native job120893459087/459290/459291/459372及Pages40101175998 check120893459117/deploy120893532285均completed/success；实际arch/fullgate/新增3observer step通过。只核primary API状态，不从中重算每格872。六canonical HTTPS逐Gitblob同，公开desktop/mobile DOM/键盘/图片通过；详见报告[发布原件](evidence/local-device-monitor-publication-cacb170-20261024/manifest.json)。最终回执不改206软件/213 QEMU输入及六site源，原硬件/G3/后续阶段保持未完成。

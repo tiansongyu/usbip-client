@@ -783,3 +783,9 @@
 
 - 英文指南/报告及README英中/现有展示页已同步872/2guest/6process的各自范围，旧E40十四paired保原来源。主证据2081份约54.38MB，只按显式public/research清单归档，所有.private宿主raw设备输出排除；原方法旧成功不重复计为新六项。同作者只读原件方法核486文件SHA恒同、34块B64重解码、206/213源码映射，非另一执行或独立安全审计。
 - 本地CUA桌面1280×720/窄屏390×844新指标/报告/图片/无横溢、ArrowRight/Home选中/焦点/backend query均通过；mobile先desktop SVG后实际mobile SVG360加载。独立CSP no-script预览实际1280宽三backend/commands可读，console查询均空。截图实际Unable，不称pixel，clipboard/reduced-motion未重跑。六子路径HTTP资源200且逐源bytes同，nojs同HTML/实际CSP头；临时tab23/24关，viewport实读reset1280×720，owned preview3767698实际Ctrl-C exit0。
+
+## 2026-10-24：本地设备观察发布回执
+
+- 内容cacb170普通SSH push后remote精确相同且primary clean。206软件/213 QEMU选定输入、40原dirty QA源、最终实际process方法及六site源逐内容Gitblob映射；实际软件仍c034、QEMU仍f66，不重标执行来源。software40101176031四native job120893459087/459290/459291/459372全部completed/success，actual arch/fullgate/新增3observer step通过；Pages40101175998 check120893459117/deploy120893532285均success。仅核primary API/job/step，不fetch完整CI log/ELF或重算每格872。
+- 六canonical HTTPS资源200逐cacb Gitblob同；公开CUA1280×720/390×844新872/2/6、报告/响应图/无横溢、ArrowRight/Home选中/焦点/backend query通过，console查询空。mobile初desktop SVG后mobile360均实存，viewport reset实际1280×720，public tab8保deliverable。截图仅本地实际Unavailable，不补造pixel。初并发jobs poll的父解析TypeError无保存raw API体，按transcription记账；同run重新观察四live jobs后最终success，未重启workflow。
+- 发布与本地QA分别独立归档，最后仅文档回执/证据普通提交推送；206/213/六site不改。本轮为完整Phase0–7的实际进展：补本地kernel驱动的热插拔观察共用库、真实代际/driver和signal/output错误，并修复外层SIGINT所有权；历史失败保留，README/英文站点及已安装全局readme-site保持维护。真实G1/G2、永久OS阻塞、ENOBUFS/瞬时全事件、完整G3、远程auto-share、TUI/GUI/安装/性能/Windows及后续阶段继续未完成，goal保持active。

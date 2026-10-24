@@ -170,3 +170,29 @@ the no-script response used the same HTML and explicit CSP header. Temporary
 tabs closed, the viewport reset was observed, and the owned loopback preview
 exited zero. These checks do not claim successful publication of the new content;
 the actual workflows and public bytes receive a separate receipt after pushing.
+
+## Publication receipt
+
+Content commit `cacb1704fe3a69ddc3ed3a66e671494f7a5ba9ac` was pushed normally to
+the authorized SSH remote. Its [software workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40101176031)
+completed successfully on all four native Ubuntu/architecture jobs, including
+the actual architecture, complete software gate and new three-case observation
+process step. The [Pages workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40101175998)
+also completed successfully. These are primary API run/job/step observations;
+full CI logs and executed binaries were not fetched, and no per-platform 872
+recount is claimed. The detailed local software count remains at `c0346d6`.
+
+All six canonical HTTPS resources returned 200 and matched the exact website
+Git blobs at `cacb170`. The public desktop/mobile DOM showed the new metrics,
+report link, responsive images and no horizontal overflow; ArrowRight/Home
+retained selected tab, focus and backend URL behavior. Both initial desktop-SVG
+and settled mobile-SVG observations are preserved. The reset viewport was
+observed at 1280×720 and the public tab retained.
+
+[Documentation/browser records](../evidence/local-device-monitor-docs-site-20261024/manifest.json)
+and [publication records](../evidence/local-device-monitor-publication-cacb170-20261024/manifest.json)
+keep maintained source copies, actual HTTP bodies/headers, initial/final API
+states, source mapping and browser transcriptions. An initial jobs-poll parser
+failure has no invented raw response; the same run was re-observed, without
+restarting it. The final receipt changes documentation/evidence only; 206
+software inputs, 213 QEMU inputs and six website source files remain unchanged.
