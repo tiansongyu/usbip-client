@@ -332,3 +332,14 @@ python3 -B scripts/qemu_process_logging/run.py --family ipv4 \
 新[harness说明](../scripts/qemu_process_logging/README.md)要求clean已提交源、默认locked all-features release构建及匹配kernel/modules；普通宿主只启动两一次性guest，不操作宿主USB。实际UID0helper/2000agent/1000operator与Native HID/FTDI在同一paired run内做normal/fault/fresh三epoch。真实access.lock freshOFD门、writerEX/2readerSH、512 committed denials/Busy、原Rootproof/fullbaseline及client NULL/Gone必须早于同nonce放门。日志fault owner实际wait1/LostRecords但cleanup独立Verified，其他owner正常drain，不能把预计日志错误写成USB未操作。startup副本在fresh SH锁下复制，不放宽strict NDJSON。
 
 验收必须保留原State/Protocol等操作结果。normal/fresh的server incoming仅当原ID/connection/tcp反tuple、peer local_stop及host先clientwait0后serverStop均匹配才可窄接纳；不叫cleanEOF、不凭宽泛Failure category声称具体wire reset因果。首44b1 hostFAIL/两guest0及source仅期望修订分别留档；新clean48c9794实际PASS/2guest0仍只是一个新场景，旧1582二十三QEMU不重计到本版。永久FS/kernel阻塞、硬件G1/G2及完整Phase3不由这些通过完成。
+
+## 私有诊断导出（E36）
+
+`python3 -B scripts/test-diagnostic-export.py --binary target/release/rustusb --evidence /tmp/diagnostic-process-NEW`在普通Linux UID以私有文件、固定Native/helper只读观察和受控loopback空DEVLIST执行allfeatures九组13child，不创建虚拟USB设备；指定独立default ELF配合`--cases`选项可验证其四组，确切参数先读该脚本`--help`。真实FSIZE/regular stderr、INT/TERM的fchmod-entry门、accepted fsync-entry门与4096满stdout不改产品返回值。proc/exe未采的fastchild及未保存wire/padding保持边界，不能补造raw。默认四组仅当前本地x86通过，四native CI只执行九allfeatures组。
+
+```sh
+python3 -B scripts/qemu_diagnostic_export/run.py --family ipv4 \
+  --kernel 6.8.0-106-generic --evidence /tmp/diagnostic-installed-NEW-CLEAN-SHA
+```
+
+[harness](../scripts/qemu_diagnostic_export/README.md)要求clean checkpoint/默认locked allfeatures build。一个paired run/一epoch内先实际HID/FTDI，再冻结原state.next candidate1 fsync-entry，核原UID/PID/start/TID/FD/inode；UID1000完整导出seq46/排除draft47，单权限拒绝、原资源/第二轮I/O都须在同门未放时完成。随后同syscall真实return0、原Rootproof/fullbaseline/VHCI NULL/Gone。生成test-only C仅固定logger六参数白名单差异；旧argc15失败不重判，永久kernel阻塞不由entry gate证明。最终clean d9ebe2e/797软件及所有原FAIL归属见[验收](research/diagnostic-export-validation.md)，旧矩阵不重计。

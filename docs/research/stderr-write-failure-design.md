@@ -1,6 +1,6 @@
 # Report console log write failures without recursive diagnostics
 
-2026-10-24. Proposed corrective contract after the first actual diagnostic-export process run. Product `dff36a3`; clean harness `2ca5f5b`; all-feature CLI `67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419`. The complete Phase0–7 goal remains active.
+2026-10-24. Corrective contract after the first actual diagnostic-export process run. Original product `dff36a3`; clean harness `2ca5f5b`; all-feature CLI `67fff5700d3282f711659c8b3fae363d5ee4f80d9a8bfdd42476dba388dfc419`. Implemented in `8351577`; the [validation report](diagnostic-export-validation.md) records the preserved failure, 797-execution gate and actual corrected process/CI results. The verification section below is the original plan, not a replacement for those receipts. The complete Phase0–7 goal remains active.
 
 ## Observed failure
 

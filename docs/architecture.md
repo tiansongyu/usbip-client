@@ -203,3 +203,11 @@ agent shutdown由独立supervisor路径在Runtime persist之外sticky fanout；�
 record最大2KiB、固定256队列、默认4MiB×8文件、硬上限8MiB×16（128MiB payload）。0700叶/0600单链接regular文件与受保护祖先逐FD核验；writer持生命周期锁，每次access锁独立open而非dup。整条记录轮转，UUID/epoch/ordinal及完整行offset游标校验；旧残尾保留并报gap，错误不静默重开。投递不做FS、不等队列容量；满队列/IO失败和最终exit与USB操作结果分开。
 
 业务Store成功commit并替换state后，新增audit序列才投递typed镜像；镜像无持久准入、Rootproof或恢复权力。ReadLogs按真实SO_PEERCRED及profile Audit授权，先授权后读盘；所有已授权结果包括Busy/disabled/error绕Runtime队列，拒绝沿旧durable denial路径。两实际reader与两queued请求的配额不因RPC取消释放；每页最多扫描256KiB/16记录，过滤空页仍可推进游标。RPC不能选择路径/保留参数或读取helper日志。logger只持日志文件/metadata，永久FS阻塞仍可能阻止实际join，不能用超时虚称取消。
+
+## 私有诊断与已提交视图（E36）
+
+[设计](research/diagnostic-export-design.md)、[操作指南](diagnostics.md)与[验收](research/diagnostic-export-validation.md)记录rustusb-diagnostics闭合schema1/4MiB产物。每次独立alias只保留metadata关系；本地固定Native/helper观察不扫描设备，agent模式仅用public manifest而不读broker凭据。操作/cleanup/linkend独立保留，health/log非同一原子视图。
+
+service在Store实际commit/state替换/旧audit镜像之后发布immutable metadata；授权Begin/Page/End及错误绕WAL，拒绝仍durable。每请求双Read+Audit和真实peer/profile校验，root也只own-unscopedDenied。四实际Arc snapshot、每UID一/30秒，Weak UID索引防止End时仍copy提前复用配额；每页16row/60000payload，过滤后offset严格校验。快照无USB能力/permit/文件路径。
+
+exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与真实write/hash/fsync/NOREPLACE/dirsync，拒绝覆盖。Native child kill后实际reap，所有probe/agent/local logs/file worker保留owner总join，专用runtime保留内部TokioFS工作。60秒预算仅停止新stage，永久OS阻塞仍可拖延退出；信号与publication race保实际结果。默认stderr返回错误由metadata latch捕获，禁subscriber递归打印，actualcleanup后报告loggingIO；不承诺永久stderr阻塞/任意formatter panic安全。

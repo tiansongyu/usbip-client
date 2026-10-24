@@ -134,13 +134,14 @@ sudo /usr/local/bin/rustusb \
       </div>
       <div class="status-layout">
         <div class="verified">
-          <h3>Bounded logging, verified processes</h3>
-          <dl><div><dt>723</dt><dd>software test executions</dd></div><div><dt>6</dt><dd>logging process scenarios</dd></div><div><dt>4</dt><dd>native CI combinations</dd></div></dl>
-          <p>Private rotating logs and authorized readers keep operational history separate from USB ownership. Actual subprocess tests cover restart, cursors, signals, blocked output and file-write failure. A final logging error can follow a completed USB operation; a stuck filesystem can still delay exit.</p>
-          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/rotating-logs-validation.md">Read the tested revisions and evidence <span aria-hidden="true">↗</span></a>
-          <p>One focused installed-path QEMU scenario at clean <code>48c9794</code> adds three epochs of actual simulated HID/FTDI I/O, authorized log reading and USB cleanup before a held logger lock is released. Its first failed verifier expectation remains recorded; transport errors and cleanup have separate results.</p>
+          <h3>Private diagnostics, live connections</h3>
+          <dl><div><dt>797</dt><dd>software test executions</dd></div><div><dt>13</dt><dd>local diagnostic groups</dd></div><div><dt>4</dt><dd>native CI combinations</dd></div></dl>
+          <p>Export bounded JSON with identity aliases, committed profile history and separately sampled health and logs. Actual subprocess checks cover private files, write failures, signals and blocked output. Thirteen local groups use 19 children; nine groups also run on each native CI platform.</p>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/diagnostic-export-validation.md">Read the tested revisions and evidence <span aria-hidden="true">↗</span></a>
+          <p>One installed Native QEMU scenario at clean <code>d9ebe2e</code> checks a complete export while the same WAL write stays paused. Two rounds of actual simulated HID/FTDI I/O use the original connections before cleanup. The first tracer-launch failure remains recorded; transport errors and verified cleanup have separate results.</p>
+          <p>The earlier <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/rotating-logs-validation.md">logging scenario at clean 48c9794</a> retains its three epochs and cleanup before logger-lock release. Permanent filesystem blocking can still delay exit.</p>
           <p>The earlier <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/prepare-recording-shutdown-validation.md">23 paired QEMU runs / 46 guest exits at clean 1582f06</a> retain their own release artifacts and scope: eight preparation-stop scenarios, six data-link runs with 18 directional fault phases and nine regressions.</p>
-          <p>The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/logging.md">logging guide</a> covers private stores and profile-authorized pages. The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/application-service-guide.md">application service</a> provides independent jobs and bounded session audit; the <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/secure-guide.md">secure guide</a> covers credentials and exact device rules.</p>
+          <p>The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/diagnostics.md">diagnostics guide</a> covers capture and partial results; the <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/logging.md">logging guide</a> covers private stores. The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/application-service-guide.md">application service</a> provides independent jobs and bounded session audit; the <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/secure-guide.md">secure guide</a> covers credentials and exact device rules.</p>
         </div>
         <div class="boundaries">
           <h3>Know the current boundaries</h3>

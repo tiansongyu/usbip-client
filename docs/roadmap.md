@@ -78,7 +78,9 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 新增[E34准备记录停止](research/prepare-recording-shutdown-validation.md)使应用journal ACK停顿不阻挡已收到owner的真实清理；Native局部stop保留sibling及同job空Catalog，agent shutdown在persist之外sticky传播。667软件通过，仿真与CI仅按专项报告实测版本记账；accepted initializer始终保留到真实返回，不承诺任意永久FS/kernel阻塞下有界退出，也不完成完整G3。
 
-新增[E35有界进程日志](research/rotating-logs-validation.md)实现私有checked NDJSON轮转/授权页读取，业务commit后镜像audit，实际USB owner清理后才join logger；723软件/177输入、实际本地6/4/2及精确89ef四原生CI通过。clean48c9794一项installed仿真/三epoch通过，首44b1 verifier期望FAIL与原transport error保留，旧23不重归属。有限operational history不等于不可变永久audit，年龄保留/诊断导出/完整安全矩阵、无独立proof的Rust崩溃协调与真实硬件继续未完成。
+新增[E35有界进程日志](research/rotating-logs-validation.md)实现私有checked NDJSON轮转/授权页读取，业务commit后镜像audit，实际USB owner清理后才join logger；723软件/177输入、实际本地6/4/2及精确89ef四原生CI通过。clean48c9794一项installed仿真/三epoch通过，首44b1 verifier期望FAIL与原transport error保留，旧23不重归属。有限operational history不等于不可变永久audit；该时点的诊断导出由下述E36补充，年龄保留/完整安全矩阵、无独立proof的Rust崩溃协调与真实硬件继续未完成。
+
+新增[E36私有诊断导出](research/diagnostic-export-validation.md)实现闭合JSON、独立别名与checked私有文件publication；Read+Audit单profile固定已提交视图绕WAL，health/log独立采样。797软件/192选定source-build输入、本地clean835的13组/19child及d9四原生CI通过；clean d9ebe2e一项双端QEMU/一epoch两轮HID/FTDI真实I/O，在同一原WAL门下完成导出与第二轮后才放门，完整原Rootproof/baseline通过。默认四组只属本地x86，原2ca exit101及bde gate启动FAIL保留，旧软件和QEMU不重归属；硬件、永久阻塞与完整G3/后续阶段继续未完成。
 
 ## 7. Phase 4：完整 TUI
 

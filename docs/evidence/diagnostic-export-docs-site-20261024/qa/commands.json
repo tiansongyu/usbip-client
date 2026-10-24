@@ -1,0 +1,35 @@
+[
+  {
+    "argv": [
+      "python3",
+      "/tmp/rustusb-diagnostic-docs-site-qa-20261024/doc-links-final.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/check-site.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "node",
+      "--check",
+      "website/app.js"
+    ],
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      ".",
+      ":!docs/evidence"
+    ],
+    "exit_code": 0
+  }
+]

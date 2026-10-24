@@ -67,3 +67,13 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - 0700/0600/nlink1/NOFOLLOW及实际identity检查；每operation fresh accessOFD，不能dup共享flock。256finitequeue、两真实reader+两queued，取消RPC不能释放实际worker配额。FS/队列等待不持USB能力。
 - 在Tokio/设备前打开，在actualowner cleanup后drain/join真实logger；永久FS硬阻塞不可假取消。LostRecords/IO可在操作完成后最终exit1，不能误说USB无副作用。
 - normal peer-close若记录State+Protocol须保留，窄验收锁原incoming IDs/同conn/反tuple peerlocal_stop及host关闭先后，全Rootproof/baseline不弱化；不是cleanEOF或已跟踪reset原因。原FAIL和新cleanPASS分账。
+
+## 私有诊断导出与默认console错误
+
+修改diagnostics/immutable Registry/Begin-Page-End/console前读`docs/research/diagnostic-export-design.md`、`docs/research/diagnostic-export-validation.md`与`docs/research/stderr-write-failure-design.md`。797为dirty2ca/192选定source-build输入，clean835本地13组19child，clean d9一个paired QEMU/一epoch两I/O，d9四native CI每格797/九诊断组；default四组只属本地x86。原2ca exit101与bde gate启动FAIL不可重判，旧793/723及23矩阵保留原来源。
+
+- 双Read+Audit/真实peer/profile逐请求，root同ownDenied；所有授权结果绕WAL，拒绝沿durable。实际commit/state替换/旧mirror后才发布，无USB能力/准入/proof权力，health/log独立采样。
+- 四实际Arc/每UID一/30秒，End/expiry不可释放仍copy的实际quota；过滤后offset、16row/60000payload严格校验，不读私有state或凭据。
+- 闭合schema1/4MiB/独立alias，无raw UID/PID/endpoint/path/key/token/USB/messages；操作/cleanup/linkend分开。真实0700/0600/EXCL/NOFOLLOW/identity/write/hash/sync/NOREPLACE/dirsync，不覆盖或删除未知文件，保留partial/不确定sideeffects。
+- 保留全部worker/private runtime/accepted child与实际kill-reap；signal sticky停止新stage，已接受publication保真实结果，不假取消永久FS/kernel阻塞。CheckedConsole必须委托真实write并latch首returned IO，禁recursive internal error，actualowner cleanup后报告；不扩大为任意formatter panic/闭FD或硬阻塞保证。
+- 原token End没有raw trace、单权限负向无独立proc、existing拒绝非并发rename，采证边界保留；samegate第二I/O后release、真实return0与完整Rootproof不能放宽。

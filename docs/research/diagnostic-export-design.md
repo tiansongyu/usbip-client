@@ -1,6 +1,6 @@
 # Private diagnostic exports
 
-2026-10-24. Baseline clean `46cd950affb0c949b164d0051be7bf70f365fac9`. Status: proposed implementation contract. The preceding goal turn made verified progress on bounded logs and publication. The complete Phase 0–7 objective remains active. This increment implements the remaining diagnostic-export part of requirement 4.11; it does not turn an observation into USB readiness, a recovery proof or complete Phase 3 acceptance.
+2026-10-24. Design baseline clean `46cd950affb0c949b164d0051be7bf70f365fac9`. Status: implemented increment, with actual software, process, installed QEMU and four-platform CI evidence in the [validation report](diagnostic-export-validation.md). The contract below records the original design and later corrective decisions; it is not itself a test result. The complete Phase 0–7 objective remains active. This increment implements the diagnostic-export part of requirement 4.11; it does not turn an observation into USB readiness, a recovery proof or complete Phase 3 acceptance.
 
 ## Evidence and decision
 

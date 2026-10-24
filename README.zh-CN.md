@@ -40,6 +40,8 @@ target/release/rustusb doctor
 
 设备 ID 使用 VID/PID、序列号（若有）和物理控制器/端口拓扑的 SHA256 候选指纹。Bus ID 只是当前地址。无序列号的同型号设备在同一物理端口替换无法可靠区分；指纹不是硬件身份认证。JSON 设备详情含序列号，分享前自行脱敏，默认日志不输出它。
 
+新增[私有诊断导出](docs/diagnostics.md)：`rustusb diagnostics --output /受保护的私有目录/result.json --json`，闭合JSON与每次捕获独立别名保留关系，不复制原始标识/路径/秘密。agent模式须同profile Read+Audit，导出已提交视图，health/log独立采样。[专项验收](docs/research/diagnostic-export-validation.md)记录797次软件执行（343/434/20）、192选定source/build输入、本地13组/19child、[d9四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40067501829)及clean `d9ebe2e` 一项双guest仿真/一epoch两轮真实HID/FTDI I/O。导出与第二轮I/O均在同一原WAL syscall暂停时完成，随后原资源清理通过；原2ca进程exit101与bde仿真启动FAIL保留。默认四组只属本地x86，不外推CI；硬件与完整G3继续未完成。
+
 ## 本机诊断
 
 普通用户运行 `rustusb doctor` 查看逐项结果和处理建议；`rustusb doctor --json` 输出供脚本读取的结构化报告，当前 `schema_version` 为 `1`。诊断完成时退出码为 `0`，其中仍可能包含 `missing`、`not_loaded`、`unknown` 或失败结果；退出码不表示整体已经就绪。

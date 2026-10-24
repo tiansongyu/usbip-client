@@ -65,7 +65,14 @@ rustusb detach 0
 rustusb unexport 'usb-<64-lowercase-hex-fingerprint>'
 ```
 
-Each command has `--help`. Use `--json` for machine-readable output and `--log-json` for JSON tracing on stderr; `RUST_LOG` controls log verbosity. Optional [bounded file logging](docs/logging.md) adds private rotating NDJSON and authorized `rustusb logs` readers. Device JSON may include serial numbers—redact it before sharing.
+Each command has `--help`. Use `--json` for machine-readable output and `--log-json` for JSON tracing on stderr; `RUST_LOG` controls log verbosity. Optional [bounded file logging](docs/logging.md) adds private rotating NDJSON and authorized `rustusb logs` readers. For troubleshooting, [private diagnostic export](docs/diagnostics.md) produces bounded JSON with per-capture identity aliases:
+
+```sh
+mkdir -m 700 "$HOME/rustusb-diagnostics"
+rustusb diagnostics --output "$HOME/rustusb-diagnostics/local.json" --json
+```
+
+Use a fresh filename in the private directory. Inspect the receipt for partial results; collected prerequisites do not establish USB readiness. Raw `devices --json` output may include serial numbers—redact it before sharing.
 
 A device fingerprint is a candidate identity derived from descriptors, serial number when available and physical topology. A Bus ID is a current address. Neither is hardware authentication; a replacement without a serial number may have the same fingerprint.
 
@@ -135,12 +142,14 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The [rotating-log validation report](docs/research/rotating-logs-validation.md) records:
+The [diagnostic-export validation report](docs/research/diagnostic-export-validation.md) records:
 
-- **723 software test executions**: 308 default, 395 all-features and 20 vendored executions, plus formatting, Clippy, release and documentation checks. All 177 selected inputs match the product commit; the original modified-worktree run retains its actual provenance.
-- **Six actual logging process scenarios**, plus the existing four signal and two backpressure checks. These exercise rotation, restart, cursors, observer cancellation, blocked output and a real file-write failure while the separate virtual USB owner remains active.
-- **One focused installed-path QEMU scenario at clean `48c9794`, two successful guest exits**: three epochs check real simulated HID/FTDI I/O, private log permissions, authorized reading and actual USB cleanup before a held logger lock is released. The first verifier-expectation failure remains preserved; recorded transport errors are shown separately from cleanup.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `89ef420`](https://github.com/tiansongyu/usbip-client/actions/runs/40053603593) passes 723 executions and the TLS, signal, backpressure and new logging checks on each platform. The earlier cache-setup failures remain recorded separately.
+- **797 software test executions**: 343 default, 434 all-features and 20 vendored executions, plus formatting, Clippy, release and documentation checks. All 192 selected source/build inputs match the product commit; the original modified-worktree run retains its actual provenance.
+- **13 actual local diagnostic groups / 19 children**: nine groups use the all-features CLI and four the default CLI. They check private publication, refusals, log projection, real write failures, signals and blocked stdout. The existing four server-signal and two backpressure checks also pass.
+- **One focused installed-path QEMU scenario at clean `d9ebe2e`, two successful guest exits**: one epoch and two actual simulated HID/FTDI I/O rounds. A complete export pins committed history while the same WAL syscall stays paused; original connections remain usable and cleanup is verified. The first tracer-launch failure remains recorded.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `d9ebe2e`](https://github.com/tiansongyu/usbip-client/actions/runs/40067501829) passes 797 executions, TLS, signal, backpressure, six logging scenarios and nine diagnostic groups per platform. The default-only diagnostic groups were checked locally on x86_64.
+
+The earlier [rotating-log report](docs/research/rotating-logs-validation.md) retains its 723-execution gate and one installed-path QEMU scenario at clean `48c9794`, with three epochs and two successful guest exits. It verifies private logging and USB cleanup before a held logger lock is released. Its original failures and recorded transport errors remain visible.
 
 The earlier [preparation-stop report](docs/research/prepare-recording-shutdown-validation.md) retains **23 paired QEMU runs at clean `1582f06`, 46 successful guest exits**: eight preparation-stop scenarios, six framed-v2 directional-loss runs and nine existing regressions. These use that report's release artifacts and establish cleanup before delayed application records, accepted initialization and local Native stop with sibling I/O. They are a separate baseline from the new logging checks.
 
@@ -169,6 +178,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 | [Shared application service](docs/application-service-guide.md) | Nonroot jobs, authorized profiles, per-connection stop, durable sessions and bounded audit |
 | [Data-link health](docs/data-link-health.md) | Opt-in v2 probes, RTT, backpressure observations and epoch-qualified history |
 | [Process logs](docs/logging.md) | Private bounded rotation, authorized pages, follow and independent logging failures |
+| [Private diagnostics](docs/diagnostics.md) | Bounded JSON export, committed profile history, identity aliases and checked publication |
 | [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
 | [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
 | [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |

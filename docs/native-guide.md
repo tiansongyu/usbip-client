@@ -16,6 +16,10 @@ target/release/rustusb doctor
 
 设备 ID 使用 VID/PID、序列号（若有）和物理控制器/端口拓扑的 SHA256 候选指纹。Bus ID 只是当前地址。无序列号的同型号设备在同一物理端口替换无法可靠区分；指纹不是硬件身份认证。JSON 设备详情含序列号，分享前自行脱敏，默认日志不输出它。
 
+## 私有诊断导出
+
+排障文件使用[`rustusb diagnostics`](diagnostics.md)，输出到已有受保护0700目录中的新文件。默认仅观察固定Native/helper前提；可选local logs或双权限agent单profile历史。闭合JSON对身份使用独立别名，文件错误/部分观察/信号有明确收据，不能据此判断USB已经就绪。实际软件、进程、四原生CI及installed QEMU证据见[专项验收](research/diagnostic-export-validation.md)。原`doctor`继续提供本机逐项建议。
+
 ## 本机诊断
 
 普通用户运行 `rustusb doctor` 查看逐项结果和处理建议；`rustusb doctor --json` 输出供脚本读取的结构化报告，当前 `schema_version` 为 `1`。诊断完成时退出码为 `0`，其中仍可能包含 `missing`、`not_loaded`、`unknown` 或失败结果；退出码不表示整体已经就绪。

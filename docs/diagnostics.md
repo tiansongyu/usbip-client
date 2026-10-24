@@ -1,6 +1,6 @@
 # Export private diagnostics
 
-`rustusb diagnostics` creates one bounded, private JSON document for troubleshooting. It observes prerequisites and optional application history; it does not change devices or stop a running USB job. Linux is required for checked artifact publication. This implementation has passed its software gates; actual CLI lifecycle and installed QEMU validation are still pending in this increment.
+`rustusb diagnostics` creates one bounded, private JSON document for troubleshooting. It observes prerequisites and optional application history; it does not change devices or stop a running USB job. Linux is required for checked artifact publication. The [validation report](research/diagnostic-export-validation.md) records 797 software executions, actual CLI lifecycle checks, four native CI combinations and one installed Native QEMU scenario during a held WAL write. Hardware acceptance remains separate.
 
 ## Local capture
 
