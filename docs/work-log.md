@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-24：主机名双栈连接
+
+- 先读完整原任务、clean9c9506、AGENTS/项目skill、架构/工作日志及实际protocol/service连接源码；上一轮为进展，原Phase0–7 goal保持active。
+- 定位实际网络缺口：Tokio1.54.1按DNS候选顺序连接，首个pending可吃完原总截止。按writing-technical-design显式并行研究两个独立组件（固定Tokio及RFC），原件在/tmp独立目录，未委派产品编辑；实际loopback探针复现首pending/第二healthy未尝试，四blocking closure探针证明取消waiter不释放实际permit。
+- 先定义`research/dual-stack-connect-design.md`：四实际DNS工作/64raw及16unique候选、按OS偏好交错、250ms正常/100ms失败间隔、inline socket futures、原deadline/独立TLS服务名/单winner且不重试认证。不是完整RFC8305、DNS取消或libc内部分配上界；用户仓库约定覆盖通用skill逐组件技能输出。先建立旧版本QEMU负向，再实施；原824/13paired保持来源。
+
 ## 2026-10-24：认证准入限速
 
 - 最终状态：clean47f软件824/196稳定输入；clean d619十三paired/26guest0；内容5845b14正常SSH push、四native CI40084212856及Pages40084212885均success，六公开HTTP资源精确Git字节一致。原956 host采证FAIL及原Phase0–7未完成项保持；详见`research/authentication-admission-validation.md`。
