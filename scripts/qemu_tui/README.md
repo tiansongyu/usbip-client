@@ -21,3 +21,11 @@ A fifth TERM-driven PTY in each guest reads actual Connected sessions in the
 original held epoch, then returns before the original I/O. Saved before/after
 termios numeric fields are independently compared, including Linux line
 control. Thus each pair has ten real PTY children, without extra USB sessions.
+
+Install the external, test-only decoder into a virtualenv first:
+`python3 -m pip install -r scripts/qemu_tui/requirements.txt`. Run `run.py` using
+that environment (or a deliberately isolated PYTHONPATH). Pyte is LGPLv3 and
+wcwidth MIT; neither is bundled with the MIT Rust product. `decode.py` requires
+exact versions and reconstructs cursor movements/differences. It expects this
+fixture's sole resize clear, bounds the emulated sizes, and saves every frame.
+A contiguous text search cannot validate actual Ratatui output.

@@ -15,7 +15,7 @@ old_inputs,old_guest,old_payload,old_verify=base.inputs,base.guest_source,base.p
 def inputs():
     result=old_inputs()
     for path in sorted(HERE.glob('*')):
-        if path.is_file() and path.suffix in ['.c','.py','.md']:
+        if path.is_file() and path.suffix in ['.c','.py','.md','.txt']:
             result[str(path.relative_to(ROOT))]={'bytes':path.stat().st_size,'sha256':base.digest(path)}
     return dict(sorted(result.items()))
 
@@ -75,7 +75,14 @@ def verify(evidence,args):
             expected=base.digest(ROOT/'target/release/rustusb')
             if actual!=expected:raise RuntimeError('actual executed TUI ELF differs')
             raw=(artifacts/f'tui-{mode}.raw').read_bytes()
-            if mode=='held' and b'Connected' not in raw:raise RuntimeError('actual connected session display absent')
+            decoder_spec=importlib.util.spec_from_file_location('tui_screen_decoder',HERE/'decode.py')
+            decoder=importlib.util.module_from_spec(decoder_spec);decoder_spec.loader.exec_module(decoder)
+            rendered=decoder.frames(raw)
+            (evidence/f'tui-{role}-{mode}-frames.txt').write_text('\n\n--- FRAME ---\n\n'.join(rendered))
+            if mode=='held':
+                label='Incoming Connected native:' if role=='server' else 'Import Connected native:'
+                if not any(label in frame and 'Current page (up to 16)' in frame for frame in rendered):
+                    raise RuntimeError('actual decoded connected session display absent')
             if b'RustUSB' not in raw:raise RuntimeError('actual product display missing')
             checks.append(f'{role}/{mode}: actual UID/ELF/wait0/raw/resize/exact-termios/alternate-screen')
     facts['tui']={'checks':checks,'pty_children':10,'mutations':'default-cancel only; original CLI retains all USB start/stop operations','scope':'product PTY metadata/navigation/signals, not installed confirmed-action coverage'}
