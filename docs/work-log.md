@@ -21,6 +21,11 @@
 
 - cleanf37d95d9第六native QEMU parent/guest实际PASS，66文件378653B、guest0、GUI正确unresolved1/agent0、无forced/四guard真，截图已实际查看；CLI5ed8…/helper83c5…/GUIe338…。原规则/positive Start/Stop/远端client/active-job/安装/硬件仍未由此覆盖。截图复核发现长详情挤出footer：补host只读geometry f未选行760正常、g选行workspace937/footer937>viewport760的真实负向（raw host设备页仅.private、不发布）。先补设计再修workspace min-height:0/metadata焦点与pending单独变化投影消费，增加宽/窄native geometry硬断言；需重新GUI gate/新QEMU，不将原f37的局部PASS写成新修复证据。
 
+- clean08ac67a1最终GUI完整gate11/0/0与全部guard通过，最终native QEMU整体PASS：68guest原件386369B、guest0、GUI预期unresolved1/agent0、无forced/四guard真；宽1180x760的workspace/footer760/main724，窄800x600的workspace/footer600/main564，metadata可焦点，实际截图再次查看。CLI5ed8d381…/helper83c53d52…保持b15 software对应，GUIcec2f513…16994496B；原TUI72四PTY PASS保持独立。归档3745原件53683154B（13,118,344B archive逐member/SHA核验）及GLib500原件6,900,945B（1,488,802B archive），排除host USB原始页/图至.private，排除私钥/ELF/rootfs/target。并非外部独立安全审计。
+- 使用已全局安装的readme-site及两reference（原rstop固定f2abbaac研究保持）同步英文README、真实QEMU截图与静态站，未重建skill。新增英文GUI指南，架构/roadmap/逐项验收/compatibility/第三方/AGENTS/核心skill更新；根库存222仅增内部frontend，GUI独立475条全平台metadata。positive GUI Start/Stop/remote/activejob/自动规则/完整安装及硬件仍明确待办。接下来执行文档/站点QA与普通SSH发布；CI/Pages尚未宣布成功。
+
+- 文档QA16文件/517本地target、site213链接/图片/唯一ID、Node与实际GUI help、默认CLI正常依赖树均PASS；222根core输入与b15、137个GUI非README输入与08逐SHA相同，三release ELF和真实PNG均精确保持。全局readme-site四文件及Codex discovery symlink逐旧回执一致。IAB在项目prefix实际desktop1280/mobile390 DOM/图片自然1180x760/无横向溢出/新链接Tab焦点outline通过；两截图API不可用明确保留，不称browser pixel/no-JS/reducedmotion新验收。native QEMU截图已另行实际查看。QA存当时文档快照；此后仅追加发布/QA回执。普通SSH commit/push和CI/Pages状态即将核对。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

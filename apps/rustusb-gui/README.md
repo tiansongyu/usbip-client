@@ -14,7 +14,7 @@ apps/rustusb-gui/target/release/rustusb-gui --manifest /etc/rustusb/agent.json
 ```
 
 Provision the protected public manifest and agent using the repository's existing
-[application-service guide](../../docs/research/application-service-design.md). Run the
+[application-service guide](../../docs/application-service-guide.md). Run the
 GUI as the authorized ordinary user; private service keys must remain unreadable.
 It does not start the agent, install a helper, load TLS private keys or take USB
 ownership. No shell/fs/http/process plugins are exposed. The packaged main WebView

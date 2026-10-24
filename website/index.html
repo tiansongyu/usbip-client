@@ -127,6 +127,11 @@ sudo /usr/local/bin/rustusb \
       </div>
     </section>
 
+    <section class="section wrap" aria-labelledby="gui-title">
+      <div class="section-heading"><h2 id="gui-title">Native desktop.<br>Shared service.</h2><p>The Linux desktop preview uses the TUI’s application worker for device inventories, fixed-profile actions, connections and checked preferences. It runs as an ordinary user.</p></div>
+      <figure class="connection-figure"><img src="assets/gui-qemu.png" width="1180" height="760" loading="lazy" alt="Recorded RustUSB Linux native window observing a synthetic QEMU USB keyboard, with descriptors in the details pane."><figcaption>Actual native WebView in an isolated QEMU guest, with a read/audit-only agent. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/native-gui-validation.md">Validation</a> covers hotplug, permission denial, original retry and layout; this capture does not prove GUI-driven USB import. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/gui.md">Build the GUI preview</a>.</figcaption></figure>
+    </section>
+
     <section class="section wrap status-section" id="status" aria-labelledby="status-title">
       <div class="section-heading">
         <h2 id="status-title">Built in the open.<br>Tested in QEMU.</h2>
@@ -146,7 +151,7 @@ sudo /usr/local/bin/rustusb \
         <div class="boundaries">
           <h3>Know the current boundaries</h3>
           <p>This is a development preview. Real-device acceptance is pending, and discovering a device does not establish compatibility.</p>
-          <ul><li>Secure commands require administrator-provisioned mutual TLS and device authorization. Legacy commands still need an administrator-managed secure network.</li><li>Opt-in crash recovery is limited to the saved device state; broader recovery and full security acceptance remain unfinished.</li><li>An optional <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/tui.md">terminal preview</a> is available. Storage sharing, ISO, complete TUI acceptance, GUI and Windows USB support remain planned or unvalidated.</li></ul>
+          <ul><li>Secure commands require administrator-provisioned mutual TLS and device authorization. Legacy commands still need an administrator-managed secure network.</li><li>Opt-in crash recovery is limited to the saved device state; broader recovery and full security acceptance remain unfinished.</li><li>An optional <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/tui.md">terminal preview</a> is available. A native desktop preview is also available. Storage sharing, ISO, full GUI acceptance, automatic sharing rules, installers and Windows USB support remain planned or unvalidated.</li></ul>
           <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/roadmap.md">Development roadmap <span aria-hidden="true">↗</span></a>
         </div>
       </div>

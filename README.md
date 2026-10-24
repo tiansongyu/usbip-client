@@ -164,6 +164,29 @@ and USB/IP traffic. The [data-link guide](docs/data-link-health.md) covers polic
 permissions and history. Raw v1 reports probes as unavailable. A reply confirms
 transport responsiveness, not USB progress or completed device cleanup.
 
+### Native desktop preview
+
+The Linux Tauri console shares the TUI's headless service worker. It provides
+local/remote inventory pages, search, device details, fixed-profile actions,
+connections, audit and checked preferences. It runs as an ordinary user against
+an administrator-provisioned application agent.
+
+```sh
+cargo build --manifest-path apps/rustusb-gui/Cargo.toml --release --locked
+apps/rustusb-gui/target/release/rustusb-gui --manifest /etc/rustusb/agent.json
+```
+
+Requires updated GTK3/WebKitGTK4.1 development packages; see the
+[GUI guide](docs/gui.md) for prerequisites and access setup.
+
+![Actual RustUSB Linux desktop window observing a QEMU USB keyboard through the shared discovery service](docs/assets/gui-qemu.png)
+
+Recorded native WebView in an isolated QEMU guest with a synthetic keyboard and
+read/audit-only agent. [Validation](docs/research/native-gui-validation.md) covers
+hotplug, actual permission denial/original retry, saved preferences and narrow
+layout. It does not establish successful GUI-driven USB sharing. Automatic rules,
+packaged installation and full GUI/hardware acceptance remain unfinished.
+
 ## Choose a backend
 
 | Backend | Device source and data path | Status |
@@ -225,7 +248,7 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Health has a defined scope.** Probes measure the data connection, not USB completion. The private agent journal upgrades to strict disk2; older agents cannot open that upgraded journal. See the [upgrade and health rules](docs/data-link-health.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
-- **More product work remains.** Complete TUI acceptance, GUI, packaged installers, Windows USB support and the full hardware/security acceptance gates are on the [roadmap](docs/roadmap.md).
+- **More product work remains.** Full GUI acceptance, automatic sharing rules, packaged installers, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
 
 Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
 

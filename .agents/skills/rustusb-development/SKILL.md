@@ -112,3 +112,8 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## 离线CRL
 
 修改TLS信任根/CRL/config前读`docs/research/offline-crl-design.md`与`offline-crl-validation.md`。1..16/每64KiB/总256KiB完整DER、唯一raw issuer、strict present非空，metadata不替代WebPki真实签名/fullchain/unknown-deny/expiry及pin/ACL。Checked SystemTime共同窗口覆盖每次新证书验证，保TLS13/禁resumption/earlydata；旧stream不热撤销，agent仅重启job不重载。fcb927/226和e441十三QEMU分账，v2诊断没加载CRL不得冒充其installed负向；新fast CLI缺liveELF保留。无ALPNprobe空输入/strict1/protocol delta1，不加104例外或改判旧47FAIL。硬件/全G3/后续阶段不由此完成。
+
+
+## 原生GUI与共享前端
+
+修改共享state/worker/preferences先读`docs/research/native-gui-design.md`与`docs/research/native-gui-validation.md`。rustusb-frontend保原TUI语义；GUI独立workspace/check-gui/CI，根默认Native无GTK。AppManifest/local main实际origin/有限action到ack、原Start UUID跨renderer reload、完整有界pull、counter字符串、实际exit join保留；配置不是权限，StopAccepted不是release。GLib上游0429两行backport不改version/license/其余原文件，不执行旧UB或压advisory。已验范围锁具体source/ELF与QEMU；正向GUI设备操作/远端/activejob、自动规则和完整安装/硬件仍需验收，不以窗口编译替代。

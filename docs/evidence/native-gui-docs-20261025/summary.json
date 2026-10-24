@@ -1,0 +1,138 @@
+{
+  "result": "PASS",
+  "documents": 16,
+  "local_links": 517,
+  "commands": [
+    {
+      "name": "site",
+      "command": [
+        "python3",
+        "scripts/check-site.py"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "site-js",
+      "command": [
+        "node",
+        "--check",
+        "website/app.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "gui-js",
+      "command": [
+        "node",
+        "--check",
+        "apps/rustusb-gui/web/app.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "gui-help",
+      "command": [
+        "apps/rustusb-gui/target/release/rustusb-gui",
+        "--help"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "native-tree",
+      "command": [
+        "cargo",
+        "tree",
+        "-p",
+        "rustusb-cli",
+        "-e",
+        "normal",
+        "--locked"
+      ],
+      "exit": 0
+    }
+  ],
+  "core_inputs_identical_to_b15": 222,
+  "gui_non_readme_inputs_identical_to_08": 137,
+  "global_skill_unchanged": {
+    "SKILL.md": {
+      "bytes": 4496,
+      "sha256": "83514d886ff1f1ff17585805a89508f35f60bb326a3dd9592f42fa52198a26f3"
+    },
+    "agents/openai.yaml": {
+      "bytes": 283,
+      "sha256": "61c795ad1d34ded25f1e2b8a799c45fea9b66abd32717c505ffe5b474c35e5cb"
+    },
+    "references/readme.md": {
+      "bytes": 4411,
+      "sha256": "995cb45f62c0ae8bcec45092267f67eec73633474bf59d0a8047c8a48b4b713b"
+    },
+    "references/site.md": {
+      "bytes": 5544,
+      "sha256": "82624a1db23c94ed3767ea47996311cd065f8510d6649eec20a11875cca1a24b"
+    }
+  },
+  "discovery_symlink": "/home/ubuntu/.codex/skills/readme-site",
+  "site_files": {
+    "app.js": {
+      "bytes": 3605,
+      "sha256": "c480aa0bce799cf078a4bdc994073a662c5fd8f17ffe5c6e443a5c99fe892f83"
+    },
+    ".nojekyll": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "styles.css": {
+      "bytes": 9700,
+      "sha256": "7825641f8f3d7e746d5970497ab07f994628c11da7b52b93b5f1cee1c74ef048"
+    },
+    "index.html": {
+      "bytes": 16236,
+      "sha256": "2420944a25d1eecb2ae229c1e40825798a286073b3c3f3c43d7d7da298e17372"
+    },
+    "assets/gui-qemu.png": {
+      "bytes": 75378,
+      "sha256": "7f2536aa6aff6ca79a0da9dcd116bdc1715fec7b5595f55ada8efb549f4a4d20"
+    },
+    "assets/usbip-flow-mobile.svg": {
+      "bytes": 2140,
+      "sha256": "8f0c2f9e6eeabdc905495d821cafb32747db8366dfc409c525dea3bb85f30be5"
+    },
+    "assets/usbip-flow.svg": {
+      "bytes": 3918,
+      "sha256": "cdc92ac84cb83a5b192584ae41ab79be4290b437334ea880ca8aa3ce3cf73aee"
+    },
+    "assets/favicon.svg": {
+      "bytes": 373,
+      "sha256": "1d0a2204e9022341120b10c18d25da7e97d221f245160bdd134bdbe92b689b0e"
+    }
+  },
+  "browser": {
+    "scope": "In-app browser /usbip-client/ prefix, read-only DOM and keyboard checks; screenshot APIs unavailable, not a pixel pass",
+    "desktop": {
+      "viewport_width": 1280,
+      "scroll_width": 1265,
+      "gui_image_width": 1120,
+      "natural_width": 1180,
+      "natural_height": 760
+    },
+    "mobile": {
+      "viewport_width": 390,
+      "scroll_width": 375,
+      "gui_image_width": 339
+    },
+    "new_link_tab_focus": "Build the GUI preview",
+    "focus_outline": "solid",
+    "viewport_reset_and_tab_closed": true,
+    "no_javascript_and_reduced_motion_rerun": false
+  },
+  "scope": "Documentation/static checks; native QEMU screenshots inspected separately. CI/Pages publication not yet checked."
+}

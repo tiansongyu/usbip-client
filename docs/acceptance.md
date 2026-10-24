@@ -132,7 +132,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
 | 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow；E36 diagnostics私有JSON/单profile导出 | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
 | 4.9 Ratatui TUI | 六页普通用户共享API前端；[E48逐项G4软件/仿真审计](research/tui-hotplug-permission-validation.md#g4-requirement-audit) | 键盘/搜索/筛选/排序/刷新/详情/确认与持久偏好；实际热插拔、服务拒绝、失联/原UUID重试已有证据。普通用户设置不编辑管理员策略；真实硬件/完整G3及后续发布门槛未完成 |
-| 4.10 GUI | 设计推迟到核心稳定，计划评估 Tauri；共用核心原则 | 后续 Phase 5；无 GUI；双端列表、延迟、访问控制、自动规则等未实现 |
+| 4.10 GUI | 原生Tauri预览/共享headless worker/六页/checked preferences，见[E49报告](research/native-gui-validation.md) | 部分：软件与native QEMU只读/真实权限拒绝已验；正向GUI设备操作/远端/activejob、自动规则与完整G5仍未完成 |
 | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E36 bounded闭合JSON/alias/独立已提交视图与真实私有publication，信号/文件失败保留实际结果。E31 audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
 
 ## 7. 自动测试、互操作、异常、安全与性能范围
@@ -332,3 +332,8 @@ E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native 
 ## 35. E48：终端热插拔、权威拒绝与G4软件/仿真审计
 
 [报告](research/tui-hotplug-permission-validation.md)锁clean2dc888ce：420/default+516/all+20/vendor共956执行/235源；两个新single分别238源/实际minimal-tui与all ELF，三个当前托管回归分别237/237/232源。五次invocation/8guest0、56实际UID1000 PTY含54正常0及两正确预期的unresolved child1；原935四PTY/guest0但整体FAIL保留。原monitor六点与三托管各原264/三I/O/完整Rootproof均保持。文档化G4 gate已有逐项软件/QEMU证据；无新USB类型/硬件/完整G3/GUI/安装/性能/Windows完成声明。
+
+
+## 36. E49：原生GUI预览与共享headless worker
+
+[报告](research/native-gui-validation.md)记录core956锁b15dd113、最终GUI11及native QEMU锁08ac67a1；真实UID1000/零有效权限WebView、QMP代际/搜索/详情、默认Cancel、Read/Audit-only真实agent两拒绝及原UUID跨reload、checked偏好、宽窄footer geometry通过。最终68文件386369B、guest0/GUI正确unresolved child1/独立agent0、无forced/四guard真；原TUI四PTY锁72fe888c回归PASS。GLib上游两行补丁保版本/许可/121源，500组件原件独立归档；所有开发/五次native失败、误判parent及旧TUI缺依赖保留，不改判。与CLI共享实际应用服务，不获得USB能力，不把负向GUI窗口当正向导入/Stop/远端RTT/activejob proof。规则/deb/systemd/完整安装/硬件G1G2/完整G3/后续原Phase5–7继续未完成。

@@ -41,3 +41,6 @@ E47终端故障验证复用现有Ratatui/Crossterm/Tokio/Rustix与test-only pyte
 
 
 E48仅复用锁定Ratatui/Crossterm/Tokio/Rustix和原test-only pyte0.8.2/wcwidth0.2.13；无外部版本或依赖边变更，inventory仍221。新增guest-only C/脚本为本仓库MIT夹具，不进入产品USB数据通路。 见[验收与审计](research/tui-hotplug-permission-validation.md)。
+
+
+Phase5原生GUI使用独立workspace：Tauri2.12.5、tauri-build2.7.4、runtime-wry2.12.3、wry0.57.1/tao0.37.2实际锁定，Apache-2.0 OR MIT（具体包以[GUI库存](../apps/rustusb-gui/dependency-inventory.json)为准，共475条全平台Cargo metadata，不等于475个Linux runtime）。GTK3/WebKitGTK/Mesa/fonts等原生系统组件保留各自LGPL/GPL/MIT等许可，未被本项目MIT重许可，临时QEMU rootfs不发布。glib0.18.5完整121原文件/MIT许可保留，只有variant_iter.rs两行按上游05dff0ee回补0429；[来源/精确补丁](../apps/rustusb-gui/vendor/README.md)和[实际验证](research/native-gui-validation.md)独立记账，不压制advisory或伪造版本，不称整个GTK已审计。根库存222仅新增内部MIT frontend crate，外部root依赖版本保持；GUI自己的gate/CI不被根检查替代。WebKitWebDriver/Xvfb及测试用程序仅在临时guest运行，不随产品分发，实际ELF哈希在证据原件中。

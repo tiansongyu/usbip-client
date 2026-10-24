@@ -6,7 +6,7 @@
 
 基于 Linux USB/IP 的远程 **USB 设备级重定向**工具，Rust 管理设备、权限和连接，Linux 内核执行真实 USB 请求转发。
 
-当前为**分阶段开发预览**：Linux Native 管理、可选 Rust 服务和受限 helper 已实现；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、TUI、GUI、存储安全共享及完整安全验收仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
+当前为**分阶段开发预览**：Linux Native 管理、可选 Rust 服务和受限 helper 已实现；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、完整GUI/安装、存储安全共享及完整安全验收仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
 可选[安全 broker 模式](docs/secure-guide.md)以双向 TLS 1.3 承载目录、IMPORT及后续URB；[应用服务](docs/application-service-guide.md)独立持有job，按OS UID授权profile/action并提供连接定向停止与有界持久audit。[数据连接观察](docs/data-link-health.md)在显式schema2下提供同一TLS数据连接的probe/RTT，响应不等于USB进展或设备释放。
 
@@ -131,3 +131,6 @@ python3 scripts/qemu/run-fault-qemu.py
 - [许可证与依赖](docs/third-party.md)、[完整需求](docs/requirements.md)、[项目开发规范](AGENTS.md)
 
 RustUSB 自有代码 MIT；外部 Linux 工具/驱动仍按各自 GPL 许可提供。没有把 GPL 实现复制为 MIT 源码。
+
+
+原生Linux [GUI预览](docs/gui.md)现已实现，复用CLI/TUI应用服务与headless worker；[真实QEMU窗口证据](docs/research/native-gui-validation.md)覆盖只读热插拔、权限拒绝/原UUID、偏好及宽窄布局。自动规则、正向GUI设备操作与完整安装/硬件仍未完成；英文README保留产品入口与真实截图。

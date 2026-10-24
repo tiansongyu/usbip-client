@@ -17,6 +17,8 @@ are retained, including two wrong license-path 404s and Ubuntu-site 500/timeouts
 No repository implementation, system installation/update, host USB access or
 upstream script execution occurred during research.
 
+Subsequent implementation is recorded separately in the [native GUI contract](native-gui-design.md) and [actual validation](native-gui-validation.md); this historical research statement is not the current implementation status.
+
 ## Verified candidate facts
 
 - Tauri **2.12.5**, released 2026-10-21 at

@@ -410,3 +410,6 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 ## 终端热插拔、权威拒绝与重载（E48）
 
 [独立脚本](../scripts/qemu_tui_interactions/README.md)保留原monitor六current点/实际kernel提示、增加真实TUI open-modal拔插、d/l/错误和真实agent拒绝；minimal-tui/all分别执行并记录ELF，预期拒绝child1不能计为child0。当前另跑E47双栈与E45 IPv4/信号回归，五invocation/8guest0、56PTY、956软件与原失败分账，详见[报告与G4审计](research/tui-hotplug-permission-validation.md)。Root/JSON/nonTTY实际快速失败没有逐child live-proc；不冒充新USB重定向或硬件/永久OS阻塞证明。
+
+
+原生GUI有独立`./scripts/check-gui.sh`与四Ubuntu/架构软件CI；root `--workspace --all-features`刻意不承担GTK，不替代GUI gate。普通用户native WebView/QEMU、上游GLib兼容修复与抽取共享worker后的TUI回归见[实际报告](research/native-gui-validation.md)和[可复现runner](../scripts/qemu_gui/README.md)。无mock冒充native、无原FAIL改判、无GUI负向推成成功USB I/O或完整安装验收。
