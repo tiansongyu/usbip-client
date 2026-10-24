@@ -38,3 +38,6 @@ QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造�
 
 
 E47终端故障验证复用现有Ratatui/Crossterm/Tokio/Rustix与test-only pyte0.8.2/wcwidth0.2.13；未新增或升级任何外部依赖，库存仍221。新增guest-only C控制夹具为本仓库MIT代码，不进入产品数据通路。详见[验证报告](research/tui-failure-retry-validation.md)。
+
+
+E48仅复用锁定Ratatui/Crossterm/Tokio/Rustix和原test-only pyte0.8.2/wcwidth0.2.13；无外部版本或依赖边变更，inventory仍221。新增guest-only C/脚本为本仓库MIT夹具，不进入产品USB数据通路。 见[验收与审计](research/tui-hotplug-permission-validation.md)。

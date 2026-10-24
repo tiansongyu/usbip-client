@@ -1,6 +1,7 @@
 # Terminal hotplug, real authorization refusal and settings reload
 
-Status: scoped validation design, 2026-10-25. Continues E45–E47 and requirements
+Status: scoped implementation verified at clean `2dc888ce`, 2026-10-25; see
+[validation and G4 audit](tui-hotplug-permission-validation.md). Continues E45–E47 and requirements
 4.9/Phase 4. No new dependency, RPC, USB privilege or administrator-policy editor.
 
 Use a new single-guest composition of the existing local-device-monitor QEMU

@@ -146,8 +146,10 @@ Exiting leaves service jobs running. Settings can be saved explicitly in a
 checked user directory, with startup overrides. [Confirmed-action validation](docs/research/tui-settings-actions-validation.md)
 records real TUI-driven Native USB sessions and separate regressions.
 [Start uncertainty and outage validation](docs/research/tui-failure-retry-validation.md)
-checks original-request retry and visibly stale retained jobs; complete TUI
-acceptance remains open.
+checks original-request retry and visibly stale retained jobs.
+[Hotplug and access validation](docs/research/tui-hotplug-permission-validation.md)
+covers the documented terminal gate in software/QEMU, including real permission
+refusal and settings reload. Hardware and overall release gates remain open.
 
 To observe a device's data connection, explicitly enable TLS configuration schema 2
 on both endpoints, then read health from the running agent:

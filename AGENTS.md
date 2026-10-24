@@ -4,7 +4,7 @@
 
 修改 USB/IP 核心、设备操作、协议解析或特权代码前，必须先读取 `.agents/skills/rustusb-development/SKILL.md`，再读相关设计和源码审计。此显式入口确保不依赖特定 Agent 的技能自动发现机制。Codex 项目技能位于 `.agents/skills/`；其他 Agent 应通过本文件显式读取，不假定通用自动加载。
 
-沿用用户级 UI/UX 和技术文档技能选择偏好。当前 Native、Rust 虚拟profile及实验性 USBFS adapter 已有 QEMU 证据；USBFS正常/热拔与原虚拟回归在干净37bc6b4通过；最新配置安全/多接口恢复在干净22d172d完成ECM、HID/FTDI正常及热拔三项回归，host-state syscall-entry取消/EOF六场景在干净c921a27最终通过；checked release修复与8个host-state/ECM/物理正常热拔在同一干净6e809a1的11项QEMU全部通过，113case/22guest0，软件89/114/19共222项及37c2d61四平台CI通过（后者仅Native测试夹具修订，QEMU结果仍锁6e809a1），见`docs/research/usbfs-checked-release.md`；内核内部active窗口及真实设备 G1/G2 仍未完成。物理设计见 `docs/research/rust-physical-backend-design.md`，不将整个 Phase2 标成完成。可选六页TUI预览见`docs/tui.md`和`docs/research/tui-validation.md`，持久偏好/Native双栈确认操作已有E46证据，完整G4/专项异常仍未完成；GUI未实现；技术文档以代码和固定上游版本为依据。
+沿用用户级 UI/UX 和技术文档技能选择偏好。当前 Native、Rust 虚拟profile及实验性 USBFS adapter 已有 QEMU 证据；USBFS正常/热拔与原虚拟回归在干净37bc6b4通过；最新配置安全/多接口恢复在干净22d172d完成ECM、HID/FTDI正常及热拔三项回归，host-state syscall-entry取消/EOF六场景在干净c921a27最终通过；checked release修复与8个host-state/ECM/物理正常热拔在同一干净6e809a1的11项QEMU全部通过，113case/22guest0，软件89/114/19共222项及37c2d61四平台CI通过（后者仅Native测试夹具修订，QEMU结果仍锁6e809a1），见`docs/research/usbfs-checked-release.md`；内核内部active窗口及真实设备 G1/G2 仍未完成。物理设计见 `docs/research/rust-physical-backend-design.md`，不将整个 Phase2 标成完成。可选六页TUI预览见`docs/tui.md`和`docs/research/tui-validation.md`，持久偏好/Native双栈确认操作已有E46，E47未知应答/失联与E48热插拔/权威拒绝/d/l已补文档化G4软件/仿真证据；硬件/完整G3与发布门槛保持，GUI未实现；技术文档以代码和固定上游版本为依据。
 
 可选Rust服务的Unix SIGINT/SIGTERM合作停止见 `docs/research/server-signal-shutdown.md`：产品修复d39517b，clean934358f软件222项、本地四项与四项QEMU通过；QEMU的虚拟与all-features构建产物分别记账，CI39899971271四原生平台均通过，每格222次测试执行、原两背压及新增四信号场景通过。修改此路径须保留listener前异步prepare取消、取得server后总await cleanup及输出背压语义。重复信号不丢cleanup目前为源码约束；SIGKILL/崩溃、kernel硬阻塞初始化、Windows USB和硬件G1/G2继续未完成。
 
@@ -61,3 +61,6 @@ TLS认证准入E39见`docs/research/authentication-admission-design.md`与`authe
 
 
 终端E47见[未知启动/失联验收](docs/research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。
+
+
+终端E48见`docs/research/tui-hotplug-permission-validation.md`：clean2dc888ce完整956软件/235源，两single238/238加三托管237/237/232，8guest0、56实际PTY（54child0/两预期unresolved child1）；minimal与all ELF分账。实际同TUI kernel socket/PID下地址2→open modal空提示→地址3，Read/Audit-only agent两真实拒绝/0准入及d/l/Reload错通过。Root/json/nonTTY快负向无逐live-proc，不补造。选择消失/代际变化清detail scroll、相同identity重排保留；原935整体FAIL与首template失败保留。文档化G4软件/仿真逐项覆盖不扩大硬件/完整G3/发布或Phase5–7；普通用户设置不编辑管理员策略，确认不授予权限，拒绝后原UUID仍保守保留。

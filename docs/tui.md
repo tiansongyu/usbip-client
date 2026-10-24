@@ -43,15 +43,25 @@ Confirmations initially select Cancel. Tab/arrows select Confirm, then Enter
 submits. Starting applies to **all devices in the fixed profile**, regardless of
 which device row is being browsed. Stopping a job may affect several sessions.
 Accepted stop is not proof of release: inspect actual cleanup before reuse.
+The [G4 software/QEMU audit](research/tui-hotplug-permission-validation.md#g4-requirement-audit)
+links each documented terminal requirement to source, rendered tests and actual
+ordinary-user product runs; hardware and full release gates remain separate.
 
 A lost start response retains the original UUID and blocks new start intents.
 `e` uses only `RetryStart`; expired retry history does not prove the old start
-never ran. Exit reports the retained profile/UUID for reconciliation.
+never ran. A real service Permission refusal also retains that identity
+conservatively; a refused retry does not authorize a new intent. Exiting with an
+unresolved start returns 1 after terminal restoration and metadata-owner joins,
+reporting the retained profile/UUID for reconciliation.
 [Installed fault validation](research/tui-failure-retry-validation.md) exercises
 this with a paused/resumed QEMU agent and the real operator terminal.
 
 Search/sort/filter cover only the displayed finite page (up to 16 service rows).
-Section snapshots are independent samples. Read failures retain visibly stale
+Local details follow the current selected identity. Removal or a new device
+generation resets the details scroll, so empty-selection feedback remains
+visible; reordering the same identity preserves scroll. Filtering a row out
+does not prove a physical unplug. Section snapshots are independent samples.
+Read failures retain visibly stale
 data. Failure of the initial agent read marks job/session/audit pages stale,
 clears the previous journal-health indication and drops old link samples. It
 does not remove the retained jobs or prove any device was released. A successful

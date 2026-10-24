@@ -243,3 +243,6 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 
 
 终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。
+
+
+终端详情滚动现在随有效选择identity变化复位，相同identity重排保留。独立本地观察、agent业务页和偏好文件各保边界；不新增USB能力。E48已逐项审计文档化G4的软件/仿真范围，管理员策略和后续GUI/安装另行维护。 见[验收与审计](research/tui-hotplug-permission-validation.md)。

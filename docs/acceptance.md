@@ -131,7 +131,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 4.6 存储挂载 / 句柄 / 服务 / 多 LUN / 分区 / 加密检查与安全释放 | 所有当前接口和缓存 inactive config 的存储判定；Phase 1 全面拒绝存储导出 | 尚未实现全面使用者 / 挂载命名空间 / dm / LUN 审计与排他导出；**拒绝存储是安全降级，不是完成存储共享功能** |
 | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
 | 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow；E36 diagnostics私有JSON/单profile导出 | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
-| 4.9 Ratatui TUI | 六页普通用户共享API前端与[E45证据](research/tui-validation.md) | 已实现键盘/搜索/筛选/排序/刷新/详情/确认与持久前端设置；Native双栈确认动作见E46，UI专项异常及完整G4仍未完成 |
+| 4.9 Ratatui TUI | 六页普通用户共享API前端；[E48逐项G4软件/仿真审计](research/tui-hotplug-permission-validation.md#g4-requirement-audit) | 键盘/搜索/筛选/排序/刷新/详情/确认与持久偏好；实际热插拔、服务拒绝、失联/原UUID重试已有证据。普通用户设置不编辑管理员策略；真实硬件/完整G3及后续发布门槛未完成 |
 | 4.10 GUI | 设计推迟到核心稳定，计划评估 Tauri；共用核心原则 | 后续 Phase 5；无 GUI；双端列表、延迟、访问控制、自动规则等未实现 |
 | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E36 bounded闭合JSON/alias/独立已提交视图与真实私有publication，信号/文件失败保留实际结果。E31 audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
 
@@ -327,3 +327,8 @@ E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native 
 
 
 终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。
+
+
+## 35. E48：终端热插拔、权威拒绝与G4软件/仿真审计
+
+[报告](research/tui-hotplug-permission-validation.md)锁clean2dc888ce：420/default+516/all+20/vendor共956执行/235源；两个新single分别238源/实际minimal-tui与all ELF，三个当前托管回归分别237/237/232源。五次invocation/8guest0、56实际UID1000 PTY含54正常0及两正确预期的unresolved child1；原935四PTY/guest0但整体FAIL保留。原monitor六点与三托管各原264/三I/O/完整Rootproof均保持。文档化G4 gate已有逐项软件/QEMU证据；无新USB类型/硬件/完整G3/GUI/安装/性能/Windows完成声明。

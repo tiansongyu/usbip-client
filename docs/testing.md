@@ -405,3 +405,8 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 
 
 终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。
+
+
+## 终端热插拔、权威拒绝与重载（E48）
+
+[独立脚本](../scripts/qemu_tui_interactions/README.md)保留原monitor六current点/实际kernel提示、增加真实TUI open-modal拔插、d/l/错误和真实agent拒绝；minimal-tui/all分别执行并记录ELF，预期拒绝child1不能计为child0。当前另跑E47双栈与E45 IPv4/信号回归，五invocation/8guest0、56PTY、956软件与原失败分账，详见[报告与G4审计](research/tui-hotplug-permission-validation.md)。Root/JSON/nonTTY实际快速失败没有逐child live-proc；不冒充新USB重定向或硬件/永久OS阻塞证明。

@@ -1,0 +1,37 @@
+Open the ordinary-user terminal frontend of the existing application service
+
+Usage: rustusb tui [OPTIONS] --config <CONFIG>
+
+Options:
+      --config <CONFIG>
+          Root-managed public agent manifest; never a TLS private configuration
+      --json
+          Emit machine-readable JSON to stdout; logs remain on stderr
+      --refresh-seconds <REFRESH_SECONDS>
+          Delay after completed profile refresh (2..=120 seconds)
+      --socket <SOCKET>
+          Root-owned local helper socket [default: /run/rustusb/control.sock]
+      --no-auto-refresh
+          Begin with automatic profile/catalog polling paused
+      --timeout <TIMEOUT>
+          Discovery timeout covering DNS, connect and response [default: 10]
+      --auto-refresh
+          Enable automatic polling even when saved preferences pause it
+      --log-json
+          Emit JSON tracing logs on stderr
+      --log-directory <LOG_DIRECTORY>
+          Write sanitized bounded NDJSON to an existing private directory instead of stderr
+      --monochrome
+          Use text emphasis without application colors
+      --color
+          Use application colors even when saved preferences select monochrome
+      --log-max-bytes <LOG_MAX_BYTES>
+          Segment byte limit (4096..=8388608); requires a file log directory
+      --log-retain <LOG_RETAIN>
+          Total retained segments including active (2..=16)
+      --preferences-directory <PREFERENCES_DIRECTORY>
+          Checked caller-owned 0700 directory, containing only frontend preferences
+      --no-preferences
+          Do not read or save user preferences; invocation-local options only
+  -h, --help
+          Print help

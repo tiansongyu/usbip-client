@@ -11,6 +11,11 @@
 
 - 为G4逐项核对补充真实App键盘/channel/TestBackend组合测试：排序保选择、attention筛选、无匹配不发stop、UUID搜索不触发刷新快捷键、最后确认只发精确job ID；14前端函数首PASS。三guard实际命令和真实open-modal判据均在最终夹具，未将原935失败改判。随后冻结新提交，执行完整质量gate和最终单guest/托管回归。
 
+- clean2dc888ce完整十项gate全0：420/default+516/all+20/vendor=956执行/235稳定源。新single all/tui分别首PASS、238源、各四PTY（三实际child0/一正确预期child1）及三fast guard1；当前E47双栈237/237和E45-v4/信号232三pair全PASS，各原264核验/三I/O/完整Rootproof保留。全部五invocation/8guest0、56实际PTY（54child0/两unresolved1）。minimal CLI06e1531d…与all6b426a35…分账；minimal normal树无RustBackend/nusb，之后实际all restore精确回software ELF，不当另一次测试。
+- 无import原verifier的同作者raw/source/Git/ELF/UID/PID/termios/状态/最终baseline核对通过，封闭3286原件/方法、1398 guest Base64与7320626B archive逐member/hash；非新增USB/独立安全审计。原935 FAIL和初template/summary观察问题保留；新报告逐项列G4软件/QEMU证据与边界，英文README/guide及维护文档同步，完整目标/硬件G1G2/完整G3/后续Phase5–7保持active。尚待文档QA与精确内容CI发布。
+
+- 文档QA19源495本地/仓库target、205site/Node/diff、实际TUI help exit0和默认Native normal树隔离均PASS；235软件及最终238/238/237/237/232输入、all ELF精确一致。七site/四global readme-site及正确Codex symlink保持，无新browser/pixel/noJS/reduced-motion宣称。QA保留检查时源快照，随后仅英文间距润色及发布回执追加；链接目标未变化。即将普通SSH commit/push并核精确内容四native CI/Pages，不提前标成功。
+
 ## 2026-10-25：终端未知启动结果与agent失联（开始）
 
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。
