@@ -894,8 +894,3 @@ def verify(evidence, summary):
             "gate": gate, "pages": pages, "source_artifacts": originals.files,
             "logging_status": {"/".join(map(str, k)): v["status"] for k, v in stores.items()},
             "scope": "three actual Native/framed-v2 epochs; same saved original capability/root proof and live OS/kernel observations; normal rotation/authorized typed reads, removable independent access-lock fault, USB cleanup before release, final actual log loss and fresh real I/O; predicates are not USB-case counts; no permanent filesystem cancellation, in-kernel-active window, hardware, or complete Phase3 claim"}
-
-
-
-
-
