@@ -175,3 +175,27 @@ remote evidence readable. Console warning/error lists were empty. Screenshots
 were unavailable, so no pixel review is claimed. CSS, JavaScript and SVGs are
 unchanged; earlier clipboard/reduced-motion checks were not repeated. Temporary
 preview tabs and the loopback server were closed and viewport settings reset.
+
+## Published content and CI
+
+Content `9e65763705aa48f4a8085ecb6f8b938fea4b7305` was normally pushed over SSH,
+with a clean tree and matching remote main.
+[Software run 40114160923](https://github.com/tiansongyu/usbip-client/actions/runs/40114160923)
+completed successfully on all four native Ubuntu 22.04/24.04 x86_64/aarch64 jobs
+(120931897631, 120931897761, 120931897823, 120931897834).
+[Pages run 40114161007](https://github.com/tiansongyu/usbip-client/actions/runs/40114161007)
+completed check 120931897786 and deploy 120931982014 successfully.
+
+The [publication receipt](../evidence/remote-catalog-watch-publication-9e65763-20261024/manifest.json)
+retains primary run/job API responses, polling, exact HTTP bodies/headers, the
+content push and verification methods. Software step details were null/empty in
+these responses; an attempted direct job-detail endpoint was rejected by the
+connector. Neither missing steps nor full CI logs/per-platform ELF/test recounts
+are invented. The four successful job conclusions are verified separately from
+the local 903 executions at `ec91c4a` and paired QEMU runs at `633b2a3`.
+
+Six canonical HTTPS resources returned 200 and exactly matched content Git blobs.
+Actual live CUA reload/AX/DOM checks confirmed the new guide links and 903-scope
+copy, loaded local SVGs and an empty warning/error list at 1280×720. There is no
+pixel review. The 223 software, each 221 QEMU and four global skill source files
+still match; the later receipt-only commit does not relabel their tested revisions.

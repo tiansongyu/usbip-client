@@ -114,3 +114,9 @@ retains stale data, recognizes reserved-device visibility and never imports USB.
 Only index copy/links change; runtime styles, JavaScript and SVGs remain unchanged.
 Its publication and any new browser checks must be recorded against their actual
 content revision, without relabeling prior inventory evidence.
+
+Remote-watch content `9e657637` is now live: Pages 40114161007 and all four native
+software jobs in 40114160923 completed successfully. Six canonical HTTP bodies
+match that commit; actual live CUA DOM/AX checks confirm its updated copy and links.
+No screenshot/pixel review or missing software-step details are claimed. See its
+[publication receipt](evidence/remote-catalog-watch-publication-9e65763-20261024/manifest.json).

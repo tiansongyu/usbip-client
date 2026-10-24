@@ -304,3 +304,5 @@ Native局部stop保留原HID真实I/O，client detach后先等精确原server st
 ## 30. 认证远程目录自动观察（E43）
 
 见[英文验收](research/remote-catalog-watch-validation.md)。shared service以同一owner/metadata API实现agent discover及secure-discover --watch，原one-shot不变；initializing/null、Current空成功、Stale保旧、terminal clear分开，stable key地址变化不授generation/能力。clean ec91软件903/223源，clean633两Native raw1双栈QEMU/4guest0各原264+新69核验与三I/O轮/完整Rootproof；同PID watcher观察2→HID-only1→stale1→恢复2→真实export stop1→0，四辅助CLI场景含direct TLS/TERM、实际满write-only FIFO/INT、关闭readerexit1、UID1002拒绝，fast拒绝无独立liveELF。旧4signal2BP3local观察通过；宿主.private仅私有保留。首Clippy gate及空jq/错误busy计数两QEMU FAIL不重判。v2仅loopback、启动取消仅源码修复；原硬件G1/G2/完整G3/Phase4–7继续未完成。
+
+E43内容9e657637正常SSH push/远端main一致/clean；software40114160923四native job120931897631/897761/897823/897834及Pages40114161007 check120931897786/deploy120931982014均completed/success。软件step详情在primary响应为null/empty，不虚构逐step/full log/各平台903重算；六canonical HTTPS资源200并逐Git字节同，actual live CUA确认新文案/links/SVG，非pixel review。原件见[发布回执](evidence/remote-catalog-watch-publication-9e65763-20261024/manifest.json)。223/各221/四global源不变，原Phase0–7未完成项保持。
