@@ -54,6 +54,7 @@ gui_open() {
     done
     jq -n --arg session_label "$GUI_LABEL" '{capabilities:{alwaysMatch:{"webkitgtk:browserOptions":{binary:"/usr/bin/gui-launcher",args:[$session_label,"--manifest","/etc/rustusb/agent.json","--settings-directory","/home/operator/.config/rustusb"]}}}}' >/run/gui-session-request.json
     gui_http POST /session "$(cat /run/gui-session-request.json)" "/tmp/gui-$GUI_LABEL-session.json"
+    { cat "/proc/$GUI_DRIVER/status" "/proc/$GUI_DRIVER/stat"; sha256sum "/proc/$GUI_DRIVER/exe"; } >"/tmp/gui-$GUI_LABEL-driver-actor.txt"
     GUI_SESSION=$(jq -er '.value.sessionId' "/tmp/gui-$GUI_LABEL-session.json")
     GUI_PID=$(cat "/tmp/gui-$GUI_LABEL.pid")
     { echo "PID=$GUI_PID"; cat "/proc/$GUI_PID/status" "/proc/$GUI_PID/stat"; echo "EXE=$(readlink "/proc/$GUI_PID/exe")"; sha256sum "/proc/$GUI_PID/exe";
@@ -113,6 +114,12 @@ gui_stop() {
     gui_wait "any(.$kind[];.id==\"$id\")" /run/gui-stop-ready.json
     gui_js 'document.querySelectorAll("nav button")[2].click();return true;' /run/gui-connections.json
     gui_dom 'document.getElementById("page-title").textContent==="Connections" && !document.getElementById("start").disabled'
+    if [ "$ROLE:$label" = client:stop-job-serial-2 ]; then
+        gui_wait 'any(.health[];.link.protocol=="raw_v1" and .link.last_round_trip_micros==null)' /tmp/gui-raw-health.json
+        gui_dom 'document.querySelector("details summary")'
+        gui_js 'document.querySelector("details summary").click();return document.body.innerText;' /tmp/gui-raw-health-dom.json
+        jq -e '.value|contains("RTT unavailable")' /tmp/gui-raw-health-dom.json >/dev/null
+    fi
     gui_js "const rows=[...document.querySelectorAll('tbody tr')].filter(r=>r.cells[0]?.firstChild?.firstChild?.textContent==='$id');if(rows.length!==1)throw Error('exact row absent/ambiguous');rows[0].querySelector('button').click();return true;" /run/gui-stop-click.json
     gui_confirm
     jq -e --arg id "$id" '.value.text|contains($id)' "/tmp/gui-$GUI_LABEL-confirm.json" >/dev/null
@@ -154,6 +161,11 @@ gui_cleanup() {
         kill -TERM "$child" 2>/dev/null
         for gui_poll in $(seq 1 150); do [ -e "/proc/$child/status" ] || break; grep -q '^State:.*Z' "/proc/$child/status" && break; sleep .05; done
         if [ -e "/proc/$child/status" ] && ! grep -q '^State:.*Z' "/proc/$child/status"; then echo "GUI_FORCED_CHILD $child";kill -KILL "$child";original=1;fi
+    done
+    for child in "$GUI_DRIVER" "$GUI_XVFB"; do
+        [ -n "$child" ] || continue
+        wait "$child"; child_wait=$?
+        echo "$child_wait" >"/tmp/gui-cleanup-$child.wait"
     done
     gui_original_result() { return "$original"; }
     gui_original_result

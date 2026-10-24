@@ -13,6 +13,8 @@
 
 - clean901a6dac第三run同exit4/原失败保留。复核不存在admitted/close原件，第二run实际state jobs0/requests0；此前将exit4归native-close及已Start为错误推断，现明确更正。真实原因gui_js新校验对boolean的.error?输出empty令jq退出4，发生在profile事件返回true。改按value type/object error判定，补true/false/null/string/object与error对象的实际jq preflight；C诊断仅未执行的夹具增强，不当修复证据。
 
+- cleanae1e3fb5第四IPv4 parent/两guest实际PASS，12真实UID1000窗口/六GUI Start/一session Stop/四job Stop/非空Remote，真实WM_DELETE_WINDOW时间与child0/localjoin；原264核验/三I/O/两epoch/Rootproof保持。原三失败不改判。末收紧：parent独立对照精确Stop ID/owner_present、补真实driver actor/ELF、raw-v1 health无RTT及展开的GUI“RTT unavailable”，失败infra cleanup实际wait直系children。最终gate、双栈与原回归待新clean执行。
+
 ## 2026-10-25：原生GUI实现（开始）
 
 - 上一轮E48与Phase5研究为实际进展；从clean7498ff40重读完整原任务、Git/AGENTS/核心skill/工作日志和固定Tauri/Linux研究。目标仍为完整Phase0–7；原英文README/展示站/全局skill保持。使用frontend-design/ui-ux-pro-max/writing-technical-design与技术文档指导，先写native-gui-design.md，保留自动规则/包/systemd/安装及硬件门槛。

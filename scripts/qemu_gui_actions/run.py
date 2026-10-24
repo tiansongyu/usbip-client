@@ -82,8 +82,19 @@ def verify(evidence,args):
             close=(folder/(prefix+'-close.txt')).read_text();assert 'protocol=WM_DELETE_WINDOW'in close and 'sent=1'in close
             assert re.search(r'timestamp=[1-9][0-9]*',close)
             assert 'GUI_FORCED_CHILD'not in(evidence/f'{role}-evidence.log').read_text()
+            driver_actor=(folder/(prefix+'-driver-actor.txt')).read_text();assert re.search(r'^Uid:\s+1000\s+1000\s+1000\s+1000$',driver_actor,re.M)
+            assert base.digest(DRIVER)in driver_actor
             session=read(prefix+'-session.json')['value'];assert session['capabilities']['browserName']=='wry'
             if label!='remote-catalog':assert read(prefix+'-confirm.json')['value']['focus']=='cancel'
+            if label.startswith('stop-job-'):
+                profile=label[len('stop-job-'):].rsplit('-',1)[0];epoch=label.rsplit('-',1)[1]
+                expected=read(f'start-{profile}-{epoch}.json')['response']['job']['id']
+                assert expected in read(prefix+'-confirm.json')['value']['text']
+                assert 'Stop accepted (owner present: true)'in read(prefix+'-accepted.json')['value']['status']
+            if label=='stop-session-hid':
+                candidates=[s['id']for s in read('server-held-1.json')['response']['sessions']if s['role']=='incoming'and s['device_key']==json.loads((folder/'keys.json').read_text())[0]and not s['terminal']]
+                assert len(candidates)==1 and candidates[0]in read(prefix+'-confirm.json')['value']['text']
+                assert 'Stop accepted (owner present: true)'in read(prefix+'-accepted.json')['value']['status']
             checks.append(f'{role}/{label}: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join')
         for p in profiles:
             for epoch in [1,2]:
@@ -100,6 +111,8 @@ def verify(evidence,args):
     assert {d['device_key']for d in catalog['devices']}==set(json.loads((client/'keys.json').read_text()))
     assert 'No devices match'in json.loads((client/'gui-remote-search-empty.json').read_text())['value']
     detail=json.loads((client/'gui-remote-detail.json').read_text())['value'];assert detail['filterHidden']and 'device_number'in detail['text']
+    health=json.loads((client/'gui-raw-health.json').read_text())['value']['health'];assert any(h['link']and h['link']['protocol']=='raw_v1'and h['link']['last_round_trip_micros']is None for h in health)
+    assert 'RTT unavailable'in json.loads((client/'gui-raw-health-dom.json').read_text())['value']
     facts['gui_actions']={'checks':checks,'native_processes':12,'start_requests':6,'targeted_session_stops':1,'job_stops':4,'gui_sha256':gui_sha,'scope':'Real native actions/Remote/WM close and continued original kernel I/O; raw-v1 RTT unavailable, not installation/hardware/full Phase5.'}
     return facts
 
