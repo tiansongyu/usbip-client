@@ -46,4 +46,6 @@ README/site counts link to the [rotating-log report](research/rotating-logs-vali
 
 The preparation-stop update is published at `ac4e802`, with [separate exact-head deployment and live-byte receipts](evidence/prepare-recording-publication-ac4e802-20261024/manifest.json). Its later workflow status does not replace the detailed CI at `5ffdc6c` or the clean QEMU results at `1582f06`.
 
+The rotating-log update is published at `7640efb`, with [separate deployment and live-byte receipts](evidence/rotating-logs-publication-7640efb-20261024/manifest.json). Its software workflow and Pages check/deploy completed successfully; all six canonical HTTPS resources match that content commit exactly. Live desktop/mobile layout, responsive images and keyboard state were checked separately. The detailed 723-execution CI remains at `89ef420`, and the focused installed QEMU scenario remains at clean `48c9794`.
+
 The tab URL/history, selected indicator and inline link cues are verified separately from USB behavior. A local CSP `script-src 'none'` response exercises initial-HTML readability; a temporary `Permissions-Policy: clipboard-write=()` response exercises the real copy-denial fallback. Those test policies are not published site settings. Record unavailable browser capabilities accurately; a DOM/layout check is not a pixel screenshot or reduced-motion emulation.
