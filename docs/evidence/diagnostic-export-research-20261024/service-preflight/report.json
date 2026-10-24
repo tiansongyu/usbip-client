@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "PROPOSED_SOURCE_PREFLIGHT_COMPLETE",
+  "baseline": "46cd950affb0c949b164d0051be7bf70f365fac9",
+  "sources": 26,
+  "source_unchanged": true,
+  "source_matches_head": true,
+  "file": "preflight.md",
+  "key_findings": [
+    "Existing state and audit reads wait on Runtime; independent committed view needed to serve useful diagnostics under WAL stall.",
+    "Read and Audit are separate permissions; require both for one-profile package and bind every page to actual UID/profile.",
+    "Existing bounded labels, principals, device fingerprints, TCP tuples and doctor String fields require an explicit diagnostic projection.",
+    "Health/log observation times differ from committed state; preserve previous epoch, loss/gap, operation/cleanup and historical proof boundaries.",
+    "Accepted log reads stay with two real readers plus two queued slots after observer cancellation; no detached filesystem or doctor task may be claimed cancelled."
+  ],
+  "proposal_not_implemented": true,
+  "execution": [
+    "Read-only source and read-only Git blob comparisons",
+    "No Cargo/build/productCLI/QEMU/oldverifier/network/API",
+    "Only new /tmp report files written"
+  ],
+  "reviewer_participation": "Author of service/logging components; source-method cross-review, not independent implementation audit.",
+  "limits": "Proposed API, quotas and tests were not compiled or executed. Parent will select final API before implementation. No hardware or cleanup claims from diagnostics."
+}

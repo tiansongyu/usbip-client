@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "crates/rustusb-native/src/diagnostics.rs",
+      "bytes": 48750,
+      "sha256": "84a51ea1d75b291ebdbbc3fce714a77b0836bd2ee4e95bdd4b8d1823d09dd394",
+      "copy": "diagnostics.rs"
+    },
+    {
+      "path": "crates/rustusb-diagnostics/src/native_probe.rs",
+      "bytes": 1882,
+      "sha256": "c9c2648a86414548ac15a1c1da506d09b6cc38a9ec6c2670a1ed63d60558173b",
+      "copy": "native_probe.rs"
+    }
+  ],
+  "api": "diagnose_native_with_child_reaping() -> rustusb_core::Result<NativeDiagnostics>; native_probe::collect(PathBuf) -> Result<NativeObservations>",
+  "old_doctor": "Same 3s tool deadline and 2s bounded reap observation; old test wrapper retained",
+  "new_owner": "Every failed-child path actual waits; wait error returned; both tools joined before error; dedicated runtime max_blocking_threads(4) dropped before closure returns",
+  "test_authored": "actual_reap_finishes_both_real_children_after_distinct_failures: real timeout/overflow children, both actual waits and proc disappearance; not executed",
+  "validation": [
+    "rustfmt on exactly two owned files completed",
+    "manual source review of five failed_child calls and join ownership"
+  ],
+  "not_executed": [
+    "Cargo",
+    "build",
+    "tests",
+    "product CLI",
+    "QEMU"
+  ],
+  "scope": "two source files frozen; artifact.rs remains separate authorized work"
+}

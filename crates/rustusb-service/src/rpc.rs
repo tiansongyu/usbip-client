@@ -79,6 +79,29 @@ pub enum Request {
         /// Between one and sixteen records; scanned bytes are independently bounded.
         limit: u8,
     },
+    /// Pin a coherent committed view; both Read and Audit are required.
+    BeginDiagnostic {
+        /// Exact configured profile; no path or credential is accepted.
+        profile: String,
+    },
+    /// Read one finite page from the caller's original pinned snapshot.
+    DiagnosticPage {
+        /// Exact profile, reauthorized on every page.
+        profile: String,
+        /// Opaque identity bound to the actual caller UID and profile.
+        snapshot: crate::diagnostics::DiagnosticToken,
+        /// Fixed typed section.
+        kind: crate::diagnostics::DiagnosticKind,
+        /// Number of filtered rows already consumed; zero starts a section.
+        after: u16,
+    },
+    /// Idempotently release only this caller's matching metadata snapshot.
+    EndDiagnostic {
+        /// Exact profile, independently requiring Read and Audit.
+        profile: String,
+        /// Unknown, foreign or expired tokens have the same no-effect reply.
+        snapshot: crate::diagnostics::DiagnosticToken,
+    },
     /// Read the authenticated catalog of a fixed client profile.
     Discover {
         /// Fixed client profile ID; endpoint/device credentials cannot be overridden.
@@ -213,6 +236,23 @@ pub enum Response {
     LogError {
         /// Fixed logger category, never an internal error string or path.
         code: LogReadFailure,
+    },
+    /// A bounded snapshot of already committed profile metadata was pinned.
+    DiagnosticStarted {
+        /// Original committed sequence, counts and finite snapshot identity.
+        header: crate::diagnostics::DiagnosticHeader,
+    },
+    /// One complete typed page of the original pinned snapshot.
+    DiagnosticPage {
+        /// Finite authorized records and an explicit continuation offset.
+        page: crate::diagnostics::DiagnosticPage,
+    },
+    /// Idempotent metadata-only release; token existence is not revealed.
+    DiagnosticEnded {},
+    /// Authorized observation failed without changing USB or WAL ownership.
+    DiagnosticError {
+        /// Fixed category, never an internal path or error string.
+        code: crate::diagnostics::DiagnosticFailure,
     },
     /// Authenticated catalog; not proof a listed device successfully redirects.
     Catalog {

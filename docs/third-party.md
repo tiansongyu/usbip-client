@@ -17,4 +17,6 @@ RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件�
 
 工作区所有feature的直接/传递依赖**实际解析版本和SPDX**导出到 `dependency-inventory.json`，生成脚本为 `scripts/dependency-inventory.py`（`cargo metadata --all-features --locked`）。发布前重新运行并审查所有license缺失/自定义条目和目标平台依赖；锁文件固定版本不等于已完成许可证审查。原生系统usbip/libusb/QEMU等不包含在Cargo元数据中，需单独登记。nusb原有底层包含unsafe，项目自身核心不新增unsafe；不能将核心规范扩大表述成全部传递依赖无unsafe。
 
+诊断导出新增内部 `rustusb-diagnostics` crate（MIT），锁解析159→160包；所有外部package块（版本、source、checksum和依赖）逐字节保持。固定Rust1.97.1、Tokio1.54.1、rustix1.1.5和serde_json1.0.154的文件/进程/有界序列化研究见[设计](research/diagnostic-export-design.md)，没有复制其产品实现或新增第三方依赖。
+
 QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造的内核、busybox和工具有各自许可证，生成的临时镜像不作为本仓库发布物。

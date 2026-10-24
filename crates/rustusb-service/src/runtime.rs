@@ -170,6 +170,7 @@ pub(crate) struct Runtime {
     recoveries: JoinSet<(SessionId, Vec<BrokerOperationStatus>)>,
     recovery_cursor: usize,
     logging: Option<rustusb_logging::LogMonitor>,
+    diagnostics: Arc<crate::diagnostics::Registry>,
 }
 impl Runtime {
     pub async fn open(config: Arc<LoadedConfig>, controls: Arc<Mutex<Controls>>) -> Result<Self> {
@@ -187,10 +188,15 @@ impl Runtime {
             .await
             .map_err(|_| Error::State("agent store task failed".into()))??;
         let state = store.state.clone();
+        let instance = InstanceId::new(fresh_id()?)?;
+        let diagnostics = Arc::new(crate::diagnostics::Registry::new(
+            instance.clone(),
+            state.clone(),
+        ));
         let (sender, receiver) = mpsc::channel(64);
         let mut value = Self {
             config,
-            instance: InstanceId::new(fresh_id()?)?,
+            instance,
             state,
             store: Arc::new(Mutex::new(store)),
             healthy: true,
@@ -201,6 +207,7 @@ impl Runtime {
             recoveries: JoinSet::new(),
             recovery_cursor: 0,
             logging,
+            diagnostics,
         };
         let mut next = value.state.clone();
         let mut changed = false;
@@ -239,6 +246,10 @@ impl Runtime {
         }
         value.refresh_health()?;
         Ok(value)
+    }
+
+    pub(crate) fn diagnostics(&self) -> Arc<crate::diagnostics::Registry> {
+        self.diagnostics.clone()
     }
 
     fn refresh_health(&self) -> Result<()> {
@@ -337,6 +348,10 @@ impl Runtime {
                         logging.audit(project_audit(&self.instance, event));
                     }
                 }
+                // Clone outside the diagnostic registry lock. Publication is
+                // observation only: poison cannot turn this committed fact or
+                // its already-emitted mirror into a business failure.
+                self.diagnostics.publish(self.state.clone());
                 self.refresh_health()
             }
             Err(error) => {
@@ -591,6 +606,21 @@ impl Runtime {
                     .authorize(uid, &profile, Action::Audit)?;
                 Err(Error::State(
                     "log reads require the independent IPC path".into(),
+                ))
+            }
+            Request::BeginDiagnostic { profile }
+            | Request::DiagnosticPage { profile, .. }
+            | Request::EndDiagnostic { profile, .. } => {
+                // Only denied reads arrive here; their ordinary durable denial
+                // path is retained. Authorized observations bypass the actor.
+                self.config
+                    .manifest
+                    .authorize(uid, &profile, Action::Read)?;
+                self.config
+                    .manifest
+                    .authorize(uid, &profile, Action::Audit)?;
+                Err(Error::State(
+                    "diagnostic reads require the independent IPC path".into(),
                 ))
             }
             Request::Discover { profile } => {

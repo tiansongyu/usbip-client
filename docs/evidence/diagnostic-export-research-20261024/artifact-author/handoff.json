@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "crates/rustusb-diagnostics/src/artifact.rs",
+      "bytes": 31894,
+      "sha256": "1b7a6d6e18e3757640ffa3c5d715493590c120b0d58b789c290992005e65de17",
+      "copy": "artifact.rs"
+    },
+    {
+      "path": "crates/rustusb-diagnostics/src/artifact/agent.rs",
+      "bytes": 18633,
+      "sha256": "fb8d6ef5ba6e1886d527a140dd09fc8a073784b1779f0e800b879b5eeed64bb0",
+      "copy": "agent.rs"
+    },
+    {
+      "path": "crates/rustusb-diagnostics/src/artifact/tests.rs",
+      "bytes": 19637,
+      "sha256": "740a8be44392dce272442c171fbae640373a6e1f6fc853922afcc431f8c3703e",
+      "copy": "tests.rs"
+    }
+  ],
+  "previous_native_probe_frozen": [
+    {
+      "path": "crates/rustusb-native/src/diagnostics.rs",
+      "unchanged": true
+    },
+    {
+      "path": "crates/rustusb-diagnostics/src/native_probe.rs",
+      "unchanged": true
+    }
+  ],
+  "public_types": [
+    "CaptureOutcome",
+    "Stage",
+    "SectionOutcome",
+    "CollectionFailure",
+    "SectionSummary",
+    "Summary"
+  ],
+  "private_builder": [
+    "new",
+    "observe_local",
+    "set_outcome",
+    "summary",
+    "encode",
+    "observe_logs",
+    "set_agent_scope (secure)",
+    "begin_agent (secure)",
+    "push_items (secure)",
+    "observe_health (secure)"
+  ],
+  "bounds": {
+    "serialized_bytes": 4194304,
+    "total_aliases": 8192,
+    "jobs": 512,
+    "sessions": 512,
+    "audit": 1024,
+    "health": 512,
+    "health_pages": 32,
+    "log_records": 512,
+    "log_pages": 32,
+    "rows_per_page": 16,
+    "attempts_per_session": 32
+  },
+  "privacy": "Closed source projections only; independent alias namespaces; internal reverse keys never serialized; raw Native/helper text ignored; no TCP/path/serial/cert/key/cursor/UID/PID/source identity output; agent scope locked before Begin and root only own unscopedDenied; requested scope aliases retained on Begin failure",
+  "facts": "State/cleanup/protocol-end independent; audit lacking source epoch remains null; health outside committed view explicit; disk logs live-status unavailable does not alone mean incomplete; sticky loss/gap/tail/limit cannot be cleared by stage Complete",
+  "validation": [
+    "Owned rustfmt and rustfmt --check completed",
+    "git diff --check of modified tracked Native source completed",
+    "manual source review only"
+  ],
+  "authored_tests": {
+    "default": 4,
+    "secure_additional": 4,
+    "executed": false
+  },
+  "limitations": [
+    "No Cargo, build, CLI, QEMU or tests executed",
+    "Runtime/task ownership enforced by root collector caller contract",
+    "Existing source DTO parsing and authorized IPC remain separate from export projection",
+    "Private secure enum variants retained in default artifact schema, with targeted cfg dead-code allowance only for absent producer"
+  ]
+}

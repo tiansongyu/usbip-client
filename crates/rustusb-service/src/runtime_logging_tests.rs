@@ -53,7 +53,7 @@ async fn rpc(
 ) -> TestResult<ResponseEnvelope> {
     let (mut client, server) = tokio::net::UnixStream::pair()?;
     let task = tokio::spawn(crate::ipc::request(
-        server, sender, config, controls, logging,
+        server, sender, config, controls, logging, None,
     ));
     let bytes = serde_json::to_vec(&RequestEnvelope {
         schema_version: 1,

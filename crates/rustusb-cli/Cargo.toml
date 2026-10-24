@@ -11,11 +11,12 @@ path = "src/main.rs"
 
 [features]
 default = []
-secure-transport = ["dep:rustusb-transport", "dep:rustusb-service"]
+secure-transport = ["dep:rustusb-transport", "dep:rustusb-service", "rustusb-diagnostics/secure-transport"]
 rust-backend = ["dep:rustusb-rust-backend", "secure-transport", "rustusb-service/rust-backend"]
 physical-nusb = ["rust-backend", "rustusb-rust-backend/physical-nusb", "rustusb-daemon/physical-usb", "rustusb-service/physical-nusb"]
 
 [dependencies]
+rustusb-diagnostics.workspace = true
 rustusb-logging.workspace = true
 rustusb-core.workspace = true
 rustusb-linux.workspace = true

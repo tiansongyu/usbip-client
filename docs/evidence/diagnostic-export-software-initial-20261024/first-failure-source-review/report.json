@@ -1,0 +1,71 @@
+{
+  "verdict": "CONFIRMED_FIXTURE_OBSERVATION_AFTER_OWNER_DROP",
+  "review_type": "Read-only method review by fixture author; not an independent implementation and no rerun",
+  "observed_run": {
+    "service": "10 passed / 1 assertion failure / 0 ignored / 75 filtered",
+    "failed_test": "runtime::tests::diagnostics::poisoned_diagnostics_preserve_actual_commit_and_existing_log_mirror",
+    "assertion": "runtime_diagnostics_tests.rs:353 accepted: observed 0, expected 1",
+    "diagnostics_default": "20 passed",
+    "diagnostics_secure": "24 passed"
+  },
+  "source_basis": [
+    {
+      "path": "crates/rustusb-logging/src/worker.rs",
+      "lines": "225\u2013236",
+      "fact": "LogMonitor holds Weak<Shared>; status after owner disappears returns unavailable_status"
+    },
+    {
+      "path": "crates/rustusb-logging/src/worker.rs",
+      "lines": "395\u2013465",
+      "fact": "Shutdown consumes owner, drains/joins actual readers and writer, then returns final Shared snapshot in ShutdownReport before dropping Shared"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "lines": "336\u2013354",
+      "fact": "Actual state commit is replaced and existing audit mirror submitted before independent diagnostic publication"
+    }
+  ],
+  "narrow_fix": "Require Some(shutdown()?.status), assert final accepted=1/written=1, keep actual disk Audit sequence1 and canonical committed store checks. Do not reinterpret unavailable Weak snapshot as actual final counters.",
+  "not_proven": [
+    "The trailing disk assertion did not execute in the failed test; no successful mirror PASS is backfilled",
+    "No new Cargo/test/CLI/QEMU executed by reviewer",
+    "No product code change requested"
+  ],
+  "files": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+      "bytes": 43133,
+      "sha256": "e4213d8c2e05ab2badc8d8c4b36c1399f0154e29f84465388fafbb126631e214"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/types.rs",
+      "bytes": 23052,
+      "sha256": "5bff0888ed9697ac7040f448f56a7c6e8d611f2a037791db3ede38e6afcbc287"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/runtime.rs",
+      "bytes": 52997,
+      "sha256": "d8d222601d1c6892508d2900af0a8d929472cc95cae6560c43b9eeb49b7af0f7"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/runtime_diagnostics_tests.rs",
+      "bytes": 15319,
+      "sha256": "b46314ac798a3a98fed45b63190b89565e5c86bad53ba0f7ce4c93ddd3091728"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-dev-first-20261024/service.log",
+      "bytes": 2324,
+      "sha256": "0957125e4efdb0119a3cd02428054c45cc97ce308c4ee41b9d3c6f10a1afef32"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-dev-first-20261024/diagnostics-default.log",
+      "bytes": 2529,
+      "sha256": "15c535c57f0152c95d773efe4988ed2c53bead723794f97e81ca0b023d16690d"
+    },
+    {
+      "path": "/tmp/rustusb-diagnostic-dev-first-20261024/diagnostics-secure.log",
+      "bytes": 2746,
+      "sha256": "2420971790a2ab08eb33b200ef712df028c9042f58ddc4f9062473796b1a2924"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "status": "SOURCE_FROZEN_PENDING_ROOT_BUILD",
+  "design_commit": "88179f2",
+  "author_scope": "service committed diagnostic registry / additive RPC / IPC independent authorized path / postcommit publication / scoped tests",
+  "public_schema": "diagnostics.rs and rpc.rs exact frozen source",
+  "facts": [
+    "Read+Audit authorization precedes registry/slot/token evaluation on Begin/Page/End",
+    "Authorized results and fixed failures bypass the Runtime actor; permission denial retains existing durable audit",
+    "Store commit and state replacement precede existing audit mirror, which precedes diagnostic publication",
+    "Registry poison gives Unavailable without changing committed WAL outcome or suppressing log mirror",
+    "4 actual Arc snapshot permits; one per UID via bounded Weak owner index; End/expiry revoke access without prematurely releasing an in-flight page quota",
+    "Current epoch checked NonZeroU64 counter; 30 second access lifetime; no per-request filesystem or RNG",
+    "Pages copy/encode outside registry mutex; filtered row offsets; 16 rows and 60000 payload bytes; IPC envelope remains <=65536",
+    "Exact profile audit plus own UID unscoped Denied applies equally to root",
+    "No USB owner, mutation, cancellation or original lifecycle schema changes"
+  ],
+  "tests_written": [
+    "coherent_complete_filtered_pages_survive_new_commits",
+    "actual_snapshot_lifetime_keeps_global_and_uid_quota_after_end_and_expiry",
+    "permissions_precede_registry_and_foreign_end_is_indistinguishable",
+    "audit_filter_is_exact_profile_or_own_denial_even_for_root",
+    "counter_overflow_poison_and_strict_nullable_are_explicit",
+    "row_and_frame_budgets_reject_oversized_rows_without_false_empty_end",
+    "actual_store_wait_keeps_old_coherent_pages_and_fast_stop_independent",
+    "failed_actual_commit_never_enters_diagnostic_publication",
+    "poisoned_diagnostics_preserve_actual_commit_and_existing_log_mirror",
+    "unknown_profile_denial_uses_actual_uid_actor_and_durable_audit",
+    "additive_diagnostic_rpc_is_strict_and_old_ipc_one_shapes_are_unchanged"
+  ],
+  "test_count": 11,
+  "executed": [
+    {
+      "command": "rustfmt --edition 2024 --check --config skip_children=true crates/rustusb-service/src/diagnostics.rs crates/rustusb-service/src/diagnostics_tests.rs crates/rustusb-service/src/runtime_diagnostics_tests.rs crates/rustusb-service/src/rpc.rs crates/rustusb-service/src/runtime.rs crates/rustusb-service/src/ipc.rs crates/rustusb-service/src/lib.rs crates/rustusb-service/src/runtime_tests.rs crates/rustusb-service/src/runtime_logging_tests.rs",
+      "exit_code": 0,
+      "scope": "Rust formatting/parser only; no type check or tests"
+    }
+  ],
+  "not_executed": [
+    "Cargo",
+    "rustc/typechecking",
+    "unit/integration tests",
+    "CLI",
+    "QEMU",
+    "hardware",
+    "Git mutation"
+  ],
+  "limits": [
+    "Registry tests use synthetic committed metadata, not device proof",
+    "Store-lock/UDS fixtures are ordinary temporary store + real Unix IPC and logger files, not helper/kernel tests",
+    "No benchmark or permanent filesystem blocking guarantee",
+    "New public IPC bodies are local authorized metadata; the artifact collector must independently project aliases/privacy"
+  ],
+  "files": [
+    {
+      "path": "crates/rustusb-service/src/diagnostics.rs",
+      "bytes": 21231,
+      "sha256": "eb22cbf6d2abed1d3e5becf0165aae69b69ed32b8726db8c0ef894167bc4b962",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/diagnostics.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/diagnostics_tests.rs",
+      "bytes": 16715,
+      "sha256": "137ad5cbf3b7b1ac9837fb2e2e980178a8a8bec580df801911966a3f07ed0e5d",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/diagnostics_tests.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime_diagnostics_tests.rs",
+      "bytes": 14947,
+      "sha256": "884cf117e16d307552cd5dd29fc52d4f64ef20f6603d92a46ad82a4b51a5196f",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/runtime_diagnostics_tests.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/rpc.rs",
+      "bytes": 10445,
+      "sha256": "b32fe740b2cd6bf6eb588b09cafc2da755e64c2f3136c008e83bdde51dd0fdd5",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/rpc.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "bytes": 52997,
+      "sha256": "d8d222601d1c6892508d2900af0a8d929472cc95cae6560c43b9eeb49b7af0f7",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/runtime.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/ipc.rs",
+      "bytes": 19384,
+      "sha256": "c115533fb45571d50caaf3eacfffdcbd0b9ef534b7b06175d4ee61ce2d600ba5",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/ipc.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/lib.rs",
+      "bytes": 1036,
+      "sha256": "565c8fa58f26f84885f65e114466852c12f0fb89aff98ddaaab7db63f1815c95",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/lib.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime_tests.rs",
+      "bytes": 32944,
+      "sha256": "278dba634a02bb6420b00260d6c7b734affa2b804d0b58957b30a5883f562859",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/runtime_tests.rs"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime_logging_tests.rs",
+      "bytes": 16016,
+      "sha256": "e1d7a18068f97768d8a456a55be7a17cae46f33592d1ae453a0c4defaa026fff",
+      "snapshot": "/tmp/rustusb-diagnostic-service-author-handoff-20261024/source/runtime_logging_tests.rs"
+    }
+  ]
+}

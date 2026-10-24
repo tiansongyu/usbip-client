@@ -1,0 +1,10 @@
+error: cannot update the lock file /home/ubuntu/github/usbip-client/Cargo.lock because --locked was passed to prevent this
+help: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.
+Traceback (most recent call last):
+  File "/home/ubuntu/github/usbip-client/scripts/dependency-inventory.py", line 8, in <module>
+    metadata = json.loads(subprocess.check_output(
+  File "/usr/lib/python3.10/subprocess.py", line 421, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cargo', 'metadata', '--format-version', '1', '--all-features', '--locked']' returned non-zero exit status 101.

@@ -1,0 +1,34 @@
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-logging v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-logging)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.21s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-87aea33f7b158ccc)
+
+running 11 tests
+test runtime::tests::diagnostics::additive_diagnostic_rpc_is_strict_and_old_ipc_one_shapes_are_unchanged ... ok
+test diagnostics::registry::tests::audit_filter_is_exact_profile_or_own_denial_even_for_root ... ok
+test diagnostics::registry::tests::permissions_precede_registry_and_foreign_end_is_indistinguishable ... ok
+test diagnostics::registry::tests::counter_overflow_poison_and_strict_nullable_are_explicit ... ok
+test diagnostics::registry::tests::actual_snapshot_lifetime_keeps_global_and_uid_quota_after_end_and_expiry ... ok
+test diagnostics::registry::tests::coherent_complete_filtered_pages_survive_new_commits ... ok
+test runtime::tests::diagnostics::failed_actual_commit_never_enters_diagnostic_publication ... ok
+test runtime::tests::diagnostics::unknown_profile_denial_uses_actual_uid_actor_and_durable_audit ... ok
+
+thread 'runtime::tests::diagnostics::poisoned_diagnostics_preserve_actual_commit_and_existing_log_mirror' (3016716) panicked at crates/rustusb-service/src/runtime_diagnostics_tests.rs:353:5:
+assertion `left == right` failed
+  left: 0
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test runtime::tests::diagnostics::poisoned_diagnostics_preserve_actual_commit_and_existing_log_mirror ... FAILED
+test diagnostics::registry::tests::row_and_frame_budgets_reject_oversized_rows_without_false_empty_end ... ok
+test runtime::tests::diagnostics::actual_store_wait_keeps_old_coherent_pages_and_fast_stop_independent ... ok
+
+failures:
+
+failures:
+    runtime::tests::diagnostics::poisoned_diagnostics_preserve_actual_commit_and_existing_log_mirror
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 75 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `-p rustusb-service --lib`

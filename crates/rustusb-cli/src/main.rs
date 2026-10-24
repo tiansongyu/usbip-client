@@ -3,6 +3,7 @@
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod agent;
 
+mod diagnostics;
 mod event_output;
 #[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
 mod foreground;
@@ -68,6 +69,8 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Export bounded private diagnostics without changing or stopping USB devices.
+    Diagnostics(diagnostics::Args),
     /// Read sanitized stored logs or authorized agent audit projections.
     Logs(logs::Args),
     /// Run or query the nonroot shared application service using fixed profiles.
@@ -285,6 +288,9 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
     #[cfg(not(all(feature = "secure-transport", target_os = "linux")))]
     let _ = &monitor;
     match &cli.command {
+        Command::Diagnostics(args) => {
+            diagnostics::run(args.clone(), cli.socket.clone(), cli.json).await
+        }
         Command::Logs(args) => logs::run(args.clone(), cli.json).await,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent { config, command } => {
@@ -558,9 +564,9 @@ fn logging_options(cli: &Cli) -> rustusb_logging::Result<Option<rustusb_logging:
     let Some(directory) = cli.log_directory.clone() else {
         return Ok(None);
     };
-    if matches!(cli.command, Command::Logs(_)) {
+    if matches!(cli.command, Command::Logs(_) | Command::Diagnostics(_)) {
         return Err(rustusb_logging::Error::InvalidInput(
-            "a log observer cannot enable a file writer",
+            "a diagnostic or log observer cannot enable a file writer",
         ));
     }
     let mut options = rustusb_logging::Options::new(directory);
@@ -622,7 +628,7 @@ fn main() -> ExitCode {
 async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> ExitCode {
     let json = cli.json;
     let owns_signal_cleanup = match &cli.command {
-        Command::Logs(_) => true,
+        Command::Logs(_) | Command::Diagnostics(_) => true,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent {
             command: agent::Command::Run,

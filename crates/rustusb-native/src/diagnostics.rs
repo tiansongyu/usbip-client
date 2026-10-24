@@ -24,6 +24,26 @@ const KERNEL_DEADLINE: Duration = Duration::from_secs(3);
 const OUTPUT_LIMIT: usize = 8192;
 const INDEX_LIMIT: usize = 4 * 1024 * 1024;
 
+#[derive(Clone, Copy)]
+enum CleanupMode {
+    BoundedObservation,
+    ActualReap,
+}
+
+struct ProbeOutcome<T> {
+    value: T,
+    reap_error: Option<io::Error>,
+}
+
+impl<T> ProbeOutcome<T> {
+    fn observed(value: T) -> Self {
+        Self {
+            value,
+            reap_error: None,
+        }
+    }
+}
+
 /// Stable observation labels; availability never implies successful redirection.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -156,6 +176,31 @@ impl Default for ProbePaths {
 /// authorization, VPN/TLS, remote reachability, and actual USB I/O are outside
 /// this report and must be checked separately.
 pub async fn diagnose_native() -> NativeDiagnostics {
+    diagnose_native_mode(CleanupMode::BoundedObservation)
+        .await
+        .value
+}
+
+/// Diagnose fixed Native prerequisites while actually reaping each owned child.
+///
+/// The fixed three-second command deadline still starts termination, but child
+/// cleanup has no observation timeout: this future waits for the actual child
+/// wait result. A failed wait returns an error rather than claiming a reap.
+/// Both tool probes finish before the first cleanup error is returned. Missing
+/// prerequisites and successfully reaped command timeouts remain observations.
+///
+/// The caller must retain and await this future, including after cancellation.
+/// Dropping it only requests `kill_on_drop`; that is not a completed wait. This
+/// API does not promise to terminate descendants or permanently blocked OS work.
+pub async fn diagnose_native_with_child_reaping() -> rustusb_core::Result<NativeDiagnostics> {
+    let observation = diagnose_native_mode(CleanupMode::ActualReap).await;
+    match observation.reap_error {
+        Some(error) => Err(error.into()),
+        None => Ok(observation.value),
+    }
+}
+
+async fn diagnose_native_mode(mode: CleanupMode) -> ProbeOutcome<NativeDiagnostics> {
     let paths = ProbePaths::default();
     let system = identify_system(&paths).await;
     let linux = std::env::consts::OS == "linux";
@@ -167,17 +212,20 @@ pub async fn diagnose_native() -> NativeDiagnostics {
             linux
         ),
         kernel_diagnostic(&paths, "vhci_hcd", system.kernel_release.as_deref(), linux),
-        probe_fixed_tool(Tool::Usbip, linux),
-        probe_fixed_tool(Tool::Usbipd, linux),
+        probe_fixed_tool(Tool::Usbip, linux, mode),
+        probe_fixed_tool(Tool::Usbipd, linux, mode),
     );
-    NativeDiagnostics {
+    // Do not short-circuit either tool: an error must not drop another child.
+    let reap_error = usbip.reap_error.or(usbipd.reap_error);
+    let value = NativeDiagnostics {
         system,
         usbip_host,
         vhci_hcd,
-        usbip,
-        usbipd,
+        usbip: usbip.value,
+        usbipd: usbipd.value,
         scope: "Read-only local prerequisites only. No module loading, USB binding, server startup, VPN/TLS verification, remote reachability test, or hardware redirection test was performed.".into(),
-    }
+    };
+    ProbeOutcome { value, reap_error }
 }
 
 fn check(
@@ -570,9 +618,13 @@ impl Tool {
     }
 }
 
-async fn probe_fixed_tool(tool: Tool, linux: bool) -> ToolDiagnostic {
+async fn probe_fixed_tool(
+    tool: Tool,
+    linux: bool,
+    mode: CleanupMode,
+) -> ProbeOutcome<ToolDiagnostic> {
     if !linux {
-        return ToolDiagnostic {
+        return ProbeOutcome::observed(ToolDiagnostic {
             path: tool.path().into(),
             version: None,
             check: check(
@@ -580,26 +632,29 @@ async fn probe_fixed_tool(tool: Tool, linux: bool) -> ToolDiagnostic {
                 "Linux Native utility is not probed on this operating system",
                 "Use a supported Linux host",
             ),
-        };
+        });
     }
     let deadline = Instant::now() + TOOL_DEADLINE;
     let verified = timeout_at(deadline, trusted_tool(Path::new(tool.path()))).await;
     let result = match verified {
-        Ok(Ok(path)) => run_version(&path, tool, deadline).await,
-        Ok(Err(result)) => (result, None),
-        Err(_) => (
+        Ok(Ok(path)) => run_version_with_mode(&path, tool, deadline, mode).await,
+        Ok(Err(result)) => ProbeOutcome::observed((result, None)),
+        Err(_) => ProbeOutcome::observed((
             check(
                 DiagnosticStatus::Timeout,
                 "Fixed tool trust inspection exceeded three seconds",
                 "Check the tool filesystem and package installation",
             ),
             None,
-        ),
+        )),
     };
-    ToolDiagnostic {
-        path: tool.path().into(),
-        check: result.0,
-        version: result.1,
+    ProbeOutcome {
+        value: ToolDiagnostic {
+            path: tool.path().into(),
+            check: result.value.0,
+            version: result.value.1,
+        },
+        reap_error: result.reap_error,
     }
 }
 
@@ -661,11 +716,23 @@ async fn trusted_tool(path: &Path) -> Result<PathBuf, DiagnosticCheck> {
     }
 }
 
+#[cfg(test)]
 async fn run_version(
     path: &Path,
     tool: Tool,
     deadline: Instant,
 ) -> (DiagnosticCheck, Option<String>) {
+    run_version_with_mode(path, tool, deadline, CleanupMode::BoundedObservation)
+        .await
+        .value
+}
+
+async fn run_version_with_mode(
+    path: &Path,
+    tool: Tool,
+    deadline: Instant,
+    mode: CleanupMode,
+) -> ProbeOutcome<(DiagnosticCheck, Option<String>)> {
     let mut command = Command::new(path);
     command
         .arg(tool.argument())
@@ -681,14 +748,14 @@ async fn run_version(
     let mut child = match command.spawn() {
         Ok(child) => child,
         Err(error) => {
-            return (
+            return ProbeOutcome::observed((
                 io_check(
                     &error,
                     "Fixed version command could not start",
                     "Check the utility, its interpreter/loader, and executable permissions",
                 ),
                 None,
-            );
+            ));
         }
     };
     let Some(stdout) = child.stdout.take() else {
@@ -696,6 +763,7 @@ async fn run_version(
             &mut child,
             DiagnosticStatus::IoError,
             "Version stdout pipe unavailable",
+            mode,
         )
         .await;
     };
@@ -704,6 +772,7 @@ async fn run_version(
             &mut child,
             DiagnosticStatus::IoError,
             "Version stderr pipe unavailable",
+            mode,
         )
         .await;
     };
@@ -715,23 +784,23 @@ async fn run_version(
         Ok(Ok((status, stdout, stderr))) if status.success() => {
             let version = safe_version(&stdout).or_else(|| safe_version(&stderr));
             if version.is_some() {
-                (
+                ProbeOutcome::observed((
                     check(
                         DiagnosticStatus::Available,
                         "Trusted fixed version command succeeded",
                         "Keep the distribution tool package aligned with the running kernel; this probe does not test device operations",
                     ),
                     version,
-                )
+                ))
             } else {
-                (
+                ProbeOutcome::observed((
                     check(
                         DiagnosticStatus::Invalid,
                         "Version command succeeded without a bounded safe ASCII version line",
                         "Inspect the distribution wrapper and matching kernel-specific utility installation",
                     ),
                     None,
-                )
+                ))
             }
         }
         Ok(Ok((status, stdout, stderr))) => {
@@ -751,7 +820,7 @@ async fn run_version(
                         .map_or_else(|| "signal".into(), |code| code.to_string())
                 )
             };
-            (
+            ProbeOutcome::observed((
                 check(
                     state,
                     detail,
@@ -762,13 +831,14 @@ async fn run_version(
                     },
                 ),
                 None,
-            )
+            ))
         }
         Ok(Err(error)) if error.kind() == io::ErrorKind::InvalidData => {
             failed_child(
                 &mut child,
                 DiagnosticStatus::OutputLimit,
                 "Fixed version command exceeded an 8 KiB output stream limit",
+                mode,
             )
             .await
         }
@@ -777,6 +847,7 @@ async fn run_version(
                 &mut child,
                 DiagnosticStatus::IoError,
                 "Fixed version command output or wait failed",
+                mode,
             )
             .await
         }
@@ -785,6 +856,7 @@ async fn run_version(
                 &mut child,
                 DiagnosticStatus::Timeout,
                 "Fixed version command exceeded its three-second deadline",
+                mode,
             )
             .await
         }
@@ -795,19 +867,21 @@ async fn failed_child(
     child: &mut tokio::process::Child,
     status: DiagnosticStatus,
     detail: &str,
-) -> (DiagnosticCheck, Option<String>) {
+    mode: CleanupMode,
+) -> ProbeOutcome<(DiagnosticCheck, Option<String>)> {
     let _ = child.start_kill();
-    let reaped = matches!(
-        timeout(Duration::from_secs(2), child.wait()).await,
-        Ok(Ok(_))
-    );
-    (
+    let completion = reap_child(child, mode).await;
+    let reaped = matches!(&completion, Ok(true));
+    let reap_error = completion.err();
+    let value = (
         check(
             status,
             format!(
                 "{detail}; {}",
                 if reaped {
                     "child reaped"
+                } else if reap_error.is_some() {
+                    "child wait failed; reaping is unconfirmed"
                 } else {
                     "child reap was not confirmed within two seconds"
                 }
@@ -815,7 +889,18 @@ async fn failed_child(
             "Inspect the distribution USB/IP tool installation before retrying; no management subcommand was executed",
         ),
         None,
-    )
+    );
+    ProbeOutcome { value, reap_error }
+}
+
+async fn reap_child(child: &mut tokio::process::Child, mode: CleanupMode) -> io::Result<bool> {
+    match mode {
+        CleanupMode::BoundedObservation => Ok(matches!(
+            timeout(Duration::from_secs(2), child.wait()).await,
+            Ok(Ok(_))
+        )),
+        CleanupMode::ActualReap => child.wait().await.map(|_| true),
+    }
 }
 
 async fn capture_output(mut stream: impl AsyncRead + Unpin) -> io::Result<Vec<u8>> {
@@ -1157,6 +1242,53 @@ mod tests {
         let (result, _) = run_version(&script, Tool::Usbip, Instant::now() + TOOL_DEADLINE).await;
         assert_eq!(result.status, DiagnosticStatus::OutputLimit, "{result:?}");
         assert!(result.detail.ends_with("child reaped"));
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn actual_reap_finishes_both_real_children_after_distinct_failures() -> TestResult {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let slow = Fixture::new()?;
+        let noisy = Fixture::new()?;
+        let slow_pid = slow.path("pid");
+        let noisy_pid = noisy.path("pid");
+        let slow_script = slow.script(&format!(
+            "printf '%s' \"$$\" > '{}'\nexec /bin/sleep 30",
+            slow_pid.display()
+        ))?;
+        let noisy_script = noisy.script(&format!(
+            "printf '%s' \"$$\" > '{}'\nwhile :; do printf 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; done",
+            noisy_pid.display()
+        ))?;
+        // The noisy child fails independently while the other actual process
+        // still needs its deadline/kill/wait path. Neither future is abandoned.
+        let (slow_result, noisy_result) = tokio::join!(
+            run_version_with_mode(
+                &slow_script,
+                Tool::Usbip,
+                Instant::now() + Duration::from_secs(1),
+                CleanupMode::ActualReap
+            ),
+            run_version_with_mode(
+                &noisy_script,
+                Tool::Usbipd,
+                Instant::now() + TOOL_DEADLINE,
+                CleanupMode::ActualReap
+            ),
+        );
+        assert_eq!(slow_result.value.0.status, DiagnosticStatus::Timeout);
+        assert_eq!(noisy_result.value.0.status, DiagnosticStatus::OutputLimit);
+        for result in [slow_result, noisy_result] {
+            assert!(result.reap_error.is_none());
+            assert!(result.value.0.detail.ends_with("child reaped"));
+            assert!(result.value.1.is_none());
+        }
+        for path in [slow_pid, noisy_pid] {
+            let pid = std::fs::read_to_string(path)?;
+            let numeric = pid.parse::<u32>()?;
+            assert!(!std::fs::exists(format!("/proc/{numeric}"))?);
+        }
         Ok(())
     }
 

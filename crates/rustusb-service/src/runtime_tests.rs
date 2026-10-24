@@ -13,6 +13,9 @@ const PROFILE: &str = "fixed-profile";
 #[path = "runtime_logging_tests.rs"]
 mod logging;
 
+#[path = "runtime_diagnostics_tests.rs"]
+mod diagnostics;
+
 // Real production stop delivery and store await, with ordinary owned Unix
 // endpoints as resource witnesses. This is not a helper/kernel USB test.
 #[tokio::test]
@@ -271,6 +274,10 @@ impl Fixture {
             recoveries: JoinSet::new(),
             recovery_cursor: 0,
             logging: None,
+            diagnostics: Arc::new(crate::diagnostics::Registry::new(
+                InstanceId::new(uuid(1))?,
+                State::default(),
+            )),
         };
         Ok(Self {
             root,

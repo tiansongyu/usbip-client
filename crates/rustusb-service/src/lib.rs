@@ -5,6 +5,7 @@
 
 pub mod config;
 pub mod context;
+pub mod diagnostics;
 pub mod foreground;
 #[cfg(target_os = "linux")]
 mod fs;

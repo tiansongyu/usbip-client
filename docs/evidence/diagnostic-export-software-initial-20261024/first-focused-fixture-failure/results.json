@@ -1,0 +1,53 @@
+[
+  {
+    "name": "diagnostics-default",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-diagnostics",
+      "--lib",
+      "--locked",
+      "--offline",
+      "--",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "inputs_unchanged": true
+  },
+  {
+    "name": "diagnostics-secure",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-diagnostics",
+      "--all-features",
+      "--lib",
+      "--locked",
+      "--offline",
+      "--",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "inputs_unchanged": true
+  },
+  {
+    "name": "service",
+    "command": [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-service",
+      "--all-features",
+      "--lib",
+      "--locked",
+      "--offline",
+      "diagnostic",
+      "--",
+      "--nocapture"
+    ],
+    "exit_code": 101,
+    "inputs_unchanged": true
+  }
+]

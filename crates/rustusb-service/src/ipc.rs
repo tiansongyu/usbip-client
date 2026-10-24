@@ -129,6 +129,7 @@ pub async fn serve_with_logging(
         None => Runtime::open(config.clone(), controls.clone()).await?,
     };
     let endpoint = Endpoint::bind(&config.manifest).await?;
+    let diagnostics = runtime.diagnostics();
     let (sender, receiver) = mpsc::channel(16);
     let (shutdown, shutdown_receiver) = watch::channel(*stop.borrow());
     let mut owner = tokio::spawn(runtime.run(receiver, shutdown_receiver));
@@ -149,8 +150,8 @@ pub async fn serve_with_logging(
                 accepted=endpoint.listener.accept()=>{
                     let (stream,_)=match accepted{Ok(pair)=>pair,Err(error)=>{accept_error=Some(error);break;}};
                     let Ok(permit)=permits.clone().try_acquire_owned()else{drop(stream);continue;};
-                    let sender=sender.clone();let config=config.clone();let controls=controls.clone();let logging=logging.clone();
-                    requests.spawn(async move{let _permit=permit;let _=tokio::time::timeout(DEADLINE,request(stream,sender,config,controls,logging)).await;});
+                    let sender=sender.clone();let config=config.clone();let controls=controls.clone();let logging=logging.clone();let diagnostics=diagnostics.clone();
+                    requests.spawn(async move{let _permit=permit;let _=tokio::time::timeout(DEADLINE,request(stream,sender,config,controls,logging,Some(diagnostics))).await;});
                 },
             }
         }
@@ -212,12 +213,44 @@ pub(crate) async fn request(
     config: Arc<LoadedConfig>,
     controls: Arc<Mutex<Controls>>,
     logging: Option<rustusb_logging::LogMonitor>,
+    diagnostics: Option<Arc<crate::diagnostics::Registry>>,
 ) -> Result<()> {
     let uid = stream.peer_cred()?.uid();
     let envelope: RequestEnvelope = serde_json::from_slice(&read_frame(&mut stream).await?)
         .map_err(|_| Error::InvalidInput("agent request schema".into()))?;
     if envelope.schema_version != 1 {
         return Err(Error::InvalidInput("agent protocol version".into()));
+    }
+    if let Some(Ok(response)) = crate::diagnostics::respond(
+        diagnostics.as_deref(),
+        &config.manifest,
+        uid,
+        &envelope.request,
+    ) {
+        // Every authorized outcome, including invalid/expired/Busy, stays out
+        // of the WAL actor. Denials continue below through its audited path.
+        let journal_healthy = controls
+            .lock()
+            .map_err(|_| Error::State("agent controls lock poisoned".into()))?
+            .journal_healthy();
+        let response = ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy,
+            response,
+        };
+        let encoded = serde_json::to_vec(&response);
+        let bytes = match encoded {
+            Ok(bytes) if bytes.len() <= MAX_FRAME => bytes,
+            _ => serde_json::to_vec(&ResponseEnvelope {
+                schema_version: 1,
+                journal_healthy,
+                response: Response::DiagnosticError {
+                    code: crate::diagnostics::DiagnosticFailure::EncodingLimit,
+                },
+            })
+            .map_err(|_| Error::State("agent diagnostic encoding".into()))?,
+        };
+        return write_frame(&mut stream, &bytes).await;
     }
     if let Request::ReadLogs {
         profile,
