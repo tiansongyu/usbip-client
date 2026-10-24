@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-24：认证准入限速
+
+- 重新读完整任务与clean30481f0、AGENTS、项目skill及实际TLS/config/service源码。上一轮属进展。原Phase0–7目标保持active，继续补Phase3实际能力：16并发permit不能限制失败后立即重试，安全文档已有该缺口。
+- 按writing-technical-design与项目规范先写`research/authentication-admission-design.md`。该skill显式要求并行研究，因此委派一个只读Governor源码/依赖/探针子任务，主线程审查配置/所有权/兼容；未委派产品编辑。候选固定Governor0.10.4 MIT/std-only，经实际Rust1.97.1隔离探针验证，选direct非等待GCRA；研究/探针不计产品测试或USB验收。
+- 拟默认burst64/每125ms补一，root可信配置可选有界对象，clone/job共享；已有TLS DTO不改，独立admission计数/Read接口。拒绝前不做TLS/device工作，失败/取消不退配额；不保证逐源公平或完整DoS防护。设计先于代码；新增产品、依赖和QEMU尚未验收。
+
 ## 2026-10-24：服务端安全观测设计
 
 - 从干净39004dd继续，原Phase0–7目标保持active；先复核现有TLS、Native/Rust listener、共享owner、IPC和日志投影。发现握手拒绝缺少持久计数、outer budget直接跳过；本轮先实现有界volatile计数，不冒称持久审计。
