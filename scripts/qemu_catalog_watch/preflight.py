@@ -17,9 +17,11 @@ def main():
     assert function.count('$(seq 1 240)')==1
     head={'event':'catalog_begin','schema_version':1,'instance':'fixture','revision':1,'state':'current','device_count':0,'change_count':0,'observation_only':True}
     tail={'event':'catalog_end','schema_version':1,'instance':'fixture','revision':1,'device_count':0,'change_count':0}
+    one=[dict(head,device_count=1),{'event':'catalog_device','schema_version':1,'instance':'fixture','revision':1,'catalog':{'device_key':'fixture'}},dict(tail,device_count=1)]
     cases=[('empty',[],0,-1,False),('complete',[head,tail],0,-1,True),('partial',[head],0,-1,False),
         ('mixed',[head,dict(tail,instance='other')],0,-1,False),('bad-count',[dict(head,device_count=1),dict(tail,device_count=1)],1,-1,False),
-        ('not-new',[head,tail],0,1,False),('new-complete',[head,tail,dict(head,revision=2),dict(tail,revision=2)],0,1,True)]
+        ('not-new',[head,tail],0,1,False),('new-complete',[head,tail,dict(head,revision=2),dict(tail,revision=2)],0,1,True),
+        ('visible-one',one,1,-1,True),('visible-count-mismatch',one,2,-1,False)]
     results=[]
     for name,rows,count,after,expected in cases:
         directory=output/name;directory.mkdir();source=directory/'source.jsonl';source.write_text(''.join(json.dumps(x)+'\n' for x in rows))
@@ -35,6 +37,6 @@ def main():
             decoded=json.loads(point.read_text());assert decoded['head']['revision']>after and decoded['head']['device_count']==count
         else:assert not point.exists(),name
         results.append({'case':name,'argv':argv,'actual_exit_code':run.returncode,'accepted':accepted})
-    summary={'result':'PASS','scope':'Seven pure fixture checks; actual guest point function with temporary paths and one poll, no product/USB execution','guest_function_sha256':hashlib.sha256((HERE/'guest-functions.sh').read_bytes()).hexdigest(),'point_filter_sha256':hashlib.sha256((HERE/'point.jq').read_bytes()).hexdigest(),'cases':results}
+    summary={'result':'PASS','scope':'Nine pure fixture checks; actual guest point function with temporary paths and one poll, no product/USB execution','guest_function_sha256':hashlib.sha256((HERE/'guest-functions.sh').read_bytes()).hexdigest(),'point_filter_sha256':hashlib.sha256((HERE/'point.jq').read_bytes()).hexdigest(),'cases':results}
     (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps({'result':'PASS','cases':len(results),'output':str(output)}))
 if __name__=='__main__':main()

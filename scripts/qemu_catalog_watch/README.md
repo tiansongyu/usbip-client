@@ -23,6 +23,12 @@ the agent is absent and must publish stale retained data before restart. It
 stops before the original server's second epoch; all three original USB I/O
 rounds and full original driver/proof checks remain required.
 
+Native catalog visibility excludes currently reserved devices. Before the client
+agent is killed, serial is still in use, so the fresh point contains only HID
+(one). The outage retains that one-entry view; after the old serial owner really
+ends and the new agent can read again, both exports are visible (two). This is
+availability metadata, not evidence that a physical device was unplugged.
+
 Installed CLI cases additionally test the protected direct TLS loader as UID2000
 with TERM, an actual full write-only stdout FIFO and INT, a closed reader and
 exit1/Broken pipe, and UID1002 terminal denial. The full FIFO is filled by an

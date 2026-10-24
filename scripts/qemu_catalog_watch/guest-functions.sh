@@ -113,9 +113,9 @@ catalog_watch_start() {
 }
 catalog_pause_before_kill() {
     # Force a fresh completed response, then stop all watcher threads during idle.
-    catalog_point /tmp/catalog-watch.stdout.txt latest-before-pause current 2 -1
+    catalog_point /tmp/catalog-watch.stdout.txt latest-before-pause current 1 -1
     jq '.head.revision' /tmp/catalog-latest-before-pause.json > /tmp/catalog-before-pause-revision.json
-    catalog_point /tmp/catalog-watch.stdout.txt before-pause current 2 "$(cat /tmp/catalog-before-pause-revision.json)"
+    catalog_point /tmp/catalog-watch.stdout.txt before-pause current 1 "$(cat /tmp/catalog-before-pause-revision.json)"
     kill -STOP "$CATALOG_WATCH_PID"
     for c_stop in $(seq 1 100); do
         [ "$(awk '/^State:/ {print $2}' "/proc/$CATALOG_WATCH_PID/status")" = T ] && break
@@ -126,7 +126,7 @@ catalog_pause_before_kill() {
 }
 catalog_local_outage() {
     kill -CONT "$CATALOG_WATCH_PID"
-    catalog_point /tmp/catalog-watch.stdout.txt stale stale 2 "$(jq '.head.revision' /tmp/catalog-before-pause.json)"
+    catalog_point /tmp/catalog-watch.stdout.txt stale stale 1 "$(jq '.head.revision' /tmp/catalog-before-pause.json)"
 }
 catalog_recovered() {
     catalog_point /tmp/catalog-watch.stdout.txt recovered current 2 "$(jq '.head.revision' /tmp/catalog-stale.json)"

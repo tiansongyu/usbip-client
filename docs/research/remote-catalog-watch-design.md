@@ -135,3 +135,9 @@ Separate installed CLI children cover direct TLS observation/TERM, an actually
 full FIFO/blocked writer plus INT, closed output/exit1, and UID1002 denial. Record
 real process UID/ELF/FD/wchan/waits and distinguish any fast denial lacking a live
 ELF receipt. Keep the original ciphertext classifier intact.
+
+The Native available catalog excludes reserved entries. The pre-kill fresh and
+stale views therefore contain only the released HID (one), while serial remains
+owned. After its original owner ends, recovery sees both exports (two), before
+explicit export stops exercise 2 -> 1 -> 0. Do not alter production visibility to
+force a test count or equate a busy entry disappearing with physical unplug.
