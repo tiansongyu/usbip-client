@@ -126,3 +126,12 @@ the latter leaf, and only the real next generation after original cleanup denies
 it. Counter deltas, original resource snapshots and real USB I/O remain separate.
 The initial installed CRL extension is raw-v1; local framed tests are not an
 installed framed refusal matrix.
+
+The first Native IPv6 attempt at clean47c0021 failed in the inherited absent-ALPN
+probe: actual OpenSSL wait104/read:errno=104, while its stdin was a nonempty
+management request. Do not accept that IO class or relabel the run. The corrected
+fixture records an empty input for the absent-ALPN handshake only, retains the
+original strict exit1/no-reply requirement, and additionally requires the original
+server snapshot's protocol_mismatch delta1. This tests negotiation rejection
+without sending application data on an unnegotiated protocol. No TCP-reset causal
+trace is claimed. All other original requests/assertions remain unchanged.

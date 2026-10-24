@@ -31,3 +31,9 @@ individual live ELF samples; original long server/helper identities remain.
 Generated shell is syntax checked and every raw original artifact/failed run is
 retained. This fixture is raw-v1; framed CRL tests are actual local TLS/TCP tests,
 not an installed framed rejection matrix. Full G3 and hardware remain separate.
+
+The first IPv6 failure is retained: OpenSSL returned104 for an absent-ALPN probe
+that still supplied an application request. The CRL extension now supplies a
+saved empty input to that negotiation-only probe. Original exit1/no-reply and
+all counter rules remain; an exact protocol-mismatch increment is also required.
+There is no new104/timeout acceptance or claim of traced TCP-reset causality.

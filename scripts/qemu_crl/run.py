@@ -102,6 +102,16 @@ def credentials(work, evidence):
 
 def generated_init():
     source = original_generated()
+    old = '        auth_wire "$kind" "$wire_identity" "$wire_alpn" "/tmp/auth-$AUTH_LABEL-catalog.request"'
+    new = '''        if [ "$kind" = absent-alpn ]; then
+            : > "/tmp/crl-$AUTH_LABEL-absent-alpn.input"
+            auth_wire "$kind" "$wire_identity" "$wire_alpn" "/tmp/crl-$AUTH_LABEL-absent-alpn.input"
+        else
+            auth_wire "$kind" "$wire_identity" "$wire_alpn" "/tmp/auth-$AUTH_LABEL-catalog.request"
+        fi'''
+    if source.count(old) != 1:
+        raise RuntimeError("missing exact no-ALPN probe input anchor")
+    source = source.replace(old, new, 1)
     for name in ["auth_policy", "auth_client_configs", "auth_server_barrier", "auth_client_batch"]:
         old = name + "() {"
         if source.count(old) != 1:

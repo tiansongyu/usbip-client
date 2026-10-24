@@ -840,3 +840,5 @@
 
 - E43内容9e657637正常SSH push exit0/远端main一致/clean；software40114160923四native job120931897631/897761/897823/897834全部completed/success，Pages40114161007 check120931897786/deploy120931982014成功。primary软件steps仍null/empty，直接job-detail URL被connector拒绝（原error JSON保留，随后解析undefined的tool错误亦有回执），不据此伪造steps/full CI log/各平台903重算。六canonical HTTPS资源200且逐Git字节同；actual live CUA reload/AX/DOM确认新guide/903范围文案/已加载SVG，console空，无pixel review。50原件/方法约0.349MB逐SHA归档见`evidence/remote-catalog-watch-publication-9e65763-20261024/manifest.json`。
 - 本轮为原Phase0–7目标实际进展：认证远端自动刷新与同库所有权实现、903软件/双栈QEMU/四CI/英文README和网站维护已完成，旧软件和两QEMU FAIL保留。全局readme-site四源/发现symlink仍有效。真实硬件G1/G2、完整G3、永久OS阻塞/全部热插拔事件、TUI/GUI/安装/性能/Windows继续未完成，goal保持active。最终仅提交上述发布回执并正常push，再核远端HEAD/clean和223/各221/七site/四global源，不把回执提交另说成本次USB实测。
+
+- clean47c0021首Native IPv4 CRL QEMU PASS/2guest0/四guard，原337+新增217核验及44新CLI wait；同版本首IPv6整体FAIL/2guest0/四guard不重判，原held1无ALPNOpenSSL实际wait104/read:errno104，既有probe虽无ALPN仍输入非空Catalog请求，严格0/1断言拒绝该状态；未完成后屏障/全清理不伪造。保留raw/诊断，下一fixture仅该握手使用保存的空输入，仍要求原exit1/空reply并新增protocol_mismatch实际delta1，不新增104例外或改产品；不声称RST因果trace。原矩阵方法遇首FAIL已停止，尚未运行的后续组合保持未执行。

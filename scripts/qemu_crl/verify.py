@@ -45,6 +45,9 @@ def verify(evidence, args, base, original):
     case_rows = []
     for label in ["free-1", "held-1", "free-2", "held-2"]:
         epoch = int(label[-1])
+        require(data(client, "crl-" + label + "-absent-alpn.input") == b"", label + " actual handshake-only absent-ALPN input")
+        old_before, old_after = [obj(server, "auth-security-" + side + "-" + label + ".json") for side in ["before", "after"]]
+        require(old_after["tls"]["protocol_mismatch"] - old_before["tls"]["protocol_mismatch"] == 1, label + " actual original no-ALPN protocol refusal")
         before, after = [obj(server, "crl-security-" + side + "-" + label + ".json") for side in ["before", "after"]]
         for snapshot in [before, after]:
             require(snapshot["consistent"] is True and snapshot["saturated"] is False and snapshot["tls"]["in_flight"] == 0, label + " resolved coherent TLS")
