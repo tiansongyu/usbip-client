@@ -124,7 +124,7 @@ local_stub_available_host() {
     wait_sessions pool /tmp/local-empty-sessions.json '.response.sessions|length==3 and all(.terminal and .cleanup=="verified")'
     root_snapshot local-empty
     cmp /tmp/host-before.json /tmp/host-local-empty.json
-    check_target_proof
+    check_target_proof /tmp/root-local-empty.json
     jq -e '.records==[] and .exports==[] and (.terminals|length)==3' /tmp/root-local-empty.json > /dev/null
     agent jobs pool > /tmp/local-empty-jobs.json
     jq -e --arg id "$TARGET_JOB" '.response.jobs|length==1 and .[0].id==$id and .[0].state=="running"' /tmp/local-empty-jobs.json > /dev/null
@@ -137,7 +137,7 @@ local_stub_available_host() {
     TRACER_PID='' AGENT_PID=''
     root_snapshot after-release
     cmp /tmp/host-before.json /tmp/host-after-release.json
-    check_target_proof
+    check_target_proof /tmp/root-after-release.json
     jq -e '.records==[] and .exports==[]' /tmp/root-after-release.json > /dev/null
     echo PREPARE_LOCAL_JOB_CLOSED
     host_expect SURVIVOR_CLOSED

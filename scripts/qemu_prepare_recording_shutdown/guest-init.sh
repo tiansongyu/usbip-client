@@ -113,18 +113,20 @@ select_candidate() {
     echo PREPARE_GATE_HELD
 }
 check_target_proof() {
+    # Judge the saved observation, never a later read of the live journal.
+    [ "$#" = 1 ] || return 2
     if [ "$BACKEND" = native ]; then
         jq -e --slurpfile sessions /tmp/selected-sessions.json '
           . as $root | ($sessions[0]|length)==2 and all($sessions[0][];
           . as $s | .attempts[0] as $a |
           all($root.exports[];.lease_id!=$a.resource_id) and
-          any($root.terminals[].terminal;.resource_id==$a.resource_id and .kind=="native_export" and .owner_uid==2000 and .correlation==$a.correlation and .device_key==$s.device_key and .proof=="native_export_restored"))' "$ROOT_FILE" > /dev/null
+          any($root.terminals[].terminal;.resource_id==$a.resource_id and .kind=="native_export" and .owner_uid==2000 and .correlation==$a.correlation and .device_key==$s.device_key and .proof=="native_export_restored"))' "$1" > /dev/null
     else
         jq -e --slurpfile sessions /tmp/selected-sessions.json '
           . as $root | ($sessions[0]|length)==2 and all($sessions[0][];
           . as $s | .attempts[0] as $a |
           all($root.records[];.lease_id!=$a.resource_id) and
-          any($root.terminals[];.resource_id==$a.resource_id and .kind=="usbfs_grant" and .owner_uid==2000 and .correlation==$a.correlation and .device_key==$s.device_key and .proof=="physical_baseline_restored"))' "$ROOT_FILE" > /dev/null
+          any($root.terminals[];.resource_id==$a.resource_id and .kind=="usbfs_grant" and .owner_uid==2000 and .correlation==$a.correlation and .device_key==$s.device_key and .proof=="physical_baseline_restored"))' "$1" > /dev/null
     fi
 }
 config_evidence() { actual_config; }
@@ -212,7 +214,7 @@ if [ "$ROLE" = server ]; then
         # The USBFS grant is a character FD. Native export ownership is the
         # supervised control UDS + root receipt; its full FD table is retained.
         if jq -e 'all(.[];.target|startswith("/dev/bus/usb/")|not)' "/tmp/fds-observe-$observation.json" > /dev/null; then no_fd=true; fi
-        if check_target_proof; then proof=true; fi
+        if check_target_proof "/tmp/root-observe-$observation.json"; then proof=true; fi
         read -r observed_uptime observed_idle < /proc/uptime
         jq -nc --argjson observation "$observation" --arg uptime "$observed_uptime" --argjson baseline "$baseline_equal" --argjson fd_closed "$no_fd" --argjson proof "$proof" '{observation:$observation,uptime:$uptime,baseline_equal:$baseline,target_fd_closed:$fd_closed,exact_root_terminal:$proof,gate_released:false}' >> /tmp/held-observations.jsonl
         if [ "$CASE" = usbfs-initializer ]; then
@@ -245,7 +247,7 @@ if [ "$ROLE" = server ]; then
     TRACER_PID='' AGENT_PID=''
     root_snapshot after-release
     cmp /tmp/host-before.json /tmp/host-after-release.json
-    check_target_proof
+    check_target_proof /tmp/root-after-release.json
     jq -e '.records==[] and ((.exports // [])==[])' /tmp/root-after-release.json > /dev/null
     echo PREPARE_TARGET_CLOSED
     # The first failure remains latched; a fresh actual attempt only tests reuse.
