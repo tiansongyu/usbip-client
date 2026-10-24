@@ -180,3 +180,13 @@ new guarded probe as actual UID2000 and capture its proc UID/executable before
 product work. It must report the stale and healthy addresses in order. A valid
 old-product comparison must use this corrected environment; no host NSS file is
 changed. The first root-only probe's narrower scope is retained.
+
+## Local legacy CLI integration
+
+The new Rust connector also serves legacy read-only DEVLIST. Add a reproducible
+ordinary-user process fixture using only loopback listeners, an empty synthetic
+DEVLIST reply and the prebuilt CLI. Check actual `discover localhost` output and
+a withheld-response timeout, with real proc executable/UID receipts and final
+child reap/server-thread joins. This is separate from842 Cargo executions and
+from installed USB qualification. Add the same two-case fixture to native CI;
+no host NSS/USB mutation, public listener, new permission or package is needed.

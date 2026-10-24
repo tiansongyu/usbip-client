@@ -60,6 +60,8 @@ jobs:
           target/release/rustusb --help
           target/release/rustusb doctor --json
           target/release/rustusb devices --json
+      - name: Unprivileged hostname discovery and deadline (two cases)
+        run: python3 -B scripts/test-hostname-discovery.py --binary target/release/rustusb --evidence "$RUNNER_TEMP/hostname-discovery"
       - name: Unprivileged virtual-server lifecycle smoke (all-features binary)
         run: |
           printf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin
