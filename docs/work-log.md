@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-25：终端持久设置与实际确认动作（开始）
+
+- 上一轮E45为实际进展：六页TUI、937软件/双栈QEMU/四CI与发布，最终clean1ed3baa4。本轮先重读完整Phase0–7原任务、Git/AGENTS/核心skill、实际TUI/CLI/worker与原QEMU，原goal保持active。
+- 使用既有ui-ux-pro-max及technical-documentation，沿既有终端设计；先写tui-settings-actions-design.md。复用锁定Rustix/Tokio/serde普通FS API，不新增组件/无委派；官方XDG0.8核绝对路径与配置位置。计划实际保存/加载/覆盖三偏好（不存权限/endpoint/密钥/自动Start）及独立UID1000 PTY确认Start/定向stop验收，原CLI回归另跑，不弱化Rootproof/I/O或制造API回执。尚未修改产品或宣称新测试通过。
+
 ## 2026-10-25：普通用户终端前端（开始）
 
 - 从clean fa766375重读完整Phase0–7原任务、Git/AGENTS/核心skill及服务实际RPC/两metadata owner；上一轮E44为实际进展，原goal保持active。英文README/展示站/全局readme-site已交付，继续维护。
