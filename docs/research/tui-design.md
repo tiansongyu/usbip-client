@@ -63,7 +63,9 @@ Previous state is visibly stale on read failure; permission failure clears it.
 Local discovery owns one `DeviceMonitor`, consumes complete snapshots, and joins
 the actual worker. Remote discovery starts only on the Remote page with a client
 profile, respects Discover, and stops/joins before replacing its source. No
-metadata subscription owns a device. Refresh pause affects frontend polling,
+metadata subscription owns a device. Joining an agent-source observer stops only
+the local RPC observer; already accepted service Discover/resolver work retains
+its separate owner and budget. Refresh pause affects frontend polling,
 not service jobs or the local kernel observer. Settings initially manage this
 invocation's refresh interval, polling and theme; persistent user preferences and
 editing administrator policy remain separate unfinished work.

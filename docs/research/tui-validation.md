@@ -111,3 +111,26 @@ scenarios and complete G4 remain open. Existing API/observer tests do not replac
 those UI-level scenarios. Permanent OS/terminal writes, full G3, hardware G1/G2,
 GUI/installation, storage safety expansion, performance and Windows remain
 unverified or future work. The complete Phase 0–7 goal stays active.
+
+## Publication
+
+Content `5866f9a4a593b70bc321b50ef6a68abdb5aac847` was normally pushed to the
+requested SSH remote with exact remote main/clean verification. The
+[software workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40125802624)
+completed successfully on Ubuntu 22.04/24.04 × native x86_64/aarch64. Actual
+reported architecture, full-gate, signal, virtual/backpressure and diagnostic
+steps also succeeded. These primary statuses do not substitute for fetched
+full CI logs, per-platform executed ELF or a fresh recount of 937 on every job.
+The [Pages workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40125802620)
+completed its check and deployment successfully.
+
+All six canonical HTTPS page/runtime resources returned 200 and matched the
+exact content commit bytes. Only the site's terminal-preview fact/link changed;
+its historical 872/903 evidence retains its original scope. The 233 software,
+two 230-input QEMU sets, release ELF, seven site and four global readme-site
+files plus Codex discovery symlink were rechecked. Publication is indexed in
+[33 original files/methods](../evidence/tui-publication-5866f9a-20261024/manifest.json)
+(215,358 bytes), each copied/hashed against its original. The final receipt also
+clarifies that local catalog join does not cancel accepted agent Discover or
+resolver work. No Rust/USB input or site content changes after the checked
+content, and no new USB execution is attributed to the receipt commit.

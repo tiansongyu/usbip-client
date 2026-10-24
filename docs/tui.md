@@ -52,7 +52,9 @@ Section snapshots are independent samples. Read failures retain visibly stale
 data; permission/protocol failures clear the affected view. Remote discovery
 runs only on its page for a client profile with Discover permission, and joins
 on pause/profile/page change. Local kernel observation continues while profile
-polling is paused. Raw-v1 RTT is unavailable; catalog/PONG is not USB progress.
+polling is paused. Joining the local catalog observer does not cancel an already
+accepted agent Discover request or resolver: the agent retains and joins its own
+bounded work. Raw-v1 RTT is unavailable; catalog/PONG is not USB progress.
 
 Settings currently apply only to this invocation. Repeat launch settings with
 `--refresh-seconds 10 --no-auto-refresh --monochrome`. Persistent user preferences,

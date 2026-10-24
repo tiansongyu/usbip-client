@@ -15,6 +15,8 @@
 
 - 文档QA14源447本地/仓库映射target及204site/Node/diff全0；233软件与两230 QEMU源仍逐原hash不变。网站仅index一条事实/link变化，其余六文件不变，四global readme-site源/SHA与Codex发现symlink保持。CUA临时IAB tab27实际读取初始HTML/入口href/状态锚点与390x844窄屏DOM（document375无横溢）；两截图接口都不可用，明确不称pixel/noJS/reduced-motion重跑。已reset viewport/关闭临时tab与本机4971预览server。原QA快照与方法见evidence/tui-docs-20261024；本段为其后回执和本轮自有日志顺序整理。接下来普通commit/push及精确内容四平台CI/Pages，不提前称已发布。
 
+- 内容5866f9a4普通SSH push/远端main一致/clean；software40125802624四原生job120966813432/813614/813642/813684及实际arch/fullgate/signal/virtual/diagnostic步骤全部completed/success；Pages40125802620 check120966813450/deploy120966894090成功。六canonical HTTPS资源实际200且逐Git5866字节同。233软件/两230 QEMU/七site/四global及symlink/实际all ELF仍一致；只核primary状态，不补造CI full log/逐平台ELF/937重算。33原件/方法215358B逐SHA归档见evidence/tui-publication-5866f9a-20261024。最终文档补清楚：local catalog join不撤销已接受agent Discover/resolver，后者仍由服务独立owner/预算总join；不更改Rust或site。原完整Phase0–7、G1/G2/完整G3/G4与持久偏好、installed确认UI操作/专项异常、GUI/安装/性能/Windows保持active。最后仅提交回执并普通push，再核remote/clean与原source/ELF/skill/site，不把回执说成新USB验收。
+
 ## 2026-10-25：离线证书撤销列表（开始）
 
 - 上一轮为实际进展：E43持续远端目录/903软件/双栈QEMU/四原生CI及发布，最终clean e6177063。重读完整Phase0–7原任务、当前Git/AGENTS/核心skill/架构与阶段gate；原目标保持active。本轮补Phase3尚缺的CRL凭据撤销，不以此完成G3/硬件或后续UI阶段。
