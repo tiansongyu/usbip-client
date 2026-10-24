@@ -363,3 +363,7 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 ## 认证准入限速（E39）
 
 [精确验收](research/authentication-admission-validation.md)记录clean47f完整824次软件及196源码输入；clean d619默认locked build的六`qemu_authentication_admission` raw-v1组合、六原secure默认策略回归、独立Native-v4/v2诊断回归共13paired/26guest0。新夹具只在观察到实际limited后允许原输入、实际worker退出/补充认证采样后允许原close，不重写rawlog；原四认证屏障、实际I/O、完整Rootproof与driverbaseline保持。首956的host采证FAIL与新clean重跑分开，waitrow不当软件/USBcase。安装态agent RPC/v2专项限速与真实硬件继续待做。
+
+## 主机名双栈回退（E40）
+
+[精确报告](research/dual-stack-connect-validation.md)记录clean f3软件842/198稳定输入，clean67d七新hostname与七回归共14paired/28guest0；全原I/O/Rootproof/driverbaseline保持。实际broker UID probe须确认stale与healthy两答案，缺host.conf的五早期FAIL不当有效双候选对照；有效旧source196/ELF8779…对照0d仍timeout，原FAIL保留。未改rawPCAP，严格只剔精确stale空SYN生成命名projection，原ciphertext classifier明确ALPN1/2；aggregate chronology不当逐process归因。另本地legacy CLI目录/withheld-response两场景有proc/真实wait/EOF/线程join与既有JSON error DTO，独立CI step不混入842 Cargo数；首错误stdout期待FAIL保留。

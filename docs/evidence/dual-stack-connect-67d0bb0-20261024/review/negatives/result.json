@@ -1,0 +1,119 @@
+{
+  "result": "PASS_observation_review_not_QEMU_PASS",
+  "preserved_host_failures": 6,
+  "runs": [
+    {
+      "directory": "/tmp/rustusb-dual-stack-old-native-ipv4-first-5b26bba-20261024",
+      "actual_head": "5b26bba66a4535b9472c2a7827c7ce35356f14db",
+      "result": "FAIL",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "guards": true,
+      "client_failure_lines": [
+        "ip: invalid argument 'replace' to 'ip'",
+        "RUSTUSB_SECURE_RESULT: FAIL role=client stage=dual-stack-hostname exit=1"
+      ],
+      "scope": "Original host FAIL retained. Guest exits do not reclassify it."
+    },
+    {
+      "directory": "/tmp/rustusb-dual-stack-old-native-ipv4-second-20261024",
+      "actual_head": "ca63bc4c44bd5b25bc1a9d154fdd3bcce565d644",
+      "result": "FAIL",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "guards": true,
+      "client_failure_lines": [
+        "2026-10-24T10:30:54.239733Z ERROR rustusb: operation failed event_code=\"operation_failed\" failure=\"timeout\" error=operation timed out: secure discovery connection",
+        "RUSTUSB_SECURE_RESULT: FAIL role=client stage=client-prepare exit=1"
+      ],
+      "scope": "Original host FAIL retained. Guest exits do not reclassify it."
+    },
+    {
+      "directory": "/tmp/rustusb-dual-stack-native-ipv4-first-20261024",
+      "actual_head": "b5d3e9219302b40ce928377efe5bf5457f27b611",
+      "result": "FAIL",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "guards": true,
+      "client_failure_lines": [
+        "2026-10-24T10:49:23.243984Z ERROR rustusb: operation failed event_code=\"operation_failed\" failure=\"timeout\" error=operation timed out: secure discovery connection",
+        "RUSTUSB_SECURE_RESULT: FAIL role=client stage=client-prepare exit=1"
+      ],
+      "scope": "Original host FAIL retained. Guest exits do not reclassify it."
+    },
+    {
+      "directory": "/tmp/rustusb-dual-stack-native-ipv4-framed-first-20261024",
+      "actual_head": "b5d3e9219302b40ce928377efe5bf5457f27b611",
+      "result": "FAIL",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "guards": true,
+      "client_failure_lines": [
+        "2026-10-24T10:50:14.294424Z ERROR rustusb: operation failed event_code=\"operation_failed\" failure=\"timeout\" error=operation timed out: secure discovery connection",
+        "RUSTUSB_SECURE_RESULT: FAIL role=client stage=client-prepare exit=1"
+      ],
+      "scope": "Original host FAIL retained. Guest exits do not reclassify it."
+    },
+    {
+      "directory": "/tmp/rustusb-dual-stack-native-ipv4-probe-first-20261024",
+      "actual_head": "636efa25454599ccf9058ba4dada233608688ace",
+      "result": "FAIL",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "guards": true,
+      "client_failure_lines": [
+        "2026-10-24T10:55:51.299076Z ERROR rustusb: operation failed event_code=\"operation_failed\" failure=\"timeout\" error=operation timed out: secure discovery connection",
+        "RUSTUSB_SECURE_RESULT: FAIL role=client stage=client-prepare exit=1"
+      ],
+      "scope": "Original host FAIL retained. Guest exits do not reclassify it.",
+      "actual_probe_lines": [
+        "RESOLVER_ACTUAL_EXE 924552cebc4cd26282c8d0c8a2298d3c3aec4c2f91aaa9869795d263ddf59e0b  /proc/128/exe",
+        "RESOLVER_RAW_COUNT 1",
+        "RESOLVER_CANDIDATE 0 [fd42:7275:7374::99]:3241"
+      ]
+    },
+    {
+      "directory": "/tmp/rustusb-dual-stack-old-valid-counterfactual-0d116f0-20261024",
+      "actual_head": "0d116f0c85db40b24b8c1c103b9b6ec4b82c3ee2",
+      "result": "FAIL",
+      "guest_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "guards": true,
+      "client_failure_lines": [
+        "2026-10-24T11:03:54.290105Z ERROR rustusb: operation failed event_code=\"operation_failed\" failure=\"timeout\" error=operation timed out: secure discovery connection",
+        "RUSTUSB_SECURE_RESULT: FAIL role=client stage=client-prepare exit=1"
+      ],
+      "scope": "Original host FAIL retained. Guest exits do not reclassify it.",
+      "actual_probe_lines": [
+        "RESOLVER_ACTUAL_EXE 9e746ba2b890437522f7e56cfa776dca1a6061dd7ec0053de3cddc69c1efc7b3  /proc/130/exe",
+        "RESOLVER_ACTUAL_UID 2000 2000 2000 2000",
+        "RESOLVER_ENV RESOLV_HOST_CONF absent",
+        "RESOLVER_ENV RESOLV_MULTI absent",
+        "RESOLVER_RAW_COUNT 2",
+        "RESOLVER_CANDIDATE 0 [fd42:7275:7374::99]:3241",
+        "RESOLVER_CANDIDATE 1 192.0.2.1:3241"
+      ],
+      "valid_counterfactual": {
+        "actual_resolver_candidates": 2,
+        "actual_broker_uid": 2000,
+        "stale_syn_packets": 6,
+        "healthy_syn_connections": 0,
+        "interpretation": "Corrected fixture reproduces sequential first-address timeout; no installed USB PASS or new software execution."
+      },
+      "selected_product_inputs_identical_to_clean47f": 196
+    }
+  ],
+  "scope": "Same-author read-only scalar/source/probe/PCAP/bundle observations. First five runs do not establish a valid two-candidate counterfactual. Only the final corrected old-source run does; every original FAIL remains FAIL."
+}

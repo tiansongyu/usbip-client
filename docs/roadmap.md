@@ -84,6 +84,8 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 新增[E37 installed认证拒绝与启动凭据退休](research/secure-negative-qemu-validation.md)在同一clean25870c6完成Native/virtual/USBFS × IPv4/IPv6六paired run/12guest0，每pair同guest/helper内两credential epoch、四前后拒绝屏障、原I/O/真实server退出/基线恢复后才启动B策略。各44条目标负向client退出记录含server直接IMPORT4/duplicate2及旧pin拒绝，264不是USBcases；clean3d7软件797/192源保持。四原hostFAIL不可重判，仅raw-v1 startup pin退休，不完成热撤销/CRL、认证耗尽、完整生产隔离/审计或G3；原硬件与后续阶段保持。
 
+新增[E40主机名/双栈回退](research/dual-stack-connect-validation.md)：clean f3软件842/198输入，clean67d十四paired/28guest0，正确两候选旧版本对照仍超时；四actual DNS工作、64raw/16unique、inline候选及原deadline/TLS身份保持。本机4signal/2BP/2CLI及所有历史FAIL分账；wire-DNS/VPN/性能、硬件与完整G3继续未完成，不跳过原Phase4–7。
+
 ## 7. Phase 4：完整 TUI
 
 使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。

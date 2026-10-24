@@ -92,3 +92,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## TLS认证准入限速
 
 修改此路径前读`docs/research/authentication-admission-design.md`与`authentication-admission-validation.md`。固定Governor0.10.4/std-only+显式MonotonicClock，root严格policy；原连接permit先于非等待gate，TLS/verifier/IO在其后，失败/取消不退还，已建立stream/URB不再过门。配置clone/job共用gate；monitor仅metadata不持实际limiter/凭据/能力，短锁无日志/FS/await，poison拒绝新decision、饱和显式。旧TLS/framing/outer方程不变，独立Read RPC/control授权绕WAL、拒绝durable。这不是设备持久准入。软件824/196属clean47f，十三paired/26guest0属clean d619；首956采证FAIL不重判。安装态agent/v2专项限速、公平/长期DoS/性能、硬件及完整G3仍待验收。
+
+## 主机名与双栈TCP回退
+
+修改前读`docs/research/dual-stack-connect-design.md`与`dual-stack-connect-validation.md`。四resolver permit持于真实blocking closure直到结束，不能由waiter cancel释放；64raw/16unique只限制保留结果，不界定std/libc内部分配或lookup时长。OS首族偏好、族内稳定顺序/去重/交错，250ms正常及100ms失败启动间隔；inline16候选无detached dial task，winner返回前drop全部loser。保留调用者原总deadline/stop，只有TCP winner进入独立TLS身份验证与USB操作，TLS失败不重试/降级。clean f3软件842/198及clean67d十四paired/28guest0分账。NSS缺multi的旧失败不能当两候选对照；正确0d旧source/ELF+UID2000两答案仍timeout。Raw capture不改，projection只排精确stale空SYN，aggregate chronology非逐process归因；probe要实际UID/ELF/候选/override缺失。不是wire-DNS/VPN/性能或完整G3。

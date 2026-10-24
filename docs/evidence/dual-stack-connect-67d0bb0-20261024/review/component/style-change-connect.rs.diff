@@ -1,0 +1,13 @@
+--- initial-capture
++++ updated-current
+@@ -37,9 +37,7 @@
+ /// retained-address limits do not bound libc allocation or OS lookup duration.
+ pub async fn connect(peer: &Peer) -> Result<TcpStream> {
+     let addresses = resolve_peer(peer, Arc::clone(&RESOLVERS)).await?;
+-    race(addresses, |address| TcpStream::connect(address))
+-        .await
+-        .map_err(Error::Io)
++    race(addresses, TcpStream::connect).await.map_err(Error::Io)
+ }
+ 
+ async fn resolve_peer(peer: &Peer, budget: Arc<Semaphore>) -> Result<Vec<SocketAddr>> {

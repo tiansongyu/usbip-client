@@ -1,0 +1,66 @@
+{
+  "result": "PASS",
+  "head": "f4f0dcbbd5ea4262438cfe31cfa39baf596134cc",
+  "binary_sha256": "29d0d476e7b7ab21ae57fea2e2a049301ebbc2453469321d1ce3a0c5dc60e8ef",
+  "cases": [
+    {
+      "case": "hostname-catalog",
+      "command": [
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--json",
+        "--timeout",
+        "3",
+        "discover",
+        "localhost",
+        "--port",
+        "46749"
+      ],
+      "result": "PASS",
+      "exit": 0,
+      "actual_executable_sha256": "29d0d476e7b7ab21ae57fea2e2a049301ebbc2453469321d1ce3a0c5dc60e8ef",
+      "actual_uid": 1000,
+      "elapsed_seconds": 0.021486698009539396,
+      "scope": "Loopback synthetic management reply/timeout only; no USB/kernel or multi-address-set claim.",
+      "server_observations": [
+        {
+          "request_hex": "0111800500000000",
+          "peer_loopback": true
+        },
+        {
+          "peer_eof_observed": true
+        }
+      ],
+      "all_server_threads_joined": true
+    },
+    {
+      "case": "withheld-response",
+      "command": [
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--json",
+        "--timeout",
+        "2",
+        "discover",
+        "localhost",
+        "--port",
+        "46263"
+      ],
+      "result": "PASS",
+      "exit": 1,
+      "actual_executable_sha256": "29d0d476e7b7ab21ae57fea2e2a049301ebbc2453469321d1ce3a0c5dc60e8ef",
+      "actual_uid": 1000,
+      "elapsed_seconds": 2.00354447204154,
+      "scope": "Loopback synthetic management reply/timeout only; no USB/kernel or multi-address-set claim.",
+      "server_observations": [
+        {
+          "request_hex": "0111800500000000",
+          "peer_loopback": true
+        },
+        {
+          "peer_eof_observed": true
+        }
+      ],
+      "all_server_threads_joined": true
+    }
+  ],
+  "scope": "Two actual prebuilt CLI hostname/total-read-deadline cases, separate from Cargo execution and USB/QEMU counts."
+}

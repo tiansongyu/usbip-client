@@ -73,3 +73,13 @@ Four native CI jobs and Pages check/deploy succeeded. Six canonical HTTPS
 resources match that commit; live desktop/mobile checks observe the new link,
 responsive images and no overflow. The 824 local executions remain at clean47f,
 and thirteen paired QEMU runs remain at clean d619.
+
+## Hostname fallback evidence refresh (2026-10-24)
+
+The English README and page now lead with the scoped 842/14/28 evidence in the
+[hostname fallback report](research/dual-stack-connect-validation.md). Earlier
+capabilities retain their original reports and acceptance entries. The global
+`readme-site` skill and five runtime assets are unchanged.
+[Local documentation/site records](evidence/dual-stack-connect-docs-site-20261024/manifest.json)
+include desktop/mobile DOM checks, keyboard navigation and a CSP no-script
+preview; screenshot capture was unavailable. Publication has its own receipt.

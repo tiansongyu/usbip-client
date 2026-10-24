@@ -185,4 +185,7 @@ lookup cannot generally be cancelled and may delay runtime exit.
 This uses the administrator's existing NSS/DNS/VPN policy; it does not supply a
 separate resolver or endpoint override. The external Linux usbip utility keeps
 its own connection behavior. The [design and validation contract](research/dual-stack-connect-design.md)
-records the exact scope; installed product validation is pending at this checkpoint.
+and [validation report](research/dual-stack-connect-validation.md) record the exact
+scope: six raw hostname cases and one separate Native framed-v2 case pass in
+QEMU, with real emulated I/O and full original cleanup. Hosts-file qualification
+does not establish wire DNS, VPN or hardware compatibility.

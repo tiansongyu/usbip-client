@@ -1,0 +1,12 @@
+--- initial-review-capture
++++ author-final-capture
+@@ -150,7 +150,8 @@
+ }
+ 
+ /// Query a remote server. A single deadline covers DNS, connect, write and the full response.
+-/// Dropping this future closes its socket; Phase 1 requires an administrator-managed trusted network.
++/// Dropping closes all TCP candidates; started system lookup may outlive its waiter,
++/// retaining its actual-work quota. This path requires an administrator-managed trusted network.
+ pub async fn discover(peer: &Peer, timeout: Duration) -> Result<Vec<RemoteDevice>> {
+     tokio::time::timeout(timeout, async {
+         let mut stream = connect::connect(peer).await?;

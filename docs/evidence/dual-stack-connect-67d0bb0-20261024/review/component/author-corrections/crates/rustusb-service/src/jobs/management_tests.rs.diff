@@ -1,0 +1,112 @@
+--- initial-review-capture
++++ author-final-capture
+@@ -364,57 +364,62 @@
+ }
+ 
+ #[tokio::test]
+-async fn hostname_tcp_selection_keeps_independent_tls_name_and_never_retries_auth() -> TestResult {
+-    use std::sync::atomic::{AtomicUsize, Ordering};
++async fn hostname_endpoint_does_not_replace_independent_tls_service_name() -> TestResult {
+     for framed in [false, true] {
+-        let (server, client) = credentials(framed)?;
+-        let ipv6 = TcpListener::bind("[::1]:0").await?;
+-        let port = ipv6.local_addr()?.port();
+-        let ipv4 = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, port)).await?;
+-        let accepted = Arc::new(AtomicUsize::new(0));
+-        let (stop, _) = watch::channel(false);
+-        let mut owners = tokio::task::JoinSet::<TestResult>::new();
+-        for listener in [ipv6, ipv4] {
+-            let tls = server.clone();
+-            let count = Arc::clone(&accepted);
+-            let mut stop = stop.subscribe();
+-            owners.spawn(async move {
+-                let incoming = tokio::select! {
+-                    biased;
+-                    result = listener.accept() => Some(result),
+-                    _ = stop.changed() => None,
+-                };
+-                if let Some(incoming) = incoming {
+-                    let (tcp, _) = incoming?;
+-                    count.fetch_add(1, Ordering::SeqCst);
+-                    let result =
+-                        tokio::time::timeout(Duration::from_secs(5), link::accept(&tls, tcp))
+-                            .await?;
+-                    assert!(
+-                        result.is_err(),
+-                        "wrong independent service name must not authenticate"
+-                    );
++        for wrong_name in [false, true] {
++            let (server, client) = credentials(framed)?;
++            let listener = TcpListener::bind("127.0.0.1:0").await?;
++            let mut config = loaded(client, listener.local_addr()?)?;
++            config.endpoint.host = Host::new("localhost")?;
++            if wrong_name {
++                config.server_name = "wrong.test".into();
++            }
++            let owner = tokio::spawn(async move {
++                let (tcp, _) =
++                    tokio::time::timeout(Duration::from_secs(5), listener.accept()).await??;
++                let connection =
++                    tokio::time::timeout(Duration::from_secs(5), link::accept(&server, tcp))
++                        .await?;
++                if wrong_name {
++                    assert!(connection.is_err());
++                } else {
++                    let (mut connection, _) = connection?;
++                    let written =
++                        tokio::time::timeout(Duration::from_secs(5), catalog(&mut connection.io))
++                            .await;
++                    let result = match written {
++                        Ok(Ok(())) => link::complete_management(
++                            &mut connection.io,
++                            &mut connection.owner,
++                            async {
++                                tokio::time::sleep(Duration::from_secs(5)).await;
++                                Err(Error::Timeout("test hostname catalog close".into()))
++                            },
++                        )
++                        .await
++                        .map(|_| ()),
++                        other => {
++                            let _ = link::finish(&mut connection.owner).await;
++                            match other {
++                                Ok(Err(error)) => Err(error),
++                                _ => Err(Error::Timeout("test hostname catalog".into())),
++                            }
++                        }
++                    };
++                    result?;
+                 }
+-                Ok(())
++                Ok::<_, Box<dyn std::error::Error + Send + Sync>>(())
+             });
++            let result = discover(&config, Duration::from_secs(5)).await;
++            owner.await??;
++            if wrong_name {
++                assert!(matches!(result, Err(Error::Permission(_))));
++            } else {
++                assert_eq!(result?.len(), 1);
++            }
+         }
+-        let mut config = loaded(
+-            client,
+-            SocketAddr::from((std::net::Ipv6Addr::LOCALHOST, port)),
+-        )?;
+-        config.endpoint.host = Host::new("localhost")?;
+-        config.server_name = "wrong.test".into();
+-        let result = tokio::time::timeout(Duration::from_secs(5), link::connect(&config)).await?;
+-        stop.send_replace(true);
+-        while let Some(owner) = owners.join_next().await {
+-            owner??;
+-        }
+-        assert!(matches!(result, Err(Error::Permission(_))));
+-        assert_eq!(
+-            accepted.load(Ordering::SeqCst),
+-            1,
+-            "TLS failure must not retry another address"
+-        );
+     }
++    // The actual localhost answer set is platform-dependent. This tests actual
++    // hostname/TLS-name separation; QEMU supplies explicit two-family evidence.
+     Ok(())
+ }

@@ -1,0 +1,17 @@
+--- initial-review-capture
++++ author-final-capture
+@@ -34,12 +34,10 @@
+ /// Wrap the entire DNS/TCP/TLS/application operation in its original deadline;
+ /// this helper does not refresh it or impose a premature per-address timeout.
+ /// Cancelled resolver waiters cannot free actual blocking-work capacity. The
+-/// retained-address limits do not bound libc allocation or OS lookup duration.
++/// retained-address limits do not bound std/libc allocation or OS lookup duration.
+ pub async fn connect(peer: &Peer) -> Result<TcpStream> {
+     let addresses = resolve_peer(peer, Arc::clone(&RESOLVERS)).await?;
+-    race(addresses, |address| TcpStream::connect(address))
+-        .await
+-        .map_err(Error::Io)
++    race(addresses, TcpStream::connect).await.map_err(Error::Io)
+ }
+ 
+ async fn resolve_peer(peer: &Peer, budget: Arc<Semaphore>) -> Result<Vec<SocketAddr>> {

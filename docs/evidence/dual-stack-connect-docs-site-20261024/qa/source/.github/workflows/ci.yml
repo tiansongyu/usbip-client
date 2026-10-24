@@ -1,0 +1,92 @@
+name: RustUSB software checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-24.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: aarch64
+          - os: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node.js 24
+        with:
+          persist-credentials: false
+      - name: Install the pinned stable toolchain
+        run: rustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy
+      - name: Verify native architecture and record the software environment
+        run: |
+          test "$(uname -m)" = "${{ matrix.arch }}"
+          uname -a
+          cat /etc/os-release
+          rustc -vV
+          cargo -V
+      - name: Formatting, lint, tests, release and documentation
+        run: scripts/check.sh
+      - name: Record secure foreground lifecycle diagnostics
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          fields = ['case', 'result', 'mutual_tls', 'authenticated_imports', 'pending_in_per_import', 'blocked', 'exit', 'elapsed_seconds', 'data_connection_closure', 'backend_cleanup_snapshot_observed']
+          directories = sorted(p for p in Path('/tmp').glob('rustusb-secure-foreground-tests-*') if p.is_dir())
+          print(json.dumps({'secure_foreground_evidence_directories': len(directories)}))
+          for directory in directories:
+              summary = directory / 'summary.json'
+              if summary.is_file():
+                  value = json.loads(summary.read_text())
+                  print(json.dumps({'scope': value.get('scope'), 'result': value.get('result'), 'failed_case': value.get('failed_case'), 'error': value.get('error'), 'cases': [{key: case[key] for key in fields if key in case} for case in value.get('cases', value.get('completed', []))]}))
+              for observation in sorted(directory.glob('*/blocked-writer-observation.json')):
+                  print(json.dumps({'case': observation.parent.name, 'blocked_writer_observation': json.loads(observation.read_text())}))
+          PY
+      - name: Read-only CLI smoke checks
+        run: |
+          target/release/rustusb --help
+          target/release/rustusb doctor --json
+          target/release/rustusb devices --json
+      - name: Unprivileged hostname discovery and deadline (two cases)
+        run: python3 -B scripts/test-hostname-discovery.py --binary target/release/rustusb --evidence "$RUNNER_TEMP/hostname-discovery"
+      - name: Unprivileged virtual-server lifecycle smoke (all-features binary)
+        run: |
+          printf '%s\n' '{"id":"ci-shutdown","op":"shutdown"}' | timeout 10 target/release/rustusb virtual-server --listen 127.0.0.1:0 --control-stdin
+          python3 scripts/test-virtual-backpressure.py
+      - name: Unprivileged server signal lifecycle (four cases)
+        run: |
+          status=0
+          python3 scripts/test-server-signals.py --skip-build --evidence "$RUNNER_TEMP/server-signals" || status=$?
+          if test -f "$RUNNER_TEMP/server-signals/summary.json"; then
+            cat "$RUNNER_TEMP/server-signals/summary.json" || true
+          fi
+          exit "$status"
+      - name: Bounded process logging lifecycle (six cases)
+        run: |
+          status=0
+          python3 -B scripts/test-process-logging.py --binary target/release/rustusb --evidence "$RUNNER_TEMP/process-logging" || status=$?
+          if test -f "$RUNNER_TEMP/process-logging/summary.json"; then
+            cat "$RUNNER_TEMP/process-logging/summary.json" || true
+          fi
+          exit "$status"
+      - name: Private diagnostic export lifecycle (nine cases)
+        run: |
+          status=0
+          python3 -B scripts/test-diagnostic-export.py --binary target/release/rustusb --evidence "$RUNNER_TEMP/diagnostic-export" || status=$?
+          if test -f "$RUNNER_TEMP/diagnostic-export/summary.json"; then
+            cat "$RUNNER_TEMP/diagnostic-export/summary.json" || true
+          fi
+          exit "$status"

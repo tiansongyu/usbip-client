@@ -47,6 +47,7 @@
 | E37 | [认证负向设计](research/secure-negative-qemu-design.md)、[英文验收](research/secure-negative-qemu-validation.md)、[harness](../scripts/qemu_authentication/README.md)、[797软件/首FAIL](evidence/authentication-software-and-first-qemu-failure-3d7e126-20261024/manifest.json)、[六QEMU](evidence/authentication-qemu-final-25870c6-20261024/manifest.json) | Rust192源不变；clean3d7软件343/434/20共797；clean25870c6三backend×双栈六paired run/12guest0，每pair同guest/helper两epoch四拒绝屏障两真实I/O。各44目标负向client退出记录、direct IMPORT4/duplicate2、旧server实际退出/基线恢复后新PID读取退休oldpin策略/B成功；四原hostFAIL保留，raw-v1 startup退休非热吊销/CRL/fullG3 |
 | E38 | [服务端安全观测](research/server-security-observations-validation.md) | clean c097cf8软件348/440/20=808，六认证观测paired与独立Native-v4/v2诊断回归通过，共14guest0；194软件输入，计数volatile/config scope、Read授权绕WAL，不是持久安全审计、设备释放或完整G3 |
 | E39 | [认证准入限速](research/authentication-admission-validation.md) | clean47f软件356/448/20=824、196输入；clean d619十三paired/26guest0：六限速、六默认配置及独立Native-v4/v2诊断回归；loaded配置共享GCRA与独立Read观测，不承诺按来源公平/完整DoS/G3 |
+| E40 | [主机名与双栈回退](research/dual-stack-connect-validation.md) | clean f3bf579软件365/457/20=842、198稳定输入；clean67d十四paired/28guest0（六raw主机名、单Native/v2主机名、六默认及独立v2诊断）；正确NSS旧source196/old ELF对照0d仍timeout，六历史FAIL保留；非wire-DNS/VPN/性能或完整G3 |
 
 当前本机软件环境为Ubuntu22.04.5 x86_64、内核6.8.0-106-generic、Rust/Cargo1.97.1。QEMU见E20，历史软件/CI见E20/E21；测试夹具修订的软件/CI见E22；信号修复后的934358f软件、本地与QEMU见E23，CI39899971271已实际四平台通过；SIGKILL旧负向见E24，持久授权的933e720仿真、250次软件测试及四平台CI39908004666见E25，独立恢复句柄实验见E26，受限产品自动恢复与2ab9976的268次软件/七项QEMU见E27，旧producer/许可撤销/外部C三项边界见E28，TLS基础与匿名内核机制见E29，历史安全产品六矩阵与412次软件见E30，历史495软件/四CI及应用服务八场景（六前台eaa、两Native补采cb）见E31。E34的667软件/四原生CI及clean1582二十三QEMU保留原版；E35为723软件/177输入、同ELF本地6/4/2及精确89ef四原生CI，最新installed日志仿真一项/三epoch锁clean48c9794，首44b1 FAIL保持。E36为797软件/192选定source-build输入，clean835本地13组19child、精确d9四native CI各797/新9诊断组；clean d9ebe2e一paired/一epoch两I/O/2guest0。最新E37仍同192 Rust输入，在clean3d7实际运行797软件，clean25870c6六installed认证负向/启动凭据退休QEMU通过、12guest0；四原hostFAIL不重判。历史各项证据保留原版本。真实硬件、Ubuntu24.04内核USB互操作及aarch64 USB内核路径仍未验证。
 
@@ -278,3 +279,7 @@ Native局部stop保留原HID真实I/O，client detach后先等精确原server st
 ## 26. 认证准入限速（E39）
 
 见[英文验收](research/authentication-admission-validation.md)。默认burst64/125ms、root可信schema1/2严格策略，loaded配置clone/job共享非等待配额；失败/取消不退还，原有stream/URB不重新准入。独立metadata-only monitor及server_admission/agent Read接口不改旧TLS/Session/Metrics/disk/诊断schema。clean47f完整824软件、196稳定输入；同product/CLI的clean d619六限速/六默认/独立v2诊断共13paired、26guest0。本地4signal/2BP通过。首956 host采证时序FAIL保留；新receipt先于校验。安装态agent RPC、v2专项限速、公平/长期DoS/性能、硬件G1/G2及完整G3仍未验收。
+
+## 27. 主机名与双栈连接（E40）
+
+见[英文验收](research/dual-stack-connect-validation.md)。共享Rust connector保留OS首族偏好，64raw/16unique、四actual resolver工作，250ms正常/100ms失败间隔、inline候选仅TCP winner进原TLS/USB；原总deadline/stop/独立service name不改。clean f3bf579完整842软件、198输入稳定；同产品ELF clean67d十四QEMU/28guest0分七新主机名与七回归，本地4signal/2BP及2legacy CLI查询/超时通过。五早期不充分候选/设置FAIL与有效旧产品0d对照FAIL分开，原件不重判。Probe实际UID2000/ELF/两候选及root NSS策略有原件；不是逐process抓包归因。std/libc/OS分配/执行时间不由保留上限约束，started lookup不可假取消；wire-DNS/VPN/性能、其余v2 backend专项、硬件及完整G3/后续阶段仍未验收。

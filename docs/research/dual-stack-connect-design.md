@@ -1,8 +1,10 @@
 # Bounded dual-stack TCP fallback
 
 2026-10-24. Baseline `9c9506fad514d016e5353fd4711a44f1c06a97e2`.
-Status: implemented; targeted8 connector tests and one raw/framed hostname/TLS
-service-name test pass. Complete clean software and installed validation pending.
+Status: implemented and validated within the
+[validation report](dual-stack-connect-validation.md):842 software executions
+at clean f3bf579 and14 successful paired QEMU runs at clean67d0bb0. Full G3 and
+the original Phase0–7 goal remain open.
 
 The original goal explicitly requires hostname, IPv4/IPv6, timeout/cancellation
 and real encrypted device data connections. The current shared secure connector

@@ -1,0 +1,23 @@
+--- initial-review-capture
++++ author-final-capture
+@@ -49,7 +49,7 @@
+ - Inspect at most 65 raw resolver entries, rejecting more than 64. Stably
+   deduplicate, reject more than 16 unique addresses or an empty result, preserve
+   full SocketAddr values and each family's order. These bounds cover retained
+-  RustUSB results, not libc/OS internal allocation or lookup duration.
++  RustUSB results, not std/libc/OS internal allocation or lookup duration.
+ - Start with the platform's first family and alternate while both remain.
+   Start the first candidate immediately; normal later starts are at least250ms
+   apart. A definitive TCP failure may shorten the next interval to100ms.
+@@ -81,8 +81,9 @@
+    cycles, real wait/cleanup, original root journals and full driver baselines.
+    A new strict capture method accepts only empty SYN attempts to the exact
+    stale candidate; it records a derived healthy projection for the original
+-   ciphertext classifier without changing raw captures. Healthy-family TLS
+-   must follow earlier stale-candidate SYNs. This is OS hostname resolution
++   ciphertext classifier without changing raw captures. Exact healthy client/server tuples must
++   follow earlier stale-candidate SYNs with equal-count sorted chronology; this
++   is aggregate evidence without per-process/per-operation attribution. This is OS hostname resolution
+    via guest hosts files, not wire-DNS or VPN qualification.
+ 3. Meaningful software tests cover ordering/duplicates/limits, actual loopback
+    fallback, launch timing with deterministic clocks, failure acceleration,

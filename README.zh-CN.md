@@ -40,6 +40,8 @@ target/release/rustusb doctor
 
 设备 ID 使用 VID/PID、序列号（若有）和物理控制器/端口拓扑的 SHA256 候选指纹。Bus ID 只是当前地址。无序列号的同型号设备在同一物理端口替换无法可靠区分；指纹不是硬件身份认证。JSON 设备详情含序列号，分享前自行脱敏，默认日志不输出它。
 
+最新[主机名与双栈回退验收](docs/research/dual-stack-connect-validation.md)：clean `f3bf579` 完整842次软件执行，clean `67d0bb0` 十四paired QEMU/28guest0（六raw主机名、一Native/v2主机名、六默认配置与独立v2诊断回归）。实际UID2000探针确认两个候选，旧连接器在相同修正配置下仍超时，新版本完成原I/O和清理；六历史hostFAIL分开保留。本机4signal/2BP及2CLI查询/超时通过，未把hosts-file测试当成wire-DNS/VPN/性能或真实硬件证明。
+
 新增[私有诊断导出](docs/diagnostics.md)：`rustusb diagnostics --output /受保护的私有目录/result.json --json`，闭合JSON与每次捕获独立别名保留关系，不复制原始标识/路径/秘密。agent模式须同profile Read+Audit，导出已提交视图，health/log独立采样。[专项验收](docs/research/diagnostic-export-validation.md)记录797次软件执行（343/434/20）、192选定source/build输入、本地13组/19child、[d9四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40067501829)及clean `d9ebe2e` 一项双guest仿真/一epoch两轮真实HID/FTDI I/O。导出与第二轮I/O均在同一原WAL syscall暂停时完成，随后原资源清理通过；原2ca进程exit101与bde仿真启动FAIL保留。默认四组只属本地x86，不外推CI；硬件与完整G3继续未完成。
 
 新增[installed认证负向与启动pin退休验收](docs/research/secure-negative-qemu-validation.md)：clean `25870c6` 的Native/virtual/USBFS × IPv4/IPv6六paired run全部通过，12guest0；每pair同guest/helper内两credential epoch、四拒绝前后屏障及两轮实际HID/Serial I/O。各44条目标负向client退出记录包含错误证书/用途/名称/信任、缺cert/ALPN、直接未授权IMPORT4/duplicate2及旧pin移除后拒绝；264条进程记录不计USBcases。clean3d7软件797次仍同192源；前四hostFAIL均保留。这是raw-v1合作停止后startup pin退休，不是热吊销/CRL、崩溃恢复或完整G3。

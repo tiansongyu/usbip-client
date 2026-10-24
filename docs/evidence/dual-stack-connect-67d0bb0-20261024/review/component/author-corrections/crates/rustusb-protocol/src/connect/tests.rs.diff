@@ -1,0 +1,114 @@
+--- initial-review-capture
++++ author-final-capture
+@@ -85,16 +85,18 @@
+     for host in ["127.0.0.1", "localhost"] {
+         let listener = TcpListener::bind("127.0.0.1:0").await?;
+         let target = peer(host, listener.local_addr()?.port())?;
+-        let (outgoing, incoming) = tokio::join!(
+-            tokio::time::timeout(Duration::from_secs(3), connect(&target)),
+-            listener.accept()
+-        );
+-        let mut outgoing = outgoing.map_err(|_| state("actual hostname connect timeout"))??;
+-        let (mut incoming, _) = incoming?;
+-        outgoing.write_all(b"bounded-connector").await?;
+-        let mut bytes = [0; 17];
+-        incoming.read_exact(&mut bytes).await?;
+-        assert_eq!(&bytes, b"bounded-connector");
++        tokio::time::timeout(Duration::from_secs(3), async {
++            let (outgoing, incoming) = tokio::join!(connect(&target), listener.accept());
++            let mut outgoing = outgoing?;
++            let (mut incoming, _) = incoming?;
++            outgoing.write_all(b"bounded-connector").await?;
++            let mut bytes = [0; 17];
++            incoming.read_exact(&mut bytes).await?;
++            assert_eq!(&bytes, b"bounded-connector");
++            Ok::<_, Error>(())
++        })
++        .await
++        .map_err(|_| state("actual hostname exchange timeout"))??;
+     }
+     Ok(())
+ }
+@@ -129,9 +131,16 @@
+     )
+     .await
+     .map_err(|_| state("healthy second candidate was not attempted"))??;
+-    let (mut accepted, _) = healthy.accept().await?;
++    let (mut accepted, _) = tokio::time::timeout(Duration::from_secs(1), healthy.accept())
++        .await
++        .map_err(|_| state("healthy accept timeout"))??;
+     drop(result);
+-    assert_eq!(accepted.read(&mut [0]).await?, 0);
++    assert_eq!(
++        tokio::time::timeout(Duration::from_secs(1), accepted.read(&mut [0]))
++            .await
++            .map_err(|_| state("selected socket close timeout"))??,
++        0
++    );
+     drop(held);
+     drop(blocked);
+     Ok(())
+@@ -211,10 +220,12 @@
+ 
+ async fn socket_pair() -> Result<(TcpStream, TcpStream)> {
+     let listener = TcpListener::bind("127.0.0.1:0").await?;
+-    let (outgoing, incoming) = tokio::join!(
+-        TcpStream::connect(listener.local_addr()?),
+-        listener.accept()
+-    );
++    let address = listener.local_addr()?;
++    let (outgoing, incoming) = tokio::time::timeout(Duration::from_secs(3), async {
++        tokio::join!(TcpStream::connect(address), listener.accept())
++    })
++    .await
++    .map_err(|_| state("test socket pair timeout"))?;
+     Ok((outgoing?, incoming?.0))
+ }
+ 
+@@ -226,24 +237,30 @@
+     let started = Arc::new(AtomicUsize::new(0));
+     let captured = Arc::clone(&started);
+     tokio::time::pause();
+-    let outcome = tokio::time::timeout(
+-        Duration::from_millis(500),
+-        race(
+-            vec![address("[::1]:3241")?, address("127.0.0.1:3241")?],
+-            move |_| {
+-                captured.fetch_add(1, Ordering::SeqCst);
+-                let stream = streams.pop_front();
+-                async move {
+-                    let _owned = stream;
+-                    std::future::pending::<io::Result<TcpStream>>().await
+-                }
+-            },
+-        ),
+-    )
+-    .await;
++    let mut attempt = Box::pin(race(
++        vec![address("[::1]:3241")?, address("127.0.0.1:3241")?],
++        move |_| {
++            captured.fetch_add(1, Ordering::SeqCst);
++            let stream = streams.pop_front();
++            async move {
++                let _owned = stream;
++                std::future::pending::<io::Result<TcpStream>>().await
++            }
++        },
++    ));
++    tokio::select! {
++        result = &mut attempt => { result?; return Err(state("test candidates unexpectedly completed")); },
++        _ = tokio::time::sleep(Duration::from_millis(300)) => {},
++    }
++    assert_eq!(started.load(Ordering::SeqCst), 2);
++    for peer in [&mut peer_one, &mut peer_two] {
++        assert!(
++            matches!(peer.try_read(&mut [0]), Err(error) if error.kind()==io::ErrorKind::WouldBlock)
++        );
++    }
++    let outcome = tokio::time::timeout(Duration::from_millis(200), attempt).await;
+     tokio::time::resume();
+     assert!(outcome.is_err());
+-    assert_eq!(started.load(Ordering::SeqCst), 2);
+     for peer in [&mut peer_one, &mut peer_two] {
+         let read = tokio::time::timeout(Duration::from_secs(1), peer.read(&mut [0]))
+             .await

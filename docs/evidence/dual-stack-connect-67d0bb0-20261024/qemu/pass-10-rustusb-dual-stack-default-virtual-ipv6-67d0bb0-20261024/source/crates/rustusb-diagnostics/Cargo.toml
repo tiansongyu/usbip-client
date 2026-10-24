@@ -1,0 +1,28 @@
+[package]
+name = "rustusb-diagnostics"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[features]
+default = []
+secure-transport = ["dep:rustusb-service"]
+
+[dependencies]
+rustusb-core.workspace = true
+rustusb-native.workspace = true
+rustusb-daemon.workspace = true
+rustusb-logging.workspace = true
+rustusb-service = { workspace = true, optional = true }
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+rustix.workspace = true
+sha2.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -159,3 +159,7 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 ## 有界认证准入
 
 [认证准入限速验收](research/authentication-admission-validation.md)覆盖默认64初始/125ms补充与root可选严格策略。每个已加载TLS服务配置的clone/job共用Governor direct gate，连接permit先于rate decision，verifier/IO在其后；失败/取消不退配额，原有设备数据流不重复检查。新计数只有policy/固定数值/一致性，无peer/key/principal；授权读取不等WAL。六raw-v1 QEMU在实际拒绝期间完成原HID/串口I/O，并在补充后成功新认证；六默认配置及独立v2诊断回归分账。不是按来源公平、持续攻击/性能或公网部署资格；安装态agent/v2专项耗尽、持久安全历史与完整G3仍未完成。
+
+## 主机名回退与身份边界
+
+[主机名验收](research/dual-stack-connect-validation.md)不把DNS映射当身份：仅选TCP winner，原service_name/PKI/ALPN/pin/设备ACL和helper授权保持，TLS失败不换地址重试或降级。请求不能覆盖endpoint。四actual resolver工作/64raw/16unique及候选inline释放约束RustUSB资源；真实lookup可超过waiter生命周期，不能假称取消或bounded libc。六raw与一Native/v2 hostname仿真只用guest hosts/multi-on策略和实际UID2000探针，不外推wire-DNS/VPN/长期DoS/性能、其他v2专项或完整G3。

@@ -2,6 +2,8 @@
 
 ## 2026-10-24：主机名双栈连接
 
+- 最终软件/仿真：clean f3bf579完整842、198输入；clean67d十四paired/28guest0（七新hostname/七回归）全部PASS，本地4signal/2BP/2legacy CLI通过。有效旧产品detached0d同NSS两候选仍timeout；前五不充分fixture FAIL与有效旧FAIL均保留。报告见`research/dual-stack-connect-validation.md`，当前仍未宣布完整G3或原Phase0–7完成。
+
 - 先读完整原任务、clean9c9506、AGENTS/项目skill、架构/工作日志及实际protocol/service连接源码；上一轮为进展，原Phase0–7 goal保持active。
 - 定位实际网络缺口：Tokio1.54.1按DNS候选顺序连接，首个pending可吃完原总截止。按writing-technical-design显式并行研究两个独立组件（固定Tokio及RFC），原件在/tmp独立目录，未委派产品编辑；实际loopback探针复现首pending/第二healthy未尝试，四blocking closure探针证明取消waiter不释放实际permit。
 - 先定义`research/dual-stack-connect-design.md`：四实际DNS工作/64raw及16unique候选、按OS偏好交错、250ms正常/100ms失败间隔、inline socket futures、原deadline/独立TLS服务名/单winner且不重试认证。不是完整RFC8305、DNS取消或libc内部分配上界；用户仓库约定覆盖通用skill逐组件技能输出。先建立旧版本QEMU负向，再实施；原824/13paired保持来源。
@@ -728,3 +730,15 @@
 - 新clean636efa独立root stdprobe实际RAW_COUNT1，仅staleIPv6；actualprobeSHA吻合，host.conf absent。故此前ca63/b5未证明两候选，旧FAIL不改但撤销其“有效双候选旧产品对照”推论。固定glibc源码multi-off首匹配停止与现象一致，Ubuntu精确patch源码404限制保留。新guest-only multi on在所有新lookup前安装，UID2000probe核实际UID/ELF/候选及override缺失，绝不改宿主NSS；随后补正确旧产品counterfactual。
 
 - 追加legacy CLI loopback读目录/withheld-response两场景：首30b7611目录PASS，deadline夹具FAIL因错误期待stdout为空；实际--json既有失败DTO为{ok:false,error:operation timed out: USB/IP discovery}，stderr同timeout。未持久化首负向child waitcode，保留stdout/stderr/method与这一证据边界；修正为精确既有DTO并在断言前保存wait/cleanup，非产品改动，fresh目录重跑。
+
+## 2026-10-24：主机名回退最终证据
+
+- clean67d三backend/双健康族六rawhostname、Native-v4独立v2hostname、六原默认secure与独立Native-v4/v2诊断回归均PASS，共14paired/28guest0，198产品源/CLI29d0/helper75e3保持f3。Probe实际UID2000与执行SHA、NSS root0644/multi on/override缺失/两候选均真实采到；I/O/Rootproof/fullbaseline不放宽。
+- 正确旧对照在独立sparse detached0d：纠正后fixture67d保留、六产品路径还原ca63，196源逐47f同，defaultlocked build实际旧CLI8779/helper7c69；broker probe两答案，原oldTCP六staleSYN/healthy0再timeout。Patch/commit/小Gitbundle保存，非新产品branch或旧软件重执行。首次empty-index准备assert失败单独记录后materialize，未丢他人工作。
+- 同作者raw方法不导入原parser/runner/verifier，4949原件前后SHA同、1695 B64重解码、207/215选定源码与198子集Gitblob核对，原默认201仅196软件输入而缺toolchain/check两项明确记账；独立重建projection但不是另一次TLS审计/安全审计或软件USBcases。
+- 2legacy CLI最终f4f0dc场景PASS：真实proc UID/ELF、精确DREQ、空catalog或既有JSON超时DTO、真实wait/EOF/join；首错误empty-stdout期待的fixture FAIL保留且不补写首child未知waitcode。新增同2case CI step。
+- 维护英文入口及现有站点，把验证区聚焦最新842/14/28，历史移至能力报告/acceptance索引，当前事实与原失败不删除；全局readme-site四源保持。原goal继续active。
+
+- 本地站点CUA 1280×720/390×844新842/14/28及报告链接可见，无横向溢出，ArrowRight/Home选中与焦点正确、hash保持空；手机先desktopSVG后mobileSVG360加载两观察保留。独立CSP script-src none预览在实际1280宽全部三backend/commands可读，console查询均空；截图实际Unavailable，不称pixel，clipboard/reduced-motion未重跑。本轮未单独抓本地六HTTP原bytes，后续线上逐内容Gitblob核。临时tab21/22关闭、viewport reset，owned preview3599860实际Ctrl-C exit0。
+
+- 主证据7125份约113.69MB含所有六FAIL/十四PASS及有效旧对照Gitbundle；文档链接/表格、177站点检查、Node/diff及全局四源/五assets不变另档，均按manifest逐original/bytes/SHA/staged blob核。发布状态待实际push/primary API/线上资源观察，不预写成功。
