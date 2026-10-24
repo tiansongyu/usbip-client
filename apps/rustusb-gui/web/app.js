@@ -49,7 +49,7 @@
     result.append(body); return result;
   }
   const empty = text => node('p', text, 'empty');
-  const json = value => node('pre', JSON.stringify(value, null, 2), 'json-detail');
+  const json = value => { const pre = node('pre', JSON.stringify(value, null, 2), 'json-detail'); pre.tabIndex = 0; pre.setAttribute('aria-label', 'Metadata details'); return pre; };
   const matches = value => JSON.stringify(value).toLowerCase().includes(query.toLowerCase());
   function renderInventory() {
     const local = page === 0, snapshot = local ? view.local : view.remote;
@@ -183,7 +183,7 @@
   }
   async function poll() {
     while (!destroyed) {
-      try { const next = await invoke('gui_snapshot'); if (next.revision !== view?.revision || waiting !== null) apply(next); }
+      try { const next = await invoke('gui_snapshot'); if (next.revision !== view?.revision || next.pending !== view?.pending || waiting !== null) apply(next); }
       catch (error) { notice(`Native bridge unavailable: ${String(error)}`); }
       await new Promise(resolve => setTimeout(resolve, 400));
     }

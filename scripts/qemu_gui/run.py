@@ -97,6 +97,9 @@ def verify(evidence,summary):
         actor=(out/f'gui-actor-{phase}.txt').read_text();assert re.search(r'^Uid:\s+1000\s+1000\s+1000\s+1000$',actor,re.M)
         assert all(re.search(r'^'+cap+r':\s+0000000000000000$',actor,re.M)for cap in ['CapInh','CapPrm','CapEff','CapAmb'])
         assert summary['binaries']['rustusb-gui']in actor and 'TARGET=/dev/bus/usb/'not in actor
+    for mode in ['wide','narrow']:
+        geometry=read(mode+'-geometry');assert geometry['workspace']<=geometry['viewport'] and geometry['footer']<=geometry['viewport'] and geometry['main']<geometry['viewport']
+    assert read('wide-geometry')['metadataTabIndex']==0
     for name in ['initial','added','denied','narrow']:
         data=base64.b64decode(read(name+'-screenshot'));assert data.startswith(b'\x89PNG\r\n\x1a\n');(evidence/(name+'.png')).write_bytes(data)
     (evidence/'decoded-files.json').write_text(json.dumps(records,indent=2)+'\n')

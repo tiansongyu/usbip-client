@@ -137,6 +137,8 @@ wait_dom 'document.querySelector(".device-name")'
 js 'document.querySelector(".device-name").click();return true;' /tmp/gui-select.json
 wait_dom 'document.querySelector(".detail").innerText.includes("device_address")'
 js 'return document.querySelector(".detail").innerText;' /tmp/gui-detail-before.json
+js 'return {viewport:innerHeight,workspace:document.querySelector(".workspace").getBoundingClientRect().bottom,footer:document.querySelector("footer").getBoundingClientRect().bottom,main:document.querySelector("main").getBoundingClientRect().bottom,metadataTabIndex:document.querySelector(".detail pre").tabIndex};' /tmp/gui-wide-geometry.json
+jq -e '.value | .workspace<=.viewport and .footer<=.viewport and .main<.viewport and .metadataTabIndex==0' /tmp/gui-wide-geometry.json >/dev/null
 shot added
 # Search is a real input event; clearing restores the same actual inventory.
 js 'const s=document.getElementById("search");s.value="no-match";s.dispatchEvent(new Event("input"));return document.getElementById("content").innerText;' /tmp/gui-search-empty.json
@@ -198,6 +200,8 @@ js 'document.querySelector(".device-name").click();return true;' /tmp/gui-narrow
 wait_dom 'document.querySelector(".detail").innerText.includes("device_address")'
 js 'document.getElementById("details-toggle").click();return {expanded:document.getElementById("details-toggle").getAttribute("aria-expanded"),visible:getComputedStyle(document.querySelector(".detail")).display!=="none"};' /tmp/gui-narrow-details.json
 jq -e '.value=={expanded:"true",visible:true}' /tmp/gui-narrow-details.json >/dev/null
+js 'return {viewport:innerHeight,workspace:document.querySelector(".workspace").getBoundingClientRect().bottom,footer:document.querySelector("footer").getBoundingClientRect().bottom,main:document.querySelector("main").getBoundingClientRect().bottom};' /tmp/gui-narrow-geometry.json
+jq -e '.value | .workspace<=.viewport and .footer<=.viewport and .main<.viewport' /tmp/gui-narrow-geometry.json >/dev/null
 shot narrow
 STAGE=shutdown
 actor before-stop

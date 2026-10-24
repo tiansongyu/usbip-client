@@ -65,7 +65,11 @@ line #334155, text #f1f5f9, muted #b1bfd1, focus #67e8f9; danger #fda4af and
 success #86efac are accompanied by text. Use local system sans (Noto Sans,
 DejaVu Sans), 14px body/20px page title, 8px spacing rhythm and restrained 6px
 controls. A 190px navigation rail, flexible main list and 300px details pane
-collapse to a list/details toggle on narrow windows. No marketing hero, fake
+collapse to a list/details toggle on narrow windows. The grid workspace must
+allow its main track to shrink (`min-height:0`); long metadata scrolls inside the
+viewport with the section status footer still visible. Metadata preformatted
+areas are keyboard-focusable. Verify actual native element geometry, not only
+screenshot dimensions. No marketing hero, fake
 live metrics, web fonts, card grid or decorative motion. The skill search's
 generic landing-page suggestions are inapplicable; retain its keyboard/contrast
 and dense-console guidance. This is an application, not the showcase website.

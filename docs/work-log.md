@@ -19,6 +19,8 @@
 
 - clean72fe888c第五native guest实际完成权限/UUID/偏好保存及800x600 resize，但紧接Save的DOM尚未消费ack，导航被正确Busy拒绝，夹具对Settings页不存在.detail调用getComputedStyle导致HTTP500/整体FAIL。actualwait0/无forced/四guard真、fallback也观察GUI child1/localjoin；补等真实DOM按钮完成及Local页面再验窄窗。TUI依赖目录实为pip --target，首次误当venv命令实际127未launch（原log保留），校验pyte0.8.2/wcwidth0.2.13后用PYTHONPATH重跑实际PASS、四PTY/预期denial1、原六monitor及三fast guard保留；此时两VM均真正结束后才修改。
 
+- cleanf37d95d9第六native QEMU parent/guest实际PASS，66文件378653B、guest0、GUI正确unresolved1/agent0、无forced/四guard真，截图已实际查看；CLI5ed8…/helper83c5…/GUIe338…。原规则/positive Start/Stop/远端client/active-job/安装/硬件仍未由此覆盖。截图复核发现长详情挤出footer：补host只读geometry f未选行760正常、g选行workspace937/footer937>viewport760的真实负向（raw host设备页仅.private、不发布）。先补设计再修workspace min-height:0/metadata焦点与pending单独变化投影消费，增加宽/窄native geometry硬断言；需重新GUI gate/新QEMU，不将原f37的局部PASS写成新修复证据。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。
