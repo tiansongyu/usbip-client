@@ -11,6 +11,8 @@
 
 - cleanb15dd113完整core956+GUI10共966执行/无fail/ignore，原件/tmp/rustusb-native-gui-gates-b15dd113-20261025，全部source/head/status真；all CLI5ed8d381…、helper83c53d52…、GUIb06acdad…。首QEMU cleanb15 FAIL boot：shell内建BusyBox setpriv不支持--reuid；无forced、四guard真，但parent遇FAIL未将已poll结束的actual code写回summary（None），不补造guest0。原tty完整保留。静态payload检查补xkbcomp；拟修finally始终记录真实wait、DOM等待真实poll而非固定睡眠，并让renderer reload也显示Rust中真实pending sequence。首git diff --check的两项是原上游LICENSE/精确patch空白，未改第三方原件；将仅对两精确路径声明保留原空白。
 
+- clean7c4eb3cd GUI完整gate11/0/0与全部guard通过，核心输入/CLI/helper保持b15软件956结果（不重复归为7c新执行）。第二QEMU实际建立wry0.57.1本地会话、UID1000真实GUI；夹具替换shot误命中snapshot，出现snapshot:not found，整体FAIL。新finally实际wait0/无forced/四guard真；app.stderr另有EGL_BAD_PARAMETER，按dlopen路径补Mesa vendor/软件DRI及其ldd依赖。保留两个原FAIL，不外推USB支持。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

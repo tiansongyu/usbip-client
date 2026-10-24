@@ -95,16 +95,7 @@ async_js() {
     jq -n --arg script "$script" '{script:$script,args:[]}' >/tmp/request.json
     http POST "/session/$SESSION/execute/async" "$(cat /tmp/request.json)" "$dest"
 }
-snapwait_dom() {
-    predicate=$1
-    for attempt in $(seq 1 200); do
-        js "return !!($predicate);" /tmp/gui-dom-wait.json
-        if jq -e '.value==true' /tmp/gui-dom-wait.json >/dev/null; then return 0; fi
-        sleep .05
-    done
-    return 1
-}
-shot() { async_js 'const done=arguments[arguments.length-1]; window.__TAURI__.core.invoke("gui_snapshot").then(done,e=>done({error:String(e)}));' "$1"; }
+snapshot() { async_js 'const done=arguments[arguments.length-1]; window.__TAURI__.core.invoke("gui_snapshot").then(done,e=>done({error:String(e)}));' "$1"; }
 wait_view() {
     predicate=$1; dest=$2
     for attempt in $(seq 1 200); do

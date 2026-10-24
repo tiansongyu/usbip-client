@@ -41,6 +41,10 @@ def payload(work,kernel,driver,evidence):
         if path.is_dir():copy_tree(path,root)
         elif path.is_file():
             target=root/tree.lstrip('/');target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,target)
+    # EGL vendors/software DRI are dlopen dependencies, absent from ordinary ldd output.
+    copy_tree('/usr/share/glvnd/egl_vendor.d',root)
+    for library in ['/usr/lib/x86_64-linux-gnu/libEGL_mesa.so.0','/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0','/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so']:
+        native.copy_binary(library,library,root)
     # Fontconfig's relative includes need their dereferenced conf.avail targets.
     copy_tree('/usr/share/fontconfig',root)
     (root/'init').write_bytes((OWN/'guest-init.sh').read_bytes());(root/'init').chmod(0o755)
