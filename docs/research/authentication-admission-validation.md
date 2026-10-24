@@ -190,3 +190,25 @@ were closed, the viewport reset and both owned preview server processes exited
 zero. Initial pending-manifest and mistyped HTTP-helper-path checks are retained
 as intermediate QA observations. CI/deployment/live verification is recorded
 after an actual push; local checks alone do not prove publication.
+
+## Published content and CI
+
+Normal SSH push published `5845b14ba41b6d112cf264845e5beecbb7533ef3`.
+Its [four native CI jobs](https://github.com/tiansongyu/usbip-client/actions/runs/40084212856)
+all completed successfully, including each actual native-architecture and full
+software-gate step. The [Pages check and deployment](https://github.com/tiansongyu/usbip-client/actions/runs/40084212885)
+also succeeded. These are final primary API run/job/step statuses; full CI logs
+and CI executable bodies were not fetched or independently recounted. The 824
+execution count remains the actual local clean-47f run, and the thirteen paired
+QEMU runs remain clean d619. All 196 selected software inputs match published
+5845 bytes without being relabeled as another execution.
+
+All six canonical HTTPS resources return 200 and exactly match that content
+commit's Git blobs. Actual live desktop/mobile DOM checks find the new evidence
+link, loaded responsive images and no horizontal overflow. The first immediate
+mobile resize sampled an image before completion; the settled observation
+retains both complete images. Viewport overrides were reset and the public tab
+kept as the deliverable. The [publication archive](../evidence/authentication-admission-publication-5845b14-20261024/manifest.json)
+preserves the original push, API, source mapping, HTTP bodies/headers and browser
+observations. A subsequent documentation receipt does not change the tested
+product or published site bytes.

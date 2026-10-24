@@ -66,3 +66,10 @@ pass. A local CSP `script-src 'none'` response retains all initial instructions.
 The screenshot API remains unavailable, so this is DOM/layout verification.
 Runtime CSS/JS/images and the four global `readme-site` files are unchanged.
 Publication is recorded against its actual pushed content revision.
+
+This update is published at `5845b14`, with
+[exact-content receipts](evidence/authentication-admission-publication-5845b14-20261024/manifest.json).
+Four native CI jobs and Pages check/deploy succeeded. Six canonical HTTPS
+resources match that commit; live desktop/mobile checks observe the new link,
+responsive images and no overflow. The 824 local executions remain at clean47f,
+and thirteen paired QEMU runs remain at clean d619.

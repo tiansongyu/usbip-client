@@ -2,6 +2,8 @@
 
 ## 2026-10-24：认证准入限速
 
+- 最终状态：clean47f软件824/196稳定输入；clean d619十三paired/26guest0；内容5845b14正常SSH push、四native CI40084212856及Pages40084212885均success，六公开HTTP资源精确Git字节一致。原956 host采证FAIL及原Phase0–7未完成项保持；详见`research/authentication-admission-validation.md`。
+
 - 重新读完整任务与clean30481f0、AGENTS、项目skill及实际TLS/config/service源码。上一轮属进展。原Phase0–7目标保持active，继续补Phase3实际能力：16并发permit不能限制失败后立即重试，安全文档已有该缺口。
 - 按writing-technical-design与项目规范先写`research/authentication-admission-design.md`。该skill显式要求并行研究，因此委派一个只读Governor源码/依赖/探针子任务，主线程审查配置/所有权/兼容；未委派产品编辑。候选固定Governor0.10.4 MIT/std-only，经实际Rust1.97.1隔离探针验证，选direct非等待GCRA；研究/探针不计产品测试或USB验收。
 - 拟默认burst64/每125ms补一，root可信配置可选有界对象，clone/job共享；已有TLS DTO不改，独立admission计数/Read接口。拒绝前不做TLS/device工作，失败/取消不退配额；不保证逐源公平或完整DoS防护。设计先于代码；新增产品、依赖和QEMU尚未验收。
@@ -697,3 +699,9 @@
 - 同clean d619六原secure默认配置回归、独立Native-v4/framed-v2诊断回归全部PASS，共13paired/26guest0，默认locked all-features release。软件824仍属clean47f的196输入；未把harness修订称为软件复跑。本地4signal/2BP属clean956的同一CLI。
 - 首956 Native-v4仍host FAIL/guest0，原因是尚未持久化summary的payload_sha256；d619在真实pack时先落独立receipt，新目录重跑通过，旧证据未补写或重判。
 - 沿用technical-documentation/readme-site维护英文README、对应静态站和验收链接，保留此前参考rstop的独立设计/全局skill。原Phase0–7 goal继续active；安装态agent/v2专项限速、公平/长期DoS/性能、硬件G1/G2及完整G3仍未完成。
+
+## 2026-10-24：认证准入发布回执
+
+- 内容5845b14经正常SSH push，ls-remote与实际HEAD相等，源/网站字节映射独立保留。四native CI任务全部completed/success（含实际native架构和完整gate步骤），Pages check/deploy均success；只核primary API最终状态，未拉完整CI log/ELF复点数，不把本地824改写为逐平台新计数。
+- 六canonical HTTPS资源200且精确匹配5845 Gitblob；公开desktop/mobile DOM新链接/响应图/nooverflow通过。首次resize图未完成观察保留，settled采样完整；viewport reset/public tab留作交付。
+- 新增独立publication archive并写验收/网站维护记录；随后仅文档回执提交，不改实际产品或site bytes。最后核本地/远端一致与工作区clean；原长期goal继续active。
