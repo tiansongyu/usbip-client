@@ -720,3 +720,5 @@
 - PCAP verifier补exact healthy IP/MAC tuple，sorted SYN配对只称aggregate chronology，不冒充逐process/operation归因；localhost实际answer集合由OS决定，不用本地多listener暗示实际两族。实现/测试仍待clean完整gate和产品QEMU，原旧产品QEMU FAIL不改。
 
 - 组件/策略只读复核最终11/12文件稳定、无剩余must-fix，未执行产品测试。根线程完成8+1定向及最终all-feature all-target Clippy。依赖清单仍174且lock/清单无diff；test-util仅protocol dev feature。冻结产品后运行clean完整gate，所有新QEMU待实际来源再记账。
+
+- clean f3bf579完整gate通过365/457/20=842、47rows、零失败忽略；198source/build稳定、Native-only隔离通过。CLI29d0d476…、helper75e3de91…均用新实际ELF，未沿用旧hash。安装态前补独立framed-v2选项/Native-v4一项，schema2与明确ALPN2 classifier，原默认raw分支/原I/O/proof不改。

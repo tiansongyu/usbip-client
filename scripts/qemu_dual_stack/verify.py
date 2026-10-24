@@ -65,7 +65,7 @@ def project(path,family):
     path.with_name(path.stem+'-projection.json').write_text(json.dumps(facts,indent=2)+'\n')
     return derived,facts
 
-def verify(evidence,args):
+def verify(evidence,args,framed_v2=False):
     client=evidence/'client-artifacts'
     expected_bad='fd42:7275:7374::99' if args.family=='ipv4' else '192.0.2.99'
     expected_good='192.0.2.1' if args.family=='ipv4' else 'fd42:7275:7374::1'
@@ -76,11 +76,18 @@ def verify(evidence,args):
     if (client/'dual-gai.txt').read_text()!=expected_gai:raise RuntimeError('exact preferred-family policy differs')
     neighbor=(client/('dual-neighbors6.txt' if args.family=='ipv4' else 'dual-neighbors4.txt')).read_text()
     if expected_bad not in neighbor or '52:54:00:00:00:99' not in neighbor or 'PERMANENT' not in neighbor:raise RuntimeError('permanent nonexistent-MAC setup not observed')
+    server_config=json.loads((evidence/'server-artifacts/server-config.json').read_text())
+    configurations=[server_config]
     for profile in ['hid','serial']:
         config=json.loads((client/f'client-{profile}-config.json').read_text())
+        configurations.append(config)
         if config['endpoint']!={'host':'rustusb-dual-stack.test','port':3241} or config['server_name']!='rustusb-qemu.test':raise RuntimeError('endpoint hostname/service-name contract differs')
+    for config in configurations:
+        if config['schema_version']!=(2 if framed_v2 else 1):raise RuntimeError('actual TLS schema differs')
+        if framed_v2 and config.get('data_link')!={'protocol':'framed_v2','interval_millis':5000,'response_timeout_millis':15000}:raise RuntimeError('actual framed policy differs')
+        if not framed_v2 and 'data_link' in config:raise RuntimeError('unexpected framed policy on raw case')
     _,facts=project(evidence/'client-external.pcap',args.family)
     stale=facts['stale_first_syn_micros'];healthy=facts['healthy_first_syn_micros']
     if not (len(stale)==len(healthy) and len(healthy)>=7):raise RuntimeError('each actual healthy TCP connection must follow one actual stale candidate')
     if not all(a<b and b-a<10_000_000 for a,b in zip(stale,healthy)):raise RuntimeError('healthy connection did not begin after stale SYN within original ten-second deadline')
-    return {'hostname':'rustusb-dual-stack.test','independent_tls_name':'rustusb-qemu.test','healthy_family':args.family,'stale_address':expected_bad,'chronological_syn_pairs':len(healthy),'projection':facts,'limits':['equal-count sorted chronology is aggregate evidence, not per-process/per-operation attribution','hosts-file OS resolution, not wire DNS','no VPN/hardware/performance/fullG3 claim','strict original USB/root proof remains independently required']}
+    return {'protocol':'framed_v2' if framed_v2 else 'raw_v1','hostname':'rustusb-dual-stack.test','independent_tls_name':'rustusb-qemu.test','healthy_family':args.family,'stale_address':expected_bad,'chronological_syn_pairs':len(healthy),'projection':facts,'limits':['equal-count sorted chronology is aggregate evidence, not per-process/per-operation attribution','hosts-file OS resolution, not wire DNS','no VPN/hardware/performance/fullG3 claim','strict original USB/root proof remains independently required']}

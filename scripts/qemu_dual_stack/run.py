@@ -23,6 +23,7 @@ original_inputs = base.inputs
 original_verify = base.verify
 original_pcap = base.pcap_review
 run_evidence = None
+framed_v2 = False
 
 def inputs():
     result = original_inputs()
@@ -33,6 +34,13 @@ def inputs():
 
 def generated_init():
     text = (ROOT/'scripts/qemu/guest-secure-init.sh').read_text()
+    if framed_v2:
+        for suffix in ['listen:$listen,', 'server_id:"qemu-server",']:
+            old = '{schema_version:1,broker_uid:2000,' + suffix
+            new = '{schema_version:2,data_link:{protocol:"framed_v2",interval_millis:5000,response_timeout_millis:15000},broker_uid:2000,' + suffix
+            if text.count(old)!=1:
+                raise RuntimeError('unique TLS schema anchor absent')
+            text=text.replace(old,new,1)
     anchor = 'broker() { /usr/bin/setpriv --reuid=2000 --regid=2000 --clear-groups /usr/bin/rustusb "$@"; }'
     addition = '''if [ "$ROLE" = client ]; then
     STAGE=dual-stack-hostname
@@ -78,21 +86,24 @@ def verify(evidence,args):
     # The original verifier retains every USB/root/baseline requirement. Only its
     # network classifier receives a named, strict, byte-preserving projection.
     facts=original_verify(evidence,args)
-    facts['dual_stack']=checker.verify(evidence,args)
+    facts['dual_stack']=checker.verify(evidence,args,framed_v2)
     return facts
 
 def pcap_review(path,family,device_ids):
     derived, facts=checker.project(path,family)
-    result=original_pcap(derived,family,device_ids)
+    result=original_pcap(derived,family,device_ids,b"rustusb-usbip/2" if framed_v2 else b"rustusb-usbip/1")
     return {'healthy_projection':result,'projection':facts}
 
 def main():
-    global run_evidence
+    global run_evidence, framed_v2
+    if "--framed-v2" in sys.argv:
+        if sys.argv.count("--framed-v2")!=1:raise RuntimeError("duplicate protocol selector")
+        framed_v2=True;sys.argv.remove("--framed-v2")
     if sys.argv.count('--evidence')!=1:
         raise RuntimeError('one explicit fresh evidence directory required')
     run_evidence=Path(sys.argv[sys.argv.index('--evidence')+1]).resolve()
     base.inputs=inputs;base.payload=payload;base.verify=verify;base.pcap_review=pcap_review
-    return base.main(scope='Two original secure USB cycles with a protected dual-stack hostname: preferred stale candidate uses an isolated nonexistent permanent MAC; healthy opposite-family TLS wins. Raw captures unchanged, strict named healthy projection and full original USB/root cleanup. Hostname files are not wire-DNS, VPN, hardware, performance or fullG3 acceptance.')
+    return base.main(scope='Two original secure USB cycles with an explicit raw1 or framed2 protected dual-stack hostname: preferred stale candidate uses an isolated nonexistent permanent MAC; healthy opposite-family TLS wins. Raw captures unchanged, strict named healthy projection and full original USB/root cleanup. Hostname files are not wire-DNS, VPN, hardware, performance or fullG3 acceptance.')
 
 if __name__=='__main__':
     sys.exit(main())

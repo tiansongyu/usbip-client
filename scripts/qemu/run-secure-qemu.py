@@ -232,8 +232,10 @@ def artifacts(evidence):
     return result
 
 
-def pcap_review(path, family, device_ids):
+def pcap_review(path, family, device_ids, expected_alpn=b"rustusb-usbip/1"):
     """Parse the entire Ethernet capture and contiguous TCP byte streams, not grep alone."""
+    if expected_alpn not in (b"rustusb-usbip/1", b"rustusb-usbip/2"):
+        raise RuntimeError("unknown expected secure ALPN")
     def ipv6_payload(packet, total):
         # This isolated test link permits one bounded Hop-by-Hop header only.
         # Parse its payload protocol; never discard an extension-wrapped TCP flow.
@@ -448,7 +450,7 @@ def pcap_review(path, family, device_ids):
             position = end
         if not application: raise RuntimeError("TLS stream lacks encrypted application records")
         if key[2] == 3241 and not server_hello_tls13: raise RuntimeError("TLS 1.3 ServerHello selection absent")
-        if key[4] == 3241 and b"rustusb-usbip/1" not in wire: raise RuntimeError("client offered ALPN not captured")
+        if key[4] == 3241 and expected_alpn not in wire: raise RuntimeError("client offered ALPN not captured")
         flows.append({"tuple": key, "stream_bytes": len(wire), "tls_records": records,
                       "encrypted_application_records": application, "stream_sha256": hashlib.sha256(wire).hexdigest()})
     if len(flows) < 16 or len(flows) % 2: raise RuntimeError("insufficient complete bidirectional TLS connections")

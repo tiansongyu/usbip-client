@@ -129,3 +129,20 @@ dependent; installed QEMU, not a local dual-listener assumption, must prove
 two-family behavior. Synthetic ready-resource timing and socket WouldBlock/EOF
 observations retain their exact scope. No external dependency or lockfile changes;
 174-package inventory remains unchanged.
+
+## Clean software and framed fixture scope
+
+At clean f3bf579 the complete gate passes365 default/457 all-features/20 vendor
+executions (842 total), with198 copied source/build inputs unchanged and the
+Native-only isolation check passing. CLI/helper release digests are separately
+recorded; neither is assumed equal to the older824 build. No new package or
+lockfile change is introduced. These are software results, not installed PASS.
+
+Before installed product runs, give the new fixture an explicit `--framed-v2`
+option for a separate Native/IPv4 scenario. Both trusted TLS JSONs must then use
+strict schema2/data_link defaults, without downgrade. The original classifier
+gets only an enumerated expected-ALPN parameter (default raw1 unchanged), so it
+checks the exact v2 ClientHello offer on the same strict healthy projection.
+No raw packet/log substitution is allowed. This supplements six raw hostname
+cases and six original raw default-policy regressions; it does not label all
+backends' installed v2 fallback or wire-DNS/VPN as qualified.

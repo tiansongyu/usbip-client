@@ -26,3 +26,8 @@ aggregate capture evidence, without per-process/per-operation attribution.
 Old sequential failure and later clean product runs must retain their actual
 verdicts and source/ELF guards. This is OS hostname resolution using hosts files;
 it is not wire-DNS, VPN, performance, hardware, full RFC8305 or fullG3 acceptance.
+
+Use `--framed-v2` only for a separately recorded v2 run: both TLS configurations
+then explicitly require schema2/data_link and ALPN2. The original classifier's
+default remains ALPN1; the new wrapper passes exactly ALPN2 without rewriting
+TLS bytes. This option alone does not imply an installed v2 PASS.
