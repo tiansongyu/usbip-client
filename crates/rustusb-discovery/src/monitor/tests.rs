@@ -302,9 +302,16 @@ async fn periodic_reconciliation_recovers_without_a_fabricated_kernel_event() ->
     })
     .await?;
     let mut subscription = owner.subscribe();
-    let first = tokio::time::timeout(Duration::from_secs(3), subscription.next())
-        .await
-        .map_err(|_| Error::Timeout("test first inventory".into()))??;
+    let first = tokio::time::timeout(Duration::from_secs(3), async {
+        loop {
+            let update = subscription.next().await?;
+            if update.snapshot.state == DiscoveryState::Current {
+                return Ok::<_, Error>(update);
+            }
+        }
+    })
+    .await
+    .map_err(|_| Error::Timeout("test first inventory".into()))??;
     assert_eq!(first.snapshot.reason, DiscoveryReason::Initial);
     *records
         .lock()

@@ -761,3 +761,5 @@
 
 - 原scanner一次DTO不改；新增观察在目录本身消失与缺失属性之间严格区分，候选ID与实际sysfs/address stamp分开。共用包实际提供初始状态、loss原因计数、最新完整快照/跳号resync，保留source-before-scan/有限drain/真实poll-wake/join。JSON最大256设备/512变化拆成独立帧，不增大原64KiB输出上限。第六轮两CLI帧测试及全目标allfeatures Clippy通过；初始化状态随后补实际门测试，完整gate待冻结后运行。
 - 依赖实际导出175包；比原174只新增内部rustusb-discovery，外部name/version/source/checksum不变，Native CLI不无条件引入TLS/job服务或nusb。此实现仍未获新QEMU/hardware验证。
+
+- clean213ab92首完整gate实际FAIL101，206选定source/build前后稳定；默认测试在periodic case失败（Initializing后仍在途Current被错当下一失败scan），全allfeatures/release尚未执行，不冒称完整通过。只改fixture总3s有界等待首个Current，再注入read失败/恢复；保留原初始化质量及不假删除契约。

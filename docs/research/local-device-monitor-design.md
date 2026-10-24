@@ -85,3 +85,5 @@ CLI保持原`devices [--json]`一次扫描兼容，新增`devices --watch`。JSO
 源码复核另发现：stamp读取某属性NotFound时，只能在设备目录本身也已消失的情况下略过；目录仍在但devnum/busnum缺失必须拒绝完整扫描，不能伪报Removed。先增加实际回归复现，再修正这一判断。
 
 编码复核：最多512条变化若集中于begin帧会超过既有64KiB上限；变化改用独立device_change帧，begin/end给定计数。丢失分别给定QueueOverflow/Truncated/Malformed固定原因计数，不把来源未知的非USB跳号当丢失。初次全目标Clippy101（manual_map/collapsible_if）保留后按style修正。
+
+clean213ab92首完整gate在默认测试失败：periodic测试把新增Initializing视作首个成功库存，修改fixture后读取到尚在途Current而非预期Stale。206输入前后稳定，原FAIL保留；测试须在原总3s内循环等待首个Current，再进行失败/恢复注入，不加sleep、不弱化质量/库存断言。产品行为不变，新clean重跑完整gate。
