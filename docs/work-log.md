@@ -748,3 +748,9 @@
 - 内容2aa9337已普通SSH push，实际remote同本地且primary clean；198软件输入逐f3/内容Gitblob相同，36份原dirty QA源映射内容但不改来源。software40091124317四native job120863835656/835772/835847/835871全部completed/success，实际arch/fullgate与新增2hostname step通过；Pages40091124270 check120863835594/deploy120863905102均success。只核primary API状态，未fetch完整CI log/ELF或重算每格842。
 - 六canonical HTTPS资源200逐2aa Gitblob同，公开CUA1280×720/390×844新842/14/28、报告/图片/无溢出及ArrowRight/Home选中/焦点/backend URL通过，console空；mobile初desktop后mobileSVG360均留实观。reset首读仍390，随后实际1280×720确认，public tab8保deliverable。原本地截图Unavailable不补造pixel。
 - 发布原件另档dual-stack-connect-publication-2aa9337-20261024；最后仅文档回执/证据普通提交推送，198软件与六site源不改。本轮是完整Phase0–7的实际进展：共享有界主机名TCP fallback、真实NSS两候选正负及原回归、英文README/网站维护；原wire-DNS/VPN/性能/硬件G1/G2/完整G3/TUI/GUI/打包/Windows及后续阶段仍未完成，goal保持active。
+
+## 2026-10-24：本地热插拔观察设计
+
+- 前一goal turn完成共享主机名回退、842软件/14paired/28guest0与README/site发布，属于实际进展；当前clean43f3ff4、指定origin保持。完整重读原Phase0–7目标、AGENTS/项目skill、工作日志/架构与应用service契约，不缩成已交付入口。
+- 当前只有一次SysfsDiscovery，继续补4.3与未来共用前端需要的真实事件观察；先落local-device-monitor-design.md，研究明确选择现有rustix1.1.5 kernel group1提示+权威扫描、safe poll/wake实际join，而不是单纯polling或event payload授权。设计skill显式要求两个组件只读研究；不委派产品编辑、不生成额外global/组件skill。
+- 实际研究发现Tokio1.54.1旧AsyncFd构造已deprecated/unsound，替代register需unsafe；udev默认非Send且iterator隐藏errno，nusb现watch缺loss语义。保留研究原警告/失败和零宿主事件范围。新产品/仿真尚未执行，旧842/14来源不变。
