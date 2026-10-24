@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-25：GUI正向Native操作与窗口退出（开始）
+
+- 上一轮E49为实际进展；本轮从clean94c37876重读完整原Phase0–7任务、当前Git/AGENTS/核心skill、GUI契约/报告、架构及原Native agent/TUI actions源码。沿用rustusb-development/ui-ux-pro-max/technical-documentation，先写gui-native-actions-design.md；不重建既有英文README/站点/全局skill，不缩减规则/安装/硬件等未完成目标。
+- 新paired夹具拟保原264核验/两epoch/三I/O/完整Rootproof，通过真实UID1000 WebKit GUI执行六Start/定向session stop/四job stop，并用ICCCM WM_DELETE_WINDOW真实窗口退出后检查同job持续服务。公开Xorg ICCCM2.0协议已核，测试-only Xlib复用系统库，不新增产品权限/依赖/USB能力；尚未执行新QEMU或宣称通过。
+
+- 新12原生进程paired夹具已实现，GUI runtime安装逻辑抽成可复用同函数，旧single语义保持；agent runner默认768MiB不变，新wrapper显式4096。严格C编译/完整生成guest的dash -n通过，尚未QEMU；原264 verifier未更改。按设计发WM协议真实timestamp、捕获actualactor/wait/close、前后唯一UI请求+safe Replay、非空Remote两key/搜索/详情、定向Stop与原I/O。新夹具实际head/source/三ELF冻结仍待首运行核验。
+
 ## 2026-10-25：原生GUI实现（开始）
 
 - 上一轮E48与Phase5研究为实际进展；从clean7498ff40重读完整原任务、Git/AGENTS/核心skill/工作日志和固定Tauri/Linux研究。目标仍为完整Phase0–7；原英文README/展示站/全局skill保持。使用frontend-design/ui-ux-pro-max/writing-technical-design与技术文档指导，先写native-gui-design.md，保留自动规则/包/systemd/安装及硬件门槛。

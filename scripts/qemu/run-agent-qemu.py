@@ -355,7 +355,7 @@ def verify(evidence, args):
 def extra_controls(logs, send_once):
     """Optional host serial controls for a separately versioned guest extension."""
 
-def main():
+def main(guest_memory_mib=768):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kernel", default=os.uname().release)
     parser.add_argument("--backend", choices=["native"], default="native")
@@ -364,6 +364,7 @@ def main():
     parser.add_argument("--evidence", type=Path, required=True)
     parser.add_argument("--skip-build", action="store_true", help="development only; final evidence uses the locked all-features build")
     args = parser.parse_args()
+    if not 256 <= guest_memory_mib <= 8192: raise RuntimeError("guest memory must be256..8192MiB")
     if os.geteuid() == 0 or os.uname().machine != "x86_64": raise RuntimeError("ordinary x86_64 host user required")
     if not 60 <= args.timeout <= 900: raise RuntimeError("timeout must be 60..900 seconds")
     evidence = args.evidence.resolve()
@@ -424,7 +425,7 @@ def main():
                 for channel in ["serial", "evidence"]: (evidence / f"{role}-{channel}.log").touch()
                 output = (evidence / f"{role}-qemu.stderr").open("wb")
                 handles.append(output)
-                cmd = ["qemu-system-x86_64", "-m", "768", "-smp", "2", *acceleration, "-rtc", "base=utc,clock=host", "-kernel", str(image), "-initrd", str(archives[role]),
+                cmd = ["qemu-system-x86_64", "-m", str(guest_memory_mib), "-smp", "2", *acceleration, "-rtc", "base=utc,clock=host", "-kernel", str(image), "-initrd", str(archives[role]),
                        "-append", f"console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.secure=1 rustusb.agent=1 rustusb.role={role} rustusb.backend={args.backend} rustusb.family={args.family}",
                        "-display", "none", "-serial", f"file:{evidence / (role+'-serial.log')}", "-serial", f"file:{evidence / (role+'-evidence.log')}",
                        "-chardev", f"socket,id=control,path={work / (role+'-control.sock')},server=on,wait=off", "-serial", "chardev:control",

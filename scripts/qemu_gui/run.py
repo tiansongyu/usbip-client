@@ -30,8 +30,7 @@ def copy_tree(source,root):
             out.parent.mkdir(parents=True,exist_ok=True)
             if path.read_bytes()[:4]==b'\x7fELF':native.copy_binary(path,'/'+str(out.relative_to(root)),root)
             else:shutil.copy2(path,out,follow_symlinks=True)
-def payload(work,kernel,driver,evidence):
-    credentials=secure.credentials(work,evidence);secure.payload(work,kernel,credentials,'server');root=work/'root'
+def install_runtime(root,driver):
     for source,target in [(REPO/'apps/rustusb-gui/target/release/rustusb-gui','/usr/bin/rustusb-gui'),(driver,'/usr/bin/WebKitWebDriver')]:native.copy_binary(source,target,root)
     for name in ['Xvfb','xkbcomp','curl','bwrap','xdg-dbus-proxy','dbus-daemon','xauth','xdotool']:
         source=shutil.which(name)
@@ -49,6 +48,10 @@ def payload(work,kernel,driver,evidence):
     # Fontconfig's relative includes need their dereferenced conf.avail targets.
     copy_tree('/usr/share/fontconfig',root)
     (root/'etc/passwd').write_text('root:x:0:0:root:/:/bin/sh\noperator:x:1000:1000:operator:/home/operator:/bin/sh\nbroker:x:2000:2000:broker:/:/sbin/nologin\n')
+
+def payload(work,kernel,driver,evidence):
+    credentials=secure.credentials(work,evidence);secure.payload(work,kernel,credentials,'server');root=work/'root'
+    install_runtime(root,driver)
     (root/'init').write_bytes((OWN/'guest-init.sh').read_bytes());(root/'init').chmod(0o755)
     (root/'usr/bin/gui-launcher').write_text('''#!/bin/sh
 /usr/bin/rustusb-gui "$@" >/tmp/gui-app.stdout 2>/tmp/gui-app.stderr &
