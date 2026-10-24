@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-24：服务端安全观测设计
+
+- 从干净39004dd继续，原Phase0–7目标保持active；先复核现有TLS、Native/Rust listener、共享owner、IPC和日志投影。发现握手拒绝缺少持久计数、outer budget直接跳过；本轮先实现有界volatile计数，不冒称持久审计。
+- 设计见`research/server-security-observations-design.md`：loaded TLS configuration scope、clone共享、TLS/独立framing/outer限额分类、Drop取消与饱和/一致性标记；仅metadata，不持能力，不改变真实cleanup。前台新control与agent精确Read授权读取，授权结果绕WAL，旧DTO/disk/诊断格式不改。尚未运行新增软件或QEMU。
+
 ## 2026-10-22：任务与环境基线
 
 - 读取完整任务并保存在 `requirements.md`。当前目录初始为空且无 Git 历史。
