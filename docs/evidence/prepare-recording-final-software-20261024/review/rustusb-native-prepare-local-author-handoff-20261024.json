@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "role": "Native prepare-stop author handoff; A/B revision",
+  "date": "2026-10-24",
+  "source_frozen": true,
+  "sources": [
+    {
+      "path": "crates/rustusb-service/src/jobs/native.rs",
+      "bytes": 74087,
+      "sha256": "0d0d5205c522c1e290f4b615feab8283096a91beb347e4b69dd9f54c3c73e4b5"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "bytes": 43904,
+      "sha256": "2d7f14a79c0bdcbe16e753e71600283817c0e3e25df17104da063d25d63e8e09"
+    }
+  ],
+  "design": "docs/research/prepare-recording-shutdown-design.md (per-export addendum committed by root as 68cc3ad)",
+  "changes": [
+    "Private PrepareOutcome distinguishes Ready, LocalCancelled with optional metadata-only uncertainty, and JobStopped.",
+    "Known received helper identity mismatch is remembered as Protocol before Resource wait; original Resource future remains retained and Finish preserves first failure.",
+    "Each received export has one independently polled actual-close watcher before Resource. CloseCause distinguishes local/job/requested/invalidated/failure, so intended local helper invalidation does not stop siblings.",
+    "A real close error or unexpected source loss broadcasts fatal to actual owners independently of parent metadata waits.",
+    "Local Resource/Available cancellation closes only the target, retains original transaction before Closing/Finish, continues remaining pool, and does not terminate an empty catalog listener.",
+    "Reserved-but-unsent managed attempts are finished Unconfirmed/Cancelled with no helper request. Up to16 metadata-only errors are retained separately and merged after genuine whole-job actual cleanup; no public Runtime proof/schema change.",
+    "Catalog accepting and IMPORT predicate check actual session.stop directly. IMPORT reserved CAS remains status2; stopped selection remains status4."
+  ],
+  "software_tests": {
+    "root_red_evidence_preserved": [
+      {
+        "path": "/tmp/rustusb-prepare-stop-native-red-20261024",
+        "result": "root reported actual0pass1fail (original Resource ACK blocked actual close)"
+      },
+      {
+        "path": "/tmp/rustusb-prepare-local-red-20261024",
+        "result": "root reported identity0pass1fail and local0pass3fail, runtime assertions,167 stable inputs"
+      },
+      {
+        "path": "/tmp/rustusb-prepare-reserved-local-red-20261024",
+        "result": "root reported actual0pass1fail reserved metadata-only cancellation closed safe sibling,167 stable inputs"
+      }
+    ],
+    "preserved_contracts": "Five new RED assertion contracts retained, including independent job/local senders, original successful ACKs, original2s observations, actual software control receipts and post-cleanup checks. Private enum matches adapted. Existing identity fixture now acknowledges actual close before the retained Resource, as required by new fail-closed known-mismatch sequencing.",
+    "additional_test": "native_tls_local_stop_refuses_import_keeps_busy_and_empty_catalog_listener uses actual TCP/mTLS and production Native management for rawv1/framedv2. Both Native keys truly allowed by authenticated peer ACL; checks stopped import4, busy import2 and repeated empty catalogs on one surviving listener. This is handler/transport evidence only when root actually executes it, not complete run/helper/kernel proof.",
+    "format": {
+      "command": "rustfmt --edition 2024 crates/rustusb-service/src/jobs/native.rs crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "actual_exit": 0
+    },
+    "cargo_or_runtime_by_author": false,
+    "candidate_test_results": "not run by author; root owns unified build/test gate"
+  },
+  "boundaries": [
+    "Ordinary-user fixtures use actual production sequencing helpers, JobMessage oneshots and owned Unix/TCP control endpoints. They do not bypass trusted helper credentials and do not prove USB/root cleanup.",
+    "No helper public API, IPC/Runtime schema, Root proof rule, dependency, or phase gate change.",
+    "Pending Begin/Attempt and accepted helper exchanges are never cancelled/discarded. An indefinite filesystem/kernel block may still prevent process exit; actual owners remain retained.",
+    "No Cargo, QEMU, product/helper execution, Git, host USB/module/network mutation by author in this revision.",
+    "Earlier655 software PASS and old clean68cc actual QEMU failures belong to their original source/ELF, not this candidate."
+  ]
+}

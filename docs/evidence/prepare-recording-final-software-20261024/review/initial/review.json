@@ -1,0 +1,1124 @@
+{
+  "schema_version": 1,
+  "result": "FAIL",
+  "scope": "Independent raw-statistics/source/ELF/local-evidence reconciliation by Native implementation participant, not independent approval of own production code. No commands or runners were executed/imported.",
+  "actual_start": {
+    "utc": "2026-10-23T23:28:20.355439+00:00",
+    "head": "b1de03488474af74a4155232cda73a00e1e0f142",
+    "status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/native.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n?? crates/rustusb-service/src/jobs/native_prepare_tests.rs\n?? crates/rustusb-service/src/jobs/recording.rs\n",
+    "command": [
+      "bash",
+      "-x",
+      "scripts/check.sh"
+    ],
+    "scope": "Actual dirty primary Native A/B revision; later individual Git input mapping must not relabel this clean. Previous655 candidate remains separately attributed."
+  },
+  "counts": {
+    "default_executions": 280,
+    "all_features_executions": 367,
+    "vendor_executions": 20,
+    "total_executions": 667,
+    "result_rows": 39,
+    "distinct_target_qualified_names": 387,
+    "failed": 0,
+    "ignored": 0,
+    "selected_inputs": 167,
+    "local_signal_cases": 4,
+    "legacy_backpressure_cases": 2
+  },
+  "commands": [
+    {
+      "line": 4,
+      "command": "cargo fmt --all -- --check"
+    },
+    {
+      "line": 5,
+      "command": "cargo clippy --workspace --all-targets --locked -- -D warnings"
+    },
+    {
+      "line": 8,
+      "command": "cargo test --workspace --locked"
+    },
+    {
+      "line": 412,
+      "command": "cargo build --workspace --release --locked"
+    },
+    {
+      "line": 416,
+      "command": "cargo doc --workspace --no-deps --locked"
+    },
+    {
+      "line": 425,
+      "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings"
+    },
+    {
+      "line": 429,
+      "command": "cargo test --workspace --all-features --locked"
+    },
+    {
+      "line": 919,
+      "command": "cargo build --workspace --all-features --release --locked"
+    },
+    {
+      "line": 924,
+      "command": "cargo doc --workspace --all-features --no-deps --locked"
+    },
+    {
+      "line": 934,
+      "command": "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests"
+    }
+  ],
+  "tools": {
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6",
+    "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)\nrelease: 1.97.1\ncommit-hash: c980f4866141969fab6254a680546a277789d6f0\ncommit-date: 2026-06-30\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.20.0-DEV (sys:0.4.88+curl-8.20.0 vendored ssl:OpenSSL/3.6.2)\nssl: OpenSSL 3.6.2 7 Apr 2026\nos: Ubuntu 22.4.0 (jammy) [64-bit]"
+  },
+  "release_artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "bytes": 15223632,
+      "sha256": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+      "dev": 66306,
+      "inode": 79628976,
+      "mtime_ns": 1792798183829119864,
+      "current_sha256": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+      "current_bytes": 15223632,
+      "current_device": 66306,
+      "current_inode": 79628976,
+      "elf_class": 2,
+      "elf_machine": 62
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "bytes": 5926600,
+      "sha256": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5",
+      "dev": 66306,
+      "inode": 79629147,
+      "mtime_ns": 1792788254566469717,
+      "current_sha256": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5",
+      "current_bytes": 5926600,
+      "current_device": 66306,
+      "current_inode": 79629147,
+      "elf_class": 2,
+      "elf_machine": 62
+    }
+  ],
+  "native_only": {
+    "commands": [
+      {
+        "command": [
+          "cargo",
+          "check",
+          "-p",
+          "rustusb-cli",
+          "--no-default-features",
+          "--features",
+          "secure-transport",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "log": "native-only-check.log"
+      },
+      {
+        "command": [
+          "cargo",
+          "tree",
+          "-p",
+          "rustusb-cli",
+          "--no-default-features",
+          "--features",
+          "secure-transport",
+          "--edges",
+          "normal",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "log": "native-only-tree.log"
+      }
+    ],
+    "normal_tree_excludes": [
+      "rustusb-rust-backend",
+      "nusb",
+      "rusb",
+      "libusb1-sys"
+    ]
+  },
+  "local_signal_scope": "ordinary-user loopback virtual profiles only; no physical USB, modules, ptrace, or network configuration",
+  "local_cases": [
+    {
+      "mode": "ready",
+      "signal": "sigint",
+      "pid": 2674908,
+      "exit": 0,
+      "elapsed_seconds": 0.000935481,
+      "blocked_writer": null,
+      "cleanup_scope": "actual stopped virtual resources0"
+    },
+    {
+      "mode": "ready",
+      "signal": "sigterm",
+      "pid": 2674943,
+      "exit": 0,
+      "elapsed_seconds": 0.000864838,
+      "blocked_writer": null,
+      "cleanup_scope": "actual stopped virtual resources0"
+    },
+    {
+      "mode": "blocked",
+      "signal": "sigint",
+      "pid": 2674978,
+      "exit": 0,
+      "elapsed_seconds": 0.001077641,
+      "blocked_writer": {
+        "comm": "virtual-test-st",
+        "monotonic_ns": 299626458592958,
+        "tid": 2675011,
+        "wchan": "pipe_write"
+      },
+      "cleanup_scope": "exit+socketEOF only; no stopped/backend proof"
+    },
+    {
+      "mode": "blocked",
+      "signal": "sigterm",
+      "pid": 2675013,
+      "exit": 0,
+      "elapsed_seconds": 0.001079664,
+      "blocked_writer": {
+        "comm": "virtual-test-st",
+        "monotonic_ns": 299626475161064,
+        "tid": 2675046,
+        "wchan": "pipe_write"
+      },
+      "cleanup_scope": "exit+socketEOF only; no stopped/backend proof"
+    }
+  ],
+  "legacy_backpressure": {
+    "result": "PASS",
+    "scope": "local CLI output backpressure; no physical USB or kernel changes",
+    "host_uid": 1000,
+    "checks": [
+      {
+        "mode": "sigint",
+        "exit": 0,
+        "elapsed_seconds": 0.003,
+        "stdout_capacity": 4096,
+        "stdout_drained_after_fill": false,
+        "lease_socket_closed": true
+      },
+      {
+        "mode": "deadline",
+        "exit": 1,
+        "elapsed_seconds": 4.821,
+        "stdout_capacity": 4096,
+        "stdout_drained_after_fill": false,
+        "lease_socket_closed": true
+      }
+    ]
+  },
+  "limits": [
+    "Actual dirty b1de034 candidate; no future commit mapping and no clean-run claim. Prior655 and five RED failures remain their original evidence.",
+    "667 counts executions across default/allfeatures/vendor;387 distinct target-qualified names. Separate62/71 developer tests and local runtime scenarios are not added to667.",
+    "Gate allfeatures release command plus recorded ELF linked to each signal child actual /proc/exe fingerprint. Signals --skip-build itself correctly states features external/not inferred.",
+    "Legacy two-backpressure script has no per-child /proc ELF/source guard; attribution is the wrapper selected path, prior allfeatures build and stable release/source workflow. No missing child originals fabricated.",
+    "The success-enclosing secure_foreground test is in allfeatures CLI test output. This audit does not assign unrelated temporary TLS5 artifacts to it without an explicit preserved path/receipt.",
+    "Local ordinary-user plaintext virtual profiles only. Blocked stdout cases prove0exit+twoEOF with actual fullpipe/writer observation; no stopped/backend/kernel/root cleanup proof claimed while unread.",
+    "No new hardware, trusted TLS-loader, helper, USBFS, QEMU or phase completion evidence.",
+    "No original checker/runner imports, Cargo, binaries, Git, QEMU or host USB/module/network mutation."
+  ],
+  "detail_files": [
+    {
+      "path": "/tmp/rustusb-prepare-stop-software-ab-review-20261024/input-reconciliation.json",
+      "bytes": 35908,
+      "sha256": "e3cde6b1e1ac42122e59fcb993daf027f6d3657379851dd637d034f21f05fd5b"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-software-ab-review-20261024/test-executions.json",
+      "bytes": 214423,
+      "sha256": "c77ead0eb2de83076631e1fbde1e910c52a48804fa2e1ea70cc98d14e6da0700"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-software-ab-review-20261024/raw-sha256.json",
+      "bytes": 57220,
+      "sha256": "41fb4d10a8483bce04d8e9311b39f6bd667b3b2c589ae406acacc08b860be8ca"
+    }
+  ],
+  "checks": [
+    {
+      "name": "actual gate terminal exit0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual start records dirty candidate, not clean/future commit",
+      "passed": true,
+      "evidence": {
+        "head": "b1de03488474af74a4155232cda73a00e1e0f142",
+        "status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/native.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n?? crates/rustusb-service/src/jobs/native_prepare_tests.rs\n?? crates/rustusb-service/src/jobs/recording.rs\n",
+        "scope": "Actual dirty primary Native A/B revision; later individual Git input mapping must not relabel this clean. Previous655 candidate remains separately attributed."
+      }
+    },
+    {
+      "name": "167 selected before/after manifests identical",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all selected paths unique and relative",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all167 preserved source copies match before manifest",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all167 current selected inputs match preserved source",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "snapshot has exactly selected167 source paths",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "new recording and Native private fixture included",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ten exact xtrace Cargo commands in expected order",
+      "passed": true,
+      "evidence": [
+        {
+          "line": 4,
+          "command": "cargo fmt --all -- --check"
+        },
+        {
+          "line": 5,
+          "command": "cargo clippy --workspace --all-targets --locked -- -D warnings"
+        },
+        {
+          "line": 8,
+          "command": "cargo test --workspace --locked"
+        },
+        {
+          "line": 412,
+          "command": "cargo build --workspace --release --locked"
+        },
+        {
+          "line": 416,
+          "command": "cargo doc --workspace --no-deps --locked"
+        },
+        {
+          "line": 425,
+          "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings"
+        },
+        {
+          "line": 429,
+          "command": "cargo test --workspace --all-features --locked"
+        },
+        {
+          "line": 919,
+          "command": "cargo build --workspace --all-features --release --locked"
+        },
+        {
+          "line": 924,
+          "command": "cargo doc --workspace --all-features --no-deps --locked"
+        },
+        {
+          "line": 934,
+          "command": "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests"
+        }
+      ]
+    },
+    {
+      "name": "both rustdoc commands actually carry deny warnings",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "xtrace step 01 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo fmt --all -- --check",
+        "trace_line": 4,
+        "section_last_line": 4
+      }
+    },
+    {
+      "name": "xtrace step 02 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+        "trace_line": 5,
+        "section_last_line": 7
+      }
+    },
+    {
+      "name": "xtrace step 03 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo test --workspace --locked",
+        "trace_line": 8,
+        "section_last_line": 411
+      }
+    },
+    {
+      "name": "xtrace step 04 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo build --workspace --release --locked",
+        "trace_line": 412,
+        "section_last_line": 415
+      }
+    },
+    {
+      "name": "xtrace step 05 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo doc --workspace --no-deps --locked",
+        "trace_line": 416,
+        "section_last_line": 424
+      }
+    },
+    {
+      "name": "xtrace step 06 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+        "trace_line": 425,
+        "section_last_line": 428
+      }
+    },
+    {
+      "name": "xtrace step 07 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo test --workspace --all-features --locked",
+        "trace_line": 429,
+        "section_last_line": 918
+      }
+    },
+    {
+      "name": "xtrace step 08 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo build --workspace --all-features --release --locked",
+        "trace_line": 919,
+        "section_last_line": 923
+      }
+    },
+    {
+      "name": "xtrace step 09 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo doc --workspace --all-features --no-deps --locked",
+        "trace_line": 924,
+        "section_last_line": 933
+      }
+    },
+    {
+      "name": "xtrace step 10 actual completion",
+      "passed": true,
+      "evidence": {
+        "command": "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests",
+        "trace_line": 934,
+        "section_last_line": 961
+      }
+    },
+    {
+      "name": "39 result rows all ok with0fail/ignored/measured/filtered",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "every per-target declared count equals individual successful names and result",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "default280 allfeatures367 vendor20 =667 actual executions",
+      "passed": true,
+      "evidence": {
+        "default": 280,
+        "all-features": 367,
+        "vendor": 20
+      }
+    },
+    {
+      "name": "every individually printed test successful",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "387 distinct target-qualified names, repetition explicit",
+      "passed": true,
+      "evidence": {
+        "distinct_names": 387,
+        "executions": 667,
+        "repeated_executions": 280
+      }
+    },
+    {
+      "name": "default/allfeatures service62/71 actual result counts",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "new Native regression known_identity_failure_is_not_erased_by_simultaneous_stop",
+      "passed": true,
+      "evidence": [
+        [
+          "default",
+          "ok"
+        ],
+        [
+          "all-features",
+          "ok"
+        ]
+      ]
+    },
+    {
+      "name": "new Native regression local_resource_stop_keeps_the_safe_sibling_owned_and_available",
+      "passed": true,
+      "evidence": [
+        [
+          "default",
+          "ok"
+        ],
+        [
+          "all-features",
+          "ok"
+        ]
+      ]
+    },
+    {
+      "name": "new Native regression local_available_stop_keeps_the_safe_sibling_owned_and_available",
+      "passed": true,
+      "evidence": [
+        [
+          "default",
+          "ok"
+        ],
+        [
+          "all-features",
+          "ok"
+        ]
+      ]
+    },
+    {
+      "name": "new Native regression local_stop_before_helper_is_a_local_skip_without_new_attempt",
+      "passed": true,
+      "evidence": [
+        [
+          "default",
+          "ok"
+        ],
+        [
+          "all-features",
+          "ok"
+        ]
+      ]
+    },
+    {
+      "name": "new Native regression reserved_unsent_local_stop_retains_uncertainty_without_stopping_sibling",
+      "passed": true,
+      "evidence": [
+        [
+          "default",
+          "ok"
+        ],
+        [
+          "all-features",
+          "ok"
+        ]
+      ]
+    },
+    {
+      "name": "new Native regression native_tls_local_stop_refuses_import_keeps_busy_and_empty_catalog_listener",
+      "passed": true,
+      "evidence": [
+        [
+          "default",
+          "ok"
+        ],
+        [
+          "all-features",
+          "ok"
+        ]
+      ]
+    },
+    {
+      "name": "historical655 remains separate; exactly6 new names and no removals",
+      "passed": true,
+      "evidence": {
+        "prior_executions": 655,
+        "prior_source_scope": "separate historical dirty655 candidate; not relabelled",
+        "new_qualified": [
+          {
+            "target": "rustusb_service",
+            "name": "jobs::native::prepare_tests::known_identity_failure_is_not_erased_by_simultaneous_stop"
+          },
+          {
+            "target": "rustusb_service",
+            "name": "jobs::native::prepare_tests::local_available_stop_keeps_the_safe_sibling_owned_and_available"
+          },
+          {
+            "target": "rustusb_service",
+            "name": "jobs::native::prepare_tests::local_resource_stop_keeps_the_safe_sibling_owned_and_available"
+          },
+          {
+            "target": "rustusb_service",
+            "name": "jobs::native::prepare_tests::local_stop_before_helper_is_a_local_skip_without_new_attempt"
+          },
+          {
+            "target": "rustusb_service",
+            "name": "jobs::native::prepare_tests::native_tls_local_stop_refuses_import_keeps_busy_and_empty_catalog_listener"
+          },
+          {
+            "target": "rustusb_service",
+            "name": "jobs::native::prepare_tests::reserved_unsent_local_stop_retains_uncertainty_without_stopping_sibling"
+          }
+        ],
+        "removed_qualified": [],
+        "selected_input_deltas": [
+          "crates/rustusb-service/src/jobs/native.rs",
+          "crates/rustusb-service/src/jobs/native_prepare_tests.rs"
+        ]
+      }
+    },
+    {
+      "name": "separate service five commands exited0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "separate service 01.log actual test count",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "separate service 02.log actual test count",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "separate service 03.log Clippy completion",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "separate service 04.log Clippy completion",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "separate service all167 same candidate",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "Native-only exact check command completed",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "Native-only normal dependency tree excludes optional Rust engine/nusb/libusb",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "Native-only tree actually includes service/native/transport",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual release rustusb bytes and identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual release rustusb-helper bytes and identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "actual release CLI expected candidate fingerprint",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "recorded tools actual host/version",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "local wrapper terminal actual both commands0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "local selected167 match exact software candidate",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "signals source before/after unchanged",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "signals full source index contains exact selected167",
+      "passed": false,
+      "evidence": {
+        "full_index_count": 9712,
+        "selected_count": 167
+      }
+    },
+    {
+      "name": "signals actual host ordinary UID1000/kernel6.8",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "signals external build accurately not inferred",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "signals all4 cases before/after ELF matches actual allfeatures release",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint exact raw JSON copies",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint signal only identity-matched owned ordinary child",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint child actual ELF equals release identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint nonvacuous configured two leased pending profiles",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint 1-1 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint 1-1 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint 1-2 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint 1-2 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint cooperative exit0 within original8s, no force",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint actual two data sockets EOF without bytes",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint stdout raw length equals consumed",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint actual stopped event/EOF and all resources0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint artifact bytes after.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint artifact bytes before.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint artifact bytes protocol.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint artifact bytes stderr.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint artifact bytes stdout-consumed.bin",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigint artifact bytes stdout-events.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm exact raw JSON copies",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm signal only identity-matched owned ordinary child",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm child actual ELF equals release identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm nonvacuous configured two leased pending profiles",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm 1-1 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm 1-1 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm 1-2 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm 1-2 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm cooperative exit0 within original8s, no force",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm actual two data sockets EOF without bytes",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm stdout raw length equals consumed",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm actual stopped event/EOF and all resources0",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm artifact bytes after.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm artifact bytes before.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm artifact bytes protocol.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm artifact bytes stderr.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm artifact bytes stdout-consumed.bin",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "ready-sigterm artifact bytes stdout-events.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint exact raw JSON copies",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint signal only identity-matched owned ordinary child",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint child actual ELF equals release identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint nonvacuous configured two leased pending profiles",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint 1-1 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint 1-1 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint 1-2 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint 1-2 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint cooperative exit0 within original8s, no force",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint actual two data sockets EOF without bytes",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint stdout raw length equals consumed",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint exact4096 full pipe EAGAIN with no drain",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint only separate OFD nonblocking",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint actual child writer blocked before signal",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint blocked scope no fabricated backend stopped proof",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes after.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes before.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes protocol.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes stderr.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes stdout-consumed.bin",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes stdout-events.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigint artifact bytes synthetic-padding.bin",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm exact raw JSON copies",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm signal only identity-matched owned ordinary child",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm child actual ELF equals release identity",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm nonvacuous configured two leased pending profiles",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm 1-1 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm 1-1 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm 1-2 actual IMPORT header success",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm 1-2 real SET_CONFIG1/IN wire frames",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm cooperative exit0 within original8s, no force",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm actual two data sockets EOF without bytes",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm stdout raw length equals consumed",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm exact4096 full pipe EAGAIN with no drain",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm only separate OFD nonblocking",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm actual child writer blocked before signal",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm blocked scope no fabricated backend stopped proof",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes after.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes before.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes protocol.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes stderr.log",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes stdout-consumed.bin",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes stdout-events.json",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "blocked-sigterm artifact bytes synthetic-padding.bin",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "legacy two backpressure checks terminal and exact modes",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "legacy sigint unchanged output/EOF/deadline contract",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "legacy deadline unchanged output/EOF/deadline contract",
+      "passed": true,
+      "evidence": null
+    },
+    {
+      "name": "all reviewed preserved raw/source artifacts unchanged through this review",
+      "passed": true,
+      "evidence": {
+        "artifact_count": 250
+      }
+    },
+    {
+      "name": "review did not find compiled source drift",
+      "passed": true,
+      "evidence": null
+    }
+  ],
+  "passed_checks": 137,
+  "failed_checks": 1
+}

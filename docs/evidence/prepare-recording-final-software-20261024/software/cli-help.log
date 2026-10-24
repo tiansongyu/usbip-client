@@ -1,0 +1,33 @@
+Linux USB/IP device management (experimental preview)
+
+Usage: rustusb [OPTIONS] <COMMAND>
+
+Commands:
+  agent               Run or query the nonroot shared application service using fixed profiles
+  secure-server       Serve configured devices with mandatory mutual TLS and per-device authorization
+  secure-discover     Read the stable-key device catalog over the configured mutually authenticated TLS endpoint
+  secure-attach       Import the configured stable device key and own its encrypted VHCI relay until stopped
+  native-pending      Inspect unresolved secure Native channels through the root helper (root only)
+  native-reconcile    Verify a stopped Native channel and retire its record (root only; no USB writes)
+  physical-pending    Inspect unresolved physical grants through the root helper (root only)
+  physical-reconcile  Verify restored physical state and retire its grant record (root only; no USB writes)
+  physical-server     Serve explicitly authorized whole USB devices through Linux USBFS (experimental, no TLS)
+  virtual-server      Serve two virtual test devices; this experimental mode provides no authentication or TLS
+  devices             Scan local devices without changing drivers. Discovery is not compatibility validation
+  doctor              Read installed tool, module and helper capabilities without loading modules
+  discover            Query a server's USB/IP device list over an administrator-managed trusted network
+  export              Export an administrator-allowlisted device fingerprint via the privileged helper
+  unexport            Release an allowlisted export and request local driver reattachment
+  attach              Import a remote bus ID through an allowlisted endpoint and Linux VHCI
+  detach              Disconnect an authorized local VHCI port (0..255)
+  sessions            Read authoritative native kernel session state through the helper
+  status              Query helper and kernel status
+  help                Print this message or the help of the given subcommand(s)
+
+Options:
+      --json               Emit machine-readable JSON to stdout; logs remain on stderr
+      --socket <SOCKET>    Root-owned local helper socket [default: /run/rustusb/control.sock]
+      --timeout <TIMEOUT>  Discovery timeout covering DNS, connect and response [default: 10]
+      --log-json           Emit JSON tracing logs on stderr
+  -h, --help               Print help
+  -V, --version            Print version

@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "review_result": "PASS",
+  "original_runtime_result": "FAIL",
+  "original_unrun_count": 22,
+  "source_scope": "Independent binding review of harness, Native product author participant; no verifier/runner imported. Current two-file static candidate only, no new runtime result.",
+  "original_head": "2222de87439f61e8a2e939e7dc15cd845d38aa4e",
+  "candidate_sources": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/guest-init.sh",
+      "bytes": 21511,
+      "sha256": "8417da8331384b640d50cf6f805c38a0569398cacdf0f88f0e58f77de8751af7"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh",
+      "bytes": 15456,
+      "sha256": "f9ea5bd9c016f92ee7115549371a2b9425efb714f076a6102d8b9d70a5f17a5b"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/prepare-gate.c",
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/run.py",
+      "bytes": 20706,
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/verify.py",
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/local.py",
+      "bytes": 2633,
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/scripts/qemu_prepare_recording_shutdown/verify_local.py",
+      "bytes": 25025,
+      "sha256": "8209c7ee2aa887ad022cece2c225d97400349ee96923836e88c469d1c1bd65cc"
+    }
+  ],
+  "checks": [
+    {
+      "check": "original matrix FAIL remains with1run and22unrun",
+      "passed": true,
+      "detail": [
+        "prepare-native-resource-term",
+        "prepare-usbfs-resource-job",
+        "prepare-usbfs-resource-term",
+        "prepare-usbfs-initializer-job",
+        "prepare-usbfs-initializer-term",
+        "prepare-native-resource-session",
+        "prepare-native-available-session",
+        "health-native-ipv4",
+        "health-native-ipv6",
+        "health-usbfs-ipv4",
+        "health-usbfs-ipv6",
+        "health-virtual-ipv4",
+        "health-virtual-ipv6",
+        "secure-virtual-ipv4",
+        "secure-virtual-ipv6",
+        "secure-usbfs-ipv4",
+        "secure-usbfs-ipv6",
+        "secure-native-ipv4",
+        "secure-native-ipv6",
+        "agent-native-ipv4",
+        "agent-native-ipv6",
+        "sigterm"
+      ]
+    },
+    {
+      "check": "original run host FAIL and two guest0 are distinct",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original actual first verifier mismatch retained",
+      "passed": true,
+      "detail": "RuntimeError: held observation 1 recomputed from raw root/sysfs/FD files"
+    },
+    {
+      "check": "original source/ELF/head/clean guards all true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "saved first snapshot has2exports0terminal and cannot prove target retirement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original observation1 wrongly records true against this saved sample",
+      "passed": true,
+      "detail": {
+        "observation": 1,
+        "uptime": "4.76",
+        "baseline_equal": false,
+        "target_fd_closed": true,
+        "exact_root_terminal": true,
+        "gate_released": false
+      }
+    },
+    {
+      "check": "separate original observation2 contains exact both root proof",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "separate original second host snapshot equals complete baseline",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original saved observations bracket same held syscall before explicit release",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "main guest exact narrow change only saved argument andarity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "local guest exact two saved snapshot argument changes only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "proof function explicitly demands exactly1argument with no fallback",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all4call sites explicit saved sample paths",
+      "passed": true,
+      "detail": [
+        {
+          "file": "scripts/qemu_prepare_recording_shutdown/guest-init.sh",
+          "line": 217,
+          "text": "if check_target_proof \"/tmp/root-observe-$observation.json\"; then proof=true; fi"
+        },
+        {
+          "file": "scripts/qemu_prepare_recording_shutdown/guest-init.sh",
+          "line": 250,
+          "text": "check_target_proof /tmp/root-after-release.json"
+        },
+        {
+          "file": "scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh",
+          "line": 127,
+          "text": "check_target_proof /tmp/root-local-empty.json"
+        },
+        {
+          "file": "scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh",
+          "line": 140,
+          "text": "check_target_proof /tmp/root-after-release.json"
+        }
+      ]
+    },
+    {
+      "check": "prepare-gate.c unchanged from actual222source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run.py unchanged from actual222source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "verify.py unchanged from actual222source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "local.py unchanged from actual222source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "verify_local.py unchanged from actual222source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "strictproof expressions and all deadlines unchanged by exactdiff",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all inspected original files unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "candidate snapshot unchanged throughout review",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "passed": 21,
+  "failed": 0,
+  "original_sha_before": [
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/result.json",
+      "bytes": 1741,
+      "sha256": "dbcc14e9bd80c0c69cfae095c83db77e1f76501b3ce2835e46f7c3979fe39a75"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/results.json",
+      "bytes": 898,
+      "sha256": "04773bf842f87fca9e6eb012d16ab8257754d0199c879383ecade5488b1467b6"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/start.json",
+      "bytes": 535,
+      "sha256": "c76b821b869f70218e1203e4ac7188a52d9e66f7fc8a7593eb575363ca5e2578"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/summary.json",
+      "bytes": 147157,
+      "sha256": "9138b44c3fd5c367bad038f8dd014df5d84e45dd36e342baebf538d5c4a5086c"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/selected-sessions.json",
+      "bytes": 1534,
+      "sha256": "6ee058a668e02c9125b20034271214117993feee959f970ae8e47cbf9c19323d"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/held-observations.jsonl",
+      "bytes": 259,
+      "sha256": "8b56802f7b56116ccfe963bc860a02e8ca0ea37e2c6a5b0f4c894ae58111a137"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/root-observe-1.json",
+      "bytes": 3279,
+      "sha256": "fb5d4d1a64f3877a62f1dc8f6d7d57888ae812a1008af01e2468c6db1d0474b8"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/root-observe-2.json",
+      "bytes": 904,
+      "sha256": "5edcd422264ff0626bfda0d356444f41e1c362a3a1bc0bb6572b044d0016d91f"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/host-before.json",
+      "bytes": 1244,
+      "sha256": "0cdebdf5bddd7abc529b1ade7a80a58f245d631ad9c4bd85ab13a249a79e8366"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/host-observe-2.json",
+      "bytes": 1244,
+      "sha256": "0cdebdf5bddd7abc529b1ade7a80a58f245d631ad9c4bd85ab13a249a79e8366"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/gate-held-before.json",
+      "bytes": 158,
+      "sha256": "7ff6f4ec62e4cd9a6dce91cd9ae9c8ff1a2adf6844d7c79b72e79c77840471dd"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/gate-held-after.json",
+      "bytes": 158,
+      "sha256": "8515373f68f471a58a7c28fdef6d2f782940d99f150ca3debae66410bccc87f4"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/selection.json",
+      "bytes": 99,
+      "sha256": "0bc4e0978b82f2184280c1df7f8a6cd35f693700a68f7fef6ea35e981759df04"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/gate-candidate-9.json",
+      "bytes": 392,
+      "sha256": "6d4f0978d3af8e2036aa19968d597cd1850d543547faaafb483f63da629417dc"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/gate-exit-9.json",
+      "bytes": 426,
+      "sha256": "3b27e36e30a3f7edc3f11e383b3dbe9ae516014ef6a1fc3e43c1cc2919d0f093"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/server-artifacts/gate-events.jsonl",
+      "bytes": 24808,
+      "sha256": "1a0ed12581db49b318718d2c2360ab0564329d0819e8fe320ac999348d801378"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/guest-init.sh",
+      "bytes": 21356,
+      "sha256": "440fd823708eaf8148ea388b8642d18e268f4e62c84d95481c954a0d93452358"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh",
+      "bytes": 15400,
+      "sha256": "0c4ed69e91a19a7ff12356b75b289696598ea3b3f504bc489b4029cb4979be04"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/prepare-gate.c",
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/run.py",
+      "bytes": 20706,
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/verify.py",
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/local.py",
+      "bytes": 2633,
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353"
+    },
+    {
+      "path": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job/source/scripts/qemu_prepare_recording_shutdown/verify_local.py",
+      "bytes": 25025,
+      "sha256": "8209c7ee2aa887ad022cece2c225d97400349ee96923836e88c469d1c1bd65cc"
+    }
+  ],
+  "original_sha_after_unchanged": true,
+  "limits": [
+    "Original observation1 saved root snapshot cannot support its true exact_root_terminal field. Source shows old helper rereads live journal. This proves saved/live binding mismatch, not precise syscall timing of that later read.",
+    "Separate saved observation2 plus held brackets shows actual original receipts and full baselines before release, but never changes original wholeFAIL or says anything about22unrun.",
+    "Snapshot root/sysfs/FD reads are sequential, not atomic. Strict verifier intentionally rejects any per-sample mismatch.",
+    "No product source, proof kind/identity matching, old verifier, timeout, syscall gate, or pre-existing evidence has been modified by this reviewer.",
+    "No Cargo/Git/QEMU/product/helper/host USB execution; no new clean/future commit attribution."
+  ]
+}

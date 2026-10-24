@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "source_runtime_head": "b1de03488474af74a4155232cda73a00e1e0f142",
+  "original_result": "FAIL",
+  "guest_exit_codes": {
+    "server": 0,
+    "client": 0
+  },
+  "guards": {
+    "source_guard": true,
+    "binary_guard": true,
+    "head_guard": true,
+    "clean_guard": true
+  },
+  "observations": {
+    "root_after_detach_exactly_equals_during": true,
+    "stored_original_stub_id": "2899cd04-be80-4fc2-bd93-c7ee9de99a5d",
+    "stored_original_stub_phase": "observed",
+    "stored_initial_stub_receipt_usbip_status": 2,
+    "actual_after_detach_hid_sysfs_usbip_status": 1,
+    "actual_after_detach_hid_device_driver": "usbip-host",
+    "root_after_detach_terminal_kinds": [
+      "native_export"
+    ],
+    "later_after_export_stop_terminal_kinds": [
+      "native_export",
+      "native_stub",
+      "native_export"
+    ],
+    "original_hid_devnum": "2",
+    "actual_after_detach_hid_devnum": "0",
+    "original_hid_generation": "23:25554",
+    "actual_after_detach_hid_generation": "23:25554"
+  },
+  "conclusion": "Client NULL/proof does not establish server retirement. At the first server read the exact original stub remained in the root journal with no stub terminal. Simultaneous sysfs reported AVAILABLE but devnum was 0, versus original 2, so the complete original hardware/address/profile state was not yet demonstrated. The original stored stub receipt status 2 is historical, not a claim that the current kernel remained USED. No polling interval was recorded before last-export StopSession. These samples do not establish the cause or exact timing of retirement; later post-export-stop terminal proof is not backfilled.",
+  "preservation": "Original b1 overall FAIL and all four original failing checks remain unchanged; the held Resource failures remain old-product observations. No reinterpretation as runtime PASS.",
+  "planned_fix": "Bounded read-only server root+sysfs polling for exact original stub retirement and unchanged export before last-export StopSession; fail on deadline, retain each original sample. No production/root mutation or assertion relaxation.",
+  "manifest": {
+    "summary.json": {
+      "bytes": 319357,
+      "sha256": "63647ac8a90a947a42e2f8d3230d835ca5328ec31f7c18ed3329ec84014a3137"
+    },
+    "host-control.jsonl": {
+      "bytes": 1880,
+      "sha256": "ed48be5a9fb1e7a327703fccec9d3b741019255e14ec2dfcf112e0e6d43c47d1"
+    },
+    "server-artifacts/root-local-survivor-io.json": {
+      "bytes": 2831,
+      "sha256": "9548b5c7355a7c87acc5eb2c0b848f4229756454a88c8943764761209da69599"
+    },
+    "server-artifacts/root-local-after-detach.json": {
+      "bytes": 2831,
+      "sha256": "9548b5c7355a7c87acc5eb2c0b848f4229756454a88c8943764761209da69599"
+    },
+    "server-artifacts/host-local-after-detach.json": {
+      "bytes": 1242,
+      "sha256": "b8b1890b835b2c5a7cee6b67ee3241778321931d8292ae36fd53b41c104936dd"
+    },
+    "server-artifacts/root-local-empty.json": {
+      "bytes": 1323,
+      "sha256": "0273720abc80c5bb62e465799de5e84bb71841bb1ed201597fd2783d3a51ffee"
+    },
+    "server-artifacts/local-survivor.json": {
+      "bytes": 766,
+      "sha256": "b1c3370fe7cdd4d2e4e0788712fecf1d7fcce5354676eced4d5155f5db7c04d8"
+    },
+    "server-artifacts/local-target.json": {
+      "bytes": 766,
+      "sha256": "24bf38b3392132d41d4394bd0670993c7a5b20dee1ccc8c28aea2289f625a04a"
+    },
+    "client-artifacts/root-local-detached.json": {
+      "bytes": 491,
+      "sha256": "7ec7c4f5128fe73c770fbfcce56a25d412bdd480135b2e0228e9ddaab20662ea"
+    },
+    "client-artifacts/local-detached-vhci.txt": {
+      "bytes": 682,
+      "sha256": "5e975a7c4a48a87920eef7e2af2f4671bca44068d7941b5a1ed2e54374ce420a"
+    },
+    "client-artifacts/local-stop-import.json": {
+      "bytes": 103,
+      "sha256": "872645eec6de75163a6c11a4552d04dd0c9de758cfe8edacfc221d3d3a67b422"
+    }
+  },
+  "pre_edit_source_sha256": {
+    "guest-local-fragments.sh": "907d44297777866c186bd9f6d8f33e0e04487fd045392ce7a8d49c5a9c643abd",
+    "verify_local.py": "3a542839a14405af42c353e8df18cc055ecd90a4f7a4d23c69f46ef98ea01c20"
+  },
+  "prior_diagnosis_sha256": "58bc4fdb6bb2ada3e5a00be3ad011f618d0eff75a8674fd955d844916660be0f"
+}

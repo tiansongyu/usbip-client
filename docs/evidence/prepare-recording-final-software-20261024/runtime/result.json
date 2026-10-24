@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-23T23:31:22.979065+00:00",
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "scripts/test-server-signals.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb",
+        "--skip-build",
+        "--evidence",
+        "/tmp/rustusb-prepare-stop-local-runtime-ab-20261024/signals"
+      ],
+      "exit_code": 0,
+      "log": "signals.log"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test-virtual-backpressure.py",
+        "--binary",
+        "/home/ubuntu/github/usbip-client/target/release/rustusb"
+      ],
+      "exit_code": 0,
+      "log": "backpressure.log"
+    }
+  ],
+  "cli_sha256": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+  "binary_stable": true,
+  "inputs_stable": true,
+  "selected_inputs": 167,
+  "scope": "Actual all-features release CLI from the complete667-execution run. Ordinary-user original four signals/two stdout-backpressure; no host USB/kernel mutation."
+}

@@ -1,0 +1,8 @@
+
+      length==1 and (.[0] | $stub[0] as $k | $survivor[0] as $s |
+      [$original[0].exports[]|select(.lease_id==$s.attempts[0].resource_id)] as $owned |
+      {terminal:{resource_id:$k.channel_id,kind:"native_stub",device_key:$s.device_key,owner_uid:2000,correlation:$k.correlation,proof:"native_stub_available"},server_id:null} as $proof |
+      .schema_version==2 and .records==[] and ($owned|length)==1 and .exports==$owned and
+      ($during[0].terminals|length)==1 and (.terminals|length)==2 and
+      (.terminals|sort_by(.terminal.resource_id))==(($during[0].terminals+[$proof])|sort_by(.terminal.resource_id)))
+null

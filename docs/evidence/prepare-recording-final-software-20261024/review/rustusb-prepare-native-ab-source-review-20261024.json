@@ -1,0 +1,63 @@
+{
+  "cargo_qemu_git_mutations": false,
+  "closure": [
+    {
+      "evidence": "Known received_key mismatch is captured before Resource wait, remembered as prior_failure, requests unique close, retains Operation Protocol through every wait branch. Late recording error remains separate; retained original ACK still precedes same session Closing/Finish.",
+      "finding": "A",
+      "source": "native.rs:537"
+    },
+    {
+      "evidence": "Private CloseCause distinguishes Local/Job/Requested/Invalidated/Failure before actual_close. Local stop disables availability directly and does not set preparation stopping. LocalCancelled continues remaining pool; normal self-close invalidation is not treated as unexpected. Real cleanup failure independently fans out fatal to sibling watchers.",
+      "finding": "B",
+      "source": "native.rs:129, native.rs:300, native.rs:581, native.rs:695"
+    },
+    {
+      "evidence": "No new helper work or fabricated NotStarted is introduced. Reserved cancellation records Cancelled+Unconfirmed; bounded16 metadata errors are retained separately from live job failure guards and merged only after genuine whole-job cleanup. Global stop still wins local outcome when observed.",
+      "finding": "reserved-unsent",
+      "source": "native.rs:339, native.rs:505"
+    },
+    {
+      "evidence": "Accepted prepare helper future remains total-await. Each returned handle registers one collection close watcher before Resource; close_all joins all actual-close tasks before finalizers. Existing local root capability is not duplicated into a second close authority.",
+      "finding": "accepted resource ownership and record order",
+      "source": "native.rs:401, native.rs:895"
+    },
+    {
+      "evidence": "Catalog checks actual local stop directly; direct IMPORT finds only allowed same key+BusID and not stopped/invalidated/failed export before reserved CAS. New real TCP mTLS v1/v2 test config explicitly grants both keys, then requests stopped target status4, live reserved sibling status2, and repeated empty catalogs on same listener. It does not use missing ACL permission to fake local-stop rejection.",
+      "finding": "last export and direct IMPORT",
+      "source": "native.rs:164, native.rs:934, native_prepare_tests.rs:755"
+    }
+  ],
+  "files": {
+    "crates/rustusb-service/src/jobs/native.rs": {
+      "bytes": 74087,
+      "sha256": "0d0d5205c522c1e290f4b615feab8283096a91beb347e4b69dd9f54c3c73e4b5"
+    },
+    "crates/rustusb-service/src/jobs/native_prepare_tests.rs": {
+      "bytes": 43904,
+      "sha256": "2d7f14a79c0bdcbe16e753e71600283817c0e3e25df17104da063d25d63e8e09"
+    }
+  },
+  "limits": [
+    "Previously accepted helper or kernel-hard-block operation is still total-await; no arbitrary kernel stall bound claimed.",
+    "Source fixtures use ordinary-user real owned endpoints/JobMessage ACKs and actual TLS, not helper credential bypass or kernel cleanup evidence.",
+    "Per-session metadata ACK remains durable; no in-memory acknowledgement replaces it.",
+    "Source review does not establish hardware compatibility or QEMU Local success."
+  ],
+  "previous_findings": [
+    "A: interrupted Resource could hide known received-key mismatch",
+    "B: local preparation cancellation closed unrelated sibling",
+    "reserved but unsent attempt must remain Unconfirmed without becoming authority to stop sibling"
+  ],
+  "repo_writes": false,
+  "result": "NO_CONCRETE_MUST_FIX_FOUND_IN_REVIEWED_DELTA",
+  "review_type": "read-only Native A/B source delta; not runtime validation",
+  "reviewer_disclosure": "Reviewer authored recording helper/Rust/client portions and reviewed earlier Native revisions; this is a cross-review, not an independent implementation.",
+  "runtime_status": "No reviewer Cargo/test/QEMU execution; previous655 candidate/old clean68 QEMUFAIL artifacts remain untouched and do not validate this source revision. Root controls subsequent real execution.",
+  "schema_version": 1,
+  "tests_source_only": [
+    "A mismatch with held Resource and preserved operation+recording separation",
+    "independent local Resource/Available cancellation with safe sibling and simulated subsequent invalidation",
+    "pre-helper and reserved-unsent local cancellation without new helper work",
+    "actual production TLS management handler v1/v2 status4/status2/empty catalogs"
+  ]
+}

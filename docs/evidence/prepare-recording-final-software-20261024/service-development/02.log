@@ -1,0 +1,85 @@
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.47s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-ec4511eef4d589c3)
+
+running 71 tests
+test health::tests::frozen_raw_observation_never_gains_live_rtt_or_changes_source ... ok
+test foreground::tests::control_errors_do_not_reflect_payload_and_unknown_fields_fail ... ok
+test config::tests::exact_profile_action_and_os_uid_are_required ... ok
+test health::tests::maximum_fixed_sample_fits_reserved_space_and_rtt_can_decrease ... ok
+test config::tests::malformed_or_ambiguous_manifests_fail_before_credentials ... ok
+test foreground::tests::independent_terminal_errors_preserve_all_original_context ... ok
+test jobs::client::tests::all_recording_failures_are_retained ... ok
+test ipc::tests::oversized_empty_and_unknown_requests_fail_without_allocating_unboundedly ... ok
+test ipc::tests::unix_credentials_and_framing_come_from_the_actual_connection ... ok
+test jobs::client::tests::managed_mode_retires_both_halves_at_the_first_eof ... ok
+test jobs::client::tests::link_failure_during_an_accepted_ack_cleans_before_waiting_for_that_same_ack ... ok
+test jobs::client::tests::foreground_half_close_still_drains_the_actual_reverse_stream ... ok
+test jobs::io::tests::real_duplex_bytes_are_counted_and_first_eof_closes_both_sides ... ok
+test jobs::native::prepare_tests::cleanup_and_late_resource_errors_remain_distinct_and_ordered ... ok
+test jobs::native::prepare_tests::available_ack_stall_drops_listener_and_closes_both_exports ... ok
+test jobs::native::prepare_tests::known_identity_failure_is_not_erased_by_simultaneous_stop ... ok
+test jobs::native::tests::export_invalidation_ends_idle_relay_with_error ... ok
+test jobs::rust_server::tests::cdc_payload_bounds_and_control_errors_remain_redacted ... ok
+test jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof ... ok
+test jobs::native::tests::stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock ... ok
+test jobs::native::prepare_tests::later_begin_and_attempt_ack_stalls_release_the_prepared_sibling ... ok
+test jobs::rust_server::tests::finish_attempts_all_received_grants_before_any_recording_and_retains_errors ... ok
+test run_context::tests::explicit_foreground_has_no_correlation_or_durable_admission ... ok
+test jobs::rust_server::tests::invalid_physical_selection_and_network_policy_precede_helper_io ... ok
+test run_context::tests::managed_admission_really_waits_and_propagates_rejection ... ok
+test jobs::rust_server::tests::rejected_begin_receipt_is_recording_failure_before_any_owner ... ok
+test jobs::native::tests::all_close_tasks_start_while_a_sibling_record_ack_is_delayed ... ok
+test run_context::tests::sticky_stop_interrupts_unacknowledged_output_delivery ... ok
+test jobs::native::prepare_tests::local_stop_before_helper_is_a_local_skip_without_new_attempt ... ok
+test jobs::native::tests::data_link_failure_releases_real_streams_and_lock_before_retained_ack ... ok
+test jobs::native::tests::stopped_foreground_prepare_skips_the_real_helper_and_creates_no_export ... ok
+test jobs::native::tests::relay_copies_both_directions_and_first_eof_releases_other_half ... ok
+test runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop ... ok
+test jobs::native::prepare_tests::local_available_stop_keeps_the_safe_sibling_owned_and_available ... ok
+test jobs::native::prepare_tests::local_resource_stop_keeps_the_safe_sibling_owned_and_available ... ok
+test jobs::rust_server::tests::failed_ready_delivery_keeps_actual_cleanup_and_no_success_event ... ok
+test jobs::rust_server::tests::held_available_ack_releases_actual_listener_and_lease_before_original_record ... ok
+test runtime::tests::shutdown_poison_still_fans_out_and_returns_an_explicit_error ... ok
+test runtime::tests::shutdown_late_session_inherits_its_already_stopped_job ... ok
+test store::platform::tests::bounded_audit_preserves_monotonic_cursor_gap ... ok
+test runtime::tests::legacy_state_migrates_strictly_without_changing_public_session_or_metrics ... ok
+test jobs::management_tests::discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver ... ok
+test runtime::tests::explicit_retry_never_starts_unknown_or_expired_requests ... ok
+test store::platform::tests::atomic_restart_lock_and_sequence_are_real_filesystem_operations ... ok
+test jobs::recording::tests::simultaneous_stop_does_not_poll_or_discard_the_original_record ... ok
+test run_context::tests::vanished_foreground_reader_reports_an_error_instead_of_fake_ack ... ok
+test jobs::recording::tests::interrupted_real_resource_message_keeps_the_original_rejection ... ok
+test jobs::rust_server::tests::soft_cleanup_deadline_is_not_finished_until_real_terminal ... ok
+test jobs::native::prepare_tests::simultaneous_stop_retains_unpolled_resource_until_actual_close ... ok
+test jobs::native::prepare_tests::received_identity_failure_survives_verified_close_in_session_finish ... ok
+test jobs::native::prepare_tests::reserved_unsent_local_stop_retains_uncertainty_without_stopping_sibling ... ok
+test jobs::native::tests::received_export_stop_closes_before_original_resource_ack ... ok
+test jobs::rust_server::tests::typed_controls_preserve_ack_error_and_ordered_shutdown ... ok
+test jobs::native::prepare_tests::received_collection_stops_two_exports_during_resource_ack ... ok
+test jobs::native::tests::vanished_foreground_stop_sender_skips_the_real_helper ... ok
+test jobs::rust_server::tests::blocked_output_receipt_does_not_block_real_foreground_cleanup ... ok
+test store::platform::tests::strict_legacy_file_is_atomically_upgraded_and_never_downgraded ... ok
+test runtime::tests::previous_epoch_health_is_historical_and_export_is_not_a_data_link ... ok
+test store::platform::tests::corrupt_changed_symlink_and_hardlink_state_are_never_reset ... ok
+test runtime::tests::unauthorized_stop_does_not_signal_and_is_durably_audited ... ok
+test runtime::tests::finished_job_with_retained_child_is_not_pruned_into_an_orphan ... ok
+test runtime::tests::verified_finish_from_error_audits_recovering_before_disconnected ... ok
+test jobs::client::tests::stopped_import_attempt_closes_actual_tls_before_late_ack_and_never_calls_helper ... ok
+test jobs::native::tests::actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner ... ok
+test jobs::management_tests::actual_client_refusal_keeps_original_failure_without_helper_attempt ... ok
+test jobs::native::prepare_tests::native_tls_local_stop_refuses_import_keeps_busy_and_empty_catalog_listener ... ok
+test runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack ... ok
+test runtime::tests::link_reads_remain_authorized_and_bounded_while_the_real_store_is_blocked ... ok
+test runtime::tests::canonical_retention_matches_memory_store_and_reopened_disk ... ok
+test runtime::tests::admission_capacity_refusal_keeps_journal_healthy_and_allows_finish ... ok
+test runtime::tests::health_growth_is_reserved_inside_the_existing_admission_budget ... ok
+
+test result: ok. 71 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.88s
+
+   Doc-tests rustusb_service
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "revision": "local-session-detach-barrier-2",
+  "state": "SOURCE_FROZEN",
+  "files": {
+    "scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh": {
+      "bytes": 15400,
+      "sha256": "0c4ed69e91a19a7ff12356b75b289696598ea3b3f504bc489b4029cb4979be04"
+    },
+    "scripts/qemu_prepare_recording_shutdown/verify_local.py": {
+      "bytes": 25025,
+      "sha256": "8209c7ee2aa887ad022cece2c225d97400349ee96923836e88c469d1c1bd65cc"
+    }
+  },
+  "frozen_source_copies": "/tmp/rustusb-prepare-local-detach-frozen-sources-20261024",
+  "unchanged_support_sources": {
+    "run.py": {
+      "bytes": 20706,
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2"
+    },
+    "local.py": {
+      "bytes": 2633,
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353"
+    },
+    "guest-init.sh": {
+      "bytes": 21356,
+      "sha256": "440fd823708eaf8148ea388b8642d18e268f4e62c84d95481c954a0d93452358"
+    },
+    "verify.py": {
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7"
+    },
+    "prepare-gate.c": {
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909"
+    }
+  },
+  "reports": {
+    "diagnosis": {
+      "path": "/tmp/rustusb-prepare-local-detach-diagnosis-20261024/diagnosis-revision2.json",
+      "bytes": 4172,
+      "sha256": "5a877797130b91b2098f4472eb5d279c9c983644d90fc5d51f266992cc3071cd"
+    },
+    "static": {
+      "path": "/tmp/rustusb-prepare-local-detach-static-20261024/report.json",
+      "bytes": 9245,
+      "sha256": "756cb0fbe8003d01e18e5e93be0ab6ded2473627e82e7fa3e3f7c0598fea3d35",
+      "diagnostic_count": 76
+    },
+    "fixtures": {
+      "path": "/tmp/rustusb-prepare-local-detach-fixtures-20261024/report.json",
+      "bytes": 2606,
+      "sha256": "33f3144d28818d3358ec1eb9abb49b224a00ba9a29a5be1433ec8f9c3b234605",
+      "diagnostic_count": 29
+    }
+  },
+  "reproducible_static_parsers": {
+    "/tmp/check-prepare-local-detach-static-20261024.py": {
+      "bytes": 6912,
+      "sha256": "790872d2081df4babd0b162923970b92117028e9062ac9712208711801ca5130"
+    },
+    "/tmp/check-prepare-local-detach-fixtures-20261024.py": {
+      "bytes": 6383,
+      "sha256": "707f1870aacc61733612709c523ec8d712070ec601dbdb656e0102c83e77c374"
+    }
+  },
+  "commands": [
+    "python3 scripts/qemu_prepare_recording_shutdown/run.py --case native-resource --stop session --kernel 6.8.0-106-generic --evidence FRESH",
+    "python3 scripts/qemu_prepare_recording_shutdown/run.py --case native-available --stop session --kernel 6.8.0-106-generic --evidence FRESH"
+  ],
+  "change": [
+    "Keep exact original full stub record from the actual survivor I/O snapshot.",
+    "After client detach, take bounded read-only root, application audit and host snapshots; retain every original sample and uptime.",
+    "Require at most 500 samples and 15 seconds, original full HID export with no stub, exact serial export and original HID stub terminals, and complete expected hardware/address/profile with usbip-host AVAILABLE.",
+    "Only an accepted sample may become after-detach evidence by byte-identical copies; final HID export StopSession follows the marker and uptime.",
+    "Failure at the bound occurs before final local StopSession. Global failure cleanup cannot backfill this proof.",
+    "Verifier independently checks each recorded predicate result, bounds, original identity, accepted raw-byte aliases, and absence of earlier HID export stop audit."
+  ],
+  "static": {
+    "source_composition_checks": 76,
+    "predicate_fixture_checks": 29,
+    "count_scope": "static diagnostics and constructed fixtures, not runtime USB cases",
+    "six_original_global_generated_init_bytes_unchanged": true
+  },
+  "runtime": {
+    "new_run_performed": false,
+    "original_directory": "/tmp/rustusb-prepare-stop-local-resource-b1de034-20261024",
+    "original_head": "b1de03488474af74a4155232cda73a00e1e0f142",
+    "original_result": "FAIL",
+    "original_failed_checks": 4,
+    "selected_originals_byte_sha_rechecked": 11,
+    "facts": {
+      "root_after_detach_exactly_equals_during": true,
+      "stored_original_stub_id": "2899cd04-be80-4fc2-bd93-c7ee9de99a5d",
+      "stored_original_stub_phase": "observed",
+      "stored_initial_stub_receipt_usbip_status": 2,
+      "actual_after_detach_hid_sysfs_usbip_status": 1,
+      "actual_after_detach_hid_device_driver": "usbip-host",
+      "root_after_detach_terminal_kinds": [
+        "native_export"
+      ],
+      "later_after_export_stop_terminal_kinds": [
+        "native_export",
+        "native_stub",
+        "native_export"
+      ],
+      "original_hid_devnum": "2",
+      "actual_after_detach_hid_devnum": "0",
+      "original_hid_generation": "23:25554",
+      "actual_after_detach_hid_generation": "23:25554"
+    },
+    "cause_scope": "The samples establish root retirement was not yet observed and actual devnum was 0, not the cause or precise timing. Stored stub status 2 is historical; actual first host sample status is 1. No race cause is asserted."
+  },
+  "preservation": {
+    "original_70_check_handoff": "/tmp/rustusb-prepare-local-author-handoff-20261024.json",
+    "original_70_check_report": "/tmp/rustusb-prepare-local-static-revision2-20261024/report.json",
+    "pre_edit_sources": "/tmp/rustusb-prepare-local-detach-diagnosis-20261024",
+    "old_failure_verdict_unchanged": true
+  },
+  "preflight_correction": "Both new jq predicates require exactly one slurped JSON value; empty and duplicate inputs reject rather than relying on jq -e empty-input exit behavior.",
+  "scope": [
+    "No product/core/C or old harness changes.",
+    "No Cargo, compiler, QEMU, device operation or Git command was executed by the author for this change.",
+    "No new runtime success or hardware/ARM claim.",
+    "Read-only samples are sequential observations, not an atomic combined kernel/database transaction."
+  ],
+  "reviewer": "/root/journal_integration_review source review pending final hash lock; current narrow source review reported no specific mustfix"
+}

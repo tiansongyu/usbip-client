@@ -1,0 +1,6 @@
+
+      $target[0] as $t | $survivor[0] as $s | $t.attempts[0] as $a |
+      .records==[] and .exports==[$original[0].exports[]|select(.lease_id==$s.attempts[0].resource_id)] and
+      (.exports|length)==1 and (.terminals|length)==1 and
+      any(.terminals[].terminal;.resource_id==$a.resource_id and .kind=="native_export" and .owner_uid==2000 and .correlation==$a.correlation and .device_key==$t.device_key and .proof=="native_export_restored")
+null

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "revision": "local-session-1",
+  "state": "SOURCE_FROZEN",
+  "files": {
+    "scripts/qemu_prepare_recording_shutdown/README.md": {
+      "sha256": "74e2563b440aadd836685784557eba6b0f039ca5a5c40b5b0a1d1f118f89dcb5",
+      "bytes": 6039
+    },
+    "scripts/qemu_prepare_recording_shutdown/guest-init.sh": {
+      "sha256": "440fd823708eaf8148ea388b8642d18e268f4e62c84d95481c954a0d93452358",
+      "bytes": 21356
+    },
+    "scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh": {
+      "sha256": "907d44297777866c186bd9f6d8f33e0e04487fd045392ce7a8d49c5a9c643abd",
+      "bytes": 11180
+    },
+    "scripts/qemu_prepare_recording_shutdown/local.py": {
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353",
+      "bytes": 2633
+    },
+    "scripts/qemu_prepare_recording_shutdown/prepare-gate.c": {
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909",
+      "bytes": 39221
+    },
+    "scripts/qemu_prepare_recording_shutdown/run.py": {
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2",
+      "bytes": 20706
+    },
+    "scripts/qemu_prepare_recording_shutdown/verify.py": {
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7",
+      "bytes": 21955
+    },
+    "scripts/qemu_prepare_recording_shutdown/verify_local.py": {
+      "sha256": "3a542839a14405af42c353e8df18cc055ecd90a4f7a4d23c69f46ef98ea01c20",
+      "bytes": 20186
+    }
+  },
+  "commands": [
+    "python3 scripts/qemu_prepare_recording_shutdown/run.py --case native-resource --stop session --kernel 6.8.0-106-generic --evidence FRESH",
+    "python3 scripts/qemu_prepare_recording_shutdown/run.py --case native-available --stop session --kernel 6.8.0-106-generic --evidence FRESH"
+  ],
+  "unchanged": [
+    "guest-init.sh 440fd823708eaf8148ea388b8642d18e268f4e62c84d95481c954a0d93452358",
+    "verify.py 9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7",
+    "prepare-gate.c 2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909",
+    "six original global mode generated init files byte-identical to revision2"
+  ],
+  "static_report": "/tmp/rustusb-prepare-local-static-revision2-20261024/report.json",
+  "static_parser": "/tmp/check-prepare-local-static-revision2-20261024.py",
+  "static_checks": 70,
+  "initial_static_report_preserved": "/tmp/rustusb-prepare-local-static-20261024/report.json",
+  "count_scope": "static diagnostics and constructed jq fixtures only, no new USB cases or Rust executions",
+  "flow": [
+    "serial exact second Resource or Available ACK gated at original fsync ENTRY",
+    "only serial actual root terminal/driver restoration, original HID root capability fully unchanged under held-before/after",
+    "release original successful fsync; same job Running and authenticated catalog only original HID",
+    "serial ordinary start Permission+NotStarted+zerohelperattempt, root store unchanged",
+    "original HID import actual KEY1 down/up",
+    "normal client import StopSession and NULL/root proof; server original HID StopSession; both exports now retired while same job remains Running",
+    "actual mTLS empty catalog before whole-agent SIGTERM",
+    "fresh server epoch distinct two grants and actual HID+35B FTDI both directions",
+    "exact retained server2jobs7sessions7proof/client4jobs4sessions3proof plus1explicit no-start denial"
+  ],
+  "limits": [
+    "no in-kernel-active stall",
+    "no hardware or ARM claim",
+    "Native raw FD tables are retained but anonymous UDSs are not individually mapped",
+    "target selection refusal is authenticated Catalog-based permission refusal, not a stale raw IMPORT request"
+  ],
+  "author_cargo": false,
+  "author_qemu": false,
+  "author_git": false,
+  "original_runtime_preserved": "68cc3ad NativeResource/job original actual FAIL was only read; no changed originals/verdicts"
+}

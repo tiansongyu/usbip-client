@@ -1,0 +1,62 @@
+{
+  "result": "FAIL",
+  "head": "2222de87439f61e8a2e939e7dc15cd845d38aa4e",
+  "runs": [
+    {
+      "case": "prepare-native-resource-job",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/qemu_prepare_recording_shutdown/run.py",
+        "--case",
+        "native-resource",
+        "--stop",
+        "job",
+        "--family",
+        "ipv4",
+        "--kernel",
+        "6.8.0-106-generic",
+        "--evidence",
+        "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job"
+      ],
+      "exit_code": 1,
+      "unchanged": true,
+      "binary_matches_software": true,
+      "binary_sha256": {
+        "rustusb": "72adb291645fdcf3cb41c1ff9e9e781fe9eed344730a4444407f983c9b63e5f2",
+        "rustusb-helper": "b4af4b5f04fd5ac67fd09d2ff176e7ed2c3613ae950266dcd74b3c7be61f3fe5"
+      },
+      "directory": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job",
+      "summary_result": "FAIL",
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      }
+    }
+  ],
+  "remaining_unrun": [
+    "prepare-native-resource-term",
+    "prepare-usbfs-resource-job",
+    "prepare-usbfs-resource-term",
+    "prepare-usbfs-initializer-job",
+    "prepare-usbfs-initializer-term",
+    "prepare-native-resource-session",
+    "prepare-native-available-session",
+    "health-native-ipv4",
+    "health-native-ipv6",
+    "health-usbfs-ipv4",
+    "health-usbfs-ipv6",
+    "health-virtual-ipv4",
+    "health-virtual-ipv6",
+    "secure-virtual-ipv4",
+    "secure-virtual-ipv6",
+    "secure-usbfs-ipv4",
+    "secure-usbfs-ipv6",
+    "secure-native-ipv4",
+    "secure-native-ipv6",
+    "agent-native-ipv4",
+    "agent-native-ipv6",
+    "sigterm"
+  ],
+  "inputs_unchanged": true
+}

@@ -1,0 +1,53 @@
+{
+  "utc": "2026-10-23T23:26:02.737173+00:00",
+  "head": "58acad03d8fbcb6876f0d25d774e576c45f3cf4e",
+  "status": " M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/jobs/client.rs\n M crates/rustusb-service/src/jobs/mod.rs\n M crates/rustusb-service/src/jobs/native.rs\n M crates/rustusb-service/src/jobs/rust_server.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n M scripts/qemu_prepare_recording_shutdown/README.md\n M scripts/qemu_prepare_recording_shutdown/run.py\n?? crates/rustusb-service/src/jobs/native_prepare_tests.rs\n?? crates/rustusb-service/src/jobs/recording.rs\n?? scripts/qemu_prepare_recording_shutdown/guest-local-fragments.sh\n?? scripts/qemu_prepare_recording_shutdown/local.py\n?? scripts/qemu_prepare_recording_shutdown/verify_local.py\n",
+  "commands": [
+    [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-service",
+      "--locked"
+    ],
+    [
+      "cargo",
+      "test",
+      "-p",
+      "rustusb-service",
+      "--all-features",
+      "--locked"
+    ],
+    [
+      "cargo",
+      "clippy",
+      "-p",
+      "rustusb-service",
+      "--all-targets",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    [
+      "cargo",
+      "clippy",
+      "-p",
+      "rustusb-service",
+      "--all-targets",
+      "--all-features",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ]
+  ],
+  "scope": "First Native A/B/local-cancellation service development gate; prior655 candidate remains separately attributed. Not full workspace/release/QEMU acceptance."
+}

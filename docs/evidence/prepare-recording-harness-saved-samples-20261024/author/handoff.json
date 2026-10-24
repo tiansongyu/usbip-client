@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "revision": "saved-proof-binding-1",
+  "state": "SOURCE_FROZEN",
+  "files": {
+    "guest-init.sh": {
+      "bytes": 21511,
+      "sha256": "8417da8331384b640d50cf6f805c38a0569398cacdf0f88f0e58f77de8751af7"
+    },
+    "guest-local-fragments.sh": {
+      "bytes": 15456,
+      "sha256": "f9ea5bd9c016f92ee7115549371a2b9425efb714f076a6102d8b9d70a5f17a5b"
+    }
+  },
+  "unchanged": {
+    "verify.py": {
+      "bytes": 21955,
+      "sha256": "9c03ff998707b36cc9641ad901e1d8f9a0f1d79378c4cdd3d812bfa2ca54c3e7"
+    },
+    "verify_local.py": {
+      "bytes": 25025,
+      "sha256": "8209c7ee2aa887ad022cece2c225d97400349ee96923836e88c469d1c1bd65cc"
+    },
+    "run.py": {
+      "bytes": 20706,
+      "sha256": "c9b46ddf4f765145b645791de347d08e4fcc1e9df4df234bf320824feeff19b2"
+    },
+    "local.py": {
+      "bytes": 2633,
+      "sha256": "c5610ffe251691e6a2ff702bc5821a2fdff32934118597a8ca39ca44b6865353"
+    },
+    "prepare-gate.c": {
+      "bytes": 39221,
+      "sha256": "2b032df59af7b0ac3cb702a9f4ea9b17375c0ebde812bcf21b4bdc2bfeaa7909"
+    }
+  },
+  "report": {
+    "path": "/tmp/rustusb-prepare-saved-proof-binding-20261024/report.json",
+    "bytes": 18446,
+    "sha256": "4dda29ec13ae3ff84d96c3175417fcbd73bade81235f1516ee0db2e98e35fd51"
+  },
+  "script": {
+    "path": "/tmp/rustusb-prepare-saved-proof-binding-20261024/static_check.py",
+    "bytes": 7412,
+    "sha256": "8ea04baacf7c372b643f5e70c1e26963a0f045b940f3ecaabf2a1d1ab9918c6b"
+  },
+  "checks": 60,
+  "count_scope": "static diagnostics; 10 actual old/new shell-function fixtures from original copied Native/USBFS data, not additional USB cases",
+  "delta": [
+    "check_target_proof requires exactly one explicit saved-path argument; unchanged Native and USBFS proof predicates read that file.",
+    "Global observation uses root-observe-N; final global uses root-after-release.",
+    "Local empty uses root-local-empty; final local uses root-after-release.",
+    "All eight generated init modes checked for both exact calls, syntax and ShellCheck.",
+    "Actual 222 active saved snapshot / retired live journal reproduces old erroneous true and new false; reverse/missinglive/missingsaved/noarg also checked in Native and USBFS branches."
+  ],
+  "source_diff_files": [
+    "/tmp/rustusb-prepare-saved-proof-binding-20261024/guest-init.sh.diff",
+    "/tmp/rustusb-prepare-saved-proof-binding-20261024/guest-local-fragments.sh.diff"
+  ],
+  "historical_failure": {
+    "directory": "/tmp/rustusb-prepare-stop-final-2222de8-20261024/prepare-native-resource-job",
+    "verdict": "FAIL",
+    "other_unrun_scenarios": 22,
+    "raw_review": "/tmp/rustusb-prepare-stop-222-raw-review-20261024/report.json",
+    "unchanged": true
+  },
+  "limits": [
+    "Root/sysfs/FD samples remain sequential; this binds predicate to its saved root sample, not an atomic multi-resource snapshot.",
+    "Strict host verifier, deadlines, production code and C gate unchanged.",
+    "No Cargo, cc, QEMU, Git or host USB operation; final checkout and original raw evidence were not edited."
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "status": "source_frozen_uncompiled",
+  "date": "2026-10-24",
+  "design": "docs/research/prepare-recording-shutdown-design.md",
+  "source": [
+    {
+      "path": "crates/rustusb-service/src/jobs/recording.rs",
+      "bytes": 4826,
+      "sha256": "47c9feb0080e90eeaa26bc7137ef3c3565f876821ec41f5d7488ebd4f7878038",
+      "snapshot": "/tmp/rustusb-prepare-recording-rust-client-author-20261024/recording.rs.final"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/rust_server.rs",
+      "bytes": 60788,
+      "sha256": "7388f08514e0817a779f3303d2a0f30e935a9c1b9ba254225478ac87ce3019b1",
+      "snapshot": "/tmp/rustusb-prepare-recording-rust-client-author-20261024/rust_server.rs.final"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/client.rs",
+      "bytes": 29563,
+      "sha256": "52edaa1859ee6ca22716fbd433a19b6111628c44612bbfc7fa7611c38fb6a362",
+      "snapshot": "/tmp/rustusb-prepare-recording-rust-client-author-20261024/client.rs.final"
+    },
+    {
+      "path": "crates/rustusb-service/src/jobs/mod.rs",
+      "bytes": 7911,
+      "sha256": "21e72d6d19f4b192e8ca32ad45844814bdc155959e0ef938330b83d9d909e529",
+      "snapshot": "/tmp/rustusb-prepare-recording-rust-client-author-20261024/mod.rs.final"
+    }
+  ],
+  "api": {
+    "module": "jobs::recording (crate private)",
+    "Pending": "Pin<Box<dyn Future<Output=core::Result<()>>+Send+static>>",
+    "Wait<T>": "Ready(Result<T>) | Interrupted {pending:Pending,reason:Result<()>}",
+    "wait": "owned Send+static Future<Result<T>>, metadata-only; stop Future<Result<()>>; exact original future retained; not Begin/handle/initializer"
+  },
+  "changes": [
+    "USBFS Resource and later Attempt stop returns original reporter-only ticket; local source vector drops before every received lease Finish; only afterward original ACK and Closing/Finish",
+    "Rust Available ACK interrupted by job/local stop or monitor failure; actual server shutdown/backend close/Finish precede original ACK",
+    "Client post-IMPORT Attempt independently observes stop/link ended, closes and joins network before original ACK, never calls helper after late ACK",
+    "Managed reserved no-handle remains conservative Unconfirmed; foreground does not fabricate tracking",
+    "No accepted helper or initializer future is cancelled; read-only legacy Status cancellation preserved",
+    "Pending/Closing error included in export Finish failure while operation/cleanup/recording remain separate"
+  ],
+  "new_tests_source_only": [
+    "interrupted_real_resource_message_keeps_the_original_rejection",
+    "simultaneous_stop_does_not_poll_or_discard_the_original_record",
+    "held_available_ack_releases_actual_listener_and_lease_before_original_record",
+    "stopped_import_attempt_closes_actual_tls_before_late_ack_and_never_calls_helper"
+  ],
+  "verification": {
+    "single_file_rustfmt": "passed parse/format only for recording/client/rust_server",
+    "cargo": false,
+    "tests_executed": false,
+    "qemu": false,
+    "git": false
+  },
+  "boundaries": [
+    "Native implementation delegated to native_diagnostics; sticky IPC/runtime stop delegated to root",
+    "Actual USBFS FD/initializer/kernel cleanup under held Resource requires root QEMU; no fake root peer fixture",
+    "Software fixtures use actual JobMessage oneshots, real Rust virtual listener/IMPORT lease and v1/v2 TCP mTLS, not actual fsync or USB hardware",
+    "Permanent recording stall can keep final job pending after actual cleanup; no bounded process exit claim",
+    "Current source author previously implemented related service paths; not independent authorship"
+  ],
+  "previous_handoff_sha256": "1fce1f50afaead7af7739e7b46767c208136382914d01558aca1e471f9679b1b",
+  "revision": 2,
+  "bounded_fixture_note": "All four new async fixtures have finite outer assertion deadlines (2s/2s/5s/15s). On early exit the original oneshot senders are dropped, releasing fixture waits as errors, never as successful ACK or cleanup. No host USB/privileged operations occur in these tests."
+}

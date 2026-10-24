@@ -1,0 +1,2 @@
+.audit[-1] as $a | .sessions as $s | $a.action=="observe" and $a.profile=="pool" and $a.state=="Available" and $a.evidence=="export_ready" and ($s|length)==2 and all($s[];.role=="export" and .state=="Available" and .terminal==false and (.attempts|length)==1 and .attempts[0].resource_id!=null) and any($s[];.id==$a.session_id and .device_key==$key)
+null
