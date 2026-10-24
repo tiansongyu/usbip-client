@@ -89,6 +89,7 @@ def verify(evidence,summary):
     original=read('denied')['unresolved'];assert original==read('after-renderer-reload')['unresolved']==read('retried')['unresolved']
     state=json.loads((out/'gui-agent-after.json').read_text());assert state['jobs']==state['sessions']==state['requests']==[]
     assert len(state['audit'])==2 and all(r['actor_uid']==1000 and r['action']=='denied'and r['failure']=='permission'for r in state['audit'])
+    assert read('remote-filter')=={'hidden':True,'localChoice':True}
     assert read('confirm-default')=={'open':True,'focus':'cancel'}
     assert (out/'gui-preferences-stat.txt').read_text().strip()=='1000:600:1'
     prefs=json.loads((out/'gui-saved-preferences.json').read_text());assert prefs['options']['refresh_seconds']==3 and not prefs['options']['auto_refresh']

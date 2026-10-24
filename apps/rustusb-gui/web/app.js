@@ -54,7 +54,7 @@
   function renderInventory() {
     const local = page === 0, snapshot = local ? view.local : view.remote;
     const devices = snapshot?.devices;
-    const items = devices?.filter(d => matches(d) && (!eligible || (local && d.eligible)));
+    const items = devices?.filter(d => matches(d) && (!local || !eligible || d.eligible));
     $('inventory-count').textContent = devices ? `${items.length} of ${devices.length} observed` : 'Not sampled';
     const content = $('content'); const layout = node('div', null, `inventory-layout${showDetails ? ' show-details' : ''}`);
     const list = node('div', null, 'table-wrap'); const panel = node('aside', null, 'detail'); panel.setAttribute('aria-label', 'Selected device details');
@@ -83,7 +83,7 @@
     panel.append(node('p', 'Selecting a row does not change the fixed devices in the administrator’s profile.', 'hint'));
     layout.append(list, panel); content.append(layout);
     $('section-status').textContent = local ? view.local_status : view.remote_status;
-    $('eligible').disabled = !local;
+    $('eligible').closest('label').hidden = !local;
   }
   async function loadDetail(key) {
     try {

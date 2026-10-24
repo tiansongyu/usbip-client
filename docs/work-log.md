@@ -26,6 +26,8 @@
 
 - 文档QA16文件/517本地target、site213链接/图片/唯一ID、Node与实际GUI help、默认CLI正常依赖树均PASS；222根core输入与b15、137个GUI非README输入与08逐SHA相同，三release ELF和真实PNG均精确保持。全局readme-site四文件及Codex discovery symlink逐旧回执一致。IAB在项目prefix实际desktop1280/mobile390 DOM/图片自然1180x760/无横向溢出/新链接Tab焦点outline通过；两截图API不可用明确保留，不称browser pixel/no-JS/reducedmotion新验收。native QEMU截图已另行实际查看。QA存当时文档快照；此后仅追加发布/QA回执。普通SSH commit/push和CI/Pages状态即将核对。
 
+- 内容77634c48普通SSH push/clean/remote一致；Pages40142433146 completed/success，七canonical HTTP资源200且逐Git一致，全局skill/code/ELF保持，core40142433091与GUI40142433200仍运行，未报成功。发布后末复核发现Local eligible=true会带到Remote并全过滤，现将predicate显式限定local且远端隐藏该控件、保本地选择；补实际native页面切换断言，完整非空远程目录仍待后续positive GUI case。先补契约，再更正/重新gate与QEMU，旧08/776证据不重归属。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

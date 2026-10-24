@@ -56,6 +56,8 @@ Audience: operators managing explicitly provisioned USB profiles. Six pages:
 Local devices, Remote devices, Connections, Activity, System, Settings. The first
 screen is the actual device inventory. Keep one persistent profile control and
 clear action/status area, a compact device table and a selection detail panel.
+Eligibility filtering applies only to local export candidates; hide its control
+on Remote and retain its local choice for return navigation.
 Use native window chrome, real empty/error states, visible keyboard focus and
 text state labels. Profile starts and exact-session/job stops require explicit
 default-cancel dialogs. Selection follows stable identity plus generation.

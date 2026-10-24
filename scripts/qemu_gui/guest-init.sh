@@ -153,10 +153,16 @@ wait_dom 'document.querySelector(".device-name")'
 js 'document.querySelector(".device-name").click();return true;' /tmp/gui-select-again.json
 wait_dom 'document.querySelector(".detail").innerText.includes("device_address")'
 js 'return document.querySelector(".detail").innerText;' /tmp/gui-detail-after.json
+# Local-only eligibility filtering must not carry into a remote catalog view.
+js 'document.getElementById("eligible").checked=true;document.getElementById("eligible").dispatchEvent(new Event("change"));return true;' /tmp/gui-local-eligible.json
 # Six real pages, including no-Discover remote status; no fake network/data owner.
 for index in 1 2 3 4 5 0; do
     js "document.querySelectorAll('nav button')[$index].click();return true;" /tmp/gui-page-click.json
     sleep .3
+    if [ "$index" = 1 ]; then
+        js 'return {hidden:document.getElementById("eligible").closest("label").hidden,localChoice:document.getElementById("eligible").checked};' /tmp/gui-remote-filter.json
+        jq -e '.value=={hidden:true,localChoice:true}' /tmp/gui-remote-filter.json >/dev/null
+    fi
     js 'return document.body.innerText;' "/tmp/gui-page-$index.json"
 done
 STAGE=confirmation
