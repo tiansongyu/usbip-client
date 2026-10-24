@@ -373,7 +373,7 @@ def main(guest_memory_mib=768):
                "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "head": git("rev-parse", "HEAD"),
                "git_status_before": git("status", "--porcelain"), "source_inputs": inputs(),
                "scope": "two disposable QEMU guests, actual UID2000 application agent plus UID1000 operators, Native HID/FTDI only; no hardware, virtual-input or full Phase3 claim",
-               "build_features": "--workspace --all-features --release --locked", "build_skipped": args.skip_build}
+               "build_features": "--workspace --all-features --release --locked", "build_skipped": args.skip_build, "forced_termination": []}
     processes, handles, connections = {}, [], {}
     qmp = ftdi = None
     sent = set()
@@ -555,8 +555,9 @@ def main(guest_memory_mib=768):
             capture_deadline = time.monotonic() + 25
             while any(process.poll() is None for process in processes.values()) and time.monotonic() < capture_deadline:
                 time.sleep(0.05)
-        for process in processes.values():
+        for role, process in processes.items():
             if process.poll() is None:
+                summary["forced_termination"].append(role)
                 process.terminate()
                 try: process.wait(timeout=5)
                 except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=5)

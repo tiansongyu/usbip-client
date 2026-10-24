@@ -109,5 +109,14 @@ def main():
     assert DRIVER.is_file()and DRIVER.read_bytes()[:4]==b'\x7fELF'
     sys.argv=[sys.argv[0],*remaining]
     base.inputs=inputs;base.guest_source=guest;base.payload=payload;base.verify=verify
-    return base.main(guest_memory_mib=4096)
+    location=argparse.ArgumentParser(add_help=False);location.add_argument('--evidence',type=Path,required=True);target,_=location.parse_known_args(remaining)
+    gui_before=base.digest(ROOT/'apps/rustusb-gui/target/release/rustusb-gui');driver_before=base.digest(DRIVER)
+    result=base.main(guest_memory_mib=4096)
+    summary_path=target.evidence/'summary.json';summary=json.loads(summary_path.read_text())
+    summary['gui_binary_sha256']=gui_before;summary['driver_sha256']=driver_before
+    summary['gui_binary_guard']=base.digest(ROOT/'apps/rustusb-gui/target/release/rustusb-gui')==gui_before
+    summary['driver_guard']=base.digest(DRIVER)==driver_before
+    if not summary['gui_binary_guard']or not summary['driver_guard']:summary['result']='FAIL';result=1
+    summary_path.write_text(json.dumps(summary,indent=2)+'\n')
+    return result
 if __name__=='__main__':raise SystemExit(main())
