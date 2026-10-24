@@ -16,3 +16,8 @@ This is metadata/navigation/shutdown coverage, not installed confirmed TUI USB
 start/stop, every setup failure, permanent terminal blocking or full Phase 4.
 Original CLI actions still own all actual USB starts/stops in this regression.
 No timeout is accepted as a successful child wait.
+
+A fifth TERM-driven PTY in each guest reads actual Connected sessions in the
+original held epoch, then returns before the original I/O. Saved before/after
+termios numeric fields are independently compared, including Linux line
+control. Thus each pair has ten real PTY children, without extra USB sessions.

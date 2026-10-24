@@ -16,7 +16,7 @@
 #include <time.h>
 
 static long long now(void){struct timespec t;if(clock_gettime(CLOCK_MONOTONIC,&t))exit(3);return (long long)t.tv_sec*1000+t.tv_nsec/1000000;}
-static int same(const struct termios *a,const struct termios *b){return a->c_iflag==b->c_iflag&&a->c_oflag==b->c_oflag&&a->c_cflag==b->c_cflag&&a->c_lflag==b->c_lflag&&!memcmp(a->c_cc,b->c_cc,NCCS)&&cfgetispeed(a)==cfgetispeed(b)&&cfgetospeed(a)==cfgetospeed(b);}
+static int same(const struct termios *a,const struct termios *b){return a->c_line==b->c_line&&a->c_iflag==b->c_iflag&&a->c_oflag==b->c_oflag&&a->c_cflag==b->c_cflag&&a->c_lflag==b->c_lflag&&!memcmp(a->c_cc,b->c_cc,NCCS)&&cfgetispeed(a)==cfgetispeed(b)&&cfgetospeed(a)==cfgetospeed(b);}
 static int copy(const char *from,const char *to){int in=open(from,O_RDONLY),out=open(to,O_CREAT|O_EXCL|O_WRONLY,0600);if(in<0||out<0)return -1;char b[4096];ssize_t n;while((n=read(in,b,sizeof b))>0)if(write(out,b,n)!=n)return -1;close(in);close(out);return n<0?-1:0;}
 int main(int argc,char **argv){
     if(argc!=3)return 2;
@@ -52,6 +52,9 @@ int main(int argc,char **argv){
     for(int i=0;i<10;i++){struct pollfd p={.fd=master,.events=POLLIN};if(poll(&p,1,20)<=0)break;char b[8192];ssize_t n=read(master,b,sizeof b);if(n<=0)break;if(total+(size_t)n>=sizeof captured)break;memcpy(captured+total,b,n);total+=(size_t)n;if(write(output,b,n)!=n)break;}
     close(output);captured[total]=0;saw_enter=strstr(captured,"\033[?1049h")!=NULL;saw_leave=strstr(captured,"\033[?1049l")!=NULL;
     int restored=tcgetattr(slave,&after)==0&&same(&before,&after);
+    snprintf(path,sizeof path,"%s.termios",prefix);FILE *tf=fopen(path,"wx");if(!tf)return 3;
+    const struct termios *ts[2]={&before,&after};const char *labels[2]={"before","after"};
+    for(int k=0;k<2;k++){fprintf(tf,"%s_flags=%lx:%lx:%lx:%lx:%x\n%s_speeds=%u:%u\n%s_cc=",labels[k],(unsigned long)ts[k]->c_iflag,(unsigned long)ts[k]->c_oflag,(unsigned long)ts[k]->c_cflag,(unsigned long)ts[k]->c_lflag,ts[k]->c_line,labels[k],(unsigned)cfgetispeed(ts[k]),(unsigned)cfgetospeed(ts[k]),labels[k]);for(int c=0;c<NCCS;c++)fprintf(tf,"%02x",ts[k]->c_cc[c]);fprintf(tf,"\n");}fclose(tf);
     if(!done){kill(pid,SIGKILL);waitpid(pid,&status,0);}
     snprintf(path,sizeof path,"%s.result",prefix);FILE *f=fopen(path,"wx");if(!f)return 3;
     fprintf(f,"pid=%d\nuid=%d\nmode=%s\nwaited=%d\nexit=%d\nraw_observed=%d\nresized=%d\nrestored=%d\nentered=%d\nleft=%d\nbytes=%zu\n",pid,getuid(),mode,done,WIFEXITED(status)?WEXITSTATUS(status):-1,raw,resized,restored,saw_enter,saw_leave,total);fclose(f);close(master);close(slave);

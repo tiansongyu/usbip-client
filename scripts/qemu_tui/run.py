@@ -40,6 +40,8 @@ tui_cases() {
     text=replace(text,'[ "${AGENT_COMMON:-}" = 1 ] && [ "$BACKEND" = native ] || exit 2\n','[ "${AGENT_COMMON:-}" = 1 ] && [ "$BACKEND" = native ] || exit 2\n'+functions)
     text=replace(text,'manifest; agent_start 1; denied server','manifest; agent_start 1; denied server\n    tui_cases server')
     text=replace(text,'    for epoch in 1 2; do\n        STAGE="client-epoch-$epoch"','    tui_cases hid\n    for epoch in 1 2; do\n        STAGE="client-epoch-$epoch"')
+    text=replace(text,'            native_host_phase held-1 held; agent_snapshot held-1','            native_host_phase held-1 held; agent_snapshot held-1\n            /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/tui-pty term /tmp/tui-held')
+    text=replace(text,'        actual_io "$round" yes','        if [ "$epoch" = 1 ]; then /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/tui-pty term /tmp/tui-held; fi\n        actual_io "$round" yes')
     return text
 
 def payload(work,kernel,certificates,role):
@@ -58,11 +60,13 @@ def verify(evidence,args):
     facts=old_verify(evidence,args);checks=[]
     for role in ['server','client']:
         artifacts=evidence/f'{role}-artifacts'
-        for mode in ['quit','ctrlc','int','term']:
+        for mode in ['quit','ctrlc','int','term','held']:
             fields=dict(line.split('=',1) for line in (artifacts/f'tui-{mode}.result').read_text().splitlines())
             for name in ['waited','raw_observed','resized','restored','entered','left']:
                 if fields[name]!='1':raise RuntimeError(f'TUI {role} {mode} {name}')
             if fields['exit']!='0' or fields['uid']!='1000':raise RuntimeError('actual ordinary-user exit')
+            terminal=dict(line.split('=',1) for line in (artifacts/f'tui-{mode}.termios').read_text().splitlines())
+            if any(terminal['before_'+key]!=terminal['after_'+key] for key in ['flags','speeds','cc']):raise RuntimeError('actual saved termios mismatch')
             status=(artifacts/f'tui-{mode}.status').read_text()
             if not re.search(r'^Uid:\s+1000\s+1000\s+1000\s+1000$',status,re.M):raise RuntimeError('actual child UID')
             for cap in ['CapInh','CapPrm','CapEff','CapAmb']:
@@ -71,9 +75,10 @@ def verify(evidence,args):
             expected=base.digest(ROOT/'target/release/rustusb')
             if actual!=expected:raise RuntimeError('actual executed TUI ELF differs')
             raw=(artifacts/f'tui-{mode}.raw').read_bytes()
+            if mode=='held' and b'Connected' not in raw:raise RuntimeError('actual connected session display absent')
             if b'RustUSB' not in raw:raise RuntimeError('actual product display missing')
             checks.append(f'{role}/{mode}: actual UID/ELF/wait0/raw/resize/exact-termios/alternate-screen')
-    facts['tui']={'checks':checks,'pty_children':8,'mutations':'default-cancel only; original CLI retains all USB start/stop operations','scope':'product PTY metadata/navigation/signals, not installed confirmed-action coverage'}
+    facts['tui']={'checks':checks,'pty_children':10,'mutations':'default-cancel only; original CLI retains all USB start/stop operations','scope':'product PTY metadata/navigation/signals, not installed confirmed-action coverage'}
     return facts
 
 def main():

@@ -859,3 +859,4 @@
 
 - 已落地六页普通用户前端，直接使用原IPC和两观察器，未新增RPC/USB/schema权限。独立终端研究封闭57公有文件，精确版本/源码/许可/真实PTY边界：Ratatui恢复不自动回滚、Fixed尺寸限240x100、poll/read同线程、raw Ctrl-C需键盘处理；研究不是产品验收。首check因terminal文件尚未落盘101，首fmt因tests未落盘1，首test因TestBackend Infallible转换101，后续五模型/实际TestBackend函数全通过；Clippy初6项折叠if、后clamp/test-loop告警真实修正，最后定向all-feature CLI/TUI Clippy -D warnings通过，不用allow删功能。所有原日志在/tmp/rustusb-tui-development-*。
 - QEMU扩展设计保留原Native managed三轮I/O/两epoch/所有原核验，新增每guest四实际UID1000产品PTY、liveELF/无caps、q/Ctrl-C/INT/TERM与精确termios恢复，确认默认取消后无job/session。C/Python/dash生成preflight通过；尚未执行完整软件/QEMU，不将planned结果预写PASS。设置仅当前运行，不称Phase4完整完成。
+- clean ba0cedc9完整十命令质量gate全0：默认411/all506/vendor20，共937执行；233选定输入前后稳定，默认/all release hash分别记录。随后仅增强QEMU采证：保存before/after数值termios供独立核对，每guest加一原held连接中的TERM PTY并要求真实Connected显示，再继续同owner I/O；不更改产品/原managed verifier。C严格编译与生成dash preflight通过，后续QEMU锁新harness实际clean版本。
