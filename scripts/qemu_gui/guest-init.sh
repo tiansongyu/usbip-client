@@ -54,17 +54,17 @@ jq -n '{schema_version:1,broker_uid:2000,helper_socket:"/run/rustusb/control.soc
 chmod 644 /etc/rustusb/server.json /etc/rustusb/agent.json
 cp /etc/rustusb/agent.json /tmp/gui-manifest.json
 stat -c '%u:%a:%h' /etc/rustusb/agent.json /etc/rustusb/server-key.der >/tmp/gui-config-stat.txt
-setpriv --reuid=1000 --regid=1000 --clear-groups /bin/sh -c '[ ! -r /etc/rustusb/server-key.der ]'
-setpriv --reuid=2000 --regid=2000 --clear-groups /usr/bin/rustusb agent --config /etc/rustusb/agent.json run >/tmp/gui-agent.stdout 2>/tmp/gui-agent.stderr & AGENT=$!
+/usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /bin/sh -c '[ ! -r /etc/rustusb/server-key.der ]'
+/usr/bin/setpriv --reuid=2000 --regid=2000 --clear-groups /usr/bin/rustusb agent --config /etc/rustusb/agent.json run >/tmp/gui-agent.stdout 2>/tmp/gui-agent.stderr & AGENT=$!
 for attempt in $(seq 1 200); do
-    if setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb agent --config /etc/rustusb/agent.json profiles >/tmp/gui-profiles.json 2>/tmp/gui-profiles.stderr; then break; fi
+    if /usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb agent --config /etc/rustusb/agent.json profiles >/tmp/gui-profiles.json 2>/tmp/gui-profiles.stderr; then break; fi
     kill -0 "$AGENT"; sleep .05
 done
 jq -e '.journal_healthy and (.response.profiles|length)==1' /tmp/gui-profiles.json >/dev/null
 /usr/bin/Xvfb :88 -screen 0 1280x900x24 -nolisten tcp >/tmp/gui-xvfb.stdout 2>/tmp/gui-xvfb.stderr & XVFB=$!
 for attempt in $(seq 1 100); do [ ! -S /tmp/.X11-unix/X88 ] || break; sleep .05; done
 export DISPLAY=:88 GDK_BACKEND=x11 TAURI_WEBVIEW_AUTOMATION=true LIBGL_ALWAYS_SOFTWARE=1 HOME=/home/operator XDG_RUNTIME_DIR=/run/user/1000
-setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/WebKitWebDriver --host=127.0.0.1 --port=15888 >/tmp/gui-driver.stdout 2>/tmp/gui-driver.stderr & DRIVER=$!
+/usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/WebKitWebDriver --host=127.0.0.1 --port=15888 >/tmp/gui-driver.stdout 2>/tmp/gui-driver.stderr & DRIVER=$!
 http() {
     method=$1; route=$2; body=$3; output=$4
     curl --silent --show-error --fail-with-body --max-time 35 -X "$method" -H 'Content-Type: application/json' --data "$body" "http://127.0.0.1:15888$route" >"$output"
@@ -95,7 +95,16 @@ async_js() {
     jq -n --arg script "$script" '{script:$script,args:[]}' >/tmp/request.json
     http POST "/session/$SESSION/execute/async" "$(cat /tmp/request.json)" "$dest"
 }
-snapshot() { async_js 'const done=arguments[arguments.length-1]; window.__TAURI__.core.invoke("gui_snapshot").then(done,e=>done({error:String(e)}));' "$1"; }
+snapwait_dom() {
+    predicate=$1
+    for attempt in $(seq 1 200); do
+        js "return !!($predicate);" /tmp/gui-dom-wait.json
+        if jq -e '.value==true' /tmp/gui-dom-wait.json >/dev/null; then return 0; fi
+        sleep .05
+    done
+    return 1
+}
+shot() { async_js 'const done=arguments[arguments.length-1]; window.__TAURI__.core.invoke("gui_snapshot").then(done,e=>done({error:String(e)}));' "$1"; }
 wait_view() {
     predicate=$1; dest=$2
     for attempt in $(seq 1 200); do
@@ -105,8 +114,18 @@ wait_view() {
     done
     return 1
 }
+wait_dom() {
+    predicate=$1
+    for attempt in $(seq 1 200); do
+        js "return !!($predicate);" /tmp/gui-dom-wait.json
+        if jq -e '.value==true' /tmp/gui-dom-wait.json >/dev/null; then return 0; fi
+        sleep .05
+    done
+    return 1
+}
 shot() { http GET "/session/$SESSION/screenshot" '' "/tmp/gui-$1-screenshot.json"; }
 wait_view '.profile=="observe" and .local.state=="Current"' /tmp/gui-initial.json
+wait_dom 'document.getElementById("profile").value==="observe"'
 js 'return {text:document.body.innerText,url:location.href,title:document.title,bridge:!!window.__TAURI__};' /tmp/gui-initial-dom.json
 shot initial
 # The actual command wrapper must reject extra fields, before reaching the real agent.
@@ -116,8 +135,9 @@ jq -e '.value.rejected and (.value.unexpected==null)' /tmp/gui-strict-input.json
 STAGE=hotplug
 echo 'RUSTUSB_GUI_REQUEST: add'
 wait_view '.local.devices | length == 1' /tmp/gui-added.json
+wait_dom 'document.querySelector(".device-name")'
 js 'document.querySelector(".device-name").click();return true;' /tmp/gui-select.json
-sleep .2
+wait_dom 'document.querySelector(".detail").innerText.includes("device_address")'
 js 'return document.querySelector(".detail").innerText;' /tmp/gui-detail-before.json
 shot added
 # Search is a real input event; clearing restores the same actual inventory.
@@ -125,12 +145,13 @@ js 'const s=document.getElementById("search");s.value="no-match";s.dispatchEvent
 js 'const s=document.getElementById("search");s.value="";s.dispatchEvent(new Event("input"));return true;' /tmp/gui-search-clear.json
 echo 'RUSTUSB_GUI_REQUEST: remove'
 wait_view '.local.devices | length == 0' /tmp/gui-removed.json
-sleep .2
+wait_dom 'document.querySelector(".detail").innerText.includes("Select an observed device")'
 js 'return document.querySelector(".detail").innerText;' /tmp/gui-detail-removed.json
 echo 'RUSTUSB_GUI_REQUEST: readd'
 wait_view '.local.devices | length == 1' /tmp/gui-readded.json
+wait_dom 'document.querySelector(".device-name")'
 js 'document.querySelector(".device-name").click();return true;' /tmp/gui-select-again.json
-sleep .2
+wait_dom 'document.querySelector(".detail").innerText.includes("device_address")'
 js 'return document.querySelector(".detail").innerText;' /tmp/gui-detail-after.json
 # Six real pages, including no-Discover remote status; no fake network/data owner.
 for index in 1 2 3 4 5 0; do
@@ -152,6 +173,7 @@ shot denied
 js 'location.reload();return true;' /tmp/gui-reload.json
 sleep .5
 wait_view '.unresolved!=null' /tmp/gui-after-renderer-reload.json
+wait_dom 'document.getElementById("start").textContent==="Resolve original start" && !document.getElementById("start").disabled'
 sleep .2
 js 'document.getElementById("start").click();document.getElementById("confirm-action").click();return true;' /tmp/gui-retry-confirm.json
 sleep .3
@@ -180,7 +202,7 @@ grep -F 'start outcome unresolved: profile observe request_id' /tmp/gui-app.stde
 grep -F 'local worker joined' /tmp/gui-app.stderr >/dev/null
 # Service is independently still alive and answers actual authorized reads.
 kill -0 "$AGENT"
-setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb agent --config /etc/rustusb/agent.json profiles >/tmp/gui-agent-after-window.json
+/usr/bin/setpriv --reuid=1000 --regid=1000 --clear-groups /usr/bin/rustusb agent --config /etc/rustusb/agent.json profiles >/tmp/gui-agent-after-window.json
 kill -TERM "$AGENT"; set +e; wait "$AGENT"; result=$?; set -e; echo "$result" >/tmp/gui-agent-wait.txt; [ "$result" = 0 ]; AGENT=''
 cmp /tmp/gui-agent-after.json /var/lib/rustusb/agent/state.json
 [ ! -d /sys/module/usbip_host ] && [ ! -d /sys/module/vhci_hcd ] && [ ! -e /run/rustusb/control.sock ]

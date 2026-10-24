@@ -162,6 +162,7 @@
     const previousSettings = JSON.stringify([view?.options, view?.preferences_status]);
     const previousRevision = view?.local?.revision; const previousInstance = view?.local?.instance;
     view = next;
+    if (view.pending !== null) waiting = view.pending;
     if (waiting !== null && BigInt(view.acknowledged) >= BigInt(waiting)) waiting = null;
     $('status').textContent = `${view.status}${busy() ? ' · Action pending…' : ''}`;
     $('journal').textContent = view.journal === null ? 'Journal not sampled' : view.journal ? 'Journal healthy' : 'Journal unhealthy';

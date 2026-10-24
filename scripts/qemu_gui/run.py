@@ -32,7 +32,7 @@ def copy_tree(source,root):
 def payload(work,kernel,driver,evidence):
     credentials=secure.credentials(work,evidence);secure.payload(work,kernel,credentials,'server');root=work/'root'
     for source,target in [(REPO/'apps/rustusb-gui/target/release/rustusb-gui','/usr/bin/rustusb-gui'),(driver,'/usr/bin/WebKitWebDriver')]:native.copy_binary(source,target,root)
-    for name in ['Xvfb','curl','bwrap','xdg-dbus-proxy','dbus-daemon','xauth','xdotool']:
+    for name in ['Xvfb','xkbcomp','curl','bwrap','xdg-dbus-proxy','dbus-daemon','xauth','xdotool']:
         source=shutil.which(name)
         if not source:raise RuntimeError('missing runtime utility: '+name)
         native.copy_binary(source,'/usr/bin/'+name,root)
@@ -140,6 +140,7 @@ def main():
             try:process.wait(timeout=5)
             except subprocess.TimeoutExpired:process.kill();process.wait(timeout=5)
             summary['qemu_wait']=process.returncode
+        if process:summary['qemu_wait']=process.wait()
         summary['guards']={'sources':inputs()==summary['source_inputs'],'head':git('rev-parse','HEAD')==summary['head'],'status':git('status','--porcelain')==summary['status'],'binaries':all(digest(p)==summary['binaries'][n]for n,p in binaries.items())}
         if not all(summary['guards'].values()):summary['result']='FAIL'
         (evidence/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

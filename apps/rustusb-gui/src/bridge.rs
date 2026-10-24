@@ -186,7 +186,12 @@ pub(crate) fn gui_snapshot(webview: tauri::WebviewWindow) -> Result<tauri::ipc::
     // Nonwaiting application projection quota; not a claim about Tauri's earlier JSON parsing or later IPC buffering.
     let _permit = state.projection.try_lock().map_err(|_| "Projection busy")?;
     let view = state.views.borrow().clone();
-    let value = projection(&view)?;
+    let sequence = state
+        .gate
+        .try_lock()
+        .map_err(|_| "Action admission busy")?
+        .sequence;
+    let value = projection(&view, sequence)?;
     Ok(tauri::ipc::Response::new(value))
 }
 #[tauri::command]
@@ -220,7 +225,7 @@ fn identity(device: &rustusb_discovery::ObservedDevice) -> String {
         device.stamp.device_number
     )
 }
-fn projection(view: &Snapshot) -> Result<String, String> {
+fn projection(view: &Snapshot, sequence: u64) -> Result<String, String> {
     let local = view.local.as_ref().map(|snapshot| {
         let devices = snapshot.devices.as_ref().map(|items| items.iter().map(|d| json!({
             "key":identity(d), "bus_id":d.device.bus_id, "vid_pid":format!("{:04x}:{:04x}",d.device.vendor_id,d.device.product_id),
@@ -233,7 +238,7 @@ fn projection(view: &Snapshot) -> Result<String, String> {
     let remote = view.remote.as_ref().map(|s|json!({"instance":s.instance,"revision":s.revision,"state":s.state,"sampled_ms":s.sampled_ms,"failure":s.failure,"devices":s.devices.as_deref()}));
     encode(
         json!({
-            "revision":view.revision,"acknowledged":view.acknowledged,"profiles":view.profiles,"profile":view.profile,
+            "revision":view.revision,"acknowledged":view.acknowledged,"pending":(sequence > view.acknowledged).then_some(sequence),"profiles":view.profiles,"profile":view.profile,
             "options":view.options,"saved_options":view.saved_options,"preferences_status":view.preferences_status,
             "local":local,"remote":remote,"jobs":view.jobs,"sessions":view.sessions,"health":view.health,"audit":view.audit,
             "next_job":view.next_job,"next_session":view.next_session,"next_audit":view.next_audit,"journal":view.journal,
@@ -288,6 +293,18 @@ mod tests {
         assert_eq!(bridge.action(Action::Refresh {})?, "2");
         bridge.request_stop();
         assert!(bridge.action(Action::Refresh {}).is_err());
+        Ok(())
+    }
+    #[test]
+    fn pending_projection_survives_renderer_state_loss() -> Result<(), String> {
+        let mut view = Snapshot::new(Options::default());
+        let before: Value =
+            serde_json::from_str(&projection(&view, 1)?).map_err(|e| e.to_string())?;
+        assert_eq!(before["pending"], "1");
+        view.acknowledged = 1;
+        let after: Value =
+            serde_json::from_str(&projection(&view, 1)?).map_err(|e| e.to_string())?;
+        assert!(after["pending"].is_null());
         Ok(())
     }
     #[test]

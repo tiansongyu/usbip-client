@@ -9,6 +9,8 @@
 - 首native host实际GUI启动panic（runtime外求值spawn_blocking）；原driver/方法保留，修为runtime.spawn_blocking。夹具b全局日期替换误改driver路径、c将preferences放/tmp触发真实安全拒绝、d误设MiniBrowser能力不匹配均保留。e依官方driver映射不传browserName并等X socket，真实UID1000 WebView+IPC/read-only inventory成功，截图已查看，SIGTERM实际进程消失且local worker joined；此为dirty开发smoke/agent不可达，不冒充最终QEMU。首GUI gate因移入GLib集成测试缺crate文档失败，补文档后第二完整GUI gate通过；未压制原GLib34条新Rust lifetime依赖警告。
 - 六页面已实现真实共享状态、设备搜索与generation详情、原请求重试、精确stop确认、独立RTT观测、audit分页、保存/重载checked preferences；GUI自己的四Ubuntu/架构CI已加入，不让根workspace检查代替。准备native QEMU真实Read/Audit-only agent拒绝、热插拔、renderer reload保UUID、实际child wait/截图；尚未执行，不宣称完整Phase5或active-job/安装/硬件通过。
 
+- cleanb15dd113完整core956+GUI10共966执行/无fail/ignore，原件/tmp/rustusb-native-gui-gates-b15dd113-20261025，全部source/head/status真；all CLI5ed8d381…、helper83c53d52…、GUIb06acdad…。首QEMU cleanb15 FAIL boot：shell内建BusyBox setpriv不支持--reuid；无forced、四guard真，但parent遇FAIL未将已poll结束的actual code写回summary（None），不补造guest0。原tty完整保留。静态payload检查补xkbcomp；拟修finally始终记录真实wait、DOM等待真实poll而非固定睡眠，并让renderer reload也显示Rust中真实pending sequence。首git diff --check的两项是原上游LICENSE/精确patch空白，未改第三方原件；将仅对两精确路径声明保留原空白。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。
