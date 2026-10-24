@@ -9,6 +9,7 @@
 - 已实现shared catalog真实owner/两quota/完整metadata订阅、2..120秒完成后轮询与失败退避、typed stale/terminalclear、stable DeviceKey差异。secure源沿原discover_until/实际FIN及driverjoin；agent源每次原Discover/实际Unix UID授权与成功audit，停止本地读不冒称取消服务端工作。新validator复用原secure地址/接口限制，原Remote DTO只增加Eq/PartialEq，无新外部依赖或schema。CLI两watch流式batch、INT/TERM及总join接入outer owns_signal_cleanup，旧one-shot参数/JSON保持。
 - 开发第一条fmt因test模块尚未落盘exit1（仅tool原始回执，未保存独立stdout文件），落下真实测试后fmt成功。先5个状态/边界test PASS；再9个库test PASS（真实raw/v2三响应、refused outage恢复、反向FIN门、actualquota/Drop/socket EOF），all-feature全workspace Clippy PASS；CLI3个watch batch/参数测试PASS。TLS既有generic handshake错误沿Permission终止，不宣称特定证书原因或所有network错误都会自动重试；libc resolver仍是原独立actual配额。
 - 新QEMU扩展保留原Native managed三轮I/O/两epoch/完整Rootproof及密文分类器；普通operator watcher观察local agent outage及远端原export session逐个真实stop的2→1→0。另实际direct TLS/TERM、满write-only FIFO/INT、关闭reader/exit1、UID1002拒绝四CLI子场景。采证设计前置，preflight修正stdout必须独立O_WRONLY，避免O_RDWR自身保reader隐藏EPIPE；新verifier不用尚未落盘final summary，而以外层已核实际broker ELF receipt匹配。生成init/dash、四个jq完整/partial/混epoch/count纯采证用例和Python语法通过；未将它们计USB或Cargo数。完整clean软件与QEMU仍待执行。
+- clean6139056首完整gate FAIL：fmt/default Clippy/default tests394/release/rustdoc通过，all-feature Clippy exit101，因CLI test模块后仍有run item。原223输入稳定，原log/默认产物保留；将真实测试模块移到文件尾而非allow告警。另代码审查修watch模式配置加载时的合作停止退出0，仍join既有load task且one-shot保持原cancel error；该启动窗口没有新增确定性syscall门，后续QEMU只验已准备/输出阻塞窗口，不冒称启动门已动态验收。跨至北京时间2026-10-25，原件路径继续按UTC20261024命名。
 
 ## 2026-10-24：托管远程目录与监督器隔离（E42）
 

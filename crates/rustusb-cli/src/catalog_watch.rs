@@ -95,6 +95,55 @@ fn terminal_error(failure: Option<CatalogFailure>) -> Error {
     }
 }
 
+pub(super) async fn run(
+    source: CatalogSource,
+    interval: RefreshInterval,
+    json: bool,
+    mut signals: ShutdownSignals,
+) -> Result<()> {
+    let mut output = EventOutput::new()?;
+    let owner = CatalogMonitor::start(source, interval)?;
+    let mut subscription = owner.subscribe();
+    let result = loop {
+        let next = tokio::select! {
+            biased;
+            signal=signals.recv()=>break signal,
+            result=subscription.next()=>result,
+        };
+        let next = match next {
+            Ok(next) => next,
+            Err(error) => break Err(error),
+        };
+        let written = tokio::select! {
+            biased;
+            signal=signals.recv()=>break signal,
+            result=update(&mut output,&next,json)=>result,
+        };
+        if let Err(error) = written {
+            break Err(error);
+        }
+        if next.snapshot.state == CatalogState::Failed {
+            break Err(terminal_error(next.snapshot.failure));
+        }
+        if next.snapshot.state == CatalogState::Stopped {
+            break Ok(());
+        }
+    };
+    // Never race/drop the actual join on another signal or output failure.
+    owner.shutdown().await?;
+    result?;
+    if !output.in_flight {
+        tokio::select! {
+            signal=signals.recv()=>signal?,
+            result=async {
+                if json {output.event(json!({"event":"stopped","schema_version":1,"catalog_observer_joined":true,"observation_only":true})).await}
+                else {output.text("Remote catalog observation stopped; local observer joined.\n".into()).await}
+            }=>result?,
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -205,53 +254,4 @@ mod tests {
         assert_eq!(frames[0]["state"], "failed");
         assert_eq!(frames[0]["failure"], "permission");
     }
-}
-
-pub(super) async fn run(
-    source: CatalogSource,
-    interval: RefreshInterval,
-    json: bool,
-    mut signals: ShutdownSignals,
-) -> Result<()> {
-    let mut output = EventOutput::new()?;
-    let owner = CatalogMonitor::start(source, interval)?;
-    let mut subscription = owner.subscribe();
-    let result = loop {
-        let next = tokio::select! {
-            biased;
-            signal=signals.recv()=>break signal,
-            result=subscription.next()=>result,
-        };
-        let next = match next {
-            Ok(next) => next,
-            Err(error) => break Err(error),
-        };
-        let written = tokio::select! {
-            biased;
-            signal=signals.recv()=>break signal,
-            result=update(&mut output,&next,json)=>result,
-        };
-        if let Err(error) = written {
-            break Err(error);
-        }
-        if next.snapshot.state == CatalogState::Failed {
-            break Err(terminal_error(next.snapshot.failure));
-        }
-        if next.snapshot.state == CatalogState::Stopped {
-            break Ok(());
-        }
-    };
-    // Never race/drop the actual join on another signal or output failure.
-    owner.shutdown().await?;
-    result?;
-    if !output.in_flight {
-        tokio::select! {
-            signal=signals.recv()=>signal?,
-            result=async {
-                if json {output.event(json!({"event":"stopped","schema_version":1,"catalog_observer_joined":true,"observation_only":true})).await}
-                else {output.text("Remote catalog observation stopped; local observer joined.\n".into()).await}
-            }=>result?,
-        }
-    }
-    Ok(())
 }

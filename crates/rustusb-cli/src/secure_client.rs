@@ -37,9 +37,13 @@ pub(super) async fn discover(
     json: bool,
 ) -> Result<()> {
     let mut signals = ShutdownSignals::new()?;
-    let config = load(path, &mut signals)
-        .await?
-        .ok_or_else(|| Error::State("secure discovery cancelled".into()))?;
+    let Some(config) = load(path, &mut signals).await? else {
+        return if watch {
+            Ok(())
+        } else {
+            Err(Error::State("secure discovery cancelled".into()))
+        };
+    };
     if watch {
         let source = rustusb_service::catalog::CatalogSource::secure(Arc::new(config), timeout)?;
         return super::catalog_watch::run(
