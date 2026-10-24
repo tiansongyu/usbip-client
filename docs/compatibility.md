@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+新增[E45终端预览](research/tui-validation.md)：937软件与Native双栈两pair/20实际PTY及原三轮I/O通过，不扩大USB设备/平台兼容，也不完成G4、硬件或完整G3。
+
 新增[E44离线CRL](research/offline-crl-validation.md)：clean fcb软件927/226源，clean e441六raw CRL/六默认安全及一v2诊断共13paired/26guest0；元数据/凭据撤销不扩大USB设备兼容。v2诊断未加载CRL、安装态managed/v2 CRL专项及硬件/完整G3保持未验收；旧47 IPv6和开发FAIL保留。
 
 新增[E43认证远程目录观察](research/remote-catalog-watch-validation.md)：common service供agent/direct TLS两watch入口，clean ec91软件903/223输入、clean633两Native/raw1双栈paired QEMU/4guest0，原三轮HID/FTDI/完整Rootproof保留，每pair新4 CLI场景与69核验。v2仅实际loopback验证；busy目录隐藏/恢复/导出逐个stop属于元数据可见性，不证明物理热插拔代际或新设备兼容。原首软件gate/两QEMU FAIL保持，真实硬件/ISO/aarch64 USB内核及完整G3/后续阶段仍未验收。

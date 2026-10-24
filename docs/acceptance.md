@@ -131,7 +131,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 4.6 存储挂载 / 句柄 / 服务 / 多 LUN / 分区 / 加密检查与安全释放 | 所有当前接口和缓存 inactive config 的存储判定；Phase 1 全面拒绝存储导出 | 尚未实现全面使用者 / 挂载命名空间 / dm / LUN 审计与排他导出；**拒绝存储是安全降级，不是完成存储共享功能** |
 | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
 | 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow；E36 diagnostics私有JSON/单profile导出 | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
-| 4.9 Ratatui TUI | 架构共用核心、roadmap G4 | 后续 Phase 4；页面、键盘、搜索 / 排序 / 自动刷新 / 确认 / 错误详情均未实现 |
+| 4.9 Ratatui TUI | 六页普通用户共享API前端与[E45证据](research/tui-validation.md) | 预览已实现键盘/搜索/筛选/排序/刷新/详情/确认；持久偏好、installed确认动作/异常交互及完整G4仍未完成 |
 | 4.10 GUI | 设计推迟到核心稳定，计划评估 Tauri；共用核心原则 | 后续 Phase 5；无 GUI；双端列表、延迟、访问控制、自动规则等未实现 |
 | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E36 bounded闭合JSON/alias/独立已提交视图与真实私有publication，信号/文件失败保留实际结果。E31 audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
 
@@ -313,3 +313,7 @@ E43内容9e657637正常SSH push/远端main一致/clean；software40114160923四n
 见[英文验收](research/offline-crl-validation.md)。完整列表受root路径/1..16/每64KiB/总256KiB限制，拒同issuer重叠/不完整scope；标准WebPki全链及unknown-deny/expiry保留，Checked SystemTime共同窗口在每次新验证检查。agent全实例启动加载，job restart不重载，既有stream不热撤销。clean fcb927/226与clean e441十三paired/26guest0分账；六CRL各44新wait、原pin持续授权/旧实际PID文件替换仍允许/真实stop和完整基线后新实例拒绝。六默认保原密文classifier；单v2诊断无CRL不可冒称其installed负向。旧47 IPv6 wait104整体FAIL、初开发失败保留；新无ALPN空输入仍strict1和实际protocol mismatch，不放宽IO。原件/研究/失败/源码索引及同作者核对见报告，不据此完成硬件、热撤销、全部G3或后续阶段。
 
 E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native job120953526607/526693/526731/526778和其实际arch/fullgate step均success，Pages40121403729 check120953526988/deploy120953618317均completed/success。primary API结论不重算每格927，不补造full log/执行ELF。六canonical HTTPS资源200且逐Git字节同，七site/四global源仍不变，无新browser/pixel。原件及方法见[发布回执](evidence/offline-crl-publication-91ecc44-20261024/manifest.json)，最终纯回执提交与fcb/e441实测分开。
+
+## 32. E45：普通用户终端预览
+
+见[英文验收](research/tui-validation.md)：clean ba0cedc9十项软件gate全0、411/default+506/all+20/vendor共937次、233源稳定。clean d181665b两Native双栈paired/4guest0、每pair230源/四guard/原264核验与三轮真实HID/FTDI I/O/完整Rootproof保持，另每pair10实际UID1000产品PTY真实wait0/raw/resize/数值termios恢复/执行ELF。原clean f131 IPv4 raw连续文字误判整体FAIL不重判；仅修fixture重建真实ANSI差量屏幕，后续实际重跑两pair PASS。QEMU确认仅默认取消，原CLI仍执行USB变更，未冒称installed确认动作/全部G4。设置仅本进程，完整G3/硬件及Phase5–7保持原目标。

@@ -126,6 +126,25 @@ device visibility, bounded refresh and complete JSONL batches. Observation never
 imports a device; its [validation](docs/research/remote-catalog-watch-validation.md)
 keeps local software and installed QEMU evidence separate.
 
+### Terminal preview
+
+With an already configured application agent, an ordinary operator can open the
+optional six-page Ratatui interface:
+
+```sh
+cargo build -p rustusb-cli --features tui --release --locked
+./target/release/rustusb tui --config /etc/rustusb/agent.json
+```
+
+![RustUSB terminal output showing two available exports and two connected incoming sessions in a QEMU test](docs/assets/tui-qemu.png)
+
+Recorded QEMU terminal output reconstructed for documentation; font and colors
+are presentation choices. [Capture and validation](docs/research/tui-validation.md)
+keep actual USB I/O and terminal coverage separate. The [TUI guide](docs/tui.md)
+covers search, filters, paging, details and confirmed fixed-profile actions.
+Exiting leaves service jobs running. Settings are invocation-local; complete
+TUI acceptance remains open.
+
 To observe a device's data connection, explicitly enable TLS configuration schema 2
 on both endpoints, then read health from the running agent:
 
@@ -200,7 +219,7 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Health has a defined scope.** Probes measure the data connection, not USB completion. The private agent journal upgrades to strict disk2; older agents cannot open that upgraded journal. See the [upgrade and health rules](docs/data-link-health.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
-- **More product work remains.** TUI, GUI, packaged installers, Windows USB support and the full hardware/security acceptance gates are on the [roadmap](docs/roadmap.md).
+- **More product work remains.** Complete TUI acceptance, GUI, packaged installers, Windows USB support and the full hardware/security acceptance gates are on the [roadmap](docs/roadmap.md).
 
 Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
 

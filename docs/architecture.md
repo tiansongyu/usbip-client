@@ -8,7 +8,7 @@ Phase 1 使用 Linux 原生数据通路，Rust 负责发现、校验、权限和
 
 ```mermaid
 flowchart LR
-  CLI[普通用户 CLI / 后续 TUI GUI] --> Core[共享应用接口与类型]
+  CLI[普通用户 CLI / TUI / 后续 GUI] --> Core[共享应用接口与类型]
   Core --> Scan[只读 sysfs 扫描]
   Core --> List[有界 USB/IP DEVLIST]
   Core --> IPC[本机 Unix socket]
@@ -38,6 +38,7 @@ flowchart LR
 | rustusb-native | 固定 usbip 命令、内核状态、强代际与匿名kernel通道 | core、protocol、serde、Tokio、tracing、rustix |
 | rustusb-daemon | root helper、root 管理的策略、OS 身份和 IPC；客户端库 | 前述 crate |
 | rustusb-service | 非root job/session owner、profile/action授权、本机应用RPC、持久状态/基础audit及精确Root证明协调 | core、protocol、daemon、native、transport、Tokio；Rust engine可选 |
+| rustusb-tui | 可选普通用户六页Ratatui、有限输入/渲染与实际观察器停止 | core、discovery、service的既有公开API；不含helper mutation/TLS private loader |
 | rustusb-cli | clap 命令与日志 | 前述公开服务接口，不直接写 sysfs |
 | rustusb-rust-backend | 共享有界 USB/IP engine、两个虚拟测试 profile、可选 Linux USBFS adapter | core、protocol、transport、Tokio；`physical-nusb` 才引入固定本地 nusb 和 rustix |
 | rustusb-transport | 有界mTLS stream、证书principal/device ACL、可信配置；接入安全broker及USB/IP engine | core、rustls、tokio-rustls、Tokio、sha2、serde、serde_json、rustix、thiserror；rcgen仅测试 |
@@ -46,7 +47,7 @@ flowchart LR
 
 共享`service::catalog`供agent/direct TLS的连续认证目录观察：最多两个actual本地owner、一个observer内不重叠poll、完成后2..120秒轮询/失败退避、完整最新metadata/resync及stable-key差异。订阅者不持凭据/socket/quota；permission/protocol等终态清当前view，IO失败保旧为stale；busy可见性不当硬件generation。direct沿原FIN/driverjoin，agent停止本地RPC不取消已接受服务端任务；原成功audit每poll保留，增加WAL成本。见[设计](research/remote-catalog-watch-design.md)与[E43验收](research/remote-catalog-watch-validation.md)，CLI/TUI/GUI复用同接口，不以stdout管理设备。
 
-没有为未来 TUI/GUI 建立空壳 crate。CLI 的 `rust-backend` feature 选择虚拟服务；`physical-nusb` 另启用物理 adapter 和 daemon 的 `physical-usb` FD 授权接口。默认 Native 和纯虚拟构建不承担 nusb 依赖。设计分别见[虚拟服务端](research/rust-virtual-backend-design.md)与[物理 adapter](research/rust-physical-backend-design.md)；物理路径正在验证，完整 G2 尚未完成。
+已新增有实际职责的可选`rustusb-tui`及CLI `tui` feature，见[前端契约](research/tui-design.md)与[验收范围](research/tui-validation.md)；不建立空GUI crate。CLI 的 `rust-backend` feature 选择虚拟服务；`physical-nusb` 另启用物理 adapter 和 daemon 的 `physical-usb` FD 授权接口。默认 Native 和纯虚拟构建不承担 nusb 依赖。设计分别见[虚拟服务端](research/rust-virtual-backend-design.md)与[物理 adapter](research/rust-physical-backend-design.md)；物理路径正在验证，完整 G2 尚未完成。
 
 安全broker已接Native、虚拟及USBFS：`secure-transport`可单独构建Native CLI，`rust-backend`同时启用安全虚拟服务，`physical-nusb`启USBFS。clean b83c931六个双guest场景覆盖实际IPv4/IPv6及I/O/清理/复用，412次软件与精确f9558fc四平台CI另有版本记录；完整Phase3、真实硬件仍未完成。配置中的trusted_network声明、库存在或doctor成功都不能代替该路径的实际验收。
 

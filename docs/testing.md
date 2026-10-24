@@ -391,3 +391,7 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 [精确报告](research/offline-crl-validation.md)记录clean fcb487cf的完整927软件执行/226源。12新transport测试函数包含真实raw/v2 TLS、全链撤销与实际时钟边界/原stream I/O、保护路径加载及快照/重新加载；子场景不另计Cargo或USB数。单独metadata unit不能代替签名验证。
 
 [QEMU操作](../scripts/qemu_crl/README.md)在clean e441bb89完成六个backend/family组合；同版本六默认安全回归和单v2诊断回归各自保留原要求。每CRL pair四新增屏障/44实际CLI wait，原pin保持而CRL变更，文件替换先于旧server真实wait及完整基线。原337/320/330和新225/221/225核验逐实际backend记录，不称USB cases。无ALPN只发送保存空输入并strict wait1/实际protocol mismatch；47c0021的原IPv6 wait104整体FAIL不改判，前一IPv4 PASS另记。v2诊断未加载CRL，不是安装态v2 CRL负向；新增fast CLI无独立liveELF，宿主USB未操作。
+
+## 普通用户终端（E45）
+
+[报告](research/tui-validation.md)区分937软件/233源与clean d181双栈QEMU/4guest0；[PTY脚本](../scripts/qemu_tui/README.md)每pair10实际child与原264核验/三轮I/O，external Python仅测试。ANSI差量必须重建屏幕，不以raw连续字符串判断；首f131 FAIL保留。默认取消不是确认后USB动作验收，G4仍开放。

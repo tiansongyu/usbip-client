@@ -171,3 +171,7 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 认证远程观察E43见[验收](research/remote-catalog-watch-validation.md)：operator只用公开可信manifest/固定profile，真实UID逐poll Discover授权，endpoint/私钥无RPC覆盖。direct源保原PKI/ALPN/ACL、原FIN/driverjoin；订阅仅metadata，不持source凭据/socket/配额。权限/协议等终态清当前view并停止，既有generic TLS handshake Permission不等于特定证书错误；旧copy不能强擦除。agent本地observer join不证明已接受远端read/独立resolver/USB清理，旧服务端actualowner/成功audit规则保留。两本地actualowner与退避非公平/长期DoS保证，busy目录不授能力或物理generation。完整G3/硬件/后续阶段不变。
 
 离线CRL E44见[设计](research/offline-crl-design.md)、[指南](offline-crl.md)与[验收](research/offline-crl-validation.md)：可选完整DER列表受root文件路径限制，present null/空拒绝；1..16/每64KiB/总256KiB，单raw issuer唯一，拒delta/IDP/indirect。x509-parser仅给有界元数据，标准WebPki保持fullchain/unknown-deny/expiry及PKI/name/pin/ACL；Checked SystemTime共同窗口在每次新验证检查，未用列表到期也拒新连接。无热更新/已有stream撤销/在线fetch或持久CRL序号抗回滚；agent stop/start单job不重载，须全实例合作退出再启动。新采证无ALPN握手使用保存空输入，仍strict exit1/无reply/实际protocol mismatch，不新增104例外。原FAIL、硬件与完整G3保持。
+
+## 普通用户终端边界
+
+[TUI](tui.md)只读public manifest、普通UID调用原profile RPC；无TLS私钥、helper变更或shell。确认不能替代实际授权；未知Start保原UUID且只RetryStart，过期不证明旧操作未开始。stop accepted与实际cleanup分开，退出仅停止/总joinmetadata owner而不停止服务job。[E45](research/tui-validation.md)不完成完整G3/G4或硬件。

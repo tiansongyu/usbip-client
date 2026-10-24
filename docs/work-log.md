@@ -6,6 +6,15 @@
 - 应用ui-ux-pro-max、writing-technical-design、technical-documentation；按设计skill明确要求委派一个独立只读终端组件研究，未委派产品编辑。先提交tui-design.md，保留硬件/完整G3/通用恢复与安装门槛，不追加OCSP等可选阻塞。使用现有应用RPC、普通用户与固定profile，不改USB能力或持久schema。
 - 计划六页Ratatui实际前端、键盘搜索/筛选/排序/刷新/详情/默认取消确认、safe retry及owner总join。首版设置仅当前进程偏好，持久用户偏好与管理员策略编辑继续未完成，不预先宣告完整Phase4。
 
+- 已落地六页普通用户前端，直接使用原IPC和两观察器，未新增RPC/USB/schema权限。独立终端研究封闭57公有文件，精确版本/源码/许可/真实PTY边界：Ratatui恢复不自动回滚、Fixed尺寸限240x100、poll/read同线程、raw Ctrl-C需键盘处理；研究不是产品验收。首check因terminal文件尚未落盘101，首fmt因tests未落盘1，首test因TestBackend Infallible转换101，后续五模型/实际TestBackend函数全通过；Clippy初6项折叠if、后clamp/test-loop告警真实修正，最后定向all-feature CLI/TUI Clippy -D warnings通过，不用allow删功能。所有原日志在/tmp/rustusb-tui-development-*。
+- QEMU扩展设计保留原Native managed三轮I/O/两epoch/所有原核验，新增每guest四实际UID1000产品PTY、liveELF/无caps、q/Ctrl-C/INT/TERM与精确termios恢复，确认默认取消后无job/session。C/Python/dash生成preflight通过；尚未执行完整软件/QEMU，不将planned结果预写PASS。设置仅当前运行，不称Phase4完整完成。
+- clean ba0cedc9完整十命令质量gate全0：默认411/all506/vendor20，共937执行；233选定输入前后稳定，默认/all release hash分别记录。随后仅增强QEMU采证：保存before/after数值termios供独立核对，每guest加一原held连接中的TERM PTY并要求真实Connected显示，再继续同owner I/O；不更改产品/原managed verifier。C严格编译与生成dash preflight通过，后续QEMU锁新harness实际clean版本。
+- clean f131468e首IPv4整体FAIL，两个guest实际0、四guard真、10实际PTY均wait0/raw/resize/保存termios恢复/执行ELF/UID正确；原verifier先返回264核验后，新held raw连续Connected搜索失败。实际pyte0.8.2+wcwidth0.2.13终端解码在双方都还原真实Incoming/Import Connected和Current page；严格保留原FAIL，诊断不改summary。首次解码缺wcwidth报ModuleNotFoundError，随后固定外部test-only依赖完成，不加入Cargo/产品。修fixture为精确版本的真实ANSI差量屏幕重建和同frame状态断言，不改产品/原managed verifier、不降低Connected要求，下一双栈实际重跑。
+- clean d181665b最终Native IPv4/IPv6均PASS，4guest实际0，每pair230源/四guard、原264核验/三轮HID/FTDI I/O/所有Rootproof和内核driver基线保持；各10实际UID1000产品PTY（含held实际Connected）均wait0/无caps/liveELF/resize/raw/保存termios字段恢复。all ELF仍匹配ba0软件。首f131整体FAIL不重判，诊断与最终运行分账。没有重跑全部旧backend/CRL/v2矩阵或本机旧signal/BP，不扩大为confirmed TUI USB动作或完整G4。
+- 原件review封闭1944文件/方法、810 guest Base64逐解码，4,809,464B archive逐member/hash与原件稳定、selected Git inputs逐对应revision；同作者独立原件核对不是新增USB或安全审计。首次归档因匹配自己PEM检查源码字面量FAIL，原方法/log保留，改识别实际PEM header后通过。57公有组件研究/所有开发失败保留，不归档ELF/私钥/target/host.private。英文报告/guide/README同步；实际PASS PTY画面按原字符位置重建并view_image审查，字体/颜色是文档选择、非native pixel或fake UI。沿全局readme-site既有rstop固定参考维护展示站一条产品事实链接，global四文件未改；后续文档/站点QA与精确内容CI发布尚待执行。
+
+- 文档QA14源447本地/仓库映射target及204site/Node/diff全0；233软件与两230 QEMU源仍逐原hash不变。网站仅index一条事实/link变化，其余六文件不变，四global readme-site源/SHA与Codex发现symlink保持。CUA临时IAB tab27实际读取初始HTML/入口href/状态锚点与390x844窄屏DOM（document375无横溢）；两截图接口都不可用，明确不称pixel/noJS/reduced-motion重跑。已reset viewport/关闭临时tab与本机4971预览server。原QA快照与方法见evidence/tui-docs-20261024；本段为其后回执和本轮自有日志顺序整理。接下来普通commit/push及精确内容四平台CI/Pages，不提前称已发布。
+
 ## 2026-10-25：离线证书撤销列表（开始）
 
 - 上一轮为实际进展：E43持续远端目录/903软件/双栈QEMU/四原生CI及发布，最终clean e6177063。重读完整Phase0–7原任务、当前Git/AGENTS/核心skill/架构与阶段gate；原目标保持active。本轮补Phase3尚缺的CRL凭据撤销，不以此完成G3/硬件或后续UI阶段。
@@ -856,8 +865,3 @@
 
 - E44内容91ecc44f正常SSH push exit0/远端main一致/clean；software40121403621四native job120953526607/526693/526731/526778与各arch/fullgate实际step均completed/success，Pages40121403729 check120953526988/deploy120953618317成功。只核primary API状态，不重算每格927或补造full log/实际ELF；六canonical HTTPS资源200且逐Git字节同，226软件/13QEMU输入、七site与四global skill/symlink不变，无新browser/pixel。41原件/方法317032B逐SHA归档见`evidence/offline-crl-publication-91ecc44-20261024/manifest.json`，runs-final为已完成third原响应的精确副本，非另一次API请求。
 - 本轮是完整Phase0–7目标的实际进展：两角色离线CRL全链/受保护路径/每次握手时间窗口实现，927软件/13最终QEMU/四CI、英文README/guide/report和原始失败归档已交付。已建立连接不热撤销；installed managed/v2 CRL专项、其他完整G3项、真实硬件、TUI/GUI/安装/存储/性能/Windows继续未完成，goal保持active。最终仅提交发布回执并普通push，复核远端HEAD/clean和原测试source/site/global字节，不重复编译或把回执提交当USB实测。
-
-- 已落地六页普通用户前端，直接使用原IPC和两观察器，未新增RPC/USB/schema权限。独立终端研究封闭57公有文件，精确版本/源码/许可/真实PTY边界：Ratatui恢复不自动回滚、Fixed尺寸限240x100、poll/read同线程、raw Ctrl-C需键盘处理；研究不是产品验收。首check因terminal文件尚未落盘101，首fmt因tests未落盘1，首test因TestBackend Infallible转换101，后续五模型/实际TestBackend函数全通过；Clippy初6项折叠if、后clamp/test-loop告警真实修正，最后定向all-feature CLI/TUI Clippy -D warnings通过，不用allow删功能。所有原日志在/tmp/rustusb-tui-development-*。
-- QEMU扩展设计保留原Native managed三轮I/O/两epoch/所有原核验，新增每guest四实际UID1000产品PTY、liveELF/无caps、q/Ctrl-C/INT/TERM与精确termios恢复，确认默认取消后无job/session。C/Python/dash生成preflight通过；尚未执行完整软件/QEMU，不将planned结果预写PASS。设置仅当前运行，不称Phase4完整完成。
-- clean ba0cedc9完整十命令质量gate全0：默认411/all506/vendor20，共937执行；233选定输入前后稳定，默认/all release hash分别记录。随后仅增强QEMU采证：保存before/after数值termios供独立核对，每guest加一原held连接中的TERM PTY并要求真实Connected显示，再继续同owner I/O；不更改产品/原managed verifier。C严格编译与生成dash preflight通过，后续QEMU锁新harness实际clean版本。
-- clean f131468e首IPv4整体FAIL，两个guest实际0、四guard真、10实际PTY均wait0/raw/resize/保存termios恢复/执行ELF/UID正确；原verifier先返回264核验后，新held raw连续Connected搜索失败。实际pyte0.8.2+wcwidth0.2.13终端解码在双方都还原真实Incoming/Import Connected和Current page；严格保留原FAIL，诊断不改summary。首次解码缺wcwidth报ModuleNotFoundError，随后固定外部test-only依赖完成，不加入Cargo/产品。修fixture为精确版本的真实ANSI差量屏幕重建和同frame状态断言，不改产品/原managed verifier、不降低Connected要求，下一双栈实际重跑。
