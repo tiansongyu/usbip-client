@@ -153,7 +153,7 @@ def verify(evidence, args, base):
         require(obj(client, f"catalog-reuse-{cycle}.json") == catalog, f"epoch{cycle} catalog reuse by actual configured client")
         ports = data(client, f"native-empty-{cycle}.txt").decode().splitlines()
         states = [line.split()[2] for line in ports if line.startswith(("hs ", "ss "))]
-        require(bool(states) and set(states) == {"4"}, f"epoch{cycle} all actual VHCI ports NULL")
+        require(bool(states) and all(re.fullmatch(r"[0-9]{1,3}", value) and int(value, 10) == 4 for value in states), f"epoch{cycle} all actual VHCI ports NULL")
         require(f"SECURE_CLIENT_RELEASED cycle={cycle} signal=SIGTERM wait=0 kernel_null=true local_gone=true" in logs["client"], f"epoch{cycle} original local generations Gone")
     require(len({x["channel_id"] for x in receipts}) == 4, "four distinct original client channel IDs")
     if args.backend != "virtual":
