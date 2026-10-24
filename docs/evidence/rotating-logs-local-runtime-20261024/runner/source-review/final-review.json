@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "scope": "read-only source review, not runtime acceptance",
+  "reviewer": "journal_integration_review; author of logging storage, not author of reviewed script/CLI/worker",
+  "files": [
+    {
+      "path": "scripts/test-process-logging.py",
+      "bytes": 38064,
+      "sha256": "c876cf054b9b37d36df71ec3b2854e467755c45326dfe0c302b8ca965c177bc1"
+    },
+    {
+      "path": "scripts/test-server-signals.py",
+      "bytes": 29123,
+      "sha256": "bd8d3c40f174aea0a1dee208a81c0234f01c161e66500766c21b11b328b8fce9"
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "bytes": 27788,
+      "sha256": "39def5a61a0947f9c5732274af82d0e810b1cbc9dcd639419b52f0a9b58eae47"
+    },
+    {
+      "path": "crates/rustusb-cli/src/logs.rs",
+      "bytes": 8193,
+      "sha256": "a62569e9b24f34f75a4c72f8125db96677fc4a1fc5d9785d2b2569a2beaabaf4"
+    },
+    {
+      "path": "crates/rustusb-logging/src/worker.rs",
+      "bytes": 43133,
+      "sha256": "e4213d8c2e05ab2badc8d8c4b36c1399f0154e29f84465388fafbb126631e214"
+    },
+    {
+      "path": "crates/rustusb-logging/src/record.rs",
+      "bytes": 13165,
+      "sha256": "bd5097db750caa66ee8a64ba43a1547572bdb1ff8006313b4e57af90f44c2b70"
+    },
+    {
+      "path": "docs/research/rotating-logs-design.md",
+      "bytes": 18467,
+      "sha256": "e264f918877c57759a7cb8bb85d35bb8005ce8fdd773296a4c5125b7a1d93c11"
+    }
+  ],
+  "result": "NO_REMAINING_SPECIFIC_MUST_FIX_IN_REVIEWED_SOURCE",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "must_fix_evidence_cleanup",
+      "status": "CLOSED_BY_AUTHOR_REVISION2_SOURCE_REVIEW",
+      "initial_script_sha256": "ab3fb0fbc2a7d42ecf821d5c81820443ecde3f7d2c2cf8c3263ba4c7d8124377",
+      "final_script_sha256": "c876cf054b9b37d36df71ec3b2854e467755c45326dfe0c302b8ca965c177bc1",
+      "resolution": "Primary failure is checkpointed before cleanup; each child/stream/socket/artifact/source guard is collected independently; errors force FAIL; requested final-summary write failure tries a fresh /tmp report preserving original error and collection_errors. Runtime scenario predicates/time budgets were not changed."
+    }
+  ],
+  "confirmed_source_contracts": [
+    "RLIMIT_FSIZE is applied only after real virtual ready, two actual imports/configuration replies and pending-IN snapshots; limit is active original inode size plus 16, below segment rotation ceiling.",
+    "SIGXFSZ is ignored in an exec wrapper and actual child SigIgn is checked before prlimit. Actual child exe/UID identity and original active-file FD dev/inode are sampled.",
+    "The partial same-inode file is retained, held-after-failure snapshot must still have both owners/pending INs, then TERM must emit fully released stopped snapshot and exit 1 with fixed logging failure plus os error 27.",
+    "main awaits execute before synchronous LogOwner.shutdown with Tokio runtime still alive. File mode has no stderr tee, final failure output occurs after owner and logger return.",
+    "Local LogObserver cancellation awaits the original blocking read JoinHandle; it does not abort the read or stop USB. Accepted agent read is retained by actual reader workers after RPC client cancellation.",
+    "Worker startup ownership/Drop, two readers plus two queue slots, closing admissions, real reader joins before final writer observation, and original storage I/O error return paths have no additional concrete blocker in the reviewed source."
+  ],
+  "limits": [
+    "No subprocess script execution, Cargo, QEMU, USB action, Git write or repository edit performed by this review.",
+    "Only source predicates reviewed; no claimed runtime EFBIG or virtual cleanup success.",
+    "Actual data-socket EOF is sampled after child wait, so it is not a pre-exit timestamp claim. The stopped event plus product ownership order is the pre-exit cleanup contract.",
+    "RLIMIT_FSIZE affects regular-file writes including stderr; the actual errno assertion is product diagnostic plus partial-file evidence, not an independent syscall trace.",
+    "Hard-blocked filesystem can block real reader/writer join; no bounded exit or fake cancellation guarantee.",
+    "Primary runner reuses fixed virtual wire/predicate helpers from test-server-signals.py; this review did not invoke either runner."
+  ],
+  "initial_review": {
+    "path": "/tmp/rustusb-process-logging-source-review-20261024/initial-review.json",
+    "sha256": "3d88f99c1c061ebfe990315a4a37c98494e962e003b555a21c36125eda78a02d"
+  },
+  "software_result_attribution": {
+    "root_first_dev_gate": "Root separately reported terminal success. This review did not parse or independently confirm its raw test results.",
+    "reviewed_cli_logs_revision": "0dc9a7269baa4215af48f87ef5595517ddbf1c9b7c181a6cb9572e7db7b08d35 is the current cancelled-observer join behavior, not a claim about earlier dev-gate source.",
+    "root_full_gate": "Root reports 177 selected inputs frozen and run active; no final PASS claimed here.",
+    "types_two_new_tests": "Outside this narrow source review; no execution claim."
+  },
+  "author_fixture_evidence": {
+    "scope": "Author-run constructed collector failures, not real process/CLI execution; read only by this reviewer, not rerun.",
+    "report": "/tmp/rustusb-process-logging-runner-author-revision2-20261024/cleanup-fixture-report.json",
+    "reported_predicates": 11,
+    "reported_passed": true,
+    "report_sha256": "d877b3825aedc94c11b701e3260798b2470d0f2250f24467564a4e00ed4909ef"
+  }
+}

@@ -1,0 +1,391 @@
+diff --git a/crates/rustusb-service/Cargo.toml b/crates/rustusb-service/Cargo.toml
+index 1e727ba..248f86a 100644
+--- a/crates/rustusb-service/Cargo.toml
++++ b/crates/rustusb-service/Cargo.toml
+@@ -12,6 +12,7 @@ physical-nusb = ["rust-backend", "rustusb-rust-backend/physical-nusb", "rustusb-
+ 
+ [dependencies]
+ rustusb-core.workspace = true
++rustusb-logging.workspace = true
+ rustusb-protocol.workspace = true
+ rustusb-daemon.workspace = true
+ rustusb-native.workspace = true
+diff --git a/crates/rustusb-service/src/ipc.rs b/crates/rustusb-service/src/ipc.rs
+index 21cdcc4..790529a 100644
+--- a/crates/rustusb-service/src/ipc.rs
++++ b/crates/rustusb-service/src/ipc.rs
+@@ -1,7 +1,7 @@
+ //! Bounded local transport authenticated with kernel Unix peer credentials.
+ 
+ use crate::{
+-    config::{LoadedConfig, Manifest},
++    config::{Action, LoadedConfig, Manifest},
+     fs::Directory,
+     rpc::*,
+     runtime::{Command, Controls, Runtime},
+@@ -101,7 +101,18 @@ fn socket_identity(directory: &File, uid: u32) -> Result<Option<(u64, u64)>> {
+ 
+ /// Run the nonroot application service until cooperative stop and actual job cleanup.
+ /// The caller must await this future; cancelling its owning task is not cleanup.
+-pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Result<()> {
++pub async fn serve(config: LoadedConfig, stop: watch::Receiver<bool>) -> Result<()> {
++    serve_with_logging(config, stop, None).await
++}
++
++/// Run with a nonowning logger monitor for authorized reads and committed audit mirrors.
++/// The caller retains the actual log owner and joins it after this service's USB
++/// owners and durable records finish. Log health never substitutes for WAL health.
++pub async fn serve_with_logging(
++    config: LoadedConfig,
++    mut stop: watch::Receiver<bool>,
++    logging: Option<rustusb_logging::LogMonitor>,
++) -> Result<()> {
+     if rustix::process::geteuid().as_raw() != config.manifest.broker_uid
+         || config.manifest.broker_uid == 0
+     {
+@@ -111,7 +122,12 @@ pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Res
+     }
+     let config = Arc::new(config);
+     let controls = Arc::new(Mutex::new(Controls::default()));
+-    let runtime = Runtime::open(config.clone(), controls.clone()).await?;
++    let runtime = match logging.clone() {
++        Some(monitor) => {
++            Runtime::open_with_logging(config.clone(), controls.clone(), Some(monitor)).await?
++        }
++        None => Runtime::open(config.clone(), controls.clone()).await?,
++    };
+     let endpoint = Endpoint::bind(&config.manifest).await?;
+     let (sender, receiver) = mpsc::channel(16);
+     let (shutdown, shutdown_receiver) = watch::channel(*stop.borrow());
+@@ -133,8 +149,8 @@ pub async fn serve(config: LoadedConfig, mut stop: watch::Receiver<bool>) -> Res
+                 accepted=endpoint.listener.accept()=>{
+                     let (stream,_)=match accepted{Ok(pair)=>pair,Err(error)=>{accept_error=Some(error);break;}};
+                     let Ok(permit)=permits.clone().try_acquire_owned()else{drop(stream);continue;};
+-                    let sender=sender.clone();let config=config.clone();let controls=controls.clone();
+-                    requests.spawn(async move{let _permit=permit;let _=tokio::time::timeout(DEADLINE,request(stream,sender,config,controls)).await;});
++                    let sender=sender.clone();let config=config.clone();let controls=controls.clone();let logging=logging.clone();
++                    requests.spawn(async move{let _permit=permit;let _=tokio::time::timeout(DEADLINE,request(stream,sender,config,controls,logging)).await;});
+                 },
+             }
+         }
+@@ -190,11 +206,12 @@ pub(crate) fn request_shutdown(
+     result
+ }
+ 
+-async fn request(
++pub(crate) async fn request(
+     mut stream: UnixStream,
+     sender: mpsc::Sender<Command>,
+     config: Arc<LoadedConfig>,
+     controls: Arc<Mutex<Controls>>,
++    logging: Option<rustusb_logging::LogMonitor>,
+ ) -> Result<()> {
+     let uid = stream.peer_cred()?.uid();
+     let envelope: RequestEnvelope = serde_json::from_slice(&read_frame(&mut stream).await?)
+@@ -202,6 +219,56 @@ async fn request(
+     if envelope.schema_version != 1 {
+         return Err(Error::InvalidInput("agent protocol version".into()));
+     }
++    if let Request::ReadLogs {
++        profile,
++        after,
++        limit,
++    } = &envelope.request
++        && config
++            .manifest
++            .authorize(uid, profile, Action::Audit)
++            .is_ok()
++    {
++        // Authorization precedes cursor/history evaluation and reader admission.
++        // Every authorized result bypasses WAL, including Busy/disabled/errors.
++        // The logging owner retains real readers after this RPC is cancelled.
++        let result = if !(1..=rustusb_logging::MAX_PAGE_RECORDS).contains(limit) {
++            Err(rustusb_logging::Error::InvalidInput("log page limit"))
++        } else if let Some(monitor) = logging.as_ref() {
++            monitor
++                .read(
++                    rustusb_logging::ReadFilter::Audit {
++                        profile: profile.clone(),
++                        actor_uid: uid,
++                        root_admin: uid == 0,
++                    },
++                    after.clone(),
++                    *limit,
++                )
++                .await
++        } else {
++            Err(rustusb_logging::Error::Disabled)
++        };
++        let response = match result {
++            Ok(page) => Response::Logs { page },
++            Err(error) => Response::LogError {
++                code: LogReadFailure::from(&error),
++            },
++        };
++        // No Controls/Store guard is held during filesystem I/O. The envelope
++        // reports current business health, independently of the logger result.
++        let journal_healthy = controls
++            .lock()
++            .map_err(|_| Error::State("agent controls lock poisoned".into()))?
++            .journal_healthy();
++        let bytes = serde_json::to_vec(&ResponseEnvelope {
++            schema_version: 1,
++            journal_healthy,
++            response,
++        })
++        .map_err(|_| Error::State("agent log response encoding".into()))?;
++        return write_frame(&mut stream, &bytes).await;
++    }
+     // Health reads are independent of a stalled WAL actor. Authorization and
+     // the finite registry are still the same fixed-profile OS-UID boundary.
+     if let Request::SessionHealth { profile, after } = &envelope.request {
+diff --git a/crates/rustusb-service/src/rpc.rs b/crates/rustusb-service/src/rpc.rs
+index acf1d7b..35183a1 100644
+--- a/crates/rustusb-service/src/rpc.rs
++++ b/crates/rustusb-service/src/rpc.rs
+@@ -70,6 +70,15 @@ pub enum Request {
+         /// Exclusive monotonic cursor.
+         after: u64,
+     },
++    /// Read projected process-log audit records independently of the business WAL.
++    ReadLogs {
++        /// Exact configured profile, requiring Audit rather than Read permission.
++        profile: String,
++        /// Complete-line continuation only; never authorization or a filesystem path.
++        after: Option<rustusb_logging::Cursor>,
++        /// Between one and sixteen records; scanned bytes are independently bounded.
++        limit: u8,
++    },
+     /// Read the authenticated catalog of a fixed client profile.
+     Discover {
+         /// Fixed client profile ID; endpoint/device credentials cannot be overridden.
+@@ -97,6 +106,46 @@ pub struct ProfileInfo {
+     pub backend: Backend,
+ }
+ 
++/// Fixed logging-only failures, independent of business journal health or cleanup.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
++#[serde(rename_all = "snake_case")]
++pub enum LogReadFailure {
++    /// Invalid bounded cursor or page input.
++    InvalidInput,
++    /// The private log store failed its filesystem trust checks.
++    Permission,
++    /// Preserved log history is malformed or ambiguous.
++    Corrupt,
++    /// Actual log filesystem I/O failed.
++    Io,
++    /// The finite actual reader and queue capacity is occupied.
++    Busy,
++    /// No file logging owner is available.
++    Disabled,
++    /// Checked logging is unavailable on this platform.
++    Unsupported,
++    /// The actual log worker failed.
++    Worker,
++    /// Logging lost records; business work may nevertheless have succeeded.
++    LostRecords,
++}
++
++impl From<&rustusb_logging::Error> for LogReadFailure {
++    fn from(error: &rustusb_logging::Error) -> Self {
++        match error {
++            rustusb_logging::Error::InvalidInput(_) => Self::InvalidInput,
++            rustusb_logging::Error::Permission(_) => Self::Permission,
++            rustusb_logging::Error::Corrupt(_) => Self::Corrupt,
++            rustusb_logging::Error::Io(_) => Self::Io,
++            rustusb_logging::Error::Busy => Self::Busy,
++            rustusb_logging::Error::Disabled => Self::Disabled,
++            rustusb_logging::Error::Unsupported => Self::Unsupported,
++            rustusb_logging::Error::Worker(_) => Self::Worker,
++            rustusb_logging::Error::LostRecords => Self::LostRecords,
++        }
++    }
++}
++
+ /// A payload-free bounded local result.
+ #[derive(Debug, Serialize, Deserialize)]
+ #[serde(tag = "result", rename_all = "snake_case", deny_unknown_fields)]
+@@ -155,6 +204,16 @@ pub enum Response {
+         /// The requested cursor predates retained history.
+         gap: bool,
+     },
++    /// Authorized typed audit projection; never a business acknowledgement.
++    Logs {
++        /// Bounded records, scan continuation and independent logger status.
++        page: rustusb_logging::LogPage,
++    },
++    /// An authorized log read failed without changing business journal health.
++    LogError {
++        /// Fixed logger category, never an internal error string or path.
++        code: LogReadFailure,
++    },
+     /// Authenticated catalog; not proof a listed device successfully redirects.
+     Catalog {
+         /// Bounded remote metadata.
+diff --git a/crates/rustusb-service/src/runtime.rs b/crates/rustusb-service/src/runtime.rs
+index 1da7bd4..0560f22 100644
+--- a/crates/rustusb-service/src/runtime.rs
++++ b/crates/rustusb-service/src/runtime.rs
+@@ -44,6 +44,10 @@ pub(crate) struct Controls {
+     shutdown_requested: bool,
+ }
+ impl Controls {
++    pub(crate) fn journal_healthy(&self) -> bool {
++        !self.journal_unhealthy
++    }
++
+     fn register_job(&mut self, id: JobId, control: Control) {
+         if self.shutdown_requested {
+             control.stop.send_replace(true);
+@@ -165,9 +169,18 @@ pub(crate) struct Runtime {
+     workers: JoinSet<(JobId, Result<()>)>,
+     recoveries: JoinSet<(SessionId, Vec<BrokerOperationStatus>)>,
+     recovery_cursor: usize,
++    logging: Option<rustusb_logging::LogMonitor>,
+ }
+ impl Runtime {
+     pub async fn open(config: Arc<LoadedConfig>, controls: Arc<Mutex<Controls>>) -> Result<Self> {
++        Self::open_with_logging(config, controls, None).await
++    }
++
++    pub async fn open_with_logging(
++        config: Arc<LoadedConfig>,
++        controls: Arc<Mutex<Controls>>,
++        logging: Option<rustusb_logging::LogMonitor>,
++    ) -> Result<Self> {
+         let directory = config.manifest.data_directory.clone();
+         let uid = config.manifest.broker_uid;
+         let store = tokio::task::spawn_blocking(move || Store::open(&directory, uid))
+@@ -187,6 +200,7 @@ impl Runtime {
+             workers: JoinSet::new(),
+             recoveries: JoinSet::new(),
+             recovery_cursor: 0,
++            logging,
+         };
+         let mut next = value.state.clone();
+         let mut changed = false;
+@@ -295,6 +309,7 @@ impl Runtime {
+         }
+         self.checkpoint_links(&mut next)?;
+         next.preflight(false)?;
++        let previous_sequence = self.state.sequence;
+         let stored = next.clone();
+         let store = self.store.clone();
+         let result = tokio::task::spawn_blocking(move || {
+@@ -309,6 +324,19 @@ impl Runtime {
+         match result {
+             Ok(()) => {
+                 self.state = next;
++                // This is a best-effort mirror of an already committed fact.
++                // Admission never awaits logging and log loss never poisons WAL.
++                // A later registry failure cannot suppress this actual commit.
++                if let Some(logging) = &self.logging {
++                    for event in self
++                        .state
++                        .audit
++                        .iter()
++                        .filter(|event| event.sequence > previous_sequence)
++                    {
++                        logging.audit(project_audit(&self.instance, event));
++                    }
++                }
+                 self.refresh_health()
+             }
+             Err(error) => {
+@@ -555,6 +583,16 @@ impl Runtime {
+             }
+             Request::Events { profile, after } => self.events(uid, profile, after, false),
+             Request::Audit { profile, after } => self.events(uid, profile, after, true),
++            Request::ReadLogs { profile, .. } => {
++                // Only denied reads use this path so they retain the existing
++                // durable denial audit. Authorized reads must never await WAL.
++                self.config
++                    .manifest
++                    .authorize(uid, &profile, Action::Audit)?;
++                Err(Error::State(
++                    "log reads require the independent IPC path".into(),
++                ))
++            }
+             Request::Discover { profile } => {
+                 self.config
+                     .manifest
+@@ -1306,6 +1344,56 @@ impl Runtime {
+         }
+     }
+ }
++fn project_audit(instance: &InstanceId, event: &AuditEvent) -> rustusb_logging::AuditProjection {
++    use rustusb_logging as logging;
++    logging::AuditProjection {
++        application_instance: instance.clone(),
++        audit_sequence: event.sequence,
++        actor_uid: event.actor_uid,
++        profile: event.profile.clone(),
++        job_id: event.job_id.clone(),
++        session_id: event.session_id.clone(),
++        action: match event.action {
++            AuditAction::Start => logging::AuditAction::Start,
++            AuditAction::Denied => logging::AuditAction::Denied,
++            AuditAction::Stop => logging::AuditAction::Stop,
++            AuditAction::Admission => logging::AuditAction::Admission,
++            AuditAction::Attempt => logging::AuditAction::Attempt,
++            AuditAction::Resource => logging::AuditAction::Resource,
++            AuditAction::Observe => logging::AuditAction::Observe,
++            AuditAction::Finish => logging::AuditAction::Finish,
++            AuditAction::Recovery => logging::AuditAction::Recovery,
++            AuditAction::Discover => logging::AuditAction::Discover,
++        },
++        failure: event.failure.map(|failure| match failure {
++            Failure::Permission => logging::FailureCategory::Permission,
++            Failure::InvalidInput => logging::FailureCategory::InvalidInput,
++            Failure::Io => logging::FailureCategory::Io,
++            Failure::Timeout => logging::FailureCategory::Timeout,
++            Failure::State => logging::FailureCategory::State,
++            Failure::Unsupported => logging::FailureCategory::Unsupported,
++            Failure::Cancelled => logging::FailureCategory::Cancelled,
++            Failure::Persistence => logging::FailureCategory::Persistence,
++        }),
++        state: event.state,
++        evidence: event.evidence.map(|evidence| match evidence {
++            Evidence::Intent => logging::Evidence::Intent,
++            Evidence::Prepared => logging::Evidence::Prepared,
++            Evidence::LocalEnumeration => logging::Evidence::LocalEnumeration,
++            Evidence::ExportReady => logging::Evidence::ExportReady,
++            Evidence::ImportReplyFlushed => logging::Evidence::ImportReplyFlushed,
++            Evidence::Closing => logging::Evidence::Closing,
++            Evidence::Released => logging::Evidence::Released,
++            Evidence::Unconfirmed => logging::Evidence::Unconfirmed,
++            Evidence::RootJournalProof => logging::Evidence::RootJournalProof,
++        }),
++        cleanup: event.cleanup.map(|cleanup| match cleanup {
++            Cleanup::NotStarted => logging::Cleanup::NotStarted,
++            Cleanup::Verified => logging::Cleanup::Verified,
++            Cleanup::Unconfirmed => logging::Cleanup::Unconfirmed,
++        }),
++    }
++}
+ fn denied() -> Error {
+     Error::Permission("agent profile action denied".into())
+ }
+diff --git a/crates/rustusb-service/src/runtime_tests.rs b/crates/rustusb-service/src/runtime_tests.rs
+index 8bf9cd4..87cbce6 100644
+--- a/crates/rustusb-service/src/runtime_tests.rs
++++ b/crates/rustusb-service/src/runtime_tests.rs
+@@ -10,6 +10,9 @@ use std::{collections::BTreeSet, os::unix::fs::PermissionsExt, path::PathBuf};
+ 
+ const PROFILE: &str = "fixed-profile";
+ 
++#[path = "runtime_logging_tests.rs"]
++mod logging;
++
+ // Real production stop delivery and store await, with ordinary owned Unix
+ // endpoints as resource witnesses. This is not a helper/kernel USB test.
+ #[tokio::test]
+@@ -267,6 +270,7 @@ impl Fixture {
+             workers: JoinSet::new(),
+             recoveries: JoinSet::new(),
+             recovery_cursor: 0,
++            logging: None,
+         };
+         Ok(Self {
+             root,

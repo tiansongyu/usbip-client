@@ -1,0 +1,55 @@
+{
+  "scope": "Read-only proposed-contract review; no source edits, Cargo, QEMU or runtime tests. Storage/reader implementation awaits API freeze.",
+  "result": "Proceed after lock/console contract clarification",
+  "findings": [
+    {
+      "id": "L1",
+      "area": "storage/access flock",
+      "severity": "must specify before implementation",
+      "detail": "Fresh open file description per simultaneous reader or writer access lock; Arc<File>/try_clone descriptors refer to same flock and cannot establish per-worker exclusion. Pin same inode; never let one reader unlock writer ownership.",
+      "evidence": "Local flock(2) /usr/share/man/man2/flock.2.gz and locked rustix1.1.5 fs/fd.rs:317; no dynamic flock experiment performed."
+    },
+    {
+      "id": "L2",
+      "area": "console/shutdown",
+      "severity": "must specify before implementation",
+      "detail": "Single file/console worker with blocking stderr can stall true join even without filesystem stall. Never console-write while holding segment access lock; choose nonblocking bounded-loss console or explicitly scope and test actual pipe blocking. Async queue alone is not bounded process exit."
+    },
+    {
+      "id": "L3",
+      "area": "authorized reader",
+      "severity": "interface requirement",
+      "detail": "Closed Audit filter must select only typed committed-audit records: exact profile plus permitted unscoped denials by actual actor UID/root admin; no generic processlog exposed by profile string. Auth before cursor/history; Busy/Disabled/Corrupt do not traverse blocked Runtime."
+    },
+    {
+      "id": "L4",
+      "area": "cursor/restart",
+      "severity": "interface requirement",
+      "detail": "Opaque UUID+offset with complete-line boundary;0matches may still return scan-progress. Header establishes chronology; rotated incomplete final tail preserved and gap reported. Missing lock must not be created by readonly observer. Never reset malformed complete history."
+    }
+  ],
+  "positive_contracts": [
+    "Postcommit mirror is best-effort operational output, no durable admission ACK or root proof.",
+    "Actual USB cleanup before logger join; runtime sink failure distinct from operation/cleanup/WAL errors.",
+    "2active+2queued reader lifetime retained beyond timed-out/disconnected RPC; no cancellation claims for actual blocking operations.",
+    "Finite payload/segments/queue/page/scan and strict unsafe path/identity rejection."
+  ],
+  "files": [
+    {
+      "path": "docs/research/rotating-logs-design.md",
+      "sha256": "a45a9fed47d1ab657abd42e37be2fcbed2f1626b69a91304e3d7ac85731739cd"
+    },
+    {
+      "path": "crates/rustusb-service/src/fs.rs",
+      "sha256": "83315132168353c37421f0f1e1e2c4391316fcd6fd19810ece90bb51fa1b0829"
+    },
+    {
+      "path": "crates/rustusb-service/src/store.rs",
+      "sha256": "21275ae843c72624a5ac3ae099aa47f2b8cc2277116e85dd82e3bc6506f988cb"
+    },
+    {
+      "path": "crates/rustusb-cli/src/main.rs",
+      "sha256": "9d65ba870ee414a60d87f627bf783ecc504b0285b86d8c3edc3702a7d4b9f7b2"
+    }
+  ]
+}

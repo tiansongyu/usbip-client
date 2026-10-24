@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "source_run": "/tmp/rustusb-logging-software-second-20261024",
+  "review_scope": "independent parsing and byte checks; reviewer authored record/worker, so not an independent review of their entire implementation",
+  "actual_run_head": "48a4b013fceb4493cf07c10cac999b8c41f76dae",
+  "actual_run_status": "dirty48a4; detailed original status in full report",
+  "test_counts": {
+    "by_build": {
+      "default": 308,
+      "all_features": 395,
+      "vendor": 20
+    },
+    "executions": 723,
+    "result_rows": 43,
+    "qualified_functions": 415,
+    "default_subset_of_allfeatures": true,
+    "zero_example_doctest_rows": 18
+  },
+  "result_rows_by_phase": {
+    "default": 21,
+    "all_features": 21,
+    "vendor": 1
+  },
+  "passed_by_package_and_phase": {
+    "default": {
+      "rustusb": 1,
+      "rustusb_core": 10,
+      "rustusb_daemon": 44,
+      "rustusb_helper": 0,
+      "rustusb_linux": 0,
+      "rustusb_linux::integration_discovery": 8,
+      "rustusb_logging": 24,
+      "rustusb_native": 40,
+      "rustusb_protocol": 14,
+      "rustusb_rust_backend": 48,
+      "rustusb_service": 66,
+      "rustusb_transport": 53,
+      "rustusb_core::doctest": 0,
+      "rustusb_daemon::doctest": 0,
+      "rustusb_linux::doctest": 0,
+      "rustusb_logging::doctest": 0,
+      "rustusb_native::doctest": 0,
+      "rustusb_protocol::doctest": 0,
+      "rustusb_rust_backend::doctest": 0,
+      "rustusb_service::doctest": 0,
+      "rustusb_transport::doctest": 0
+    },
+    "all_features": {
+      "rustusb": 5,
+      "rustusb_core": 10,
+      "rustusb_daemon": 97,
+      "rustusb_helper": 0,
+      "rustusb_linux": 0,
+      "rustusb_linux::integration_discovery": 8,
+      "rustusb_logging": 24,
+      "rustusb_native": 40,
+      "rustusb_protocol": 14,
+      "rustusb_rust_backend": 69,
+      "rustusb_service": 75,
+      "rustusb_transport": 53,
+      "rustusb_core::doctest": 0,
+      "rustusb_daemon::doctest": 0,
+      "rustusb_linux::doctest": 0,
+      "rustusb_logging::doctest": 0,
+      "rustusb_native::doctest": 0,
+      "rustusb_protocol::doctest": 0,
+      "rustusb_rust_backend::doctest": 0,
+      "rustusb_service::doctest": 0,
+      "rustusb_transport::doctest": 0
+    },
+    "vendor": {
+      "nusb": 20
+    }
+  },
+  "commands": [
+    "cargo fmt --all -- --check",
+    "cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "cargo test --workspace --locked",
+    "cargo build --workspace --release --locked",
+    "cargo doc --workspace --no-deps --locked",
+    "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+    "cargo test --workspace --all-features --locked",
+    "cargo build --workspace --all-features --release --locked",
+    "cargo doc --workspace --all-features --no-deps --locked",
+    "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests"
+  ],
+  "native_only": {
+    "tree_exclusions": {
+      "rustusb-rust-backend": true,
+      "nusb": true,
+      "rusb": true,
+      "libusb1-sys": true
+    },
+    "check_command": [
+      "cargo",
+      "check",
+      "-p",
+      "rustusb-cli",
+      "--no-default-features",
+      "--features",
+      "secure-transport",
+      "--locked"
+    ],
+    "tree_command": [
+      "cargo",
+      "tree",
+      "-p",
+      "rustusb-cli",
+      "--no-default-features",
+      "--features",
+      "secure-transport",
+      "--edges",
+      "normal",
+      "--locked"
+    ]
+  },
+  "source_equality": {
+    "selected_inputs": 177,
+    "original_before_after_current": true,
+    "later_exact_git_mapping": {
+      "commit": "f3cf8d4f13077cbcbb48c9e3e27918b87ca31a0d",
+      "files": 177,
+      "all_match": true,
+      "scope": "Content equality only; does not relabel actual dirty48a4 run as clean"
+    }
+  },
+  "actual_release_artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "expected": {
+        "bytes": 15951440,
+        "sha256": "6cc828f3769d1ebd4c2e7b566707b7788f107151bc21155843c315a818b8b474"
+      },
+      "actual": {
+        "bytes": 15951440,
+        "sha256": "6cc828f3769d1ebd4c2e7b566707b7788f107151bc21155843c315a818b8b474"
+      },
+      "ELF_magic": "7f454c46"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "expected": {
+        "bytes": 7460056,
+        "sha256": "bb0ea543bf6cc1af840c4e793b26906a6f9062b534c00b0c6549dce3fce834a1"
+      },
+      "actual": {
+        "bytes": 7460056,
+        "sha256": "bb0ea543bf6cc1af840c4e793b26906a6f9062b534c00b0c6549dce3fce834a1"
+      },
+      "ELF_magic": "7f454c46"
+    }
+  ],
+  "tools": {
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+    "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)\nrelease: 1.97.1\ncommit-hash: c980f4866141969fab6254a680546a277789d6f0\ncommit-date: 2026-06-30\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.20.0-DEV (sys:0.4.88+curl-8.20.0 vendored ssl:OpenSSL/3.6.2)\nssl: OpenSSL 3.6.2 7 Apr 2026\nos: Ubuntu 22.4.0 (jammy) [64-bit]\n"
+  },
+  "assertion_count": 619,
+  "assertion_failures": [],
+  "parser_correction": {
+    "original_script": "/tmp/review-rustusb-logging-software-second-20261024.py",
+    "original_report": "/tmp/rustusb-logging-software-second-independent-review-20261024/review.json",
+    "original_failure": "Wrong assumed service test module name runtime_logging_tests; actual printed module runtime::tests::logging. Product and raw unchanged."
+  },
+  "limitations": [
+    "Actual gate ran on dirty48a4 candidate; no later commit/clean mapping is inferred.",
+    "723 is executions including repeated default/allfeatures tests;415 is qualified function union, neither USB hardware cases nor QEMU evidence.",
+    "No added diagnostics-export or hardware acceptance is inferred.",
+    "Raw log printed completion and external wrapper terminal exit0 are evidence; this parser does not rerun commands or project verifier.",
+    "177 selected inputs include Rust/TOML/lock/check sources, not scripts/test-process-logging.py or a later six-run wrapper; those need separate receipts.",
+    "Only recorded release artifacts are independently hashed; no missing per-test child /proc ELF or temporary runtime artifacts are invented.",
+    "Earlier developer gate22logger/4service and two style-only Clippy failures retain their original source/result attribution.",
+    "New strict types tests belong to this24logger suite, not the earlier22-test run.",
+    "Native-only check/tree are read-only auxiliary provenance; release remains actual prior allfeatures release ELF, not a Native-only release."
+  ],
+  "detail_files": [
+    "review.json",
+    "raw-artifacts.json",
+    "source-checks.json",
+    "git-mapping.json",
+    "qualified-tests.json"
+  ]
+}

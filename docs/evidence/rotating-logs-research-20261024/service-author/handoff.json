@@ -1,0 +1,106 @@
+{
+  "created_utc": "2026-10-24T01:30:01.706550+00:00",
+  "scope": "service source implementation; no Cargo/build/test/QEMU/Git mutation performed",
+  "owned_sources": [
+    {
+      "path": "crates/rustusb-service/Cargo.toml",
+      "bytes": 802,
+      "sha256": "c3b55ef484007dd964930cd70a6af8e345697d8849cdde745b7beea197f79ab5"
+    },
+    {
+      "path": "crates/rustusb-service/src/ipc.rs",
+      "bytes": 18006,
+      "sha256": "8212569591d994e4fc78ca65023a4ced68468640c4b6d8bbc4059bbb7ff27ee8"
+    },
+    {
+      "path": "crates/rustusb-service/src/rpc.rs",
+      "bytes": 8645,
+      "sha256": "32011dee1ee9cbd54d4b8185268c9e32fdc671b421e1f1cf3e3755f1ca6df031"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime.rs",
+      "bytes": 51644,
+      "sha256": "0110e126eb0a8996f235b588055cd798884047c0d51fa84479fcd2fc1319e00c"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime_tests.rs",
+      "bytes": 32723,
+      "sha256": "0e3c0b0a20ae7a6738e476913cf30d6aa6694066a1ca2117325bd7d55c5b7d4e"
+    },
+    {
+      "path": "crates/rustusb-service/src/runtime_logging_tests.rs",
+      "bytes": 16010,
+      "sha256": "1c8acfe6a85bf894cdd00549eddafd88c0551de0adbb101573424d69d3b0b1c9"
+    }
+  ],
+  "checks": [
+    {
+      "name": "owned-rustfmt",
+      "command": [
+        "rustfmt",
+        "--edition",
+        "2024",
+        "--check",
+        "crates/rustusb-service/src/ipc.rs",
+        "crates/rustusb-service/src/rpc.rs",
+        "crates/rustusb-service/src/runtime.rs",
+        "crates/rustusb-service/src/runtime_tests.rs",
+        "crates/rustusb-service/src/runtime_logging_tests.rs"
+      ],
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "name": "owned-diffcheck",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "crates/rustusb-service/Cargo.toml",
+        "crates/rustusb-service/src/ipc.rs",
+        "crates/rustusb-service/src/rpc.rs",
+        "crates/rustusb-service/src/runtime.rs",
+        "crates/rustusb-service/src/runtime_tests.rs",
+        "crates/rustusb-service/src/runtime_logging_tests.rs",
+        "docs/research/rotating-logs-design.md"
+      ],
+      "exit_code": 0,
+      "passed": true
+    },
+    {
+      "name": "no-unsafe-unwrap-expect-explicit-panic-in-owned-rust",
+      "passed": true
+    }
+  ],
+  "passed_static_checks": 3,
+  "runtime_tests_added": 4,
+  "runtime_tests_executed": 0,
+  "interfaces": [
+    "ipc::serve_with_logging(LoadedConfig,watch::Receiver<bool>,Option<LogMonitor>) -> Result<()>",
+    "Request::ReadLogs { profile:String, after:Option<Cursor>, limit:u8 }",
+    "Response::Logs { page:LogPage }",
+    "Response::LogError { code:LogReadFailure }"
+  ],
+  "behavior": [
+    "existing Action::Audit authorization before reader admission/history",
+    "authorized reads including Busy/Disabled/errors bypass Runtime queue",
+    "denied reads retain original business Permission/durable denial path",
+    "postcommit audit delta after actual commit and state assignment, before health registry refresh",
+    "explicit closed-enum projection; logger is nonowning and failure cannot poison WAL"
+  ],
+  "tests_scope": [
+    "real temp log files under HOME production trust checks; no global subscriber",
+    "real business Store mutex gate and corrupted persisted bytes",
+    "real UnixStream peer UID/framing, pagination and unauthorized field rejection",
+    "actual ordinary Unix endpoint closes on stop before blocked business ACK; no USB claim"
+  ],
+  "limits": [
+    "new runtime tests await root centralized build/execution",
+    "worker two-active/two-queued/cancellation quota tests owned by logging implementation",
+    "neither service tests nor static checks prove USB/kernel cleanup",
+    "no guarantee of lossless mirror or durable immutable audit; existing WAL remains authority"
+  ],
+  "design_append": "Service interface clarification only; prior design text belongs to root",
+  "design_snapshot_sha256": "e264f918877c57759a7cb8bb85d35bb8005ce8fdd773296a4c5125b7a1d93c11"
+}

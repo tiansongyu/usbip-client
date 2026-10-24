@@ -1,0 +1,79 @@
+{
+  "state": "SOURCE_FROZEN",
+  "scope": "Only owned storage.rs and storage/**/*.rs. No Cargo, compile, QEMU, product execution, Git mutation or other repo files edited.",
+  "api": [
+    "Storage::open(&Options,&LogId)->Result<Storage>",
+    "Storage::source(&self)->Source (Clone metadata only; no FD)",
+    "Storage::append(&mutself,&LogRecord)->Result<Cursor> after actual sync",
+    "Storage::sync(&mutself)->Result<()>",
+    "read_source(&Source,&ReadFilter,Option<&Cursor>,u8)->Result<LogPage>",
+    "read_directory(&Path,Option<Cursor>,u8)->Result<LogPage>",
+    "cfg(test) Storage::fixture(&Options,&LogId,anchor:&Path) only within logging crate"
+  ],
+  "storage": [
+    "Linux checked0700 leaf and root/owner nonwritable ancestor chain; files0600 singlelink NOFOLLOW/CLOEXEC/NONBLOCK",
+    "writer.lock lifetime + fresh independent OFD per shared/exclusive access.lock operation",
+    "known fixedslots only, strict header schema1/UUID/epoch/ordinal order; full bounded startup/rotation validation",
+    "whole record max2048 and actual fsync; newheader no Started; new epoch always newsegment",
+    "incomplete final tail preserved and gap; complete corrupt record/history rejects without resetting",
+    "lower configured bytecap than existing retainedsegment refuses before mutation; retention decrease removes only oldest validated slots",
+    "nonLinux Unsupported; Source contains only path/uid/identities, no capabilities"
+  ],
+  "reader": [
+    "owner/root directread; emptydirectory creates nothing; absent required accesslock Corrupt",
+    "max16/32KiB returnedrecords; max256KiB scannedrecordbytes, metadataheaders separately bounded16x256",
+    "cursor validates UUID/offset/range/previousnewline and progresses across filtered records",
+    "agentfilter only typedAudit exactprofile or ownunscopedDenied; rootunscopedAdmin; genericdiagnostics excluded",
+    "snapshot accesslock retained until actualread returns; worker owns concurrency/permits/lifetime"
+  ],
+  "verification": {
+    "rustfmt_owned": "PASS (syntax/format only)",
+    "tests_written_not_run": [
+      "empty_reader_does_not_create_locks_or_headers",
+      "writer_header_is_not_a_started_record_and_append_returns_synced_boundary",
+      "rotation_is_complete_bounded_and_expired_cursor_reports_gap",
+      "restart_seals_partial_tail_without_rewriting_original_bytes",
+      "malformed_complete_record_prevents_startup_without_deleting_history",
+      "header_unknown_fields_duplicate_ids_and_slot_gaps_are_not_guessed",
+      "second_writer_is_busy_and_readers_use_independent_lock_descriptions",
+      "typed_audit_filter_never_exposes_generic_or_other_profile_records",
+      "filtered_scan_window_has_bounded_bytes_and_forward_progress",
+      "cursor_inside_record_and_page_overflow_are_rejected",
+      "unsafe_links_modes_unknown_files_and_missing_lock_preserve_originals",
+      "directory_and_active_replacement_latch_writer_failure",
+      "fifo_is_refused_without_blocking_and_public_tmp_path_is_not_trusted",
+      "actual_write_error_is_returned_and_storage_cannot_reopen_as_healthy",
+      "lowering_byte_limit_or_exhausting_ordinal_does_not_rewrite_history"
+    ],
+    "cargo": "NOT RUN",
+    "runtime": "NOT RUN"
+  },
+  "boundaries": [
+    "Multi-file rotation is not a power-loss-atomic transaction; interrupted ambiguous slot/header state refuses rather than repairs.",
+    "Reader validates complete records within its bounded scan; startup/rotation validate all retained records before retention mutation.",
+    "Filesystem hard block can hold actual worker; no timeout pretends cancellation.",
+    "Private test anchor does not weaken production /tmp rejection; crosscrate tests must use actual protected HOME chain."
+  ],
+  "files": [
+    {
+      "path": "crates/rustusb-logging/src/storage/linux/reader.rs",
+      "bytes": 8094,
+      "sha256": "b3ffdd63039b5dba43b1ee1cd61622dd53e2e6ace7be8fcdb26b2ef7eada7958"
+    },
+    {
+      "path": "crates/rustusb-logging/src/storage/linux/tests.rs",
+      "bytes": 18113,
+      "sha256": "0744e00ff0881a7e1c91d832f1981b2add09962a74b9e0082e8b10bf3c2ed315"
+    },
+    {
+      "path": "crates/rustusb-logging/src/storage/linux.rs",
+      "bytes": 22897,
+      "sha256": "46abaeee1557cf7083de94f7b139192111a16c2c66d01901d685ac9796532f3d"
+    },
+    {
+      "path": "crates/rustusb-logging/src/storage.rs",
+      "bytes": 1492,
+      "sha256": "a331a41aacbc1d38c9763368e4bf7b00722d6170e8d85999646993362c22c4e3"
+    }
+  ]
+}

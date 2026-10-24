@@ -1,0 +1,3238 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "source_run": "/tmp/rustusb-logging-software-second-20261024",
+  "scope": "independent parsing and byte checks; reviewer authored record/worker, so not an independent review of their entire implementation",
+  "actual_run_head": "48a4b013fceb4493cf07c10cac999b8c41f76dae",
+  "actual_run_dirty_status": " M Cargo.lock\n M Cargo.toml\n M crates/rustusb-cli/Cargo.toml\n M crates/rustusb-cli/src/agent.rs\n M crates/rustusb-cli/src/event_output.rs\n M crates/rustusb-cli/src/main.rs\n M crates/rustusb-daemon/Cargo.toml\n M crates/rustusb-daemon/src/main.rs\n M crates/rustusb-service/Cargo.toml\n M crates/rustusb-service/src/ipc.rs\n M crates/rustusb-service/src/rpc.rs\n M crates/rustusb-service/src/runtime.rs\n M crates/rustusb-service/src/runtime_tests.rs\n M docs/dependency-inventory.json\n M docs/research/rotating-logs-design.md\n?? crates/rustusb-cli/src/logs.rs\n?? crates/rustusb-logging/\n?? crates/rustusb-service/src/runtime_logging_tests.rs\n?? scripts/test-process-logging.py\n",
+  "current_head_read_only_observed": "f3cf8d4f13077cbcbb48c9e3e27918b87ca31a0d",
+  "later_exact_git_mapping": {
+    "commit": "f3cf8d4f13077cbcbb48c9e3e27918b87ca31a0d",
+    "files": 177,
+    "all_match": true,
+    "scope": "Content equality only; does not relabel actual dirty48a4 run as clean"
+  },
+  "parser_correction": {
+    "original_script": "/tmp/review-rustusb-logging-software-second-20261024.py",
+    "original_report": "/tmp/rustusb-logging-software-second-independent-review-20261024/review.json",
+    "original_failure": "Wrong assumed service test module name runtime_logging_tests; actual printed module runtime::tests::logging. Product and raw unchanged."
+  },
+  "test_counts": {
+    "by_build": {
+      "default": 308,
+      "all_features": 395,
+      "vendor": 20
+    },
+    "executions": 723,
+    "result_rows": 43,
+    "qualified_functions": 415,
+    "default_subset_of_allfeatures": true,
+    "zero_example_doctest_rows": 18
+  },
+  "commands": [
+    {
+      "line": 4,
+      "command": "cargo fmt --all -- --check",
+      "next_command_or_eof_line": 5,
+      "finished_lines": [],
+      "result_rows": 0
+    },
+    {
+      "line": 5,
+      "command": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "next_command_or_eof_line": 11,
+      "finished_lines": [
+        "Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.80s"
+      ],
+      "result_rows": 0
+    },
+    {
+      "line": 11,
+      "command": "cargo test --workspace --locked",
+      "next_command_or_eof_line": 451,
+      "finished_lines": [
+        "Finished `test` profile [unoptimized + debuginfo] target(s) in 8.43s"
+      ],
+      "result_rows": 21
+    },
+    {
+      "line": 451,
+      "command": "cargo build --workspace --release --locked",
+      "next_command_or_eof_line": 458,
+      "finished_lines": [
+        "Finished `release` profile [optimized] target(s) in 6.33s"
+      ],
+      "result_rows": 0
+    },
+    {
+      "line": 458,
+      "command": "cargo doc --workspace --no-deps --locked",
+      "next_command_or_eof_line": 470,
+      "finished_lines": [
+        "Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.32s"
+      ],
+      "result_rows": 0
+    },
+    {
+      "line": 470,
+      "command": "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "next_command_or_eof_line": 473,
+      "finished_lines": [
+        "Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.68s"
+      ],
+      "result_rows": 0
+    },
+    {
+      "line": 473,
+      "command": "cargo test --workspace --all-features --locked",
+      "next_command_or_eof_line": 1000,
+      "finished_lines": [
+        "Finished `test` profile [unoptimized + debuginfo] target(s) in 10.91s"
+      ],
+      "result_rows": 21
+    },
+    {
+      "line": 1000,
+      "command": "cargo build --workspace --all-features --release --locked",
+      "next_command_or_eof_line": 1007,
+      "finished_lines": [
+        "Finished `release` profile [optimized] target(s) in 15.03s"
+      ],
+      "result_rows": 0
+    },
+    {
+      "line": 1007,
+      "command": "cargo doc --workspace --all-features --no-deps --locked",
+      "next_command_or_eof_line": 1020,
+      "finished_lines": [
+        "Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.63s"
+      ],
+      "result_rows": 0
+    },
+    {
+      "line": 1020,
+      "command": "cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests",
+      "next_command_or_eof_line": 1048,
+      "finished_lines": [
+        "Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s"
+      ],
+      "result_rows": 1
+    }
+  ],
+  "result_rows": [
+    {
+      "phase": "default",
+      "package": "rustusb",
+      "kind": "unit_or_integration",
+      "line": 22,
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 1
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_core",
+      "kind": "unit_or_integration",
+      "line": 38,
+      "result": "ok",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 10
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_daemon",
+      "kind": "unit_or_integration",
+      "line": 88,
+      "result": "ok",
+      "passed": 44,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 44
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_helper",
+      "kind": "unit_or_integration",
+      "line": 94,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_linux",
+      "kind": "unit_or_integration",
+      "line": 100,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_linux::integration_discovery",
+      "kind": "unit_or_integration",
+      "line": 114,
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 8
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_logging",
+      "kind": "unit_or_integration",
+      "line": 144,
+      "result": "ok",
+      "passed": 24,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 24
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_native",
+      "kind": "unit_or_integration",
+      "line": 190,
+      "result": "ok",
+      "passed": 40,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 40
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_protocol",
+      "kind": "unit_or_integration",
+      "line": 210,
+      "result": "ok",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 14
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_rust_backend",
+      "kind": "unit_or_integration",
+      "line": 264,
+      "result": "ok",
+      "passed": 48,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 48
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_service",
+      "kind": "unit_or_integration",
+      "line": 336,
+      "result": "ok",
+      "passed": 66,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 66
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_transport",
+      "kind": "unit_or_integration",
+      "line": 395,
+      "result": "ok",
+      "passed": 53,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 53
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_core",
+      "kind": "doctest",
+      "line": 401,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_daemon",
+      "kind": "doctest",
+      "line": 407,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_linux",
+      "kind": "doctest",
+      "line": 413,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_logging",
+      "kind": "doctest",
+      "line": 419,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_native",
+      "kind": "doctest",
+      "line": 425,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_protocol",
+      "kind": "doctest",
+      "line": 431,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_rust_backend",
+      "kind": "doctest",
+      "line": 437,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_service",
+      "kind": "doctest",
+      "line": 443,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "default",
+      "package": "rustusb_transport",
+      "kind": "doctest",
+      "line": 449,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb",
+      "kind": "unit_or_integration",
+      "line": 488,
+      "result": "ok",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 5
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_core",
+      "kind": "unit_or_integration",
+      "line": 504,
+      "result": "ok",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 10
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_daemon",
+      "kind": "unit_or_integration",
+      "line": 607,
+      "result": "ok",
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 97
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_helper",
+      "kind": "unit_or_integration",
+      "line": 613,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_linux",
+      "kind": "unit_or_integration",
+      "line": 619,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_linux::integration_discovery",
+      "kind": "unit_or_integration",
+      "line": 633,
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 8
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_logging",
+      "kind": "unit_or_integration",
+      "line": 663,
+      "result": "ok",
+      "passed": 24,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 24
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_native",
+      "kind": "unit_or_integration",
+      "line": 709,
+      "result": "ok",
+      "passed": 40,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 40
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_protocol",
+      "kind": "unit_or_integration",
+      "line": 729,
+      "result": "ok",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 14
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_rust_backend",
+      "kind": "unit_or_integration",
+      "line": 804,
+      "result": "ok",
+      "passed": 69,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 69
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_service",
+      "kind": "unit_or_integration",
+      "line": 885,
+      "result": "ok",
+      "passed": 75,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 75
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_transport",
+      "kind": "unit_or_integration",
+      "line": 944,
+      "result": "ok",
+      "passed": 53,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 53
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_core",
+      "kind": "doctest",
+      "line": 950,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_daemon",
+      "kind": "doctest",
+      "line": 956,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_linux",
+      "kind": "doctest",
+      "line": 962,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_logging",
+      "kind": "doctest",
+      "line": 968,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_native",
+      "kind": "doctest",
+      "line": 974,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_protocol",
+      "kind": "doctest",
+      "line": 980,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_rust_backend",
+      "kind": "doctest",
+      "line": 986,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_service",
+      "kind": "doctest",
+      "line": 992,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "all_features",
+      "package": "rustusb_transport",
+      "kind": "doctest",
+      "line": 998,
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 0
+    },
+    {
+      "phase": "vendor",
+      "package": "nusb",
+      "kind": "unit_or_integration",
+      "line": 1046,
+      "result": "ok",
+      "passed": 20,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "printed_qualified_tests": 20
+    }
+  ],
+  "native_only": {
+    "tree_exclusions": {
+      "rustusb-rust-backend": true,
+      "nusb": true,
+      "rusb": true,
+      "libusb1-sys": true
+    },
+    "check_command": [
+      "cargo",
+      "check",
+      "-p",
+      "rustusb-cli",
+      "--no-default-features",
+      "--features",
+      "secure-transport",
+      "--locked"
+    ],
+    "tree_command": [
+      "cargo",
+      "tree",
+      "-p",
+      "rustusb-cli",
+      "--no-default-features",
+      "--features",
+      "secure-transport",
+      "--edges",
+      "normal",
+      "--locked"
+    ]
+  },
+  "actual_release_artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "expected": {
+        "bytes": 15951440,
+        "sha256": "6cc828f3769d1ebd4c2e7b566707b7788f107151bc21155843c315a818b8b474"
+      },
+      "actual": {
+        "bytes": 15951440,
+        "sha256": "6cc828f3769d1ebd4c2e7b566707b7788f107151bc21155843c315a818b8b474"
+      },
+      "ELF_magic": "7f454c46"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "expected": {
+        "bytes": 7460056,
+        "sha256": "bb0ea543bf6cc1af840c4e793b26906a6f9062b534c00b0c6549dce3fce834a1"
+      },
+      "actual": {
+        "bytes": 7460056,
+        "sha256": "bb0ea543bf6cc1af840c4e793b26906a6f9062b534c00b0c6549dce3fce834a1"
+      },
+      "ELF_magic": "7f454c46"
+    }
+  ],
+  "tools": {
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+    "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)\nrelease: 1.97.1\ncommit-hash: c980f4866141969fab6254a680546a277789d6f0\ncommit-date: 2026-06-30\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.20.0-DEV (sys:0.4.88+curl-8.20.0 vendored ssl:OpenSSL/3.6.2)\nssl: OpenSSL 3.6.2 7 Apr 2026\nos: Ubuntu 22.4.0 (jammy) [64-bit]\n"
+  },
+  "selected_source_count": 177,
+  "source_equality": true,
+  "assertions": [
+    {
+      "assertion": "actual wrapper terminal PASS",
+      "pass": true
+    },
+    {
+      "assertion": "actual initial head is dirty48a4 and never clean-labelled",
+      "pass": true
+    },
+    {
+      "assertion": "initial invocation was bash-x actual check script",
+      "pass": true
+    },
+    {
+      "assertion": "before and after manifest exact bytes identical",
+      "pass": true
+    },
+    {
+      "assertion": "selected input count exactly177",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path Cargo.lock",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes Cargo.lock",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/agent.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/agent.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/event_output.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/event_output.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/foreground.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/foreground.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/logs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/logs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/main.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/main.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/physical_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/physical_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/secure_client.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/secure_client.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/secure_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/secure_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/shutdown_signals.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/shutdown_signals.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-cli/src/virtual_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-cli/src/virtual_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-core/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-core/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-core/src/application.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-core/src/application.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-core/src/device_key.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-core/src/device_key.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-core/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-core/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-core/src/link_health.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-core/src/link_health.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-core/src/server_session.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-core/src/server_session.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/ancillary.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/ancillary.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/broker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/broker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/diagnostics.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/diagnostics.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/journal.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/journal.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/journal_tracked_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/journal_tracked_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/linux.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/linux.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/main.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/main.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/native_channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/native_channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/native_export.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/native_export.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/native_state.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/native_state.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/native_tracking.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/native_tracking.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/native_tracking_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/native_tracking_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/physical.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/physical.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-daemon/src/physical_recovery.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-daemon/src/physical_recovery.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-linux/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-linux/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-linux/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-linux/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-linux/tests/discovery.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-linux/tests/discovery.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/record.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/record.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/storage.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/storage.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/storage/linux.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/storage/linux.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/storage/linux/reader.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/storage/linux/reader.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/storage/linux/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/storage/linux/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/types.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/types.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-logging/src/worker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-logging/src/worker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-native/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-native/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-native/src/channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-native/src/channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-native/src/channel_initial_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-native/src/channel_initial_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-native/src/diagnostics.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-native/src/diagnostics.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-native/src/export_channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-native/src/export_channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-native/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-native/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-protocol/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-protocol/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-protocol/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-protocol/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-protocol/src/secure.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-protocol/src/secure.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-protocol/src/server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-protocol/src/server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/counted.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/counted.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/managed.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/managed.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/monitor.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/monitor.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/physical.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/physical.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/physical/observe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/physical/observe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/physical/safety.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/physical/safety.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/physical/worker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/physical/worker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/server_managed_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/server_managed_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/session.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/session.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-rust-backend/src/wire.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-rust-backend/src/wire.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/config.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/config.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/context.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/context.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/foreground.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/foreground.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/fs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/fs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/health.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/health.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/ipc.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/ipc.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/client.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/client.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/io.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/io.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/management_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/management_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/native.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/native.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/recording.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/recording.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/jobs/rust_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/jobs/rust_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/model.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/model.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/rpc.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/rpc.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/run_context.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/run_context.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/runtime.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/runtime.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/runtime_logging_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/runtime_logging_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/runtime_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/runtime_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-service/src/store.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-service/src/store.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/acl.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/acl.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/config.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/config.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/config/platform/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/config/platform/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/flush.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/flush.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/flush/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/flush/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/link/adversarial_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/link/adversarial_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/link/quiet_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/link/quiet_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/link/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/link/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/quiet.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/quiet.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/tls.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/tls.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/tls/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/tls/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path crates/rustusb-transport/src/tls/tests/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes crates/rustusb-transport/src/tls/tests/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path rust-toolchain.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes rust-toolchain.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path scripts/check.sh",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes scripts/check.sh",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/bulk.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/bulk.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/bulk_io.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/bulk_io.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/bulk_io_smol.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/bulk_io_smol.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/bulk_io_tokio.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/bulk_io_tokio.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/buses.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/buses.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/control.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/control.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/detach.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/detach.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/detach_claim.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/detach_claim.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/list.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/list.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/examples/string_descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/examples/string_descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/bitset.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/bitset.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/error.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/error.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/io/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/io/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/io/read.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/io/read.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/io/write.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/io/write.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/maybe_future.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/maybe_future.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/events.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/events.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/webusb/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/webusb/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/webusb/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/webusb/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/webusb/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/webusb/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/webusb/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/webusb/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/platform/windows_winusb/util.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/platform/windows_winusb/util.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/transfer/buffer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/transfer/buffer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/transfer/control.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/transfer/control.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/transfer/internal.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/transfer/internal.rs",
+      "pass": true
+    },
+    {
+      "assertion": "safe selected source path vendor/nusb/src/transfer/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "original source copy and current exact bytes vendor/nusb/src/transfer/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input Cargo.lock",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/agent.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/event_output.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/foreground.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/logs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/main.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/physical_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/secure_client.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/secure_foreground_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/secure_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/shutdown_signals.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-cli/src/virtual_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-core/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-core/src/application.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-core/src/device_key.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-core/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-core/src/link_health.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-core/src/server_session.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/ancillary.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/broker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/diagnostics.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/journal.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/journal_tracked_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/linux.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/main.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/native_channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/native_export.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/native_state.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/native_tracking.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/native_tracking_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/physical.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/physical_lifecycle.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-daemon/src/physical_recovery.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-linux/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-linux/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-linux/tests/discovery.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/record.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/storage.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/storage/linux.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/storage/linux/reader.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/storage/linux/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/types.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-logging/src/worker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-native/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-native/src/channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-native/src/channel_initial_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-native/src/diagnostics.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-native/src/export_channel.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-native/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-protocol/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-protocol/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-protocol/src/secure.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-protocol/src/server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/counted.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/managed.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/monitor.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/physical.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/physical/observe.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/physical/safety.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/physical/worker.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/server_managed_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/server_tls_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/session.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-rust-backend/src/wire.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/config.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/context.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/foreground.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/fs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/health.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/ipc.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/client.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/io.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/management_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/native.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/native_prepare_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/recording.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/jobs/rust_server.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/model.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/rpc.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/run_context.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/runtime.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/runtime_logging_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/runtime_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-service/src/store.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/acl.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/config.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/config/platform/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/flush.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/flush/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/link/adversarial_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/link/quiet_tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/link/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/quiet.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/tls.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/tls/tests.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input crates/rustusb-transport/src/tls/tests/link.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input rust-toolchain.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input scripts/check.sh",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/Cargo.toml",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/bulk.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/bulk_io.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/bulk_io_smol.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/bulk_io_tokio.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/buses.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/control.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/detach.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/detach_claim.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/list.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/examples/string_descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/bitset.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/descriptors.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/error.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/io/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/io/read.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/io/write.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/lib.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/maybe_future.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/events.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/linux_usbfs/usbfs.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/events.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/iokit.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/iokit_c.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/iokit_usb.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/macos_iokit/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/webusb/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/webusb/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/webusb/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/webusb/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/cfgmgr32.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/device.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/enumeration.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/hotplug.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/hotplug_win7.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/hub.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/registry.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/threadpool.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/transfer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/platform/windows_winusb/util.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/transfer/buffer.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/transfer/control.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/transfer/internal.rs",
+      "pass": true
+    },
+    {
+      "assertion": "later Git blob matches original dirty-run input vendor/nusb/src/transfer/mod.rs",
+      "pass": true
+    },
+    {
+      "assertion": "177 original source copies exactly cover manifest",
+      "pass": true
+    },
+    {
+      "assertion": "source manifest includes logging crate and new runtime logging tests",
+      "pass": true
+    },
+    {
+      "assertion": "process logging Python harness is explicitly outside177-input gate",
+      "pass": true
+    },
+    {
+      "assertion": "ten actual cargo command trace entries in intended order",
+      "pass": true
+    },
+    {
+      "assertion": "two doc invocations each have strict rustdoc warnings directly before",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo test --workspace --locked",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo build --workspace --release --locked",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo doc --workspace --no-deps --locked",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo test --workspace --all-features --locked",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo build --workspace --all-features --release --locked",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo doc --workspace --all-features --no-deps --locked",
+      "pass": true
+    },
+    {
+      "assertion": "command has actual completion evidence cargo test --manifest-path vendor/nusb/Cargo.toml --lib --features tokio --locked --target-dir target/nusb-tests",
+      "pass": true
+    },
+    {
+      "assertion": "no build/test/doc error markers in successful gate",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line22",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line38",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line88",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line94",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line100",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line114",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line144",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line190",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line210",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line264",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line336",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line395",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line401",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line407",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line413",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line419",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line425",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line431",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line437",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line443",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line449",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line488",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line504",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line607",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line613",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line619",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line633",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line663",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line709",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line729",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line804",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line885",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line944",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line950",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line956",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line962",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line968",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line974",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line980",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line986",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line992",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line998",
+      "pass": true
+    },
+    {
+      "assertion": "summary matches actual qualified name occurrences line1046",
+      "pass": true
+    },
+    {
+      "assertion": "actual result rows exactly43",
+      "pass": true
+    },
+    {
+      "assertion": "actual successful test executions 308+395+20=723",
+      "pass": true
+    },
+    {
+      "assertion": "zero failed ignored measured filtered",
+      "pass": true
+    },
+    {
+      "assertion": "actual printed qualified test occurrences exactly723",
+      "pass": true
+    },
+    {
+      "assertion": "qualified union415, repeated feature executions not relabelled distinct",
+      "pass": true
+    },
+    {
+      "assertion": "default308 functions are subset of allfeatures395",
+      "pass": true
+    },
+    {
+      "assertion": "18 doctest rows execute zero examples",
+      "pass": true
+    },
+    {
+      "assertion": "authored record3 and worker4 each execute default+allfeatures",
+      "pass": true
+    },
+    {
+      "assertion": "root added two strict types tests execute twice",
+      "pass": true
+    },
+    {
+      "assertion": "service four real logging tests execute twice",
+      "pass": true
+    },
+    {
+      "assertion": "native only tree excludes engine/nusb/rusb/libusb1sys",
+      "pass": true
+    },
+    {
+      "assertion": "native only check actually completed",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal full-gate.log",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal native-only-check.log",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal native-only-tree.log",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal rustc.log",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal cargo.log",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal cli-help.log",
+      "pass": true
+    },
+    {
+      "assertion": "recorded auxiliary command terminal helper-help.log",
+      "pass": true
+    },
+    {
+      "assertion": "actual current ELF exact rustusb",
+      "pass": true
+    },
+    {
+      "assertion": "actual current ELF exact rustusb-helper",
+      "pass": true
+    },
+    {
+      "assertion": "expected release CLI hash",
+      "pass": true
+    },
+    {
+      "assertion": "expected release helper hash",
+      "pass": true
+    },
+    {
+      "assertion": "all original raw and source artifact bytes unchanged during read",
+      "pass": true
+    },
+    {
+      "assertion": "original file set unchanged during read",
+      "pass": true
+    }
+  ],
+  "limitations": [
+    "Actual gate ran on dirty48a4 candidate; no later commit/clean mapping is inferred.",
+    "723 is executions including repeated default/allfeatures tests;415 is qualified function union, neither USB hardware cases nor QEMU evidence.",
+    "No added diagnostics-export or hardware acceptance is inferred.",
+    "Raw log printed completion and external wrapper terminal exit0 are evidence; this parser does not rerun commands or project verifier.",
+    "177 selected inputs include Rust/TOML/lock/check sources, not scripts/test-process-logging.py or a later six-run wrapper; those need separate receipts.",
+    "Only recorded release artifacts are independently hashed; no missing per-test child /proc ELF or temporary runtime artifacts are invented.",
+    "Earlier developer gate22logger/4service and two style-only Clippy failures retain their original source/result attribution.",
+    "New strict types tests belong to this24logger suite, not the earlier22-test run.",
+    "Native-only check/tree are read-only auxiliary provenance; release remains actual prior allfeatures release ELF, not a Native-only release."
+  ],
+  "raw_artifact_manifest": "raw-artifacts.json",
+  "selected_source_details": "source-checks.json",
+  "qualified_tests": "qualified-tests.json",
+  "prior_artifact_scope": "No original evidence modified; no build/CLI/QEMU/USB command run."
+}

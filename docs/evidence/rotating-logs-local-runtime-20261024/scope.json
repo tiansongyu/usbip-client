@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "source_head": "f3cf8d4f13077cbcbb48c9e3e27918b87ca31a0d",
+  "source_clean": true,
+  "compiled_input_guard_count": 177,
+  "new_runtime_logging_cases": 6,
+  "original_signal_cases": 4,
+  "original_backpressure_cases": 2,
+  "cli_sha256": "6cc828f3769d1ebd4c2e7b566707b7788f107151bc21155843c315a818b8b474",
+  "notes": [
+    "No rebuild in the clean checkout: selected external ELF is from the actual dirty 723 gate above.",
+    "New 6 cases: startup refusals (7 internal steps), rotation/restart/cursors, follow INT, follow TERM, real 4096-byte stdout backpressure, real child RLIMIT_FSIZE EFBIG.",
+    "EFBIG preserves same inode/FD and a real 16-byte trailing fragment, actual virtual stopped resources zero, then actual wait exit 1, then two data EOF observations. Parent did not sample EOF before process exit.",
+    "38 new subprocess records contain only 11 actual /proc executable samples. 27 fast children have selected-argv/binary guards without a sampled executed ELF.",
+    "New source inventory 190 differs from 177 compilation inputs. Old signal inventory 14149 includes 13951 historical documentation paths; those are not current compilation inputs.",
+    "Original 4 signals and 2 backpressure runs retain their old evidence scope. Missing per-child ELF or raw wire in old backpressure is not reconstructed.",
+    "Only loopback memory virtual profiles, no helper or host USB/sysfs/kernel mutation. No hardware acceptance.",
+    "Two initial parser ID/module mistakes remain in original review artifacts; corrected method does not alter the actual runtime result.",
+    "Reviewer authored record/worker; independent raw/statistical method is not independent implementation."
+  ]
+}

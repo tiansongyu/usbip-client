@@ -1,0 +1,32 @@
+    Checking rustusb-logging v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-logging)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Checking rustusb-cli v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-cli)
+error: this `if` statement can be collapsed
+   --> crates/rustusb-cli/src/logs.rs:148:9
+    |
+148 | /         if let Some(status) = &page.status {
+149 | |             if !status.healthy {
+150 | |                 text.push_str("[operational logger unhealthy; USB cleanup is a separate result]\n");
+151 | |             }
+152 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+148 ~         if let Some(status) = &page.status
+149 ~             && !status.healthy {
+150 |                 text.push_str("[operational logger unhealthy; USB cleanup is a separate result]\n");
+151 ~             }
+    |
+
+error: could not compile `rustusb-cli` (bin "rustusb") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `rustusb-cli` (bin "rustusb" test) due to 1 previous error

@@ -1,0 +1,212 @@
+--- initial-ab3fb0f.py
++++ revision2-c876cf0.py
+@@ -45,6 +45,11 @@
+ def require(condition, message):
+     if not condition:
+         raise RuntimeError(message)
++
++
++def error_fact(error):
++    return {"type": type(error).__name__, "message": str(error),
++            "traceback": "".join(traceback.format_exception(type(error), error, error.__traceback__))}
+ 
+ 
+ def support():
+@@ -151,6 +156,8 @@
+         self.binary, self.evidence, self.util = binary, evidence, utility
+         self.children = []
+         self.client_sockets = []
++        self.collection_errors = []
++        self.primary_checkpoint_attempted = False
+         self.env = dict(os.environ, RUST_LOG="debug", RUST_BACKTRACE="0", LC_ALL="C")
+ 
+     def spawn(self, name, arguments, stdout=subprocess.PIPE, ignore_xfsz=False):
+@@ -216,11 +223,27 @@
+         child["row"].setdefault("signals", []).append(fact)
+         return fact
+ 
++    def collect(self, operation, action):
++        """A secondary collection failure must never replace the primary test error."""
++        try:
++            return action()
++        except Exception as error:
++            self.collection_errors.append({"operation": operation, **error_fact(error)})
++            return None
++
++    def primary_checkpoint(self, summary):
++        if not self.primary_checkpoint_attempted:
++            self.primary_checkpoint_attempted = True
++            self.collect("primary-failure-checkpoint", lambda: save(
++                self.evidence / "primary-failure.json", summary))
++
+     def finalize(self):
+         failures = []
+         for child in self.children:
+             process = child["process"]
+-            if process.poll() is None:
++            name = child["row"]["name"]
++            alive = self.collect(name + ":poll-before-cleanup", lambda: process.poll() is None)
++            if alive:
+                 child["row"]["forced_cleanup"] = True
+                 failures.append(child["row"]["name"])
+                 try:
+@@ -229,25 +252,60 @@
+                     # Popen still owns this unreaped child. This emergency path
+                     # never counts as the cooperative outcome being tested.
+                     child["row"]["emergency_identity_error"] = str(error)
+-                    process.kill()
+-                try:
+-                    self.wait(child, 3)
+-                except Exception as error:
+-                    child["row"]["emergency_wait_error"] = str(error)
++                    self.collection_errors.append({"operation": name + ":emergency-signal-identity", **error_fact(error)})
++                    self.collect(name + ":emergency-kill", process.kill)
++                self.collect(name + ":emergency-wait", lambda: self.wait(child, 3))
+             if child["output"] is not None:
+-                child["output"].raw.close()
+-                save(child["directory"] / "stdout-events.json", child["output"].events)
++                self.collect(name + ":close-stdout-artifact", child["output"].raw.close)
++                self.collect(name + ":save-stdout-events", lambda: save(
++                    child["directory"] / "stdout-events.json", child["output"].events))
+             if "protocol" in child:
+-                save(child["directory"] / "protocol.json", child["protocol"])
+-            for stream in [process.stdin, process.stdout]:
+-                if stream and not stream.closed:
+-                    stream.close()
+-            child["stderr"].close()
+-            child["row"]["returncode"] = process.poll()
+-            save(child["directory"] / "process.json", child["row"])
+-        for stream in self.client_sockets:
+-            stream.close()
++                self.collect(name + ":save-protocol", lambda: save(child["directory"] / "protocol.json", child["protocol"]))
++            for label, stream in [("stdin", process.stdin), ("stdout", process.stdout)]:
++                if stream is not None:
++                    self.collect(name + ":close-" + label, stream.close)
++            self.collect(name + ":close-stderr", child["stderr"].close)
++            child["row"]["returncode"] = self.collect(name + ":poll-final", process.poll)
++            self.collect(name + ":save-process", lambda: save(child["directory"] / "process.json", child["row"]))
++        for index, stream in enumerate(self.client_sockets):
++            self.collect(f"client-socket-{index}:close", stream.close)
+         return failures
++
++    def archive_final(self, store, destination):
++        """Keep collecting other original files even if one source/copy fails."""
++        self.collect(str(destination) + ":mkdir", destination.mkdir)
++        paths = self.collect(str(store) + ":list", lambda: sorted(store.iterdir()))
++        rows = []
++        for path in paths or []:
++            def copy_one():
++                require(path.is_file() and not path.is_symlink(), "unexpected nonregular log artifact")
++                data = path.read_bytes()
++                (destination / path.name).write_bytes(data)
++                return {**metadata(path), "archived": path.name, "sha256": hashlib.sha256(data).hexdigest()}
++            row = self.collect(str(path) + ":archive-original", copy_one)
++            if row is not None:
++                rows.append(row)
++        self.collect(str(destination) + ":save-metadata", lambda: save(destination / "original-metadata.json", rows))
++
++    def final_summary(self, summary):
++        """Attempt the requested report, with a fresh /tmp fallback if its write fails."""
++        path = self.evidence / "summary.json"
++        for fallback in [False, True]:
++            try:
++                if fallback:
++                    summary["result"] = "FAIL"
++                    descriptor, filename = tempfile.mkstemp(prefix="rustusb-process-logging-summary-failure-", suffix=".json")
++                    os.close(descriptor)
++                    path = Path(filename)
++                summary["summary_destination"] = str(path)
++                save(path, summary)
++                return path, sha(path)
++            except Exception as error:
++                self.collection_errors.append({"operation": str(path) + ":save-final-summary", **error_fact(error)})
++        # Neither filesystem accepted a report. Preserve the original primary
++        # error and every collection error in the caller's captured stderr.
++        print(json.dumps(summary, sort_keys=True), file=sys.stderr, flush=True)
++        return None, None
+ 
+ 
+ class Virtual:
+@@ -572,7 +630,8 @@
+     evidence.mkdir(parents=True, exist_ok=False)
+     utility = support()
+     run = Run(binary, evidence, utility)
+-    summary = {"schema_version": 1, "result": "FAIL", "command": sys.argv, "python": sys.version,
++    summary = {"schema_version": 1, "result": "FAIL", "completed": False,
++               "collection_errors": run.collection_errors, "command": sys.argv, "python": sys.version,
+                "uid": os.getuid(), "host": list(os.uname()), "cases": [],
+                "scope": "actual logging subprocesses and loopback virtual memory devices; no host USB/root/helper/kernel mutation",
+                "build": "external prebuilt executable; this runner never builds",
+@@ -601,36 +660,56 @@
+             try:
+                 case["facts"] = action()
+                 case["result"] = "PASS"
++            except Exception as error:
++                case["error"] = error_fact(error)
++                summary.setdefault("error", case["error"])
++                run.primary_checkpoint(summary)
++                raise
+             finally:
+                 case["completed_monotonic_ns"] = time.monotonic_ns()
+-                save(evidence / (name + ".json"), case)
++                run.collect(name + ":save-case", lambda: save(evidence / (name + ".json"), case))
+         summary["result"] = "PASS"
+     except Exception as error:
+-        summary["error"] = {"type": type(error).__name__, "message": str(error), "traceback": traceback.format_exc()}
++        summary.setdefault("error", error_fact(error))
++        run.primary_checkpoint(summary)
+     finally:
+-        forced = run.finalize()
++        run.collect("pre-cleanup-checkpoint", lambda: save(evidence / "pre-cleanup-summary.json", summary))
++        forced = run.collect("finalize-children", run.finalize)
+         summary["forced_cleanup"] = forced
+-        if forced:
++        if forced or forced is None:
+             summary["result"] = "FAIL"
+-        summary["sources_after"] = sources()
+-        summary["binary_after"] = binary_receipt(binary)
+-        summary["source_unchanged"] = summary.get("sources_before") == summary["sources_after"]
+-        summary["binary_unchanged"] = summary.get("binary_before") == summary["binary_after"]
++        summary["sources_after"] = run.collect("sources-after", sources)
++        summary["binary_after"] = run.collect("binary-after", lambda: binary_receipt(binary))
++        summary["source_unchanged"] = bool(summary["sources_after"]) and summary.get("sources_before") == summary["sources_after"]
++        summary["binary_unchanged"] = bool(summary["binary_after"]) and summary.get("binary_before") == summary["binary_after"]
+         if not summary["source_unchanged"] or not summary["binary_unchanged"]:
+             summary["result"] = "FAIL"
+         if base is not None:
+             # Retain every original, including failure tails. Never delete a
+             # failed store or rewrite it to make a later run pass.
+-            for store in sorted(base.iterdir()):
+-                if store.is_dir() and not store.is_symlink():
++            stores = run.collect("private-stores:list", lambda: sorted(base.iterdir()))
++            for store in stores or []:
++                is_directory = run.collect(str(store) + ":classify", lambda: store.is_dir() and not store.is_symlink())
++                if is_directory:
+                     destination = evidence / ("final-store-" + store.name)
+-                    if not destination.exists():
+-                        archive_store(store, destination)
++                    run.collect(str(store) + ":archive-final-store", lambda: run.archive_final(store, destination))
+         summary["children"] = [child["row"] for child in run.children]
+-        summary["artifacts"] = [{"path": str(path.relative_to(evidence)), "bytes": path.stat().st_size,
+-                                 "sha256": sha(path)} for path in sorted(evidence.rglob("*")) if path.is_file()]
+-        save(evidence / "summary.json", summary)
+-    print(json.dumps({"result": summary["result"], "evidence": str(evidence), "sha256": sha(evidence / "summary.json")}))
++        summary["artifacts"] = []
++        artifacts = run.collect("artifacts:list", lambda: sorted(evidence.rglob("*")))
++        for path in artifacts or []:
++            def artifact():
++                if path.is_file():
++                    return {"path": str(path.relative_to(evidence)), "bytes": path.stat().st_size, "sha256": sha(path)}
++                return None
++            value = run.collect(str(path) + ":artifact-hash", artifact)
++            if value is not None:
++                summary["artifacts"].append(value)
++        if run.collection_errors:
++            summary["result"] = "FAIL"
++        summary["completed"] = True
++        report_path, report_sha = run.final_summary(summary)
++    print(json.dumps({"result": summary["result"], "evidence": str(evidence),
++                      "summary": str(report_path) if report_path else None, "sha256": report_sha}))
+     return 0 if summary["result"] == "PASS" else 1
+ 
+ 

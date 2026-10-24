@@ -1,0 +1,53 @@
+{
+  "result": "PASS",
+  "runs": [
+    {
+      "name": "logging",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rustusb-logging",
+        "--lib",
+        "--offline",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "inputs_unchanged": true
+    },
+    {
+      "name": "service",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "rustusb-service",
+        "--all-features",
+        "--lib",
+        "--offline",
+        "logging",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "inputs_unchanged": true
+    },
+    {
+      "name": "cli-check",
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "rustusb-cli",
+        "--all-features",
+        "--all-targets",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "inputs_unchanged": true
+    }
+  ],
+  "input_count": 177,
+  "inputs_unchanged": true
+}

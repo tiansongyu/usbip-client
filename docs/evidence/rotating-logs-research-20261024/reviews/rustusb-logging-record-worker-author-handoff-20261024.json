@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "kind": "source_frozen_author_handoff_not_acceptance",
+  "date": "2026-10-24",
+  "head_observed": "48a4b013fceb4493cf07c10cac999b8c41f76dae",
+  "files": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/record.rs",
+      "bytes": 13165,
+      "sha256": "bd5097db750caa66ee8a64ba43a1547572bdb1ff8006313b4e57af90f44c2b70",
+      "tests": 3
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+      "bytes": 43133,
+      "sha256": "e4213d8c2e05ab2badc8d8c4b36c1399f0154e29f84465388fafbb126631e214",
+      "tests": 4
+    }
+  ],
+  "owned_scope": [
+    "crates/rustusb-logging/src/record.rs",
+    "crates/rustusb-logging/src/worker.rs"
+  ],
+  "api": [
+    "LogRecord::validate/encode_line/format_human",
+    "initialize(Option<Options>,json_console)->Result<LogOwner>",
+    "LogOwner::open(Options)->Result<LogOwner> without installing global subscriber",
+    "LogOwner::monitor()->Option<LogMonitor>; shutdown(self)->Result<ShutdownReport>; Drop joins",
+    "LogMonitor::audit(AuditProjection) nonblocking I/O-free metadata admission",
+    "LogMonitor::status()->LogStatus; read(ReadFilter,Option<Cursor>,u8) async ->Result<LogPage>"
+  ],
+  "implementation": [
+    "typed strict validation and static human messages; no unapproved Debug/Error formatting; only closed code/failure tokens/numeric/bool fields persisted",
+    "file-only typed layer, legacy no-file stderr with original ANSI disabled; weak layer/monitor owns no FD",
+    "sequence allocation and try_send ordered by short metadata-only mutex, validation/MAX-sequence line sizing outside lock; no synthetic contention loss",
+    "bounded256 writer queue with visible loss and per-record actual Storage.append sync accounting; no USB/WAL proof implied",
+    "two fixed reader threads plus two waiting requests; cancellation does not cancel actual read; all readers join before final writer Stopped observation",
+    "actual sink identity/error failure latched; shutdown closes admissions, drains and joins; Drop never detaches; permanently blocked filesystem may block outer join"
+  ],
+  "authored_tests": [
+    "whole-line actual DTO round trip and safe human failure",
+    "wrong target/control text/scalar type refusal",
+    "stopped health cannot contradict loss or counters",
+    "real typed tracing layer secret/debug-format counter plus stored page check",
+    "two actual held reader workers remain occupied after async cancellation, only two queued, fifth Busy",
+    "actual held writer and queue256 saturation, loss visible, same owner drain/join after release",
+    "real directory replacement produces actual Storage failure and failed shutdown"
+  ],
+  "validation": {
+    "rustfmt_owned_two_files": "PASS, source formatting only",
+    "cargo_or_builds": false,
+    "tests_executed": false,
+    "qemu_or_usb": false,
+    "git_writes_or_commits": false
+  },
+  "scope_limits": [
+    "source-only until root unified compilation and actual tests",
+    "private hooks only cfg(test), gate before same real storage call; not USB/kernel evidence",
+    "Storage::fixture test anchor only inside logging crate; publicopen security not relaxed",
+    "no diagnostic export/new audit authority/USB session schema changes"
+  ],
+  "initial_source_preserved": "/tmp/rustusb-logging-worker-initial-20261024/ (source-only initial admission try_lock + serialization; changed after root review, not a failed test artifact)"
+}

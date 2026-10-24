@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "read_only_proposed_design_review",
+  "source": {
+    "path": "/home/ubuntu/github/usbip-client/docs/research/rotating-logs-design.md",
+    "bytes": 15013,
+    "sha256": "25363380a14106a198495570432920dfd0373f45c7bc9f4eb0f5a3e7881c5a31",
+    "head": "bd6e08be8b304767452dc98b6606e2e65448c2da"
+  },
+  "status": "one interface clarification required before claiming independent file progress/bounded console exit",
+  "accepted": [
+    {
+      "area": "startup flags rather than new manifest",
+      "reason": "broker process UID is existing trusted whole-pool owner; no RPC path/flags and no profile/endpoint/pool override",
+      "line": 25
+    },
+    {
+      "area": "typed async file and console",
+      "reason": "producer never formats unapproved values or blocks on output; legacy stderr-only and machine stdout contracts retained",
+      "line": 26
+    },
+    {
+      "area": "reader worker ownership",
+      "reason": "at most two actual active workers plus finite queue; timeout/disconnect does not return permit before actual operation completion; LogOwner joins",
+      "line": 61
+    },
+    {
+      "area": "WAL separation",
+      "reason": "only committed audit projection, never business acknowledgement or cleanup proof"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "contract clarification before implementation",
+      "area": "console blocking versus file progress",
+      "line": 26,
+      "detail": "If a single blocking writer performs both file and stderr writes serially, a full stderr pipe can stop file logging and its shutdown join. Asynchronous admission alone does not prove independent file progress or bounded process exit. Do not hold the file access lock across console output.",
+      "minimum_resolution": "Use an independently owned bounded console path with explicit saturation/failure status, or explicitly document coupled output and unbounded stderr hard-block limitation. Device cleanup must still run before all log-owner joins."
+    },
+    {
+      "severity": "implementation guard",
+      "area": "synchronous standalone read API",
+      "line": 80,
+      "detail": "CLI must call read_directory through an actual owned blocking task; service must use monitor reader workers, never a direct filesystem call in an async RPC handler."
+    }
+  ],
+  "scope": {
+    "repo_modified": false,
+    "compiled_or_run_programs": false,
+    "cargo_qemu_usb": false,
+    "only_tmp_report_written": true,
+    "design_not_runtime_acceptance": true
+  }
+}

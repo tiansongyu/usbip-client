@@ -1,0 +1,58 @@
+{
+  "source": "/home/ubuntu/github/usbip-client/scripts/test-process-logging.py",
+  "bytes": 33317,
+  "sha256": "ab3fb0fbc2a7d42ecf821d5c81820443ecde3f7d2c2cf8c3263ba4c7d8124377",
+  "mode": "0o755",
+  "static": {
+    "ast": true,
+    "python_bytecode": true,
+    "diffcheck_exit": 0
+  },
+  "executed_cli": false,
+  "executed_cargo": false,
+  "executed_qemu": false,
+  "command": [
+    "python3",
+    "scripts/test-process-logging.py",
+    "--binary",
+    "/ABSOLUTE/PREBUILT/rustusb",
+    "--evidence",
+    "/tmp/NEW-EVIDENCE-DIRECTORY"
+  ],
+  "scope": "ordinary UID real subprocess software verification; loopback memory USB/IP only; no physical USB/helper/modules/network configuration",
+  "cases": [
+    "seven startup/flags/trusted-directory refusals",
+    "same-process byte rotation plus three restarts, strict raw NDJSON and actual CLI cursor pagination/retention gap",
+    "follow SIGINT with original two pending virtual leases unchanged",
+    "follow SIGTERM with original two pending virtual leases unchanged",
+    "actual 4096-byte stdout pipe blocked writer, no drain, real five-second observer deadline",
+    "same-process RLIMIT_FSIZE after actual ready/import/configure/two pending IN, +16B partial record then EFBIG; exact selected FD inode; TERM/stopped resources0+two data EOF then distinct logger Exit1"
+  ],
+  "reused_support": {
+    "path": "scripts/test-server-signals.py",
+    "sha256": "bd8d3c40f174aea0a1dee208a81c0234f01c161e66500766c21b11b328b8fce9",
+    "functions": "Output, fixed-profile IMPORT/configure/SUBMIT, pending/released snapshot predicates, child identity/signal helpers; not run_case/main"
+  },
+  "bounds": {
+    "wire_or_control_seconds": 3,
+    "startup_seconds": 5,
+    "exit_seconds": 8,
+    "observer_deadline_expected_seconds": [
+      4,
+      8
+    ],
+    "stdout_pipe_bytes": 4096,
+    "segment_bytes": 4096,
+    "retained_segments": 2
+  },
+  "limits": [
+    "all runtime cases unexecuted; root owns build/run",
+    "fast startup rejection child may exit before /proc executable sampled; explicitly reports selected argv/binary guards only",
+    "private directories are under existing HOME/.cache; evidence is independent and originals retained",
+    "no authentication/TLS/helper/rootproof/kernel USB/hardware claim",
+    "worker queue saturation/cancellation accounting has independent crate tests; this runner does not replace them"
+  ],
+  "files_touched": [
+    "scripts/test-process-logging.py"
+  ]
+}

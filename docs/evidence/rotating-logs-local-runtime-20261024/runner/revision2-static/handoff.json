@@ -1,0 +1,52 @@
+{
+  "revision": 2,
+  "scope": "only runner failure preservation/collection cleanup; runtime cases and assertions remain unexecuted",
+  "source": {
+    "path": "/home/ubuntu/github/usbip-client/scripts/test-process-logging.py",
+    "bytes": 38064,
+    "sha256": "c876cf054b9b37d36df71ec3b2854e467755c45326dfe0c302b8ca965c177bc1",
+    "mode": "0o755"
+  },
+  "previous_source": {
+    "path": "/tmp/rustusb-process-logging-runner-author-20261024/test-process-logging.py",
+    "bytes": 33317,
+    "sha256": "ab3fb0fbc2a7d42ecf821d5c81820443ecde3f7d2c2cf8c3263ba4c7d8124377",
+    "preserved": true
+  },
+  "previous_handoff": "/tmp/rustusb-process-logging-runner-author-20261024/handoff.json",
+  "changes": [
+    "first case failure captured before case-finally artifact writes",
+    "primary-failure.json and pre-cleanup-summary.json checkpoints",
+    "child close/save/poll/kill/wait and client socket operations independently caught into collection_errors",
+    "each final original copy/hash and source/binary guard independently collected",
+    "every collection failure makes final result FAIL without replacing primary error",
+    "summary.json attempted after all collection; fresh /tmp fallback if requested report fails; stderr last resort if both filesystems fail"
+  ],
+  "static": {
+    "ast": true,
+    "bytecode_compile": true,
+    "diffcheck_exit": 0
+  },
+  "constructed_fault_fixture": {
+    "path": "/tmp/rustusb-process-logging-runner-author-revision2-20261024/check_cleanup_faults.py",
+    "report": "/tmp/rustusb-process-logging-runner-author-revision2-20261024/cleanup-fixture-report.json",
+    "diagnostic_checks": 11,
+    "passed": true,
+    "subprocesses_executed": 0
+  },
+  "not_executed": [
+    "CLI",
+    "Cargo",
+    "QEMU",
+    "physical USB"
+  ],
+  "untouched_behavior": [
+    "limits/deadlines",
+    "actual RLIMIT_FSIZE +16 and errno27 requirement",
+    "original pending/cleanup/data EOF predicates",
+    "six case definitions and no-drain output requirement"
+  ],
+  "files_touched": [
+    "scripts/test-process-logging.py"
+  ]
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "process-logging",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/test-process-logging.py",
+      "--binary",
+      "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "--evidence",
+      "/tmp/rustusb-logging-local-runtime-first-20261024/logging"
+    ],
+    "exit_code": 0,
+    "inputs_stable": true,
+    "binary_stable": true,
+    "head_guard": true,
+    "clean_guard": true
+  },
+  {
+    "name": "signals",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/test-server-signals.py",
+      "--binary",
+      "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "--skip-build",
+      "--evidence",
+      "/tmp/rustusb-logging-local-runtime-first-20261024/signals"
+    ],
+    "exit_code": 0,
+    "inputs_stable": true,
+    "binary_stable": true,
+    "head_guard": true,
+    "clean_guard": true
+  },
+  {
+    "name": "backpressure",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/test-virtual-backpressure.py",
+      "--binary",
+      "/home/ubuntu/github/usbip-client/target/release/rustusb"
+    ],
+    "exit_code": 0,
+    "inputs_stable": true,
+    "binary_stable": true,
+    "head_guard": true,
+    "clean_guard": true
+  }
+]

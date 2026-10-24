@@ -1,0 +1,443 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-24",
+  "kind": "read_only_research_and_proposed_contract",
+  "head_observed": "bd6e08be8b304767452dc98b6606e2e65448c2da",
+  "git_status_observed": [
+    " M docs/work-log.md"
+  ],
+  "scope": {
+    "implemented": false,
+    "acceptance_result": false,
+    "repo_edits": false,
+    "cargo_or_builds": false,
+    "tests_or_child_programs_run": false,
+    "qemu_or_host_usb_changes": false,
+    "new_dependency_added": false,
+    "files_written_only_under": "/tmp/rustusb-logging-research-20261024",
+    "diagnostic_export": "explicit follow-up, not included in recommended implementation slice",
+    "prior_evidence": "no reassignment of prior software/QEMU/CI results"
+  },
+  "recommendation": {
+    "path": "/tmp/rustusb-logging-research-20261024/recommendation.md",
+    "bytes": 17446,
+    "sha256": "f45e9bc93ea91d29cec8a4671cc273a84bc0c0cdfd0b328996edcd83c1d08c8d"
+  },
+  "minimal_contract": {
+    "crate": "implemented rustusb-logging shared by CLI/helper/service; no filesystem in core and no daemon/service cycle",
+    "compatibility": "default stderr stays; trusted opt-in private directory. Existing machine stdout remains logging-free.",
+    "commands": [
+      "rustusb logs --agent-config /etc/rustusb/agent.json --profile PROFILE [--after CURSOR] [--json] [--follow]",
+      "rustusb logs --helper (root-only fixed helper store, no arbitrary path RPC)"
+    ],
+    "dto": [
+      "LogRecordV1",
+      "LogStatus",
+      "LogPage",
+      "ReadLogs",
+      "opaque Cursor",
+      "LogStoreOwner::shutdown -> actual writer result"
+    ],
+    "defaults": {
+      "record_bytes": 2048,
+      "queue_records": 256,
+      "segment_bytes": 4194304,
+      "total_segments": 8,
+      "page_records": 16,
+      "page_output_bytes": 32768,
+      "page_scan_bytes": 262144,
+      "read_concurrency": 2,
+      "directory_mode": "0700",
+      "file_mode": "0600"
+    },
+    "redaction": "Allowlisted typed event codes and scalar fields only; static Failure category plus optional errno; never persist arbitrary tracing message/Debug/Display, Device, raw USB, keys/certs/config or subprocess stderr. Human rendering from same typed records.",
+    "audit": "Mirror typed AuditEvent only after successful authoritative Store commit, preserve audit_seq/epoch; gaps allowed; never ACK admission or replace state WAL/proof.",
+    "restart": "Exclusive checked owner; validate bounded old segments; fresh epoch and segment. Preserve torn old tail as reported gap, no append onto partial JSON; runtime failure remains unhealthy without silent auto reopen.",
+    "cursor": "Generated segment UUID + complete-record offset, no paths and no authorization capability; current OS UID/profile authorization applies before each read; retention/replacement produces gap/refusal.",
+    "failure_shutdown": "bounded nonblocking producer; worker real I/O errors visible; actual USB cleanup and required state WAL first, then drain/join writer. Hard-blocked filesystem cannot be cancelled/proven joined. Logger status independent from journal_healthy and USB cleanup."
+  },
+  "existing_versions": {
+    "rustix": "1.1.5",
+    "serde": "1.0.229",
+    "serde_json": "1.0.154",
+    "tokio": "1.54.1",
+    "tracing": "0.1.44",
+    "tracing-subscriber": "0.3.23"
+  },
+  "source_inputs": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/AGENTS.md",
+      "bytes": 9596,
+      "sha256": "235935e73abbeb2cc1d2ce0098f0d3b8691052baa950784c9549b6f6d1433eca",
+      "repo_path": "AGENTS.md",
+      "references": [
+        "entire file: read-only development and evidence boundary"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/.agents/skills/rustusb-development/SKILL.md",
+      "bytes": 6969,
+      "sha256": "2d7e201e9706786ac1a37b825c27467e9c67c2454d0f52a1d604ddb2b78afe4b",
+      "repo_path": ".agents/skills/rustusb-development/SKILL.md",
+      "references": [
+        "entire skill: source/evidence/trust-boundary workflow"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/docs/requirements.md",
+      "bytes": 19823,
+      "sha256": "b7d168e31c7eadfa9c829c25da7ddcda6376815baabcd50d9cc5285b6bb67c2c",
+      "repo_path": "docs/requirements.md",
+      "references": [
+        "392-428: logging/audit/rotation/redaction/export requirement"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/docs/architecture.md",
+      "bytes": 27173,
+      "sha256": "c0cd32f975700e97ae6ac43a8d1a8bf79c3baa36d49dabf0199cb2246e3c3fd4",
+      "repo_path": "docs/architecture.md",
+      "references": [
+        "current crate and helper/application boundaries"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/docs/security.md",
+      "bytes": 28177,
+      "sha256": "6bbcf9267a0b4034c431f5e3f41c2e6d59b4f59a63e588e2a41bebf23d9b2671",
+      "repo_path": "docs/security.md",
+      "references": [
+        "125-129: no USB payload/key/content logging"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/docs/application-service-guide.md",
+      "bytes": 12122,
+      "sha256": "0e3815faaeb4dc705c92bef4628cc969574e51481a6326450d3ebe867abc9e72",
+      "repo_path": "docs/application-service-guide.md",
+      "references": [
+        "current agent audit/authorization/retention behavior"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/main.rs",
+      "bytes": 25035,
+      "sha256": "9d65ba870ee414a60d87f627bf783ecc504b0285b86d8c3edc3702a7d4b9f7b2",
+      "repo_path": "crates/rustusb-cli/src/main.rs",
+      "references": [
+        "45-56: global logging flags",
+        "539-559: synchronous stderr subscriber",
+        "592-597: final error formatting"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/main.rs",
+      "bytes": 1468,
+      "sha256": "51ca14efc5fb71526eb5500299a92f36aa817a8f472b8be26f5b8f3197e18694",
+      "repo_path": "crates/rustusb-daemon/src/main.rs",
+      "references": [
+        "25-43: stderr subscriber and final failure"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/diagnostics.rs",
+      "bytes": 13557,
+      "sha256": "d42c145ff152ac0724d810db1f95fe368def10c03852de631f17d68b67d67a72",
+      "repo_path": "crates/rustusb-daemon/src/diagnostics.rs",
+      "references": [
+        "33-93: bounded safe helper diagnostics"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/lib.rs",
+      "bytes": 40648,
+      "sha256": "14aea05b3fe18a67ee5448531cf89811d87de9160e13a97e8e989d8350f27eda",
+      "repo_path": "crates/rustusb-daemon/src/lib.rs",
+      "references": [
+        "416-455: sanitized Response failure projection"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-native/src/diagnostics.rs",
+      "bytes": 43702,
+      "sha256": "04d29734bd2164fc3cf3eef9e7a1e451fd6b935eedd00687d30f490b34c3113d",
+      "repo_path": "crates/rustusb-native/src/diagnostics.rs",
+      "references": [
+        "20-27,65-127: fixed safe native doctor DTO"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-native/src/lib.rs",
+      "bytes": 80860,
+      "sha256": "23891cef2654955b1e8a193a7c0294538522f43fb9ae9571dae5ce55a794af2e",
+      "repo_path": "crates/rustusb-native/src/lib.rs",
+      "references": [
+        "532-562: bounded subprocess stdout/stderr consumption"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-core/src/lib.rs",
+      "bytes": 13426,
+      "sha256": "214ad243482dce59e29b9631d304c70aafb8668a481d1a95dec421cf4701cc43",
+      "repo_path": "crates/rustusb-core/src/lib.rs",
+      "references": [
+        "14-40: arbitrary string error context",
+        "208-241: Device sensitive strings/serial"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/config.rs",
+      "bytes": 12508,
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd",
+      "repo_path": "crates/rustusb-service/src/config.rs",
+      "references": [
+        "15-24,154-176: explicit actions and OS UID/profile authorization"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/fs.rs",
+      "bytes": 5556,
+      "sha256": "83315132168353c37421f0f1e1e2c4391316fcd6fd19810ece90bb51fa1b0829",
+      "repo_path": "crates/rustusb-service/src/fs.rs",
+      "references": [
+        "28-151: checked directories/files and lifetime lock"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/model.rs",
+      "bytes": 8995,
+      "sha256": "e1c5009bd0dffe71442eee564b68e064e173dde2b1b51c20de3ca202a958c095",
+      "repo_path": "crates/rustusb-service/src/model.rs",
+      "references": [
+        "42-77: typed Failure",
+        "218-240: typed AuditEvent"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/store.rs",
+      "bytes": 21694,
+      "sha256": "21275ae843c72624a5ac3ae099aa47f2b8cc2277116e85dd82e3bc6506f988cb",
+      "repo_path": "crates/rustusb-service/src/store.rs",
+      "references": [
+        "7-13: disk/audit bounds",
+        "123-157: audit ring",
+        "332-445: checked atomic Store commit"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/runtime.rs",
+      "bytes": 47297,
+      "sha256": "2f17f75fe7ac7276711c0bccb75617e76a43f1129433076d77bb4e6b119dbf2d",
+      "repo_path": "crates/rustusb-service/src/runtime.rs",
+      "references": [
+        "292-320: actual owned persist and unhealthy status",
+        "577-621: authorized audit pages"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/rpc.rs",
+      "bytes": 6196,
+      "sha256": "07408a3c1a6793662e6bd40ba5d706ae30cad030e0efdc2f477e03ece35e6a1f",
+      "repo_path": "crates/rustusb-service/src/rpc.rs",
+      "references": [
+        "request/reply DTOs: fixed action/profile control, no arbitrary file API"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/ipc.rs",
+      "bytes": 15307,
+      "sha256": "7bfa1dc5834fb8c4c79061a7a609719aeb9173e6cb0e51c9d087184e4fac2056",
+      "repo_path": "crates/rustusb-service/src/ipc.rs",
+      "references": [
+        "25-26: 64KiB frame and bounded deadline"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-transport/src/quiet.rs",
+      "bytes": 2286,
+      "sha256": "4fb83430838ab28b6ba1037349295890655a67988485680777ec2c358708ca52",
+      "repo_path": "crates/rustusb-transport/src/quiet.rs",
+      "references": [
+        "entire file: h2 silence boundary"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-transport/src/link/quiet_tests.rs",
+      "bytes": 4048,
+      "sha256": "56808039fc432ccc0d69bbe69460de7a82168a6e13a1c269448780d0a8ee4b1a",
+      "repo_path": "crates/rustusb-transport/src/link/quiet_tests.rs",
+      "references": [
+        "negative secret sentinel coverage source only; not rerun"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/Cargo.toml",
+      "bytes": 1643,
+      "sha256": "8d98f3211828e32a3a097e45d3078fb010936b3a87ee105a069907027bf7c742",
+      "repo_path": "Cargo.toml",
+      "references": [
+        "workspace dependencies"
+      ]
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/Cargo.lock",
+      "bytes": 36795,
+      "sha256": "aecdd28d490d8f4414141b5a0328063c02a3ad82edaadfaaa8fd282f399a6e4f",
+      "repo_path": "Cargo.lock",
+      "references": [
+        "fixed existing dependency versions"
+      ]
+    }
+  ],
+  "upstream": {
+    "tracing_appender": {
+      "version": "0.2.5",
+      "commit": "53e14901f484a455d6edd59474ee87fd2f5f6e54",
+      "license": "MIT",
+      "official_ref": "https://api.github.com/repos/tokio-rs/tracing/git/ref/tags/tracing-appender-0.2.5",
+      "fixed_commit_equivalence": {
+        "path": "/tmp/rustusb-logging-research-20261024/fixed-commit-check.json",
+        "bytes": 846,
+        "sha256": "2b43877e06a2b7834dfa329b71d5fb10b7a90d5eb7f463881f0f9ee0b15ccb6c"
+      },
+      "source_manifest": {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream-provenance.json",
+        "bytes": 2354,
+        "sha256": "4ecea099b2ec1748075801dfaf1dc9ea26cdcc8e6fbb8d42f5ce774707eceb55"
+      },
+      "findings": [
+        {
+          "source": "non_blocking.rs",
+          "lines": "67,238-255,282-300",
+          "fact": "128000-item default, count-not-byte queue, no-op flush, blocking/lossy producer choice; Drop lacks actual thread join and timeout can println to stdout"
+        },
+        {
+          "source": "worker.rs",
+          "lines": "30-103",
+          "fact": "ordinary writer errors not propagated as application health result"
+        },
+        {
+          "source": "rolling.rs",
+          "lines": "655-746,786-806",
+          "fact": "time/count rotation and ordinary path opens do not implement required byte/FD/security/error contract"
+        }
+      ]
+    },
+    "file_rotate": {
+      "version": "0.8.0",
+      "commit": "8ee371fd0e50d281e87d8a755aaeaa2c824f86b1",
+      "license": "MIT",
+      "crate_sha256": "6e8e2fa049328a1f3295991407a88585805d126dfaadf74b9fe8c194c730aafc",
+      "official_metadata": "https://crates.io/api/v1/crates/file-rotate/0.8.0",
+      "official_source": "https://docs.rs/file-rotate/0.8.0/src/file_rotate/lib.rs.html",
+      "source_manifest": {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-source-provenance.json",
+        "bytes": 1682,
+        "sha256": "82a81ddbfaee91a95468ca940bb28aac3ae046710f1cb23a3a761ab804b6b657"
+      },
+      "findings": [
+        {
+          "source": "src/lib.rs",
+          "lines": "403-425,478-485,706-728",
+          "fact": "constructor panic paths; open_file .ok -> None; absent file can still report successful Write/flush; byte modes alone do not ensure whole JSON record bound"
+        }
+      ]
+    },
+    "all_downloaded_artifacts": [
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-.cargo_vcs_info.json",
+        "bytes": 94,
+        "sha256": "fcd1a7ec75df6c605c52a1fa95de1df3d62668276c371997fcaa079055763744"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-Cargo.toml",
+        "bytes": 1427,
+        "sha256": "d1c084b6c14e267ac70a61e54cd80af1a6d55be1d8169a49741df6240f3b257d"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-LICENSE",
+        "bytes": 1070,
+        "sha256": "2b716aac57758c79a78126d3b78ead021e796e0746e4406d5f6142e8aba70271"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-metadata.json",
+        "bytes": 1570,
+        "sha256": "ac270c2dd338b336d27e6be6fc791225ad10711d92840f08c77d958987367e98"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-source-provenance.json",
+        "bytes": 1682,
+        "sha256": "82a81ddbfaee91a95468ca940bb28aac3ae046710f1cb23a3a761ab804b6b657"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-src_lib.rs",
+        "bytes": 26195,
+        "sha256": "5d54e1dff8e9620367501823ce1d02b9acaf891dd974d07c47ef07f1dfb37630"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0-src_suffix.rs",
+        "bytes": 15635,
+        "sha256": "16c028849e5107dc7460f5cbac1077b2df87ca2bff2d97e886f941169adc8430"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/file-rotate-0.8.0.crate",
+        "bytes": 22483,
+        "sha256": "6e8e2fa049328a1f3295991407a88585805d126dfaadf74b9fe8c194c730aafc"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-LICENSE",
+        "bytes": 1062,
+        "sha256": "898b1ae9821e98daf8964c8d6c7f61641f5f5aa78ad500020771c0939ee0dea1"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-tag.json",
+        "bytes": 393,
+        "sha256": "e7d916539fddfffb04366889fc97b9e662c78aeed25e2a39514100ce7507a354"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-tracing-appender_Cargo.toml",
+        "bytes": 1099,
+        "sha256": "80f52d6b09a55b70a74b8f6328bcb216e476eedbab71435cee1e1cf109a2ad73"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-tracing-appender_src_non_blocking.rs",
+        "bytes": 17320,
+        "sha256": "160280130b31303e67b1a1e45f061fdc0d9a578074c83a17e995fddfb6f9bbd8"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-tracing-appender_src_rolling.rs",
+        "bytes": 49386,
+        "sha256": "340a878055bdef26bbe752a3cb831e5a76411c1e7dffad856c2c3706e36a61d3"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-tracing-appender_src_rolling_builder.rs",
+        "bytes": 9998,
+        "sha256": "3918cd7650dea916059375f673599a90b7e93a32383f2fb6a521e12114932743"
+      },
+      {
+        "path": "/tmp/rustusb-logging-research-20261024/upstream/tracing-appender-0.2.5-tracing-appender_src_worker.rs",
+        "bytes": 3242,
+        "sha256": "c510705d270a0a9560ebeb430ab48e25558bab6026f22dd81cbb93a263811e4e"
+      }
+    ],
+    "scope": "Official source/downloads only, no fetched code compiled or run; suitability findings are neither newly reproduced RustUSB failures nor library security advisories."
+  },
+  "required_validation": [
+    "real temp-FS rotation/torn-tail/lock/UID/mode/link/FIFO/replacement and writer-error tests",
+    "actual typed/tracing secret sentinel tests across file/read/machine stdout with existing quiet h2 coverage",
+    "held actual writer + full bounded queue cannot prevent actual software USB/network owner cleanup, then release and join same writer",
+    "real subprocess human/JSON/follow/backpressure/exit behavior; no logger bytes on stdout",
+    "actual IPC UID/profile/cursor denial with no resource effects",
+    "only focused installed privilege integration as needed; diagnostic export and unrelated old QA matrices not substituted for logging"
+  ],
+  "research_limitations": [
+    "No implementation acceptance or dynamic runtime behavior established by this task.",
+    "Arbitrary current Error Display is a gap for a future persistent formatter, not proof of a newly observed secret leak.",
+    "Storage hard blocking and SIGKILL can lose/process-delay logs; no cancellation/immutability/secure erasure claim.",
+    "Optional retention age and exact manifest schema require root design decision."
+  ],
+  "skills_used": [
+    "rustusb-development",
+    "writing-technical-design (research workflow only; explicit read-only scope overrides skill suggestions to create repository component skills)"
+  ]
+}
