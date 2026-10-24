@@ -1,0 +1,704 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "mustfix": [],
+  "scope": "Read-only documentation/source/installed-skill review. Reviewer authored logging storage and separate QEMU verifier; method review, not new runtime/hardware acceptance. Current validation document is a root-owned working draft and the new QEMU run is not judged here.",
+  "skills_used": [
+    {
+      "path": "/home/ubuntu/.agents/skills/technical-documentation/SKILL.md",
+      "bytes": 11492,
+      "sha256": "0b3f21ed2ef88f13ef346ac6624c293cbfb8a247fb447003a807b2cd2fb3f63c"
+    }
+  ],
+  "documents": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/docs/logging.md",
+      "bytes": 8170,
+      "sha256": "c81ab46d5219d362c805a330576d588aac9dc2863d35b49829f7e96297dec07c"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/README.md",
+      "bytes": 15430,
+      "sha256": "93272072fcbd25d4a6926b2ac59380304c862b21181b7c1345c98e14b77139ac"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/README.zh-CN.md",
+      "bytes": 13262,
+      "sha256": "edcabfd33149d66c255b0dc446df84509d66e0f5f51a085f525fe6a90c81fc09"
+    }
+  ],
+  "reviewed_sources": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/main.rs",
+      "bytes": 27788,
+      "sha256": "39def5a61a0947f9c5732274af82d0e810b1cbc9dcd639419b52f0a9b58eae47"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/logs.rs",
+      "bytes": 8193,
+      "sha256": "a62569e9b24f34f75a4c72f8125db96677fc4a1fc5d9785d2b2569a2beaabaf4"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/src/event_output.rs",
+      "bytes": 2827,
+      "sha256": "3822811b264269c7d4fea6ce7abf426ad83e4e0c52cc38ee94d4a4d67e20e08a"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-cli/Cargo.toml",
+      "bytes": 1186,
+      "sha256": "f6f17ff59f2dc2b13a995f9a79b22378e69e59470923d059ccc47dede3ccfd79"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-daemon/src/main.rs",
+      "bytes": 3816,
+      "sha256": "8f718266821ba4682a8fc2c7977c143a09f076dadeed7b5e628e9f6237a98ca6"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/ipc.rs",
+      "bytes": 18006,
+      "sha256": "8212569591d994e4fc78ca65023a4ced68468640c4b6d8bbc4059bbb7ff27ee8"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/runtime.rs",
+      "bytes": 51644,
+      "sha256": "0110e126eb0a8996f235b588055cd798884047c0d51fa84479fcd2fc1319e00c"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-service/src/config.rs",
+      "bytes": 12508,
+      "sha256": "f6b263648d618d4b8dbf38aa899e090fb781f6fd0a82b9bc262b02e7cd7e86bd"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/types.rs",
+      "bytes": 23052,
+      "sha256": "5bff0888ed9697ac7040f448f56a7c6e8d611f2a037791db3ede38e6afcbc287"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/worker.rs",
+      "bytes": 43133,
+      "sha256": "e4213d8c2e05ab2badc8d8c4b36c1399f0154e29f84465388fafbb126631e214"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/storage/linux.rs",
+      "bytes": 22897,
+      "sha256": "46abaeee1557cf7083de94f7b139192111a16c2c66d01901d685ac9796532f3d"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/storage/linux/reader.rs",
+      "bytes": 8072,
+      "sha256": "3c42998e86258d720514cd85e7fa6a24ad8943d7acf3b22c17fc0103164b922e"
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/crates/rustusb-logging/src/record.rs",
+      "bytes": 13165,
+      "sha256": "bd5097db750caa66ee8a64ba43a1547572bdb1ff8006313b4e57af90f44c2b70"
+    }
+  ],
+  "facts": [
+    {
+      "claim": "default CLI devices/logs directory commands and global JSON flag; agent mode needs Linux secure-transport",
+      "source": "cli/main.rs44-80, cli/logs.rs13-34,102-146; cli/Cargo.toml12-15",
+      "result": "matches guide commands and feature distinction"
+    },
+    {
+      "claim": "writer switches require log-directory; 4096..8388608 and retain2..16; defaults4MiB/8; conflicts log-json",
+      "source": "cli/main.rs56-67, logging/types.rs52-66; daemon/main.rs24-35",
+      "result": "matches guide;128MiB is segment payload ceiling, not filesystem metadata"
+    },
+    {
+      "claim": "protected owner/root ancestor chain, leaf0700, files0600/nlink1/regular/no symlink; owner or root local read",
+      "source": "logging/storage/linux.rs57-99,125-139; reader.rs78-102",
+      "result": "matches; directory exists before startup; empty reader creates no lock"
+    },
+    {
+      "claim": "nonroot broker role; Audit action before reader/history; exact profile audit plus caller-owned unscopedDenied",
+      "source": "service/ipc.rs115-121,222-248; logging/storage/linux/reader.rs38-55",
+      "result": "matches; root_admin expands unscoped Audit only, not generic diagnostics"
+    },
+    {
+      "claim": "postcommit mirror and no log failure rollback/WAL poisoning; typed audit independent of tracing filters",
+      "source": "service/runtime.rs306-340; logging/worker.rs241-249,477-515",
+      "result": "matches"
+    },
+    {
+      "claim": "finitepage16/scan256KiB/cursor progress and gap; local statusNone, agent live status",
+      "source": "cli/logs.rs26-34,148-224; logging/storage/linux/reader.rs108-212; worker read/status path",
+      "result": "matches; human/JSON/follow command shapes inspected, not executed"
+    },
+    {
+      "claim": "observer-only SIGINT/TERM, actual local blockingread join; remote admitted readers stayowned; output deadline",
+      "source": "cli/logs.rs60-93,118-145,180-226; cli/event_output.rs; worker.rs257-293",
+      "result": "matches; genuinely blocked FS may still delay exit"
+    },
+    {
+      "claim": "file-only sink, real USB/business work before sync loggerjoin; queue loss/error final exit is separate",
+      "source": "cli/main.rs557-620; daemon/main.rs38-107; logging/worker.rs302-472",
+      "result": "matches; no stderrtee, final fixed stderr diagnostic can still block"
+    },
+    {
+      "claim": "README723/177-input evidence, exact89efCI and historical23QEMU distinction",
+      "source": "prior completed /tmp/rustusb-logging-ci-89ef420-method-review-20261024/first/report.json plus root-owned current docs",
+      "result": "new log sections do not attribute pending new QEMU success; old1582 simulation remains separate"
+    }
+  ],
+  "nonblocking_precision_notes": [
+    {
+      "document": "docs/logging.md",
+      "text": "Root can also inspect administrative observations",
+      "clarification": "In agent mode root additionally sees unscoped typed Audit projections; generic process Diagnostic/Started/Stopped records remain excluded by ReadFilter::Audit. Directory mode remains the way to inspect all records. Existing profile-selection qualification is present."
+    },
+    {
+      "document": "docs/logging.md",
+      "text": "An observer cannot also enable a file writer in the directory it reads",
+      "clarification": "Actual CLI rejects --log-directory for every Logs command, even a different directory. The documented example is safe; the stricter universal prohibition could be stated for precision."
+    }
+  ],
+  "local_link_targets": [
+    {
+      "document": "docs/logging.md",
+      "target": "research/rotating-logs-design.md",
+      "file_exists": true
+    },
+    {
+      "document": "docs/logging.md",
+      "target": "../README.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "rust-toolchain.toml",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "LICENSE",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/roadmap.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/secure-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/native-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/compatibility.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "README.zh-CN.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "website/assets/usbip-flow.svg",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/native-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/native-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/logging.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/secure-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/application-service-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/data-link-health-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/data-link-health.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/rust-virtual-server.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/rust-physical-server.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/rotating-logs-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/prepare-recording-shutdown-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/data-link-health-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/shared-owner-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/secure-usbip-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/physical-driver-autorestore.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/physical-driver-autorestore-negatives.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/native-qemu-matrix.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/userspace-qemu.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/research/physical-driver-autorestore-negatives.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/data-link-health.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/roadmap.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/security.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/native-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/secure-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/application-service-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/data-link-health.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/logging.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/native-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/rust-virtual-server.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/rust-physical-server.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/compatibility.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/acceptance.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/testing.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/architecture.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/protocol.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/work-log.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/requirements.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "AGENTS.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": ".agents/skills/rustusb-development/SKILL.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/testing.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "LICENSE",
+      "file_exists": true
+    },
+    {
+      "document": "README.md",
+      "target": "docs/third-party.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "README.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/work-log.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/roadmap.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/secure-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/application-service-guide.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/data-link-health.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/logging.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/rotating-logs-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/prepare-recording-shutdown-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/data-link-health-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/shared-owner-validation.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/rust-virtual-server.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/userspace-qemu.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/rust-physical-server.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/usbfs-checked-release.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/evidence/publication-native-fixture-20261023.json",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/server-signal-shutdown.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/evidence/publication-server-signals-934358f-20261023.json",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/physical-crash-recovery.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/physical-journal-recovery.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/evidence/publication-journal-933e720-20261023.json",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/physical-driver-autorestore.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/physical-driver-autorestore-negatives.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/acceptance.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/native-qemu-matrix.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/native-qemu-contention.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/native-qemu-transport-abort.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/compatibility.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "examples/policy.json",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/security.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/testing.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/architecture.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/protocol.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/gap-analysis.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/linux-usbip-audit.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/research/rust-backend-audit.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/third-party.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "docs/requirements.md",
+      "file_exists": true
+    },
+    {
+      "document": "README.zh-CN.md",
+      "target": "AGENTS.md",
+      "file_exists": true
+    }
+  ],
+  "link_scope": "Only existence of repository-relative file targets in these three documents checked; not browser rendering, remote URL availability, or a complete anchor audit.",
+  "global_skill": {
+    "canonical": "/home/ubuntu/.agents/skills/readme-site",
+    "canonical_is_real_directory": true,
+    "codex_discovery": "/home/ubuntu/.codex/skills/readme-site",
+    "is_symlink": true,
+    "link_text": "/home/ubuntu/.agents/skills/readme-site",
+    "resolved": "/home/ubuntu/.agents/skills/readme-site",
+    "resolved_matches": true,
+    "files": [
+      {
+        "relative": "SKILL.md",
+        "canonical": {
+          "path": "/home/ubuntu/.agents/skills/readme-site/SKILL.md",
+          "bytes": 4496,
+          "sha256": "83514d886ff1f1ff17585805a89508f35f60bb326a3dd9592f42fa52198a26f3"
+        },
+        "archived": {
+          "path": "/home/ubuntu/github/usbip-client/docs/evidence/readme-site-20261023/skill/SKILL.md",
+          "bytes": 4496,
+          "sha256": "83514d886ff1f1ff17585805a89508f35f60bb326a3dd9592f42fa52198a26f3"
+        },
+        "bytes_match": true,
+        "discovery_matches": true
+      },
+      {
+        "relative": "agents/openai.yaml",
+        "canonical": {
+          "path": "/home/ubuntu/.agents/skills/readme-site/agents/openai.yaml",
+          "bytes": 283,
+          "sha256": "61c795ad1d34ded25f1e2b8a799c45fea9b66abd32717c505ffe5b474c35e5cb"
+        },
+        "archived": {
+          "path": "/home/ubuntu/github/usbip-client/docs/evidence/readme-site-20261023/skill/agents/openai.yaml",
+          "bytes": 283,
+          "sha256": "61c795ad1d34ded25f1e2b8a799c45fea9b66abd32717c505ffe5b474c35e5cb"
+        },
+        "bytes_match": true,
+        "discovery_matches": true
+      },
+      {
+        "relative": "references/readme.md",
+        "canonical": {
+          "path": "/home/ubuntu/.agents/skills/readme-site/references/readme.md",
+          "bytes": 4411,
+          "sha256": "995cb45f62c0ae8bcec45092267f67eec73633474bf59d0a8047c8a48b4b713b"
+        },
+        "archived": {
+          "path": "/home/ubuntu/github/usbip-client/docs/evidence/readme-site-20261023/skill/references/readme.md",
+          "bytes": 4411,
+          "sha256": "995cb45f62c0ae8bcec45092267f67eec73633474bf59d0a8047c8a48b4b713b"
+        },
+        "bytes_match": true,
+        "discovery_matches": true
+      },
+      {
+        "relative": "references/site.md",
+        "canonical": {
+          "path": "/home/ubuntu/.agents/skills/readme-site/references/site.md",
+          "bytes": 5544,
+          "sha256": "82624a1db23c94ed3767ea47996311cd065f8510d6649eec20a11875cca1a24b"
+        },
+        "archived": {
+          "path": "/home/ubuntu/github/usbip-client/docs/evidence/readme-site-20261023/skill/references/site.md",
+          "bytes": 5544,
+          "sha256": "82624a1db23c94ed3767ea47996311cd065f8510d6649eec20a11875cca1a24b"
+        },
+        "bytes_match": true,
+        "discovery_matches": true
+      }
+    ],
+    "fixed_reference": {
+      "project": "fan-ziqi/rstop",
+      "commit": "f2abbaac3ea4b44c77a926195e5f847e3ce43a6e",
+      "reader_url": "https://github.com/fan-ziqi/rstop/blob/f2abbaac3ea4b44c77a926195e5f847e3ce43a6e/README.md",
+      "reference_is_pinned": true,
+      "scope": "Recorded pinned reference remains unchanged; no new network fetch, live-site verification, reinstall or skill mutation."
+    }
+  },
+  "not_performed": [
+    "CLI/help execution",
+    "Cargo/build/tests",
+    "QEMU",
+    "browser/UI/API/network",
+    "repository/skill edits",
+    "new runtime/USB/hardware verification"
+  ],
+  "original_review_integrity": {
+    "skill_files_unchanged": true,
+    "document_snapshot_copies_match": true
+  }
+}

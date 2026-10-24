@@ -1,6 +1,8 @@
 # 兼容性与支持证据
 
-最新[E34准备记录停止](research/prepare-recording-shutdown-validation.md)：667软件/167输入映射，clean `1582f06` 二十三QEMU/46guest0，同CLI72adb291…/helperb4af4b5f…。八新场景覆盖Native/USBFS Resource记录门、accepted initializer syscall-entry与Native Resource/Available局部StopSession；六数据链/九旧回归同源另账。仅固定模拟设备，不扩展真实硬件、ISO、内核内部active或aarch64 USB支持；旧FAIL与未运行矩阵保持原裁决。
+最新[E35有界日志](research/rotating-logs-validation.md)：723软件/177输入映射f3cf8、本地同CLI新6logging/旧4signal2BP及89ef四原生CI通过；新增文件轮转/授权读页不扩大USB设备兼容范围。新增clean48c9794一项installed日志QEMU/三epoch/2guest0通过，同CLI6cc/helperbb0；首44b1 hostFAIL保持，原23矩阵仍归1582/旧ELF。State/Protocol与cleanup独立保留，不称cleanEOF。真实硬件、ISO及aarch64 USB内核支持继续未验证。
+
+此前[E34准备记录停止](research/prepare-recording-shutdown-validation.md)：667软件/167输入映射，clean `1582f06` 二十三QEMU/46guest0，同CLI72adb291…/helperb4af4b5f…。八新场景覆盖Native/USBFS Resource记录门、accepted initializer syscall-entry与Native Resource/Available局部StopSession；六数据链/九旧回归同源另账。仅固定模拟设备，不扩展真实硬件、ISO、内核内部active或aarch64 USB支持；旧FAIL与未运行矩阵保持原裁决。
 
 此前[E33数据链健康](research/data-link-health-validation.md)：626次软件执行、165输入映射，与clean `531e0c3` 十五QEMU/30guest0分账；六新managed Native/USBFS/virtual双栈含18个定向断流阶段及同一serial/CDC原连接I/O，九旧回归同源/ELF。virtual此新场景为HID枚举闲置与CDC echo，不是新键盘注入；Native/managedUSBFS pending/inflight、真实G1/G2及ISO仍未测。[精确531四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40029976284)每格626/39rows及原信号/背压通过，原530 CI保留历史。
 

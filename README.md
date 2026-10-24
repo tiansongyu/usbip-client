@@ -65,7 +65,7 @@ rustusb detach 0
 rustusb unexport 'usb-<64-lowercase-hex-fingerprint>'
 ```
 
-Each command has `--help`. Use `--json` for machine-readable output and `--log-json` for JSON tracing on stderr; `RUST_LOG` controls log verbosity. Device JSON may include serial numbers—redact it before sharing.
+Each command has `--help`. Use `--json` for machine-readable output and `--log-json` for JSON tracing on stderr; `RUST_LOG` controls log verbosity. Optional [bounded file logging](docs/logging.md) adds private rotating NDJSON and authorized `rustusb logs` readers. Device JSON may include serial numbers—redact it before sharing.
 
 A device fingerprint is a candidate identity derived from descriptors, serial number when available and physical topology. A Bus ID is a current address. Neither is hardware authentication; a replacement without a serial number may have the same fingerprint.
 
@@ -135,13 +135,16 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The [preparation-stop validation report](docs/research/prepare-recording-shutdown-validation.md) records:
+The [rotating-log validation report](docs/research/rotating-logs-validation.md) records:
 
-- **667 software test executions**: 280 default, 367 all-features and 20 vendored executions, with formatting, Clippy, release and documentation checks. All 167 selected inputs match the product commits; the original modified-worktree run retains its actual provenance.
-- **23 paired QEMU runs at clean `1582f06`, 46 successful guest exits**: eight new preparation-stop scenarios, six framed-v2 directional-loss runs and nine existing regressions, all using the same release artifacts. The new cases check actual cleanup before a delayed application record, retained accepted initialization and local Native stop with sibling I/O and an empty catalog.
-- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `5ffdc6c`](https://github.com/tiansongyu/usbip-client/actions/runs/40044605684) passes 667 executions and the existing TLS, signal and backpressure checks on each platform. Earlier runs keep their own revisions and counts.
+- **723 software test executions**: 308 default, 395 all-features and 20 vendored executions, plus formatting, Clippy, release and documentation checks. All 177 selected inputs match the product commit; the original modified-worktree run retains its actual provenance.
+- **Six actual logging process scenarios**, plus the existing four signal and two backpressure checks. These exercise rotation, restart, cursors, observer cancellation, blocked output and a real file-write failure while the separate virtual USB owner remains active.
+- **One focused installed-path QEMU scenario at clean `48c9794`, two successful guest exits**: three epochs check real simulated HID/FTDI I/O, private log permissions, authorized reading and actual USB cleanup before a held logger lock is released. The first verifier-expectation failure remains preserved; recorded transport errors are shown separately from cleanup.
+- **Four native CI combinations**: Ubuntu 22.04/24.04 × x86_64/aarch64. [CI at `89ef420`](https://github.com/tiansongyu/usbip-client/actions/runs/40053603593) passes 723 executions and the TLS, signal, backpressure and new logging checks on each platform. The earlier cache-setup failures remain recorded separately.
 
-Stopping actual resources and completing their durable records are separate steps. A delayed application-journal acknowledgement no longer blocks received owners from cleaning up, but a stuck filesystem or kernel call can still prevent process exit. Earlier product failures and the first revised-product sampling failure retain their original evidence. The [data-link](docs/research/data-link-health-validation.md) and [shared-owner](docs/research/shared-owner-validation.md) reports retain their historical baselines.
+The earlier [preparation-stop report](docs/research/prepare-recording-shutdown-validation.md) retains **23 paired QEMU runs at clean `1582f06`, 46 successful guest exits**: eight preparation-stop scenarios, six framed-v2 directional-loss runs and nine existing regressions. These use that report's release artifacts and establish cleanup before delayed application records, accepted initialization and local Native stop with sibling I/O. They are a separate baseline from the new logging checks.
+
+Actual cleanup, durable business records and operational logs have different roles. A logging failure can cause a final nonzero exit after a USB operation completed. Permanent filesystem or kernel blocking can still delay exit. The [data-link](docs/research/data-link-health-validation.md) and [shared-owner](docs/research/shared-owner-validation.md) reports retain their own revisions and recorded transport-error boundaries.
 
 Earlier [secure-path tests](docs/research/secure-usbip-validation.md), [USBFS recovery tests](docs/research/physical-driver-autorestore.md) and [recovery boundary scenarios](docs/research/physical-driver-autorestore-negatives.md) retain their own revisions and raw evidence, including failed development runs and their fixes.
 
@@ -165,6 +168,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 | [Secure broker setup](docs/secure-guide.md) | Mutual TLS, dedicated broker roles, exact device authorization and supervised cleanup |
 | [Shared application service](docs/application-service-guide.md) | Nonroot jobs, authorized profiles, per-connection stop, durable sessions and bounded audit |
 | [Data-link health](docs/data-link-health.md) | Opt-in v2 probes, RTT, backpressure observations and epoch-qualified history |
+| [Process logs](docs/logging.md) | Private bounded rotation, authorized pages, follow and independent logging failures |
 | [Native setup and diagnostics](docs/native-guide.md) | Helper deployment, policy, sharing and troubleshooting |
 | [Virtual server](docs/rust-virtual-server.md) / [USBFS server](docs/rust-physical-server.md) | Optional service setup, controls and lifecycle boundaries |
 | [Compatibility](docs/compatibility.md) / [acceptance](docs/acceptance.md) | Tested environments, device scope and unfinished gates |

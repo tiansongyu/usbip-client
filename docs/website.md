@@ -42,7 +42,7 @@ Its README-only mode does not add a website. Publishing, commits and pushes stil
 
 ## Current evidence updates
 
-README/site counts link to the [preparation-stop report](research/prepare-recording-shutdown-validation.md): 667 executions and 23 QEMU runs at clean `1582f06`, with their actual software-input provenance. Eight new preparation cases, six data-link runs and nine older regressions remain separate. Preserve the earlier 626/data-link and 530/shared-owner records, all original product failures and the revised-product sampling failure instead of replacing their source labels. Native CI links are updated only after the corresponding published run is observed.
+README/site counts link to the [rotating-log report](research/rotating-logs-validation.md): 723 software executions, six actual process-logging scenarios and four native CI combinations. One focused installed-path QEMU scenario at clean `48c9794` has three epochs and two successful guest exits; the first `44b1ef9` verifier-expectation failure and the original CI setup failures remain recorded. Transport errors and verified cleanup have separate results. The earlier [preparation-stop report](research/prepare-recording-shutdown-validation.md) retains 23 paired runs at clean `1582f06` with that report's release artifacts. Do not combine these into a single-source 24-run result or relabel prior 667/626/530 software checks.
 
 The preparation-stop update is published at `ac4e802`, with [separate exact-head deployment and live-byte receipts](evidence/prepare-recording-publication-ac4e802-20261024/manifest.json). Its later workflow status does not replace the detailed CI at `5ffdc6c` or the clean QEMU results at `1582f06`.
 

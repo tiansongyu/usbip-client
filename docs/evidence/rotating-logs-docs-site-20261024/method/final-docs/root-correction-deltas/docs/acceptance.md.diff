@@ -1,0 +1,29 @@
+--- initial/docs/acceptance.md
++++ final/docs/acceptance.md
+@@ -121,7 +121,7 @@
+ | 4.5 九状态、超时、取消、幂等、失败释放、重启恢复 | E31实际job/会话owner与Root proof；E34独立sticky shutdown/晚注册继承、准备ACK下实际owner先清理、局部export不连关sibling、accepted initializer保留到真实返回；clean1582八新QEMU通过 | 完整状态/并发矩阵仍未完成；Rust虚拟export及Rust incoming无独立helper proof的崩溃session未自动协调；存储不自动恢复写入 |
+ | 4.6 存储挂载 / 句柄 / 服务 / 多 LUN / 分区 / 加密检查与安全释放 | 所有当前接口和缓存 inactive config 的存储判定；Phase 1 全面拒绝存储导出 | 尚未实现全面使用者 / 挂载命名空间 / dm / LUN 审计与排他导出；**拒绝存储是安全降级，不是完成存储共享功能** |
+ | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
+-| 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health | peers/logs/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
++| 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
+ | 4.9 Ratatui TUI | 架构共用核心、roadmap G4 | 后续 Phase 4；页面、键盘、搜索 / 排序 / 自动刷新 / 确认 / 错误详情均未实现 |
+ | 4.10 GUI | 设计推迟到核心稳定，计划评估 Tauri；共用核心原则 | 后续 Phase 5；无 GUI；双端列表、延迟、访问控制、自动规则等未实现 |
+ | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E31 bounded audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/诊断导出/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
+@@ -225,7 +225,7 @@
+ 
+ Native agent在RPC返回后实际I/O、定向停HID但原serial继续、client KILL137后Root精确proof协调/旧ID保留与新attempt真实I/O、server TERM完整driverbaseline均有原件。新版实际TLS JSON/public DER/pin/policy/两epoch权限、双方PCAP及actual UID/ELF经独立复核；私钥仅metadata。完整来源与所有限制见[专项报告](research/application-service-validation.md)。
+ 
+-这是原G3的子步骤：本E31交付时旧前台未统一提取、同数据链heartbeat/RTT未完成，后续E32已统一owner、E33补充受限probe/RTT及定向黑洞证据；Rust无独立proof的崩溃session、轮转/长期审计、完整网络证书负向/轮换矩阵等仍未完成。物理硬件G1/G2、ISO及其余阶段不改为通过。
++这是原G3的子步骤：本E31交付时旧前台未统一提取、同数据链heartbeat/RTT未完成，后续E32已统一owner、E33补充受限probe/RTT及定向黑洞证据；E31未完成的轮转后由E35补充；Rust无独立proof的崩溃session、长期审计、完整网络证书负向/轮换矩阵等仍未完成。物理硬件G1/G2、ISO及其余阶段不改为通过。
+ 
+ ## 19. 共享前台与托管owner子步骤（E32）
+ 
+@@ -242,7 +242,7 @@
+ 
+ 见[英文验收](research/prepare-recording-shutdown-validation.md)。667软件在actualdirtyb1运行，167输入逐8ec/1582 Gitblob匹配；clean1582f06二十三QEMU/46guest0、同CLI/helper。八新场景分别核实际第二Resource fsync门下四global停止、accepted GET_CONFIGURATION entry下两global停止与Native Resource/Available两local停止；六health18方向及九旧回归另账。旧产品五QEMU负向、b1缺server stub屏障、2222首saved/live错配FAIL与22未运行均保留；采证修复只绑定对应saved原件，不放宽proof/timeout。
+ 
+-Native局部stop保留原HID真实I/O，client detach后先等精确原server stub退休/完整原profile，再停最后export并核同job/listener的真实空Catalog；原APP记录在实际close之后仍可能pending。initializer是已接受同一syscall-entry合作保留/返回后真实Finish，不是内核内部active硬阻塞。永久FS/kernel阻塞、无独立proof的Rust崩溃记录、日志轮转、真实G1/G2、ISO及完整Phase3/后续阶段仍未完成。
++Native局部stop保留原HID真实I/O，client detach后先等精确原server stub退休/完整原profile，再停最后export并核同job/listener的真实空Catalog；原APP记录在实际close之后仍可能pending。initializer是已接受同一syscall-entry合作保留/返回后真实Finish，不是内核内部active硬阻塞。E34未包含的日志轮转后由E35补充；永久FS/kernel阻塞、无独立proof的Rust崩溃记录、真实G1/G2、ISO及完整Phase3/后续阶段仍未完成。
+ 
+ 
+ ## 22. 有界进程日志子步骤（E35）

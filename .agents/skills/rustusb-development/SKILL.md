@@ -56,3 +56,14 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - 假 sysfs、假命令和本地 TCP 测试可验证分支，不能证明真实驱动枚举。互操作三方向、QEMU HID/CDC、真实设备和故障矩阵见 `docs/testing.md`。
 - 每阶段执行根 AGENTS.md 的四项 Cargo 检查。新增公共接口执行 rustdoc 检查。硬件测试须显式选择设备和两端授权，不扫描后自动解绑。
 - 文档区分设计、源码事实、软件测试、硬件实测；修改行为同步 README、架构、兼容性和工作日志。不得编造性能或设备支持。
+
+
+## 有界文件日志与授权读取
+
+修改日志/外层main/ReadLogs/mirror前读`docs/research/rotating-logs-design.md`与`docs/research/rotating-logs-validation.md`。723软件/177输入、clean48c一个三epoch QEMU、本地6/4/2及89ef四原生CI各自归属，首44b1与41fce失败不可重判；旧23仍归1582。
+
+- 默认stderr保留；file-only不tee，stdout只给命令协议。typed records不得格式化任意Debug/Error或持久化raw USB/serial/凭据/路径；generic profile字段不获得audit可见性。
+- 业务commit/state替换后才mirror新序列，之前/旧ring不伪作已commit；logger无WAL/准入/Rootproof权力。先核peer+profile Audit，所有授权页/Busy/error绕Runtime；RPC不接收路径。只root本地读取helper store。
+- 0700/0600/nlink1/NOFOLLOW及实际identity检查；每operation fresh accessOFD，不能dup共享flock。256finitequeue、两真实reader+两queued，取消RPC不能释放实际worker配额。FS/队列等待不持USB能力。
+- 在Tokio/设备前打开，在actualowner cleanup后drain/join真实logger；永久FS硬阻塞不可假取消。LostRecords/IO可在操作完成后最终exit1，不能误说USB无副作用。
+- normal peer-close若记录State+Protocol须保留，窄验收锁原incoming IDs/同conn/反tuple peerlocal_stop及host关闭先后，全Rootproof/baseline不弱化；不是cleanEOF或已跟踪reset原因。原FAIL和新cleanPASS分账。

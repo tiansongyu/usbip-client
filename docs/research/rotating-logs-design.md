@@ -1,6 +1,6 @@
 # Bounded process logs and authorized reading
 
-2026-10-24. Baseline `bd6e08be8b304767452dc98b6606e2e65448c2da`. Status: implemented; complete software validation, six actual process-logging subprocess scenarios, and the existing four signal/two backpressure scenarios passed. Installed QEMU logging validation remains pending. The preceding goal turn made verified progress on preparation-stop ownership and publication. The full Phase 0–7 objective remains active. This slice implements the missing process-log rotation and reading in requirement 4.11; diagnostic export, complete security qualification and real-device G1/G2 remain outstanding.
+2026-10-24. Baseline `bd6e08be8b304767452dc98b6606e2e65448c2da`. Status: implemented; complete software validation, six actual process-logging subprocess scenarios, and the existing four signal/two backpressure scenarios passed. Installed Native IPv4/framed-v2 logging validation passed at clean `48c9794`; the first `44b1ef9` verifier-expectation failure remains preserved. The preceding goal turn made verified progress on preparation-stop ownership and publication. The full Phase 0–7 objective remains active. This slice implements the missing process-log rotation and reading in requirement 4.11; diagnostic export, complete security qualification and real-device G1/G2 remain outstanding.
 
 ## Decision and existing behavior
 
@@ -26,7 +26,7 @@ These are compatibility findings for these exact sources, not reproduced RustUSB
 - In file mode, process log events go only to the finite asynchronous NDJSON sink: there is no synchronous or asynchronous stderr tee. `--log-json` selects the legacy stderr format and conflicts with `--log-directory`; file records always use the strict new JSON schema. Human/JSON rendering is available through the read-only logs command. Final fixed error diagnostics can still use stderr after actual cleanup and logger join; an unread stderr pipe can delay that final diagnostic, not active file progress. Legacy stderr-only behavior is retained explicitly.
 - `rustusb logs --directory DIR [--after CURSOR] [--limit 16] [--follow] [--json]` reads a caller-owned log store, or an administrator's local store when root. It never invokes a helper device operation.
 - `rustusb logs --agent-config FILE --profile ID ...` uses the authenticated agent socket. Every page requires existing `Action::Audit` for that exact profile; Read alone does not grant Logs. It returns that profile's projected audit events, plus only the same caller's unscoped denials (root may read unscoped administrative observations). Cursor possession never grants access. Root/helper logs are not exposed through the broker RPC.
-- Directory mode and agent mode are mutually exclusive. A logs observer cannot enable a writer in the store it reads. Ctrl-C/SIGTERM stops the observer, not USB jobs. Follow uses bounded pages and reports gaps/status, not a shell or raw tail operation.
+- Directory mode and agent mode are mutually exclusive. The logs command cannot also enable a process-file writer, even for a different directory. Ctrl-C/SIGTERM stops the observer, not USB jobs. Follow uses bounded pages and reports gaps/status, not a shell or raw tail operation.
 
 ## Records and redaction
 

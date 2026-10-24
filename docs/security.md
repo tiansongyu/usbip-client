@@ -4,7 +4,7 @@
 
 ## 1. 资产、前提和边界
 
-[E32共享owner](research/shared-owner-validation.md)保持Foreground untracked与Managed durable/tracked的明确边界；stdout delivery ACK不是持久准入。实际stub close后释放独占锁，再等待原记录ACK，不丢原future；准备阶段Resource ACK无限停顿仍未证明有界清理。新增应用服务的权限、状态与恢复切片见[契约](research/application-service-design.md)及[E31验收](research/application-service-validation.md)。非root agent直接持有实际job；本机RPC按SO_PEERCRED逐profile/action授权，不接受端点/路径/凭据/FD或任意helper请求。broker UID仍是整个helper池的信任域，profile ACL不隔离同UID任意进程。Root proof须kind/correlation/key/UID/resource全匹配，活owner不能被只读observer提前退休；新进程资源0和PID死亡均非旧释放证明。
+[E32共享owner](research/shared-owner-validation.md)保持Foreground untracked与Managed durable/tracked的明确边界；stdout delivery ACK不是持久准入。实际stub close后释放独占锁，再等待原记录ACK，不丢原future；后续[E34](research/prepare-recording-shutdown-validation.md)补充Resource记录停顿下的实际清理，永久FS/kernel硬阻塞仍不承诺有界退出。新增应用服务的权限、状态与恢复切片见[契约](research/application-service-design.md)及[E31验收](research/application-service-validation.md)。非root agent直接持有实际job；本机RPC按SO_PEERCRED逐profile/action授权，不接受端点/路径/凭据/FD或任意helper请求。broker UID仍是整个helper池的信任域，profile ACL不隔离同UID任意进程。Root proof须kind/correlation/key/UID/resource全匹配，活owner不能被只读observer提前退休；新进程资源0和PID死亡均非旧释放证明。
 
 Native agent双栈仿真已有定向停止、KILL137协调与新attempt实际I/O；actual TLS JSON/public DER/pin/权限与PCAP分别采证。审计为有界最小字段ring，私钥内容不采集；不等于永久归档/轮转。raw-v1无同数据链heartbeat/RTT，Rust无独立proof的崩溃session仍未决，证书负向/轮换等完整gate继续未完成。
 
@@ -126,7 +126,11 @@ USBFS 的当前局部状态为 Available/Claiming/Leased/Closing/Quarantined/Gon
 
 使用 `tracing` 记录发现、权限判定、导入 / 导出、连接、状态转移、取消、网络故障、清理和结束，支持 JSON / 人类可读格式。日志包含可关联的操作 / 会话 ID、后端、结果和安全错误码；设备序列号、地址和用户信息按隐私策略脱敏。禁止默认记录原始 URB、HID 按键、存储内容、证书私钥、token 或完整认证请求。
 
-发布前建立日志轮转、最大大小、限频、权限和保留期限；审计与普通调试日志区分。诊断导出必须再次过滤配置和凭据。指标记录活动设备 / 会话数、连接失败次数、错误数、RTT、字节和吞吐量；Native 后端无法可靠观测的指标显示不可用，不能用估算冒充实测。安全测试须搜索日志、崩溃输出和诊断包中的预置秘密标记。
+可选[E35文件日志](logging.md)已实现按字节/文件数轮转、有限256队列、2KiB typed记录及0700/0600 checked路径；硬上限128MiB segment payload，文件metadata另计。已成功commit的audit才镜像，镜像可丢失、不能确认准入或cleanup。文件投影只收封闭码/允许的标量，不格式化未知Debug，不持久化原始message/error、USB数据、序列号、任意路径或凭据。旧stderr tracing的任意trace输出不由此自动成为可公开的脱敏导出。
+
+ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返该profile typed audit与caller自身unscoped denial，root可读unscoped typed管理audit而非通用diagnostic。RPC不接收日志路径或写配置；root helper文件仅本地root读取。独立实际worker/配额在取消后保留，日志失败不改变业务WAL健康、USB副作用或Rootproof；真实owner清理后才join logger，非零日志退出不得误作USB未操作。具体软件/进程/仿真证据按[专项验收](research/rotating-logs-validation.md)来源记账。
+
+年龄保留、压缩、诊断导出、全面秘密扫描及永久文件系统阻塞仍待独立工作。诊断导出必须再次过滤配置和凭据。指标记录活动设备 / 会话数、连接失败次数、错误数、RTT、字节和吞吐量；Native 后端无法可靠观测的指标显示不可用，不能用估算冒充实测。安全测试须搜索日志、崩溃输出和诊断包中的预置秘密标记。
 
 ## 8. 安全 gate 与剩余限制
 

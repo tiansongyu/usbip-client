@@ -318,3 +318,17 @@ python3 -B scripts/qemu_prepare_recording_shutdown/run.py \
 六global组合为`native-resource|usbfs-resource|usbfs-initializer`各配`--stop job|term`；两local组合为`native-resource|native-available --stop session`。必须使用新目录、clean已提交源和默认locked all-features build。依赖、门限、真正的syscall release/FD映射与原件规则见[harness说明](../scripts/qemu_prepare_recording_shutdown/README.md)。
 
 Resource门要求所有相关实际资源在原ACK放行前关闭；initializer门要求保持同一accepted工作至真实返回后总join/清理。Local门要求目标退休而原HID export保持，原同job/listener继续实际I/O；client detach后须先有服务端精确stub退休和完整原profile，才停最后export并验证真实空Catalog。每份proof必须从同份saved sample重算，不能重读live journal补旧状态。原FAIL即使尾部释放/再用成功也保持FAIL，未执行项不计PASS；23项整体结果与旧15/9矩阵不可相加冒作独立case。
+
+
+## 有界日志与installed场景（E35）
+
+`python3 -B scripts/test-process-logging.py --binary target/release/rustusb --evidence /tmp/process-logging-NEW` 要求普通Linux UID、已构建的rust-backend CLI与全新证据目录。新六场景覆盖启动拒绝、实际文件轮转/重启/游标、follow两信号、4096满stdout与子进程实际RLIMIT_FSIZE错误；只用loopback memory设备，不操作宿主USB。缺失HOME/.cache只在验证完整受保护祖先后创建0700，已有目录不改mode。旧四signal/两BP另账；fastchild缺/proc采样须保留。
+
+```sh
+python3 -B scripts/qemu_process_logging/run.py --family ipv4 \
+  --kernel 6.8.0-106-generic --evidence /tmp/logging-installed-NEW-CLEAN-SHA
+```
+
+新[harness说明](../scripts/qemu_process_logging/README.md)要求clean已提交源、默认locked all-features release构建及匹配kernel/modules；普通宿主只启动两一次性guest，不操作宿主USB。实际UID0helper/2000agent/1000operator与Native HID/FTDI在同一paired run内做normal/fault/fresh三epoch。真实access.lock freshOFD门、writerEX/2readerSH、512 committed denials/Busy、原Rootproof/fullbaseline及client NULL/Gone必须早于同nonce放门。日志fault owner实际wait1/LostRecords但cleanup独立Verified，其他owner正常drain，不能把预计日志错误写成USB未操作。startup副本在fresh SH锁下复制，不放宽strict NDJSON。
+
+验收必须保留原State/Protocol等操作结果。normal/fresh的server incoming仅当原ID/connection/tcp反tuple、peer local_stop及host先clientwait0后serverStop均匹配才可窄接纳；不叫cleanEOF、不凭宽泛Failure category声称具体wire reset因果。首44b1 hostFAIL/两guest0及source仅期望修订分别留档；新clean48c9794实际PASS/2guest0仍只是一个新场景，旧1582二十三QEMU不重计到本版。永久FS/kernel阻塞、硬件G1/G2及完整Phase3不由这些通过完成。

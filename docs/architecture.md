@@ -1,6 +1,6 @@
 # RustUSB 技术架构
 
-状态：已实现结构与分阶段设计约束；2026-10-23。实现范围及验证结果以工作日志为准。
+状态：已实现结构与分阶段设计约束；2026-10-24。实现范围及验证结果以工作日志为准。
 
 ## 路线
 
@@ -31,6 +31,7 @@ flowchart LR
 | crate | 职责 | 允许依赖 |
 | --- | --- | --- |
 | rustusb-core | 领域模型、输入类型、状态、错误与后端 trait | serde、thiserror；不含系统写操作 |
+| rustusb-logging | 有界typed NDJSON、checked文件轮转、实际writer/reader线程所有权与受限页读取 | core、serde/serde_json、tracing/subscriber、Tokio、rustix、thiserror；不持USB能力、不回业务WAL |
 | rustusb-protocol | 有界标准管理帧、稳定key前导/目录映射与安全客户端codec | core、serde、serde_json、Tokio |
 | rustusb-linux | sysfs 设备/接口/端点扫描、指纹、能力与存储检查 | core、sha2；阻塞读取在调用边界隔离 |
 | rustusb-native | 固定 usbip 命令、内核状态、强代际与匿名kernel通道 | core、protocol、serde、Tokio、tracing、rustix |
@@ -194,3 +195,11 @@ Native detach命令成功后，只对同一status属性两次已成功解析但�
 USBFS先释放全部sources或实际server/backend，完成所有已收到grant的Finish，再等原ACK；accepted initializer保留至真实返回。client远端IMPORT后的Attempt等待被停止/断链中断时先join网络，晚ACK不触发新helper申请。共享私有pending future仅持metadata，不能持FD、stream、permit或helper能力；原Begin/Attempt的注册结果不能丢弃。
 
 agent shutdown由独立supervisor路径在Runtime persist之外sticky fanout；晚注册job/session继承stop。实际owner总await后仍等待原记录，故设备已释放时job仍可能pending。保守reserved-unsent仍Unconfirmed，不造NotStarted/Verified，也不借此关闭safe sibling。永久文件系统/内核阻塞、内核内部active窗口与真实硬件仍单列限制。
+
+## 有界进程日志（E35）
+
+[设计](research/rotating-logs-design.md)、[操作指南](logging.md)与[验收](research/rotating-logs-validation.md)区分可选文件日志、业务audit事务与实际USB所有权。CLI/helper同步外层main在Tokio/设备之前打开日志，async操作和实际owner清理结束后才关闭新读入、drain并join真实logger线程。默认stderr保留；`--log-directory`选择file-only NDJSON并与`--log-json`互斥。无stderr tee，也不把logger文本写入机器stdout。
+
+record最大2KiB、固定256队列、默认4MiB×8文件、硬上限8MiB×16（128MiB payload）。0700叶/0600单链接regular文件与受保护祖先逐FD核验；writer持生命周期锁，每次access锁独立open而非dup。整条记录轮转，UUID/epoch/ordinal及完整行offset游标校验；旧残尾保留并报gap，错误不静默重开。投递不做FS、不等队列容量；满队列/IO失败和最终exit与USB操作结果分开。
+
+业务Store成功commit并替换state后，新增audit序列才投递typed镜像；镜像无持久准入、Rootproof或恢复权力。ReadLogs按真实SO_PEERCRED及profile Audit授权，先授权后读盘；所有已授权结果包括Busy/disabled/error绕Runtime队列，拒绝沿旧durable denial路径。两实际reader与两queued请求的配额不因RPC取消释放；每页最多扫描256KiB/16记录，过滤空页仍可推进游标。RPC不能选择路径/保留参数或读取helper日志。logger只持日志文件/metadata，永久FS阻塞仍可能阻止实际join，不能用超时虚称取消。

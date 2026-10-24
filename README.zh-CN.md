@@ -6,7 +6,11 @@
 
 当前为**分阶段开发预览**：Linux Native 管理、可选 Rust 服务和受限 helper 已实现；阶段状态和实际测试结果见 [工作日志](docs/work-log.md)。真实物理设备兼容性尚未验证，Windows、TUI、GUI、存储安全共享及完整安全验收仍在 [开发计划](docs/roadmap.md) 中。发现某类设备不代表已验证它可正确重定向。
 
-可选[安全 broker 模式](docs/secure-guide.md)以双向 TLS 1.3 承载目录、IMPORT及后续URB；[应用服务](docs/application-service-guide.md)独立持有job、按OS UID授权profile/action、支持连接定向停止与有界持久audit。新增[数据连接健康观察](docs/data-link-health.md)：显式schema2启用同一TLS数据连接的探测/RTT，`agent health`独立只读查询；探测响应不等于USB进展或设备清理。最新[准备记录停止验收](docs/research/prepare-recording-shutdown-validation.md)记录667次软件执行/167输入映射，以及clean `1582f06` 的23项QEMU/46guest0：八项新准备/局部停止、六项数据链双栈18方向与九项旧回归分账。真实资源清理不再等待应用记录ACK，但永久FS/kernel阻塞仍不承诺有界退出；旧产品及采证FAIL均保留。[原数据链验收](docs/research/data-link-health-validation.md)保留626/531十五项历史。[精确5ff四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40044605684)每格667次及TLS/原信号背压通过；原531/626 CI保留历史；[原530/共享owner验收](docs/research/shared-owner-validation.md)及四原生CI保留原版本，原Catalog/virtual链路就绪FAIL也完整保留。完整Phase3与真实硬件仍未完成。
+可选[安全 broker 模式](docs/secure-guide.md)以双向 TLS 1.3 承载目录、IMPORT及后续URB；[应用服务](docs/application-service-guide.md)独立持有job，按OS UID授权profile/action并提供连接定向停止与有界持久audit。[数据连接观察](docs/data-link-health.md)在显式schema2下提供同一TLS数据连接的probe/RTT，响应不等于USB进展或设备释放。
+
+新增[有界文件日志与读取](docs/logging.md)支持私有typed NDJSON、按大小/文件数轮转和profile授权页面，日志失败与USB操作/业务audit独立。[专项验收](docs/research/rotating-logs-validation.md)记录723次软件执行（308/395/20）、177输入映射、本地新六进程场景与旧四信号/两背压；[精确89ef四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40053603593)各项通过，原41fce缺cache前置FAIL保留。新增installed日志仿真在clean `48c9794` 的一个双端场景/三epoch通过（2guest0），核权限/轮转/真实HID与FTDI I/O及logger锁未放前的原USB清理；首44b1验证器期望FAIL保留，实际State/Protocol与cleanup独立记录。
+
+此前[准备记录停止验收](docs/research/prepare-recording-shutdown-validation.md)的clean `1582f06` 二十三QEMU/46guest0继续归其原CLI/helper：八prepare、六health含18方向与九旧回归分账。应用记录ACK停顿不阻挡已收到owner先清理，但永久FS/kernel阻塞仍不承诺有界退出。此前[数据链](docs/research/data-link-health-validation.md)、[共享owner](docs/research/shared-owner-validation.md)与旧产品/采证失败均保持版本和原件；真实硬件与完整Phase3仍未完成。
 
 可选 Rust 用户态服务端已实现固定虚拟 HID/CDC ACM，通过 `rust-backend` feature 显式启用，见[虚拟服务指南](docs/rust-virtual-server.md)与干净cfeffd3的[双QEMU实际功能测试](docs/research/userspace-qemu.md)。
 
@@ -81,7 +85,7 @@ CLI 普通权限运行；只有受限的 `rustusb-helper` 作为系统管理员�
    rustusb unexport 'usb-<64位小写指纹>'
    ```
 
-示例地址 `192.0.2.1` 仅用于文档/隔离仿真。请使用实际受管地址和扫描得到的Bus ID。所有命令支持 `--json`，日志写 stderr，`--log-json` 启用 JSON tracing，`RUST_LOG=info` 配置级别。普通用户不使用 `sudo rustusb` 代替 helper。
+示例地址 `192.0.2.1` 仅用于文档/隔离仿真。请使用实际受管地址和扫描得到的Bus ID。所有命令支持 `--json`；默认日志写 stderr，`--log-json` 启用 JSON tracing，`RUST_LOG=info` 配置级别；可选 `--log-directory` 切换到私有文件sink，与 `--log-json` 互斥。普通用户不使用 `sudo rustusb` 代替 helper。
 
 helper 的所有允许 UID 共同管理已批准设备和本实例建立的连接；这不是多租户隔离。仅能自动断开本运行实例准确认领的端口、取消本实例成功创建并验证的导出绑定。重启后的未知端口和导出、外部工具建立的导出均拒绝自动接管，需管理员核对。设备操作失败、超时或取消不代表没有副作用，也不保证驱动或资源已经恢复；请检查 `devices/sessions/status` 和内核，避免盲目重试。失败后来源不明的绑定不会自动认领或撤销。卸载/重启不自动强制断开未知设备。详见 [安全边界](docs/security.md)。
 

@@ -72,11 +72,13 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 **G3 gate：** [安全模型](security.md) S1–S6 的适用项全部有证据；无认证、错误 / 过期 / 撤销凭据、非法设备、重放 / 重复连接和并发争用全部拒绝；外部抓包证明 DEVLIST 和 IMPORT 后的 URB 均走加密通道，直连 3240 在 IPv4 / IPv6 被阻断。状态机覆盖 Discovered / Available / Exporting / Connecting / Connected / Disconnecting / Disconnected / Error / Recovering，所有关键路径有超时、取消、幂等清理和重启恢复测试。不能在故障后无条件恢复存储写入。
 
-应用服务增量见[实施契约](research/application-service-design.md)、[英文操作指南](application-service-guide.md)及[E31验收](research/application-service-validation.md)：非root agent直接持有真实job、typed会话事实和Root tracked proof，managed admission、独立连接stop与有界原子audit已实现；软件196/279/20共495次、四原生CI及两Native agent双栈/六前台回归通过，版本和补强采证分别记账。后续[E32共享owner](research/shared-owner-validation.md)以匹配2638a8c的输入完成530软件、在clean b45c2e8完成九项QEMU/18guest0，消除前台owner重复并保留两模式边界。raw-v1同数据链heartbeat/RTT、持久日志轮转以及无独立root proof的Rust崩溃session协调仍未完成，不宣告完整G3。
+应用服务增量见[实施契约](research/application-service-design.md)、[英文操作指南](application-service-guide.md)及[E31验收](research/application-service-validation.md)：非root agent直接持有真实job、typed会话事实和Root tracked proof，managed admission、独立连接stop与有界原子audit已实现；软件196/279/20共495次、四原生CI及两Native agent双栈/六前台回归通过，版本和补强采证分别记账。后续[E32共享owner](research/shared-owner-validation.md)以匹配2638a8c的输入完成530软件、在clean b45c2e8完成九项QEMU/18guest0，消除前台owner重复并保留两模式边界。E32时点的raw-v1同链heartbeat/RTT、日志轮转及Rust无独立proof崩溃协调均未完成；后续v2及日志增量见下文，不宣告完整G3。
 
-新增[E33数据链v2](research/data-link-health-validation.md)显式schema2/ALPN2提供同TLS数据连接probe/RTT及独立只读health/epoch历史，626软件与clean531十五QEMU通过（六新18方向、九旧另账）。raw1仍Unavailable，PONG不证明USB进展；短management有界FIN/EOF自然join、actualcleanup独立。此增量不完成完整G3，日志轮转、无独立root proof的Rust崩溃协调、生产/证书轮换安全矩阵及真实硬件继续保留。
+新增[E33数据链v2](research/data-link-health-validation.md)显式schema2/ALPN2提供同TLS数据连接probe/RTT及独立只读health/epoch历史，626软件与clean531十五QEMU通过（六新18方向、九旧另账）。raw1仍Unavailable，PONG不证明USB进展；短management有界FIN/EOF自然join、actualcleanup独立。此E33增量未完成日志轮转；后续日志见E35，无独立root proof的Rust崩溃协调、生产/证书轮换安全矩阵及真实硬件继续保留。
 
 新增[E34准备记录停止](research/prepare-recording-shutdown-validation.md)使应用journal ACK停顿不阻挡已收到owner的真实清理；Native局部stop保留sibling及同job空Catalog，agent shutdown在persist之外sticky传播。667软件通过，仿真与CI仅按专项报告实测版本记账；accepted initializer始终保留到真实返回，不承诺任意永久FS/kernel阻塞下有界退出，也不完成完整G3。
+
+新增[E35有界进程日志](research/rotating-logs-validation.md)实现私有checked NDJSON轮转/授权页读取，业务commit后镜像audit，实际USB owner清理后才join logger；723软件/177输入、实际本地6/4/2及精确89ef四原生CI通过。clean48c9794一项installed仿真/三epoch通过，首44b1 verifier期望FAIL与原transport error保留，旧23不重归属。有限operational history不等于不可变永久audit，年龄保留/诊断导出/完整安全矩阵、无独立proof的Rust崩溃协调与真实硬件继续未完成。
 
 ## 7. Phase 4：完整 TUI
 
