@@ -181,3 +181,23 @@ retains 17 source snapshots, 485 local/repository-mapped links and actual
 remain identical to `e6177063`, and the global readme-site skill's four files and
 Codex discovery symlink remain unchanged. No new browser/pixel execution or
 repeated global skill quick-validation is claimed for unchanged assets.
+
+## Published content and CI
+
+Content `91ecc44fe458de40ff806b80d7a73b7e24440a64` was normally pushed over SSH,
+with a clean tree and matching remote main.
+[Software run 40121403621](https://github.com/tiansongyu/usbip-client/actions/runs/40121403621)
+completed successfully on all four native Ubuntu 22.04/24.04 x86_64/aarch64 jobs
+(120953526607, 120953526693, 120953526731, 120953526778). The primary API's actual
+architecture/full-gate step conclusions are also successful. This does not
+recount each platform's tests or invent executed-ELF/full-log samples.
+[Pages run 40121403729](https://github.com/tiansongyu/usbip-client/actions/runs/40121403729)
+completed check 120953526988 and deploy 120953618317 successfully.
+
+The [publication receipt](../evidence/offline-crl-publication-91ecc44-20261024/manifest.json)
+retains 41 original files/methods: primary run/job responses, exact HTTP bodies
+and headers, source/step checks and the content push. Six canonical HTTPS bodies
+returned 200 and match content Git blobs. The seven website sources and four
+global skill files remain unchanged; no new browser/pixel execution is claimed.
+The local 927 executions remain at `fcb487cf` and final paired QEMU at `e441bb89`.
+The final receipt-only commit does not relabel those runs as its own verification.

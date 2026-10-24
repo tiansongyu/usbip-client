@@ -127,3 +127,8 @@ all seven website source files remain unchanged, retaining their local-inventory
 and remote-observer evidence scopes. No new browser/pixel check is claimed for
 this documentation-only site maintenance. Global readme-site guidance is reused
 without changing its four source files.
+
+Content `91ecc44f` completed Pages 40121403729 check/deploy and all four native
+software jobs in 40121403621. Six canonical HTTPS resources match its Git bytes;
+the seven site sources are unchanged. No new browser/pixel verification is
+claimed; see the [publication receipt](evidence/offline-crl-publication-91ecc44-20261024/manifest.json).

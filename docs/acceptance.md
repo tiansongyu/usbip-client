@@ -311,3 +311,5 @@ E43内容9e657637正常SSH push/远端main一致/clean；software40114160923四n
 ## 31. 离线证书撤销列表（E44）
 
 见[英文验收](research/offline-crl-validation.md)。完整列表受root路径/1..16/每64KiB/总256KiB限制，拒同issuer重叠/不完整scope；标准WebPki全链及unknown-deny/expiry保留，Checked SystemTime共同窗口在每次新验证检查。agent全实例启动加载，job restart不重载，既有stream不热撤销。clean fcb927/226与clean e441十三paired/26guest0分账；六CRL各44新wait、原pin持续授权/旧实际PID文件替换仍允许/真实stop和完整基线后新实例拒绝。六默认保原密文classifier；单v2诊断无CRL不可冒称其installed负向。旧47 IPv6 wait104整体FAIL、初开发失败保留；新无ALPN空输入仍strict1和实际protocol mismatch，不放宽IO。原件/研究/失败/源码索引及同作者核对见报告，不据此完成硬件、热撤销、全部G3或后续阶段。
+
+E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native job120953526607/526693/526731/526778和其实际arch/fullgate step均success，Pages40121403729 check120953526988/deploy120953618317均completed/success。primary API结论不重算每格927，不补造full log/执行ELF。六canonical HTTPS资源200且逐Git字节同，七site/四global源仍不变，无新browser/pixel。原件及方法见[发布回执](evidence/offline-crl-publication-91ecc44-20261024/manifest.json)，最终纯回执提交与fcb/e441实测分开。
