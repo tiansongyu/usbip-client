@@ -4,6 +4,7 @@ Run as an ordinary x86_64 host user from a clean tree, using a fresh evidence
 directory. The normal locked all-feature release build is required:
 
 ```sh
+python3 scripts/qemu_catalog_watch/preflight.py --output /tmp/catalog-point-NEW
 python3 scripts/qemu_catalog_watch/run.py --family ipv4 --evidence /tmp/catalog-watch-v4-NEW
 python3 scripts/qemu_catalog_watch/run.py --family ipv6 --evidence /tmp/catalog-watch-v6-NEW
 ```
@@ -39,3 +40,10 @@ host verifier independently parses the original raw JSONL and compares every
 saved projection. A failed collector, partial batch or original verifier remains
 FAIL, even if a later guest or QEMU exit is zero. This validates polling snapshots,
 not all transient events, physical generations, hardware or full G3.
+
+An empty jq input can exit 0 without yielding an object. The guest therefore
+requires exactly one slurped object before accepting a point. The preflight runs
+that actual shell function, with only temporary paths and a single retry, against
+empty, complete, partial, mixed, bad-count and revision cases. These are fixture
+checks, not Cargo or USB tests. The first failed QEMU run and its empty saved point
+remain failures; a later successful guest exit does not repair missing evidence.

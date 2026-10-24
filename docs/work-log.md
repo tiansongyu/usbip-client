@@ -11,6 +11,7 @@
 - 新QEMU扩展保留原Native managed三轮I/O/两epoch/完整Rootproof及密文分类器；普通operator watcher观察local agent outage及远端原export session逐个真实stop的2→1→0。另实际direct TLS/TERM、满write-only FIFO/INT、关闭reader/exit1、UID1002拒绝四CLI子场景。采证设计前置，preflight修正stdout必须独立O_WRONLY，避免O_RDWR自身保reader隐藏EPIPE；新verifier不用尚未落盘final summary，而以外层已核实际broker ELF receipt匹配。生成init/dash、四个jq完整/partial/混epoch/count纯采证用例和Python语法通过；未将它们计USB或Cargo数。完整clean软件与QEMU仍待执行。
 - clean6139056首完整gate FAIL：fmt/default Clippy/default tests394/release/rustdoc通过，all-feature Clippy exit101，因CLI test模块后仍有run item。原223输入稳定，原log/默认产物保留；将真实测试模块移到文件尾而非allow告警。另代码审查修watch模式配置加载时的合作停止退出0，仍join既有load task且one-shot保持原cancel error；该启动窗口没有新增确定性syscall门，后续QEMU只验已准备/输出阻塞窗口，不冒称启动门已动态验收。跨至北京时间2026-10-25，原件路径继续按UTC20261024命名。
 - clean ec91c4a第二完整gate十命令全0：默认394/all489/vendor20共903次、0失败/忽略，223选定输入前后稳定；默认/all release各自hash已记。QEMU源preflight再将SIGSTOP门前revision取自已保存的完整point，避免直接解析并发raw尾部；新point须晚于该已完成revision，测试修改后仅Rust/软件输入映射不变，后续QEMU锁其真实clean版本，不重标ec91软件归属。尚未执行新QEMU裁决。
+- clean8daf首IPv4 QEMU整体FAIL、两guest0且四guard真，不能改判。原raw确证watcher已在原PID下从Current2变Stale2并保旧，但guest point函数把jq零输出(exit0)当成功，保存空before-pause文件并打印虚假point beacon；随后空revision导致--argjson错误。实际独立jq空输入探针也exit0无输出，根因已定位为采证判定。修为slurp严格一object；新增rootless preflight运行原guest函数，仅改临时路径/单轮，覆盖空/完整/partial/混epoch/count/新旧revision。保留原空文件、错误、raw、guard/guest0，未以产品raw或各早期case wait代替整体PASS。Rust223和EC91软件产物未改。
 
 ## 2026-10-24：托管远程目录与监督器隔离（E42）
 

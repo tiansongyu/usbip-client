@@ -16,7 +16,7 @@ catalog_point() {
     C_FILE=$1 C_MARK=$2 C_STATE=$3 C_COUNT=$4 C_AFTER=$5
     for c_try in $(seq 1 240); do
         if jq -s --arg state "$C_STATE" --argjson count "$C_COUNT" --argjson after "$C_AFTER" -f /etc/rustusb/catalog-point.jq "$C_FILE" > "/tmp/catalog-$C_MARK.candidate.json" 2> "/tmp/catalog-$C_MARK.parse.txt" &&
-            jq -e 'type=="object" and .head.observation_only==true' "/tmp/catalog-$C_MARK.candidate.json" > /dev/null 2>&1; then
+            jq -se 'length==1 and (.[0]|type=="object" and .head.observation_only==true)' "/tmp/catalog-$C_MARK.candidate.json" > /dev/null 2>&1; then
             mv "/tmp/catalog-$C_MARK.candidate.json" "/tmp/catalog-$C_MARK.json"
             echo "CATALOG_POINT mark=$C_MARK state=$C_STATE count=$C_COUNT"
             return 0
