@@ -297,3 +297,5 @@ Native局部stop保留原HID真实I/O，client detach后先等精确原server st
 ## 29. 托管远程目录任务（E42）
 
 见[英文验收](research/catalog-supervisor-validation.md)。远程DNS/TCP/TLS/Catalog不再占用单session监督器；最多两个实际任务，包含未消费完成结果，调用者退出不释放槽。原UID/profile Discover授权先于容量，成功audit先于Catalog回应；网络任务不持helper/USB能力、不写WAL，外部stop与命令EOF合作停止并总join。clean b675626完整385/477/20共882软件、220选定输入稳定；五新loopback/store测试含真实v1/v2 mTLS/保持反向FIN/原store锁门。两Native managed IPv4/IPv6既有QEMU回归各264核验/三I/O轮，4guest0、212输入与四guard；原四signal/两背压通过。旧产品red FAIL与测试E0502编译FAIL保留，v2拥塞只属本地loopback，不外推installed矩阵、硬件或完整G3。
+
+内容57c8750正常SSH push且远端ref一致；software40105141484四native job120905165402/165585/165731/166099与Pages40105141472 check120905165381/deploy120905234573均completed/success，primary实际arch/fullgate step成功。只核API状态，不从中重算每格882；六canonical HTTPS资源200且逐Git字节同，无新browser执行。详见[发布原件](evidence/catalog-supervisor-publication-57c8750-20261024/manifest.json)。最终receipt不改220软件/212QEMU输入与七site文件，原完整目标未完成项保持。

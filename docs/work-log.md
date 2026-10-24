@@ -1,6 +1,6 @@
 # RustUSB 工作日志
 
-## 2026-10-24：托管远程目录与监督器隔离（开始）
+## 2026-10-24：托管远程目录与监督器隔离（E42）
 
 - 从clean30fb57a继续，已重读完整Phase0–7原任务、AGENTS/核心skill、工作日志和当前应用服务。英文README、展示站与全局readme-site已交付，原goal保持active。
 - 实际源码定位`Runtime::dispatch(Discover)`在单监督器内等待远端最多4秒，阻塞其他命令、job事实和owner完成记账。先写`research/catalog-supervisor-design.md`，拟采用原有Tokio JoinSet/watch、最多2个实际目录任务，原UID/profile Discover授权、成功后审计、取消后真实close/join及USB owner契约不变。不是远程自动共享、完整G3或TUI/GUI完成。
@@ -15,6 +15,8 @@
 - 同作者不导入原runner/verifier的原件核对PASS：1168文件/方法逐bytes/SHA稳定，软件220/QEMU212逐Git，原manifest及实际liveELF/exit核对；不是新增USB执行或独立安全审计。闭合raw-evidence.tar.gz约8.53MB含全部6开发日志/软件/QEMU/信号/BP方法，逐member核并排除ELF/private key/.private；索引见`evidence/catalog-supervisor-b675626-20261024/manifest.json`。旧red未单独冻结整份pre-format fixture/执行ELF，明确不称clean；原FAIL不改判。
 - 英文验收/应用指南、README及E42/架构/安全/测试/路线图/项目约定同步，网站六源不改，保留inventory872/f66历史归属。全局readme-site沿原rstop固定参考/四文件与Codex发现symlink复核；本轮另用skill-creator快速校验，详细实际退出待下文。原Phase0–7、硬件G1/G2/完整G3/永久OS阻塞/TUI/GUI等目标继续active，尚未将本次文档/代码宣称远端CI或部署成功。
 - 实际全局skill quick_validate exit0/Skill is valid，四源快照和正确Codex symlink记入QA。12文档379本地/仓库映射target、188site/Node/diff均PASS，35外链未全fetch；220软件/各212QEMU源仍匹配b675，网站七文件（六HTTP资源加空.nojekyll）逐30fb不变，无新browser/pixel/noJS执行宣称。QA保存检查时文档源快照，此后的本段只追加回执；见`evidence/catalog-supervisor-docs-20261024/manifest.json`。接下来仅普通commit/push并观察精确内容revision的CI；未提前宣称成功。
+- 内容57c8750普通push exit0/remote main一致/clean；software40105141484四native job120905165402/165585/165731/166099及Pages40105141472 check120905165381/deploy120905234573全部completed/success，actual arch/fullgate step亦成功。只核primary API状态，不补造CI full log/逐执行ELF或各平台882重算。网站六canonical HTTPS资源实际200且逐Git57字节同；无新browser执行，七site文件逐30fb不变。原API轮询/HTTP bodies+headers/普通push回执和方法28份约0.285MB逐原件SHA归档，见`evidence/catalog-supervisor-publication-57c8750-20261024/manifest.json`。
+- 这一轮为原完整Phase0–7目标的实际进展：解决已有agent目录阻塞session监督器，保留有界实际owner/成功audit/合作stop；英文README补验证入口、英文指南和报告维护，已交付的展示站与全局readme-site继续有效。原red/开发compile FAIL和所有历史失败不重判；硬件G1/G2、完整G3、永久OS阻塞/无独立proof通用恢复/TUI/GUI/安装/性能/Windows继续未完成，goal保持active。最终仅提交文档回执/证据并普通push，再核远端HEAD/clean与220/212/七site/四global源，避免把纯回执CI误作上述实测。
 
 ## 2026-10-24：本地设备观察最终状态
 

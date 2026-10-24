@@ -55,7 +55,8 @@ counts, not extra USB test cases:
   and service stop joins the catalog owner before the fixture releases that
   remote gate. Peer driver termination is also observed and joined.
 
-No test contacts the helper, imports USB, loads modules or changes host drivers.
+These five loopback tests do not contact the helper, import USB, load modules or
+change host drivers.
 The 200 ms regression observation is a test deadline, not a latency benchmark.
 
 ## Actual QEMU regression
@@ -139,3 +140,22 @@ per-file SHA-256/lengths, including all original failures and the actual method
 scripts. Inspect or extract into a fresh temporary directory. No ELF, private key
 or host-device `.private` output is included. Publication is recorded separately;
 these local results alone are not CI or live-site deployment evidence.
+
+## Publication
+
+Content `57c8750e4bdcced2a0144882cc6f94d353a34852` was pushed normally and the
+remote main ref matched. The
+[software workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40105141484)
+completed successfully on Ubuntu 22.04/24.04, both x86_64 and aarch64. The
+[Pages workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40105141472)
+check and deploy jobs also succeeded. Six canonical HTTPS bodies returned 200
+and exactly matched that content revision's Git blobs. The website files are
+unchanged from `30fb57a7`; this turn performed no new browser/layout checks.
+
+The [publication manifest](../evidence/catalog-supervisor-publication-57c8750-20261024/manifest.json)
+retains the original primary run/job/step API responses, push receipt and HTTP
+bodies/headers. CI conclusions do not substitute for fetched full logs, per-job
+executed ELF receipts or a per-platform recount of 882; those were not collected.
+Local 882-execution software and the two paired QEMU runs remain assigned to
+`b6756265`. The final receipt changes only documentation/evidence and preserves
+the tested product inputs and website bytes.
