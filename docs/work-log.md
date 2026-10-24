@@ -5,6 +5,9 @@
 - 上一轮E45为实际进展：六页TUI、937软件/双栈QEMU/四CI与发布，最终clean1ed3baa4。本轮先重读完整Phase0–7原任务、Git/AGENTS/核心skill、实际TUI/CLI/worker与原QEMU，原goal保持active。
 - 使用既有ui-ux-pro-max及technical-documentation，沿既有终端设计；先写tui-settings-actions-design.md。复用锁定Rustix/Tokio/serde普通FS API，不新增组件/无委派；官方XDG0.8核绝对路径与配置位置。计划实际保存/加载/覆盖三偏好（不存权限/endpoint/密钥/自动Start）及独立UID1000 PTY确认Start/定向stop验收，原CLI回归另跑，不弱化Rootproof/I/O或制造API回执。尚未修改产品或宣称新测试通过。
 
+- 实现严格schema1/4KiB的三项用户偏好与XDG/显式目录/no-preferences，load不创建目录；save用既有安全FD-relative/0700/0600/NOFOLLOW/nlink1/有限读取、独立OFD非等待锁、own临时文件/sync/重核/rename/dirsync及不确定错误；只在实际成功后记saved。FS工作在accepted blocking task并真实join；CLI覆盖不暗存，Settings w/l/d实际保存/重载/默认，不改agent/helper权限。无新外部包，inventory仍221（tempfile仅TUI dev依赖边）。
+- 首11测试有5 FAIL，定位tempfile默认group-writable夹具根目录而产品祖先校验正确拒绝；仅夹具明确0700后11全PASS，CLI真实Parser/覆盖test另1 PASS，定向all-feature CLI/TUI Clippy -D warnings通过。新C采证首严格编译因else缩进告警失败，原log与失败源保留，显式大括号修正；生成init dash检查通过。尚未执行clean完整gate/QEMU，不将这些开发结果充当验收。
+
 ## 2026-10-25：普通用户终端前端（开始）
 
 - 从clean fa766375重读完整Phase0–7原任务、Git/AGENTS/核心skill及服务实际RPC/两metadata owner；上一轮E44为实际进展，原goal保持active。英文README/展示站/全局readme-site已交付，继续维护。

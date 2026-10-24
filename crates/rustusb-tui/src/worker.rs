@@ -1,4 +1,4 @@
-use crate::state::*;
+use crate::{Settings, state::*};
 use rustusb_core::{
     Error, Result,
     application::{JobId, RequestId, SessionId},
@@ -26,6 +26,7 @@ struct Worker {
     remote: Option<CatalogMonitor>,
     subscription: Option<CatalogSubscription>,
     join_error: Option<Error>,
+    settings: Option<Settings>,
 }
 impl Worker {
     fn publish(&mut self) {
@@ -262,6 +263,12 @@ impl Worker {
                 self.close_remote().await;
                 self.ensure_remote().await;
             }
+            Command::SaveSettings | Command::ReloadSettings => {
+                let reload = matches!(envelope.command, Command::ReloadSettings);
+                if !*self.stop.borrow() {
+                    self.settings_work(reload).await;
+                }
+            }
             Command::Next(kind) => {
                 match kind {
                     PageKind::Jobs => {
@@ -298,6 +305,53 @@ impl Worker {
         }
         self.view.acknowledged = envelope.sequence;
         self.publish();
+    }
+    async fn settings_work(&mut self, reload: bool) {
+        let Some(mut settings) = self.settings.clone() else {
+            self.view.preferences_status =
+                "Preferences disabled; use a user configuration directory".into();
+            self.view.status = self.view.preferences_status.clone();
+            return;
+        };
+        let options = self.view.options;
+        // Accepted filesystem work is retained through signals/quit, never raced away.
+        let result = tokio::task::spawn_blocking(move || {
+            if reload {
+                settings = Settings::load(settings.directory().to_owned())?;
+            } else {
+                settings.save(options)?;
+            }
+            Ok::<_, Error>(settings)
+        })
+        .await;
+        match result {
+            Ok(Ok(settings)) => {
+                self.view.saved_options = settings.saved();
+                if reload {
+                    self.view.options = settings.options();
+                }
+                self.settings = Some(settings);
+                self.view.preferences_status = if reload {
+                    "Reloaded checked preferences"
+                } else {
+                    "Saved preferences"
+                }
+                .into();
+                if reload {
+                    self.close_remote().await;
+                    self.ensure_remote().await;
+                }
+            }
+            Ok(Err(error)) => {
+                self.view.preferences_status =
+                    format!("{} failed: {error}", if reload { "Reload" } else { "Save" })
+            }
+            Err(_) => {
+                self.view.preferences_status =
+                    "Preferences worker failed; inspect file before retry".into()
+            }
+        }
+        self.view.status = self.view.preferences_status.clone();
     }
     async fn mutate(&mut self, action: Mutation) {
         let fresh = if matches!(&action, Mutation::Start(_)) && self.view.unresolved.is_none() {
@@ -389,6 +443,7 @@ pub(crate) async fn run(
     mut requests: mpsc::Receiver<Envelope>,
     sender: watch::Sender<Snapshot>,
     stop: watch::Receiver<bool>,
+    settings: Option<Settings>,
 ) -> Result<()> {
     let mut worker = Worker {
         manifest,
@@ -402,6 +457,7 @@ pub(crate) async fn run(
         remote: None,
         subscription: None,
         join_error: None,
+        settings,
     };
     if *worker.stop.borrow() {
         return Ok(());

@@ -3,6 +3,9 @@
 //! This frontend never owns USB resources. Closing it leaves service jobs running.
 #![cfg(target_os = "linux")]
 
+mod preferences;
+pub use preferences::Settings;
+
 mod state;
 mod terminal;
 mod worker;
@@ -12,8 +15,9 @@ use rustusb_service::config::Manifest;
 use std::sync::Arc;
 use tokio::sync::{mpsc, watch};
 
-/// Initial, invocation-local frontend preferences; never administrator policy.
-#[derive(Debug, Clone, Copy)]
+/// Frontend preferences; never administrator policy or automatic device actions.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Options {
     /// Seconds after a completed refresh, in 2..=120.
     pub refresh_seconds: u64,
@@ -41,6 +45,17 @@ impl Default for Options {
 pub async fn run(
     manifest: Manifest,
     options: Options,
+    external: watch::Receiver<bool>,
+) -> Result<()> {
+    run_with_settings(manifest, options, None, external).await
+}
+
+/// Run with a checked user-settings location loaded by an owned blocking worker.
+/// Options are the effective invocation values; save/reload work is truly joined.
+pub async fn run_with_settings(
+    manifest: Manifest,
+    options: Options,
+    settings: Option<Settings>,
     mut external: watch::Receiver<bool>,
 ) -> Result<()> {
     if rustix::process::geteuid().is_root() {
@@ -50,12 +65,25 @@ pub async fn run(
     rustusb_service::catalog::RefreshInterval::new(options.refresh_seconds)?;
     let (stop, receiver) = watch::channel(*external.borrow());
     let (commands, requests) = mpsc::channel(1);
-    let (views, observations) = watch::channel(state::Snapshot::new(options));
+    let mut snapshot = state::Snapshot::new(options);
+    if let Some(settings) = &settings {
+        snapshot.saved_options = settings.saved();
+        snapshot.preferences_status = format!(
+            "{}; [w] save / [l] reload / [d] defaults",
+            if settings.has_saved() {
+                "Loaded checked preferences"
+            } else {
+                "No saved preferences yet"
+            }
+        );
+    }
+    let (views, observations) = watch::channel(snapshot);
     let mut service = tokio::spawn(worker::run(
         Arc::new(manifest),
         requests,
         views,
         receiver.clone(),
+        settings,
     ));
     let mut screen =
         tokio::task::spawn_blocking(move || terminal::run(observations, commands, receiver));

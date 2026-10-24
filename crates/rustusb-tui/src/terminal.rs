@@ -231,7 +231,7 @@ impl App {
                 row(
                     "scope",
                     "Acceptance: hardware and full G3 remain open",
-                    "This terminal frontend adds no device/platform compatibility guarantee. Settings are invocation-local. Administrator policy and TLS material are managed separately.",
+                    "This terminal frontend adds no device/platform compatibility guarantee. Preferences can be saved explicitly. Administrator policy and TLS material are managed separately.",
                 ),
             ],
             4 => snapshot
@@ -251,6 +251,15 @@ impl App {
             _ => {
                 let mut rows = vec![
                     row(
+                        "preferences",
+                        &format!("Preferences: {}", snapshot.preferences_status),
+                        &format!(
+                            "{}\nChanged from saved: {}\n[w] save / [l] reload / [d] defaults. Never edits administrator policy, credentials or device authorization.",
+                            snapshot.preferences_status,
+                            snapshot.saved_options != Some(self.options)
+                        ),
+                    ),
+                    row(
                         "refresh",
                         &format!("Auto refresh: {}  [a]", self.options.auto_refresh),
                         "Pause/resume profile polling and remote discovery. Local kernel observation continues. Service jobs are unaffected.",
@@ -266,7 +275,7 @@ impl App {
                     row(
                         "theme",
                         &format!("Monochrome: {}  [m]", self.options.monochrome),
-                        "Colors never carry state by themselves. Preferences apply only to this process; use launch flags to repeat them.",
+                        "Colors never carry state by themselves. Use w to save checked preferences; launch flags override them without saving.",
                     ),
                     row(
                         "start",
@@ -455,6 +464,11 @@ impl App {
                 let mut options = self.options;
                 options.monochrome = !options.monochrome;
                 self.send(sender, Command::Options(options));
+            }
+            KeyCode::Char('w') if self.page == 5 => self.send(sender, Command::SaveSettings),
+            KeyCode::Char('l') if self.page == 5 => self.send(sender, Command::ReloadSettings),
+            KeyCode::Char('d') if self.page == 5 => {
+                self.send(sender, Command::Options(Options::default()))
             }
             KeyCode::Char('e') if self.waiting.is_none() => {
                 if let Some(intent) = &snapshot.unresolved {
@@ -704,7 +718,7 @@ fn draw(frame: &mut Frame, app: &mut App, snapshot: &Snapshot) {
                 ),
             )
         } else if app.help {
-            ("Keyboard", "1-6 / Tab / Shift-Tab: pages\n[/]: previous/next readable profile\nj/k or arrows: stable selection\n/: search current page; Esc: clear filters\nf: attention filter; s: reverse label sort\nEnter: details; arrows scroll; Esc closes\nv: sessions/jobs on Connections\nn: next service page; b: first page (Connections/Logs)\nr: refresh agent metadata\na: pause/resume polling; +/-: 2..120 seconds; m: monochrome\ne: start WHOLE fixed profile / retry unresolved original\nx: stop selected session/job (Connections)\nq / Ctrl-C / external INT/TERM: exit UI, leave service jobs\nSettings apply only to this invocation. No root or TLS policy editing.\nFiltering/sorting apply only to the displayed finite service page.".into())
+            ("Keyboard", "1-6 / Tab / Shift-Tab: pages\n[/]: previous/next readable profile\nj/k or arrows: stable selection\n/: search current page; Esc: clear filters\nf: attention filter; s: reverse label sort\nEnter: details; arrows scroll; Esc closes\nv: sessions/jobs on Connections\nn: next service page; b: first page (Connections/Logs)\nr: refresh agent metadata\na: pause/resume polling; +/-: 2..120 seconds; m: monochrome\ne: start WHOLE fixed profile / retry unresolved original\nx: stop selected session/job (Connections)\nq / Ctrl-C / external INT/TERM: exit UI, leave service jobs\nSettings: w saves, l reloads, d restores in-memory defaults. No root or TLS policy editing.\nFiltering/sorting apply only to the displayed finite service page.".into())
         } else {
             ("Details [Esc closes]", selected_detail)
         };
