@@ -66,6 +66,8 @@ The [final six-run archive](../evidence/authentication-qemu-final-25870c6-202610
 
 Raw PCAP is saved without applying the earlier all-positive classifier to a mixture of accepted and rejected TLS handshakes. The older [six secure data-path scenarios](secure-usbip-validation.md), framed-v2 [health matrix](data-link-health-validation.md), [23 preparation-stop runs](prepare-recording-shutdown-validation.md) and [diagnostic export scenario](diagnostic-export-validation.md) retain their own revisions and executable scopes. No larger single-revision aggregate is claimed.
 
+The README/site content at `52627d8` has [separate publication receipts](../evidence/authentication-publication-52627d8-20261024/manifest.json). [Software run 40073774652](https://github.com/tiansongyu/usbip-client/actions/runs/40073774652) passed all four native Ubuntu/architecture combinations; [Pages run 40073774627](https://github.com/tiansongyu/usbip-client/actions/runs/40073774627) passed check/deploy. All six canonical HTTPS resources returned 200 and match that content commit exactly, with separate actual desktop/mobile and keyboard observations. These status receipts do not recount software executions or move the QEMU results from clean `25870c6`.
+
 ## Preserved failures
 
 | Original clean run | Actual terminal result and correction |
