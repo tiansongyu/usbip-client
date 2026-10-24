@@ -47,6 +47,12 @@ Also verify actual root, JSON and redirected-terminal rejection commands with
 returned exit1, empty stdout and the exact supported guard error. These fast
 commands have no separate live /proc sample; do not imply that they do.
 
+The G4 audit also checks the compound keyboard path through sort, attention
+filter, bounded search and exact-target stop confirmation with the real App
+handler/channel and TestBackend. Filtering an empty result must not issue a
+stop; searching a UUID must not change refresh options. This proves UI command
+selection, not authorization or actual release, which remain service concerns.
+
 Retain actual PTY wait, saved termios, raw/resize/alternate screen, live ELF and
 zero capabilities. Capture protected public configuration and private-key
 metadata only. All accepted agent/observer/PTY children are actually joined;

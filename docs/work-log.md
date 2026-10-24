@@ -9,6 +9,8 @@
 
 - clean935bd446首all单guest整体FAIL：实际guest0/无forced/四guard真，四实际TUI生命周期均符合预期（三child0、真实拒绝child1）。原monitor六点通过，open modal原地址2→拔出空白→新地址3；首判据误把初始wide旁栏空提示列为候选，但其顺序仍正确FAIL，原summary不改。后续仅将空提示候选进一步收紧为真实open modal。产品selection身份变化时清scroll、相同身份重排保scroll；新60/120 TestBackend回归与13前端函数首PASS。补三实际root/json/nonTTY拒绝采证（无逐fast child live-proc，不冒称）。完整clean gate/最终QEMU尚待执行。
 
+- 为G4逐项核对补充真实App键盘/channel/TestBackend组合测试：排序保选择、attention筛选、无匹配不发stop、UUID搜索不触发刷新快捷键、最后确认只发精确job ID；14前端函数首PASS。三guard实际命令和真实open-modal判据均在最终夹具，未将原935失败改判。随后冻结新提交，执行完整质量gate和最终单guest/托管回归。
+
 ## 2026-10-25：终端未知启动结果与agent失联（开始）
 
 - 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。

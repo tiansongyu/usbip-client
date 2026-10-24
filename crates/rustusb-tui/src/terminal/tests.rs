@@ -294,3 +294,80 @@ fn detail_scroll_follows_identity_and_empty_selection_feedback_stays_visible()
     }
     Ok(())
 }
+
+#[test]
+fn keyboard_filter_sort_and_uuid_search_keep_stop_target_exact()
+-> std::result::Result<(), Box<dyn std::error::Error>> {
+    use rustusb_core::application::{InstanceId, JobId};
+    use rustusb_service::model::{Failure, Job, JobState};
+    let mut snapshot = Snapshot::new(Options::default());
+    let wanted = JobId::new("00000000-0000-4000-8000-000000000002")?;
+    for number in 1..=3 {
+        snapshot.jobs.push(Job {
+            id: JobId::new(format!("00000000-0000-4000-8000-{number:012}"))?,
+            instance_id: InstanceId::new("00000000-0000-4000-8000-000000000004")?,
+            profile: "test".into(),
+            operator_uid: 1000,
+            state: JobState::Running,
+            stop_requested: false,
+            operation_error: (number == 2).then_some(Failure::Io),
+        });
+    }
+    let mut app = App::new(snapshot.options);
+    app.page = 2;
+    app.jobs = true;
+    app.selected[2] = Some(wanted.to_string());
+    let (tx, mut rx) = mpsc::channel(1);
+    let press = |c| KeyEvent::new(KeyCode::Char(c), KeyModifiers::NONE);
+    let enter = KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE);
+    app.key(press('s'), &snapshot, &tx);
+    let rows = app.rows(&snapshot);
+    assert_eq!(
+        rows[app
+            .selection(&rows)
+            .ok_or_else(|| Error::State("lost sorted selection".into()))?]
+        .key,
+        wanted.to_string()
+    );
+    app.key(press('f'), &snapshot, &tx);
+    assert_eq!(app.rows(&snapshot).len(), 1);
+    app.key(press('/'), &snapshot, &tx);
+    for c in "missing".chars() {
+        app.key(press(c), &snapshot, &tx);
+    }
+    app.key(enter, &snapshot, &tx);
+    assert!(app.rows(&snapshot).is_empty());
+    app.key(press('x'), &snapshot, &tx);
+    assert!(app.confirm.is_none() && rx.try_recv().is_err());
+    app.key(
+        KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE),
+        &snapshot,
+        &tx,
+    );
+    app.key(press('/'), &snapshot, &tx);
+    for c in wanted.to_string().chars() {
+        app.key(press(c), &snapshot, &tx);
+    }
+    app.key(enter, &snapshot, &tx);
+    assert_eq!(app.options, snapshot.options);
+    let mut terminal = Terminal::new(TestBackend::new(60, 18))?;
+    terminal.draw(|f| draw(f, &mut app, &snapshot))?;
+    app.key(press('x'), &snapshot, &tx);
+    assert!(app.confirm.is_some());
+    assert!(rx.try_recv().is_err());
+    app.key(
+        KeyEvent::new(KeyCode::Right, KeyModifiers::NONE),
+        &snapshot,
+        &tx,
+    );
+    app.key(enter, &snapshot, &tx);
+    match rx.try_recv().map(|e| e.command) {
+        Ok(Command::Mutate(Mutation::StopJob(id))) => assert_eq!(id, wanted),
+        other => {
+            return Err(Error::State(format!("wrong filtered stop command: {other:?}")).into());
+        }
+    }
+    assert!(rx.try_recv().is_err());
+    assert!(snapshot.jobs.iter().all(|j| !j.stop_requested));
+    Ok(())
+}
