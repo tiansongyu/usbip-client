@@ -711,3 +711,5 @@
 - 内容5845b14经正常SSH push，ls-remote与实际HEAD相等，源/网站字节映射独立保留。四native CI任务全部completed/success（含实际native架构和完整gate步骤），Pages check/deploy均success；只核primary API最终状态，未拉完整CI log/ELF复点数，不把本地824改写为逐平台新计数。
 - 六canonical HTTPS资源200且精确匹配5845 Gitblob；公开desktop/mobile DOM新链接/响应图/nooverflow通过。首次resize图未完成观察保留，settled采样完整；viewport reset/public tab留作交付。
 - 新增独立publication archive并写验收/网站维护记录；随后仅文档回执提交，不改实际产品或site bytes。最后核本地/远端一致与工作区clean；原长期goal继续active。
+
+- 双栈首clean5b26bba Native-v4 host FAIL，client在dual-stack-hostname阶段报BusyBox ip invalid argument replace，尚未连接；两guest0/四guard真不重判。新增邻居命令须显式用已复制/usr/bin/ip；源/设计先记录，再新clean/fresh复跑，产品未改。

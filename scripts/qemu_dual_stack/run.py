@@ -39,19 +39,19 @@ def generated_init():
     if [ "$FAMILY" = ipv4 ]; then
         BAD=fd42:7275:7374::99 GOOD=192.0.2.1
         printf 'precedence ::/0 100\\nprecedence ::ffff:0:0/96 10\\n' > /etc/gai.conf
-        ip -6 neigh replace "$BAD" lladdr 52:54:00:00:00:99 nud permanent dev eth0
+        /usr/bin/ip -6 neigh replace "$BAD" lladdr 52:54:00:00:00:99 nud permanent dev eth0
     else
         BAD=192.0.2.99 GOOD=fd42:7275:7374::1
         printf 'precedence ::/0 10\\nprecedence ::ffff:0:0/96 100\\n' > /etc/gai.conf
-        ip -4 neigh replace "$BAD" lladdr 52:54:00:00:00:99 nud permanent dev eth0
+        /usr/bin/ip -4 neigh replace "$BAD" lladdr 52:54:00:00:00:99 nud permanent dev eth0
     fi
     printf '127.0.0.1 localhost\\n::1 localhost\\n%s rustusb-dual-stack.test\\n%s rustusb-dual-stack.test\\n' "$BAD" "$GOOD" > /etc/hosts
     printf 'hosts: files\\n' > /etc/nsswitch.conf
     cp /etc/hosts /tmp/dual-hosts.txt
     cp /etc/gai.conf /tmp/dual-gai.txt
     cp /etc/nsswitch.conf /tmp/dual-nsswitch.txt
-    ip -4 neigh show dev eth0 > /tmp/dual-neighbors4.txt
-    ip -6 neigh show dev eth0 > /tmp/dual-neighbors6.txt
+    /usr/bin/ip -4 neigh show dev eth0 > /tmp/dual-neighbors4.txt
+    /usr/bin/ip -6 neigh show dev eth0 > /tmp/dual-neighbors6.txt
     HOST=rustusb-dual-stack.test
     echo "DUAL_STACK_READY healthy=$FAMILY stale=$BAD mac=52:54:00:00:00:99"
 fi

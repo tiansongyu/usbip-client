@@ -98,3 +98,12 @@ ownership are unchanged. Requests gain no endpoint override or new privilege.
 
 This is Phase3 connectivity work, not complete G3, a performance benchmark,
 hardware G1/G2, hot credential revocation, TUI/GUI, packaging or Windows support.
+
+## Initial installed fixture correction
+
+The first clean5b26bba Native/IPv4 fixture fails during hostname setup:
+BusyBox standalone ash selects its `ip` applet, which rejects `neigh replace`.
+No DUAL_STACK_READY or product hostname dial occurs. Both guest exits zero and
+all four provenance guards true do not turn that host FAIL into a sequential-
+connector reproduction. Use the already copied `/usr/bin/ip` explicitly for the
+new neighbor mutation and observation, then rerun clean/fresh. Product unchanged.
