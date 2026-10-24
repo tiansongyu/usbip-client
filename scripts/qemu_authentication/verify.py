@@ -88,6 +88,24 @@ def verify(evidence, args, base):
     labels = ["free-1", "held-1", "free-2", "held-2"]
     wire_results = []
     for label in labels:
+        security = {side: obj(server, f"auth-security-{side}-{label}.json") for side in ["before", "after"]}
+        for side, sample in security.items():
+            require(set(sample) == {"scope", "tls", "framing", "listener_connection_limit", "saturated", "consistent"}, label + side + " closed security snapshot")
+            require(sample["scope"] == "loaded_tls_server_configuration" and sample["consistent"] is True and sample["saturated"] is False, label + side + " explicit coherent volatile scope")
+            tls = sample["tls"]
+            require(set(tls) == {"attempts", "in_flight", "authenticated", "handshake_failed", "timed_out", "unmapped_certificate", "protocol_mismatch", "connection_limit", "cancelled"}, label + side + " closed TLS categories")
+            require(all(type(value) is int and 0 <= value <= 2**64-1 for value in tls.values()), label + side + " bounded numeric TLS fields")
+            require(tls["attempts"] == sum(value for key, value in tls.items() if key != "attempts"), label + side + " coherent TLS accounting")
+            require(sample["listener_connection_limit"] == 0 and tls["connection_limit"] == 0, label + side + " no unobserved quota refusal")
+            require(set(sample["framing"]) == {"attempts", "in_flight", "ready", "failed", "timed_out", "cancelled"} and all(type(value) is int and value == 0 for value in sample["framing"].values()), label + side + " raw-v1 no fabricated framing")
+        before, after = security["before"]["tls"], security["after"]["tls"]
+        require(all(after[key] >= before[key] for key in before if key != "in_flight"), label + " monotonic TLS totals")
+        require(after["unmapped_certificate"] - before["unmapped_certificate"] == (2 if label.endswith("2") else 1), label + " actual unmapped/retired local refusal count")
+        # Rustls may reject ALPN during negotiation or the fixed post-handshake
+        # check. Do not infer certificate causes from their aggregate IO errors.
+        require(after["handshake_failed"] + after["protocol_mismatch"] - before["handshake_failed"] - before["protocol_mismatch"] == 8, label + " actual generic handshake/protocol refusal count")
+        require(after["authenticated"] > before["authenticated"], label + " real locally authenticated attempts counted")
+        require(after["in_flight"] == 0 and after["timed_out"] == before["timed_out"] and after["cancelled"] == before["cancelled"], label + " all hostile TLS attempts resolved")
         for marker in ["WAIT", "SAVED", "CHECKED"]:
             require(f"AUTH_SERVER_{marker} label={label}\n" in logs["server"], label + " server " + marker)
         require(f"AUTH_CLIENT_DONE label={label}\n" in logs["client"], label + " actual client completion")

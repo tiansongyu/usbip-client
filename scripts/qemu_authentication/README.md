@@ -13,4 +13,12 @@ The [design](../../docs/research/secure-negative-qemu-design.md) defines two cre
 
 Capture public certificates, exact protected configurations, original channels, actual waits, kernel/helper observations, request/reply bytes, QMP/serial input and PCAP. Private keys stay solely in the temporary role-specific payload and are not archived. Raw-v1 is explicit; a mixed accepted/rejected handshake capture is not passed through the older all-positive packet classifier. Fast negative processes have fixed source/role/config and actual waits but no assumed per-executed-ELF samples.
 
+The current fixture additionally reads the actual `server_security` foreground
+control before/after all four hostile batches. Its verifier checks closed numeric
+fields, coherent attempt accounting, generic handshake/protocol versus unmapped
+leaf deltas, no invented raw-v1 framing and resolved attempts. These volatile
+counters do not replace any existing owner, I/O, retirement or cleanup check.
+Earlier reports belong to their original harness revisions and did not collect
+this new interface.
+
 No PASS is implied by this README. First failures remain failures; guest exit zero does not override the host verdict. Hardware, framed-v2-specific negative coverage, long-term/exhaustion behavior and complete G3 remain separate work.

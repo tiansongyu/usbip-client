@@ -32,6 +32,7 @@ auth_state() {
     auth_process "$SERVER_PID" "server-$auth_label"
     if [ "$BACKEND" != virtual ]; then auth_process "$HELPER_PID" "helper-$auth_label"; fi
     snapshot "auth-$auth_label"
+    auth_security_snapshot "$auth_label"
     if [ "$BACKEND" = native ]; then
         native_host_phase "auth-$auth_label" "$auth_phase"
         native_server_journal "auth-$auth_label" "$auth_phase"
@@ -39,6 +40,19 @@ auth_state() {
         cp /var/lib/rustusb/physical/journal.json "/tmp/auth-physical-$auth_label.json"
         host_baseline "/tmp/host-auth-$auth_label.json"
     fi
+}
+auth_security_snapshot() {
+    local auth_security_label auth_security_attempt
+    auth_security_label=$1
+    printf '{"op":"server_security","id":"security-%s"}\n' "$auth_security_label" | timeout 3 /usr/bin/setpriv --reuid=2000 --regid=2000 --clear-groups /bin/busybox tee /run/broker/control > /dev/null
+    for auth_security_attempt in $(seq 1 100); do
+        if jq -se --arg id "security-$auth_security_label" 'any(.[]; .event=="server_security" and .id==$id)' /tmp/server.events > /dev/null 2>&1; then
+            jq -s --arg id "security-$auth_security_label" '.[] | select(.event=="server_security" and .id==$id) | .snapshot' /tmp/server.events > "/tmp/auth-security-$auth_security_label.json"
+            return 0
+        fi
+        kill -0 "$SERVER_PID"; sleep 0.05
+    done
+    return 1
 }
 auth_server_barrier() {
     local auth_label auth_phase
