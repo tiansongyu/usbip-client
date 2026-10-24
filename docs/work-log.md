@@ -8,6 +8,12 @@
 - 实现严格schema1/4KiB的三项用户偏好与XDG/显式目录/no-preferences，load不创建目录；save用既有安全FD-relative/0700/0600/NOFOLLOW/nlink1/有限读取、独立OFD非等待锁、own临时文件/sync/重核/rename/dirsync及不确定错误；只在实际成功后记saved。FS工作在accepted blocking task并真实join；CLI覆盖不暗存，Settings w/l/d实际保存/重载/默认，不改agent/helper权限。无新外部包，inventory仍221（tempfile仅TUI dev依赖边）。
 - 首11测试有5 FAIL，定位tempfile默认group-writable夹具根目录而产品祖先校验正确拒绝；仅夹具明确0700后11全PASS，CLI真实Parser/覆盖test另1 PASS，定向all-feature CLI/TUI Clippy -D warnings通过。新C采证首严格编译因else缩进告警失败，原log与失败源保留，显式大括号修正；生成init dash检查通过。尚未执行clean完整gate/QEMU，不将这些开发结果充当验收。
 
+- clean5584c5b3完整十项gate全0：417/default、513/all、20/vendor共950执行、235选定输入前后稳定。两Native双栈UI动作均首实际PASS，各19实际UID1000产品PTY/233源，原264核验/三轮HID-FTDI I/O/完整Rootproof保留；每pair6真实UI Start/1指定session stop/4jobstop及两端8settings case，普通operator不能读实际broker key，mode/字节/单frame值正确。Started回执来自原UI已正常ACK后的exact RetryStart CLI readback且无新请求，不当作UI lost-ACK验收。
+- 两原invocation-only TUI双栈回归各10实际PTY/232源首PASS；旧路径明确no-preferences，仅新flag隔离当前默认加载，原CLI仍执行该组USB Start/stop。全部四pair/8guest实际0/四guard/58PTY，所有新UI及旧broker/helper执行ELF匹配同software release；未重跑全历史Virtual/USBFS/v2矩阵或单独本地旧signals/BP，不据此完成G4/硬件/完整G3。
+- 同作者不import原verifier的源码/Git/ELF/UID/termios/请求及原件检查闭合2612文件、1250原guest Base64逐还原，5,986,575B archive逐member/原件SHA稳定；非新增USB或独立安全审计。首5开发夹具FAIL日志/C失败原源保留，不称其clean运行或保留了未冻结的初始Rust夹具。英文指南/README/设计/报告及验收/架构/安全/兼容/测试/roadmap/约定同步，website与global skill沿用，尚待QA与精确内容CI发布。
+
+- 文档QA15源468本地/仓库target，205site检查/Node/diff/实际CLI help exit0与默认Native normal树隔离均通过；235软件/两233及两232 QEMU输入与实际all ELF仍逐hash一致。七website、四global readme-site及Codex symlink保持，不重跑browser/pixel/noJS/reduced-motion或把E45不可截图情况改判。检查时源快照/方法见evidence/tui-settings-docs-20261024，后续仅回执追加。即将普通commit/push并核精确内容四平台CI/Pages，不预先声明成功。
+
 ## 2026-10-25：普通用户终端前端（开始）
 
 - 从clean fa766375重读完整Phase0–7原任务、Git/AGENTS/核心skill及服务实际RPC/两metadata owner；上一轮E44为实际进展，原goal保持active。英文README/展示站/全局readme-site已交付，继续维护。

@@ -395,3 +395,7 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 ## 普通用户终端（E45）
 
 [报告](research/tui-validation.md)区分937软件/233源与clean d181双栈QEMU/4guest0；[PTY脚本](../scripts/qemu_tui/README.md)每pair10实际child与原264核验/三轮I/O，external Python仅测试。ANSI差量必须重建屏幕，不以raw连续字符串判断；首f131 FAIL保留。默认取消不是确认后USB动作验收，G4仍开放。
+
+## 持久设置与确认操作（E46）
+
+[报告](research/tui-settings-actions-validation.md)记录clean5584c5b3完整950执行/235稳定输入、6新偏好函数及1CLI Parser/覆盖函数；首次5夹具FAIL/C严格告警不重判。[动作脚本](../scripts/qemu_tui_actions/README.md)在Native双栈各19实际UID1000 PTY，原脚本另以no-preferences双栈各10；共58PTY/8guest0，四pair均保原264/三轮I/O与Rootproof。Start原件用真实CLI RetryStart读取UI原job且replayed true，既非伪造response，也非lost-reply UI验证。独立raw方法仅源码/hash/原件核对非新增USB或安全审计。

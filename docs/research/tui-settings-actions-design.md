@@ -1,6 +1,7 @@
 # Persistent frontend settings and installed terminal actions
 
-Status: implementation design, 2026-10-25. This continues the six-page frontend
+Status: scoped implementation verified at clean5584c5b3, 2026-10-25; see the
+[validation report](tui-settings-actions-validation.md). This continues the six-page frontend
 without changing the original hardware/full G3/G4 gates.
 
 ## Settings

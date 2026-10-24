@@ -142,7 +142,9 @@ Recorded QEMU terminal output reconstructed for documentation; font and colors
 are presentation choices. [Capture and validation](docs/research/tui-validation.md)
 keep actual USB I/O and terminal coverage separate. The [TUI guide](docs/tui.md)
 covers search, filters, paging, details and confirmed fixed-profile actions.
-Exiting leaves service jobs running. Settings are invocation-local; complete
+Exiting leaves service jobs running. Settings can be saved explicitly in a
+checked user directory, with startup overrides. [Confirmed-action validation](docs/research/tui-settings-actions-validation.md)
+records real TUI-driven Native USB sessions and separate regressions; complete
 TUI acceptance remains open.
 
 To observe a device's data connection, explicitly enable TLS configuration schema 2

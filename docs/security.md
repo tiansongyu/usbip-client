@@ -175,3 +175,7 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 ## 普通用户终端边界
 
 [TUI](tui.md)只读public manifest、普通UID调用原profile RPC；无TLS私钥、helper变更或shell。确认不能替代实际授权；未知Start保原UUID且只RetryStart，过期不证明旧操作未开始。stop accepted与实际cleanup分开，退出仅停止/总joinmetadata owner而不停止服务job。[E45](research/tui-validation.md)不完成完整G3/G4或硬件。
+
+## 终端偏好隔离（E46）
+
+[E46](research/tui-settings-actions-validation.md)的用户JSON仅interval/polling/monochrome，strict1/4KiB；不是认证或设备规则，UI仍逐实际UID/profile经原RPC。文件caller0700/0600/NOFOLLOW/nlink1/独立OFD锁/有限read/own临时sync与重核rename；不覆盖未知JSON，publication错误可不确定。启动load不创建目录，所有accepted blocking FS工作真实join，无永久阻塞/所有power-loss保证。确认操作实际Native双栈通过，不能扩大为lost-ACK UI/全部G4/硬件或Root权限。

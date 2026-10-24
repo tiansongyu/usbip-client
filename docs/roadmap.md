@@ -88,7 +88,7 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 ## 7. Phase 4：完整 TUI
 
-已提供[六页可选普通用户预览](tui.md)，[E45](research/tui-validation.md)记录937软件与两Native双栈/20实际PTY/原I/O清理回归。设置仅当前进程；持久偏好、installed确认动作和UI专项异常仍未完成，G4不标通过。之前G1/G2/完整G3门槛保留，不以开发前端重判历史验收。
+已提供[六页可选普通用户预览](tui.md)，[E45](research/tui-validation.md)记录937软件与两Native双栈/20实际PTY/原I/O清理回归。后续[E46](research/tui-settings-actions-validation.md)补充持久三偏好及Native双栈installed确认操作，950软件/四paired/58真实PTY；UI专项异常/未知启动应答等仍未完成，G4不标通过。之前G1/G2/完整G3门槛保留，不以开发前端重判历史验收。
 
 使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。
 

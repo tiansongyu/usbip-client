@@ -66,9 +66,10 @@ profile, respects Discover, and stops/joins before replacing its source. No
 metadata subscription owns a device. Joining an agent-source observer stops only
 the local RPC observer; already accepted service Discover/resolver work retains
 its separate owner and budget. Refresh pause affects frontend polling,
-not service jobs or the local kernel observer. Settings initially manage this
-invocation's refresh interval, polling and theme; persistent user preferences and
-editing administrator policy remain separate unfinished work.
+not service jobs or the local kernel observer. Initial settings were invocation-only;
+[persistent checked frontend preferences](tui-settings-actions-design.md) now add
+explicit save/reload and startup override behavior. Administrator policy remains
+separately provisioned, without new frontend privilege.
 
 ## Shutdown and verification
 

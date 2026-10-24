@@ -1,5 +1,9 @@
 # Ordinary-user terminal preview: validation
 
+Historical E45 evidence. Later [E46](tui-settings-actions-validation.md) adds
+persistent preferences and confirmed Native TUI actions; the original revisions,
+verdicts and capture below retain their tested scope.
+
 The optional frontend now provides six real Ratatui pages backed by the existing
 application service and shared metadata observers. It adds no USB privilege,
 private-key loading, RPC or persistent schema. This is a usable preview, not

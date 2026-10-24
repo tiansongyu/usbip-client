@@ -131,7 +131,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 4.6 存储挂载 / 句柄 / 服务 / 多 LUN / 分区 / 加密检查与安全释放 | 所有当前接口和缓存 inactive config 的存储判定；Phase 1 全面拒绝存储导出 | 尚未实现全面使用者 / 挂载命名空间 / dm / LUN 审计与排他导出；**拒绝存储是安全降级，不是完成存储共享功能** |
 | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
 | 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow；E36 diagnostics私有JSON/单profile导出 | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
-| 4.9 Ratatui TUI | 六页普通用户共享API前端与[E45证据](research/tui-validation.md) | 预览已实现键盘/搜索/筛选/排序/刷新/详情/确认；持久偏好、installed确认动作/异常交互及完整G4仍未完成 |
+| 4.9 Ratatui TUI | 六页普通用户共享API前端与[E45证据](research/tui-validation.md) | 已实现键盘/搜索/筛选/排序/刷新/详情/确认与持久前端设置；Native双栈确认动作见E46，UI专项异常及完整G4仍未完成 |
 | 4.10 GUI | 设计推迟到核心稳定，计划评估 Tauri；共用核心原则 | 后续 Phase 5；无 GUI；双端列表、延迟、访问控制、自动规则等未实现 |
 | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E36 bounded闭合JSON/alias/独立已提交视图与真实私有publication，信号/文件失败保留实际结果。E31 audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
 
@@ -317,3 +317,7 @@ E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native 
 ## 32. E45：普通用户终端预览
 
 见[英文验收](research/tui-validation.md)：clean ba0cedc9十项软件gate全0、411/default+506/all+20/vendor共937次、233源稳定。clean d181665b两Native双栈paired/4guest0、每pair230源/四guard/原264核验与三轮真实HID/FTDI I/O/完整Rootproof保持，另每pair10实际UID1000产品PTY真实wait0/raw/resize/数值termios恢复/执行ELF。原clean f131 IPv4 raw连续文字误判整体FAIL不重判；仅修fixture重建真实ANSI差量屏幕，后续实际重跑两pair PASS。QEMU确认仅默认取消，原CLI仍执行USB变更，未冒称installed确认动作/全部G4。设置仅本进程，完整G3/硬件及Phase5–7保持原目标。
+
+## 33. E46：持久设置与实际终端确认
+
+[报告](research/tui-settings-actions-validation.md)锁clean5584c5b3：417/default+513/all+20/vendor共950次/235源；两新UI动作Native双栈各19实际PTY/233源、两旧invocation-only各10PTY/232源，四paired/8guest0/原264核验/三HID-FTDI I/O与完整Rootproof保持。新Start只来自UID1000真实界面，真实RetryStart返回replayed metadata且不增加requests；指定UUID stop与wholejob stop实际释放，未制造Started/StopAccepted。文件实际save/重启load/启动flag覆盖/权限错误可见；公开存储仅三偏好不授权限。完整G4专项异常/未知启动应答、硬件/完整G3及Phase5–7继续未完成。

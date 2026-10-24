@@ -33,6 +33,7 @@ durable audit pages with separate Audit permission.
 | `n`, `b` on Connections/Logs | Next service page; first page |
 | `r` | Refresh agent metadata |
 | `a`, `-` / `+`, `m` | Polling, 2–120 second interval, monochrome |
+| `w`, `l`, `d` on Settings | Save, reload, restore in-memory defaults |
 | `e` | Confirm whole-profile start or retry unresolved original start |
 | `x` on Connections | Confirm stop of exact selected session/job |
 | `?` | Help |
@@ -56,10 +57,33 @@ polling is paused. Joining the local catalog observer does not cancel an already
 accepted agent Discover request or resolver: the agent retains and joins its own
 bounded work. Raw-v1 RTT is unavailable; catalog/PONG is not USB progress.
 
-Settings currently apply only to this invocation. Repeat launch settings with
-`--refresh-seconds 10 --no-auto-refresh --monochrome`. Persistent user preferences,
-administrator policy editing and complete Phase 4 acceptance remain unfinished.
-The frontend does not complete hardware G1/G2 or full G3.
+Settings persist only when you explicitly press `w` on Settings. The strict
+schema-1 file stores refresh interval, automatic polling and monochrome alone.
+The default location is `$XDG_CONFIG_HOME/rustusb/preferences.json`, or
+`$HOME/.config/rustusb/preferences.json`. Relative/empty XDG values are ignored;
+without an absolute home fallback, persistence is visibly disabled.
+
+Use `--preferences-directory /absolute/user/directory` to choose another checked
+location or `--no-preferences` for invocation-only behavior. Startup flags
+`--refresh-seconds 10`, `--auto-refresh` / `--no-auto-refresh`, and
+`--color` / `--monochrome` override loaded values without saving them. Later
+keyboard changes apply in memory. `l` explicitly reloads the file/defaults and
+replaces current values; `d` restores in-memory defaults. Only `w` writes.
+
+The directory must be caller-owned0700; files must be0600 regular/single-link.
+Ancestors must be protected root/caller directories (root sticky temporary
+ancestors are allowed). Symlink paths are refused. Load creates nothing; Save
+creates missing directories with requested0700, never relaxes existing modes,
+and refuses an unknown/malformed file. A save error is visible; an error after
+rename can mean publication is uncertain. Filesystem workers are really joined
+on exit, so permanent OS blocking can delay return. Fix an unsuitable user path
+or choose `--no-preferences`; do not run the UI as root to bypass this check.
+
+No profile, endpoint, device key, credential, request ID, automatic Start or
+permission is stored. Administrator TLS/profile policy is managed separately.
+[Exact validation](research/tui-settings-actions-validation.md) records actual
+confirmed TUI actions, persisted settings and separate old regressions. Complete
+Phase4/G4, hardware G1/G2 and full G3 remain open.
 
 The viewport is bounded to 240x100 cells, untrusted display controls/bidi marks
 are stripped, and narrow terminals have a details overlay. Exit joins issued
