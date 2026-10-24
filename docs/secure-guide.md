@@ -27,6 +27,12 @@ The broker reads these files at startup. Stop it cooperatively and restart to ro
 
 The server additionally maps the SHA-256 digest of each authorized client's **leaf DER certificate** to its principal. Obtain the 64 lowercase hexadecimal digits with `openssl dgst -sha256 client.der`; copy only the digest into `pins`. A valid CA chain alone does not grant access to a device.
 
+## Retire a client credential
+
+Changing the configuration file does not change a running broker's policy or revoke an existing stream. To retire a client leaf, stop its imports cooperatively, then stop the server and wait for its original resources and driver state to be released. As administrator, remove that exact leaf digest from `pins` and install the intended replacement policy/credentials using the same protected-file rules. Restart the broker, confirm the retired client is refused, and verify the replacement's actual device function. Keep unresolved records for investigation; a new process's empty state cannot prove old cleanup.
+
+The [installed refusal/retirement report](research/secure-negative-qemu-validation.md) verifies this sequence in the same QEMU guests/helper instances across all three backends and both IP families. These examples use raw-v1; optional framed-v2 is documented in the [data-link guide](data-link-health.md). This startup-only procedure does not provide hot reload, immediate active-stream revocation, CRL/OCSP or general crash recovery.
+
 ## Server configuration
 
 This example publishes one virtual HID profile. Replace the address and certificate digest with actual deployment values before use:

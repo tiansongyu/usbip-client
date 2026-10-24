@@ -42,6 +42,8 @@ target/release/rustusb doctor
 
 新增[私有诊断导出](docs/diagnostics.md)：`rustusb diagnostics --output /受保护的私有目录/result.json --json`，闭合JSON与每次捕获独立别名保留关系，不复制原始标识/路径/秘密。agent模式须同profile Read+Audit，导出已提交视图，health/log独立采样。[专项验收](docs/research/diagnostic-export-validation.md)记录797次软件执行（343/434/20）、192选定source/build输入、本地13组/19child、[d9四原生CI](https://github.com/tiansongyu/usbip-client/actions/runs/40067501829)及clean `d9ebe2e` 一项双guest仿真/一epoch两轮真实HID/FTDI I/O。导出与第二轮I/O均在同一原WAL syscall暂停时完成，随后原资源清理通过；原2ca进程exit101与bde仿真启动FAIL保留。默认四组只属本地x86，不外推CI；硬件与完整G3继续未完成。
 
+新增[installed认证负向与启动pin退休验收](docs/research/secure-negative-qemu-validation.md)：clean `25870c6` 的Native/virtual/USBFS × IPv4/IPv6六paired run全部通过，12guest0；每pair同guest/helper内两credential epoch、四拒绝前后屏障及两轮实际HID/Serial I/O。各44条目标负向client退出记录包含错误证书/用途/名称/信任、缺cert/ALPN、直接未授权IMPORT4/duplicate2及旧pin移除后拒绝；264条进程记录不计USBcases。clean3d7软件797次仍同192源；前四hostFAIL均保留。这是raw-v1合作停止后startup pin退休，不是热吊销/CRL、崩溃恢复或完整G3。
+
 ## 本机诊断
 
 普通用户运行 `rustusb doctor` 查看逐项结果和处理建议；`rustusb doctor --json` 输出供脚本读取的结构化报告，当前 `schema_version` 为 `1`。诊断完成时退出码为 `0`，其中仍可能包含 `missing`、`not_loaded`、`unknown` 或失败结果；退出码不表示整体已经就绪。

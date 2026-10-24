@@ -1,6 +1,6 @@
 # Installed authentication failures and credential retirement
 
-2026-10-24. Design baseline clean `0c6e4b74b155159722aa65e1b22464ad5621001f`. Proposed test contract; no new runtime result is implied. The preceding increment delivered private diagnostics, 797 software executions and a separate installed WAL-pause scenario. The full Phase 0–7 objective remains active.
+2026-10-24. Design baseline clean `0c6e4b74b155159722aa65e1b22464ad5621001f`. This test contract is implemented; the [validation report](secure-negative-qemu-validation.md) records all six final paired runs at clean `25870c6`, with original failures preserved. The contract and historical corrections below are not substitutes for those results. The preceding increment delivered private diagnostics, 797 software executions and a separate installed WAL-pause scenario. The full Phase 0–7 objective remains active.
 
 ## Gap and existing implementation
 

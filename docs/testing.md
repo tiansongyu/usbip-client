@@ -343,3 +343,14 @@ python3 -B scripts/qemu_diagnostic_export/run.py --family ipv4 \
 ```
 
 [harness](../scripts/qemu_diagnostic_export/README.md)要求clean checkpoint/默认locked allfeatures build。一个paired run/一epoch内先实际HID/FTDI，再冻结原state.next candidate1 fsync-entry，核原UID/PID/start/TID/FD/inode；UID1000完整导出seq46/排除draft47，单权限拒绝、原资源/第二轮I/O都须在同门未放时完成。随后同syscall真实return0、原Rootproof/fullbaseline/VHCI NULL/Gone。生成test-only C仅固定logger六参数白名单差异；旧argc15失败不重判，永久kernel阻塞不由entry gate证明。最终clean d9ebe2e/797软件及所有原FAIL归属见[验收](research/diagnostic-export-validation.md)，旧矩阵不重计。
+
+## Installed认证负向与startup pin退休（E37）
+
+```sh
+python3 -B scripts/qemu_authentication/run.py --backend native --family ipv4 \
+  --kernel 6.8.0-106-generic --evidence /tmp/auth-native-ipv4-NEW-CLEAN-SHA
+```
+
+按[harness](../scripts/qemu_authentication/README.md)分别运行Native/virtual/USBFS与IPv4/IPv6，证据目录必须全新、源必须clean、默认locked allfeatures build，不并行覆盖release产物。OpenSSL为实际copied ELF/动态库校验的独立测试客户端，CA/role私钥不归档，不改guest时钟。每pair同guest/helper内两epoch，free/held各两屏障；直接TLS IMPORT4/duplicate2、oldpin拒绝与B实际USB I/O、原server actualwait0/fullbaseline后才能启动新PID。early INJECT只到held屏障，真正INPUT_READY后才QMP/CDC注入，不能先发送输入再等待reader。
+
+最终clean25870c6六paired run/12guest0通过，各44目标负向退出记录不是USBcase。clean3d7软件797同192源；四原hostFAIL保留。数字004严格解析为NULL4，mapping类缺close_notify/104保真实IO，其他失败保固定TLS/service类别，不能泛放权限/IO或叫cleanEOF。完整范围、原件/同作者新raw方法及无逐fastchildELF/无混合PCAPclassifier边界见[英文验收](research/secure-negative-qemu-validation.md)。这不完成framed-v2专属负向、热吊销/CRL、认证耗尽、生产隔离/审计、硬件G1/G2或完整G3。

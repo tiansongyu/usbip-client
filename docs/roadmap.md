@@ -82,6 +82,8 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 新增[E36私有诊断导出](research/diagnostic-export-validation.md)实现闭合JSON、独立别名与checked私有文件publication；Read+Audit单profile固定已提交视图绕WAL，health/log独立采样。797软件/192选定source-build输入、本地clean835的13组/19child及d9四原生CI通过；clean d9ebe2e一项双端QEMU/一epoch两轮HID/FTDI真实I/O，在同一原WAL门下完成导出与第二轮后才放门，完整原Rootproof/baseline通过。默认四组只属本地x86，原2ca exit101及bde gate启动FAIL保留，旧软件和QEMU不重归属；硬件、永久阻塞与完整G3/后续阶段继续未完成。
 
+新增[E37 installed认证拒绝与启动凭据退休](research/secure-negative-qemu-validation.md)在同一clean25870c6完成Native/virtual/USBFS × IPv4/IPv6六paired run/12guest0，每pair同guest/helper内两credential epoch、四前后拒绝屏障、原I/O/真实server退出/基线恢复后才启动B策略。各44条目标负向client退出记录含server直接IMPORT4/duplicate2及旧pin拒绝，264不是USBcases；clean3d7软件797/192源保持。四原hostFAIL不可重判，仅raw-v1 startup pin退休，不完成热撤销/CRL、认证耗尽、完整生产隔离/审计或G3；原硬件与后续阶段保持。
+
 ## 7. Phase 4：完整 TUI
 
 使用 Ratatui，经统一应用服务展示本地设备、远端设备、当前连接、系统状态、日志和设置。支持键盘快捷键、焦点、搜索、过滤、排序、自动刷新、错误详情和危险操作确认；热插拔 / 会话事件由核心驱动，不直接执行特权命令。加载相关 UI Skill 并沿用已确认视觉规范。

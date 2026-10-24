@@ -77,3 +77,12 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 - 闭合schema1/4MiB/独立alias，无raw UID/PID/endpoint/path/key/token/USB/messages；操作/cleanup/linkend分开。真实0700/0600/EXCL/NOFOLLOW/identity/write/hash/sync/NOREPLACE/dirsync，不覆盖或删除未知文件，保留partial/不确定sideeffects。
 - 保留全部worker/private runtime/accepted child与实际kill-reap；signal sticky停止新stage，已接受publication保真实结果，不假取消永久FS/kernel阻塞。CheckedConsole必须委托真实write并latch首returned IO，禁recursive internal error，actualowner cleanup后报告；不扩大为任意formatter panic/闭FD或硬阻塞保证。
 - 原token End没有raw trace、单权限负向无独立proc、existing拒绝非并发rename，采证边界保留；samegate第二I/O后release、真实return0与完整Rootproof不能放宽。
+
+## Installed认证负向与凭据退休
+
+修改TLS/principal/device ACL或负向harness前读`docs/research/secure-negative-qemu-design.md`与`docs/research/secure-negative-qemu-validation.md`。clean25870c6六paired run/12guest0、每pair两epoch四屏障与两轮真实I/O，clean3d7软件797/同192源；四历史hostFAIL保留，264负向client退出记录不是USBcases。
+
+- 标准PKI先于leaf pin，pin不能绕过CA/时间/用途；client服务名独立。running配置不可变，旧server actualwait/原资源基线先于新PID/pin策略，不以新进程资源0证明旧cleanup；startup退休不是热撤销/CRL/崩溃恢复。
+- 未授权direct IMPORT须经真实TLS到server返回4，authorized duplicate返回2；catalog隐藏或client先拒绝不能代替它。before/after保原owner并随后实际I/O，不能只做echo/新catalog。
+- TLS1.3 mapping拒绝可在client完成握手后表现为缺close_notify或精确Linux104；只该类认可此观察，不泛放IO或叫cleanEOF/已trace reset。其他证书/服务端校验保固定TLS/service类别；VHCI004按严格有界十进制解释NULL4。
+- 201harness输入含192source/build；实测raw-v1、fast负向无逐executedELF、混合PCAP无旧正向classifier裁决、同作者raw方法非独立实现审计。所有实际owner/原proof/driverbaseline、guest0不能覆盖hostFAIL的规则保持。

@@ -98,6 +98,8 @@ Phase 1 只在管理员已建立的可信 VPN / 受管隧道上使用，明确�
 
 配置/CA/chain及祖先目录由root保护，私钥root或目标broker所有且0600、运行身份须实际可读。加载有界、拒绝symlink/hardlink/非regular及读取中变化；启动后不可变，轮换须合作停止/重启。成熟库提供链/有效期/用途/服务名验证，禁止跳过校验；证书撤销、完整轮换/认证限速矩阵及业务状态审计仍未全部验收，不将所测正向通路标成完整G3。
 
+[E37 installed负向](research/secure-negative-qemu-validation.md)在clean25870c6的三backend/双栈六QEMU通过：同guest/helper内合作停止后实际新server PID读取移除旧leaf pin的策略，旧A拒绝、B实际I/O与完整清理；每pair四free/held屏障保原资源、直接IMPORT4/duplicate2及证书/名称/信任/ALPN负向有原件。264条目标client退出记录不是USBcase，raw-v1 startup退休不是热撤销/CRL/OCSP或SIGKILL恢复；TLS1.3映射拒绝可保IO/errno104而非cleanEOF。完整G3与生产隔离/审计、认证耗尽等仍未完成。
+
 密钥生成使用操作系统随机源，不自研密码协议。服务端私钥只允许服务身份读取，客户端凭据按账户隔离；不放入仓库、命令行、默认日志或诊断包。部署须有首次信任、吊销、过期、轮换、备份权限和丢失恢复流程。认证失败重试使用限速；重放或重复导入不能创建第二个所有者。TLS 不能消除恶意 USB 设备及内核漏洞风险。
 
 ## 6. 状态机、取消与重启协调
