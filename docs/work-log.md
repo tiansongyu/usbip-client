@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-25：终端未知启动结果与agent失联（开始）
+
+- 从clean097cce18复核完整原任务、Git/工作日志、AGENTS、核心skill及实际TUI/IPC/原QEMU。上一轮为实际进展；英文README/展示站/全局readme-site继续维护，原Phase0–7 goal保持active。
+- 使用ui-ux-pro-max与technical-documentation，复用锁定组件不新增依赖/委派。先写tui-failure-retry-design.md：隔离guest暂停同agent，实际UI Start超时后恢复并仅重试原UUID；另检查job页失联/恢复。源码发现Profiles早期失败保留Current section/journal/health的显示缺口，拟修正为显式stale。UI热插拔/服务权威拒绝仍单独未完成。尚未修改产品或宣称新验收通过。
+
 ## 2026-10-25：终端持久设置与实际确认动作（开始）
 
 - 上一轮E45为实际进展：六页TUI、937软件/双栈QEMU/四CI与发布，最终clean1ed3baa4。本轮先重读完整Phase0–7原任务、Git/AGENTS/核心skill、实际TUI/CLI/worker与原QEMU，原goal保持active。

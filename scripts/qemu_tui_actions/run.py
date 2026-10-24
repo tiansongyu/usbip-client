@@ -52,7 +52,7 @@ def payload(work,kernel,certificates,role):
     packed=subprocess.run(['cpio','--null','-o','--format=newc','--owner=0:0'],input=names,cwd=root,capture_output=True,check=True)
     archive=work/'tui-action-initramfs.cpio.gz';archive.write_bytes(gzip.compress(packed.stdout));return archive,provenance
 
-def verify(evidence,args):
+def verify(evidence,args,unknown_starts=frozenset()):
     facts=old_verify(evidence,args);checks=[]
     for role in ['server','client']:
         folder=evidence/f'{role}-artifacts'
@@ -91,7 +91,12 @@ def verify(evidence,args):
                 if len(new)!=1 or new[0]['uid']!=1000 or new[0]['profile']!=profile or after['requests']!=retry['requests']:raise RuntimeError('one exact actual terminal admission and safe retry')
                 job=receipt['response']['job']
                 if not receipt['response']['replayed']or receipt['response']['result']!='started'or job['id']!=new[0]['job_id']:raise RuntimeError('real replayed metadata receipt does not identify original UI job')
-                if not any('Admitted job'in f for f in rendered[label]):raise RuntimeError('normal original Start ACK not shown in actual UI')
+                if (role,label) in unknown_starts:
+                    if not any('Response unknown' in f and 'Timeout' in f for f in rendered[label]):raise RuntimeError('real Start timeout not displayed')
+                    if not any('Resolve ONLY original start' in f and new[0]['id'] in f for f in rendered[label]):raise RuntimeError('retry confirmation does not show exact original UUID')
+                    if not any('Resolved original' in f for f in rendered[label]):raise RuntimeError('original retry not resolved in actual UI')
+                    if any('Admitted job' in f for f in rendered[label]):raise RuntimeError('unknown Start unexpectedly received normal admission ACK')
+                elif not any('Admitted job'in f for f in rendered[label]):raise RuntimeError('normal original Start ACK not shown in actual UI')
         checks.append(f'{role}: actual preferences save/reload/override/failure and exact UI admission identities')
     facts['tui_actions']={'checks':checks,'pty_children':19,'scope':'Distinct UI-driven managed scenario; original 264 kernel/identity/proof/I/O assertions retained. Actual replayed RetryStart receipts only, no fabricated JSON.'}
     return facts
