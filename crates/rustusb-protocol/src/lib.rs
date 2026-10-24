@@ -19,7 +19,7 @@ pub const MAX_INTERFACES: usize = 32;
 pub const DEVLIST_REQUEST: [u8; 8] = [0x01, 0x11, 0x80, 0x05, 0, 0, 0, 0];
 
 /// Remote interface class tuple advertised by DEVLIST, without endpoint descriptors.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RemoteInterface {
     /// Interface class.
@@ -31,7 +31,7 @@ pub struct RemoteInterface {
 }
 
 /// Remote device metadata, not a claim of tested compatibility or access permission.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RemoteDevice {
     /// Validated remote bus ID.

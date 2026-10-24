@@ -6,6 +6,10 @@
 - 继续实现要求4.3的远程列表自动刷新。先写`research/remote-catalog-watch-design.md`：同一service观察器支持普通operator固定agent profile与dedicated broker已加载TLS源，最多两个actual owner、最新完整视图/过期保留/授权失败清空、stable-key地址变化、真实stop/join；不自动导入、不改helper/RPC/disk schema或阶段gate。
 - 采用rustusb-development、writing-technical-design与technical-documentation；只复用既有锁定Tokio/codec/IPC普通API，按设计skill既有栈例外不新增组件技能或委派。CLI拟加agent discover/secure-discover --watch，原one-shot保持；轮询成功仍使用既有audit，公开WAL成本，停止本地IPC观察不冒称远端owner已退休。尚未修改产品或执行新验收。
 
+- 已实现shared catalog真实owner/两quota/完整metadata订阅、2..120秒完成后轮询与失败退避、typed stale/terminalclear、stable DeviceKey差异。secure源沿原discover_until/实际FIN及driverjoin；agent源每次原Discover/实际Unix UID授权与成功audit，停止本地读不冒称取消服务端工作。新validator复用原secure地址/接口限制，原Remote DTO只增加Eq/PartialEq，无新外部依赖或schema。CLI两watch流式batch、INT/TERM及总join接入outer owns_signal_cleanup，旧one-shot参数/JSON保持。
+- 开发第一条fmt因test模块尚未落盘exit1（仅tool原始回执，未保存独立stdout文件），落下真实测试后fmt成功。先5个状态/边界test PASS；再9个库test PASS（真实raw/v2三响应、refused outage恢复、反向FIN门、actualquota/Drop/socket EOF），all-feature全workspace Clippy PASS；CLI3个watch batch/参数测试PASS。TLS既有generic handshake错误沿Permission终止，不宣称特定证书原因或所有network错误都会自动重试；libc resolver仍是原独立actual配额。
+- 新QEMU扩展保留原Native managed三轮I/O/两epoch/完整Rootproof及密文分类器；普通operator watcher观察local agent outage及远端原export session逐个真实stop的2→1→0。另实际direct TLS/TERM、满write-only FIFO/INT、关闭reader/exit1、UID1002拒绝四CLI子场景。采证设计前置，preflight修正stdout必须独立O_WRONLY，避免O_RDWR自身保reader隐藏EPIPE；新verifier不用尚未落盘final summary，而以外层已核实际broker ELF receipt匹配。生成init/dash、四个jq完整/partial/混epoch/count纯采证用例和Python语法通过；未将它们计USB或Cargo数。完整clean软件与QEMU仍待执行。
+
 ## 2026-10-24：托管远程目录与监督器隔离（E42）
 
 - 从clean30fb57a继续，已重读完整Phase0–7原任务、AGENTS/核心skill、工作日志和当前应用服务。英文README、展示站与全局readme-site已交付，原goal保持active。

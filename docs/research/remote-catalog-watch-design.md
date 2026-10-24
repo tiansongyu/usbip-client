@@ -41,6 +41,8 @@ accepted remote read, its two-entry quota and successful audit even after that
 caller disappears. Joining the local observer does **not** prove that remote
 request or any USB resource has been cleaned up. Actual server shutdown still
 joins its original owners. Direct TLS observers stop and join their own driver.
+An existing libc lookup can still outlive its awaiter under the original four
+actual resolver permits; observer completion is not resolver cancellation.
 
 Use locked Tokio 1.54.1 watch/JoinHandle/semaphore/time APIs in their existing
 ordinary patterns and the previously audited management codec. The design
@@ -65,6 +67,9 @@ hard filesystem/libc/kernel blocking is not claimed cancellable.
   without removal changes. Permission, invalid-input, protocol or unsupported
   failures clear the current view, publish terminal failure and stop; old copies
   already held by a caller cannot be erased. A successful empty catalog is real.
+  The existing TLS handshake path uses the Permission class for a generic
+  handshake failure; that category does not establish a specific certificate
+  fault and it terminates the watcher, including an interruption at that stage.
 - Sort by exact backend-qualified DeviceKey; validate at most 16 records, unique
   keys and Bus IDs, the existing secure addressing/path/interface bounds, and at
   most 60 KiB of encoded catalog. Changes distinguish added, removed, address
@@ -116,3 +121,17 @@ real USB I/O and original cleanup proofs. Freeze source, executed ELF, raw outpu
 actual process waits, guest exits and failures. This is polling/latest-state
 observation; do not claim every transient event, a remote physical generation,
 real hardware support, complete G3 or a finished TUI.
+
+The focused QEMU extension retains the existing managed Native two-epoch/three-I/O
+fixture and every original verifier requirement. The operator watcher survives a
+deliberately observed local-agent outage, then observes the actual remote server's
+original export sessions being stopped individually (2 -> 1 -> 0), while the same
+empty-catalog listener remains alive. It stops before the original server restart;
+the old second-epoch I/O and complete root proofs/baselines still run. A fresh
+complete catalog publication precedes a guest-only SIGSTOP/SIGCONT gate around
+the agent kill, avoiding an intentionally partial TLS handshake in the original
+all-positive packet classifier. No USB or production observer behavior is faked.
+Separate installed CLI children cover direct TLS observation/TERM, an actually
+full FIFO/blocked writer plus INT, closed output/exit1, and UID1002 denial. Record
+real process UID/ELF/FD/wchan/waits and distinguish any fast denial lacking a live
+ELF receipt. Keep the original ciphertext classifier intact.

@@ -232,6 +232,17 @@ async fn foreground_security_observes_real_listener_overload_cancel_and_job_rest
 }
 
 async fn catalog(io: &mut link::Io) -> Result<()> {
+    catalog_entries(
+        io,
+        &[secure::CatalogDevice {
+            device_key: DeviceKey::virtual_profile(VirtualProfile::Hid),
+            device: device()?,
+        }],
+    )
+    .await
+}
+
+async fn catalog_entries(io: &mut link::Io, entries: &[secure::CatalogDevice]) -> Result<()> {
     assert!(matches!(
         secure::read_prelude(io).await?,
         secure::SecureOperation::Catalog
@@ -240,17 +251,40 @@ async fn catalog(io: &mut link::Io) -> Result<()> {
         server::read_management(io).await?,
         server::Management::Devlist
     ));
-    let device = device()?;
-    secure::write_catalog_mapping(
-        io,
-        &[secure::DeviceMapping {
-            device_key: DeviceKey::virtual_profile(VirtualProfile::Hid),
-            bus_id: device.bus_id.clone(),
-        }],
-    )
-    .await?;
-    io.write_all(&server::devlist_reply(&[device])?).await?;
+    let mapping: Vec<_> = entries
+        .iter()
+        .map(|entry| secure::DeviceMapping {
+            device_key: entry.device_key.clone(),
+            bus_id: entry.device.bus_id.clone(),
+        })
+        .collect();
+    secure::write_catalog_mapping(io, &mapping).await?;
+    let devices: Vec<_> = entries.iter().map(|entry| entry.device.clone()).collect();
+    io.write_all(&server::devlist_reply(&devices)?).await?;
     io.flush().await?;
+    Ok(())
+}
+
+pub(crate) async fn serve_catalog_sequence(
+    tls: TlsServer,
+    listener: TcpListener,
+    catalogs: Vec<Vec<secure::CatalogDevice>>,
+) -> TestResult {
+    for entries in catalogs {
+        let (tcp, _) = tokio::time::timeout(Duration::from_secs(5), listener.accept()).await??;
+        let (mut connection, _) = link::accept(&tls, tcp).await?;
+        if let Err(error) = catalog_entries(&mut connection.io, &entries).await {
+            let _ = link::finish(&mut connection.owner).await;
+            return Err(error.into());
+        }
+        assert!(
+            link::complete_management(&mut connection.io, &mut connection.owner, async {
+                tokio::time::sleep(Duration::from_secs(3)).await;
+                Err(Error::Timeout("catalog sequence peer close".into()))
+            })
+            .await?
+        );
+    }
     Ok(())
 }
 

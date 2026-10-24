@@ -351,6 +351,10 @@ def verify(evidence, args):
     configuration=verify_collected_configuration(evidence,args.family)
     return {"actual_configuration":configuration,"scope":"Native-only actual agent ownership/recovery; assertions are audit checks, not USB cases","checks":checks,"assertion_count":len(checks),"io_rounds":3,"hid_key_codes":[2,4],"serial_each_direction_bytes":105,"external_link":external}
 
+
+def extra_controls(logs, send_once):
+    """Optional host serial controls for a separately versioned guest extension."""
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kernel", default=os.uname().release)
@@ -460,6 +464,7 @@ def main():
                 for role in processes:
                     kernel = (evidence / f"{role}-serial.log").read_text(errors="replace")
                     if "Kernel panic" in kernel or "Oops:" in kernel: raise RuntimeError(f"{role} kernel fault")
+                extra_controls(logs, send_once)
                 keys = re.search(r"^AGENT_KEYS (\[.*\])$", logs["server"], re.M)
                 if keys: send_once("keys", "client", keys[1])
                 if "AGENT_SERVER_READY epoch=1\n" in logs["server"] and "keys" in sent:

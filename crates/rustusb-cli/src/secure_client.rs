@@ -29,11 +29,27 @@ async fn load(path: PathBuf, signals: &mut ShutdownSignals) -> Result<Option<Loa
 }
 
 /// Read-only CLI operation; the catalog is matched by stable key rather than list order.
-pub(super) async fn discover(path: PathBuf, timeout: Duration) -> Result<()> {
+pub(super) async fn discover(
+    path: PathBuf,
+    timeout: Duration,
+    watch: bool,
+    refresh_seconds: u64,
+    json: bool,
+) -> Result<()> {
     let mut signals = ShutdownSignals::new()?;
     let config = load(path, &mut signals)
         .await?
         .ok_or_else(|| Error::State("secure discovery cancelled".into()))?;
+    if watch {
+        let source = rustusb_service::catalog::CatalogSource::secure(Arc::new(config), timeout)?;
+        return super::catalog_watch::run(
+            source,
+            rustusb_service::catalog::RefreshInterval::new(refresh_seconds)?,
+            json,
+            signals,
+        )
+        .await;
+    }
     let devices = tokio::select! {
         biased;
         signal = signals.recv() => {

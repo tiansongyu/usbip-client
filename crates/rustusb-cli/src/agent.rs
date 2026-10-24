@@ -67,16 +67,53 @@ pub(super) enum Command {
         after: u64,
     },
     /// Discover the authenticated catalog using a fixed client profile.
-    Discover { profile: String },
+    Discover {
+        profile: String,
+        /// Refresh authorized remote snapshots without importing USB.
+        #[arg(long)]
+        watch: bool,
+        /// Delay after completion (2..=120 seconds); failures back off to 120.
+        #[arg(long, default_value_t=2, requires="watch", value_parser=clap::value_parser!(u64).range(2..=120))]
+        refresh_seconds: u64,
+    },
 }
 
 pub(super) async fn run(
     path: PathBuf,
     command: Command,
     logs: Option<rustusb_logging::LogMonitor>,
+    json: bool,
 ) -> Result<()> {
     if matches!(command, Command::Run) {
         return serve(path, logs).await;
+    }
+    if let Command::Discover {
+        profile,
+        watch: true,
+        refresh_seconds,
+    } = &command
+    {
+        let mut signals = ShutdownSignals::new()?;
+        let loading_path = path.clone();
+        let mut loading = tokio::task::spawn_blocking(move || {
+            rustusb_service::config::Manifest::read(&loading_path)
+        });
+        let manifest = tokio::select! {
+            biased;
+            signal=signals.recv()=>{let _=loading.await;return signal;},
+            result=&mut loading=>result.map_err(|_|Error::State("catalog manifest task failed".into()))??,
+        };
+        let source = rustusb_service::catalog::CatalogSource::agent(
+            std::sync::Arc::new(manifest),
+            profile.clone(),
+        )?;
+        return super::catalog_watch::run(
+            source,
+            rustusb_service::catalog::RefreshInterval::new(*refresh_seconds)?,
+            json,
+            signals,
+        )
+        .await;
     }
     let request = match command {
         Command::Run => return Err(Error::State("invalid agent dispatch".into())),
@@ -113,7 +150,7 @@ pub(super) async fn run(
         Command::ServerAdmission { profile } => Request::ServerAdmission { profile },
         Command::Events { profile, after } => Request::Events { profile, after },
         Command::Audit { profile, after } => Request::Audit { profile, after },
-        Command::Discover { profile } => Request::Discover { profile },
+        Command::Discover { profile, .. } => Request::Discover { profile },
     };
     let response = rustusb_service::ipc::call_path(&path, request).await?;
     let failure = match response.response {

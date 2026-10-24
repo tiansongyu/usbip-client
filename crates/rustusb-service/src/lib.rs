@@ -3,6 +3,8 @@
 //! A frontend requests work; the service retains the real task and cooperatively
 //! joins cleanup even when the requesting connection disappears.
 
+#[cfg(target_os = "linux")]
+pub mod catalog;
 pub mod config;
 pub mod context;
 pub mod diagnostics;

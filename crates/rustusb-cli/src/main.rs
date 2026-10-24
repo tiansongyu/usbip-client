@@ -3,6 +3,9 @@
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod agent;
 
+#[cfg(all(feature = "secure-transport", target_os = "linux"))]
+mod catalog_watch;
+
 #[cfg(target_os = "linux")]
 mod device_watch;
 mod diagnostics;
@@ -102,6 +105,12 @@ enum Command {
         /// Root-managed configuration for this dedicated nonroot broker UID.
         #[arg(long)]
         config: PathBuf,
+        /// Refresh authorized snapshots until interrupted; never import a device.
+        #[arg(long)]
+        watch: bool,
+        /// Delay after completion (2..=120 seconds); failures back off to 120.
+        #[arg(long, default_value_t=2, requires="watch", value_parser=clap::value_parser!(u64).range(2..=120))]
+        refresh_seconds: u64,
     },
     /// Import the configured stable device key and own its encrypted VHCI relay until stopped.
     #[cfg(feature = "secure-transport")]
@@ -299,7 +308,7 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
         Command::Logs(args) => logs::run(args.clone(), cli.json).await,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent { config, command } => {
-            agent::run(config.clone(), command.clone(), monitor.clone()).await
+            agent::run(config.clone(), command.clone(), monitor.clone(), cli.json).await
         }
         #[cfg(feature = "secure-transport")]
         Command::SecureServer {
@@ -326,14 +335,25 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
             .await
         }
         #[cfg(feature = "secure-transport")]
-        Command::SecureDiscover { config } => {
+        Command::SecureDiscover {
+            config,
+            watch,
+            refresh_seconds,
+        } => {
             #[cfg(target_os = "linux")]
             {
-                secure_client::discover(config.clone(), Duration::from_secs(cli.timeout)).await
+                secure_client::discover(
+                    config.clone(),
+                    Duration::from_secs(cli.timeout),
+                    *watch,
+                    *refresh_seconds,
+                    cli.json,
+                )
+                .await
             }
             #[cfg(not(target_os = "linux"))]
             {
-                let _ = config;
+                let _ = (config, watch, refresh_seconds);
                 Err(Error::Unsupported(
                     "trusted secure broker configuration requires Linux".into(),
                 ))
@@ -650,7 +670,7 @@ async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Exit
         Command::Logs(_) | Command::Diagnostics(_) | Command::Devices { watch: true } => true,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent {
-            command: agent::Command::Run,
+            command: agent::Command::Run | agent::Command::Discover { watch: true, .. },
             ..
         } => true,
         #[cfg(feature = "rust-backend")]
@@ -813,6 +833,43 @@ mod tests {
                 ])
                 .is_err()
             );
+        }
+    }
+
+    #[cfg(all(feature = "secure-transport", target_os = "linux"))]
+    #[test]
+    fn catalog_watch_requires_explicit_bounded_refresh_and_keeps_one_shot_arguments() {
+        for prefix in [
+            vec![
+                "rustusb",
+                "agent",
+                "--config",
+                "/etc/rustusb/agent.json",
+                "discover",
+                "hid",
+            ],
+            vec![
+                "rustusb",
+                "secure-discover",
+                "--config",
+                "/etc/rustusb/client.json",
+            ],
+        ] {
+            assert!(Cli::try_parse_from(prefix.clone()).is_ok());
+            let mut watched = prefix.clone();
+            watched.extend(["--watch", "--json"]);
+            assert!(Cli::try_parse_from(watched).is_ok());
+            for seconds in ["0", "1", "121", "18446744073709551615"] {
+                let mut invalid = prefix.clone();
+                invalid.extend(["--watch", "--refresh-seconds", seconds]);
+                assert!(Cli::try_parse_from(invalid).is_err());
+            }
+            let mut missing = prefix.clone();
+            missing.extend(["--refresh-seconds", "5"]);
+            assert!(Cli::try_parse_from(missing).is_err());
+            let mut valid = prefix;
+            valid.extend(["--watch", "--refresh-seconds", "120"]);
+            assert!(Cli::try_parse_from(valid).is_ok());
         }
     }
 }

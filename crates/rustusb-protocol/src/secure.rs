@@ -218,7 +218,7 @@ pub async fn write_catalog_mapping(
 }
 
 /// Matched catalog entry from the authenticated mapping and standard descriptor response.
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CatalogDevice {
     /// Exact backend-qualified authorization key.
@@ -237,6 +237,26 @@ fn validate_address(device: &RemoteDevice) -> Result<()> {
         || device.num_configurations == 0
     {
         return Err(protocol("secure remote device addressing or speed"));
+    }
+    Ok(())
+}
+
+/// Validate a complete catalog received through an authenticated metadata API.
+///
+/// This applies the secure wire address/interface bounds and rejects duplicate
+/// authorization keys or current addresses. It grants no import permission and
+/// does not establish physical device identity or continued availability.
+pub fn validate_catalog(devices: &[CatalogDevice]) -> Result<()> {
+    if devices.len() > MAX_CATALOG_ENTRIES {
+        return Err(protocol("secure catalog entry limit"));
+    }
+    let mut keys = HashSet::new();
+    let mut buses = HashSet::new();
+    for entry in devices {
+        validate_address(&entry.device)?;
+        if !keys.insert(&entry.device_key) || !buses.insert(&entry.device.bus_id) {
+            return Err(protocol("duplicate secure catalog key or address"));
+        }
     }
     Ok(())
 }
