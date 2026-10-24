@@ -174,7 +174,7 @@ pub struct Peer {
 pub struct VhciPort(pub u8);
 
 /// USB endpoint metadata from sysfs.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Endpoint {
     /// Endpoint address, including IN bit.
     pub address: u8,
@@ -187,7 +187,7 @@ pub struct Endpoint {
 }
 
 /// One currently selected interface alternate setting.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Interface {
     /// Interface number.
     pub number: u8,
@@ -206,7 +206,7 @@ pub struct Interface {
 }
 
 /// A discovered device; discovery never promises redirection compatibility.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Device {
     /// Candidate persistent fingerprint; topology is included, not cryptographic identity.
     pub id: String,

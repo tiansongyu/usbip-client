@@ -35,7 +35,7 @@
 
 ## 所有权与公共契约
 
-新增`rustusb_service::discovery`，CLI一次扫描及`devices --watch`均通过此共用入口；未来TUI/GUI直接使用此API，不解析CLI子进程。它观察当前OS用户能读取的本地sysfs，不代理broker权限，不新增宽权限agent RPC，不接收任意设备写操作。
+新增实际`rustusb-discovery`应用观察库，由`rustusb_service::discovery`原样re-export；CLI一次扫描及`devices --watch`直接调用同一库，未来TUI/GUI使用同一API，不解析CLI子进程。Native CLI不因此启用整个可选TLS/job服务依赖。它观察当前OS用户能读取的本地sysfs，不代理broker权限，不新增宽权限agent RPC，不接收任意设备写操作。
 
 ```rust,ignore
 pub async fn scan() -> Result<Vec<Device>>;
@@ -61,12 +61,12 @@ impl DeviceSubscription {
 ## 边界与流控
 
 - 数据报固定16KiB，字段/数量有界；先核实际来源，再解析。非USB事件只忽略，不因全局SEQNUM跳号声称丢包。
-- 每轮最多64个数据报，stop/wake优先；50ms debounce有最早截止，不因持续事件推迟到永远。周期协调2s；socket收缓冲请求64KiB并记录实际值，拒绝异常超大结果。
+- 每轮最多64个数据报，stop/wake优先；50ms debounce及至少100ms扫描启动间隔有最早截止，不因持续事件推迟到永远。周期协调2s；socket收缓冲请求64KiB并记录实际值，拒绝异常超大结果。
 - 截断、ENOBUFS或真实来源的畸形消息要求重新同步；不保留payload/原始环境，也不记录潜在serial/path。其他真实I/O错误保留上下文，不能转成空目录。
 - 快照最多256设备、单设备编码48KiB、合计4MiB；超过限额报告Stale/容量错误，不截掉设备冒充删除。原scanner保留自身遍历/属性限制；这些界不声称限制内核/OS内部资源。
 - 最新快照是metadata，不保留全部USB事件。订阅者持有多少返回Arc由其调用代码负责；服务内不为每消费者无限排队。
 
-CLI保持原`devices [--json]`一次扫描兼容，新增`devices --watch`。JSON流按snapshot_begin/device/snapshot_end分帧，每帧小于现有64KiB输出上限；只有完整end才提交这一整批，退出/输出中断的partial不能当空快照。首次/跳号/stale恢复标明resync。默认文本显示观察变化，JSON设备元数据可能含serial，与原显式devices JSON一样只输出给调用者；不复制到tracing或文件日志。
+CLI保持原`devices [--json]`一次扫描兼容，新增`devices --watch`。JSON流按snapshot_begin/device/device_change/snapshot_end分帧，每帧小于现有64KiB输出上限；只有完整end才提交这一整批，退出/输出中断的partial不能当空快照。首次/跳号/stale恢复标明resync。默认文本显示观察变化，JSON设备元数据可能含serial，与原显式devices JSON一样只输出给调用者；不复制到tracing或文件日志。
 
 信号在取得monitor前注册；stdout慢/关闭/错误不能阻止monitor合作stop及原worker实际join。沿用有界EventOutput，不重发仍在途stdout，不用末尾输出成功证明扫描退出。重复signal只sticky stop，不能丢已开始scan/join。
 
@@ -77,3 +77,11 @@ CLI保持原`devices [--json]`一次扫描兼容，新增`devices --watch`。JSO
 3. 实际CLI JSON整批、人类输出、INT/TERM/双signal、真正stdout背压/关闭，实际wait/worker退出。完整default/all-feature fmt/Clippy/tests/release/rustdoc与Native-only依赖隔离。
 4. 新干净QEMU普通UID观察真实内核USB add/remove/reinsert、同候选新代际和驱动/接口变化，原始通知与快照分账；真实kernel事件不能用发送伪数据报或fixture代替。另按scanner变更范围保留原真实USB重定向/热拔回归。
 5. 记录全部失败、来源/ELF/命令/清理与未运行项，正常commit/push；未验证前不修改支持矩阵为已支持。原硬件G1/G2、wire-DNS/VPN、完整G3、TUI/GUI/安装/性能/Windows继续未完成。
+
+## 首次实现检查后的结构修订
+
+实际Linux测试与service观察定向测试通过，默认CLI编译101：原rustusb-service只在secure-transport启用，默认入口不能直接引用它。不能为修复编译而移除默认watch功能，也不应无条件把TLS/job依赖带进Native。将已有完整观察实现移至职责明确的rustusb-discovery库，service原样re-export、CLI直接依赖同一实现；不是新增空crate或第二扫描器。新增内部包不引入外部crate版本。
+
+源码复核另发现：stamp读取某属性NotFound时，只能在设备目录本身也已消失的情况下略过；目录仍在但devnum/busnum缺失必须拒绝完整扫描，不能伪报Removed。先增加实际回归复现，再修正这一判断。
+
+编码复核：最多512条变化若集中于begin帧会超过既有64KiB上限；变化改用独立device_change帧，begin/end给定计数。丢失分别给定QueueOverflow/Truncated/Malformed固定原因计数，不把来源未知的非USB跳号当丢失。初次全目标Clippy101（manual_map/collapsible_if）保留后按style修正。

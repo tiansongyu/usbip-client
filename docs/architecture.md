@@ -32,6 +32,7 @@ flowchart LR
 | --- | --- | --- |
 | rustusb-core | 领域模型、输入类型、状态、错误与后端 trait | serde、thiserror；不含系统写操作 |
 | rustusb-logging | 有界typed NDJSON、checked文件轮转、实际writer/reader线程所有权与受限页读取 | core、serde/serde_json、tracing/subscriber、Tokio、rustix、thiserror；不持USB能力、不回业务WAL |
+| rustusb-discovery | 共用普通用户本地扫描、kernel提示/周期协调、有限最新快照与实际观察worker停止 | core、linux、serde、Tokio、rustix；service原样re-export，Native CLI不启整套TLS/job依赖 |
 | rustusb-protocol | 有界标准管理帧、稳定key前导/目录映射与安全客户端codec | core、serde、serde_json、Tokio |
 | rustusb-linux | sysfs 设备/接口/端点扫描、指纹、能力与存储检查 | core、sha2；阻塞读取在调用边界隔离 |
 | rustusb-native | 固定 usbip 命令、内核状态、强代际与匿名kernel通道 | core、protocol、serde、Tokio、tracing、rustix |
@@ -224,3 +225,7 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 ## 主机名与TCP候选所有权
 
 [设计](research/dual-stack-connect-design.md)和[验收](research/dual-stack-connect-validation.md)定义`rustusb_protocol::connect`，供Rust DEVLIST与共享secure client调用。IP字面量绕DNS；四permit由实际blocking lookup closure持有，取消等待者不释放尚在运行的工作。OS结果64raw/16unique，保留偏好并交错族；inline TCP futures按250/100ms有界启动，胜出前丢弃全部loser，无spawn dial task或第二次TLS/IMPORT。调用者原总deadline与stop保持；只有winner进入独立server_name验证。外部分发usbip工具保留自己的连接策略；不声称std/libc内部分配/永久OS阻塞有界或完整RFC8305。
+
+## 本地热插拔观察（实施中）
+
+见[实施设计](research/local-device-monitor-design.md)。实际rustusb-discovery库复用原scanner，service::discovery仅re-export；CLI一次扫描及devices --watch共用这一实现。kernel group1事件只触发重扫，当前地址/候选fingerprint/只读sysfs观察戳分开。Initializing/Stale不冒充成功空库存，丢失或慢订阅者按完整快照重新同步。两个真实blocking owner配额保留到实际完成；stdout不拥有扫描器，显式shutdown总join。该实现尚待新clean完整软件与QEMU实际热插拔验收，不以原E40代替；不增加设备授权/重连或root能力。

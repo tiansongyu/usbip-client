@@ -3,6 +3,11 @@
 //! This module never opens `/dev/bus/usb`, unbinds drivers, mounts storage, or writes sysfs.
 //! Async callers should run [`DeviceDiscovery::scan`] in a blocking task.
 
+#[cfg(target_os = "linux")]
+pub mod hotplug;
+#[cfg(target_os = "linux")]
+pub mod observation;
+
 use rustusb_core::{BusId, Device, DeviceDiscovery, Endpoint, Interface, Result};
 use sha2::{Digest, Sha256};
 use std::{

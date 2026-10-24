@@ -880,7 +880,7 @@ dependencies = [
  "rustusb-core",
  "rustusb-daemon",
  "rustusb-diagnostics",
- "rustusb-linux",
+ "rustusb-discovery",
  "rustusb-logging",
  "rustusb-native",
  "rustusb-protocol",
@@ -942,10 +942,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustusb-discovery"
+version = "0.1.0"
+dependencies = [
+ "rustix",
+ "rustusb-core",
+ "rustusb-linux",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "rustusb-linux"
 version = "0.1.0"
 dependencies = [
+ "rustix",
  "rustusb-core",
+ "serde",
  "sha2",
  "tempfile",
 ]
@@ -1014,6 +1028,7 @@ dependencies = [
  "rustix",
  "rustusb-core",
  "rustusb-daemon",
+ "rustusb-discovery",
  "rustusb-logging",
  "rustusb-native",
  "rustusb-protocol",

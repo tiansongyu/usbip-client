@@ -754,3 +754,10 @@
 - 前一goal turn完成共享主机名回退、842软件/14paired/28guest0与README/site发布，属于实际进展；当前clean43f3ff4、指定origin保持。完整重读原Phase0–7目标、AGENTS/项目skill、工作日志/架构与应用service契约，不缩成已交付入口。
 - 当前只有一次SysfsDiscovery，继续补4.3与未来共用前端需要的真实事件观察；先落local-device-monitor-design.md，研究明确选择现有rustix1.1.5 kernel group1提示+权威扫描、safe poll/wake实际join，而不是单纯polling或event payload授权。设计skill显式要求两个组件只读研究；不委派产品编辑、不生成额外global/组件skill。
 - 实际研究发现Tokio1.54.1旧AsyncFd构造已deprecated/unsound，替代register需unsafe；udev默认非Send且iterator隐藏errno，nusb现watch缺loss语义。保留研究原警告/失败和零宿主事件范围。新产品/仿真尚未执行，旧842/14来源不变。
+
+- 首次开发format/Linux测试/service观察定向通过，默认CLI check101：rustusb-service为secure可选依赖，直接调用未链接。先修订设计，保留默认watch实际功能并把观察实现移到独立非空rustusb-discovery、service原样re-export，不强行启用整套TLS/job依赖。首次原stdout/stderr和post-run源码副本保留，不能虚称before快照或clean运行。复核发现目录仍在的missing devnum被误当消失，拟先补真实红测再修复，不能用空快照掩盖。
+
+- 新missing-address红测实际101，确认目录仍在但devnum缺失被错误略过；已限定只有设备目录实际NotFound才略过，其余拒绝整次观察，定向通过。第二轮Linux/观察/默认CLI通过后Clippy101仅manual_map/collapsible_if，style修复后第四轮全目标allfeatures Clippy通过。第三轮精细loss原因测试夹具仍期待Malformed而实际Truncated，原101保留后更正。第五轮新CLI分帧测试使用超长非法BusId而101，保留原错；改为真实可表示的最大256设备/512变化完整batch，并独立测试Stale null而非空清单。尚无clean完整gate或新QEMU声明。
+
+- 原scanner一次DTO不改；新增观察在目录本身消失与缺失属性之间严格区分，候选ID与实际sysfs/address stamp分开。共用包实际提供初始状态、loss原因计数、最新完整快照/跳号resync，保留source-before-scan/有限drain/真实poll-wake/join。JSON最大256设备/512变化拆成独立帧，不增大原64KiB输出上限。第六轮两CLI帧测试及全目标allfeatures Clippy通过；初始化状态随后补实际门测试，完整gate待冻结后运行。
+- 依赖实际导出175包；比原174只新增内部rustusb-discovery，外部name/version/source/checksum不变，Native CLI不无条件引入TLS/job服务或nusb。此实现仍未获新QEMU/hardware验证。

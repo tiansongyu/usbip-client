@@ -8,6 +8,10 @@ license.workspace = true
 [dependencies]
 rustusb-core.workspace = true
 sha2.workspace = true
+serde.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+rustix = { workspace = true, features = ["net", "event"] }
 
 [dev-dependencies]
 tempfile.workspace = true

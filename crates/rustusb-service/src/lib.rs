@@ -6,6 +6,8 @@
 pub mod config;
 pub mod context;
 pub mod diagnostics;
+/// Common read-only discovery used by all local frontends.
+pub use rustusb_discovery as discovery;
 pub mod foreground;
 #[cfg(target_os = "linux")]
 mod fs;

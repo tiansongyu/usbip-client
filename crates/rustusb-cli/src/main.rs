@@ -3,6 +3,8 @@
 #[cfg(all(feature = "secure-transport", target_os = "linux"))]
 mod agent;
 
+#[cfg(target_os = "linux")]
+mod device_watch;
 mod diagnostics;
 mod event_output;
 #[cfg(any(feature = "rust-backend", feature = "secure-transport"))]
@@ -21,10 +23,9 @@ mod shutdown_signals;
 mod virtual_server;
 
 use clap::{Parser, Subcommand};
-use rustusb_core::{BusId, DeviceDiscovery, Error, Host, Peer, Result, VhciPort};
+use rustusb_core::{BusId, Error, Host, Peer, Result, VhciPort};
 use rustusb_daemon::diagnostics::{HelperDiagnostics, diagnose_helper};
 use rustusb_daemon::{Request, request};
-use rustusb_linux::SysfsDiscovery;
 use rustusb_native::diagnostics::{DiagnosticCheck, NativeDiagnostics, diagnose_native};
 use serde::Serialize;
 use std::{
@@ -168,7 +169,11 @@ enum Command {
         control_stdin: bool,
     },
     /// Scan local devices without changing drivers. Discovery is not compatibility validation.
-    Devices,
+    Devices {
+        /// Observe kernel USB hints and reconciled snapshots until interrupted.
+        #[arg(long)]
+        watch: bool,
+    },
     /// Read installed tool, module and helper capabilities without loading modules.
     Doctor,
     /// Query a server's USB/IP device list over an administrator-managed trusted network.
@@ -402,10 +407,16 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
             )
             .await
         }
-        Command::Devices => {
-            let devices = tokio::task::spawn_blocking(|| SysfsDiscovery::default().scan())
-                .await
-                .map_err(|e| Error::State(format!("discovery task: {e}")))??;
+        Command::Devices { watch } => {
+            if *watch {
+                #[cfg(target_os = "linux")]
+                return device_watch::run(cli.json).await;
+                #[cfg(not(target_os = "linux"))]
+                return Err(Error::Unsupported(
+                    "local USB monitoring requires Linux".into(),
+                ));
+            }
+            let devices = rustusb_discovery::scan().await?;
             tracing::info!(
                 device_count = devices.len(),
                 "local device discovery completed"

@@ -26,3 +26,5 @@ QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造�
 认证准入新增固定governor0.10.4及14个锁package，当前全feature清单174包且无缺失license metadata。它的normal子树禁用quanta/dashmap/rand/getrandom，但不将此扩大为TLS/ring全树无随机源；实际编入、源码、feature和后续验收分别记账。
 
 主机名回退未新增外部依赖或改变Cargo.lock，清单保持174包。复用固定Tokio1.54.1 TCP/actual blocking pool和平台std/NSS，test-util仅新增protocol dev feature。固定Tokio、Rust1.97.1与glibc2.35源码只读研究原件及各自许可保存在[E40证据](research/dual-stack-connect-validation.md)，未将glibc源码移入MIT产品；Ubuntu精确patch源码404的审查限制保留。
+
+本地发现观察新增内部MIT包rustusb-discovery（完整实现，service re-export），现有锁定rustix1.1.5增用net/event安全API；未引入udev/tokio-udev/libudev或新外部package/version。175包清单中的增量仅这一内部包。固定Linux/systemd源码只作研究，不复制其GPL/LGPL实现进入MIT产品。研究许可及实际零宿主事件探针另按清单保留，未作为热插拔产品验收。

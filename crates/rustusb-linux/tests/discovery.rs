@@ -301,3 +301,52 @@ fn descendant_budget_exhaustion_refuses_to_claim_storage_safety() -> Result<()> 
     );
     Ok(())
 }
+
+#[cfg(target_os = "linux")]
+#[test]
+fn observation_stamp_changes_independently_of_persistent_candidate() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let path = fixture.device(1, 3, &[3], true)?;
+    let scanner = SysfsDiscovery::new(&fixture.root);
+    let before = scanner.observe()?;
+    assert_eq!(before.len(), 1);
+    write(&path, "devnum", "42")?;
+    let after = scanner.observe()?;
+    assert_eq!(before[0].device.id, after[0].device.id);
+    assert_ne!(before[0].stamp, after[0].stamp);
+    assert_eq!(before[0].stamp.sysfs_inode, after[0].stamp.sysfs_inode);
+    assert_eq!(after[0].stamp.device_number, 42);
+    // The original one-shot device DTO is still exactly the scanner result.
+    assert_eq!(
+        scanner.scan()?,
+        after
+            .into_iter()
+            .map(|observation| observation.device)
+            .collect::<Vec<_>>()
+    );
+    Ok(())
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn missing_inventory_or_incomplete_address_is_an_error_not_an_empty_observation() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let path = fixture.device(1, 3, &[3], false)?;
+    let scanner = SysfsDiscovery::new(&fixture.root);
+    fs::remove_file(path.join("devnum"))?;
+    assert!(
+        scanner.observe().is_err(),
+        "present device with missing address must not disappear"
+    );
+    // A genuinely disappearing entry can be omitted, but a present device with
+    // an unreadable/missing address cannot become a coherent observation.
+    // Restore a malformed address to exercise the explicit non-NotFound error.
+    write(&path, "devnum", "invalid")?;
+    assert!(scanner.observe().is_err());
+    assert!(
+        SysfsDiscovery::new(fixture.root.join("missing"))
+            .observe()
+            .is_err()
+    );
+    Ok(())
+}
