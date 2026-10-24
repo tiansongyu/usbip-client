@@ -385,3 +385,9 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 实际代码/范围见[指南](remote-catalog-watch.md)与[验收](research/remote-catalog-watch-validation.md)。903软件锁clean ec91/223源；新9库函数和3CLI函数覆盖typed状态/边界及实际raw/v2 loopback，而非USB cases。以`python3 scripts/qemu_catalog_watch/preflight.py --output /tmp/new-point-check`测试原guest point函数的9个fixture边界，不计Cargo。
 
 [QEMU fixture](../scripts/qemu_catalog_watch/README.md)保留原Native三轮I/O/两epoch/264核验/完整Rootproof，新增同PID观察/实际CLI stdout与信号/UID拒绝，每pair69核验；clean633两family通过/4guest0。原空jq false beacon、reserved串口错误count导致的两个QEMU FAIL及first gate Clippy101保持。point必须严格一object并独立比原raw完整batch；fresh pause前目录应HID-only1，不能放宽count或修改生产busy过滤。实际O_WRONLY FIFO/caps/ELF/syscall/wait先于归档，fast denial没有liveELF不补造。原4signal2BP3local回归通过，宿主.private排除公开清单。
+
+## 离线CRL（E44）
+
+[精确报告](research/offline-crl-validation.md)记录clean fcb487cf的完整927软件执行/226源。12新transport测试函数包含真实raw/v2 TLS、全链撤销与实际时钟边界/原stream I/O、保护路径加载及快照/重新加载；子场景不另计Cargo或USB数。单独metadata unit不能代替签名验证。
+
+[QEMU操作](../scripts/qemu_crl/README.md)在clean e441bb89完成六个backend/family组合；同版本六默认安全回归和单v2诊断回归各自保留原要求。每CRL pair四新增屏障/44实际CLI wait，原pin保持而CRL变更，文件替换先于旧server真实wait及完整基线。原337/320/330和新225/221/225核验逐实际backend记录，不称USB cases。无ALPN只发送保存空输入并strict wait1/实际protocol mismatch；47c0021的原IPv6 wait104整体FAIL不改判，前一IPv4 PASS另记。v2诊断未加载CRL，不是安装态v2 CRL负向；新增fast CLI无独立liveELF，宿主USB未操作。

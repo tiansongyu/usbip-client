@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+新增[E44离线CRL](research/offline-crl-validation.md)：clean fcb软件927/226源，clean e441六raw CRL/六默认安全及一v2诊断共13paired/26guest0；元数据/凭据撤销不扩大USB设备兼容。v2诊断未加载CRL、安装态managed/v2 CRL专项及硬件/完整G3保持未验收；旧47 IPv6和开发FAIL保留。
+
 新增[E43认证远程目录观察](research/remote-catalog-watch-validation.md)：common service供agent/direct TLS两watch入口，clean ec91软件903/223输入、clean633两Native/raw1双栈paired QEMU/4guest0，原三轮HID/FTDI/完整Rootproof保留，每pair新4 CLI场景与69核验。v2仅实际loopback验证；busy目录隐藏/恢复/导出逐个stop属于元数据可见性，不证明物理热插拔代际或新设备兼容。原首软件gate/两QEMU FAIL保持，真实硬件/ISO/aarch64 USB内核及完整G3/后续阶段仍未验收。
 
 此前[E35有界日志](research/rotating-logs-validation.md)：723软件/177输入映射f3cf8、本地同CLI新6logging/旧4signal2BP及89ef四原生CI通过；新增文件轮转/授权读页不扩大USB设备兼容范围。新增clean48c9794一项installed日志QEMU/三epoch/2guest0通过，同CLI6cc/helperbb0；首44b1 hostFAIL保持，原23矩阵仍归1582/旧ELF。State/Protocol与cleanup独立保留，不称cleanEOF。真实硬件、ISO及aarch64 USB内核支持继续未验证。

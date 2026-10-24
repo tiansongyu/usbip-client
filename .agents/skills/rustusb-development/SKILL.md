@@ -108,3 +108,7 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## 认证远程目录观察
 
 修改service::catalog/两watch CLI前读`docs/research/remote-catalog-watch-design.md`与`remote-catalog-watch-validation.md`。903/223软件锁ec91，221源两Native QEMU锁633；旧软件与两QEMU FAIL不重判。最多2actual本地owner，失订阅不持source/凭据/FD/quota；Drop仅stop，shutdown总join direct原FIN/driver，agent本地RPC取消不伪远端/独立resolver/USB结束。每poll真实UID/固定profile Discover和成功audit保留；2..120秒完成后轮询/指数退避，无自动import/降级。Initializing无数据为None、Stale保旧不假删除、permission/protocol终态清当前，generic handshake Permission不细分证书原因；busy可见性不当物理拔出，stable-key地址不授generation/能力。JSON完整matching end才应用，gaps/恢复resync；保持CLI owns_signal_cleanup/输出背压不持网络owner。新启动cancel仅源码、v2/地址变化仅loopback，硬件/完整G3不由此完成。
+
+## 离线CRL
+
+修改TLS信任根/CRL/config前读`docs/research/offline-crl-design.md`与`offline-crl-validation.md`。1..16/每64KiB/总256KiB完整DER、唯一raw issuer、strict present非空，metadata不替代WebPki真实签名/fullchain/unknown-deny/expiry及pin/ACL。Checked SystemTime共同窗口覆盖每次新证书验证，保TLS13/禁resumption/earlydata；旧stream不热撤销，agent仅重启job不重载。fcb927/226和e441十三QEMU分账，v2诊断没加载CRL不得冒充其installed负向；新fast CLI缺liveELF保留。无ALPNprobe空输入/strict1/protocol delta1，不加104例外或改判旧47FAIL。硬件/全G3/后续阶段不由此完成。

@@ -191,3 +191,15 @@ Minimal audit records contain fixed action/error categories, OS UIDs, profile/jo
 Optional [private process logs](logging.md) add bounded file rotation and `rustusb logs --agent-config /etc/rustusb/agent.json --profile lab-keyboard --follow`. Provision a separate private directory and enable it with the agent's startup `--log-directory` option. Each page requires the profile's `audit` action; it contains typed committed-audit mirrors, not generic diagnostics. The mirror is separate from the authoritative journal and can lose records. A logging failure can produce a final nonzero exit after actual USB cleanup, so inspect operation/session results before retrying.
 
 Counters are actual post-IMPORT USB/IP application bytes, including protocol headers and partial successful writes. They are neither USB payload bytes nor TLS wire bytes. Raw USB/IP v1 has no inserted heartbeat or measured RTT. Opt-in framed v2 provides separate [data-link observations](data-link-health.md); transport responsiveness does not prove USB completion.
+
+## Renew offline CRLs
+
+Optional [offline CRLs](offline-crl.md) belong to each profile's immutable loaded
+TLS configuration. The agent loads every profile before its listener or device
+access. Replacing a CRL file, or stopping and starting a job within the same
+agent, does not reload it. Cooperatively stop the whole owning agent, verify
+actual cleanup/exit, then restart to load the renewed lists. Existing authenticated
+connections are not hot-revoked; a new process's empty state cannot retire an
+old unresolved owner. Installed CRL rejection evidence currently uses foreground
+brokers; managed profile loading follows the shared code, not a new installed
+managed-agent rejection matrix.

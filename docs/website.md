@@ -120,3 +120,10 @@ software jobs in 40114160923 completed successfully. Six canonical HTTP bodies
 match that commit; actual live CUA DOM/AX checks confirm its updated copy and links.
 No screenshot/pixel review or missing software-step details are claimed. See its
 [publication receipt](evidence/remote-catalog-watch-publication-9e65763-20261024/manifest.json).
+
+Offline CRL documentation adds [an English guide](offline-crl.md) and
+[separate validation](research/offline-crl-validation.md). The README links it;
+all seven website source files remain unchanged, retaining their local-inventory
+and remote-observer evidence scopes. No new browser/pixel check is claimed for
+this documentation-only site maintenance. Global readme-site guidance is reused
+without changing its four source files.

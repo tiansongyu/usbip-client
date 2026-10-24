@@ -189,3 +189,13 @@ and [validation report](research/dual-stack-connect-validation.md) record the ex
 scope: six raw hostname cases and one separate Native framed-v2 case pass in
 QEMU, with real emulated I/O and full original cleanup. Hosts-file qualification
 does not establish wire DNS, VPN or hardware compatibility.
+
+## Optional offline revocation lists
+
+Both TLS JSON schemas can include protected complete DER CRLs for the peer's full
+certification path. Follow the [offline CRL guide](offline-crl.md) for bounds,
+freshness, issuer coverage and renewal. Omission keeps the prior PKI/pin policy;
+explicit null/empty is rejected. File replacement is not a live reload: an agent
+must actually stop and restart, because job clones reuse its startup credentials.
+Already authenticated connections are not revoked by changing or expiring lists.
+See [exact validation](research/offline-crl-validation.md) for the tested scope.

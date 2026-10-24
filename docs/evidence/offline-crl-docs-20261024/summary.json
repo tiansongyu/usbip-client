@@ -1,0 +1,102 @@
+{
+  "result": "PASS",
+  "scope": "Documentation/static and byte comparison only; no new browser/pixel or USB execution. Snapshots precede later receipts.",
+  "source_files": 17,
+  "local_links": 485,
+  "external_links": 48,
+  "commands": [
+    {
+      "name": "site",
+      "argv": [
+        "python3",
+        "scripts/check-site.py"
+      ],
+      "actual_exit_code": 0
+    },
+    {
+      "name": "javascript",
+      "argv": [
+        "node",
+        "--check",
+        "website/app.js"
+      ],
+      "actual_exit_code": 0
+    },
+    {
+      "name": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "actual_exit_code": 0
+    }
+  ],
+  "software_inputs_unchanged": 226,
+  "qemu_inputs_unchanged": {
+    "crl-usbfs-ipv6-summary.json": 226,
+    "crl-native-ipv4-summary.json": 226,
+    "diagnostic-v2-summary.json": 230,
+    "regression-virtual-ipv4-summary.json": 216,
+    "regression-native-ipv4-summary.json": 216,
+    "crl-virtual-ipv6-summary.json": 226,
+    "regression-usbfs-ipv4-summary.json": 216,
+    "crl-native-ipv6-summary.json": 226,
+    "crl-usbfs-ipv4-summary.json": 226,
+    "regression-native-ipv6-summary.json": 216,
+    "crl-virtual-ipv4-summary.json": 226,
+    "regression-virtual-ipv6-summary.json": 216,
+    "regression-usbfs-ipv6-summary.json": 216
+  },
+  "site_unchanged_since": "e6177063",
+  "site_files": {
+    "website/.nojekyll": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "website/app.js": {
+      "bytes": 3605,
+      "sha256": "c480aa0bce799cf078a4bdc994073a662c5fd8f17ffe5c6e443a5c99fe892f83"
+    },
+    "website/assets/favicon.svg": {
+      "bytes": 373,
+      "sha256": "1d0a2204e9022341120b10c18d25da7e97d221f245160bdd134bdbe92b689b0e"
+    },
+    "website/assets/usbip-flow-mobile.svg": {
+      "bytes": 2140,
+      "sha256": "8f0c2f9e6eeabdc905495d821cafb32747db8366dfc409c525dea3bb85f30be5"
+    },
+    "website/assets/usbip-flow.svg": {
+      "bytes": 3918,
+      "sha256": "cdc92ac84cb83a5b192584ae41ab79be4290b437334ea880ca8aa3ce3cf73aee"
+    },
+    "website/index.html": {
+      "bytes": 14983,
+      "sha256": "6f6b8f3a6d3f02cd4809277bb9b51b1bf267efe9120e020e5ad9e034466bc685"
+    },
+    "website/styles.css": {
+      "bytes": 9700,
+      "sha256": "7825641f8f3d7e746d5970497ab07f994628c11da7b52b93b5f1cee1c74ef048"
+    }
+  },
+  "global_skill_unchanged": {
+    "SKILL.md": {
+      "bytes": 4496,
+      "sha256": "83514d886ff1f1ff17585805a89508f35f60bb326a3dd9592f42fa52198a26f3"
+    },
+    "agents/openai.yaml": {
+      "bytes": 283,
+      "sha256": "61c795ad1d34ded25f1e2b8a799c45fea9b66abd32717c505ffe5b474c35e5cb"
+    },
+    "references/readme.md": {
+      "bytes": 4411,
+      "sha256": "995cb45f62c0ae8bcec45092267f67eec73633474bf59d0a8047c8a48b4b713b"
+    },
+    "references/site.md": {
+      "bytes": 5544,
+      "sha256": "82624a1db23c94ed3767ea47996311cd065f8510d6649eec20a11875cca1a24b"
+    }
+  },
+  "codex_symlink_correct": true,
+  "global_quick_validation": "Not repeated; four files unchanged from previous validated installation."
+}

@@ -133,3 +133,5 @@ cargo build --workspace --release
 托管目录隔离E42见[验收](research/catalog-supervisor-validation.md)：clean b675626完整882软件/220输入、两个Native managed双栈QEMU/4guest0与原4signal2BP通过。网络不占session监督器，两实际任务至真实close/join，授权和成功audit契约不变；v2保持FIN只属loopback，真实WAL/DNS硬阻塞、硬件/完整G3及原Phase4–7仍保留。
 
 远程目录观察E43见[验收](research/remote-catalog-watch-validation.md)：要求4.3的既有认证可见目录自动刷新已增量实现，common service供两watch入口；clean ec91软件903/223源、clean633两个Native paired双栈QEMU/4guest0与旧4/2/3通过，保留首软件及两采证FAIL。busy与ACL/export可见性不同于物理热拔；v2/地址变化只属loopback，不据此完成全部4.3、硬件/G3或Phase4–7。
+
+离线CRL E44见[验收](research/offline-crl-validation.md)：两角色/两TLS schema支持有界完整列表、全链实际撤销/unknown-deny和每次新证书验证的共同时间窗口。clean fcb软件927/226；clean e441六CRL/六默认/一v2诊断共13paired/26guest0，旧47IPv6 FAIL和开发compile失败保留。静态新握手撤销不等于已建立连接热撤销/OCSP/在线下载/CRL序号抗回滚；agent全实例重启才重载，v2诊断不冒称安装态CRL负向。硬件G1/G2/完整G3/后续Phase4–7不变。

@@ -107,6 +107,12 @@ Remote catalog reads now run in a bounded independent task group; see the
 [managed catalog validation](docs/research/catalog-supervisor-validation.md) for
 slow-peer responsiveness, audit and shutdown checks.
 
+Optional [offline CRLs](docs/offline-crl.md) can reject revoked peers at new TLS
+verification, including intermediate certificates. Lists are immutable startup
+inputs: renew them through cooperative service restart. Existing connections
+are not hot-revoked; [validation](docs/research/offline-crl-validation.md) keeps
+software and installed QEMU evidence separate.
+
 With a configured application agent, an ordinary operator can refresh its
 authenticated catalog continuously:
 

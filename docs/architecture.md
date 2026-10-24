@@ -233,3 +233,5 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 ## 本地热插拔观察（实施中）
 
 见[实施设计](research/local-device-monitor-design.md)。实际rustusb-discovery库复用原scanner，service::discovery仅re-export；CLI一次扫描及devices --watch共用这一实现。kernel group1事件只触发重扫，当前地址/候选fingerprint/只读sysfs观察戳分开。Initializing/Stale不冒充成功空库存，丢失或慢订阅者按完整快照重新同步。两个真实blocking owner配额保留到实际完成；stdout不拥有扫描器，显式shutdown总join。本地观察已通过c034的872软件及f66两个单guest事件验收，见[报告](research/local-device-monitor-validation.md)，不以原E40双端I/O代替；不增加设备授权/重连或root能力。
+
+离线CRL E44将完整DER列表接入两TLS角色/两schema的共享TrustRoots，元数据由固定x509-parser解析，真实链/签名/全链撤销和unknown拒绝仍交标准WebPki。Checked SystemTime的共同thisUpdate/nextUpdate窗口在每次新证书验证取时，不改原TLS1.3/pin/ACL或禁用resumption/early-data。配置/agent启动加载快照及job clone共用；完整agent重启才重载，已有连接不热撤销。设计和范围见[离线CRL](research/offline-crl-design.md)与[验收](research/offline-crl-validation.md)，不新增helper/USB能力。

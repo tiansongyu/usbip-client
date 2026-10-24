@@ -4,10 +4,10 @@
 
 - 上一轮为实际进展：E43持续远端目录/903软件/双栈QEMU/四原生CI及发布，最终clean e6177063。重读完整Phase0–7原任务、当前Git/AGENTS/核心skill/架构与阶段gate；原目标保持active。本轮补Phase3尚缺的CRL凭据撤销，不以此完成G3/硬件或后续UI阶段。
 - 应用rustusb-development、writing-technical-design和technical-documentation。按设计skill显式要求，三个独立只读组件研究分别检查锁定rustls/webpki、rcgen/RFC与x509-parser；不委派产品编辑、不扩大为无关组件技能。实际研究探针重现future thisUpdate被接受、同issuer旧空CRL先置可遮蔽新撤销；故先写`research/offline-crl-design.md`，采用标准全链验证加有界元数据/单issuer完整CRL和每次握手实际TimeProvider窗口保护，不写自定义密码学/ASN.1，不改USB/helper/schema会话能力。尚未修改产品或宣称新验收。
-- clean fcb487cf完整十项软件gate全0：406/default、501/all及20/vendor共927次，226选定输入前后稳定；原开发compile失败保留。默认Native CLI normal树不含transport/x509-parser，parser normal树无verify/ring，175包inventory不变。随后仅修改QEMU采证/文档，后续须锁真实clean harness版本，不把它重标为fcb运行。
-- 新CRL QEMU扩展在四个原auth barrier之后单列新barrier，保留原counter/Rootproof/I/O要求；每barrier11实际CLI wait（6加载失败、5网络attempt），跨真实stop/restart两pin保持授权，只CRL撤销新serial。held1提前换磁盘active文件，老PID须继续接受，再由实际新实例拒绝。独立OpenSSL三CRL状态/服务端撤销校验、生成init dash及实际policy jq preflight全0，临时CA/私钥目录已删除；这些不计软件/USB，尚未执行QEMU。
 - 实现TrustRoots::with_crls与两角色schema1/2受保护路径，1..16/每64KiB/总256KiB，拒null/空/重复issuer及不完整scope；x509-parser只供元数据，标准WebPki全链/unknown-deny/expiration/pin/ACL保持，安全with_webpki_verifier无自定义密码校验。Checked SystemTime+CrlClock在每次真实新证书验证检查共同窗口，原resumption/early-data禁用；不重验已有stream，不自动下载/热更新或持久CRL序号抗回滚。
 - 开发首次check E0277因Oid无Ord，改存有界OID编码；首次TLS fixture E0277为tuple async中的?，以及后续json重复数组宏、补充extension单元的错误Oid导出/构造参数编译失败均保留。第一check仅tool原回执与失败源快照，后续原stderr/stdout有文件。第二check0；先8再11新test通过，最终transport全部测试与allworkspace/alltargets/allfeatures Clippy -D warnings通过。真实raw/v2 TLS含同pin撤销、全中间链、坏签名/issuer、实际clock过期/回退（包括无关list共同窗口）及已有stream继续I/O，配置测试实际加载后双schema握手/文件更新旧快照与新load拒绝；完整clean gate及installed QEMU尚待执行，不将开发PASS替代它们。
+- clean fcb487cf完整十项软件gate全0：406/default、501/all及20/vendor共927次，226选定输入前后稳定；原开发compile失败保留。默认Native CLI normal树不含transport/x509-parser，parser normal树无verify/ring，175包inventory不变。随后仅修改QEMU采证/文档，后续须锁真实clean harness版本，不把它重标为fcb运行。
+- 新CRL QEMU扩展在四个原auth barrier之后单列新barrier，保留原counter/Rootproof/I/O要求；每barrier11实际CLI wait（6加载失败、5网络attempt），跨真实stop/restart两pin保持授权，只CRL撤销新serial。held1提前换磁盘active文件，老PID须继续接受，再由实际新实例拒绝。独立OpenSSL三CRL状态/服务端撤销校验、生成init dash及实际policy jq preflight全0，临时CA/私钥目录已删除；这些不计软件/USB，尚未执行QEMU。
 
 ## 2026-10-24：远程目录自动刷新（开始）
 
@@ -842,3 +842,8 @@
 - 本轮为原Phase0–7目标实际进展：认证远端自动刷新与同库所有权实现、903软件/双栈QEMU/四CI/英文README和网站维护已完成，旧软件和两QEMU FAIL保留。全局readme-site四源/发现symlink仍有效。真实硬件G1/G2、完整G3、永久OS阻塞/全部热插拔事件、TUI/GUI/安装/性能/Windows继续未完成，goal保持active。最终仅提交上述发布回执并正常push，再核远端HEAD/clean和223/各221/七site/四global源，不把回执提交另说成本次USB实测。
 
 - clean47c0021首Native IPv4 CRL QEMU PASS/2guest0/四guard，原337+新增217核验及44新CLI wait；同版本首IPv6整体FAIL/2guest0/四guard不重判，原held1无ALPNOpenSSL实际wait104/read:errno104，既有probe虽无ALPN仍输入非空Catalog请求，严格0/1断言拒绝该状态；未完成后屏障/全清理不伪造。保留raw/诊断，下一fixture仅该握手使用保存的空输入，仍要求原exit1/空reply并新增protocol_mismatch实际delta1，不新增104例外或改产品；不声称RST因果trace。原矩阵方法遇首FAIL已停止，尚未运行的后续组合保持未执行。
+
+- clean e441bb89最终矩阵13paired全部PASS/26guest实际0：六CRL（各226输入；Native原337+新225、virtual320+221、USBFS330+225核验；每pair44新实际CLI wait），六原默认加密回归各216输入，一原Native/IPv4 v2诊断230输入且未加载CRL。各四guard真，all release CLI d941b677…/helper594cda8d…匹配fcb软件产物。新无ALPN纯握手空输入/strict1/protocol delta1通过，旧47 IPv6 FAIL及此前IPv4 PASS另记，不改产品迎合退出码。
+- 三研究闭合116文件/许可/真实探针审核；主归档10,491原件/方法约20.89MB，原bytes/hash稳定，6,039原guest Base64逐还原、66,101只读核对通过；同作者不导入原verifier的原件检查不是新USB执行或独立安全审计。见`evidence/offline-crl-e441bb8-20261024/manifest.json`。无ELF/私钥/host.private；只有临时guest公开数据。英文guide/report与README、secure/app guide、架构/安全/测试/兼容/roadmap/acceptance及项目约定同步，网站七源和四global skill尚待最终QA核对；未提前宣称CI/发布成功。
+
+- E44文档QA：17源485本地/仓库target、199site/Node/diff全0，226软件及13最终QEMU的226/216/230输入逐当前源不变；七site逐e617字节同、四global readme-site和Codex发现symlink正确，不重跑quick validate或编造browser/pixel。检查前源快照与方法见`evidence/offline-crl-docs-20261024/manifest.json`；之后只增加回执及整理本轮自有六条起始日志顺序。接下来普通commit/push并观察确切内容head的四原生CI/Pages，不提前声明成功。

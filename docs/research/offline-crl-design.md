@@ -1,7 +1,7 @@
 # Offline certificate revocation lists
 
 2026-10-24 UTC / 2026-10-25 Asia/Shanghai. Baseline `e6177063`.
-Status: implementing. This advances Phase 3 certificate revocation; it does not
+Status: implemented; [local validation](offline-crl-validation.md) records exact revisions. This advances Phase 3 certificate revocation; it does not
 complete G3, hot revocation, physical acceptance or later UI stages.
 
 ## Contract
