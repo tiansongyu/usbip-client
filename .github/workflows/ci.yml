@@ -72,3 +72,11 @@ jobs:
             cat "$RUNNER_TEMP/server-signals/summary.json" || true
           fi
           exit "$status"
+      - name: Bounded process logging lifecycle (six cases)
+        run: |
+          status=0
+          python3 -B scripts/test-process-logging.py --binary target/release/rustusb --evidence "$RUNNER_TEMP/process-logging" || status=$?
+          if test -f "$RUNNER_TEMP/process-logging/summary.json"; then
+            cat "$RUNNER_TEMP/process-logging/summary.json" || true
+          fi
+          exit "$status"
