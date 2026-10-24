@@ -1,0 +1,110 @@
+{
+  "result": "PASS",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "-x",
+        "scripts/check.sh"
+      ],
+      "exit_code": 0,
+      "log": "full-gate.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "check",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-check.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "tree",
+        "-p",
+        "rustusb-cli",
+        "--no-default-features",
+        "--features",
+        "secure-transport",
+        "--edges",
+        "normal",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "log": "native-only-tree.log"
+    },
+    {
+      "command": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "rustc.log"
+    },
+    {
+      "command": [
+        "cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "log": "cargo.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-help.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb",
+        "agent",
+        "--config",
+        "/etc/rustusb/unused.json",
+        "server-security",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "agent-security-help.log"
+    },
+    {
+      "command": [
+        "target/release/rustusb-helper",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "helper-help.log"
+    }
+  ],
+  "inputs_stable": true,
+  "selected_inputs": 194,
+  "artifacts": [
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb",
+      "bytes": 17041168,
+      "sha256": "9b8299bed3ddb25b5d40f4f0ec61a91e23f91efaefcae646143d0cf75ab7512b",
+      "dev": 66306,
+      "inode": 79641529,
+      "mtime_ns": 1792828621429525908
+    },
+    {
+      "path": "/home/ubuntu/github/usbip-client/target/release/rustusb-helper",
+      "bytes": 7464240,
+      "sha256": "7c690c62dbc02b7e08b224e2f3cfe773c77bebc6a8e6c10ebd716b2696806322",
+      "dev": 66306,
+      "inode": 79641322,
+      "mtime_ns": 1792816939275444399
+    }
+  ]
+}

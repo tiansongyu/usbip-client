@@ -1,8 +1,10 @@
 # Bounded server authentication observations
 
 2026-10-24. Baseline `39004dda3172d2945650b36023a45065bcc19a64`.
-Status: implemented; targeted software checks passed. Complete software and
-installed-QEMU validation remain pending at this checkpoint.
+Status: implemented and validated at clean `c097cf8`: 808 software executions,
+six installed authentication-observation pairs and one separate framed-v2
+diagnostic regression passed. See the [validation report](server-security-observations-validation.md)
+for exact sources, ELFs, counters and remaining boundaries.
 
 The installed authentication negatives exposed missing operational information:
 Native silently skips outer connection-budget refusals, and both engines project

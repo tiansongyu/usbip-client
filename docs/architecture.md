@@ -211,3 +211,8 @@ record最大2KiB、固定256队列、默认4MiB×8文件、硬上限8MiB×16（1
 service在Store实际commit/state替换/旧audit镜像之后发布immutable metadata；授权Begin/Page/End及错误绕WAL，拒绝仍durable。每请求双Read+Audit和真实peer/profile校验，root也只own-unscopedDenied。四实际Arc snapshot、每UID一/30秒，Weak UID索引防止End时仍copy提前复用配额；每页16row/60000payload，过滤后offset严格校验。快照无USB能力/permit/文件路径。
 
 exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与真实write/hash/fsync/NOREPLACE/dirsync，拒绝覆盖。Native child kill后实际reap，所有probe/agent/local logs/file worker保留owner总join，专用runtime保留内部TokioFS工作。60秒预算仅停止新stage，永久OS阻塞仍可拖延退出；信号与publication race保实际结果。默认stderr返回错误由metadata latch捕获，禁subscriber递归打印，actualcleanup后报告loggingIO；不承诺永久stderr阻塞/任意formatter panic安全。
+
+
+## 服务端安全观测
+
+[设计](research/server-security-observations-design.md)和[验收](research/server-security-observations-validation.md)限定volatile loaded-TLS-configuration scope；clone共享计数，TLS/独立framing/outer budget分开，Drop取消、饱和与一致性显式。短metadata锁不做日志/FS/await，不持凭据、stream、permit或USB owner；计数不参与准入或cleanup。前台server_security control与agent固定Profile Read读取使用单独variant，授权所有结果绕WAL、拒绝仍durable，service instance明确重启。旧Session/Metrics/disk/诊断bundle不变；此接口不是持久安全审计或前epoch恢复证明。

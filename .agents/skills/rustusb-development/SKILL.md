@@ -80,6 +80,8 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 
 ## Installed认证负向与凭据退休
 
+服务端安全计数修改前读`docs/research/server-security-observations-design.md`及`server-security-observations-validation.md`。clean c097的808软件/194输入、六raw观测paired与独立Native-v4/v2诊断回归/14guest0各自记账。loaded配置的clone/job共享volatile totals；TLS、独立framing、outer限额分开，Drop取消/饱和/一致性显式，不猜generic握手错误的证书原因。monitor不保凭据/stream/permit/USB owner；短锁无日志/FS/await。单独variant Read逐peer/profile授权，所有授权结果绕WAL，拒绝durable；旧Session/Metrics/disk/诊断bundle不改。不是持久安全审计或cleanup proof，安装态agent counter及v2负向counter仍未验收。
+
 修改TLS/principal/device ACL或负向harness前读`docs/research/secure-negative-qemu-design.md`与`docs/research/secure-negative-qemu-validation.md`。clean25870c6六paired run/12guest0、每pair两epoch四屏障与两轮真实I/O，clean3d7软件797/同192源；四历史hostFAIL保留，264负向client退出记录不是USBcases。
 
 - 标准PKI先于leaf pin，pin不能绕过CA/时间/用途；client服务名独立。running配置不可变，旧server actualwait/原资源基线先于新PID/pin策略，不以新进程资源0证明旧cleanup；startup退休不是热撤销/CRL/崩溃恢复。

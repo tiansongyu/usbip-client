@@ -354,3 +354,8 @@ python3 -B scripts/qemu_authentication/run.py --backend native --family ipv4 \
 按[harness](../scripts/qemu_authentication/README.md)分别运行Native/virtual/USBFS与IPv4/IPv6，证据目录必须全新、源必须clean、默认locked allfeatures build，不并行覆盖release产物。OpenSSL为实际copied ELF/动态库校验的独立测试客户端，CA/role私钥不归档，不改guest时钟。每pair同guest/helper内两epoch，free/held各两屏障；直接TLS IMPORT4/duplicate2、oldpin拒绝与B实际USB I/O、原server actualwait0/fullbaseline后才能启动新PID。early INJECT只到held屏障，真正INPUT_READY后才QMP/CDC注入，不能先发送输入再等待reader。
 
 最终clean25870c6六paired run/12guest0通过，各44目标负向退出记录不是USBcase。clean3d7软件797同192源；四原hostFAIL保留。数字004严格解析为NULL4，mapping类缺close_notify/104保真实IO，其他失败保固定TLS/service类别，不能泛放权限/IO或叫cleanEOF。完整范围、原件/同作者新raw方法及无逐fastchildELF/无混合PCAPclassifier边界见[英文验收](research/secure-negative-qemu-validation.md)。这不完成framed-v2专属负向、热吊销/CRL、认证耗尽、生产隔离/审计、硬件G1/G2或完整G3。
+
+
+## 服务端认证计数回归
+
+E38见[精确运行报告](research/server-security-observations-validation.md)：clean c097cf8完整808软件、194输入前后稳定；六认证观测QEMU沿原负向夹具在四屏障前后保存server_security，不放宽原实际I/O/owner/proof。独立第七Native-v4/framed-v2诊断回归复用原WAL门/导出/第二I/O；不把它当新v2负向计数或安装态agent counter验收。所有实际来源/ELF/四guard与未完成项在报告分账。

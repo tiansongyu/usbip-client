@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "broker_uid": 2000,
+  "listen": "192.0.2.1:3241",
+  "devices": [
+    "virtual:hid",
+    "virtual:cdc-acm"
+  ],
+  "principals": [
+    {
+      "id": "replacement",
+      "pins": [
+        "ffeb9c339591e0c0c7a10feb7f77aa67e399d558cd4fd7be6c5582aaa8cb1cc6"
+      ],
+      "devices": [
+        "virtual:hid",
+        "virtual:cdc-acm"
+      ]
+    },
+    {
+      "id": "restricted",
+      "pins": [
+        "cb8aeda9dedd112662b1bb9f29ce34740ed2308186e105878e500f7d1395926f"
+      ],
+      "devices": [
+        "virtual:hid"
+      ]
+    },
+    {
+      "id": "expired",
+      "pins": [
+        "7198d1a0d59e8a2f8df9794c3d7bf1068f0f588bae97a33bb77204fab2bd46eb"
+      ],
+      "devices": [
+        "virtual:hid",
+        "virtual:cdc-acm"
+      ]
+    },
+    {
+      "id": "badeku",
+      "pins": [
+        "121081b3b90771af3f2db97d3038773796df61ece5ba134be6cf05eebafbcb0d"
+      ],
+      "devices": [
+        "virtual:hid",
+        "virtual:cdc-acm"
+      ]
+    },
+    {
+      "id": "unknown-ca",
+      "pins": [
+        "fc7f4455055306016896183b2f79b6c19cff3fb5ecc62f51bc6a31f1710a924b"
+      ],
+      "devices": [
+        "virtual:hid",
+        "virtual:cdc-acm"
+      ]
+    }
+  ],
+  "ca_certificates": [
+    "/etc/rustusb/ca.der"
+  ],
+  "certificate_chain": [
+    "/etc/rustusb/server.der"
+  ],
+  "private_key": "/etc/rustusb/server-key.der"
+}

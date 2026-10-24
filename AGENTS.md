@@ -14,6 +14,8 @@ SIGKILL与首次重启的独立负向见 `docs/research/physical-crash-recovery.
 
 ## 每次交付
 
+服务端volatile计数见`docs/research/server-security-observations-design.md`及`server-security-observations-validation.md`：clean c097cf8完整808软件/194稳定输入、六认证观测paired与独立Native-v4/v2诊断回归通过/14guest0。TLS/framing/outer限额区分，loaded configuration scope跨clone/job，agent实例标epoch；metadata无能力，Read授权所有结果绕WAL，拒绝仍durable。不是持久安全审计或USB释放证明；安装态agent counter/v2负向counter、硬件G1/G2与完整G3未验收。
+
 Phase3前置基线见`docs/research/secure-transport-foundation.md`：当时18项transport/304软件与匿名kernel机制，不重归属后续产品结果。当前安全broker已接Native、virtual和USBFS：clean b83c931六项双guest IPv4/IPv6 QEMU全PASS，12guest0、125输入/ELF guards真；完整软件412及精确f9558fc四平台CI各412通过，见`docs/research/secure-usbip-validation.md`。四个开发FAIL保留。Native USED早于device_add，须保留首次row/目录代际固定和有界初始化等待，不能 blanket retry/覆盖旧receipt；cfg/IF仍是phase状态。修改broker必须保留专用UID/互斥设备池、同TLS管理+URB、helper只交R/自持K、实际blockingguard/cleanup及持久未决不接管。完整G1/G2/G3、真实硬件和后续阶段未完成。
 
 独立恢复句柄机制在clean da764d0双QEMU通过237项检查（原journal184+新增53）、两guest0和恢复后第三轮真实HID/FTDI I/O，见`docs/research/usbfs-guardian-mechanism.md`。guest-only probe证明独立B与dupA/C的占用差异和CONNECT恢复，未修改产品或实现自动恢复；首43d6d43的jq测试脚本FAIL保留。机制PASS不等于跨配置、FD撤销或硬件验收。

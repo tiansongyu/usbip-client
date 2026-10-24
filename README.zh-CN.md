@@ -44,6 +44,8 @@ target/release/rustusb doctor
 
 新增[installed认证负向与启动pin退休验收](docs/research/secure-negative-qemu-validation.md)：clean `25870c6` 的Native/virtual/USBFS × IPv4/IPv6六paired run全部通过，12guest0；每pair同guest/helper内两credential epoch、四拒绝前后屏障及两轮实际HID/Serial I/O。各44条目标负向client退出记录包含错误证书/用途/名称/信任、缺cert/ALPN、直接未授权IMPORT4/duplicate2及旧pin移除后拒绝；264条进程记录不计USBcases。clean3d7软件797次仍同192源；前四hostFAIL均保留。这是raw-v1合作停止后startup pin退休，不是热吊销/CRL、崩溃恢复或完整G3。
 
+更新的[服务端观测版本](docs/research/server-security-observations-validation.md)在干净`c097cf8`通过808次软件测试和七次双QEMU：六组认证拒绝/计数组合，以及独立的framed-v2诊断回归。前台control与`agent server-security PROFILE`提供有界TLS/framing/限额计数；它们按已加载配置累计、服务重启归零，不是持久审计或USB清理证明。
+
 ## 本机诊断
 
 普通用户运行 `rustusb doctor` 查看逐项结果和处理建议；`rustusb doctor --json` 输出供脚本读取的结构化报告，当前 `schema_version` 为 `1`。诊断完成时退出码为 `0`，其中仍可能包含 `missing`、`not_loaded`、`unknown` 或失败结果；退出码不表示整体已经就绪。
