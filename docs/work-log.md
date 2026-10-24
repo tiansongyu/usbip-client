@@ -28,6 +28,10 @@
 
 - 内容77634c48普通SSH push/clean/remote一致；Pages40142433146 completed/success，七canonical HTTP资源200且逐Git一致，全局skill/code/ELF保持，core40142433091与GUI40142433200仍运行，未报成功。发布后末复核发现Local eligible=true会带到Remote并全过滤，现将predicate显式限定local且远端隐藏该控件、保本地选择；补实际native页面切换断言，完整非空远程目录仍待后续positive GUI case。先补契约，再更正/重新gate与QEMU，旧08/776证据不重归属。
 
+- clean03621a06 local-only filter修复的GUI完整gate11/0/0与native QEMU整体PASS：70原件364143B，guest0/GUI预期1/agent0/无forced/四guard真，真实Remote控件隐藏/保本地choice及原全部流程通过。GUI最终a8b897c0…16994912B；core CLI/helper及b15源保持。新原件独立supplement archive，旧08/776不改判不重归属，README/site PNG改为036实际未编辑截图。仍未称非空远程目录正向验证。
+
+- filter补充公开归档466原件6782080B/1942926B archive逐member/SHA核验；最终PNG已再次查看。补充文档QA17文件519本地target/site213/Node/actualhelp/无GTK CLI依赖均PASS；222核心与b15、138 GUI非README输入与036及三ELF保持，全局skill四源/symlink保持。沿用先前站点DOM/keyboard观察且明确本轮PNG后未新跑browser；不虚称pixel/no-JS/reducedmotion。即将推送该最终内容并核独立CI/Pages，旧776发布仍保留独立回执。
+
 ## 2026-10-25：终端热插拔、权威拒绝与设置重载（开始）
 
 - 上一轮E47为实际进展，clean8be43fbb已发布；本轮完整重读原Phase0–7任务、Git/AGENTS/核心skill/工作日志及实际TUI、IPC、原本地monitor QEMU。原goal保持active，英文README/站点/全局readme-site继续维护。

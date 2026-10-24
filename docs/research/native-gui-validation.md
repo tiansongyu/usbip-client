@@ -38,10 +38,12 @@ and permanent kernel blocking are outside cooperative cleanup guarantees.
 | Root ten-command `scripts/check.sh` | b15dd113 |420 default +516 all-features +20 vendored nusb =956 passed,0 failed/ignored; fmt/Clippy/release/rustdoc passed|
 | Initial GUI full gate | b15dd113 |10 passed; preserved earlier developer failures|
 | Pending-state GUI full gate |7c4eb3cd|11 passed:5 bridge +6 GLib; all GUI gate commands0|
-| Final viewport GUI full gate |08ac67a1|11 passed,0 failed/ignored; fmt/Clippy/release/rustdoc/JS syntax passed|
+| Viewport GUI full gate |08ac67a1|11 passed,0 failed/ignored; fmt/Clippy/release/rustdoc/JS syntax passed|
 | Shared-worker original TUI QEMU |72fe888c|guest0, no forced termination, four guards true; four actual PTYs (three child0, one expected unresolved child1), original six observer points and three fast refusals preserved|
 | First functional native GUI QEMU |f37d95d9|parent/guest PASS,66 guest files/378653B; subsequent visual QA found a separate long-detail layout bug|
-| Final native GUI QEMU with geometry |08ac67a1|parent/guest PASS,68 guest files/386369B; actual guest0, no forced termination, all four guards true|
+| Native GUI QEMU with geometry |08ac67a1|parent/guest PASS,68 guest files/386369B; actual guest0, no forced termination, all four guards true|
+| Final GUI full gate, local-only eligibility |03621a06|11 passed,0 failed/ignored; all GUI gate commands0|
+| Final native GUI QEMU, filter and geometry |03621a06|parent/guest PASS,70 guest files/364143B; guest0, no forced termination, all four guards true|
 
 Root core inputs from b15 remain unchanged through the GUI/fixture-only commits;
 root tests are not falsely counted as rerun on each later revision. Repeated GUI
@@ -52,7 +54,7 @@ head, worktree and binary guards. Final actual release ELFs:
 |---|---:|---|
 |root all-features rustusb|20284624|`5ed8d381c21958cf29269a38dde528c867963420fe0a7903f20784168619cc6a`|
 |root all-features helper|7525376|`83c53d522d5c89a9b3384b23c17242aa3e197217fc785d62706b520c1e1473e5`|
-|native GUI|16994496|`cec2f51371b3aae7329ffcb666aa09b3df076721be17dea9537a61a8fdca0634`|
+|native GUI|16994912|`a8b897c0151c9ebfe96a1d3be9e8f42fc5942ff42f879608165c5ead7a1db8dd`|
 
 The helper is copied but never started in these native GUI cases. Final QEMU
 uses a disposable x86_64 Linux6.8.0-106 guest, no NIC/host USB passthrough and no
@@ -126,6 +128,21 @@ Unchanged upstream GLib emits34 newer-Rust lifetime-syntax dependency warnings;
 they were not suppressed. Version scanners may still flag0.18.5. This is not a
 whole-GTK vulnerability or release-license audit. Root inventory222 and separate
 GUI Cargo inventory475 include all-platform metadata, not475 Linux runtime libs.
+
+## Final local-filter correction
+
+Post-publication code review found that a selected local eligibility filter could
+hide remote entries. The predicate is now explicitly local-only; Remote hides
+that control while preserving its local choice. Final clean03621a06 repeats the
+full GUI gate and native QEMU flow, with a real page-navigation assertion for the
+hidden remote control/local choice plus all existing geometry/denial/join checks.
+This still does not validate a nonempty live remote client catalog.
+
+[Supplemental originals](../evidence/native-gui-filter-03621a06-20261025/manifest.json)
+and [receipt](../evidence/native-gui-filter-03621a06-20261025/receipt.json) retain the
+new source, commands, logs and summaries separately. The README/site image now
+uses this final run's actual unedited native capture. Previous08 screenshots,
+CEC2 ELF and original results remain in the historical archive, not reassigned.
 
 ## Open acceptance
 

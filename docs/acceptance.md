@@ -337,3 +337,6 @@ E44内容91ecc44f普通SSH push/main一致/clean；software40121403621四native 
 ## 36. E49：原生GUI预览与共享headless worker
 
 [报告](research/native-gui-validation.md)记录core956锁b15dd113、最终GUI11及native QEMU锁08ac67a1；真实UID1000/零有效权限WebView、QMP代际/搜索/详情、默认Cancel、Read/Audit-only真实agent两拒绝及原UUID跨reload、checked偏好、宽窄footer geometry通过。最终68文件386369B、guest0/GUI正确unresolved child1/独立agent0、无forced/四guard真；原TUI四PTY锁72fe888c回归PASS。GLib上游两行补丁保版本/许可/121源，500组件原件独立归档；所有开发/五次native失败、误判parent及旧TUI缺依赖保留，不改判。与CLI共享实际应用服务，不获得USB能力，不把负向GUI窗口当正向导入/Stop/远端RTT/activejob proof。规则/deb/systemd/完整安装/硬件G1G2/完整G3/后续原Phase5–7继续未完成。
+
+
+E49末复核补local eligible过滤不得应用Remote；clean03621a06 GUI11与native QEMU重新PASS，70原件364143B/guest0/GUI预期1/agent0/无forced/四guard真，原宽窄及两真实拒绝完整保留；PNG更新为该实际run。08/776与原失败保留、不改归属；非空远程/正向GUI/规则/安装/硬件范围未扩张，见同报告补充。
