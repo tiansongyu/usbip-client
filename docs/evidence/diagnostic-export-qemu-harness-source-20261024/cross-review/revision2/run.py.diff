@@ -1,0 +1,31 @@
+--- initial/run.py
++++ revision2/run.py
+@@ -81,6 +81,20 @@
+     packed=subprocess.run(["cpio","--null","-o","--format=newc","--owner=0:0"],input=names,cwd=root,capture_output=True,check=True)
+     archive=work/"diagnostic-initramfs.cpio.gz";archive.write_bytes(gzip.compress(packed.stdout))
+     return archive,provenance
++
++def check_final_guest_logs(evidence):
++    # Polling is not a terminal observation: either guest can emit its last
++    # marker/artifact error between a poll and the actual process wait.
++    for role in ("server","client"):
++        log=(evidence/f"{role}-evidence.log").read_text(errors="strict")
++        expected=f"RUSTUSB_DIAGNOSTIC_RESULT: PASS role={role}"
++        pass_lines=[line for line in log.splitlines() if line.startswith("RUSTUSB_DIAGNOSTIC_RESULT: PASS")]
++        if pass_lines!=[expected]:
++            raise RuntimeError(role+" final unique exact guest PASS marker missing")
++        for forbidden in ("RUSTUSB_DIAGNOSTIC_RESULT: FAIL","SECURE_ARTIFACT_ERROR","OVERSIZE","POWEROFF_RETURNED"):
++            if forbidden in log:
++                raise RuntimeError(role+" final guest failure/artifact marker: "+forbidden)
++
+ 
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+@@ -233,6 +247,7 @@
+                 time.sleep(0.05)
+             else: raise RuntimeError("two-guest agent run deadline exceeded")
+             if any(process.wait() != 0 for process in processes.values()): raise RuntimeError("nonzero actual QEMU exit")
++            check_final_guest_logs(evidence)
+             if ftdi:
+                 while select.select([ftdi], [], [], 0)[0]:
+                     chunk = ftdi.recv(4096)

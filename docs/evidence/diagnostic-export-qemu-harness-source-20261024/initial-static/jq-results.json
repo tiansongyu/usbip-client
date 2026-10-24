@@ -1,0 +1,307 @@
+[
+  {
+    "expression": "{name:$name,number:$number,alt:$alt,class:$class,subclass:$subclass,protocol:$protocol,driver:$driver}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{bus:$bus,generation:$generation,devnum:$devnum,path:$path,busnum:$busnum,vendor:$vendor,product:$product,speed:$speed,release:$release,configuration:$cfg,num_interfaces:$count,configuration_bytes:$configuration_bytes,count_bytes:$count_bytes,interfaces:($interfaces|sort_by(.name)),device_driver:$device_driver,usbip_status:$usbip_status}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "sort_by(.bus)",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "{path:$path,kind:$kind,canonical:$canonical,uid:$uid,gid:$gid,mode:$mode,links:$links,bytes:$bytes,device:$device,inode:$inode,captured_file:(if $copy==\"\" then null else $copy end)}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "sort_by(.path)",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy==true and .response.result==\"profiles\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy==true and .response.result==\"started\" and .response.replayed==false and .response.job.operator_uid==1000",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".journal_healthy and .response.result==\"sessions\" and .response.next_after==null",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==2 and (.records|type)==\"array\" and (.exports|type)==\"array\" and (.terminals|type)==\"array\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".records==[] and .exports==[]",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy and .response=={result:\"jobs\",jobs:[],next_after:null}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy and .response=={result:\"sessions\",sessions:[],next_after:null}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy and .response=={result:\"error\",code:\"permission\"}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".jobs==[] and .sessions==[] and .requests==[] and ([.audit[]|select(.action==\"denied\" and .failure==\"permission\")]|length)==2",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{schema_version:1,broker_uid:2000,helper_socket:\"/run/rustusb/control.sock\",control_directory:\"/run/agent\",data_directory:\"/var/lib/rustusb/agent\",profiles:$profiles[0],operators:[{uid:1000,profiles:[$profiles[0][].id],actions:[\"read\",\"start\",\"stop\",\"discover\",\"audit\"]}]}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==2 and .exports==[] and (.records|length)==2 and all(.records[]; .owner.uid==2000 and .correlation!=null and .state.phase==\"observed\" and .state.receipt.session.status==6)",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".records[]|select(.target.device_key==$key)|.state.receipt.session.local_bus_id",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".records[]|select(.target.device_key==$key)|.state.receipt.session.local_bus_id",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "{hid:$hid,serial:$serial,hid_generation:$hid_generation,serial_generation:$serial_generation}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{path:$path,canonical:$canonical,capture:$capture,mode:$mode,kind:$kind,uid:$uid,gid:$gid,bytes:$bytes,links:$links,device:$device,inode:$inode}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "any(.[]; .event.kind?==\"started\")",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "any(.[]; .event.kind?==\"started\")",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "{hid:$hid,serial:$serial,hid_exists:false,serial_exists:false,uptime:$uptime}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{tid:$tid,comm:$comm,syscall:$syscall,wchan:$wchan,fd:$fd,target:$target,stat:$stat}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{fd:$fd,target:$target,stat:$stat}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{role:$role,carrier:$carrier,operstate:$operstate,uptime:$uptime}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{schema_version:1,broker_uid:2000,helper_socket:\"/run/rustusb/control.sock\",control_directory:\"/run/agent\",data_directory:\"/var/lib/rustusb/agent\",profiles:$profiles[0],operators:[{uid:1000,profiles:[$profiles[0][].id],actions:[\"read\",\"start\",\"stop\",\"discover\",\"audit\"]},{uid:1002,profiles:[$profiles[0][].id],actions:[\"read\"]},{uid:1003,profiles:[$profiles[0][].id],actions:[\"audit\"]}]}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".uid==2000 and .tracee_pid==$pid and .event==\"ready\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy and .response.result==\"profiles\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".schema_version==1 and .journal_healthy",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{path:$path,canonical:$canonical,mode:$mode,kind:$kind,uid:$uid,gid:$gid,bytes:$bytes,links:$links,device:$device,inode:$inode}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "length==1 and (.[0]|.event==\"armed\" and .operation==\"resource\" and .nonce==\"prepare-stop-v1\" and .tracee_pid==$ready[0].tracee_pid and .tracee_starttime==$ready[0].tracee_starttime)",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "length==1 and .[0].event==\"armed\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".sequence==($old[0].sequence+1) and any(.audit[];.sequence==($old[0].sequence+1) and .actor_uid==1000 and .action==\"denied\" and .profile==null)",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "length==2 and all(.[]; .export_blockers==[])",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "length==2 and all(.[]; .export_blockers==[])",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".[]|select(.vendor_id==1575 and .product_id==1)|.id",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".[]|select(.vendor_id==1027 and .product_id==24577)|.id",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".[]|select(.id==$id)|.bus_id",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".[]|select(.id==$id)|.bus_id",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "length==2 and all(.[]; (.configuration|tonumber)==1 and (.interfaces|length)==1) and ([.[].interfaces[].driver]|sort)==[\"ftdi_sio\",\"usbhid\"]",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_native_device_ids:[$hid,$serial]}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "[$hid,$serial]",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{schema_version:2,data_link:{protocol:\"framed_v2\",interval_millis:1000,response_timeout_millis:3000},broker_uid:2000,listen:$listen,devices:$keys[0],principals:[{id:\"qemu-client\",pins:[$pin],devices:$keys[0]}],ca_certificates:[\"/etc/rustusb/ca.der\"],certificate_chain:[\"/etc/rustusb/server.der\"],private_key:\"/etc/rustusb/server-key.der\"}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{jobs,sessions:(.sessions|map(del(.metrics))),requests}",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".event==\"diagnostic_export\" and .capture==\"partial\" and any(.summary.sections[];.stage==\"agent\" and .failure==\"permission\")",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{jobs,sessions:(.sessions|map(del(.metrics))),requests}",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".schema_version==1 and .event==\"diagnostic_export\" and .capture==\"complete\" and .summary.complete and .file.result==\"written\" and .file.receipt.publication==\"published\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".response.result==\"diagnostic_started\"",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{schema_version:1,request:{op:\"end_diagnostic\",profile:\"server\",snapshot:.response.header.snapshot}}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".response=={result:\"diagnostic_ended\"}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "any(.audit[];.sequence==($old[0].sequence+1) and .action==\"denied\" and .actor_uid==1000)",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "any(.audit[];.sequence==($old[0].sequence+1) and .action==\"denied\" and .actor_uid==1000)",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": "length==2 and all(.[]; startswith(\"native:\"))",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".[0]",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{allowed_uids:[1000],export_device_ids:[],peers:[],trusted_network:false,secure_broker_uid:2000,secure_imports:[{server_id:\"qemu-server\",device_keys:$keys[0]}]}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": "{schema_version:2,data_link:{protocol:\"framed_v2\",interval_millis:1000,response_timeout_millis:3000},broker_uid:2000,server_id:\"qemu-server\",endpoint:{host:$host,port:3241},server_name:\"rustusb-qemu.test\",device:$key,ca_certificates:[\"/etc/rustusb/ca.der\"],certificate_chain:[\"/etc/rustusb/client.der\"],private_key:\"/etc/rustusb/client-key.der\"}",
+    "exit": 0,
+    "diagnostic": ""
+  },
+  {
+    "expression": ".response.sessions|map(select(.role==\"export\" and .state==\"Available\" and .terminal==false))|length==2",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".response.sessions|map(select(.role==\"incoming\" and .state==\"Connected\" and .terminal==false))|length==2",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  },
+  {
+    "expression": ".response.sessions|map(select(.state==\"Connected\" and .evidence==\"local_enumeration\" and .terminal==false))|length==1",
+    "exit": 5,
+    "diagnostic": "jq: error (at <unknown>): Cannot iterate over null (null)\n"
+  }
+]

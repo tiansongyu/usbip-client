@@ -80,3 +80,11 @@ jobs:
             cat "$RUNNER_TEMP/process-logging/summary.json" || true
           fi
           exit "$status"
+      - name: Private diagnostic export lifecycle (nine cases)
+        run: |
+          status=0
+          python3 -B scripts/test-diagnostic-export.py --binary target/release/rustusb --evidence "$RUNNER_TEMP/diagnostic-export" || status=$?
+          if test -f "$RUNNER_TEMP/diagnostic-export/summary.json"; then
+            cat "$RUNNER_TEMP/diagnostic-export/summary.json" || true
+          fi
+          exit "$status"

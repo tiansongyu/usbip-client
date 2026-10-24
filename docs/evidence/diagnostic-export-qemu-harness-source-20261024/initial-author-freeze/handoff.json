@@ -1,0 +1,111 @@
+{
+  "status": "SOURCE_FROZEN",
+  "source": {
+    "scripts/qemu_diagnostic_export/README.md": {
+      "bytes": 5309,
+      "sha256": "5feec6aa30c7d175a5d8b18be364855e78f082ec4d4bd73c3872ace72e30a140"
+    },
+    "scripts/qemu_diagnostic_export/guest-init.sh": {
+      "bytes": 16952,
+      "sha256": "fca047bf0aadce65abbeaf1eba2dc636de36785edf6e9f321622fac524c53756"
+    },
+    "scripts/qemu_diagnostic_export/run.py": {
+      "bytes": 23165,
+      "sha256": "ecf3e51f8ff44450fd344b3e9019fe6175c7d804b1a0435b3db6ec0aa97575bc"
+    },
+    "scripts/qemu_diagnostic_export/verify.py": {
+      "bytes": 30433,
+      "sha256": "2c13790c18448f9a441d82d3408e44a93b0c3faaba05996770c322ea59ff1661"
+    }
+  },
+  "scope": "one installed Native IPv4 framed-v2 paired-guest scenario; two actual I/O rounds around complete diagnostic export while same real WAL fsync entry is withheld; source/static only",
+  "commands": [
+    "python3 scripts/qemu_diagnostic_export/run.py --kernel 6.8.0-106-generic --evidence /tmp/rustusb-diagnostic-export-FRESH"
+  ],
+  "host_build_requirements": [
+    "locked all-features workspace release (coordinator only)",
+    "cc -std=c11 -O2 -Wall -Wextra -Werror existing prepare-gate.c (coordinator only)",
+    "qemu-system-x86_64, cpio, jq, openssl, flock, module tools used by existing secure payload"
+  ],
+  "static_report": "/tmp/rustusb-diagnostic-harness-static-20261024/report.json",
+  "static_checks": 80,
+  "jq_compilations": 61,
+  "static_manifest": {
+    "check-initial.py": {
+      "bytes": 7290,
+      "sha256": "e27d58c9e5c8b281e1530a86e0ea21d214a2038e0d14c5ccd2fbfd0a95985245"
+    },
+    "check.py": {
+      "bytes": 8030,
+      "sha256": "742a2dee7c18f3ce58d46d7a7ce98be25a0067a5e8e986d53ec2d91b481697e2"
+    },
+    "dash-final.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "dash.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "generated-init-final.sh": {
+      "bytes": 51321,
+      "sha256": "34908a1f943df97a0ece8ba523dd99efbbef9e316776670929d839e4526a36dc"
+    },
+    "generated-init.sh": {
+      "bytes": 50880,
+      "sha256": "5c755093c63ea0cb7ad35606bb667a9adc6217235cb38f2fc33ecb9e7a91fe5b"
+    },
+    "jq-first-parser-error.json": {
+      "bytes": 420,
+      "sha256": "3a2a95f4237b7dfdb17022c93f9743b016d4633255299a93764010f25f178098"
+    },
+    "jq-results.json": {
+      "bytes": 11465,
+      "sha256": "c66ab1d06c5786afaffc3efdc71e91a00d59a5eebfd96c0670750f0163418163"
+    },
+    "jq-value.json": {
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "report.json": {
+      "bytes": 6604,
+      "sha256": "c02f38ea46d4b30d59acb7e15a22fbed530247add8cf79f014cb4bba7df5a736"
+    },
+    "shellcheck-final.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-inputs.json": {
+      "bytes": 31705,
+      "sha256": "027f7d7b5d33ca8e2f5fcd71098416af011122feea3eecc03eb826c2d438cf05"
+    },
+    "syntax-report.json": {
+      "bytes": 356,
+      "sha256": "7bb2e3742d3ef3f9cd8f2e11893dbd9597b2f178022b445395f9a79f9f37f2d9"
+    }
+  },
+  "not_executed": [
+    "Cargo",
+    "rustc",
+    "cc",
+    "product CLI",
+    "QEMU",
+    "USB device operations",
+    "full real-evidence verifier"
+  ],
+  "preflight_corrections": [
+    "Existing gate only supports before/after, so final source uses those exact two receipts around export + second I/O; no old C modification.",
+    "Synthetic jq collector initially attempted compiling dynamic $3; original parser and diagnostic preserved; each literal caller is now independently compiled.",
+    "Existing tracer terminal event is finished; final verifier uses that exact event."
+  ],
+  "time_scope": {
+    "existing_hold_seconds": 30,
+    "existing_tracer_total_seconds": 120,
+    "host_overall_seconds": 600,
+    "failure_collection_seconds": 150,
+    "no_new_production_deadlines": true
+  },
+  "reuse": "Old agent/secure/logging boot/config and read-only collectors; old process_logging epoch1 exact lifecycle and peer-close predicates reused by explicit import; not independently implemented audit",
+  "metadata_end_scope": "Complete original CLI receipt follows retained collector End; fresh same-UID Begin and explicit End under same held gate prove one-slot reuse; does not claim raw original token tracing",
+  "privacy": "Private TLS key bytes never copied; only metadata. Output is typed JSON; actual full artifacts are private test evidence."
+}

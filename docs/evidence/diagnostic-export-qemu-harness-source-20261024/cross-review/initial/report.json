@@ -1,0 +1,102 @@
+{
+  "status": "SOURCE_REVIEW_BLOCKED_PENDING_NARROW_HARNESS_FIXES",
+  "scope": "Four initial H-frozen focused QEMU sources, plus read-only transitive lifecycle/collector/registry/gate source checks",
+  "reviewer_participation": "Reviewer authored service diagnostic registry and some earlier reused lifecycle verifier code. This is method cross-review, not an independently implemented auditor.",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "must_fix",
+      "source": "verify.py:64\u201377",
+      "problem": "Committed jobs/sessions retain creation order, while service pages deterministically sort by UUID; direct zip can reject correct exports or bind wrong raw identities.",
+      "change": "Sort expected raw jobs/sessions by id and audit by sequence; retain exact typed-row and injective-alias checks.",
+      "basis": [
+        "service diagnostics.rs:408\u2013442",
+        "collector/agent.rs:218\u2013252"
+      ]
+    },
+    {
+      "id": "R2",
+      "severity": "evidence_binding_gap",
+      "source": "verify.py:141\u2013159,243\u2013245",
+      "problem": "Selected gate receipt is internally consistent but candidate PID/starttime is not cross-bound to saved actual broker proc identity/ELF and ready/armed records.",
+      "change": "Use existing saved proc snapshots before/after plus start; compare exact PID/starttime and frozen ELF, ready/armed/candidate relation and nonce/operation only on records actually containing them. No new C fields or gate timing."
+    },
+    {
+      "id": "R3",
+      "severity": "must_fix_false_pass_risk",
+      "source": "run.py:186\u2013235,263\u2013267; old process_logging verify.py:980",
+      "problem": "Both guests can exit after final loop log read; all-exited break precedes missing-PASS check. Postwait scans only kernel logs, and reused lifecycle subfunctions omit old top-level final PASS/artifact-error gate. Late FAIL or unused artifact encoding error could be missed.",
+      "change": "After actual waits require exactly one final diagnostic PASS per role and reject all diagnostic FAIL/artifact error/oversize/poweroff-returned markers before assigning PASS."
+    }
+  ],
+  "positive_scope": [
+    "Guest closes host control FD in broker/exporter/direct UDS children; original tracer remains root-only and guest-only",
+    "Withheld candidate must be next UID1000 Denied audit; saved committed bytes checked unchanged across successful exporter and second same-device I/O",
+    "Complete collector receipt includes code-constrained End acknowledgement, then fresh same-UID Begin/End observes slot reuse; no claim to raw original token trace",
+    "Inherited exact Native attempts/correlations/Root terminals, original driver/config/alt baseline and client NULL/Gone remain strict",
+    "State/Protocol exception remains exact normal epoch1 original incoming IDs, reversed TCP peer local_stop and client-first actual I/O/ordering; no generic Io allowance or clean EOF claim",
+    "No new packet classification or hardware/kernel-internal blocking claim"
+  ],
+  "checks": [
+    {
+      "check": "AST run.py",
+      "result": "PASS",
+      "scope": "parse only, no module import or execution"
+    },
+    {
+      "check": "AST verify.py",
+      "result": "PASS",
+      "scope": "parse only, no module import or execution"
+    },
+    {
+      "check": "insertion order versus UUID-order fixture",
+      "result": "reproduced mismatch",
+      "insertion_ids": [
+        "b",
+        "a"
+      ],
+      "page_ids": [
+        "a",
+        "b"
+      ],
+      "full_rows_match_unsorted": false,
+      "full_rows_match_sorted": true
+    }
+  ],
+  "files": [
+    {
+      "path": "scripts/qemu_diagnostic_export/run.py",
+      "reviewed_frozen_copy": "/tmp/rustusb-diagnostic-harness-author-20261024/source/run.py",
+      "sha256": "ecf3e51f8ff44450fd344b3e9019fe6175c7d804b1a0435b3db6ec0aa97575bc",
+      "bytes": 23165
+    },
+    {
+      "path": "scripts/qemu_diagnostic_export/guest-init.sh",
+      "reviewed_frozen_copy": "/tmp/rustusb-diagnostic-harness-author-20261024/source/guest-init.sh",
+      "sha256": "fca047bf0aadce65abbeaf1eba2dc636de36785edf6e9f321622fac524c53756",
+      "bytes": 16952
+    },
+    {
+      "path": "scripts/qemu_diagnostic_export/verify.py",
+      "reviewed_frozen_copy": "/tmp/rustusb-diagnostic-harness-author-20261024/source/verify.py",
+      "sha256": "2c13790c18448f9a441d82d3408e44a93b0c3faaba05996770c322ea59ff1661",
+      "bytes": 30433
+    },
+    {
+      "path": "scripts/qemu_diagnostic_export/README.md",
+      "reviewed_frozen_copy": "/tmp/rustusb-diagnostic-harness-author-20261024/source/README.md",
+      "sha256": "5feec6aa30c7d175a5d8b18be364855e78f082ec4d4bd73c3872ace72e30a140",
+      "bytes": 5309
+    }
+  ],
+  "not_executed": [
+    "product CLI",
+    "Cargo",
+    "cc",
+    "QEMU",
+    "Git",
+    "original verifier",
+    "module imports"
+  ],
+  "source_changes": "None by reviewer; H authorized revision2 may change current primary source after this initial frozen review."
+}

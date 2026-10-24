@@ -1,0 +1,51 @@
+--- initial/verify.py
++++ revision2/verify.py
+@@ -61,8 +61,8 @@
+     check(set(counts)=={'application_epochs','process_epochs','jobs','sessions','attempts','resources','devices','principals','profiles','uids','connections'} and all(type(v) is int and 0<=v<=8192 for v in counts.values()) and sum(counts.values())<=8192,'bounded separate alias namespaces')
+     bind=AliasBinding(check,counts).bind
+     committed=o.data('server','selected-committed.json');draft=o.data('server','selected-draft.json');view=bundle['agent']
+-    jobs=[j for j in committed['jobs'] if j['profile']=='server']
+-    sessions=[s for s in committed['sessions'] if s['profile']=='server']
++    jobs=sorted((j for j in committed['jobs'] if j['profile']=='server'),key=lambda row:row['id'])
++    sessions=sorted((s for s in committed['sessions'] if s['profile']=='server'),key=lambda row:row['id'])
+     audit=[a for a in committed['audit'] if a['profile']=='server' or (a['profile'] is None and a['action']=='denied' and a['actor_uid']==1000)]
+     check(len(jobs)==1 and len(sessions)==4 and len(audit)>16,'real retained nonempty single-profile view spans multiple audit pages')
+     check(view['backend']=='native' and view['committed_sequence']==committed['sequence'] and draft['sequence']==committed['sequence']+1,'snapshot is original committed sequence; draft excluded')
+@@ -132,13 +132,18 @@
+     return {'committed_sequence':committed['sequence'],'excluded_draft_sequence':draft['sequence'],'audit_rows':len(audit),'log_records':len(records),'log_pages':len(pages),'artifact_bytes':len(raw),'artifact_sha256':hashlib.sha256(raw).hexdigest()}
+ 
+ 
+-def check_gate(o):
++def check_gate(o, broker_sha):
+     check=o.check
+     selected=int(o.raw('server','selected-candidate.txt'))
+     events=rows(o.raw('server','gate-events.jsonl'))
+     candidate=o.data('server',f'gate-candidate-{selected}.json');end=o.data('server',f'gate-exit-{selected}.json')
+     held=[o.data('server','gate-held-'+mark+'.json') for mark in ('before','after')]
+     check(candidate['event']=='held' and candidate['operation']=='resource' and candidate['request']==74 and candidate['nonce']=='prepare-stop-v1','actual Linux x86_64 fsync-entry on original state.next')
++    ready=o.data('server','gate-ready.json')
++    armed=o.data('server','gate-armed.json')
++    start=L.saved_proc(o,'server','agent-start',2000,broker_sha)
++    check(ready['event']=='ready' and ready['uid']==2000 and ready['tracee_pid']==candidate['tracee_pid']==start['pid'] and ready['tracee_starttime']==candidate['tracee_starttime']==start['starttime'] and ready['tracer_pid']==candidate['tracer_pid'],'actual candidate is the original ready/retained broker PID and starttime')
++    check(armed['event']=='armed' and all(armed[k]==candidate[k] for k in ('nonce','operation','tracer_pid','tracee_pid','tracee_starttime')) and all(end[k]==candidate[k] for k in ('nonce','operation','tracer_pid')),'actual available nonce/operation/tracer identities bind arm/candidate/exit')
+     fields=('candidate','tracee_pid','tracee_starttime','tid','fd','request','file_device','file_inode')
+     check(all(h['held'] is True and all(h[k]==candidate[k] for k in fields) for h in held),'same actual syscall/thread/file identity held across complete export and I/O')
+     check(all(end[k]==candidate[k] for k in fields) and end['event']=='exit' and end['return_value']==0 and end['is_error'] is False,'same original syscall released then actually returned success')
+@@ -151,6 +156,8 @@
+     check(not any(r['event'] in {'abort_cleanup','gate_timeout','process_timeout','failure'} for r in events),'success never uses watchdog/abort release')
+     check(any(r['event']=='tracee_exit' and r['exit_code']==0 and r['signal']==0 for r in events) and any(r['event']=='finished' for r in events) and o.raw('server','wait-tracer.txt')==b'0\n','actual traced broker exit and parent tracer wait0')
+     for mark in ('before','after'):
++        actual=L.saved_proc(o,'server','gate-'+mark,2000,broker_sha)
++        check(actual['pid']==candidate['tracee_pid'] and actual['starttime']==candidate['tracee_starttime'],'actual held '+mark+' observation retains the same broker PID/starttime/ELF')
+         fds=rows(o.raw('server','proc-gate-'+mark+'-fds.jsonl'))
+         fd=L.one(fds,lambda r:int(r['fd'])==candidate['fd'],'same held state.next FD')
+         stat=fd['stat'].split(':',4)
+@@ -261,7 +268,7 @@
+         controls=rows((Path(evidence)/'host-control.jsonl').read_bytes())
+         commands=[r['command'] for r in controls]
+         o.check(commands.index('OBSERVE1')<commands.index('IO2')<commands.index('IO2_COMPLETE')<commands.index('CLOSE1')<commands.index('STOP1'),'host actual I/O/control barriers keep cleanup after export/second I/O/release')
+-        facts={'projection':check_projection(o),'gate':check_gate(o),'lifecycle':lifecycle,'scope':'one Native-v4/framed-v2 epoch with two real I/O rounds; reused source-locked lifecycle predicates; removable syscall-entry gate, not hard-kernel blocking/hardware; same-token End code receipt plus new same-UID Begin/End, not a raw trace of old token'}
++        facts={'projection':check_projection(o),'gate':check_gate(o,summary['binary_sha256']['rustusb']),'lifecycle':lifecycle,'scope':'one Native-v4/framed-v2 epoch with two real I/O rounds; reused source-locked lifecycle predicates; removable syscall-entry gate, not hard-kernel blocking/hardware; same-token End code receipt plus new same-UID Begin/End, not a raw trace of old token'}
+         check_files(o)
+         return {'checks':o.checks,'facts':facts,'source_artifacts':o.files}
+     except Exception as error:

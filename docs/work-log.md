@@ -619,3 +619,6 @@
 
 - dff四平台官方完整logs已从primary连接器取得，原UTF8/BOM与换行逐小chunk直写，不经patch重建；五次delegated连接器transportFAIL及首ARM合流context解析FAIL均保留，revision2按stderr contexts/stdout results各自顺序复核。I最终331方法谓词确认每格341/432/20=793、47rows零失败忽略、4signal/2BP/6logging与嵌套5TLS；191逐Git dff、390blob/15650大inventory路径匹配，大inventory不是编译输入。官方13原件/旧207原件前后SHA同，无CI ELF或runner/tmp缺件补造，不归新797。
 - 原clean2ca真实FAIL/两次零child预检/静态源码及stderr研究79份约0.43MB、新797/定向3child/独立default构建与审查229份约3.08MB、dff官方CI/方法/保留解析与连接失败83份约148.67MB分别归档diagnostic-export-local-first-failure、stderr-correction-software与ci-dff36a3；逐original/bytes/SHA/暂存blob全核。原CLI67fff forensics ELF本地保留、未作为二进制上传，旧失败与新软件PASS各自归属。
+
+- stderr修复与原件提交8351577后，独立clean835工作树不build，选同192源allCLI9708/default88c运行完整本地matrix实际exec56166终态0：新allfeatures9case/13child、default4case/6child及旧4signal/2BP均通过；四guards不变、无forced/secondary。三真实ptrace entry为两fchmod91/一fsync74，实际signal转发后仍held，原syscall均return0/is_error0，最终原inode：INT/TERM取消留有效Cancelled partial，已接受publication的signal保Complete Published+cancel_observed true。原clean2ca FAIL不改判；新source797仍actualdirty2ca，仅192逐Git835映射，不假称软件clean运行。
+- 四native CI新增同一actual diagnostic runner九场景；default四场景目前只属于本地x86运行，不冒称四native已执行。新QEMU源码初80静态后，I发现expected插入顺序/实际broker identity绑定/late terminal marker三缺口；H revision2仅run/verify窄修并27构造通过，原完整Rootproof/基线/NULL/Gone及State/Protocol窄匹配字节不变。未有新QEMU运行，Root先读实际生成与采证流程再建立clean首次run checkpoint。
