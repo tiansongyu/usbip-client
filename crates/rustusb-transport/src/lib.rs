@@ -10,6 +10,7 @@
 //! each completed protocol response and bound their application reads/writes.
 
 mod acl;
+mod admission;
 pub mod config;
 mod flush;
 mod link;
@@ -20,6 +21,7 @@ mod tls;
 pub use acl::{
     AccessPolicy, CertificatePin, DeviceKey, PrincipalRule, VerifiedPeer, VirtualProfile,
 };
+pub use admission::{AdmissionMonitor, AdmissionPolicy, AdmissionSnapshot};
 pub use config::{LoadedClientConfig, LoadedServerConfig, load_client, load_server};
 pub use link::{Link, LinkIo, LinkMonitor, LinkOutcome, LinkOwner, ProbePolicy};
 pub use security::{
@@ -73,6 +75,12 @@ pub enum Error {
     /// The server already owns its bounded number of connections.
     #[error("TLS connection limit reached")]
     ConnectionLimit,
+    /// New authentication work exceeded the loaded configuration's temporal quota.
+    #[error("TLS authentication admission rate limit reached")]
+    AdmissionRateLimited,
+    /// Admission metadata cannot be trusted; new authentication fails closed.
+    #[error("TLS authentication admission unavailable")]
+    AdmissionUnavailable,
     /// A PKI-authenticated certificate is absent from the configured mapping.
     #[error("TLS certificate has no configured principal")]
     UnmappedCertificate,

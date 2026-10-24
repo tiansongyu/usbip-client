@@ -269,6 +269,11 @@ enum Binding {
     Secure(Arc<LoadedServerConfig>),
 }
 
+struct TlsObservers {
+    security: rustusb_transport::SecurityMonitor,
+    admission: rustusb_transport::AdmissionMonitor,
+}
+
 impl Binding {
     fn validate(&self) -> Result<()> {
         match self {
@@ -277,9 +282,12 @@ impl Binding {
         }
     }
 
-    fn security(&self) -> Option<rustusb_transport::SecurityMonitor> {
+    fn security(&self) -> Option<TlsObservers> {
         match self {
-            Self::Secure(config) => Some(config.tls.security_monitor()),
+            Self::Secure(config) => Some(TlsObservers {
+                security: config.tls.security_monitor(),
+                admission: config.tls.admission_monitor(),
+            }),
             Self::Legacy(_) => None,
         }
     }
@@ -431,6 +439,10 @@ impl Owner {
                 id: Some(id),
                 code: ControlError::Rejected,
             }),
+            Control::ServerAdmission { id } => Ok(Event::Error {
+                id: Some(id),
+                code: ControlError::Rejected,
+            }),
             Control::Shutdown { .. } | Control::Eof => Err(Error::State(
                 "stop control was not dispatched by owner".into(),
             )),
@@ -463,7 +475,7 @@ fn stopping(stop: &watch::Receiver<bool>) -> bool {
 async fn serving(
     server: ServerHandle,
     owner: &Owner,
-    security: Option<rustusb_transport::SecurityMonitor>,
+    security: Option<TlsObservers>,
     monitor: Option<ServerMonitor>,
     context: RunContext,
     exports: &[Export],
@@ -534,7 +546,16 @@ async fn serving(
                     Control::ServerSecurity { id } => {
                         let event = match &security {
                             Some(monitor) => Event::ServerSecurity {
-                                id, snapshot: monitor.snapshot(),
+                                id, snapshot: monitor.security.snapshot(),
+                            },
+                            None => Event::Error { id: Some(id), code: ControlError::Rejected },
+                        };
+                        context.emit(event).await?;
+                    },
+                    Control::ServerAdmission { id } => {
+                        let event = match &security {
+                            Some(monitor) => Event::ServerAdmission {
+                                id, snapshot: monitor.admission.snapshot(),
                             },
                             None => Event::Error { id: Some(id), code: ControlError::Rejected },
                         };

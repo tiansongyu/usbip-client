@@ -52,6 +52,8 @@ pub(super) enum Command {
     },
     /// Read volatile authentication and framing counters of a fixed server profile.
     ServerSecurity { profile: String },
+    /// Read configured authentication quota and pre-TLS admission totals.
+    ServerAdmission { profile: String },
     /// Read retained lifecycle events; the response reports expired history.
     Events {
         profile: String,
@@ -108,6 +110,7 @@ pub(super) async fn run(
         Command::Sessions { profile, after } => Request::Sessions { profile, after },
         Command::Health { profile, after } => Request::SessionHealth { profile, after },
         Command::ServerSecurity { profile } => Request::ServerSecurity { profile },
+        Command::ServerAdmission { profile } => Request::ServerAdmission { profile },
         Command::Events { profile, after } => Request::Events { profile, after },
         Command::Audit { profile, after } => Request::Audit { profile, after },
         Command::Discover { profile } => Request::Discover { profile },

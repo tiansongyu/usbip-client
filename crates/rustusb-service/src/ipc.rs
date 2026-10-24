@@ -302,7 +302,8 @@ pub(crate) async fn request(
         .map_err(|_| Error::State("agent log response encoding".into()))?;
         return write_frame(&mut stream, &bytes).await;
     }
-    if let Request::ServerSecurity { profile } = &envelope.request
+    if let Request::ServerSecurity { profile } | Request::ServerAdmission { profile } =
+        &envelope.request
         && config
             .manifest
             .authorize(uid, profile, Action::Read)
@@ -314,7 +315,12 @@ pub(crate) async fn request(
             let controls = controls
                 .lock()
                 .map_err(|_| Error::State("agent controls lock poisoned".into()))?;
-            match controls.security(&config, uid, profile) {
+            let result = if matches!(&envelope.request, Request::ServerAdmission { .. }) {
+                controls.admission(&config, uid, profile)
+            } else {
+                controls.security(&config, uid, profile)
+            };
+            match result {
                 Ok(response) => response,
                 Err(error) => ResponseEnvelope {
                     schema_version: 1,

@@ -125,3 +125,34 @@ Send SIGINT or SIGTERM to the importing broker and await its exit. A successful 
 Unconfirmed Native operations survive helper restart as pending records and block new ownership. As root, use `rustusb native-pending` and its bounded `--after` cursor. `rustusb native-reconcile <channel-id>` performs read-only verification after the old owner has ended and the old resource is demonstrably released. It does not detach an unknown port or restore a driver. Do not delete journal files to clear an unresolved operation.
 
 Limit network access to the configured TLS endpoint and verify both address families. There should be no `usbipd` or plaintext device listener for this deployment. Real hardware acceptance, general cross-configuration compatibility, ISO, crash recovery and the full Phase 3 state/audit requirements remain separate gates.
+
+
+## Bound new authentication work
+
+Secure servers now share a nonwaiting authentication quota across clones and
+successive jobs of one loaded configuration. The default allows an initial
+burst of64 and replenishes one admission every125ms. Both server configuration
+schema1 and2 accept an optional administrator-controlled object:
+
+```json
+"authentication_limit": { "burst": 64, "interval_millis": 125 }
+```
+
+Burst must be1–256 and the one-cell interval1–60000ms. Omission uses the default;
+null, zero, unknown fields and client-side overrides are rejected. Provision it
+with the same protected file/ancestor rules as the other server settings. A
+cooperative stop/restart loads a changed quota; an operator request cannot alter
+it. Existing authenticated streams and USB transfers are unaffected by later
+rate refusals. New attempts receive the existing fixed authentication failure
+projection; the administrator can read `agent server-admission PROFILE` using
+Read permission, or the enabled foreground control
+`{"op":"server_admission","id":"check-1"}`.
+
+The sixteen-stream budget, TLS deadline, standard PKI, pin mapping, device ACL
+and durable incoming-session admission remain separate checks. A failed or
+cancelled handshake consumes authentication quota. The shared quota does not
+guarantee per-source fairness, and is not qualification for arbitrary public
+exposure or complete denial-of-service resistance. Counts are volatile, without
+credentials/addresses or USB cleanup proof. See the
+[implementation and validation contract](research/authentication-admission-design.md);
+new installed exhaustion validation is still pending at this checkpoint.

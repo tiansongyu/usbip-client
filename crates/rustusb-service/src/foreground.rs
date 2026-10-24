@@ -65,6 +65,11 @@ pub enum Control {
         /// Validated request identity.
         id: ControlId,
     },
+    /// Sample the loaded secure server's pre-TLS rate decisions and policy.
+    ServerAdmission {
+        /// Validated request identity.
+        id: ControlId,
+    },
     /// Acknowledge then request normal cooperative shutdown.
     Shutdown {
         /// Validated request identity.
@@ -82,6 +87,7 @@ enum WireControl {
     CdcEmit { id: ControlId, hex: String },
     Snapshot { id: ControlId },
     ServerSecurity { id: ControlId },
+    ServerAdmission { id: ControlId },
     Shutdown { id: ControlId },
 }
 
@@ -99,6 +105,7 @@ pub fn parse_control(bytes: &[u8]) -> Result<Control> {
         WireControl::CdcEmit { id, hex } => Control::CdcEmit { id, hex },
         WireControl::Snapshot { id } => Control::Snapshot { id },
         WireControl::ServerSecurity { id } => Control::ServerSecurity { id },
+        WireControl::ServerAdmission { id } => Control::ServerAdmission { id },
         WireControl::Shutdown { id } => Control::Shutdown { id },
     })
 }
@@ -185,6 +192,13 @@ pub enum Event {
         /// Volatile metadata shared with this configuration's clones.
         snapshot: rustusb_transport::SecuritySnapshot,
     },
+    /// Pre-TLS admission observations, separate from TLS, backend and cleanup state.
+    ServerAdmission {
+        /// Safe local request identity.
+        id: ControlId,
+        /// Volatile decision totals and the exact immutable configuration quota.
+        snapshot: rustusb_transport::AdmissionSnapshot,
+    },
     /// Fixed local error, optionally associated with a safe request identity.
     Error {
         /// Safe local request identity when available.
@@ -246,6 +260,9 @@ impl Event {
             Self::Ack { id } => json!({"schema_version":1,"event":"ack","id":id,"ok":true}),
             Self::ServerSecurity { id, snapshot } => {
                 json!({"schema_version":1,"event":"server_security","id":id,"snapshot":snapshot})
+            }
+            Self::ServerAdmission { id, snapshot } => {
+                json!({"schema_version":1,"event":"server_admission","id":id,"snapshot":snapshot})
             }
             Self::Error { id, code } => {
                 let code = match code {

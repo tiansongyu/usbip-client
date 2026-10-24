@@ -25,6 +25,22 @@ business WAL; `journal_healthy` reports that journal independently. These are
 volatile observations, without persisted security history or USB cleanup proof;
 see the [contract and validation scope](research/server-security-observations-design.md).
 
+## Observe authentication admission
+
+```sh
+rustusb agent --config /etc/rustusb/agent.json server-admission lab-server
+```
+
+This separate Read-authorized response reports the loaded configuration's quota,
+`admitted` and `limited` totals, plus saturation/consistency and the actual service
+instance ID. It works independently of the business WAL, including an authorized
+client-profile Unsupported response. Authentication admission permits TLS work;
+it does not grant device access or acknowledge a durable incoming USB session.
+Rate refusals precede TLS I/O and are excluded from the existing TLS-stage
+snapshot. Existing authenticated streams do not consume quota again. Job
+stop/start shares the loaded gate; restarting the service loads a new gate.
+See the [admission contract](research/authentication-admission-design.md).
+
 ## Prerequisites
 
 Use Linux and the repository's stable Rust toolchain. Install the root helper, explicitly authorize the test devices and provision both endpoints' TLS configurations as described in the [secure guide](secure-guide.md). The service runs as the same dedicated **nonzero broker UID** named in those configurations and the helper policy. Operators use their own accounts. The broker UID is the trust domain for the full helper pool: do not share it with operators; profile ACLs cannot isolate another process running under that same UID. Root has read/audit access; it does not implicitly gain start/stop permission.

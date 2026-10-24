@@ -86,6 +86,8 @@ async fn actual_uid_security_reads_and_unsupported_bypass_a_real_blocked_store()
     let mut fixture = Fixture::new()?;
     let (tls, _) = crate::jobs::management_tests::credentials(false)?;
     let monitor = tls.security_monitor();
+    let admission = tls.admission_monitor();
+    let observed_tls = tls.clone();
     let config = Arc::get_mut(&mut fixture.runtime.config).ok_or("shared fixture configuration")?;
     config.credentials.insert(
         PROFILE.into(),
@@ -149,6 +151,14 @@ async fn actual_uid_security_reads_and_unsupported_bypass_a_real_blocked_store()
                 .is_err()
         );
         let reads = async {
+            // Actual failed duplex handshakes consume the same loaded quota;
+            // reads must observe those decisions while the real WAL stays held.
+            for _ in 0..80 {
+                let (left, right) = tokio::io::duplex(64);
+                drop(right);
+                assert!(observed_tls.accept(left).await.is_err());
+            }
+            assert!(admission.snapshot().limited > 0);
             for count in [1, 2] {
                 monitor.listener_connection_limit();
                 let result = rpc(
@@ -170,9 +180,48 @@ async fn actual_uid_security_reads_and_unsupported_bypass_a_real_blocked_store()
                 };
                 assert_eq!(instance_id, InstanceId::new(uuid(1))?);
                 assert_eq!(snapshot.listener_connection_limit, count);
-                assert_eq!(snapshot.tls.attempts, 0);
+                assert_eq!(snapshot.tls.attempts, admission.snapshot().admitted);
+                assert_eq!(snapshot.tls.handshake_failed, snapshot.tls.attempts);
+                assert_eq!(snapshot.tls.authenticated + snapshot.tls.in_flight, 0);
                 assert!(result.journal_healthy);
+                let observed = rpc(
+                    Request::ServerAdmission {
+                        profile: PROFILE.into(),
+                    },
+                    config.clone(),
+                    controls.clone(),
+                    None,
+                    commands.clone(),
+                )
+                .await?;
+                let Response::ServerAdmission {
+                    instance_id,
+                    snapshot,
+                } = observed.response
+                else {
+                    return Err("missing admission counters".into());
+                };
+                assert_eq!(instance_id, InstanceId::new(uuid(1))?);
+                assert_eq!(snapshot, admission.snapshot());
+                assert!(snapshot.limited > 0 && snapshot.consistent);
+                assert_eq!(snapshot.admitted + snapshot.limited, 80);
             }
+            let admission_unsupported = rpc(
+                Request::ServerAdmission {
+                    profile: "client-only".into(),
+                },
+                config.clone(),
+                controls.clone(),
+                None,
+                commands.clone(),
+            )
+            .await?;
+            assert!(matches!(
+                admission_unsupported.response,
+                Response::Error {
+                    code: Failure::Unsupported
+                }
+            ));
             let unsupported = rpc(
                 Request::ServerSecurity {
                     profile: "client-only".into(),
@@ -228,19 +277,21 @@ async fn denied_security_rpc_uses_actual_uid_and_durable_denial_without_counter_
     } else {
         vec![PROFILE, "unknown"]
     };
-    for profile in profiles {
-        let config = fixture.runtime.config.clone();
-        let controls = fixture.runtime.controls.clone();
-        let (commands, mut queued) = mpsc::channel(1);
-        let task = tokio::spawn(rpc(
+    let requests = profiles.into_iter().flat_map(|profile| {
+        [
             Request::ServerSecurity {
                 profile: profile.into(),
             },
-            config,
-            controls,
-            None,
-            commands,
-        ));
+            Request::ServerAdmission {
+                profile: profile.into(),
+            },
+        ]
+    });
+    for request in requests {
+        let config = fixture.runtime.config.clone();
+        let controls = fixture.runtime.controls.clone();
+        let (commands, mut queued) = mpsc::channel(1);
+        let task = tokio::spawn(rpc(request, config, controls, None, commands));
         let command = tokio::time::timeout(Duration::from_secs(3), queued.recv())
             .await?
             .ok_or("denial did not reach actor")?;

@@ -149,6 +149,48 @@ fn explicit_v2_trusted_fixture_selects_framing_and_preserves_v1() -> TestResult 
 }
 
 #[test]
+fn trusted_server_admission_policy_is_bounded_immutable_and_server_only() -> TestResult {
+    let fixture = Fixture::new()?;
+    for version in [1, 2] {
+        let mut document = fixture.server();
+        document["schema_version"] = json!(version);
+        if version == 2 {
+            document["data_link"] = json!({"protocol":"framed_v2","interval_millis":1000,"response_timeout_millis":3000});
+        }
+        let defaults = load_server_inner(&fixture.config(&document)?, &fixture.context)?;
+        assert_eq!(
+            defaults.tls.admission_monitor().snapshot().policy,
+            crate::AdmissionPolicy::default()
+        );
+        document["authentication_limit"] = json!({"burst":3,"interval_millis":1000});
+        let loaded = load_server_inner(&fixture.config(&document)?, &fixture.context)?;
+        assert_eq!(
+            loaded.tls.admission_monitor().snapshot().policy,
+            crate::AdmissionPolicy::new(3, 1000)?
+        );
+        for bad in [
+            Value::Null,
+            json!({"burst":0,"interval_millis":1}),
+            json!({"burst":257,"interval_millis":1}),
+            json!({"burst":1,"interval_millis":60001}),
+            json!({"burst":1,"interval_millis":1,"enabled":false}),
+        ] {
+            document["authentication_limit"] = bad;
+            assert!(load_server_inner(&fixture.config(&document)?, &fixture.context).is_err());
+        }
+        assert_eq!(loaded.tls.admission_monitor().snapshot().policy.burst(), 3);
+        assert_eq!(
+            defaults.tls.admission_monitor().snapshot().policy.burst(),
+            64
+        );
+    }
+    let mut client = fixture.client();
+    client["authentication_limit"] = json!({"burst":1,"interval_millis":1});
+    assert!(load_client_inner(&fixture.config(&client)?, &fixture.context).is_err());
+    Ok(())
+}
+
+#[test]
 fn v2_policy_and_version_shapes_reject_ambiguity_before_credentials() -> TestResult {
     let fixture = Fixture::new()?;
     let valid =

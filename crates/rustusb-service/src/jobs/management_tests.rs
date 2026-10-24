@@ -189,6 +189,26 @@ async fn foreground_security_observes_real_listener_overload_cancel_and_job_rest
             assert_eq!(wire["event"], "server_security");
             assert!(serde_json::to_vec(&wire)?.len() < 1200);
             delivery.complete(Ok(()));
+            frontend
+                .controls
+                .send(foreground::parse_control(
+                    br#"{"op":"server_admission","id":"admission-1"}"#,
+                )?)
+                .await?;
+            let admission = tokio::time::timeout(Duration::from_secs(2), frontend.events.recv())
+                .await?
+                .ok_or("admission reply missing")?;
+            let Event::ServerAdmission { id, snapshot } = &admission.event else {
+                return Err("wrong admission event".into());
+            };
+            assert_eq!(id.as_str(), "admission-1");
+            assert_eq!(
+                snapshot.policy,
+                rustusb_transport::AdmissionPolicy::default()
+            );
+            assert_eq!(snapshot.admitted, 16);
+            assert_eq!(snapshot.limited, 0);
+            admission.complete(Ok(()));
             stop.send_replace(true);
             tokio::time::timeout(Duration::from_secs(7), task)
                 .await??

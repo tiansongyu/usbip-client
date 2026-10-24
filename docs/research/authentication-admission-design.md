@@ -1,7 +1,8 @@
 # Bounded TLS authentication admission
 
 2026-10-24. Baseline `30481f05ceb7d7dc3c48a61afe2f50d021cae520`.
-Status: implementing contract; no product or installed result yet.
+Status: implemented, targeted development tests passed; complete clean software
+and installed validation remain pending at this checkpoint.
 
 The existing sixteen connection permits bound simultaneous work, but a peer can
 immediately replace a failed handshake. The security model explicitly leaves
@@ -37,7 +38,9 @@ are disabled. Actual project resolution and licenses must be recorded before
 delivery, not inferred from this candidate graph.
 
 The [clock](https://github.com/boinkor-net/governor/blob/9f3a79dd47dd32acd589c562b8d4fefe99b93372/governor/src/clock.rs)
-uses MonotonicClock without quanta. The
+uses MonotonicClock without quanta. Production will explicitly select
+`RateLimiter<NotKeyed, InMemoryState, MonotonicClock>` and `direct_with_clock`,
+so later Cargo feature unification cannot silently select QuantaClock. The
 [nanosecond representation](https://github.com/boinkor-net/governor/blob/9f3a79dd47dd32acd589c562b8d4fefe99b93372/governor/src/nanos.rs)
 has a u64 horizon of about 584 years and internal expect/add/multiply operations;
 bounded quotas keep configured arithmetic far below it, but are not a claim of
@@ -129,3 +132,27 @@ override and do not prove audit persistence, revocation or USB cleanup.
   baseline restoration. Retain old failures and separate raw/framed results.
   Run applicable secure regressions; do not convert old 808/c097 results into
   validation of this new dependency or default behavior.
+
+## Initial checks and dependency resolution
+
+Actual targeted checks passed eight transport/config tests (four gate tests,
+three real TLS transport tests and one trusted-config test), three extended
+service tests, all-feature workspace compilation and all-target all-feature
+Clippy. The service fixtures exercise real loopback foreground controls, actual
+Unix peer UID, durable denials and independent reads while a real Store commit
+waits. Existing TLS snapshots remain separate and actual admitted/refused totals
+sum to all eighty failed fixture connections.
+
+The first extended Store test FAILED because its old assertion still expected
+zero TLS attempts after adding those eighty connections; it observed sixty-four.
+The corrected test checks admitted-versus-TLS and admitted-plus-refused equations
+instead. This is a dirty development fixture correction, not a clean installed
+product failure or grounds to reinterpret older runs.
+
+Project resolution adds fourteen locked packages and exports 174 package/license
+metadata records without missing license metadata. The Governor subtree selects
+only std and excludes quanta/dashmap/rand/getrandom; this exclusion does not apply
+to TLS/ring's legitimate random source. A read-only fixed-component review found
+no must-fix and verified nine captured source/build files remained unchanged;
+its first helper applied that exclusion too broadly and corrected the helper.
+Neither the component review nor library probes are product/USB acceptance.

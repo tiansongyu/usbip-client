@@ -122,13 +122,20 @@ pub struct TlsServer {
     limit: Arc<Semaphore>,
     link_policy: Option<ProbePolicy>,
     security: crate::SecurityMonitor,
+    admission: Arc<crate::admission::Admission>,
 }
 
 impl TlsServer {
     /// Configure TLS 1.3, mandatory client certificates, fixed ALPN, and no tickets/0-RTT.
     /// Only PKI-verified leaf certificates present in `policy` can produce a stream.
     pub fn new(roots: TrustRoots, identity: DerIdentity, policy: AccessPolicy) -> Result<Self> {
-        Self::configured(roots, identity, policy, None)
+        Self::configured(
+            roots,
+            identity,
+            policy,
+            None,
+            crate::AdmissionPolicy::default(),
+        )
     }
 
     /// Require framed ALPN v2 and independently drive probes on each data connection.
@@ -139,7 +146,36 @@ impl TlsServer {
         policy: AccessPolicy,
         probes: ProbePolicy,
     ) -> Result<Self> {
-        Self::configured(roots, identity, policy, Some(probes))
+        Self::configured(
+            roots,
+            identity,
+            policy,
+            Some(probes),
+            crate::AdmissionPolicy::default(),
+        )
+    }
+
+    /// Configure raw TLS with a bounded nonwaiting authentication admission quota.
+    /// Clones share the quota; failed or cancelled handshakes do not refund it.
+    pub fn new_with_admission(
+        roots: TrustRoots,
+        identity: DerIdentity,
+        policy: AccessPolicy,
+        admission: crate::AdmissionPolicy,
+    ) -> Result<Self> {
+        Self::configured(roots, identity, policy, None, admission)
+    }
+
+    /// Configure framed TLS and the same shared nonwaiting admission boundary.
+    /// Existing authenticated data connections never consume admission again.
+    pub fn new_with_link_and_admission(
+        roots: TrustRoots,
+        identity: DerIdentity,
+        policy: AccessPolicy,
+        probes: ProbePolicy,
+        admission: crate::AdmissionPolicy,
+    ) -> Result<Self> {
+        Self::configured(roots, identity, policy, Some(probes), admission)
     }
 
     fn configured(
@@ -147,6 +183,7 @@ impl TlsServer {
         identity: DerIdentity,
         policy: AccessPolicy,
         link_policy: Option<ProbePolicy>,
+        admission: crate::AdmissionPolicy,
     ) -> Result<Self> {
         let provider = Arc::new(rustls::crypto::ring::default_provider());
         let verifier = rustls::server::WebPkiClientVerifier::builder_with_provider(
@@ -174,6 +211,7 @@ impl TlsServer {
             limit: Arc::new(Semaphore::new(MAX_CONNECTIONS)),
             link_policy,
             security: crate::SecurityMonitor::default(),
+            admission: Arc::new(crate::admission::Admission::new(admission)?),
         })
     }
 
@@ -204,6 +242,11 @@ impl TlsServer {
     /// Retaining the monitor keeps no credentials, stream, permit or device alive.
     pub fn security_monitor(&self) -> crate::SecurityMonitor {
         self.security.clone()
+    }
+
+    /// Independent metadata observer; holds no quota, credentials or network owner.
+    pub fn admission_monitor(&self) -> crate::AdmissionMonitor {
+        self.admission.monitor()
     }
 
     /// Authenticate a real TCP connection and create its owned single-stream driver.
@@ -248,13 +291,20 @@ impl TlsServer {
     where
         S: AsyncRead + AsyncWrite + Unpin,
     {
+        let permit = match self.limit.clone().try_acquire_owned() {
+            Ok(permit) => permit,
+            Err(_) => {
+                self.security
+                    .begin(Stage::Tls)
+                    .finish(Outcome::ConnectionLimit);
+                return Err(Error::ConnectionLimit);
+            }
+        };
+        // A rate refusal is outside the existing TLS stage. No I/O or verifier
+        // has run, and returning drops both the input and temporary permit.
+        self.admission.check()?;
         let observation = self.security.begin(Stage::Tls);
         let result = async {
-            let permit = self
-                .limit
-                .clone()
-                .try_acquire_owned()
-                .map_err(|_| Error::ConnectionLimit)?;
             let handshake = self.acceptor.accept_with(stream, |connection| {
                 connection.set_buffer_limit(Some(TLS_BUFFER_LIMIT));
             });

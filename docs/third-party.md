@@ -12,6 +12,7 @@ RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件�
 | rustls / tokio-rustls | 精确0.23.46 / 0.26.6，[来源与设计](research/secure-transport-design.md) | rustls Apache-2.0 OR ISC OR MIT；tokio-rustls MIT OR Apache-2.0。官方crate checksum已核，显式ring/std、关闭默认features，仅TLS1.3；现已接入安全USB/IP broker，实际范围见[验收报告](research/secure-usbip-validation.md) |
 | ring / rustls-webpki / rustls-pki-types | 实际解析0.17.14 / 0.103.16 / 1.15.1 | Cargo元数据分别为Apache-2.0 AND ISC、ISC、MIT OR Apache-2.0；ring完整`LICENSE`另列BoringSSL及历史来源条款，须按各crate完整许可分发。不能把密码库和底层unsafe表述为自有MIT实现或FIPS认证 |
 | rcgen | 精确0.14.10，仅新transport测试生成内存证书 | MIT OR Apache-2.0；关闭默认features、启ring，不提交测试私钥，不作为产品证书签发工具 |
+| governor | 精确0.10.4，固定VCS `9f3a79dd47dd32acd589c562b8d4fefe99b93372`，[设计与源码](research/authentication-admission-design.md) | MIT；仅std features，显式MonotonicClock、direct非等待GCRA，不使用keyed map、quanta或jitter。新认证quota与原16连接owner预算分开；内部约584年ns horizon保留为依赖边界，所测quota与真实验收见专项报告，不宣称无限运行或完整DoS防护 |
 | OpenSSL CLI | QEMU认证负向使用发行版3.0系列工具，实际版本、ELF及动态库哈希随每次运行记录 | Apache-2.0；仅测试签发一次性证书和独立TLS客户端，不是产品Rust依赖。临时guest镜像不发布，私钥不归档；用法与边界见[测试设计](research/secure-negative-qemu-design.md) |
 | h2 / http / bytes | h2精确0.4.20，[固定源码b0e89084](https://github.com/hyperium/h2/tree/b0e890842ac16d3c76836fd4fcc06421acb15fa7)；本轮lock实际http1.5.0、bytes1.12.1 | h2 MIT，http/bytes MIT OR Apache-2.0。v2候选复用单stream流控及PING/PONG，不修改或复制上游实现，不启实验feature；实际TLS flush另由本项目安全wrapper跟踪，不能把h2入队当发送完成 |
 | h2新增传递依赖 | lock实际atomic-waker1.1.2、equivalent1.0.3、fnv1.0.7、futures-sink0.3.34、hashbrown0.17.1、indexmap2.14.2、tokio-util0.7.20 | 前六项主体MIT OR Apache-2.0（fnv旧元数据写作Apache-2.0 / MIT，实际两许可文件分别核）；tokio-util MIT。atomic-waker另有LICENSE-THIRD-PARTY，记录2016 Alex Crichton/2017 Tokio的Apache/MIT条款，发布时须保留相应通知。九个新crate归档SHA逐Cargo.lock checksum核对，清单不是完整发布合规审查 |
@@ -21,3 +22,5 @@ RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件�
 诊断导出新增内部 `rustusb-diagnostics` crate（MIT），锁解析159→160包；所有外部package块（版本、source、checksum和依赖）逐字节保持。固定Rust1.97.1、Tokio1.54.1、rustix1.1.5和serde_json1.0.154的文件/进程/有界序列化研究见[设计](research/diagnostic-export-design.md)，没有复制其产品实现或新增第三方依赖。
 
 QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造的内核、busybox和工具有各自许可证，生成的临时镜像不作为本仓库发布物。
+
+认证准入新增固定governor0.10.4及14个锁package，当前全feature清单174包且无缺失license metadata。它的normal子树禁用quanta/dashmap/rand/getrandom，但不将此扩大为TLS/ring全树无随机源；实际编入、源码、feature和后续验收分别记账。

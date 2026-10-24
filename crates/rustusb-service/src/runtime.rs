@@ -74,6 +74,31 @@ impl Controls {
         !self.journal_unhealthy
     }
 
+    pub(crate) fn admission(
+        &self,
+        config: &LoadedConfig,
+        uid: u32,
+        profile: &str,
+    ) -> Result<ResponseEnvelope> {
+        config.manifest.authorize(uid, profile, Action::Read)?;
+        let Some(Credentials::Server(server)) = config.credentials.get(profile) else {
+            return Err(Error::Unsupported(
+                "profile has no TLS server configuration".into(),
+            ));
+        };
+        Ok(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: !self.journal_unhealthy,
+            response: Response::ServerAdmission {
+                instance_id: self
+                    .instance
+                    .clone()
+                    .ok_or_else(|| Error::State("agent observation epoch unavailable".into()))?,
+                snapshot: server.tls.admission_monitor().snapshot(),
+            },
+        })
+    }
+
     fn register_job(&mut self, id: JobId, control: Control) {
         if self.shutdown_requested {
             control.stop.send_replace(true);
@@ -623,7 +648,7 @@ impl Runtime {
                 )?;
                 Ok(envelope.response)
             }
-            Request::ServerSecurity { profile } => {
+            Request::ServerSecurity { profile } | Request::ServerAdmission { profile } => {
                 self.config
                     .manifest
                     .authorize(uid, &profile, Action::Read)?;

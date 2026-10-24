@@ -61,6 +61,11 @@ pub enum Request {
         /// Exact profile requiring the existing Read action.
         profile: String,
     },
+    /// Read immutable authentication quota and volatile admission decisions.
+    ServerAdmission {
+        /// Exact server profile requiring Read; never a quota override.
+        profile: String,
+    },
     /// Read lifecycle observations from the bounded retained event window.
     Events {
         /// Fixed profile ID.
@@ -227,6 +232,13 @@ pub enum Response {
         instance_id: InstanceId,
         /// Volatile metadata; never an admission, durable audit or cleanup proof.
         snapshot: rustusb_transport::SecuritySnapshot,
+    },
+    /// Separate pre-TLS decisions; existing TLS observation fields are unchanged.
+    ServerAdmission {
+        /// Actual service epoch; no previous-epoch quota is recovered.
+        instance_id: InstanceId,
+        /// Loaded-configuration policy and bounded metadata-only decision totals.
+        snapshot: rustusb_transport::AdmissionSnapshot,
     },
     /// Bounded observations with explicit history expiry.
     Events {

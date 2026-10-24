@@ -684,3 +684,6 @@
 - 正常SSH推送dfd2b83后，primary API确认CI40077177969四原生job（120822947404/947561/947564/947643）全部completed/success，实际native architecture step成功；Pages40077177869 check120822947125/deploy120823004551成功。仅核最终API/job/step状态，未fetch完整CI logs/ELF或重算每格808；808仍归clean c097本地。公开6资源HTTP200逐dfd Git blob同，CUA public desktop新链接/图片/无溢出，tab8保deliverable。最终receipt保194软件输入及6site bytes同，不改QEMU来源。local check-site另173项通过；全局skill保持既有四源与symlink。
 
 - 最终publication文档复核30源545链接/表格无错，59外链未全fetch；旧543-source snapshot原件不改。发布记录只增报告/路线图/安全说明/工作日志与API、HTTP、方法原件，194软件和六site源仍锁dfd/c097的实际证据。
+
+- 认证quota产品已接raw/v2、root schema1/2可选有界配置、独立server_admission前台control及agent Read读取；E38旧SecuritySnapshot/Session/Metrics/disk/bundle不改。Governor显式MonotonicClock不受后续feature union切换，monitor仅持metadata不保limiter；poison拒新auth，quota失败/取消不退。
+- 定向8项transport/config、3项扩展service通过及all-feature编译/all-target Clippy通过。首次Store扩展断言仍期待零TLS、实际64而FAIL；夹具新增80真实失败duplex连接后应核admitted+limited=80及TLS=admitted，已修正并通过，非产品故障或旧记录重判。独立component源审查9文件稳定/no must-fix；初helper把getrandom禁用范围误扩至TLS全树，留原错改为Governor子树。新锁14packages、实际导出174全目标/feature包license元数据，无missing；无新installed结果或完整gate声明。

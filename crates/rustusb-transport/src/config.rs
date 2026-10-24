@@ -145,6 +145,8 @@ mod platform {
         ca_certificates: Vec<PathBuf>,
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
+        #[serde(default)]
+        authentication_limit: crate::AdmissionPolicy,
     }
 
     #[derive(Deserialize)]
@@ -200,6 +202,8 @@ mod platform {
         certificate_chain: Vec<PathBuf>,
         private_key: PathBuf,
         data_link: DataLinkFile,
+        #[serde(default)]
+        authentication_limit: crate::AdmissionPolicy,
     }
 
     #[derive(Deserialize)]
@@ -242,6 +246,7 @@ mod platform {
                         ca_certificates: file.ca_certificates,
                         certificate_chain: file.certificate_chain,
                         private_key: file.private_key,
+                        authentication_limit: file.authentication_limit,
                     },
                     Some(policy),
                 ))
@@ -565,8 +570,19 @@ mod platform {
             listen: file.listen,
             devices: file.devices,
             tls: match link_policy {
-                Some(probes) => TlsServer::new_with_link(roots, identity, policy, probes)?,
-                None => TlsServer::new(roots, identity, policy)?,
+                Some(probes) => TlsServer::new_with_link_and_admission(
+                    roots,
+                    identity,
+                    policy,
+                    probes,
+                    file.authentication_limit,
+                )?,
+                None => TlsServer::new_with_admission(
+                    roots,
+                    identity,
+                    policy,
+                    file.authentication_limit,
+                )?,
             },
         })
     }

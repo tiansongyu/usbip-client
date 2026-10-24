@@ -835,6 +835,9 @@ pub(super) async fn run(config: Arc<LoadedServerConfig>, context: RunContext) ->
                     Control::ServerSecurity { id } => Event::ServerSecurity {
                         id, snapshot: config.tls.security_monitor().snapshot(),
                     },
+                    Control::ServerAdmission { id } => Event::ServerAdmission {
+                        id, snapshot: config.tls.admission_monitor().snapshot(),
+                    },
                     _ => Event::Error { id: None, code: ControlError::InvalidControl },
                 };
                 if let Err(error) = context.emit(event).await { break Err(error); }
