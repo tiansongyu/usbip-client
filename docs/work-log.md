@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- clean d329fe32最终transport82 PASS/0failed/ignored；原feded测试文件全部原字节为当前前缀（仅末尾追加无FIN abort负向），原half-close函数保持；真实shutdown release/stop/timeout/BrokenPipe四场景总join并核真实drop/typed结果。预先固定32轮 × 两原函数=64实际test进程全0，HEAD/clean guards true，debug ELF sha05d30066。当前仅特定transport修复证据，不称E59加密失败已定因或一般无竞态；最终设计重写以选定契约为主，历史候选/规格变更/FAIL保留。重写patch同一路径delete/add组合被工具原子拒绝后改exact update，无源文件损失。完整软件和安装态回归待运行。
+
 - d6707a77 retained refs + completed single-stream NO_ERROR的transport78/1FAIL，原half-close和有限pause真实TLS正常路径均PASS；唯一FAIL是前一graceful-PONG方案特有负向预期LocalDataStall，实际PeerEof。最终选择无需新stream grace RTT的完成流收尾：恢复feded原最强gate测试原文及PeerEof判据，不改原half-close；独立底层AsyncWrite.shutdown真实门测release/stop/timeout/IO，不以不存在PONG交换编造deadline失败。前所有候选/规格调整/FAIL都保留，无任意IO成功化。
 
 - 980445be完整transport77/2FAIL（原half-close及新resumed-peer），da111ead诊断78/1FAIL；所有裁决保存。实际typed h2 diagnostic显示server BrokenPipe，区分原extra stream与server真实IO（不泄raw h2 Debug）；单独half-close有PASS不能覆盖矩阵FAIL。h2 client固定源码maybe_close_connection_if_no_streams表明提前drop Send/Recv refs会让client先关，破坏server graceful控制尾部；更新设计保留原stream/ping refs到实际conn关闭再drop，不掩盖BrokenPipe。临时cfg(test)诊断仅元数据，交付前去除；第二测试patch同样首行多加号fmt拒绝已修，无测试在parse错误时运行。

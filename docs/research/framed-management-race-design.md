@@ -1,128 +1,79 @@
-# Framed management race investigation
+# Framed management connection-close contract
 
-2026-10-25, starting clean `1e67e70ff35734531ae4b71006bd821564221fad`.
-E59 is verified progress, not an unresolved-owner wait. Its ten original failed
-runs stay failed. In Native/IPv4 attempt4 the first HID import failed with I/O
-before any helper attempt, while the serial import remained active. A later
-independent run passed; that does not identify or fix the intermittent failure.
+2026-10-25. Started clean `1e67e70ff35734531ae4b71006bd821564221fad`.
+E59 is verified progress, not a live-owner wait. This work addresses a concrete
+transport close defect; it does not decrypt or identify the cause of E59's
+intermittent Native/IPv4 failure. The complete Phase0–7 objective remains active.
 
-## Evidence and initial hypothesis
+## Problem and selected correction
 
-The client job first runs production discovery (TLS connect, Catalog parse,
-framed FIN/EOF and exact driver join), then creates the IMPORT connection and
-publishes its monitor, then asks the helper. A missing attempt and null link
-history narrow the path but do not prove which discovery/connect stage failed.
-Do not infer USB driver failure from the generic I/O category alone.
+Production discovery finishes TLS/Catalog/FIN/EOF/owner join before IMPORT
+requests a helper capability. E59's absent HID attempt and null link history
+narrow that path without proving its failing substage.
 
-The current framed driver returns PeerEof after received END_STREAM/application
-drain and local FIN flush, then drops the owned h2 connection. Investigate whether
-this can race the peer's remaining driver/transport work. This is a hypothesis,
-not a claim about the failed encrypted capture, a TLS reset, or its root cause.
+The original driver drops its h2/TLS connection after authenticated stream EOS,
+trailers, application consumption/flow credit and local FIN flush. Those stream
+facts do not execute TLS shutdown. At clean fededbe2, the controlled real-TCP/mTLS
+`completed_framed_peer_close_survives_delayed_final_tls_read` fails with
+ConnectionAborted after actual server completion. Both owners are joined before
+its assertion. The original test function remains verbatim. The earlier256
+concurrent production Catalogs at b3cdd482 passed and did not reproduce it.
 
-## Investigation contract
+Keep original send/receive/ping references alive through actual connection close.
+Retain the unique h2/TLS connection in a bounded close phase before publishing
+its outcome. A private adapter accepts a close flag: client keeps polling its
+actual connection; server first preserves an observed extra stream/error, then
+requests NO_ERROR close for the already-drained fixed single stream and polls
+real codec flush/TLS shutdown. The h2 method is named `abrupt_shutdown`; here
+no application half/byte remains outstanding and no new stream is admitted.
+Its generic graceful new-stream grace exchange instead adds a MAX-ID GOAWAY/PING
+round that produced actual idle-close BrokenPipe candidate failures.
 
-1. Add bounded real TCP/mTLS regressions using the current production discovery,
-   protocol and ownership paths. Exercise concurrent independent Catalogs without
-   device/helper operations, and retain actual failures and join outcomes. Use
-   fresh credentials/server limits in bounded groups to avoid accidentally testing
-   authentication quota exhaustion. No sleep/retry or sequential-import workaround.
-2. If needed add a controlled transport scheduling gate to make the suspected
-   close ordering deterministic. Keep real original owner handles and await them;
-   an observation deadline cannot drop or replace a live driver. A negative test
-   must fail on actual current code before its production fix is credited.
-3. Change product code only after evidence identifies a defect. Preserve strict
-   malformed/truncated-frame, partial-DATA/FIN, flow-control, typed end/error,
-   no-extra-application-data, quiet logging and actual total owner-join contracts.
-   Do not accept arbitrary IO/EOF/reset as clean completion or widen deadlines.
-4. Verify the unchanged installed Native/USBFS I/O/upgrade baseline and add
-   repeated concurrent installed imports with pre-cleanup observations as needed.
-   Original Root correlation/kind/UID/key/resource/proof and kernel/driver/node
-   baselines stay mandatory. Keep failed and successful runs at actual source,
-   package and ELF identities. Host USB/services/modules remain untouched.
-5. Run full root and separate GUI gates, archive explicit public evidence without
-   private keys/disks, update claims only to the measured scope, commit and normally
-   push. Global README/site skill remains the existing shared installation.
+Only after actual close are connection/stream/ping owners dropped and terminal
+metadata published. Stop and the original response-timeout policy bound this
+pure asynchronous network stage; actual stop/timeout/protocol/I/O failures stay
+typed failures. Never mask BrokenPipe/reset/EOF or treat a deadline as a healthy
+peer completion. Preserve server h2 I/O classification separately from extra
+streams. Public LinkHealth/TLS/ALPN/helper/WAL schemas and device ownership stay
+unchanged. Every h2 operation/error/drop remains quiet; temporary typed test-only
+diagnostics are removed. No unsafe access, dependency update or copied upstream
+implementation is introduced.
 
-This investigation does not replace missing hardware G1/G2, installed ARM runtime,
-Windows USB, storage/ISO, power-loss recovery or the full Phase0–7 objective.
+## Fixed source evidence
 
-## Reproduced defect and selected correction
+h2 0.4.20 source is
+[`b0e890842ac16d3c76836fd4fcc06421acb15fa7`](https://github.com/hyperium/h2/blob/b0e890842ac16d3c76836fd4fcc06421acb15fa7/src/server.rs).
+Close requires continued polling; client stream-reference loss auto-closes its
+connection, while generic server graceful close uses a PING/one RTT before final
+GOAWAY. These details come from actual source, not a README.
+Tokio-rustls0.26.6 source
+[`8aebb7c9556ea8024c1b974b84a4a6f2e306889a`](https://github.com/rustls/tokio-rustls/blob/8aebb7c9556ea8024c1b974b84a4a6f2e306889a/src/client.rs)
+polls close_notify and underlying shutdown; its
+[buffer contract](https://docs.rs/tokio-rustls/0.26.6/tokio_rustls/)
+also requires actual flush.
 
-At clean `fededbe2`, the real TCP/mTLS delayed-final-read test actually fails
-with client ConnectionAborted after both original owners have been joined. The
-preceding 256 concurrent production Catalogs at clean b3cdd482 passed and did not
-reproduce it. Retain that original test source and failing verdict. This establishes a transport
-defect; it does not identify the contents/cause of the old encrypted E59 failure.
+## Verification and limits
 
-The current driver drops its h2/TLS connection immediately after authenticated
-stream EOS, consumed receive bytes and local FIN flush. Application END_STREAM
-is not an executed TLS shutdown. The fixed h2 0.4.20 source is
-[`b0e890842ac16d3c76836fd4fcc06421acb15fa7`](https://github.com/hyperium/h2/blob/b0e890842ac16d3c76836fd4fcc06421acb15fa7/src/proto/connection.rs):
-the client polls shutdown when stream references are gone, and the server's
-explicit no-error close continues polling its codec through actual shutdown.
-Tokio-rustls 0.26.6 polls close_notify and underlying shutdown; its
-[buffered-write contract](https://docs.rs/tokio-rustls/0.26.6/tokio_rustls/)
-also requires actual flush. No dependency update or copied upstream code.
+At clean d329fe32 the complete transport suite passes82 tests. A predefined
+32 rounds of the original half-close and original delayed-read tests pass all64
+actual processes with HEAD/clean guards. Original feded test bytes remain a
+prefix of the final file; only an independent no-FIN abort negative is appended.
+A real underlying AsyncWrite.shutdown gate verifies release, stop, timeout and
+I/O error, actual owner joins and actual transport drop. An aborted TLS peer
+without stream FIN still produces I/O failure.
 
-After the original local FIN is flushed, release only its completed h2 send
-handle (subsequent shutdown stays idempotent). After the original receive EOS,
-trailers, consumed bytes and returned flow credit, drop the completed receive
-and ping handles, retain the unique connection, and poll actual h2/TLS close.
-The client can then close naturally without retained stream references. The
-server requests NO_ERROR GOAWAY only after this complete single-stream boundary;
-it still rejects an observed extra stream/error. Keep all h2 operations/drops
-inside existing quiet wrappers. The close phase is interruptible using the
-original stop and bounded by the existing response-timeout policy, with actual
-typed failure on I/O/protocol/timeout. Do not turn any such failure into PeerEof,
-skip partial DATA/FIN, discard unconsumed receive bytes, or lose the outer owner.
+Keep every original candidate FAIL/source/result. Early reference release broke
+the original half-close; a generic graceful-PING candidate also broke normal
+close. Its provisional PONG-withholding timeout assumption is superseded by the
+restored original stronger regression and actual shutdown gate. No original
+half-close/malformed-data assertion is weakened, ignored or reclassified.
+Software success does not establish the old encrypted QEMU cause or race freedom.
 
-The first candidate 41540391 passes the unchanged delayed TLS-read regression
-but fails the original half-close/reverse-drain test (Io instead of PeerEof).
-Retain that failure. Fully consumed DATA can still leave h2 control work such as
-returned window credit; a one-step server abrupt_shutdown is therefore not a
-complete orderly-close strategy. Use h2's normal graceful_shutdown progression
-under the same bounded original owner, preserving its control-frame drain. Do
-not weaken the original half-close assertion or mask its I/O error.
-
-At 800f94c9 the original half-close passes; the delayed-network-read test's
-client now succeeds, but the deliberately stalled server correctly reports
-LocalDataStall instead of its test's assumed healthy PeerEof. h2's documented
-graceful close waits for a control PONG/one RTT, which the gate intentionally
-withholds until that owner ends. Correct this **test specification**, preserving
-the original source/101 result: add one case releasing the gate after actual FIN
-flush and requiring both actual owners PeerEof, and one withholding reads until
-the real close deadline and requiring server LocalDataStall and client clean EOF.
-Verify the revised negative against the original pre-fix production link source;
-it must still fail there. Do not accept arbitrary errors, remove the original
-half-close test, add ignores or call a timeout a successful peer completion.
-
-The 980445be/da111ead normal-close regressions still fail (original half-close
-and/or resumed TLS peer), with actual server BrokenPipe observation. The fixed
-h2 client automatically initiates close when its stream references disappear.
-Dropping completed receive/ping and send references **before** orderly connection
-close introduced that additional race against the server's graceful control
-exchange. Revise the correction: retain the original LinkIo send and driver
-receive/ping handles through actual connection close, and drop them only before
-publishing the final outcome. No application buffer or peer control work is
-discarded; do not mask BrokenPipe. Keep the normal graceful server progression,
-existing stop/timeout and strict owner outcomes. Temporary test-only diagnostics
-print typed IO kind/reason flags only and will be removed before delivery.
-
-805c267a still fails both normal cases. Source inspection further identifies
-that h2 graceful_shutdown queues an idle MAX-ID GOAWAY plus shutdown PING; its
-client closes once GOAWAY has no remaining active streams, potentially before
-the server's PING progression. Test the complete-stream NO_ERROR close again
-while retaining all original stream references (unlike 41540391). This is a
-bounded candidate experiment, not a passed fix, and must satisfy both original
-half-close and new real-TLS cases before it can be selected.
-
-The retained-reference NO_ERROR candidate d6707a77 passes both normal cases;
-its only failed assertion is the provisional graceful-PING-specific timeout
-expectation (actual healthy PeerEof). For a fixed single stream already fully
-drained, no new-stream grace RTT is needed. Restore the **original fededbe2
-delayed-read regression verbatim**, preserving its stronger one-sided-completion
-ordering and healthy outcome. Keep the aborted-without-FIN negative. Test actual
-close stop/timeout/error with a gate on the underlying AsyncWrite shutdown call,
-not by assuming a GOAWAY/PONG handshake that is no longer requested. All prior
-candidate failures/specification changes remain visible; no original half-close
-assertion, malformed-data rule or actual I/O error is relaxed.
+Run the unchanged full root and separate GUI gates, package actual final ELFs,
+and run original installed Native/USBFS dual-stack I/O/upgrade tests with all
+Root/kernel/driver/node/PCAP checks intact. Freeze HEAD/source/ELFs during every
+actual live local gate/QEMU owner; do not restart on observation expiry. Archive
+explicit public evidence without keys/disks, commit and normally push. Global
+README/site skill remains shared. Hardware G1/G2, installed ARM runtime, Windows
+USB, storage/ISO, permanent blocked-kernel/FS cancellation, power loss and full
+phases remain unverified.
