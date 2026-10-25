@@ -373,9 +373,10 @@ git, command, credentials, connect_unix, artifacts = secure.git, secure.command,
 physical = secure.physical
 
 
-def run_experiment(args):
+def run_experiment(args, guest_memory_mib=768):
     if os.geteuid() == 0 or os.uname().machine != "x86_64": raise RuntimeError("ordinary x86_64 host user required")
     if not 60 <= args.timeout <= 900: raise RuntimeError("timeout must be 60..900 seconds")
+    if not 256 <= guest_memory_mib <= 8192: raise RuntimeError("guest memory must be256..8192MiB")
     evidence = args.evidence.resolve()
     evidence.mkdir(parents=True, exist_ok=False)
     summary = {"schema_version": 1, "result": "FAIL", "backend": args.backend, "family": args.family,
@@ -385,7 +386,8 @@ def run_experiment(args):
                          + ("virtual HID enumeration/idle and CDC 35-byte echo, no key injection or host FTDI" if args.backend == "virtual"
                             else "real QEMU HID/FTDI I/O and exact original helper cleanup proof")
                          + "; no unobserved pending-URB/physical hardware/complete Phase3 claim"),
-               "build_features": "--workspace --all-features --release --locked", "build_skipped": args.skip_build}
+               "build_features": "--workspace --all-features --release --locked", "build_skipped": args.skip_build,
+               "forced_termination": []}
     processes, handles, connections = {}, [], {}
     qmp = ftdi = private = None
     sent = set()
@@ -443,7 +445,7 @@ def run_experiment(args):
                 for channel in ["serial", "evidence"]: (evidence / f"{role}-{channel}.log").touch()
                 output = (evidence / f"{role}-qemu.stderr").open("wb")
                 handles.append(output)
-                cmd = ["qemu-system-x86_64", "-m", "768", "-smp", "2", *acceleration, "-rtc", "base=utc,clock=host", "-kernel", str(image), "-initrd", str(archives[role]),
+                cmd = ["qemu-system-x86_64", "-m", str(guest_memory_mib), "-smp", "2", *acceleration, "-rtc", "base=utc,clock=host", "-kernel", str(image), "-initrd", str(archives[role]),
                        "-append", f"console=ttyS0 panic=-1 RUSTUSB_QEMU_GUEST=1 rustusb.secure=1 rustusb.agent=1 rustusb.link_health=1 rustusb.role={role} rustusb.backend={args.backend} rustusb.family={args.family}",
                        "-display", "none", "-serial", f"file:{evidence / (role+'-serial.log')}", "-serial", f"file:{evidence / (role+'-evidence.log')}",
                        "-chardev", f"socket,id=control,path={work / (role+'-control.sock')},server=on,wait=off", "-serial", "chardev:control",
@@ -508,11 +510,13 @@ def run_experiment(args):
                     try: private.valve.poll(0.01)
                     except Exception as collector_error: summary.setdefault("valve_collector_error", str(collector_error))
                 time.sleep(0.05)
-        for process in processes.values():
+        for role, process in processes.items():
             if process.poll() is None:
+                summary["forced_termination"].append(role)
                 process.terminate()
                 try: process.wait(timeout=5)
                 except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=5)
+            process.wait()
         if private:
             try: private.close()
             except Exception as valve_error: summary.setdefault("valve_close_error", str(valve_error)); summary["result"] = "FAIL"

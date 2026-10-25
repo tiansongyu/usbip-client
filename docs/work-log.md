@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-25：GUI同数据链RTT与故障展示（开始）
+
+- 上一轮E50为实际进展；本轮从clean0281f853完整重读原Phase0–7任务、当前Git/AGENTS/核心skill/架构、GUI动作与v2原契约/源码。沿用rustusb-development/ui-ux-pro-max/technical-documentation；原英文README/站点/global skill保持，完整goal不缩减。
+- 先写gui-link-health-design.md，拟复用原v2 Native三方向精确valve/packet/lifecycle/七I/O，在相同真实UID1000 GUI下验证实测RTT和故障后历史/typed end/独立cleanup。源码发现Connections每次render重建details，拟先用原ELF真实复现展开/焦点丢失；两次UX检索均未命中具体刷新保持语义，按现有原生details/项目焦点约定验证，不伪称匹配建议。尚无新运行或完成声明，规则/安装/硬件等原门槛保留。
+
 ## 2026-10-25：GUI正向Native操作与窗口退出（开始）
 
 - 上一轮E49为实际进展；本轮从clean94c37876重读完整原Phase0–7任务、当前Git/AGENTS/核心skill、GUI契约/报告、架构及原Native agent/TUI actions源码。沿用rustusb-development/ui-ux-pro-max/technical-documentation，先写gui-native-actions-design.md；不重建既有英文README/站点/全局skill，不缩减规则/安装/硬件等未完成目标。

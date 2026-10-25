@@ -38,9 +38,9 @@ def guest():
     text=replace(text,'STAGE=complete\necho "RUSTUSB_AGENT_RESULT: PASS role=$ROLE"','gui_infra_stop\nSTAGE=complete\necho "RUSTUSB_AGENT_RESULT: PASS role=$ROLE"')
     return text
 
-def payload(work,kernel,certificates,role):
-    _,provenance=old_payload(work,kernel,certificates,role);root=work/'root'
-    gui.install_runtime(root,DRIVER)
+def install_native_automation(work,root,provenance,driver):
+    """Install the same guest-only native launcher/close/runtime for GUI fixtures."""
+    gui.install_runtime(root,driver)
     binary=work/'gui-native-close'
     base.command(['cc','-std=c11','-O2','-Wall','-Wextra','-Werror',str(HERE/'native-close.c'),'-lX11','-o',str(binary)],work/'gui-close-build.log')
     base.secure.native.copy_binary(binary,'/usr/bin/gui-native-close',root)
@@ -55,6 +55,10 @@ wait "$pid";result=$?;echo "$result" >"/tmp/gui-$label.wait";exit "$result"
     for name in ['rustusb-gui','gui-native-close','WebKitWebDriver','gui-launcher']:provenance['usr/bin/'+name]=base.digest(root/'usr/bin'/name)
     elfs={str(p.relative_to(root)):{'bytes':p.stat().st_size,'sha256':base.digest(p)}for p in root.rglob('*')if p.is_file()and not p.is_symlink()and p.read_bytes()[:4]==b'\x7fELF'}
     (root/'etc/rustusb/gui-runtime-elfs.json').write_text(json.dumps(elfs,indent=2)+'\n')
+
+def payload(work,kernel,certificates,role):
+    _,provenance=old_payload(work,kernel,certificates,role);root=work/'root'
+    install_native_automation(work,root,provenance,DRIVER)
     shutil.copyfile(root/'init',work/'generated-agent-init.sh')
     names=b'.\0'+b'\0'.join(str(p.relative_to(root)).encode()for p in root.rglob('*'))+b'\0'
     plain=work/'gui-agent.cpio';archive=work/'gui-agent.cpio.gz'
