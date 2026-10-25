@@ -1,5 +1,9 @@
 # RustUSB 工作日志
 
+## 2026-10-25：首次导入 I/O 失败定位（开始）
+
+- E60从clean1e67e70f重读完整Phase0–7目标，核Git/日志/AGENTS/核心skill与应用服务、v2关闭设计及既有实际Catalog失败契约；上轮是已验证进展，非blocked。新framed-management-race-design先规定真实生产discovery并发/mTLS和必要时可控调度重现，不以顺序IMPORT/重试/宽化EOF或原verifier改判换通过。当前只有假说：short-management driver完成后直接drop h2/TLS可能影响对端最后收尾；原加密包未解密，不称根因。无新agent委托，无产品修改/新测试PASS。
+
 ## 2026-10-25：完整安装服务的 USB 数据路径
 
 - E59发布：normal SSH push到指定origin，remote main确认为content a028cb1bc20f6500db586b6f516c5263cceb040d；core40197552464四native Ubuntu jobs、GUI40197552421四native jobs、Pages40197552419 check/deploy全部completed/success（10jobs）。四Debian artifact metadata确认，不下载/执行/安装或重新宣称ARM运行支持；旧84b产物检查保持原归属。线上首页+六runtime asset及pinned README/report共9次HTTP200且源字节一致。两初始通用遍历把隐藏.nojekyll marker当HTTP资源404，错误维护README假说在实际文件列表后丢弃；改显式runtime后通过，原观察保留。发布证据31成员/685253B逐hash/size验证，研究报告补原content CI/HTTP回执；最终receipt只记录，不重归属d6软件/dd+d6 QEMU，也不将未定位import间歇问题标修复。
