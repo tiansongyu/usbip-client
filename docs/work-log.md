@@ -6,6 +6,10 @@
 - 先写automatic-sharing-rust-qemu-design：复用原v2 Rust三方向/15秒valve/七I/O/完整Rootproof，Virtual客户端自动规则、USBFS完整pool本地自动规则各双栈；原无policy/Native回归独立。显式每role disk2/3预期且保严格默认，实际RetryStart读回自动准入；计划同policy下UID1002规则拒绝和CAS再启用。尚未改产品或宣称新验证通过；GUI/dynamic pool/物理远端receipt/安装/硬件等缺口保留。
 - 新wrapper/guest接入真实Create/Retry/Enable/RetryStart、同saved snapshot的origin/Start/Fired绑定；旧v2 verifier增加显式role schema预期并收紧完整字段集，默认disk2/Root/packet条件保持。权限负向增强为UID1001有全部manual ACL但无automation grant，原UID1002拒绝保留；额外operator仅新fixture显式预期。首完整guest拼接因Rust fragment位于network_ready与role之间而锚点FAIL，未启动QEMU，改在真实rust_server_setup前插入；两完整guest dash语法通过，50 schema正负/两个生成脚本preflight通过、247输入。尚无新运行PASS；准备clean commit与完整gate/QEMU，产品Rust/锁/ELF尚未更改。
 
+- clean42e98ab3完整root1019+GUI11/399输入及50 schema/两完整guest语法通过，Rust/锁/三ELF逐20a保持。四新Virtual/USBFS自动规则双栈各247源/原v2三方向15秒/七I/O/持续sibling/packet/全Rootproof与额外43或17规则核验全部PASS；原无policy Virtual/USBFS v2 IPv4各244源及E53 Native自动IPv4237源也PASS，共七invocation/14guest实际0/无forced/四guard真。USBFS v6 c2s client实际Io/server timeout，保原结果不改判。所有actual handle终止后才改文档；无新GUI窗口/物理硬件或更广scope宣称。
+- 4421原件52966244B逐member SHA归档11150104B，SHA95b4678c0d0d02526c675594391c166a116a87553f1b15ef9c8f4e99c28cadd4，排私钥/ELF/rootfs/host raw。英文report/guide/README/网站边界及设计/架构/roadmap/acceptance/testing/AGENTS/核心skill同步E54；全局README skill保持。IAB当前子路径desktop1280/scroll1265、mobile390/375、真实Tab focus2px solid及CSP禁script的390三backend/commands/新范围正文通过，原图加载；无新pixel/reduced-motion emulation，tab/viewport/server实际130已收回。静态QA/普通push/CI/Pages回执待完成，完整goal保持active。
+- 静态QA18文档/240本地target/site43引用、399冻结输入/三ELF及四global readme-site源/Codex symlink全部保持；网站仅index文案改、原CSS/JS/图不变，actual CLI help与原四gate文件逐字同。尚无新GUI规则实现；已核共享worker目前只保Start未知UUID，后续需独立mutation UUID和有界规则投影。接下来提交全部已核manifest成员并普通SSH push，CI/Pages待实际回执。
+
 ## 2026-10-25：自动共享持久规则与后台触发（开始）
 
 - 上轮E52为实际进展；本轮从clean595c3411完整重读原Phase0–7目标、当前Git/工作日志/核心skill/自动规则设计与相关Runtime/IPC/CLI/monitor源码。沿用rustusb-development与technical-documentation；原README/站点/全局skill保持，未缩减goal、未启动子agent。

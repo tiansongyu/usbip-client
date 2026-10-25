@@ -155,13 +155,15 @@ checks every archived original member. It excludes private keys, executable/root
 payloads and host raw inventory. Reports retain exact tested heads; later docs/CI
 receipts do not acquire these runs retroactively.
 
-Still required: automatic virtual/USBFS QEMU, automatic v2/failure/hotplug/revocation
+At this revision, still required: automatic virtual/USBFS QEMU, automatic v2/failure/hotplug/revocation
 expansion, authenticated complete safety/generation receipts for physical remote
 devices, dynamic per-device pools, GUI rule CRUD/unknown-response flows, packaged
 installation/systemd/upgrade/uninstall/reboot, real G1/G2 hardware, full G3,
 performance/compatibility expansion and Windows support. Earlier independent
 evidence remains scoped to its original revision and ELF. The full Phase0–7
-objective remains active.
+objective remains active. The subsequent [E54 validation](automatic-sharing-rust-qemu-validation.md)
+adds the virtual/USBFS automatic v2 matrix at its own recorded head; other gaps
+retain their separate requirements.
 
 ## Publication receipt
 

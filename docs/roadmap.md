@@ -96,7 +96,7 @@ Unix SIGINT/SIGTERM合作停止已在clean934358f通过软件、本地四场景�
 
 ## 8. Phase 5：GUI 与安装体验
 
-已开始[版本固定的GUI/Linux运行库研究](research/gui-installation-research.md)，研究后的[原生GUI预览](gui.md)及[实际软件/QEMU证据](research/native-gui-validation.md)已落地：共享headless worker、六页面、checked preferences及GLib上游兼容补丁。[双栈正向操作](research/gui-native-actions-validation.md)补GUI确认Start/精确Stop、非空远程目录和窗口关闭后实际USB I/O。[v2 GUI链路证据](research/gui-link-health-validation.md)已补实测RTT、三方向故障历史及阅读状态保持。[自动规则设计与接口审查](research/automatic-sharing-design.md)整体仍draft；[E52授权/输入基础](research/automatic-sharing-foundation-validation.md)已有clean52fd127d的978+11软件验证，[E53固定profile运行时](research/automatic-sharing-runtime-validation.md)已接journal/RPC/CLI/实际后台触发、clean20a的1019+11软件和Native本地双栈QEMU；物理远端safety receipt、dynamic pool、GUI规则编辑及完整规则/安装门槛仍待完成，不把预览标成整个G5完成。
+已开始[版本固定的GUI/Linux运行库研究](research/gui-installation-research.md)，研究后的[原生GUI预览](gui.md)及[实际软件/QEMU证据](research/native-gui-validation.md)已落地：共享headless worker、六页面、checked preferences及GLib上游兼容补丁。[双栈正向操作](research/gui-native-actions-validation.md)补GUI确认Start/精确Stop、非空远程目录和窗口关闭后实际USB I/O。[v2 GUI链路证据](research/gui-link-health-validation.md)已补实测RTT、三方向故障历史及阅读状态保持。[自动规则设计与接口审查](research/automatic-sharing-design.md)整体仍draft；[E52授权/输入基础](research/automatic-sharing-foundation-validation.md)已有clean52fd127d的978+11软件验证，[E53固定profile运行时](research/automatic-sharing-runtime-validation.md)已接journal/RPC/CLI/实际后台触发、clean20a的1019+11软件和Native本地双栈QEMU；[E54](research/automatic-sharing-rust-qemu-validation.md)另补clean42e98ab3的Virtual/USBFS自动规则双栈v2故障矩阵及原回归（七QEMU/14guest0），物理远端safety receipt、dynamic pool、GUI规则编辑及完整规则/安装门槛仍待完成，不把预览标成整个G5完成。
 
 评估 Tauri 后再实施 GUI，与 CLI / TUI 共用核心；提供双端设备列表、连接 / 断开、搜索、延迟、状态、设备详情、自动共享规则、错误和访问控制。制作 `.deb`、systemd 服务、配置参考、安装 / 卸载脚本、升级与回滚指引。root helper 的部署和策略默认拒绝；卸载不随意解绑不属于本工具的资源。
 

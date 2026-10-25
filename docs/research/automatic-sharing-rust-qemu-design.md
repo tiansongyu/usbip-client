@@ -6,6 +6,10 @@ goal turn made actual implementation/validation/publication progress. The full
 Phase0–7 objective stays active; this does not replace dynamic pools, GUI editing,
 installation, physical remote safety receipts or hardware acceptance.
 
+The fixture was subsequently implemented and validated at clean `42e98ab3`;
+see the [actual report](automatic-sharing-rust-qemu-validation.md). The contract
+below records its intended scope and does not declare the overall architecture accepted.
+
 Reuse the existing `qemu_data_link_health` owner, valve, packet auditor and Rust
 lifecycle checker. No new component, dependency, external version choice or
 parallel agent is needed. Read the current agent/rule implementation and its

@@ -113,6 +113,10 @@ delegation. [Native local-rule QEMU tests](docs/research/automatic-sharing-runti
 verify actual I/O and manual pause across restart on IPv4/IPv6. GUI rule editing,
 dynamic device pools and physical remote automatic import remain unfinished.
 
+[Rust-engine rule tests](docs/research/automatic-sharing-rust-qemu-validation.md)
+also cover virtual remote import and USBFS local rules over framed-v2 on both IP
+families, with real I/O, directional connection loss and exact cleanup proofs.
+
 Optional [offline CRLs](docs/offline-crl.md) can reject revoked peers at new TLS
 verification, including intermediate certificates. Lists are immutable startup
 inputs: renew them through cooperative service restart. Existing connections

@@ -7,8 +7,9 @@ after the requesting CLI exits. This is an early CLI/service feature;
 
 [Native local-rule validation](research/automatic-sharing-runtime-validation.md)
 covers actual IPv4/IPv6 QEMU HID/FTDI I/O, manual pause across restart and explicit
-rearm. Virtual remote import and local USBFS rules have software coverage but no
-automatic-rule QEMU acceptance yet. Physical/Native remote keys report
+rearm. [Rust-engine rule tests](research/automatic-sharing-rust-qemu-validation.md)
+add framed-v2 virtual remote import and local USBFS rules on both IP families,
+with three directional faults, original I/O and exact cleanup. Physical/Native remote keys report
 `safety_evidence_unavailable`: their catalog lacks the complete configuration and
 alternate-setting evidence needed for unattended import. These rules do not
 establish hardware acceptance or general storage sharing.

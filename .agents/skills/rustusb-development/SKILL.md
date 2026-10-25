@@ -127,6 +127,8 @@ E52见`docs/research/automatic-sharing-foundation-validation.md`：clean52fd127d
 
 修改前读`docs/research/automatic-sharing-runtime-validation.md`及`automatic-sharing-design.md`的Runtime契约。E53 clean20a15a01 root1019+GUI11/396输入、Native本地规则双栈及原agent/v2 IPv4四QEMU/8guest0均通过；只证明报告锁定范围，virtual/USBFS自动QEMU/物理远端receipt/dynamic pool/GUI/安装/硬件仍未完成。旧早停FAIL、0测试过滤与clippy expect失败保留。
 
+E54补充见`automatic-sharing-rust-qemu-validation.md`：clean42e98ab3同产品源/三ELF，root1019+GUI11/399输入、50 schema/两语法及Virtual远端/USBFS本地双栈v2与原回归七QEMU/14guest0通过。三方向15秒/七I/O/原grant和sibling/packet/全Rootproof不弱化；Virtual HID只枚举，不伪注入；USBFS-v6 c2s client Io不重标timeout。UID1001全部manual ACL仍因无auto grant拒绝；新fixture显式schema/operator参数不改变原严格disk2默认。后续GUI/dynamic/物理远端安全receipt/安装/硬件等范围继续保留。
+
 - 显式root policy才启observer/自动准入；严格disk2/3不同完整shape、必需nonnull automation、不降级/不重置旧owner。冻结Job/Session/Metrics/旧audit/log/diagnostic schema。
 - origin/rule/revision/delegated UID/token与原Start job/request/audit和Fired同事务先commit再runner；Start FIFO淘汰不能消除已保origin。mutation独立UUID/CAS/query，unknown/expired不是没副作用，不自动换UUID或重发edit。
 - manual Stop在WAL外sticky代际抑制，Stop事务持久pause；晚auto注册继承，旧Enable commit不得清较新Stop，原定向stop安全sibling保持。disable/delete不假cleanup、未决tomb计quota。
