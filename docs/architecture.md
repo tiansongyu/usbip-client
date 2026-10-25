@@ -246,3 +246,6 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 
 
 终端详情滚动现在随有效选择identity变化复位，相同identity重排保留。独立本地观察、agent业务页和偏好文件各保边界；不新增USB能力。E48已逐项审计文档化G4的软件/仿真范围，管理员策略和后续GUI/安装另行维护。 见[验收与审计](research/tui-hotplug-permission-validation.md)。
+
+
+GUI仍经同一headless frontend/应用服务操作，不另持USB资源。E50的[双栈正向核验](research/gui-native-actions-validation.md)通过真实确认Start/精确Stop、非空Remote和WM_DELETE_WINDOW后原owner实际USB I/O验证该边界；测试-only Xlib不进入产品依赖/API。raw-v1显示RTT unavailable，v2 GUI RTT与完整Phase5另验。

@@ -70,3 +70,6 @@ Phase5候选研究见`docs/research/gui-installation-research.md`：固定Tauri2
 
 
 原生GUI/共享worker修改前读`docs/research/native-gui-design.md`和`docs/research/native-gui-validation.md`。TUI run/Options/Settings经headless rustusb-frontend复用，不另写USB/RPC业务；GUI独立workspace有mandatory check-gui与四平台CI，root all不承担GTK。glib两行上游补丁保持121原文件/许可/版本，只有variant_iter.rs变更；不压advisory、不执行旧UB。AppManifest三命令/本地main实际origin/有限准入到ack/原UUID跨reload/字符串counter/完整投影上限/CSP与导航拒绝/exit先join保留。长详情workspace min-height0与真实宽窄footer geometry已验。core956锁b15，GUI11及native QEMU最终锁03621a06（此前08保持独立）（guest0、child预期unresolved1、agent0、无USB准入）；原TUI四PTY锁72。所有原失败保留。positive GUI Start/Stop/远端RTT/activejob、规则/deb/systemd/安装/硬件/完整G3和原Phase5–7保持未完成。
+
+
+GUI正向E50见`docs/research/gui-native-actions-validation.md`与`gui-native-actions-design.md`：clean8e8d50d9软件956+11及双栈378源/各12真实UID1000窗口通过，24次WM_DELETE_WINDOW/actual wait0/local join；六Start/一session Stop/四job Stop每pair、非空Remote及原三I/O/264核验/完整Rootproof保留。原agent229源/768MiB和旧single GUI372源另回归，共七guest0/无forced。产品三ELF保持E49；三夹具FAIL与误将exit4归native-close/已有Start的更正完整保留。raw-v1 RTT unavailable已有UI证据，v2 GUI live RTT/规则/完整GUI/deb/systemd/安装生命周期/硬件/完整G3/原Phase0–7仍未完成。

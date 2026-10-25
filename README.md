@@ -184,8 +184,10 @@ Requires updated GTK3/WebKitGTK4.1 development packages; see the
 Recorded native WebView in an isolated QEMU guest with a synthetic keyboard and
 read/audit-only agent. [Validation](docs/research/native-gui-validation.md) covers
 hotplug, actual permission denial/original retry, saved preferences and narrow
-layout. It does not establish successful GUI-driven USB sharing. Automatic rules,
-packaged installation and full GUI/hardware acceptance remain unfinished.
+layout. Separate [IPv4/IPv6 action tests](docs/research/gui-native-actions-validation.md)
+verify confirmed GUI Start/Stop, a nonempty remote catalog and continued QEMU
+HID/FTDI I/O after native windows close. Automatic rules, packaged installation
+and full GUI/hardware acceptance remain unfinished.
 
 ## Choose a backend
 

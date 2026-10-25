@@ -64,12 +64,14 @@ that is separate from the agent's USB cleanup state.
 
 ## Validation and limits
 
-[Recorded native QEMU validation](research/native-gui-validation.md) includes
-real WebKit IPC, hotplug, actual OS-peer denial/original retry, checked preferences
-and wide/narrow geometry. It does not validate GUI-driven successful USB Start,
-Stop, a live remote client catalog/RTT, or continued active service jobs. Those
-remain additional GUI acceptance cases, alongside automatic rules, `.deb`,
-systemd, install/upgrade/uninstall/reboot, hardware and Windows work.
+[Recorded preview validation](research/native-gui-validation.md) includes real
+WebKit IPC, hotplug, actual OS-peer denial/original retry, checked preferences and
+wide/narrow geometry. [Confirmed-action validation](research/gui-native-actions-validation.md)
+adds IPv4/IPv6 GUI Start, exact session/job Stop, a nonempty authenticated remote
+catalog and actual USB I/O after native windows close. The fixed QEMU HID/FTDI
+cases use raw-v1, which correctly shows RTT unavailable. Framed-v2 GUI live RTT,
+automatic rules, `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and
+hardware/Windows acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded
 from the root Native workspace; its root checks do not replace the GUI gate.

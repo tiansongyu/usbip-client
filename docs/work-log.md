@@ -15,6 +15,9 @@
 
 - cleanae1e3fb5第四IPv4 parent/两guest实际PASS，12真实UID1000窗口/六GUI Start/一session Stop/四job Stop/非空Remote，真实WM_DELETE_WINDOW时间与child0/localjoin；原264核验/三I/O/两epoch/Rootproof保持。原三失败不改判。末收紧：parent独立对照精确Stop ID/owner_present、补真实driver actor/ELF、raw-v1 health无RTT及展开的GUI“RTT unavailable”，失败infra cleanup实际wait直系children。最终gate、双栈与原回归待新clean执行。
 
+- clean8e8d50d9完整root956+GUI11 gate PASS，无fail/ignore、三guard真；三release ELF逐E49相同。最终IPv4/IPv6各378源/六guard真、12实际GUI wait0+WM_DELETE_WINDOW/localjoin、原264/三I/O/两epoch/Rootproof及非空Remote/精确Stop/raw-v1 RTT unavailable全部PASS。旧agent IPv4(229源/原768MiB)与single GUI(372源/70原件385784B)也PASS，四次最终invocation共七guest0/无forced，source/HEAD/ELF直到实际terminal才解冻。远端实际截图已查看，不替换原E49截图。
+- 归档初审误拒其自身source内literal PEM marker，诊断确认九原目录无key文件/实际PEM；partial私有保留，改完整行header与key filename检查。最终4934原件57902451B、archive13141249B/SHA be5d7496891005aae35698574c212696a42003f9410ebdfcdb3132a77c12d1a2逐member核验，原三FAIL/中间PASS/方法/更正全留。英文报告/README/站点caption、验收/roadmap/compatibility/指南/AGENTS/项目skill同步E50；全局skill未改，v2 GUI RTT/规则/完整GUI/包/安装/硬件及原目标保持。文档QA18文件/521本地target、site218与两JS/actual GUI help/默认Native无GTK依赖通过；377非README输入与8e8d逐SHA相同，三ELF/四global skill及symlink保持。IAB当前1280/390 DOM/新链接Tab焦点/窄屏真实图加载与CSP script-src none两尺寸正文/三后端/构建可见通过；截图API不可用、reduced-motion仅原CSS审阅不称新像素/media验收，viewport/tab/server均收回。下一步普通SSH push及四平台CI/Pages回执。
+
 ## 2026-10-25：原生GUI实现（开始）
 
 - 上一轮E48与Phase5研究为实际进展；从clean7498ff40重读完整原任务、Git/AGENTS/核心skill/工作日志和固定Tauri/Linux研究。目标仍为完整Phase0–7；原英文README/展示站/全局skill保持。使用frontend-design/ui-ux-pro-max/writing-technical-design与技术文档指导，先写native-gui-design.md，保留自动规则/包/systemd/安装及硬件门槛。

@@ -176,3 +176,13 @@ retain the earlier776 and final content observations independently. API step
 success is not a per-platform test recount or fetched CI ELF/log archive. The
 native QEMU and open acceptance boundaries above remain unchanged. This receipt
 only adds documentation; it is not a new product build or hardware result.
+
+
+## Subsequent confirmed-action evidence
+
+The later [E50 report](gui-native-actions-validation.md) independently validates
+IPv4/IPv6 GUI Start/Stop, a nonempty remote catalog and continued original Native
+HID/FTDI I/O after actual WM_DELETE_WINDOW closes. It reruns both software gates
+and the original agent/single-GUI fixtures on clean8e8d50d9. Earlier E49 results,
+negative-only scope and original failures above remain attributed to their own
+runs; the E49 screenshot is not relabeled as a positive import capture.

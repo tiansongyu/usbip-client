@@ -35,5 +35,8 @@ their own licenses; the application MIT license does not relicense them.
 
 Automatic sharing rules, `.deb`/systemd packaging, install/upgrade/uninstall/reboot
 qualification and complete Phase5 acceptance remain required work. QEMU procedure:
-[native WebView test](../../scripts/qemu_gui/README.md). Hardware and Windows gates
-remain open.
+[native WebView test](../../scripts/qemu_gui/README.md) and
+[confirmed-action pairs](../../scripts/qemu_gui_actions/README.md). The
+[IPv4/IPv6 report](../../docs/research/gui-native-actions-validation.md) records
+GUI Start/Stop, nonempty Remote and USB I/O after native windows close. Raw-v1 RTT
+is unavailable; framed-v2 GUI live RTT, hardware and Windows gates remain open.

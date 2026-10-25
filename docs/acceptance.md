@@ -132,7 +132,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
 | 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow；E36 diagnostics私有JSON/单profile导出 | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
 | 4.9 Ratatui TUI | 六页普通用户共享API前端；[E48逐项G4软件/仿真审计](research/tui-hotplug-permission-validation.md#g4-requirement-audit) | 键盘/搜索/筛选/排序/刷新/详情/确认与持久偏好；实际热插拔、服务拒绝、失联/原UUID重试已有证据。普通用户设置不编辑管理员策略；真实硬件/完整G3及后续发布门槛未完成 |
-| 4.10 GUI | 原生Tauri预览/共享headless worker/六页/checked preferences，见[E49报告](research/native-gui-validation.md) | 部分：软件与native QEMU只读/真实权限拒绝已验；正向GUI设备操作/远端/activejob、自动规则与完整G5仍未完成 |
+| 4.10 GUI | 原生Tauri预览/共享headless worker/六页/checked preferences，见[E49](research/native-gui-validation.md)和[E50](research/gui-native-actions-validation.md) | 部分：双栈GUI确认Start/精确Stop、非空Remote及窗口关闭后USB I/O已验；v2 GUI RTT、自动规则与完整GUI/G5仍未完成 |
 | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E36 bounded闭合JSON/alias/独立已提交视图与真实私有publication，信号/文件失败保留实际结果。E31 audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
 
 ## 7. 自动测试、互操作、异常、安全与性能范围
@@ -343,3 +343,8 @@ E49末复核补local eligible过滤不得应用Remote；clean03621a06 GUI11与na
 
 
 E49最终内容3aafa2c0的root40142928056与GUI40142928072各四native格/实际arch/fullgate均completed/success，Pages40142928094 check/deploy成功；七canonical HTTPS逐Git精确、core/GUI/ELF/global skill保持。见[发布回执](evidence/native-gui-publication-3aafa2c0-20261025/receipt.json)。不由CI状态重算每格967、不伪造ELF/日志；真实QEMU锁036，其余未验阶段保留。
+
+
+## 37. E50：GUI双栈正向操作与真实窗口退出
+
+[报告](research/gui-native-actions-validation.md)锁clean8e8d50d9：core956与GUI11软件全通过；两新Native GUI双栈pair各378源/六guard真/两guest0，每pair12真实UID1000进程、六Start、一精确incoming HID Stop、四job Stop、非空Remote搜索/详情和raw-v1 RTT unavailable。24窗口均真实WM_DELETE_WINDOW/实际wait0/local join，关闭Start窗口后同job Running，原264核验/三轮HID-FTDI I/O/两epoch/完整Rootproof及原driver/VHCI基线保留。另原agent IPv4(229源/768MiB)及旧single GUI(372源/70原件385784B)回归PASS，共四次最终invocation/七guest0，无forced；旧GUI的unresolved child预期1独立保留。产品源码与三ELF保持E49，三原夹具FAIL及误诊更正保留；4934原件57902451B归档逐SHA核验。未扩大USB类/硬件矩阵；v2 GUI实测RTT、规则/完整GUI、deb/systemd/安装生命周期、G1G2/完整G3/性能/Windows及原Phase0–7仍未完成。

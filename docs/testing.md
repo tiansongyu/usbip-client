@@ -413,3 +413,6 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 
 
 原生GUI有独立`./scripts/check-gui.sh`与四Ubuntu/架构软件CI；root `--workspace --all-features`刻意不承担GTK，不替代GUI gate。普通用户native WebView/QEMU、上游GLib兼容修复与抽取共享worker后的TUI回归见[实际报告](research/native-gui-validation.md)和[可复现runner](../scripts/qemu_gui/README.md)。无mock冒充native、无原FAIL改判、无GUI负向推成成功USB I/O或完整安装验收。
+
+
+GUI确认动作与真实窗口关闭的双栈流程见[runner](../scripts/qemu_gui_actions/README.md)和[E50报告](research/gui-native-actions-validation.md)。新wrapper保留原Native264核验与三I/O/完整Rootproof，真实UID1000 GUI准入、精确Stop、WM_DELETE_WINDOW/actual wait/local join后同job继续I/O；冻结source/head/worktree/三ELF及driver直到实际terminal。原single GUI和默认768MiB Native agent均另行回归，不把guest0、StopAccepted或新进程资源0代替原owner release。
