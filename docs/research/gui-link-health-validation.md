@@ -116,3 +116,17 @@ complete G3, broader performance/device compatibility and Windows USB remain
 required. Earlier failed runs retain their original verdict/source. Publication
 and four-platform CI receipts will be recorded separately from these local/QEMU
 facts; this report does not declare the full project complete.
+
+## Publication
+
+Content `b6607956905964a8b5e86ba4f73bab3b814f05ad` was pushed through the authorized
+SSH remote. [Core CI](https://github.com/tiansongyu/usbip-client/actions/runs/40148272068)
+and [independent GUI CI](https://github.com/tiansongyu/usbip-client/actions/runs/40148272076)
+each completed all four native Ubuntu22.04/24.04 × x86_64/aarch64 jobs successfully,
+including architecture/full-gate steps.
+[Pages](https://github.com/tiansongyu/usbip-client/actions/runs/40148272107) check
+and deploy succeeded. Seven canonical HTTPS resources returned200 with exact Git
+bytes;389 frozen non-README inputs, product ELFs and global README skill integrity
+checks passed. [Original receipts](../evidence/gui-link-health-publication-b6607956-20261025/README.md)
+retain API/step/HTTP bodies and methods; they are not CI logs/ELFs or a new test
+recount. Local/QEMU evidence remains c4f72f6e. Later receipt edits are documentation.
