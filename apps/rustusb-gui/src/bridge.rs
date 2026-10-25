@@ -246,11 +246,20 @@ impl Action {
 }
 
 fn rule_command(view: &Snapshot, mutation: RuleMutation) -> Result<Command, String> {
+    if view.journal == Some(false) {
+        return Err(
+            "Agent journal unhealthy; new edits unavailable; original queries remain available"
+                .into(),
+        );
+    }
     if view.unresolved_rule.is_some() {
         return Err("Original rule edit unresolved; query only its original UUID".into());
     }
     if !view.rules.requested || !view.rules.current {
         return Err("Refresh the current rule page before editing".into());
+    }
+    if view.rules.decision_support.is_none() {
+        return Err("Rule-edit support unavailable; refresh or upgrade the agent".into());
     }
     Ok(Command::Mutate(Mutation::Rule {
         profile: view.profile.clone().ok_or("No readable profile selected")?,
@@ -391,8 +400,9 @@ fn projection(view: &Snapshot, sequence: u64) -> Result<String, String> {
             "status":view.status,"jobs_status":view.jobs_status,"sessions_status":view.sessions_status,"audit_status":view.audit_status,
             "local_status":view.local_status,"remote_status":view.remote_status,"remote_page":view.remote_page,
             "unresolved":view.unresolved.as_ref().map(|i|json!({"profile":i.profile,"request_id":i.request_id}))
-            ,"rules":{"requested":view.rules.requested,"current":view.rules.current,"policy_enabled":view.rules.policy_enabled,"grant":view.rules.grant,"rules":view.rules.rules,"next_rule":view.rules.next_rule,"status":view.rules.status,"events":view.rules.events,"next_event":view.rules.next_event,"events_status":view.rules.events_status,"result":view.rules.result}
-            ,"unresolved_rule":view.unresolved_rule.as_ref().map(|i|json!({"profile":i.profile,"request_id":i.request_id,"mutation":i.mutation}))
+            ,"rules":{"requested":view.rules.requested,"current":view.rules.current,"decision_support":view.rules.decision_support,"decision_support_status":view.rules.decision_support_status,"policy_enabled":view.rules.policy_enabled,"grant":view.rules.grant,"rules":view.rules.rules,"next_rule":view.rules.next_rule,"status":view.rules.status,"events":view.rules.events,"next_event":view.rules.next_event,"events_status":view.rules.events_status,"result":view.rules.result}
+            ,"unresolved_rule":view.unresolved_rule
+            ,"last_rule_decision":view.last_rule_decision.as_ref().map(|r|json!({"original":r.original,"decision":r.decision,"replayed":r.replayed}))
         }),
         MAX_VIEW,
     )
@@ -436,6 +446,7 @@ mod tests {
         view.profile = Some("fixed".into());
         view.rules.requested = true;
         view.rules.current = true;
+        view.rules.decision_support = Some(false);
         view.rules.policy_enabled = Some(true);
         view.rules.grant = Some(AutomationGrantInfo {
             devices: vec![],
@@ -617,6 +628,106 @@ mod tests {
         assert_eq!(value["unresolved_rule"]["request_id"], request.to_string());
         assert_eq!(value["unresolved_rule"]["profile"], "original");
         assert_eq!(value["rules"]["rules"][0]["revision"], "9007199254740993");
+        assert_eq!(value["pending"], "1");
+        Ok(())
+    }
+
+    #[test]
+    fn unavailable_support_blocks_new_edits_but_never_redirects_original_queries()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let mut view = rule_view()?;
+        let rule = view.rules.rules[0].clone();
+        view.rules.decision_support = None;
+        assert!(
+            Action::RuleCreate {
+                spec: rule.spec.clone()
+            }
+            .command(&view)
+            .is_err()
+        );
+        assert!(
+            Action::RuleDelete {
+                id: rule.id.to_string(),
+                revision: rule.revision.to_string()
+            }
+            .command(&view)
+            .is_err()
+        );
+        view.rules.decision_support = Some(true);
+        view.journal = Some(false);
+        assert!(
+            Action::RuleCreate {
+                spec: rule.spec.clone()
+            }
+            .command(&view)
+            .is_err()
+        );
+        let id = rustusb_core::application::RequestId::new("00000000-0000-4000-8000-000000000002")?;
+        view.rule_request_with_protocol(
+            "original".into(),
+            RuleMutation::Create {
+                spec: rule.spec,
+                enabled: false,
+            },
+            id.clone(),
+            true,
+        );
+        assert!(matches!(
+            Action::RuleResolve {}.command(&view)?,
+            Command::Mutate(Mutation::ResolveRule)
+        ));
+        assert!(
+            matches!(view.rule_retry(), Some(rustusb_service::rpc::Request::RetryRuleDecision { profile, request_id }) if profile == "original" && request_id == id)
+        );
+        Ok(())
+    }
+    #[test]
+    fn rejected_draft_projection_retains_exact_original_revision_across_renderer_loss()
+    -> Result<(), Box<dyn std::error::Error>> {
+        use rustusb_service::{automation::RuleDecision, model::Failure, rpc::Response};
+        let mut view = rule_view()?;
+        let rule = view.rules.rules[0].clone();
+        let id = rustusb_core::application::RequestId::new("00000000-0000-4000-8000-000000000002")?;
+        view.rule_request_with_protocol(
+            "original".into(),
+            RuleMutation::Replace {
+                rule_id: rule.id,
+                expected_revision: ExpectedRevision::new(rule.revision)?,
+                spec: rule.spec,
+            },
+            id.clone(),
+            true,
+        );
+        view.rule_response(Response::RuleDecided {
+            request_id: id.clone(),
+            decision: RuleDecision::Rejected {
+                sequence: u64::MAX,
+                failure: Failure::State,
+            },
+            replayed: true,
+        });
+        let value: Value = serde_json::from_str(&projection(&view, 1)?)?;
+        assert!(value["unresolved_rule"].is_null());
+        assert_eq!(
+            value["last_rule_decision"]["original"]["request_id"],
+            id.to_string()
+        );
+        assert_eq!(
+            value["last_rule_decision"]["original"]["mutation"]["expected_revision"],
+            "9007199254740993"
+        );
+        assert_eq!(
+            value["last_rule_decision"]["decision"]["sequence"],
+            "18446744073709551615"
+        );
+        assert_eq!(
+            value["last_rule_decision"]["original"]["profile"],
+            "original"
+        );
+        assert_eq!(
+            value["last_rule_decision"]["original"]["settled_protocol"],
+            true
+        );
         assert_eq!(value["pending"], "1");
         Ok(())
     }

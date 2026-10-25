@@ -64,6 +64,7 @@ pub(super) struct StopTarget {
 #[derive(Default)]
 pub(super) struct RuleRegistry {
     policy: Option<Arc<AutomationPolicy>>,
+    settled_results: bool,
     views: Vec<RuleView>,
     events: Vec<RuleEvent>,
     sequence: u64,
@@ -101,6 +102,21 @@ impl RuleRegistry {
 }
 
 impl Controls {
+    pub(crate) fn rule_decision_support(
+        &self,
+        config: &LoadedConfig,
+        uid: u32,
+        profile: &str,
+    ) -> Result<ResponseEnvelope> {
+        config.manifest.authorize(uid, profile, Action::Read)?;
+        Ok(ResponseEnvelope {
+            schema_version: 1,
+            journal_healthy: !self.journal_unhealthy,
+            response: Response::RuleDecisionSupport {
+                enabled: self.automation.settled_results,
+            },
+        })
+    }
     pub(crate) fn rules(
         &self,
         config: &LoadedConfig,
@@ -232,9 +248,20 @@ impl Runtime {
                 .map_err(|_| Error::State("automatic boot metadata task failed".into()))??,
             );
         }
-        if self.automation.policy.is_some() && self.state.schema_version == 2 {
+        let decisions = self
+            .automation
+            .policy
+            .as_ref()
+            .is_some_and(|p| p.settled_rule_results());
+        if (self.automation.policy.is_some() && self.state.schema_version == 2)
+            || (decisions && self.state.rule_rejections.is_none())
+        {
             let mut next = self.state.clone();
-            next.enable_automation()?;
+            if decisions {
+                next.enable_rule_decisions()?;
+            } else {
+                next.enable_automation()?;
+            }
             self.persist(next).await?;
         }
         self.refresh_rules()
@@ -398,6 +425,7 @@ impl Runtime {
         let mut controls = self.controls.lock().map_err(|_| lock_error())?;
         let registry = &mut controls.automation;
         registry.policy = self.automation.policy.clone();
+        registry.settled_results = self.state.rule_rejections.is_some();
         registry.known_jobs = self
             .state
             .jobs
@@ -504,6 +532,23 @@ impl Runtime {
             .authorize(uid, &profile, Action::Read)?;
         if let Some(old) = self
             .state
+            .rule_rejections
+            .as_ref()
+            .map(|r| r.find(uid, &profile, &request_id))
+            .transpose()?
+            .flatten()
+        {
+            if mutation.as_ref().is_some_and(|m| *m != old.mutation) {
+                return Err(Error::InvalidInput(
+                    "mutation identity payload mismatch".into(),
+                ));
+            }
+            // The original denial was already durably audited. Legacy readback
+            // keeps its original shape without manufacturing another denial.
+            return Ok(Response::Error { code: old.failure });
+        }
+        if let Some(old) = self
+            .state
             .automation
             .as_ref()
             .map(|a| a.mutation(uid, &profile, &request_id))
@@ -608,6 +653,149 @@ impl Runtime {
             outcome,
             replayed: false,
         })
+    }
+
+    fn original_rule_decision(
+        &self,
+        uid: u32,
+        profile: &str,
+        request_id: &RequestId,
+        mutation: Option<&RuleMutation>,
+    ) -> Result<Option<RuleDecision>> {
+        if let Some(old) = self
+            .state
+            .automation
+            .as_ref()
+            .map(|a| a.mutation(uid, profile, request_id))
+            .transpose()?
+            .flatten()
+        {
+            if mutation.is_some_and(|m| *m != old.mutation) {
+                return Err(Error::InvalidInput(
+                    "decision identity payload mismatch".into(),
+                ));
+            }
+            return Ok(Some(RuleDecision::Applied {
+                outcome: old.outcome.clone(),
+            }));
+        }
+        if let Some(old) = self
+            .state
+            .rule_rejections
+            .as_ref()
+            .map(|r| r.find(uid, profile, request_id))
+            .transpose()?
+            .flatten()
+        {
+            if mutation.is_some_and(|m| *m != old.mutation) {
+                return Err(Error::InvalidInput(
+                    "decision identity payload mismatch".into(),
+                ));
+            }
+            return Ok(Some(RuleDecision::Rejected {
+                sequence: old.sequence,
+                failure: old.failure,
+            }));
+        }
+        Ok(None)
+    }
+
+    pub(super) async fn decide_rule(
+        &mut self,
+        uid: u32,
+        profile: String,
+        request_id: RequestId,
+        mutation: Option<RuleMutation>,
+    ) -> Result<Response> {
+        self.config
+            .manifest
+            .authorize(uid, &profile, Action::Read)?;
+        if self.state.rule_rejections.is_none() {
+            return Err(Error::Unsupported(
+                "settled rule results require explicit disk4 policy".into(),
+            ));
+        }
+        if let Some(decision) =
+            self.original_rule_decision(uid, &profile, &request_id, mutation.as_ref())?
+        {
+            return Ok(Response::RuleDecided {
+                request_id,
+                decision,
+                replayed: true,
+            });
+        }
+        let Some(mutation) = mutation else {
+            return Ok(Response::RuleDecisionExpired { request_id });
+        };
+        match self
+            .mutate_rule(
+                uid,
+                profile.clone(),
+                request_id.clone(),
+                Some(mutation.clone()),
+            )
+            .await
+        {
+            Ok(Response::RuleMutationApplied {
+                outcome, replayed, ..
+            }) => {
+                return Ok(Response::RuleDecided {
+                    request_id,
+                    decision: RuleDecision::Applied { outcome },
+                    replayed,
+                });
+            }
+            Ok(_) => {
+                return Err(Error::State(
+                    "unexpected legacy mutation outcome; original identity retained".into(),
+                ));
+            }
+            Err(error) => {
+                // Actual persist may have succeeded before registry publication
+                // failed. Never replace that committed positive with a refusal.
+                if let Some(decision) =
+                    self.original_rule_decision(uid, &profile, &request_id, Some(&mutation))?
+                {
+                    return Ok(Response::RuleDecided {
+                        request_id,
+                        decision,
+                        replayed: false,
+                    });
+                }
+                if !self.healthy {
+                    return Err(error);
+                }
+                let failure = Failure::from_error(&error);
+                let mut next = self.state.clone();
+                next.rule_rejections.as_mut().ok_or_else(denied)?.record(
+                    uid,
+                    profile.clone(),
+                    request_id.clone(),
+                    mutation.clone(),
+                    failure,
+                )?;
+                if failure == Failure::Permission {
+                    next.audit(uid, None, None, None, AuditAction::Denied, Some(failure))?;
+                }
+                next.preflight(true)?;
+                let committed = self.persist(next).await;
+                // A postcommit registry error cannot erase an actual durable
+                // rejection either. Writer uncertainty still has no receipt.
+                if let Some(decision) =
+                    self.original_rule_decision(uid, &profile, &request_id, Some(&mutation))?
+                {
+                    return Ok(Response::RuleDecided {
+                        request_id,
+                        decision,
+                        replayed: false,
+                    });
+                }
+                committed?;
+            }
+        }
+        Err(Error::State(
+            "rule decision missing after persistence; retain original identity".into(),
+        ))
     }
 
     pub(super) async fn open_rule_observer(

@@ -674,6 +674,24 @@ impl Runtime {
                 .map_err(|_| lock_error())?
                 .rules(&self.config, uid, &profile, after.as_ref())?
                 .response),
+            Request::RuleDecisionSupport { profile } => Ok(self
+                .controls
+                .lock()
+                .map_err(|_| lock_error())?
+                .rule_decision_support(&self.config, uid, &profile)?
+                .response),
+            Request::DecideRule {
+                profile,
+                request_id,
+                mutation,
+            } => {
+                self.decide_rule(uid, profile, request_id, Some(mutation))
+                    .await
+            }
+            Request::RetryRuleDecision {
+                profile,
+                request_id,
+            } => self.decide_rule(uid, profile, request_id, None).await,
             Request::RuleEvents { profile, after } => Ok(self
                 .controls
                 .lock()

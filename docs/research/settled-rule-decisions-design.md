@@ -70,11 +70,20 @@ retained decision support; current root grants still determine every edit.
 ## Frontend and CLI
 
 The ordinary-user GUI discovers support while Settings is requested. Legacy
-policy1/old peers retain the original conservative behavior. Save the selected
+policy1 returns explicit false and keeps the original conservative behavior.
+An old/unavailable peer that cannot answer support is read-only for new GUI
+edits until refreshed/upgraded; original retained queries remain available.
+Do not silently select a different protocol after an uncertain capability read.
+Known unhealthy journals block new GUI edits before minting an identity; original
+queries and independent cooperative Stop remain available.
+Save the selected
 query protocol with the original UUID/profile/payload before issuing IPC; a later
 profile/capability change must not redirect its query. Only an exact original
 Applied or durably Rejected reply clears that in-process intent. Generic Error,
 Expired, wrong identity and uncertain persistence remain blocked/query-only.
+Positive receipts also bind their exact rule/revision/deleted effect to the
+original typed mutation; malformed zero-sequence/Persistence refusals cannot
+clear an identity.
 
 Keep a bounded last actual decision and original payload in Rust so a renderer
 reload can inspect/restore a rejected Create/Replace draft. Restore does not

@@ -33,6 +33,8 @@ pub(crate) struct State {
     pub link_history: Vec<crate::health::LinkHistory>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub automation: Option<crate::rules::RuleJournal>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub rule_rejections: Option<crate::rule_rejections::RejectionJournal>,
 }
 
 // Freeze both complete shapes. An optional field on disk2 would let missing or
@@ -61,8 +63,22 @@ struct Disk3 {
     automation: crate::rules::RuleJournal,
 }
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Disk4 {
+    schema_version: u32,
+    sequence: u64,
+    jobs: Vec<Job>,
+    sessions: Vec<Session>,
+    audit: Vec<AuditEvent>,
+    requests: Vec<RequestRecord>,
+    link_history: Vec<crate::health::LinkHistory>,
+    automation: crate::rules::RuleJournal,
+    rule_rejections: crate::rule_rejections::RejectionJournal,
+}
+#[derive(Deserialize)]
 #[serde(untagged)]
 enum CurrentDisk {
+    V4(Disk4),
     V3(Disk3),
     V2(Disk2),
 }
@@ -80,6 +96,7 @@ impl TryFrom<CurrentDisk> for State {
                 requests: d.requests,
                 link_history: d.link_history,
                 automation: None,
+                rule_rejections: None,
             },
             CurrentDisk::V3(d) if d.schema_version == 3 => Self {
                 schema_version: 3,
@@ -90,6 +107,18 @@ impl TryFrom<CurrentDisk> for State {
                 requests: d.requests,
                 link_history: d.link_history,
                 automation: Some(d.automation),
+                rule_rejections: None,
+            },
+            CurrentDisk::V4(d) if d.schema_version == 4 => Self {
+                schema_version: 4,
+                sequence: d.sequence,
+                jobs: d.jobs,
+                sessions: d.sessions,
+                audit: d.audit,
+                requests: d.requests,
+                link_history: d.link_history,
+                automation: Some(d.automation),
+                rule_rejections: Some(d.rule_rejections),
             },
             _ => {
                 return Err(Error::InvalidInput(
@@ -112,6 +141,7 @@ impl Default for State {
             requests: vec![],
             link_history: vec![],
             automation: None,
+            rule_rejections: None,
         }
     }
 }
@@ -148,6 +178,7 @@ impl State {
             requests: old.requests,
             link_history: vec![],
             automation: None,
+            rule_rejections: None,
         };
         state.initialize_legacy_links();
         state.validate()?;
@@ -172,6 +203,14 @@ impl State {
             self.automation = Some(crate::rules::RuleJournal::default());
         }
         Ok(())
+    }
+    pub(crate) fn enable_rule_decisions(&mut self) -> Result<()> {
+        self.enable_automation()?;
+        if self.schema_version == 3 {
+            self.schema_version = 4;
+            self.rule_rejections = Some(crate::rule_rejections::RejectionJournal::default());
+        }
+        self.validate()
     }
     pub fn preflight(&mut self, admission: bool) -> Result<()> {
         self.prune();
@@ -291,8 +330,8 @@ impl State {
     }
     pub fn validate(&self) -> Result<()> {
         if !matches!(
-            (self.schema_version, &self.automation),
-            (2, None) | (3, Some(_))
+            (self.schema_version, &self.automation, &self.rule_rejections),
+            (2, None, None) | (3, Some(_), None) | (4, Some(_), Some(_))
         ) || self.audit.len() > MAX_AUDIT
             || self.requests.len() > MAX_REQUESTS
             || self.sessions.len() > MAX_SESSIONS
@@ -398,6 +437,9 @@ impl State {
             }
         }
         if let Some(automation) = &self.automation {
+            if let Some(rejections) = &self.rule_rejections {
+                rejections.validate(automation)?;
+            }
             automation.validate(&self.jobs, &self.sessions)?;
             for origin in &automation.origins {
                 if let Some(request) = self.requests.iter().find(|r| r.id == origin.request_id)

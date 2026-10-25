@@ -1498,3 +1498,6 @@ async fn actual_read_only_observer_stops_and_returns_worker_permit_before_wal_ac
     assert!(!helper.exists());
     Ok(())
 }
+
+#[path = "runtime_rule_decision_tests.rs"]
+mod decisions;

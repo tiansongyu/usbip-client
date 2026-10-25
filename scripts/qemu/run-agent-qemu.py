@@ -198,11 +198,13 @@ def verify(evidence, args, private_schema_versions=None):
         return count
     def private_link_history(state, label):
         version = (private_schema_versions or {}).get(label, 2)
-        if version not in [2, 3]: raise RuntimeError("unsupported explicit fixture schema")
+        if version not in [2, 3, 4]: raise RuntimeError("unsupported explicit fixture schema")
         fields = {"schema_version", "sequence", "jobs", "sessions", "audit", "requests", "link_history"}
-        if version == 3: fields.add("automation")
+        if version in [3, 4]: fields.add("automation")
+        if version == 4: fields.add("rule_rejections")
         require(set(state) == fields and state["schema_version"] == version
-                and (version == 2 or isinstance(state["automation"], dict)), f"{label} strict private disk{version} shape")
+                and (version == 2 or isinstance(state["automation"], dict))
+                and (version != 4 or isinstance(state["rule_rejections"], dict)), f"{label} strict private disk{version} shape")
         sessions = {item["id"]: item for item in state["sessions"]}
         history = {item["session_id"]: item for item in state["link_history"]}
         require(len(sessions) == len(state["sessions"]) == len(history) == len(state["link_history"])

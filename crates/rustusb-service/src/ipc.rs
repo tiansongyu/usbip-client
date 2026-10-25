@@ -367,6 +367,7 @@ pub(crate) async fn request(
     // unavailable/empty policy. Mutations/retries retain original actor ordering.
     let read_rule = match &envelope.request {
         Request::Rules { profile, .. } => Some((profile, Action::Read)),
+        Request::RuleDecisionSupport { profile } => Some((profile, Action::Read)),
         Request::RuleEvents { profile, .. } => Some((profile, Action::Audit)),
         _ => None,
     };
@@ -383,6 +384,9 @@ pub(crate) async fn request(
                 }
                 Request::RuleEvents { after, .. } => {
                     controls.rule_events(&config, uid, profile, *after)
+                }
+                Request::RuleDecisionSupport { .. } => {
+                    controls.rule_decision_support(&config, uid, profile)
                 }
                 _ => return Err(Error::State("rule read dispatch".into())),
             };

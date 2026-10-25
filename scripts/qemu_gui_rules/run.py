@@ -60,9 +60,9 @@ def payload(work, kernel, certificates, role):
         shutil.copyfileobj(source, dest)
     return archive, provenance
 
-def verify(evidence, args):
+def verify(evidence, args, private_schema_versions=None):
     # Original 264 assertions/kernel/Root proofs/three HID+FTDI rounds stay intact.
-    facts = auto.original_verify(evidence, args, {'server final': 3, 'server held0': 3, 'server held1': 3})
+    facts = auto.original_verify(evidence, args, private_schema_versions or {'server final': 3, 'server held0': 3, 'server held1': 3})
     folder = evidence / 'server-artifacts'
     get = lambda n: json.loads((folder / n).read_text())
     checks = []

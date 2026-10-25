@@ -193,6 +193,29 @@ impl Worker {
             return;
         };
         self.view.rules.current = false;
+        self.view.rules.decision_support = None;
+        match self
+            .read(Request::RuleDecisionSupport {
+                profile: profile.clone(),
+            })
+            .await
+        {
+            Ok(Response::RuleDecisionSupport { enabled }) => {
+                self.view.rules.decision_support = Some(enabled);
+                self.view.rules.decision_support_status = if enabled {
+                    "Settled-result protocol; original Applied/Rejected receipts"
+                } else {
+                    "Legacy protocol; uncertain/refused edits remain query-only"
+                }
+                .into();
+            }
+            result => {
+                self.view.rules.decision_support_status = format!(
+                    "Rule-edit support unavailable; refresh or upgrade agent: {}",
+                    read_status(&result)
+                )
+            }
+        }
         match self
             .read(Request::Rules {
                 profile: profile.clone(),
@@ -532,8 +555,9 @@ impl Worker {
             }
             Err(error) => {
                 self.view.status = format!(
-                    "Response unknown ({:?}); inspect jobs; use only original retry identity",
-                    Failure::from_error(&error)
+                    "Response unknown ({:?}); inspect {}; use only original retry identity",
+                    Failure::from_error(&error),
+                    if is_rule { "rules/events" } else { "jobs" }
                 );
                 if is_rule {
                     self.view.rules.result = self.view.status.clone();
@@ -661,8 +685,8 @@ pub async fn run(
     }
     if let Some(intent) = worker.view.unresolved_rule {
         unresolved.push(format!(
-            "rule edit outcome unresolved: profile {} request_id {}; reconcile rules/events or use agent rule retry; no edit resubmitted",
-            intent.profile, intent.request_id
+            "rule edit outcome unresolved: profile {} request_id {}; reconcile rules/events or use agent rule {} {}retry {}; no edit resubmitted",
+            intent.profile, intent.request_id, intent.profile, if intent.settled_protocol { "--settled " } else { "" }, intent.request_id
         ));
     }
     if !unresolved.is_empty() {

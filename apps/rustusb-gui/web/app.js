@@ -191,12 +191,27 @@
     const meta = view.rules, content = $('content'), block = node('section', null, 'block automation');
     block.append(node('h2', 'Automatic sharing'), node('p', meta.status, 'section-note'),
       node('p', 'Rules affect the administrator’s complete fixed profile. Disable and Delete change future intent; use Connections to stop an existing job and inspect actual cleanup.', 'section-note'));
+    block.append(node('p', meta.decision_support_status, 'section-note'));
     const result = node('p', meta.result, 'section-note'); result.id = 'rule-result'; result.setAttribute('role', 'status'); block.append(result);
     if (meta.grant) {
       block.append(node('p', `Granted device pool (${meta.grant.devices.length}); quota ${meta.grant.max_rules} rules. Conditions: ${meta.grant.triggers.join(', ')}. Rearm: ${meta.grant.rearm.join(', ')}.`, 'section-note'));
       const pool = node('ul'); meta.grant.devices.forEach(key => pool.append(node('li', key, 'data-id'))); block.append(pool);
     }
-    const canCreate = meta.current && meta.policy_enabled === true && !!meta.grant && !view.unresolved_rule;
+    const canCreate = meta.current && view.journal !== false && typeof meta.decision_support === 'boolean' && meta.policy_enabled === true && !!meta.grant && !view.unresolved_rule;
+    const receipt = view.last_rule_decision;
+    if (receipt?.decision.decision === 'rejected') {
+      const previous = receipt.original, change = previous.mutation;
+      const rejected = node('section', null, 'unresolved'); rejected.id = 'rule-rejected';
+      rejected.append(node('p', `Settled rejection · ${previous.profile} · ${previous.request_id} · ${receipt.decision.failure}. This request did not apply its edit. Review the latest state before a new explicit request.`));
+      const details = node('details'); details.append(node('summary', 'Original rejected edit'), json(receipt)); rejected.append(details);
+      if (change.change === 'create' || change.change === 'replace') {
+        const restore = button('Restore rejected draft', () => confirm('Restore the rejected draft?', `Profile ${previous.profile}, original request ${previous.request_id}${change.change === 'replace' ? `, rule ${change.rule_id}, revision ${change.expected_revision}` : ''}. This only restores the draft for review; it does not rebase or submit an edit.`, () => {
+          ruleDraft = { profile: previous.profile, id: change.change === 'replace' ? change.rule_id : null, revision: change.change === 'replace' ? change.expected_revision : null, spec: { ...change.spec } };
+          ruleEditor = null; renderPage(); $('rule-name')?.focus();
+        })); restore.id = 'rule-restore'; rejected.append(restore);
+      }
+      block.append(rejected);
+    }
     const create = button('New disabled rule', () => { if (ruleDraft) confirm('Replace the current draft?', 'The current unsaved draft will be replaced with a new disabled-rule draft for the selected profile.', () => newRuleDraft()); else newRuleDraft(); }); create.id = 'rule-new'; block.append(unavailable(create, !canCreate));
     if (ruleDraft) {
       const editor = renderRuleEditor();
@@ -219,7 +234,7 @@
         const command = { action: change, id: rule.id, revision: rule.revision }; if (enabled !== null) command.enabled = enabled;
         const control = button(label, () => confirm(`${label}?`, `Complete profile ${rule.profile}, rule ${rule.id}, exact revision ${rule.revision}. ${enabled === true ? 'Explicitly rearm future consideration under the administrator grant.' : 'This does not stop or release the current job.'}`, command));
         control.dataset.ruleAction = enabled === null ? 'delete' : enabled ? 'enable' : 'disable';
-        controls.append(unavailable(control, !meta.current || !!view.unresolved_rule || rule.deleted || (enabled === true && !canCreate)));
+        controls.append(unavailable(control, !meta.current || view.journal === false || typeof meta.decision_support !== 'boolean' || !!view.unresolved_rule || rule.deleted || (enabled === true && !canCreate)));
       }
       row.append(controls); block.append(row);
     }

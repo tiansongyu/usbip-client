@@ -22,6 +22,9 @@ pub(super) enum Command {
         /// Explicit root-managed automatic-rule delegation; absent means disabled.
         #[arg(long)]
         automation_policy: Option<PathBuf>,
+        /// Explicit root schema2 policy opting in to disk4 settled edit results.
+        #[arg(long, conflicts_with = "automation_policy")]
+        automation_decisions_policy: Option<PathBuf>,
     },
     /// List fixed profiles readable by this OS identity.
     Profiles,
@@ -34,6 +37,9 @@ pub(super) enum Command {
     /// Create/edit/pause/retire rules within explicit administrator delegation.
     Rule {
         profile: String,
+        /// Use the explicit settled-result protocol for this edit/original query.
+        #[arg(long)]
+        settled: bool,
         #[command(subcommand)]
         command: RuleCommand,
     },
@@ -180,7 +186,7 @@ pub(super) enum RuleCommand {
     Retry { request_id: RequestId },
 }
 
-fn mutation_request(profile: String, command: RuleCommand) -> Result<Request> {
+fn mutation_request(profile: String, command: RuleCommand, settled: bool) -> Result<Request> {
     let (request_id, mutation) = match command {
         RuleCommand::Create {
             definition,
@@ -225,9 +231,16 @@ fn mutation_request(profile: String, command: RuleCommand) -> Result<Request> {
             },
         ),
         RuleCommand::Retry { request_id } => {
-            return Ok(Request::RetryRuleMutation {
-                profile,
-                request_id,
+            return Ok(if settled {
+                Request::RetryRuleDecision {
+                    profile,
+                    request_id,
+                }
+            } else {
+                Request::RetryRuleMutation {
+                    profile,
+                    request_id,
+                }
             });
         }
     };
@@ -237,10 +250,18 @@ fn mutation_request(profile: String, command: RuleCommand) -> Result<Request> {
             RequestId::new(std::fs::read_to_string("/proc/sys/kernel/random/uuid")?.trim_end())?
         }
     };
-    Ok(Request::MutateRule {
-        profile,
-        request_id,
-        mutation,
+    Ok(if settled {
+        Request::DecideRule {
+            profile,
+            request_id,
+            mutation,
+        }
+    } else {
+        Request::MutateRule {
+            profile,
+            request_id,
+            mutation,
+        }
     })
 }
 
@@ -250,11 +271,26 @@ pub(super) async fn run(
     logs: Option<rustusb_logging::LogMonitor>,
     json: bool,
 ) -> Result<()> {
-    if let Command::Run { automation_policy } = &command {
-        return serve(path, automation_policy.clone(), logs).await;
+    if let Command::Run {
+        automation_policy,
+        automation_decisions_policy,
+    } = &command
+    {
+        return serve(
+            path,
+            automation_policy.clone(),
+            automation_decisions_policy.clone(),
+            logs,
+        )
+        .await;
     }
-    if let Command::Rule { profile, command } = &command {
-        return rule_call(path, profile.clone(), command.clone()).await;
+    if let Command::Rule {
+        profile,
+        command,
+        settled,
+    } = &command
+    {
+        return rule_call(path, profile.clone(), command.clone(), *settled).await;
     }
     if let Command::Discover {
         profile,
@@ -340,13 +376,22 @@ pub(super) async fn run(
     Ok(())
 }
 
-async fn rule_call(path: PathBuf, profile: String, command: RuleCommand) -> Result<()> {
+async fn rule_call(
+    path: PathBuf,
+    profile: String,
+    command: RuleCommand,
+    settled: bool,
+) -> Result<()> {
     let mut signals = ShutdownSignals::new()?;
-    let request = mutation_request(profile, command)?;
+    let request = mutation_request(profile, command, settled)?;
     let (request_id, event) = match &request {
         Request::MutateRule { request_id, .. } => (request_id.clone(), "rule_mutation_intent"),
         Request::RetryRuleMutation { request_id, .. } => {
             (request_id.clone(), "rule_mutation_query")
+        }
+        Request::DecideRule { request_id, .. } => (request_id.clone(), "rule_decision_intent"),
+        Request::RetryRuleDecision { request_id, .. } => {
+            (request_id.clone(), "rule_decision_query")
         }
         _ => return Err(Error::State("invalid rule request identity".into())),
     };
@@ -359,8 +404,12 @@ async fn rule_call(path: PathBuf, profile: String, command: RuleCommand) -> Resu
     };
     let mut output = EventOutput::new()?;
     {
-        let prepared = output
-            .event(serde_json::json!({"schema_version":1,"event":event,"request_id":request_id}));
+        let mut intent =
+            serde_json::json!({"schema_version":1,"event":event,"request_id":request_id});
+        if settled {
+            intent["protocol"] = serde_json::json!("settled");
+        }
+        let prepared = output.event(intent);
         tokio::pin!(prepared);
         tokio::select! {
             biased;
@@ -379,6 +428,11 @@ async fn rule_call(path: PathBuf, profile: String, command: RuleCommand) -> Resu
     let failure = match &response.response {
         Response::Error { code } => Some(*code),
         Response::RuleMutationExpired { .. } => Some(rustusb_service::model::Failure::State),
+        Response::RuleDecisionExpired { .. } => Some(rustusb_service::model::Failure::State),
+        Response::RuleDecided {
+            decision: rustusb_service::automation::RuleDecision::Rejected { failure, .. },
+            ..
+        } => Some(*failure),
         _ => None,
     };
     {
@@ -406,15 +460,20 @@ async fn rule_call(path: PathBuf, profile: String, command: RuleCommand) -> Resu
 async fn serve(
     path: PathBuf,
     policy_path: Option<PathBuf>,
+    decisions_path: Option<PathBuf>,
     logs: Option<rustusb_logging::LogMonitor>,
 ) -> Result<()> {
     let mut signals = ShutdownSignals::new()?;
     let mut loading = tokio::task::spawn_blocking(move || {
         let config = LoadedConfig::load(&path)?;
-        let policy = policy_path
-            .as_ref()
-            .map(|p| AutomationPolicy::read(p, &config))
-            .transpose()?;
+        let policy = if let Some(p) = &decisions_path {
+            Some(AutomationPolicy::read_decisions(p, &config)?)
+        } else {
+            policy_path
+                .as_ref()
+                .map(|p| AutomationPolicy::read(p, &config))
+                .transpose()?
+        };
         Ok::<_, Error>((config, policy))
     });
     let (config, policy) = tokio::select! {

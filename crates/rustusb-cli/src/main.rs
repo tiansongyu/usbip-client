@@ -972,4 +972,53 @@ mod tests {
             assert!(Cli::try_parse_from(valid).is_ok());
         }
     }
+    #[cfg(all(feature = "secure-transport", target_os = "linux"))]
+    #[test]
+    fn settled_rule_protocol_and_root_policy_are_explicit_and_mutually_exclusive() -> Result<()> {
+        let prefix = ["rustusb", "agent", "--config", "/etc/rustusb/agent.json"];
+        let parse = |tail: Vec<&str>| {
+            let mut args = prefix.to_vec();
+            args.extend(tail);
+            Cli::try_parse_from(args)
+        };
+        let parsed = parse(vec![
+            "rule",
+            "fixed",
+            "--settled",
+            "retry",
+            "00000000-0000-4000-8000-000000000001",
+        ])
+        .map_err(|e| Error::InvalidInput(e.to_string()))?;
+        assert!(matches!(
+            parsed.command,
+            Command::Agent {
+                command: agent::Command::Rule {
+                    settled: true,
+                    command: agent::RuleCommand::Retry { .. },
+                    ..
+                },
+                ..
+            }
+        ));
+        assert!(
+            parse(vec![
+                "run",
+                "--automation-decisions-policy",
+                "/etc/rustusb/decisions.json"
+            ])
+            .is_ok()
+        );
+        assert!(
+            parse(vec![
+                "run",
+                "--automation-decisions-policy",
+                "/etc/rustusb/decisions.json",
+                "--automation-policy",
+                "/etc/rustusb/automation.json"
+            ])
+            .is_err()
+        );
+        assert!(parse(vec!["rule", "fixed", "--settled", "retry"]).is_err());
+        Ok(())
+    }
 }

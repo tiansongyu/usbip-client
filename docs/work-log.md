@@ -5,6 +5,10 @@
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。
 - 先写settled-rule-decisions-design：独立root2 trusted入口/startup opt-in和严格disk4，不改原root1/disk2/3；新有限decision/query协议及正负ID统一去重，原positive journal保持，失败先核已commit原正向/healthy，再原Store持久拒绝，未知writer不得伪Rejected。GUI保原query协议/UUID/payload，精确Rejected后显式恢复draft且不rebase；计划真实暂停前端poll造成service CAS、IPC超时/renderer reload/agent重启后的原查询与旧Native I/O。当前仅设计，尚无新产品/测试成功；全目标active。
 
+- 已接root2独立trusted reader/CLI冲突选项、严格disk4与有限独立rejection journal、共享正负UUID去重/新support-decide-query协议；原root1/2/3与旧响应shape不改。先核commit正向再持久拒绝，writer不确定不伪Rejected，Permission拒绝同事务audit一次。dirty两次workspace all-features check通过；首Runtime六项及journal两项实际通过。随后service143+frontend13（0fail/ignore）及当时GUI15通过，all-feature Clippy通过；新GUI两bridge测试之后加入，仍待完整gate。
+- frontend保原protocol/UUID/payload，原Applied须校验rule/revision/deleted，Rejected须正sequence且非Persistence；last receipt在Rust保原draft供显式恢复，未知support不降级发新edit、旧policy1明确false仍保守legacy。旧peer无法回答support时新GUI只读，已先补设计说明。只读检查曾误给CLI lib.rs及runtime/tests.rs、rules_tests.rs不存在，rg确认真实binary/flat测试路径后再读；无源码副作用。大输出截断后关键owner audit/Store/Runtime按小段补读。
+- 新qemu_rule_decisions组合E55/原Native全部264，明确schema4参数才允许新增完整字段，默认严格2/原E55默认3保留。先暂停GUI polling使观察2与实际service3不同，真实agent STOP/5s timeout/renderer reload、CONT后durable拒绝、合作wait/restart再原Query、默认Cancel恢复原revision2并继续原positive CRUD/I/O；无合成receipt/代理UID。完整生成guest64168B/dash语法及397输入preflight通过，尚未启动新QEMU；原E55方法只加显式schema参数，不改默认判据。 后续完整生成64924B/dash语法通过，补实际--settled CLI原查询两帧/预期exit1与全journal不变；known-unhealthy在GUI发新UUID前阻断、原Query/Stop独立。一次组合patch因fmt后context不匹配整批未写，按真实代码定位后修正。
+
 ## 2026-10-25：GUI 自动共享规则编辑（开始）
 
 - 从clean4de41e0f重读完整Phase0–7任务、当前Git/日志/核心skill与共享state/worker/bridge、规则RPC/journal和原GUI/QEMU契约。沿用UI错误恢复与技术文档技能，本轮读取writing-technical-design；复用既有已审架构，不新增依赖或子agent，不重建README/站点/global skill，不缩减goal。

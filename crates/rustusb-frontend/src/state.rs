@@ -1,5 +1,5 @@
 use crate::Options;
-use crate::automation::{RulesPage, UnresolvedRule};
+use crate::automation::{RuleDecisionReceipt, RulesPage, UnresolvedRule};
 use rustusb_core::application::{JobId, RequestId, SessionId};
 use rustusb_discovery::DeviceSnapshot;
 use rustusb_service::{
@@ -147,6 +147,8 @@ pub struct Snapshot {
     pub rules: RulesPage,
     /// Original issued rule edit, separate from Start and preferences.
     pub unresolved_rule: Option<UnresolvedRule>,
+    /// Last actual rule receipt and original payload, independent of profile selection.
+    pub last_rule_decision: Option<RuleDecisionReceipt>,
 }
 impl Snapshot {
     /// Initialize an unsampled view; no operation has been issued.
@@ -179,6 +181,7 @@ impl Snapshot {
             unresolved: None,
             rules: RulesPage::default(),
             unresolved_rule: None,
+            last_rule_decision: None,
         }
     }
     /// Retain pages with explicit stale status and discard live-health claims.
@@ -190,6 +193,8 @@ impl Snapshot {
         self.journal = None;
         self.health.clear();
         self.rules.current = false;
+        self.rules.decision_support = None;
+        self.rules.decision_support_status = "Stale: agent unavailable".into();
         self.rules.status = "Stale: agent unavailable; retained rule page".into();
         self.rules.events_status = "Stale: agent unavailable; retained event page".into();
     }
@@ -242,7 +247,12 @@ impl Snapshot {
             }
             Mutation::StopJob(job_id) => Some(Request::StopJob { job_id }),
             Mutation::StopSession(session_id) => Some(Request::StopSession { session_id }),
-            Mutation::Rule { profile, mutation } => self.rule_request(profile, mutation, fresh?),
+            Mutation::Rule { profile, mutation } => self.rule_request_with_protocol(
+                profile,
+                mutation,
+                fresh?,
+                self.rules.decision_support == Some(true),
+            ),
             Mutation::ResolveRule => self.rule_retry(),
         }
     }

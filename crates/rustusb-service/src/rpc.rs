@@ -11,6 +11,27 @@ use serde::{Deserialize, Serialize};
 pub enum Request {
     /// List profiles this kernel UID may read.
     Profiles,
+    /// Read settled-result support, separately from legacy Rules and delegation.
+    RuleDecisionSupport {
+        /// Fixed profile requiring this actual OS peer's Read permission.
+        profile: String,
+    },
+    /// Edit using explicit disk4 positive/negative durable result semantics.
+    DecideRule {
+        /// Complete fixed profile effect; not a key/endpoint override.
+        profile: String,
+        /// Original mutation namespace identity.
+        request_id: RequestId,
+        /// Exact bounded definition or revision mutation.
+        mutation: crate::automation::RuleMutation,
+    },
+    /// Query only an original settled-protocol decision; never reapply an edit.
+    RetryRuleDecision {
+        /// Same original fixed profile.
+        profile: String,
+        /// Same original mutation UUID.
+        request_id: RequestId,
+    },
     /// Read committed rules plus current finite condition metadata independently of WAL.
     Rules {
         /// Fixed profile requiring Read; only own rules (or root's admin view).
@@ -213,6 +234,25 @@ impl From<&rustusb_logging::Error> for LogReadFailure {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "result", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Response {
+    /// Current journal supports durable rejection receipts; not an authorization.
+    RuleDecisionSupport {
+        /// True for retained explicit disk4; no policy/grant is implied.
+        enabled: bool,
+    },
+    /// Exact original edit decision recorded before acknowledgement.
+    RuleDecided {
+        /// Original UUID checked by the frontend before clearing pending intent.
+        request_id: RequestId,
+        /// Original positive outcome or durable refusal; no cleanup claim.
+        decision: crate::automation::RuleDecision,
+        /// True for query/duplicate readback without reapplying the operation.
+        replayed: bool,
+    },
+    /// No retained result; neither rejection nor proof of no late original.
+    RuleDecisionExpired {
+        /// Same original query identity; never permission to create a new edit.
+        request_id: RequestId,
+    },
     /// Finite current rule metadata; no USB owner or authorization is transferred.
     Rules {
         /// Whether an explicit startup automation policy was loaded.

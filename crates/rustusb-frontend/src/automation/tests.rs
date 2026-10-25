@@ -126,3 +126,135 @@ fn start_stop_and_rule_queries_keep_separate_namespaces() -> Result<()> {
     );
     Ok(())
 }
+
+#[test]
+fn settled_query_protocol_and_payload_survive_profile_loss_and_uncertain_receipts() -> Result<()> {
+    let mut view = Snapshot::new(Options::default());
+    let mutation = edit()?;
+    assert!(matches!(
+        view.rule_request_with_protocol("original".into(), mutation.clone(), request(1)?, true),
+        Some(Request::DecideRule { .. })
+    ));
+    view.agent_stale();
+    view.clear_profile();
+    view.profile = Some("another".into());
+    view.rules.decision_support = Some(false);
+    view.rule_response(Response::Error {
+        code: Failure::State,
+    });
+    view.rule_response(Response::RuleDecisionExpired {
+        request_id: request(1)?,
+    });
+    assert!(
+        matches!(view.rule_retry(),Some(Request::RetryRuleDecision{profile,request_id})if profile=="original"&&request_id==request(1)?)
+    );
+    assert_eq!(
+        view.unresolved_rule
+            .as_ref()
+            .ok_or_else(|| Error::State("lost original".into()))?
+            .mutation,
+        mutation
+    );
+    view.rule_response(Response::RuleMutationApplied {
+        request_id: request(1)?,
+        outcome: RuleMutationOutcome {
+            rule_id: RuleId::new("00000000-0000-4000-8000-000000000003")?,
+            revision: 1,
+            deleted: false,
+        },
+        replayed: true,
+    });
+    assert!(
+        view.unresolved_rule.is_some(),
+        "wrong protocol cleared original"
+    );
+    Ok(())
+}
+#[test]
+fn only_valid_exact_settled_rejection_clears_identity_and_retains_the_original_draft() -> Result<()>
+{
+    use rustusb_service::automation::RuleDecision;
+    let mut view = Snapshot::new(Options::default());
+    let mutation = edit()?;
+    view.rule_request_with_protocol("fixed".into(), mutation.clone(), request(1)?, true);
+    for (id, sequence, failure) in [
+        (request(2)?, 1, Failure::State),
+        (request(1)?, 0, Failure::State),
+        (request(1)?, 1, Failure::Persistence),
+    ] {
+        view.rule_response(Response::RuleDecided {
+            request_id: id,
+            decision: RuleDecision::Rejected { sequence, failure },
+            replayed: true,
+        });
+        assert!(view.unresolved_rule.is_some());
+    }
+    view.rule_response(Response::RuleDecided {
+        request_id: request(1)?,
+        decision: RuleDecision::Rejected {
+            sequence: 1,
+            failure: Failure::State,
+        },
+        replayed: true,
+    });
+    assert!(view.unresolved_rule.is_none());
+    assert!(view.rule_retry().is_none());
+    let receipt = view
+        .last_rule_decision
+        .as_ref()
+        .ok_or_else(|| Error::State("lost receipt".into()))?;
+    assert_eq!(receipt.original.mutation, mutation);
+    assert_eq!(receipt.original.request_id, request(1)?);
+    assert_eq!(receipt.original.profile, "fixed");
+    assert!(receipt.original.settled_protocol);
+    assert!(view.rules.result.contains("Rejected original rule edit"));
+    assert!(view.unresolved.is_none());
+    Ok(())
+}
+#[test]
+fn positive_outcome_must_match_original_rule_revision_and_delete_effect() -> Result<()> {
+    use rustusb_service::automation::{ExpectedRevision, RuleDecision};
+    let mut view = Snapshot::new(Options::default());
+    let id = RuleId::new("00000000-0000-4000-8000-000000000003")?;
+    let other = RuleId::new("00000000-0000-4000-8000-000000000004")?;
+    view.rule_request_with_protocol(
+        "fixed".into(),
+        RuleMutation::Delete {
+            rule_id: id.clone(),
+            expected_revision: ExpectedRevision::new(2)?,
+        },
+        request(1)?,
+        true,
+    );
+    for (rule_id, revision, deleted) in [
+        (other, 3, true),
+        (id.clone(), 2, true),
+        (id.clone(), 3, false),
+    ] {
+        view.rule_response(Response::RuleDecided {
+            request_id: request(1)?,
+            decision: RuleDecision::Applied {
+                outcome: RuleMutationOutcome {
+                    rule_id,
+                    revision,
+                    deleted,
+                },
+            },
+            replayed: true,
+        });
+        assert!(view.unresolved_rule.is_some());
+    }
+    view.rule_response(Response::RuleDecided {
+        request_id: request(1)?,
+        decision: RuleDecision::Applied {
+            outcome: RuleMutationOutcome {
+                rule_id: id,
+                revision: 3,
+                deleted: true,
+            },
+        },
+        replayed: true,
+    });
+    assert!(view.unresolved_rule.is_none());
+    Ok(())
+}

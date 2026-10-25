@@ -154,6 +154,24 @@ impl From<ExpectedRevision> for u64 {
     }
 }
 
+/// An original rule-edit result, settled only by an actual durable transaction.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "decision", rename_all = "snake_case", deny_unknown_fields)]
+pub enum RuleDecision {
+    /// The original positive mutation, independent of its later rule/job state.
+    Applied {
+        /// Exact immutable positive edit receipt.
+        outcome: RuleMutationOutcome,
+    },
+    /// The original completed request was durably recorded without applying its edit.
+    Rejected {
+        /// Independent rejection sequence; never a cleanup or rule-event sequence.
+        sequence: u64,
+        /// Fixed secret-free failure category, not an arbitrary error message.
+        failure: crate::model::Failure,
+    },
+}
+
 /// Strict typed rule edit, independent of Start's deduplication namespace.
 ///
 /// The future service must bind a separate original mutation RequestId and the
@@ -471,6 +489,7 @@ impl AutomationGrant {
 pub struct AutomationPolicy {
     broker_uid: u32,
     grants: Vec<AutomationGrant>,
+    settled_rule_results: bool,
 }
 
 #[derive(Deserialize)]
@@ -479,6 +498,15 @@ struct PolicyFile {
     schema_version: u32,
     broker_uid: u32,
     grants: Vec<GrantFile>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct DecisionPolicyFile {
+    schema_version: u32,
+    broker_uid: u32,
+    grants: Vec<GrantFile>,
+    settled_rule_results: bool,
 }
 
 #[derive(Deserialize)]
@@ -520,12 +548,59 @@ impl AutomationPolicy {
         Self::bind(&bytes, config)
     }
 
+    /// Load explicit root schema2 delegation and opt in to disk4 settled results.
+    ///
+    /// Separate from the frozen schema1 reader; retain/join its blocking startup
+    /// work before opening a listener. This does not grant additional USB access.
+    pub fn read_decisions(path: &Path, config: &LoadedConfig) -> Result<Self> {
+        let bytes = rustusb_transport::config::read_root_document(path)
+            .map_err(|_| Error::Permission("trusted decision policy could not be read".into()))?;
+        Self::bind_decisions(&bytes, config)
+    }
+
+    fn bind_decisions(bytes: &[u8], config: &LoadedConfig) -> Result<Self> {
+        if bytes.len() > MAX_POLICY_BYTES {
+            return Err(Error::InvalidInput("decision policy byte bound".into()));
+        }
+        let file: DecisionPolicyFile = serde_json::from_slice(bytes)
+            .map_err(|_| Error::InvalidInput("decision policy schema".into()))?;
+        if file.schema_version != 2 || !file.settled_rule_results {
+            return Err(Error::InvalidInput(
+                "explicit decision policy version/opt-in".into(),
+            ));
+        }
+        let mut policy = Self::bind_file(
+            PolicyFile {
+                schema_version: 1,
+                broker_uid: file.broker_uid,
+                grants: file.grants,
+            },
+            config,
+        )?;
+        policy.settled_rule_results = true;
+        Ok(policy)
+    }
+
+    /// Explicit administrator opt-in to the versioned settled-result journal.
+    pub fn settled_rule_results(&self) -> bool {
+        self.settled_rule_results
+    }
+
+    #[cfg(test)]
+    pub(crate) fn fixture_decisions(bytes: &[u8], config: &LoadedConfig) -> Result<Self> {
+        Self::bind_decisions(bytes, config)
+    }
+
     fn bind(bytes: &[u8], config: &LoadedConfig) -> Result<Self> {
         if bytes.len() > MAX_POLICY_BYTES {
             return Err(Error::InvalidInput("automation policy byte bound".into()));
         }
         let file: PolicyFile = serde_json::from_slice(bytes)
             .map_err(|_| Error::InvalidInput("automation policy schema".into()))?;
+        Self::bind_file(file, config)
+    }
+
+    fn bind_file(file: PolicyFile, config: &LoadedConfig) -> Result<Self> {
         config.manifest.validate()?;
         if file.schema_version != 1
             || file.broker_uid == 0
@@ -578,6 +653,7 @@ impl AutomationPolicy {
         Ok(Self {
             broker_uid: file.broker_uid,
             grants,
+            settled_rule_results: false,
         })
     }
 
