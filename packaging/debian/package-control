@@ -59,7 +59,9 @@ def account():
             raise ValueError('rustusb group exists without the package account')
         entry = pwd.getpwnam('rustusb')
     group = grp.getgrnam('rustusb')
-    if (entry.pw_uid == 0 or entry.pw_gid != group.gr_gid
+    if (entry.pw_uid <= 0 or entry.pw_uid >= 4294967295
+            or group.gr_gid <= 0 or group.gr_gid >= 4294967295
+            or entry.pw_gid != group.gr_gid
             or entry.pw_dir != '/var/lib/rustusb-agent'
             or entry.pw_shell not in ('/usr/sbin/nologin', '/bin/false')
             or group.gr_mem):
@@ -131,9 +133,17 @@ def empty_cgroup(name):
 def stop():
     if not Path('/run/systemd/system').is_dir() or Path('/proc/1/comm').read_text().strip() != 'systemd':
         raise ValueError('upgrade/removal requires the booted systemd manager; offline roots unsupported')
+    if not Path('/sys/fs/cgroup/cgroup.controllers').is_file():
+        raise ValueError('package stop gate requires unified cgroup v2')
     for unit in UNITS:
         before = show(unit)
-        if before['LoadState'] != 'not-found':
+        if before['LoadState'] == 'masked':
+            # A fully inactive administrator mask has no runnable unit policy.
+            # Verify its actual lack of owners below; never unmask just to stop.
+            if (before['ActiveState'] != 'inactive' or before['MainPID'] != '0'
+                    or before['ControlPID'] != '0'):
+                raise ValueError(f'{unit}: masked unit still has an active owner')
+        elif before['LoadState'] != 'not-found':
             if (before['KillMode'] != 'mixed' or before['SendSIGKILL'] != 'no'
                     or before['TimeoutStopUSec'] != 'infinity' or before['Restart'] != 'no'):
                 raise ValueError(f'{unit}: unsafe stop-policy override; inspect before package operation')

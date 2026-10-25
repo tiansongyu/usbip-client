@@ -42,6 +42,8 @@ jobs:
       - name: Build matching base and native preview Debian packages
         run: |
           cargo build --workspace --all-features --release --locked
+          cargo fetch --locked
+          cargo fetch --locked --manifest-path apps/rustusb-gui/Cargo.toml
           python3 packaging/debian/build.py --output target/debian \
             --version "0.1.0~ci${GITHUB_RUN_NUMBER}+g${GITHUB_SHA:0:12}-1" \
             --gui apps/rustusb-gui/target/release/rustusb-gui

@@ -28,9 +28,10 @@ def run(args, expected=(0,)):
     global INDEX
     INDEX += 1
     base = OUT/f'command-{INDEX:04d}'
-    result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    base.with_suffix('.stdout').write_bytes(result.stdout)
-    base.with_suffix('.stderr').write_bytes(result.stderr)
+    base.with_suffix('.started.json').write_text(json.dumps({'args': [str(x) for x in args], 'monotonic': time.monotonic()})+'\n')
+    with base.with_suffix('.stdout').open('wb') as stdout, base.with_suffix('.stderr').open('wb') as stderr:
+        child = subprocess.run(args, stdout=stdout, stderr=stderr)
+    result = subprocess.CompletedProcess(args, child.returncode, base.with_suffix('.stdout').read_bytes(), base.with_suffix('.stderr').read_bytes())
     base.with_suffix('.json').write_text(json.dumps({'args': [str(x) for x in args], 'exit': result.returncode})+'\n')
     if result.returncode not in expected:
         raise RuntimeError(f'command {INDEX} returned {result.returncode}: {args}')
@@ -136,11 +137,16 @@ def desktop():
 def install():
     run(['dpkg-query', '-W', 'systemd', 'dpkg', 'init-system-helpers'])
     run(['systemctl', '--version']); run(['uname', '-a'])
-    run(['apt-get', 'update'])
+    # Fixture-only network limits, independent of infinite service cleanup wait.
+    apt = ['apt-get', '-o', 'Acquire::Languages=none', '-o', 'Acquire::http::Timeout=30',
+           '-o', 'Acquire::https::Timeout=30', '-o', 'Acquire::Retries=2']
+    run([*apt, 'update'])
     packages = json.loads((FIXTURE/'packages.json').read_text())
     first = [str(FIXTURE/name) for name in packages['first']]
     second = [str(FIXTURE/name) for name in packages['second']]
-    run(['env', 'DEBIAN_FRONTEND=noninteractive', 'apt-get', 'install', '-y', *first, 'xvfb', 'openbox', 'wmctrl'])
+    run(['env', 'DEBIAN_FRONTEND=noninteractive', *apt, 'install', '--no-install-recommends', '-y', *first, 'xvfb', 'openbox', 'wmctrl'])
+    run(['dpkg-query', '-W', 'systemd', 'dpkg', 'init-system-helpers', 'libgtk-3-0*', 'libwebkit2gtk-4.1-0'])
+    run(['systemctl', '--version'])
     for unit in ('rustusb-agent.service', 'rustusb-helper.service'):
         check(text(['systemctl', 'is-enabled', unit], (1,)) == 'disabled', 'fresh '+unit+' disabled')
         check(service(unit, 'ActiveState') == 'inactive', 'fresh '+unit+' inactive')
@@ -157,6 +163,14 @@ def install():
     result = run(['/usr/bin/python3', '-I', '/usr/libexec/rustusb/package-control', 'prepare-agent'], (1,))
     check(b'unexpected existing directory' in result.stderr and (data.stat().st_mode & 0o777) == 0o755 and sha(data/'retained-sentinel') == before, 'wrong mode refused without repair/data loss')
     data.chmod(0o700)  # Explicit test administrator correction, not product repair.
+    os.chown(data, 0, 0)
+    run(['/usr/bin/python3', '-I', '/usr/libexec/rustusb/package-control', 'prepare-agent'], (1,))
+    check(data.stat().st_uid == 0 and sha(data/'retained-sentinel') == before, 'wrong owner refused without recursive chown')
+    os.chown(data, entry.pw_uid, entry.pw_gid)
+    runtime = Path('/run/rustusb-agent'); runtime.symlink_to(data, target_is_directory=True)
+    run(['/usr/bin/python3', '-I', '/usr/libexec/rustusb/package-control', 'prepare-agent'], (1,))
+    check(runtime.is_symlink() and sha(data/'retained-sentinel') == before, 'symlink leaf refused without following or deletion')
+    runtime.unlink()  # Explicit removal of this fixture's own test symlink.
     run(['systemctl', 'start', 'rustusb-helper.service', 'rustusb-agent.service']); ready()
     desktop()
     started = agent('start', 'package-virtual')

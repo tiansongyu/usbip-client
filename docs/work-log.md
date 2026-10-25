@@ -2,6 +2,9 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- clean7cdc007f首Jammy全VM dev01未完成：cloud-init0、APT update0（32.2MB/5分23秒），install仍下载时作者误据无partial文件推断停滞并主动SIGINT，实际child-2/guest脚本1；确认dpkg-query无rustusb，未进产品安装。回收成功、QEMU实际0/无forced/三guard真。完整APT原件复核显示已Get到179项，故不是产品FAIL或完全网络中断，保留取消/网络观察与原summary，不补判成功。四deb静态audit通过（539/964成员，188/345许可节点）。
+- 所有actual handle terminal后，仅本轮脚本/包管理改进：stdout/stderr实时落文件、APT仅fixture网络timeout和no-recommends/无翻译索引，服务cleanup仍无限等；补实际wrong-owner/symlink负向。预审修正既存mask完全inactive时不unmask、仍核实际owner/cgroup/exit；专用GID须非零、明确cgroup2、configure/abort文案不虚称一定disabled/stopped；CI显式fetch后offline许可库存，未修改Rust/三ELF。需新的clean完整VM运行。
+
 - clean47355db9原root1076+GUI18全gate通过、440冻结输入/HEAD/clean guards真，三ELF逐f174相同。随后仅packaging/CI补充：prerm输出实际operation以识别failed-upgrade；分发前按本机目标graph补188/345节点许可清单、原license/notice及selectors原MPL source，发现缺文本从cargo_vcs固定上游补齐，无新crate。第一次猜Mozilla /index.txt为404导致下载辅助脚本末段失败（前三文件已写），改用实际官方media文本并保存SHA/来源；stylo根LICENSE404保留为研究失败。dev02包build完成/receipt，包装调用误仅打印output未打印sessionID，已只读确认原build PID不存在/完整receipt与末JSON，无重复build冒充新运行。CI沿用原四格GUI gate后构建base/分包并上传preview，不冒充安装验证。
 
 - 两只读组件研究完成，保存Debian/systemd digest与固定上游引用；DPKG failed-upgrade可绕过失败old prerm、conffile先于postrm消失及d-s-h mask默认等均进设计。实现基础/GUI .deb builder、隔离Python固定命令目录准备/真实cgroup stop gate、无自动启动的两unit、显式生命周期脚本与英文指南；不改Rust数据通路。首development build成功，实际GUI help纠正desktop为--manifest，64px icon按真实尺寸安装；初稿误用不存在native-gui.md改为实际gui.md。两官方dated image gpgv/sha通过，Jammy2099e63d/730529792B、Noble04e8f246/621284352B。完整VM新fixture包含实际ordinary GUI WM close、停止失败old/new fallback、SIGSTOP真实upgrade等待/CONT、reboot/remove/purge；目前尚未运行，不作通过声明。
