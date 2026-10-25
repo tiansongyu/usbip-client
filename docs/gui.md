@@ -4,8 +4,9 @@ The Linux Tauri application uses the same headless observation/action worker as
 the TUI. Local and remote inventories, profile actions, jobs, sessions, audit and
 preferences all use the existing libraries and authenticated application service.
 Settings also edits explicitly delegated fixed-profile automatic rules. This is
-an early preview; settled-negative rule recovery, packaged installation and full
-GUI acceptance remain unfinished.
+an early preview. [Process-restart recovery](frontend-recovery.md) retains original
+confirmed requests for explicit queries; packaged installation and full GUI
+acceptance remain unfinished.
 
 ## Build and open
 
@@ -100,8 +101,13 @@ neither rebases nor submits. Inspect current rules and explicitly choose a lates
 revision before another confirmation. A legacy disk3 agent retains conservative retry;
 an old agent unable to answer support is read-only for new GUI edits. Unknown
 support and known unhealthy journals block new edits before creating UUIDs.
-Original queries and independent Stop remain available. Retention covers this
-frontend process and renderer reload, not whole-process crashes/restarts.
+Original queries and independent Stop remain available. [Checked local recovery](frontend-recovery.md)
+now preserves both original UUID namespaces, rule protocol/payload and the last
+issued rule receipt/draft across a whole frontend-process restart. It sends no
+automatic mutation. New Start/rule edits require a healthy private writer; another
+writer or invalid storage makes them unavailable. System/Settings show this
+separately from agent journal health. Unsaved renderer forms and preferences are
+not automatically saved by that mechanism.
 
 ## Validation and limits
 
@@ -118,9 +124,13 @@ adds fixed-profile CRUD, exact revisions, a true lost IPC reply and native rende
 reload/original query on IPv4/IPv6, with original Native I/O and GUI regressions.
 [Settled-decision validation](research/settled-rule-decisions-validation.md) adds
 actual stale-revision refusal, timeout/reload, service restart and original query
-on both families, followed by explicit original-draft restoration. Whole frontend
-crash persistence, `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and
-hardware/Windows acceptance remain unfinished.
+on both families, followed by explicit original-draft restoration.
+[Process-restart validation](research/frontend-intent-recovery-validation.md) adds
+actual whole-GUI SIGKILL/relaunch, both original namespaces and the last issued
+draft on IPv4/IPv6, with competing-writer/private-directory refusal and shared TUI
+regressions. Unknown/expired outcomes remain conservative. Power-loss durability,
+`.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
+acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded
 from the root Native workspace; its root checks do not replace the GUI gate.

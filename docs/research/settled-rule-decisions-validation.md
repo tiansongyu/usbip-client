@@ -208,3 +208,5 @@ still match their recorded sources. CI job conclusions are not CI log analysis,
 executed-ELF sampling or a per-platform test recount. Local software and QEMU
 remain pinned to650c53a8; CI/Pages belong to5b54c73a. The final receipt-only commit
 is a separate revision. The remaining full-objective limitations above stay open.
+
+Later [E57 frontend-process validation](frontend-intent-recovery-validation.md) adds private original-request persistence across actual native process crashes. This E56 source, original failures and results remain assigned to their own revisions; it does not become power-loss or complete GUI acceptance.

@@ -432,3 +432,7 @@ E55 [GUI规则runner](../scripts/qemu_gui_rules/README.md)组合原Native264/三
 ## 持久规则决策（E56）
 
 先读[设计](research/settled-rule-decisions-design.md)、[报告](research/settled-rule-decisions-validation.md)与[runner](../scripts/qemu_rule_decisions/README.md)。`python3 scripts/qemu_rule_decisions/run.py --family ipv4 --evidence /tmp/NEW-UNIQUE-DECISION-EVIDENCE`，ipv6另用全新目录。仅显式参数允许完整disk4，原默认strict2/E55 strict3不变；保原264/三I/O/Rootproof。实际暂停poll造成观察2/service3，agent STOP/IPC超时/renderer reload→CONT真实持久拒绝→合作wait/重启→原GUI及CLI query（CLI预期1）→默认Cancel恢复原revision2，不合成receipt或代理UID。冻结所有source/HEAD/三ELF/driver至全部actual terminal；完整root/独立GUI及原规则双栈、动作双栈、v2/single回归分别记账。有限负向不是USB cleanup、全进程崩溃恢复或硬件验收。
+
+## 前端跨进程请求恢复（E57）
+
+先读[设计](research/frontend-intent-recovery-design.md)、[报告](research/frontend-intent-recovery-validation.md)和[runner](../scripts/qemu_frontend_recovery/README.md)。新双栈组合保E56/E55/原Native264/三I/O/全Rootproof，四次计划whole-GUI SIGKILL/reap137与六actual WM close0分开，不把计划crash当合作join。保原two namespace/protocol/payload/file，最后settled后另杀进程恢复已发draft；真实第二GUI持锁/坏目录拒绝无新UUID或服务写入。readonly窗口显式要求Start disabled，默认旧helper仍Start enabled。三原PTY child明确测试XDG_STATE_HOME，不重置state或改原断言；原GUI/规则/v2/single及TUI动作/故障/basic均双栈另验。冻结source/head/三ELF至所有实际handle terminal，保留两最初FAIL；不把Cargo、guest、native、PTY与USB计数合并。

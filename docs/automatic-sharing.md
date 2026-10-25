@@ -178,8 +178,11 @@ before creating UUIDs. Original queries and independent Stop remain available.
 After an exact durable refusal, **Restore rejected draft** defaults Cancel and
 restores the original profile, definition and revision. Inspect current rules,
 then explicitly choose any latest revision before confirming another edit; there
-is no silent rebase or resubmission. Rust retains this identity/draft across a
-renderer reload, but whole frontend-process crash persistence is unfinished.
+is no silent rebase or resubmission. [Checked frontend recovery](frontend-recovery.md)
+retains confirmed original identity/protocol/payload and the last issued receipt/
+draft across renderer reload and a whole process restart. It requires a healthy
+private writer for new edits and never automatically resubmits them. Unconfirmed
+renderer form changes are not saved by that mechanism.
 
 [Validation](research/settled-rule-decisions-validation.md) records actual dual-stack
 GUI timeout, renderer reload, service restart and original decision queries,

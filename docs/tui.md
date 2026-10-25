@@ -80,7 +80,7 @@ The default location is `$XDG_CONFIG_HOME/rustusb/preferences.json`, or
 without an absolute home fallback, persistence is visibly disabled.
 
 Use `--preferences-directory /absolute/user/directory` to choose another checked
-location or `--no-preferences` for invocation-only behavior. Startup flags
+location or `--no-preferences` for invocation-only preferences. Startup flags
 `--refresh-seconds 10`, `--auto-refresh` / `--no-auto-refresh`, and
 `--color` / `--monochrome` override loaded values without saving them. Later
 keyboard changes apply in memory. `l` explicitly reloads the file/defaults and
@@ -105,3 +105,18 @@ The viewport is bounded to 240x100 cells, untrusted display controls/bidi marks
 are stripped, and narrow terminals have a details overlay. Exit joins issued
 frontend requests and actual metadata owners; permanent OS/terminal blocking is
 not claimed cancellable. See the [ownership design](research/tui-design.md).
+
+## Original requests after a process restart
+
+The shared [request-recovery store](frontend-recovery.md) saves confirmed Start
+UUIDs before IPC, independently of preferences. It uses XDG state (or
+`$HOME/.local/state/rustusb`), so `--no-preferences` does not disable it. Settings
+shows its own status. A busy/invalid/unavailable private writer blocks new Start
+before a UUID, while retained original queries and exact Stop remain independent.
+After reopening, `e` confirms only the original profile/UUID, even after current
+profile or service changes. A matching result is locally recorded before its
+slot clears. Generic/expired results remain conservative; never delete state to
+resolve uncertainty. Closing the frontend still leaves agent jobs independent.
+[Validation](research/frontend-intent-recovery-validation.md) covers actual native
+crashes plus all six original paired TUI regressions; it is not power-loss or
+installed reboot acceptance.

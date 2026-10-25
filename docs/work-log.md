@@ -12,6 +12,11 @@
 
 - clean f717b0c0第二IPv4仍实际FAIL、两guest0/无forced/六guard真；新增last-http原件为false，按实际gui_open源码定位其末尾强制等待Start enabled，恰与竞争/坏目录只读场景要求Start disabled相反，不是产品startup失败。仅新wrapper加显式GUI_EXPECT_READONLY分支，负向要求profile正确且Start disabled，默认仍原enabled；不删除竞争场景/不放宽原verifier。两FAIL继续保留，不补造其原UUID/USB成功。产品/三ELF仍逐f174一致，需新clean fresh运行。
 
+- clean10117a0e第三IPv4新case实际PASS，原264+46+27+78/三I/O与计划四native137/六WM0通过；随后最多两独立invocation并行且每batch全实际wait，最终16case全部PASS/31guest0/无forced/全部适用guards真。60native=51合作0+8计划137+原single预期1，96TUI PTY0；原GUI规则/settled/actions双栈、v2/single、三类TUI双栈不弱化。实际428源与三ELF映射软件f174/fixture10117仅两文件差异；两原FAIL不可改判。offline cargo metadata复核root222/GUI475库存逐字节同、两lock仅内部frontend多sha2边，无外部包/版本/checksum变化。
+- 所有actual handles terminal后collector通过13064成员/155701511B roundtrip，tar36255107B/SHAb847ae55a46d0851004bb9f9b4b65915b671a22f6eb0ffb17b92abe642c5894c，逐源实际Git与三ELF、两FAIL/CLI原件完整。新双栈原proc进一步同作者只读核client broker确T/UID2000、endpoint digest匹配实际public manifest，非新执行或独立安全审计。两实际1180×760 PNG已查看，是后续positive/deleted与新local recovery状态、各自真实scroll，非中间负向pixel/a11y全验收。补英文guide/report与README/site等当前能力，未确认renderer表单/Unknown-Expired安全清除/断电与安装态reboot/完整目标不缩减；静态QA、SSH push、远端CI/Pages待实际完成。
+
+- 静态QA首PASS428源/28文档/269 targets/46 site refs、三ELF、八site仅index、四global skill/symlink，CLI/TUI/GUI实际help通过。真实IAB1280/390无横溢、新链接实际keyboard focus2px、mobile选择原flow-mobile SVG，390无JS三static panels/新文案/命令可读；首below-fold GUI图仍deferred（没有误判loaded），另实际click到GUI heading后三图全部loaded。normal error/warn空，三个owned tab关闭、viewport reset、owned server实际INT wait130。按desktop范围查skill quick-reference critical/high与pro-rules，不冒称mobile/完整a11y；两原生PNG仍后续positive/deleted归属。
+
 ## 2026-10-25：自动规则持久拒绝回执（开始）
 
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。

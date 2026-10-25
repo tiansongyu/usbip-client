@@ -149,3 +149,5 @@ cargo build --workspace --release
 E55 [GUI规则验收](research/gui-automatic-rules-validation.md)：clean7ef产品/root1027+GUI15软件，clean e668仅fixture修订且产品/三ELF不变，双栈规则与原GUI actions双栈/v2/single六QEMU/11guest0；34 native child含原single预期未决1。真实5s IPC超时/renderer reload/原UUID查询、CRUD/独立job/原264三I/O通过，首DOM同步FAIL与第二tombstone verifier FAIL保留。settled负向回执/安全协调、进程崩溃ID持久化、dynamic pool、物理远端receipt、完整GUI/包/安装/硬件及后续完整Phase仍待完成。
 
 E56 [持久拒绝与原草稿恢复](research/settled-rule-decisions-validation.md)：clean650c53a8 root1054+GUI17/410输入、八QEMU/15guest0/40native child通过；显式root2/disk4，真实超时/reload/服务重启后原查询及原revision恢复，不放宽原264/I/O/Rootproof。闭合有限settled负向缺口，整个前端进程崩溃ID、dynamic pool、物理远端安全receipt、完整GUI/安装/性能/硬件G1/G2/Windows及原完整Phase0–7仍待完成。
+
+E57 [跨进程请求恢复验收](research/frontend-intent-recovery-validation.md)：产品/软件clean f174f434 root1076+GUI18/428输入，final harness10117a0e仅两新fixture变更；最终16 QEMU/31guest0，60native（51合作0/8计划137/原single预期1）与96 TUI PTY0全部通过。两原readonly-helper FAIL不改判，原264/I/O/Rootproof保持；已闭合确认过的Start/rule identities与最后已发draft跨process保留。未确认表单、所有未知/Expired安全协调、断电/安装态reboot、动态pool、物理远端receipt、完整GUI/安装/性能/硬件/Windows及原全目标继续未完成。

@@ -117,6 +117,10 @@ after a real lost reply. Opt-in [settled decisions](docs/research/settled-rule-d
 add durable refusals, service-restart queries and explicit original-draft recovery.
 Dynamic pools and physical remote automatic import remain unfinished.
 
+The shared [frontend recovery store](docs/frontend-recovery.md) saves confirmed
+Start/rule identities before IPC. After a process restart, explicitly query the
+original request; unconfirmed form edits are not automatically saved.
+
 [Rust-engine rule tests](docs/research/automatic-sharing-rust-qemu-validation.md)
 also cover virtual remote import and USBFS local rules over framed-v2 on both IP
 families, with real I/O, directional connection loss and exact cleanup proofs.
@@ -204,8 +208,10 @@ HID/FTDI I/O after native windows close. [GUI rule tests](docs/research/gui-auto
 now cover fixed-profile edits, renderer reload and real unknown-outcome recovery
 on both address families. [Durable refusal tests](docs/research/settled-rule-decisions-validation.md)
 also verify explicit draft restoration after timeout and service restart.
-Whole frontend crash persistence, packaged installation and full GUI/hardware
-acceptance remain unfinished.
+[Process-restart tests](docs/research/frontend-intent-recovery-validation.md) also
+cover whole-GUI SIGKILL/relaunch and last-issued-draft restoration on both families.
+Packaged installation, power-loss durability and full GUI/hardware acceptance
+remain unfinished.
 
 [Same-connection RTT tests](docs/research/gui-link-health-validation.md) also
 verify live v2 samples, retained fault history and reading-state preservation

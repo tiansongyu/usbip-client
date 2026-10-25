@@ -1,0 +1,106 @@
+    Checking rustusb-core v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-core)
+    Checking rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+    Checking rustusb-protocol v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-protocol)
+    Checking rustusb-logging v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-logging)
+    Checking rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+    Checking rustusb-discovery v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-discovery)
+    Checking rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+    Checking rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+    Checking rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+    Checking rustusb-frontend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-frontend)
+warning: constant `LIMIT` is never used
+  --> crates/rustusb-frontend/src/recovery.rs:13:7
+   |
+13 | const LIMIT: u64 = 16 * 1024;
+   |       ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: enum `Slot` is never used
+  --> crates/rustusb-frontend/src/recovery.rs:17:6
+   |
+17 | enum Slot<T> {
+   |      ^^^^
+
+warning: method `into_option` is never used
+  --> crates/rustusb-frontend/src/recovery.rs:27:8
+   |
+26 | impl<T> Slot<T> {
+   | --------------- method in this implementation
+27 |     fn into_option(self) -> Option<T> {
+   |        ^^^^^^^^^^^
+
+warning: struct `Retained` is never constructed
+  --> crates/rustusb-frontend/src/recovery.rs:36:19
+   |
+36 | pub(crate) struct Retained {
+   |                   ^^^^^^^^
+
+warning: associated items `from_view`, `restore`, and `validate` are never used
+  --> crates/rustusb-frontend/src/recovery.rs:42:19
+   |
+41 | impl Retained {
+   | ------------- associated items in this implementation
+42 |     pub(crate) fn from_view(view: &Snapshot) -> Self {
+   |                   ^^^^^^^^^
+...
+49 |     pub(crate) fn restore(self, view: &mut Snapshot) {
+   |                   ^^^^^^^
+...
+54 |     fn validate(&self) -> Result<()> {
+   |        ^^^^^^^^
+
+warning: struct `Document` is never constructed
+  --> crates/rustusb-frontend/src/recovery.rs:84:8
+   |
+84 | struct Document {
+   |        ^^^^^^^^
+
+warning: associated items `new` and `checked` are never used
+   --> crates/rustusb-frontend/src/recovery.rs:93:8
+    |
+ 92 | impl Document {
+    | ------------- associated items in this implementation
+ 93 |     fn new(state: Retained, broker_uid: u32) -> Self {
+    |        ^^^
+...
+103 |     fn checked(self, broker_uid: u32) -> Result<Retained> {
+    |        ^^^^^^^
+
+warning: struct `Recovery` is never constructed
+   --> crates/rustusb-frontend/src/recovery.rs:122:19
+    |
+122 | pub(crate) struct Recovery {
+    |                   ^^^^^^^^
+
+warning: associated items `default_directory`, `open`, `writable`, `status`, `save`, and `save_with` are never used
+   --> crates/rustusb-frontend/src/recovery.rs:133:19
+    |
+132 | impl Recovery {
+    | ------------- associated items in this implementation
+133 |     pub(crate) fn default_directory() -> Option<PathBuf> {
+    |                   ^^^^^^^^^^^^^^^^^
+...
+136 |     pub(crate) fn open(directory: PathBuf, manifest: &Manifest) -> Result<Self> {
+    |                   ^^^^
+...
+158 |     pub(crate) fn writable(&self) -> bool {
+    |                   ^^^^^^^^
+...
+161 |     pub(crate) fn status(&self) -> &'static str {
+    |                   ^^^^^^
+...
+170 |     pub(crate) fn save(&mut self, retained: Retained) -> Result<()> {
+    |                   ^^^^
+...
+177 |     fn save_with(&mut self, retained: Retained, before_commit: impl FnOnce() -> Result<()>) -> Result<()> {
+    |        ^^^^^^^^^
+
+warning: function `directory_from` is never used
+   --> crates/rustusb-frontend/src/recovery.rs:206:4
+    |
+206 | fn directory_from(state: Option<OsString>, home: Option<OsString>) -> Option<PathBuf> {
+    |    ^^^^^^^^^^^^^^
+
+warning: `rustusb-frontend` (lib) generated 10 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.88s

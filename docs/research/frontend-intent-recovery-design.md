@@ -1,6 +1,8 @@
 # Frontend request recovery across process restarts
 
-Status: implementation contract written before source changes,2026-10-25.
+Status: implementation contract written before source changes,2026-10-25;
+[scoped validation](frontend-intent-recovery-validation.md) now passes, with local
+software/product at f174f434 and final QEMU at10117a0e.
 Continues the full Phase0–7 objective and requirements4.5/4.9/4.10. E56 is verified
 progress at clean650c53a8; its [report](settled-rule-decisions-validation.md) retains
 a whole-frontend-process persistence gap. This document is not validation or full
