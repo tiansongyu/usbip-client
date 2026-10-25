@@ -26,6 +26,8 @@ def guest():
     source=baseline.guest();replace=baseline.replace
     anchor='[ "${AGENT_COMMON:-}" = 1 ] && [ "$BACKEND" = native ] || exit 2\n'
     source=replace(source,anchor,anchor+(HERE/'guest.sh').read_text()+'\n')
+    # Preserve the actual final HTTP body without changing its return status.
+    source=replace(source,'    /usr/bin/curl --silent --show-error --fail-with-body --max-time 35 -X "$method" -H \'Content-Type: application/json\' --data "$body" "http://127.0.0.1:15888$route" >"$dest"\n','    local recovery_http_exit\n    if /usr/bin/curl --silent --show-error --fail-with-body --max-time 35 -X "$method" -H \'Content-Type: application/json\' --data "$body" "http://127.0.0.1:15888$route" >"$dest"; then recovery_http_exit=0;else recovery_http_exit=$?;fi\n    cp "$dest" "/tmp/gui-$GUI_LABEL-last-http.json"\n    return "$recovery_http_exit"\n')
     # Independent actual WebKit drivers permit a second read-only GUI concurrently.
     source=replace(source,'http://127.0.0.1:15888$route','http://127.0.0.1:${GUI_PORT:-15888}$route')
     source=replace(source,'--port=15888','--port=${GUI_PORT:-15888}')

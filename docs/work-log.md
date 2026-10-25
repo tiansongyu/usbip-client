@@ -8,6 +8,8 @@
 
 - endpoint绑定补强后frontend23/TUI9定向通过；新guest71146B/402输入的前两次dash preflight通过，尚无QEMU运行。新wrapper保E56/E55/原264，计划四个whole-GUI SIGKILL/reap137（Start、正rule、负rule、已settled后last draft）与六WM close0、两OS UID1000 readonly负向；新增verifier明确磁盘整数到原native十进制字符串投影比较，未放宽原服务/Rootproof判据。组合检查补独立第二driver端口的status探测；发现三原PTY夹具PID1无普通HOME，先补设计，再仅child checked setenv显式测试XDG_STATE_HOME（不删/重置record、不改旧断言），需完整TUI回归。只读定位曾猜不存在qemu_agent目录、qemu_tui/guest-init.sh及pyte venv bin路径，改用实际source/package目录，无产品副作用。
 
+- clean f174f434完整root1076+GUI18/0fail/0ignore、428输入/三ELF/HEAD与clean guard通过；CLI54a67744…22447632B/helper475b2f97…7525544B/GUI5c9ec587…17897832B。原CLI五实际进程通过。首新IPv4 QEMU实际FAIL（两guest实际0/无forced/六guard真）：server三个计划GUI kill137与重开/草稿步骤已执行，client在第二native实例profiles准备时失败、未执行计划Start/I/O，故不能判旧264或wholecase通过。原始summary与采证不改；大summary误按blacklist打印包含source_inputs导致截断，改为白名单小输出。所有actual handles terminal后只给新fixture补最后HTTP原body保存、保原return code与断言，用实际错误继续诊断，不猜产品修复/不删竞争负向；产品/三ELF不改。一次诊断patch Python引号语法错且set-e停止，无文件写入，改用短独立脚本。
+
 ## 2026-10-25：自动规则持久拒绝回执（开始）
 
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。
