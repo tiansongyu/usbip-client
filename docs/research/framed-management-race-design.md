@@ -95,3 +95,15 @@ the real close deadline and requiring server LocalDataStall and client clean EOF
 Verify the revised negative against the original pre-fix production link source;
 it must still fail there. Do not accept arbitrary errors, remove the original
 half-close test, add ignores or call a timeout a successful peer completion.
+
+The 980445be/da111ead normal-close regressions still fail (original half-close
+and/or resumed TLS peer), with actual server BrokenPipe observation. The fixed
+h2 client automatically initiates close when its stream references disappear.
+Dropping completed receive/ping and send references **before** orderly connection
+close introduced that additional race against the server's graceful control
+exchange. Revise the correction: retain the original LinkIo send and driver
+receive/ping handles through actual connection close, and drop them only before
+publishing the final outcome. No application buffer or peer control work is
+discarded; do not mask BrokenPipe. Keep the normal graceful server progression,
+existing stop/timeout and strict owner outcomes. Temporary test-only diagnostics
+print typed IO kind/reason flags only and will be removed before delivery.

@@ -353,7 +353,7 @@ impl Drop for LinkOwner {
 /// Bounded application bytes over stream1, without a public h2/TLS extraction API.
 pub struct LinkIo {
     receive: DuplexStream,
-    send: Option<Quiet<h2::SendStream<Bytes>>>,
+    send: Quiet<h2::SendStream<Bytes>>,
     flush: FlushMonitor,
     shared: Arc<Shared>,
     data_enqueued: u64,
@@ -421,19 +421,16 @@ impl AsyncWrite for LinkIo {
         let wanted = bytes.len().min(FRAME);
         let capacity = this
             .send
-            .as_mut()
-            .and_then(|send| {
-                send.with_mut(|send| {
-                    send.reserve_capacity(wanted);
-                    if send.capacity() > 0 {
-                        return Poll::Ready(Ok(send.capacity()));
-                    }
-                    match send.poll_capacity(cx) {
-                        Poll::Pending => Poll::Pending,
-                        Poll::Ready(Some(Ok(capacity))) => Poll::Ready(Ok(capacity)),
-                        Poll::Ready(_) => Poll::Ready(Err(failed())),
-                    }
-                })
+            .with_mut(|send| {
+                send.reserve_capacity(wanted);
+                if send.capacity() > 0 {
+                    return Poll::Ready(Ok(send.capacity()));
+                }
+                match send.poll_capacity(cx) {
+                    Poll::Pending => Poll::Pending,
+                    Poll::Ready(Some(Ok(capacity))) => Poll::Ready(Ok(capacity)),
+                    Poll::Ready(_) => Poll::Ready(Err(failed())),
+                }
             })
             .unwrap_or_else(|| Poll::Ready(Err(failed())));
         if let Err(error) = this.shared.update(|h| {
@@ -458,12 +455,9 @@ impl AsyncWrite for LinkIo {
         };
         let sent = this
             .send
-            .as_mut()
-            .and_then(|send| {
-                send.with_mut(|send| {
-                    send.send_data(Bytes::copy_from_slice(&bytes[..count]), false)
-                        .map_err(|_| failed())
-                })
+            .with_mut(|send| {
+                send.send_data(Bytes::copy_from_slice(&bytes[..count]), false)
+                    .map_err(|_| failed())
             })
             .unwrap_or_else(|| Err(failed()));
         if let Err(e) = sent {
@@ -496,10 +490,7 @@ impl AsyncWrite for LinkIo {
         if !this.fin_enqueued {
             let result = this
                 .send
-                .as_mut()
-                .and_then(|send| {
-                    send.with_mut(|send| send.send_data(Bytes::new(), true).map_err(|_| failed()))
-                })
+                .with_mut(|send| send.send_data(Bytes::new(), true).map_err(|_| failed()))
                 .unwrap_or_else(|| Err(failed()));
             if let Err(e) = result {
                 this.shared.fail(LinkEnd::Protocol);
@@ -515,10 +506,6 @@ impl AsyncWrite for LinkIo {
         }
         let result = this.flush.poll_flushed(cx, this.data_enqueued, true);
         if matches!(result, Poll::Ready(Ok(()))) {
-            // The actual FIN fence is complete. Retaining this finished h2
-            // reference would prevent the client's connection from shutting
-            // down after the receive half also drains. Keep the readable I/O.
-            drop(this.send.take());
             this.shared.local_fin_flushed.store(true, Ordering::Release);
             this.shared.wake.notify_one();
         }
@@ -629,7 +616,7 @@ fn start(
     Ok(Link {
         io: LinkIo {
             receive: reader,
-            send: Some(send),
+            send,
             flush,
             shared: shared.clone(),
             data_enqueued: 0,
@@ -871,8 +858,6 @@ async fn driver(
     };
     // Only completed receive/credit and ping handles are released here. The
     // connection stays owned until its actual codec/TLS shutdown finishes.
-    drop(pump);
-    drop(ping);
     if end == LinkEnd::PeerEof && !connection_done {
         end = tokio::select! {
             biased;
@@ -898,6 +883,8 @@ async fn driver(
     }
     // Close every actual network/h2 reference before publishing terminal facts.
     drop(connection);
+    drop(pump);
+    drop(ping);
     if shared.observation.failed.load(Ordering::Acquire) {
         return Err(Error::LinkDriverFailed);
     }

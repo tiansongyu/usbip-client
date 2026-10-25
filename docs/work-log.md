@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- 980445be完整transport77/2FAIL（原half-close及新resumed-peer），da111ead诊断78/1FAIL；所有裁决保存。实际typed h2 diagnostic显示server BrokenPipe，区分原extra stream与server真实IO（不泄raw h2 Debug）；单独half-close有PASS不能覆盖矩阵FAIL。h2 client固定源码maybe_close_connection_if_no_streams表明提前drop Send/Recv refs会让client先关，破坏server graceful控制尾部；更新设计保留原stream/ping refs到实际conn关闭再drop，不掩盖BrokenPipe。临时cfg(test)诊断仅元数据，交付前去除；第二测试patch同样首行多加号fmt拒绝已修，无测试在parse错误时运行。
+
 - clean800f94c9 transport仍76PASS/1FAIL，但原half-close已PASS；新gate client读取/owner已好，原测试错误要求在故意阻断h2 graceful PONG直到server结束时仍server PeerEof，实际为有界LocalDataStall。对照固定h2 go_away_gracefully的一RTT契约后明确修订测试规格：FIN已flush即放行的正向要求两端PeerEof，保持读阻断的负向要求server LocalDataStall/正常client EOF，不能把timeout算健康。原feded测试源码/失败与415候选失败保存；将以旧产品link.rs独立control验证新负向仍真正失败。新patch首次文档anchor不匹配原子拒绝后分开修正，无测试运行。原half-close始终不改。
 
 - clean41540391 unchanged final-read回归PASS，但完整transport 76PASS/1FAIL：原half-close/reverse-drain测试期望PeerEof实际Io，保留原FAIL，不改原测试。h2完整应用EOS仍可能有窗口credit/control尾部；更新设计，用上游正常graceful_shutdown而非one-step abrupt_shutdown推进原conn控制收尾，仍按原policy/stop核真实结束，不忽略Io。当前尚不能宣称产品修复完整通过。
