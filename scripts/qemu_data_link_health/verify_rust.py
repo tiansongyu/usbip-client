@@ -68,6 +68,26 @@ def one(rows, predicate, label):
     return values[0]
 
 
+def application_disk(state, role, expected_schemas=None):
+    """Closed disk2 by default; only a fixture's explicit role may require disk3."""
+    expected_schemas = expected_schemas or {}
+    require(set(expected_schemas) <= {"client", "server"}, "known explicit application schema role")
+    version = expected_schemas.get(role, 2)
+    require(version in (2, 3), "known explicit application disk version")
+    fields = {"schema_version", "sequence", "jobs", "sessions", "requests", "audit", "link_history"}
+    if version == 3:
+        fields.add("automation")
+    require(set(state) == fields and state["schema_version"] == version,
+            f"actual strict private {role} application disk{version}")
+    if version == 3:
+        journal = state["automation"]
+        require(isinstance(journal, dict) and set(journal) == {"sequence", "rules", "mutations", "origins", "events"},
+                "required nonnull complete automation object")
+        require(type(journal["sequence"]) is int and journal["sequence"] >= 0
+                and all(isinstance(journal[name], list) for name in ("rules", "mutations", "origins", "events")),
+                "typed automation sequence and collections")
+
+
 def proof(root, session):
     require(len(session["attempts"]) == 1, "one owned capability per Native session")
     attempt = session["attempts"][0]
@@ -142,7 +162,7 @@ def physical_phase(baseline, observed, fault):
                 "actual target driver restored while original sibling remains USBFS claimed")
 
 
-def phase_proof(evidence, phase, live=False):
+def phase_proof(evidence, phase, live=False, application_schemas=None):
     require(phase in PHASES, "known fault phase")
     evidence = Path(evidence)
     files = {}
@@ -162,7 +182,8 @@ def phase_proof(evidence, phase, live=False):
     for role, wanted_role in (("client", "import"), ("server", "incoming")):
         before = data(role, f"agent-pre-{phase}.json")
         after = data(role, f"agent-fault-{phase}.json")
-        require(before["schema_version"] == after["schema_version"] == 2, "actual private application disk2")
+        application_disk(before, role, application_schemas)
+        application_disk(after, role, application_schemas)
         target = one(before["sessions"], lambda s: s["device_key"] == target_key and s["role"] == wanted_role and not s["terminal"], "pre-fault target")
         ended = one(after["sessions"], lambda s: s["id"] == target["id"], "same terminal target")
         for field in ("id", "instance_id", "job_id", "device_key", "profile", "role"):
@@ -255,7 +276,7 @@ def phase_proof(evidence, phase, live=False):
             "outcomes": outcomes, "source_artifacts": files}
 
 
-def verify(evidence, args):
+def verify(evidence, args, application_schemas=None, extra_operators=None):
     evidence = Path(evidence)
     def raw(role, name):
         return (evidence / f"{role}-artifacts" / name).read_bytes()
@@ -270,7 +291,7 @@ def verify(evidence, args):
     require(backend_for_keys(keys) == args.backend, "actual keys match requested backend")
     phase_facts = []
     for phase in PHASES:
-        current = phase_proof(evidence, phase)
+        current = phase_proof(evidence, phase, application_schemas=application_schemas)
         require(current == json.loads((evidence / "bindings" / f"{phase}-terminal.json").read_text()), "late raw artifacts equal pre-disarm proof")
         phase_facts.append(current)
         for role in ("client", "server"):
@@ -362,7 +383,8 @@ def verify(evidence, args):
         require(raw(role, "wait-agent-1.txt").strip() == b"0", "actual agent TERM/reap0")
         final = data(role, "agent-final.json")
         expected_sessions, expected_jobs = (7, 1) if role == "server" else (5, 5)
-        require(final["schema_version"] == 2 and len(final["sessions"]) == expected_sessions and len(final["jobs"]) == expected_jobs, "exact complete retained session/job history")
+        application_disk(final, role, application_schemas)
+        require(len(final["sessions"]) == expected_sessions and len(final["jobs"]) == expected_jobs, "exact complete retained session/job history")
         require(len({s["id"] for s in final["sessions"]}) == expected_sessions and len({j["id"] for j in final["jobs"]}) == expected_jobs, "unique history identities")
         require(all(s["terminal"] and s["cleanup"] == "verified" and s["state"] == "Disconnected" for s in final["sessions"])
                 and all(j["state"] == "finished" and j["operator_uid"] == 1000 for j in final["jobs"]), "actual final task/resource retirement")
@@ -403,7 +425,7 @@ def verify(evidence, args):
         for reason in ("uid", "profile"):
             require(data(role, f"denied-{reason}.json")["response"] == {"result": "error", "code": "permission"}, "real typed authorization refusal")
     vhci("vhci-final.txt", 0)
-    configuration = verify_collected_configuration(evidence, args.family, args.backend)
+    configuration = verify_collected_configuration(evidence, args.family, args.backend, extra_operators)
     wire = packet_audit.audit(evidence)
     return {"scope": "Rust same-data TLS idle/after-I/O blackhole/cleanup/reuse; no pending-URB or hardware claim",
             "backend": args.backend,
@@ -411,7 +433,7 @@ def verify(evidence, args):
             "io_rounds": 7, "hid_key_codes": [2, 4, 6, 8] if args.backend == "usbfs" else [], "virtual_hid_scope": "real enumeration and idle fault, no injected key" if args.backend == "virtual" else None, "serial_each_direction_bytes": 245}
 
 
-def verify_collected_configuration(evidence, family, backend):
+def verify_collected_configuration(evidence, family, backend, extra_operators=None):
     """Exact observed public configuration/DER and permission metadata only."""
     observations=[]
     def get(role,name):return (evidence/f'{role}-artifacts'/name).read_bytes()
@@ -429,7 +451,9 @@ def verify_collected_configuration(evidence, family, backend):
         else:
             require(policy['secure_imports']==[{'server_id':'qemu-server','device_keys':keys}],f'{role} actual helper logical server/device pool matches client profiles')
         profiles=[{'id':'server','backend':backend,'config':'/etc/rustusb/server.json'}] if role=='server' else [{'id':profile,'backend':'client','config':f'/etc/rustusb/client-{profile}.json'} for profile in ['hid','serial']]
-        manifest={'schema_version':1,'broker_uid':2000,'helper_socket':'/run/rustusb/control.sock','control_directory':'/run/agent','data_directory':'/var/lib/rustusb/agent','profiles':profiles,'operators':[{'uid':1000,'profiles':[p['id'] for p in profiles],'actions':['read','start','stop','discover','audit']}]}
+        operators=[{'uid':1000,'profiles':[p['id'] for p in profiles],'actions':['read','start','stop','discover','audit']}]
+        operators += (extra_operators or {}).get(role, [])
+        manifest={'schema_version':1,'broker_uid':2000,'helper_socket':'/run/rustusb/control.sock','control_directory':'/run/agent','data_directory':'/var/lib/rustusb/agent','profiles':profiles,'operators':operators}
         expected={'agent.json':manifest,'policy.json':policy}
         if role=='server':
             expected['server.json']={'schema_version':2,'data_link':DATA_LINK,'broker_uid':2000,'listen':'192.0.2.1:3241' if family=='ipv4' else '[fd42:7275:7374::1]:3241','devices':keys,'principals':[{'id':'qemu-client','pins':[pin],'devices':keys}],'ca_certificates':['/etc/rustusb/ca.der'],'certificate_chain':['/etc/rustusb/server.der'],'private_key':'/etc/rustusb/server-key.der'}

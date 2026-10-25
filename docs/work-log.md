@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-25：Rust engines 自动规则与 v2 故障矩阵（开始）
+
+- 上轮E53为实际进展；从clean7de3c242完整重读原Phase0–7目标、Git/日志/核心skill与当前规则/agent/v2夹具、两接口audit。沿用rustusb-development/technical-documentation；不启动子agent，不重建已完成README/展示站/global skill，不缩减goal。
+- 先写automatic-sharing-rust-qemu-design：复用原v2 Rust三方向/15秒valve/七I/O/完整Rootproof，Virtual客户端自动规则、USBFS完整pool本地自动规则各双栈；原无policy/Native回归独立。显式每role disk2/3预期且保严格默认，实际RetryStart读回自动准入；计划同policy下UID1002规则拒绝和CAS再启用。尚未改产品或宣称新验证通过；GUI/dynamic pool/物理远端receipt/安装/硬件等缺口保留。
+- 新wrapper/guest接入真实Create/Retry/Enable/RetryStart、同saved snapshot的origin/Start/Fired绑定；旧v2 verifier增加显式role schema预期并收紧完整字段集，默认disk2/Root/packet条件保持。权限负向增强为UID1001有全部manual ACL但无automation grant，原UID1002拒绝保留；额外operator仅新fixture显式预期。首完整guest拼接因Rust fragment位于network_ready与role之间而锚点FAIL，未启动QEMU，改在真实rust_server_setup前插入；两完整guest dash语法通过，50 schema正负/两个生成脚本preflight通过、247输入。尚无新运行PASS；准备clean commit与完整gate/QEMU，产品Rust/锁/ELF尚未更改。
+
 ## 2026-10-25：自动共享持久规则与后台触发（开始）
 
 - 上轮E52为实际进展；本轮从clean595c3411完整重读原Phase0–7目标、当前Git/工作日志/核心skill/自动规则设计与相关Runtime/IPC/CLI/monitor源码。沿用rustusb-development与technical-documentation；原README/站点/全局skill保持，未缩减goal、未启动子agent。
