@@ -689,7 +689,8 @@ impl Pump {
                     .with_mut(|receive| {
                         receive.poll_trailers(cx).map(|result| match result {
                             Ok(None) => Ok(()),
-                            _ => Err(failed()),
+                            Ok(Some(_)) => Err(failed()),
+                            Err(error) => Err(h2_error(error)),
                         })
                     })
                     .unwrap_or_else(|| Poll::Ready(Err(failed())));
@@ -712,7 +713,7 @@ impl Pump {
                 .with_mut(|receive| {
                     receive
                         .poll_data(cx)
-                        .map(|result| result.map(|r| r.map_err(|_| failed())))
+                        .map(|result| result.map(|r| r.map_err(h2_error)))
                 })
                 .unwrap_or_else(|| Poll::Ready(Some(Err(failed()))));
             match next {
@@ -823,7 +824,11 @@ async fn driver(
                 if shared.update(|h| h.phase = LinkPhase::Draining).is_err() { break reason(shared.fatal.load(Ordering::Acquire)).unwrap_or(LinkEnd::Io); }
             },
             result = poll_fn(|cx| pump.poll(cx, &shared)), if !pump.done => {
-                if result.is_err() { break reason(shared.fatal.load(Ordering::Acquire)).unwrap_or(LinkEnd::Protocol); }
+                if let Err(error) = result {
+                    break reason(shared.fatal.load(Ordering::Acquire)).unwrap_or_else(|| {
+                        if error.kind() == io::ErrorKind::InvalidData { LinkEnd::Protocol } else { LinkEnd::Io }
+                    });
+                }
             },
             result = poll_fn(|cx| ping.with_mut(|p| p.poll_pong(cx).map(|r| r.map(|_| ()).map_err(|_| failed()))).unwrap_or_else(|| Poll::Ready(Err(failed())))), if pending.is_some() && !connection_done => {
                 if result.is_err() { break LinkEnd::Protocol; }

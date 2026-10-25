@@ -95,3 +95,13 @@ TLS shutdown after its normal complete EOS/credit/FIN boundary. This removes the
 late-idle close adapter and NO_ERROR-abrupt candidate. No added stream, ALPN
 version, retry, sleep, ownership relaxation or I/O suppression is introduced.
 All original regressions and the production concurrent Catalog remain mandatory.
+
+The active-stream candidate b9fc7a6c passes the original close/half-close cases and
+the production concurrent Catalog. Its no-FIN TLS abort negative still fails its
+exact error-category assertion: actual Protocol instead of required Io, never
+healthy completion. h2 can deliver a transport error through the receive-stream
+after GOAWAY; the old pump mapped every such error to generic protocol failure.
+Preserve its typed IO kind (without formatting raw h2 errors) through DATA/trailer
+reads and driver classification. Invalid framing/trailers remain Protocol;
+explicit counter/metadata fatal reasons retain precedence. Do not weaken the
+abort test or accept arbitrary failures as success.
