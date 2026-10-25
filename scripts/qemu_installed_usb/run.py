@@ -172,6 +172,11 @@ def one(args):
         result['failure']=traceback.format_exc()
         (out/'failure.txt').write_text(result['failure'])
     finally:
+        # Preserve original live state before cleanup can change peer symptoms.
+        for role,vm in vms.items():
+            if vm.process and vm.process.poll() is None:
+                try:guest(role,'observe')
+                except BaseException:(out/(role+'-observation-failure.txt')).write_text(traceback.format_exc())
         for role,vm in vms.items():
             if vm.process and vm.process.poll() is None:
                 try:guest(role,'stop-services')

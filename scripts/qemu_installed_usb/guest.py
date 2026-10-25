@@ -234,6 +234,13 @@ def main():
     elif a.action=='ready':result=ready(a.args[0])
     elif a.action=='server-idle':result=ready('server',idle=True)
     elif a.action=='snapshot':result=snapshot()
+    elif a.action=='observe':
+        result={'snapshot':snapshot(),'addresses':json.loads(run(['ip','-j','addr'])),
+            'routes4':json.loads(run(['ip','-j','route'])), 'routes6':json.loads(run(['ip','-j','-6','route'])),
+            'neighbors':json.loads(run(['ip','-j','neigh'])), 'kernel':run(['dmesg','--json'])}
+        if (CONFIG/'server.json').exists():
+            result['server_security']=agent('server-security','server')
+            result['server_admission']=agent('server-admission','server')
     elif a.action=='probe':result=probe(int(a.args[0]))
     elif a.action=='denied':
         before=snapshot();result=agent('start',a.args[0],uid=1002,expected=(1,));after=snapshot()
