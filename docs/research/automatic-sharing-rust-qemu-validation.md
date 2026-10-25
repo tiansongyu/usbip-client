@@ -139,3 +139,18 @@ authenticated physical remote safety/generation evidence, automatic raw-v1 and
 hotplug/revocation/prepare/WAL QEMU expansion, packaged installation/systemd/
 upgrade/uninstall/reboot, G1/G2 hardware, full G3, performance/compatibility work
 and Windows support. The full Phase0–7 goal remains active.
+
+## Publication receipt
+
+Content `1ed00832943789564bdac5b472391a4226f29876` was pushed normally over SSH.
+Core run40162668994 and GUI run40162669093 completed successfully on all four
+Ubuntu22.04/24.04 x86_64/aarch64 jobs, including their actual architecture and
+full-gate steps. Pages run40162669053 check/deploy succeeded. Seven canonical
+HTTPS resources return200 and match the exact content-head bytes; all399 frozen
+inputs, three ELFs, eight site files and four global skill files remain intact.
+
+The [publication receipt](../evidence/automatic-sharing-rust-publication-1ed00832-20261025/receipt.json)
+retains37 original API/HTTP/method files,410357 bytes, with per-file hashes.
+It does not contain downloaded CI logs/executables or infer per-platform test
+counts. Local software/QEMU stays locked to42e98ab3; the final documentation
+receipt commit is not another tested code/CI revision.
