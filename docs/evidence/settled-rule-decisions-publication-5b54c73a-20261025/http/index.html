@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d12">
+  <meta name="description" content="RustUSB manages Linux USB/IP device sharing with a Rust CLI, a restricted helper, and optional Rust servers. Explore the development preview and its QEMU-tested paths.">
+  <meta property="og:title" content="RustUSB — Your USB. Across the network.">
+  <meta property="og:description" content="Linux USB device redirection, managed in Rust. Explore the CLI, backend paths and verified development status.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tiansongyu.github.io/usbip-client/">
+  <link rel="canonical" href="https://tiansongyu.github.io/usbip-client/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+  <title>RustUSB — Your USB. Across the network.</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="wrap site-header">
+    <a class="wordmark" href="#main" aria-label="RustUSB home"><img src="assets/favicon.svg" width="30" height="30" alt="">RustUSB</a>
+    <nav aria-label="Main navigation">
+      <a href="#explore">Explore</a>
+      <a href="#status">Status</a>
+      <a href="https://github.com/tiansongyu/usbip-client">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <p class="preview"><span aria-hidden="true"></span>Linux development preview</p>
+      <h1 id="hero-title">Your USB.<br>Across the network.</h1>
+      <p class="hero-description">Discover, share and connect USB devices with a Rust CLI.<br class="wide-only"> Linux USB/IP with optional TLS brokers and Rust servers.</p>
+      <div class="hero-actions">
+        <a class="button" href="#start">Build from source</a>
+        <a class="text-link" href="https://github.com/tiansongyu/usbip-client#readme">Read the docs <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="platforms">Ubuntu 22.04 / 24.04 <span aria-hidden="true">·</span> Rust 2024 Edition <span aria-hidden="true">·</span> MIT</p>
+      <figure class="connection-figure">
+        <picture><source media="(max-width: 680px)" srcset="assets/usbip-flow-mobile.svg"><img src="assets/usbip-flow.svg" width="1120" height="460" alt="Native path: a USB device on a Linux server uses usbip_host and usbipd, crosses an administrator-managed secure network, and reaches vhci_hcd and the native driver on a Linux client." fetchpriority="high"></picture>
+        <figcaption>Legacy Native path illustration. This mode uses administrator-managed network protection. Optional <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/secure-guide.md">TLS brokers</a> protect the device data path directly.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section wrap explore" id="explore" aria-labelledby="explore-title">
+      <div class="section-heading">
+        <h2 id="explore-title">One CLI.<br>Distinct data paths.</h2>
+        <p>Use Linux’s kernel path for Native sharing. Explore virtual devices and the experimental USBFS adapter with the optional Rust server.</p>
+      </div>
+      <div class="backend-tabs" role="tablist" aria-label="Sharing backends" hidden>
+        <button type="button" role="tab" id="tab-native" aria-controls="panel-native" aria-selected="true" data-tab="native">Linux Native</button>
+        <button type="button" role="tab" id="tab-virtual" aria-controls="panel-virtual" aria-selected="false" tabindex="-1" data-tab="virtual">Virtual devices</button>
+        <button type="button" role="tab" id="tab-physical" aria-controls="panel-physical" aria-selected="false" tabindex="-1" data-tab="physical">USBFS adapter</button>
+      </div>
+      <div class="backend-panel" id="panel-native" data-panel="native">
+        <div class="backend-copy">
+          <p class="path-label">Default backend</p>
+          <h3>Keep USB requests<br>in the Linux kernel.</h3>
+          <p>RustUSB handles discovery, policy and connection management. Linux <code>usbip_host</code>, <code>usbipd</code> and <code>vhci_hcd</code> carry the Native USB data path.</p>
+          <ul class="feature-list"><li>Export and import approved devices</li><li>Inspect sessions and disconnect owned ports</li><li>Run the CLI without root privileges</li></ul>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client#use">Native setup <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="command-window">
+          <div class="window-heading"><span>Discover a remote device</span><span>CLI example</span></div>
+          <pre><code><span class="comment"># After administrator setup</span>
+rustusb discover 192.0.2.1 --json
+
+<span class="comment"># Use the actual returned Bus ID</span>
+rustusb attach 192.0.2.1 1-2
+rustusb sessions
+
+<span class="comment"># Use the port from sessions</span>
+rustusb detach 0</code></pre>
+          <p class="command-note">Example address and identifiers. Requires approved devices, a running helper and a managed secure network.</p>
+        </div>
+      </div>
+      <div class="backend-panel" id="panel-virtual" data-panel="virtual">
+        <div class="backend-copy">
+          <p class="path-label">Optional · rust-backend</p>
+          <h3>Start with<br>a virtual USB device.</h3>
+          <p>The Rust server provides fixed HID and CDC ACM profiles. Use them to explore protocol behavior and Linux VHCI interoperability without exporting a host USB device.</p>
+          <ul class="feature-list"><li>Fixed keyboard and serial profiles</li><li>Bounded USB/IP protocol handling</li><li>Cooperative SIGINT / SIGTERM shutdown on Unix</li></ul>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/rust-virtual-server.md">Virtual server guide <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="command-window">
+          <div class="window-heading"><span>Explore the virtual server</span><span>CLI example</span></div>
+          <pre><code>cargo build --release --locked \
+  --workspace --features rust-backend
+
+target/release/rustusb \
+  virtual-server --help
+
+<span class="comment"># Listen on loopback for local exploration</span>
+target/release/rustusb virtual-server \
+  --listen 127.0.0.1:3240</code></pre>
+          <p class="command-note">The server is a developer interface. See the guide for control input, profiles and guest setup.</p>
+        </div>
+      </div>
+      <div class="backend-panel" id="panel-physical" data-panel="physical">
+        <div class="backend-copy">
+          <p class="path-label">Experimental · physical-nusb</p>
+          <h3>Explore a Rust<br>USBFS server.</h3>
+          <p>A restricted helper grants device file descriptors to the ordinary-user server. Persistent original-state records block new grants while a previous grant remains unresolved.</p>
+          <ul class="feature-list"><li>QEMU HID, FTDI and ECM evidence</li><li>Verified cooperative completion</li><li>Explicit administrator reconciliation</li></ul>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/rust-physical-server.md">Physical server guide <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="command-window">
+          <div class="window-heading"><span>Inspect experimental capabilities</span><span>CLI example</span></div>
+          <pre><code>cargo build --release --locked \
+  --workspace --all-features
+
+target/release/rustusb \
+  physical-server --help
+
+<span class="comment"># Administrator-only record inspection</span>
+sudo /usr/local/bin/rustusb \
+  --json physical-pending</code></pre>
+          <p class="command-note">Requires an installed all-features helper and explicit device policy. Original-driver recovery requires a separate opt-in policy and unchanged configuration.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles-band">
+      <div class="wrap principles">
+        <article><span class="principle-icon" aria-hidden="true">⌁</span><h3>Device-level redirection</h3><p>Forward USB requests so the client’s native driver can use the device. This is the USB/IP data path.</p></article>
+        <article><span class="principle-icon" aria-hidden="true">⌘</span><h3>Explicit authorization</h3><p>Keep the CLI unprivileged. Approved users, device identities and remote endpoints are managed by a restricted helper.</p></article>
+        <article><span class="principle-icon" aria-hidden="true">◇</span><h3>Observable state</h3><p>Watch local USB changes and refresh <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/remote-catalog-watch.md">authenticated remote catalogs</a>. Inspect sessions and <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/data-link-health.md">data-link health</a> through the shared application service.</p></article>
+      </div>
+    </section>
+
+    <section class="section wrap" aria-labelledby="gui-title">
+      <div class="section-heading"><h2 id="gui-title">Native desktop.<br>Shared service.</h2><p>The Linux desktop preview uses the TUI’s application worker for device inventories, fixed-profile actions, connections and checked preferences. It runs as an ordinary user.</p></div>
+      <figure class="connection-figure"><img src="assets/gui-qemu.png" width="1180" height="760" loading="lazy" alt="Recorded RustUSB Linux native window observing a synthetic QEMU USB keyboard, with descriptors in the details pane."><figcaption>Recorded native WebView with a read/audit-only agent and synthetic QEMU keyboard. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/native-gui-validation.md">Preview validation</a> covers inventory, permission denial, retry and layout. Separate <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/gui-native-actions-validation.md">action tests</a> and <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/gui-link-health-validation.md">same-link RTT/fault tests</a> cover confirmed sharing and real connection loss. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/gui.md">Build the GUI preview</a>.</figcaption></figure>
+    </section>
+
+    <section class="section wrap status-section" id="status" aria-labelledby="status-title">
+      <div class="section-heading">
+        <h2 id="status-title">Built in the open.<br>Tested in QEMU.</h2>
+        <p>Development evidence is linked to its tested revision. Software checks and emulated devices are recorded separately from real hardware compatibility.</p>
+      </div>
+      <div class="status-layout">
+        <div class="verified">
+          <h3>Live local USB inventory</h3>
+          <dl><div><dt>872</dt><dd>software test executions</dd></div><div><dt>2</dt><dd>QEMU guest runs</dd></div><div><dt>6</dt><dd>local observer process cases</dd></div></dl>
+          <p>The shared observer uses kernel USB notifications and fresh metadata scans, with bounded views and explicit resynchronization. Software is tested at clean <code>c0346d6</code>; emulated observation is locked to clean <code>f66da6b</code>.</p>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/local-device-monitor-validation.md">Read the tested revisions and evidence <span aria-hidden="true">↗</span></a>
+          <p>Default and all-features builds each boot one guest. The actual ordinary-user CLI observes keyboard insertion, interface driver changes, removal and reinsertion with a new generation. Complete batches and the actual worker exit are checked. These are local inventory tests; USB/IP redirection and real hardware retain separate evidence.</p>
+          <p>Both binaries pass SIGINT, real stdout backpressure with SIGTERM and a closed-output error. Earlier <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/dual-stack-connect-validation.md">hostname fallback</a>, <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/authentication-admission-validation.md">authentication limits</a> and <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/acceptance.md">the full acceptance history</a> keep their tested versions and boundaries.</p>
+          <p>The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/local-device-monitor.md">observation guide</a> explains live inventory and stale data. The <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/application-service-guide.md">application service</a> provides independent jobs and session audit; <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/data-link-health.md">data-link health</a> measures the actual connection. Metadata and logs do not prove USB release.</p>
+          <p>Continuous <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/remote-catalog-watch.md">remote catalog observation</a> has <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/remote-catalog-watch-validation.md">separate validation</a>: 903 software executions and two Native paired QEMU runs. A busy entry disappearing does not mean physical unplug, and an observer join does not prove USB cleanup.</p>
+        </div>
+        <div class="boundaries">
+          <h3>Know the current boundaries</h3>
+          <p>This is a development preview. Real-device acceptance is pending, and discovering a device does not establish compatibility.</p>
+          <ul><li>Secure commands require administrator-provisioned mutual TLS and device authorization. Legacy commands still need an administrator-managed secure network.</li><li>Opt-in crash recovery is limited to the saved device state; broader recovery and full security acceptance remain unfinished.</li><li>An optional <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/tui.md">terminal preview</a> is available. A native desktop preview is also available. Explicitly delegated <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/automatic-sharing.md">fixed-profile automatic rules</a> have QEMU evidence for Native/USBFS local rules and virtual remote import. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/gui-automatic-rules-validation.md">Native GUI rule editing</a> now has dual-stack QEMU evidence for fixed-profile edits, real lost replies and original-UUID queries. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/research/settled-rule-decisions-validation.md">Opt-in durable refusals</a> add restart-safe service queries and explicit original-draft restoration. Whole frontend crash persistence, storage sharing, ISO, full GUI acceptance, dynamic/physical remote rules, installers and Windows USB support remain planned or unvalidated.</li></ul>
+          <a class="text-link" href="https://github.com/tiansongyu/usbip-client/blob/main/docs/roadmap.md">Development roadmap <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="start-section" id="start" aria-labelledby="start-title">
+      <div class="wrap start-layout">
+        <div><h2 id="start-title">Start at<br>your terminal.</h2><p>Build the preview, list local devices and inspect readiness. Native sharing needs additional administrator setup.</p><p class="requirements">Ubuntu 22.04 / 24.04 · Git · Rust via rustup · native build tools. Cargo selects the pinned toolchain.</p><a class="text-link" href="https://github.com/tiansongyu/usbip-client#build-from-source">Full build instructions <span aria-hidden="true">↗</span></a></div>
+        <div class="build-box">
+          <div class="window-heading"><span>Build and inspect locally</span><button type="button" id="copy-build" hidden>Copy commands</button></div>
+          <pre><code id="build-command">git clone https://github.com/tiansongyu/usbip-client.git
+cd usbip-client
+cargo build --workspace --release --locked
+./target/release/rustusb devices
+./target/release/rustusb doctor</code></pre>
+          <p id="copy-status" role="status" aria-live="polite">Source build. No prebuilt installer is provided.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap"><div class="footer-top"><a class="wordmark" href="#main">RustUSB</a><nav aria-label="Project resources"><a href="https://github.com/tiansongyu/usbip-client#readme">Documentation</a><a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/compatibility.md">Compatibility</a><a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/security.md">Security</a><a href="https://github.com/tiansongyu/usbip-client/blob/main/README.zh-CN.md" lang="zh-CN">中文</a></nav></div><p>MIT-licensed project code. Linux tools and drivers retain their own licenses. <a href="https://github.com/tiansongyu/usbip-client/blob/main/docs/third-party.md">Third-party details</a>.</p></footer>
+</body>
+</html>

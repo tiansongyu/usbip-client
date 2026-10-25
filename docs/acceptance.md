@@ -388,3 +388,5 @@ E49最终内容3aafa2c0的root40142928056与GUI40142928072各四native格/实际
 ## 43. E56：持久规则拒绝与显式草稿恢复
 
 [报告](research/settled-rule-decisions-validation.md)：同一clean650c53a8、410输入及三ELF，完整root1054+GUI17、原CLI五进程、八次QEMU/15guest实际0/无forced全通过；40 native child含原single预期未决1。新双栈各保原264+46 GUI+27 decision检查/三轮I/O，旧规则双栈strict3、动作双栈、v2和single保原判据。显式root2/disk4与健康writer拒绝、原查询/服务重启/原草稿revision已验；未新增失败。整个前端崩溃ID持久化、动态pool、物理远端receipt、完整GUI安装硬件/Windows与原全目标未完成。
+
+内容5b54c73a的core40172001651与GUI40172001639各四native格、实际arch/fullgate均success，Pages40172001636 check/deploy成功；七canonical HTTPS全200逐Git精确，410源/三ELF/八site/四global skill/symlink保持。[原发布回执](evidence/settled-rule-decisions-publication-5b54c73a-20261025/receipt.json)42成员553155B逐SHA；无CI logs/执行ELF/每平台重计，本地软件/QEMU仍650c，CI/Pages仅5b54，最后纯回执head另账。

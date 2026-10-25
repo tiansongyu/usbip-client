@@ -190,3 +190,21 @@ keyboard focus (2px outline), loaded images and the desktop CSP no-script view
 with all three static panels and build commands. No new showcase pixel, clipboard,
 motion or complete accessibility claim. Both owned tabs close, viewport override
 resets and the actual preview server joins after SIGINT/exit130.
+
+## Published CI receipt
+
+Content head `5b54c73a717106f90af0f417acefcf43599bfb0a` is pushed normally to
+`main`. [Core CI](https://github.com/tiansongyu/usbip-client/actions/runs/40172001651)
+and [GUI CI](https://github.com/tiansongyu/usbip-client/actions/runs/40172001639)
+each complete all four Ubuntu22.04/24.04 x86_64/aarch64 native jobs successfully,
+including the actual architecture/environment and full gate steps.
+[Pages](https://github.com/tiansongyu/usbip-client/actions/runs/40172001636) check and
+deploy also succeed. [Original receipt](../evidence/settled-rule-decisions-publication-5b54c73a-20261025/receipt.json) retains42 API/HTTP/method files,
+553,155B, with exact member hashes.
+
+All seven canonical HTTPS resources return200 and match Git bytes. The410 local
+frozen inputs, three ELFs, eight site files and four global skill files/symlink
+still match their recorded sources. CI job conclusions are not CI log analysis,
+executed-ELF sampling or a per-platform test recount. Local software and QEMU
+remain pinned to650c53a8; CI/Pages belong to5b54c73a. The final receipt-only commit
+is a separate revision. The remaining full-objective limitations above stay open.

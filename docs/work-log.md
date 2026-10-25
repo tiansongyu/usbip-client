@@ -14,6 +14,8 @@
 
 - 静态QA首次通过410源/24文档/257 targets/45 site refs、三ELF、八site仅index、四global skill/symlink；真实IAB1280/390无横溢，新report link键盘焦点2px，三observed images loaded。CSP实际新tab为1280（不冒称mobile），三static panel/命令/新文案在无JS下可读，normal console error/warn空。两owned tabs关闭、viewport reset、owned server实际SIGINT wait130；两PNG归属不变。文档读取有大输出截断，按需要小段补读，不作为全部已读或新测试失败。
 
+- 36主证据manifest成员22261948B逐SHA/track核验后内容5b54c73a普通SSH push/远端精确/clean。core40172001651四格121104615820/615911/615947/616120与GUI40172001639四格121104615623/615847/615859/615919实际arch/fullgate及所有job success；Pages40172001636 check121104615664/deploy121104700052 success。七canonical HTTPS全200逐Git精确，410源/三ELF/八site/四global skill/symlink保持；42原API/HTTP/方法553155B归档publication-5b54，编号响应均实际调用，receipt直接引用所选观察而非复制成新调用。无CI logs/CI执行ELF/每平台重计；本地软件/QEMU归650c，CI/Pages归5b54。仅补最后发布回执/文档再普通push，不重标签测试head，原完整目标继续active。
+
 ## 2026-10-25：GUI 自动共享规则编辑（开始）
 
 - 从clean4de41e0f重读完整Phase0–7任务、当前Git/日志/核心skill与共享state/worker/bridge、规则RPC/journal和原GUI/QEMU契约。沿用UI错误恢复与技术文档技能，本轮读取writing-technical-design；复用既有已审架构，不新增依赖或子agent，不重建README/站点/global skill，不缩减goal。
