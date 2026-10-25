@@ -38,5 +38,7 @@ qualification and complete Phase5 acceptance remain required work. QEMU procedur
 [native WebView test](../../scripts/qemu_gui/README.md) and
 [confirmed-action pairs](../../scripts/qemu_gui_actions/README.md). The
 [IPv4/IPv6 report](../../docs/research/gui-native-actions-validation.md) records
-GUI Start/Stop, nonempty Remote and USB I/O after native windows close. Raw-v1 RTT
-is unavailable; framed-v2 GUI live RTT, hardware and Windows gates remain open.
+GUI Start/Stop, nonempty Remote and USB I/O after native windows close.
+[Link-health validation](../../docs/research/gui-link-health-validation.md) adds
+actual v2 RTT/fault history and stable expansion/focus/scroll. Raw-v1 RTT is
+unavailable; hardware and Windows gates remain open.

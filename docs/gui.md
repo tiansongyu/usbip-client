@@ -41,6 +41,9 @@ as root. Native Linux GTK/WebKit libraries are separate system dependencies.
   and independent cleanup. Request stop for an exact returned identity. Stop
   acceptance does not establish release. Link-health detail shows measured RTT
   only when an actual transport sample contains it; raw-v1 has no heartbeat RTT.
+  Expansion, focus and metadata scroll survive updates for the same connection.
+  Ended/previous-epoch samples are labeled retained history; recorded RTT is not
+  a current responsiveness result. Read operation error and cleanup separately.
 - **Activity / System:** inspect authorized audit pages, retained-history gaps,
   journal availability and independently sampled observer state.
 - **Settings:** apply, explicitly save or reload checked user preferences. These
@@ -69,9 +72,12 @@ WebKit IPC, hotplug, actual OS-peer denial/original retry, checked preferences a
 wide/narrow geometry. [Confirmed-action validation](research/gui-native-actions-validation.md)
 adds IPv4/IPv6 GUI Start, exact session/job Stop, a nonempty authenticated remote
 catalog and actual USB I/O after native windows close. The fixed QEMU HID/FTDI
-cases use raw-v1, which correctly shows RTT unavailable. Framed-v2 GUI live RTT,
-automatic rules, `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and
-hardware/Windows acceptance remain unfinished.
+cases use raw-v1, which correctly shows RTT unavailable.
+[Framed-v2 validation](research/gui-link-health-validation.md) separately covers
+actual same-connection RTT, history/typed ends after three directional faults,
+and preserved reading state on both address families. Automatic rules,
+`.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
+acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded
 from the root Native workspace; its root checks do not replace the GUI gate.

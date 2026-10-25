@@ -70,3 +70,6 @@ E48为x86_64/Ubuntu6.8.0-106内核的TUI观察/权限证据及当前Native回归
 
 
 原生GUI预览验证了Ubuntu22.04宿主/6.8 x86_64 guest的真实WebKit运行时、热插拔、Read/Audit-only拒绝/原UUID与偏好和宽窄布局，见[E49验收](research/native-gui-validation.md)。后续[E50双栈正向操作](research/gui-native-actions-validation.md)补固定Native QEMU HID/FTDI的GUI确认Start/精确Stop、非空远程目录及关闭窗口后的实际I/O。四平台GUI软件CI与实际USB内核/clean安装分开，不扩大USB设备类型、硬件、ARM USB或Windows兼容矩阵。
+
+
+[E51 GUI链路](research/gui-link-health-validation.md)在相同x86_64/6.8模拟设备中验证IPv4/IPv6同数据链RTT、三方向故障/历史和阅读状态，另原v2/raw actions/single GUI回归。没有增加硬件/USB类别、ARM USB内核或Windows兼容结论，真实微秒字段不当性能基准。

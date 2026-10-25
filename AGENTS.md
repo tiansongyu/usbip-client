@@ -73,3 +73,6 @@ Phase5候选研究见`docs/research/gui-installation-research.md`：固定Tauri2
 
 
 GUI正向E50见`docs/research/gui-native-actions-validation.md`与`gui-native-actions-design.md`：clean8e8d50d9软件956+11及双栈378源/各12真实UID1000窗口通过，24次WM_DELETE_WINDOW/actual wait0/local join；六Start/一session Stop/四job Stop每pair、非空Remote及原三I/O/264核验/完整Rootproof保留。原agent229源/768MiB和旧single GUI372源另回归，共七guest0/无forced。产品三ELF保持E49；三夹具FAIL与误将exit4归native-close/已有Start的更正完整保留。raw-v1 RTT unavailable已有UI证据，v2 GUI live RTT/规则/完整GUI/deb/systemd/安装生命周期/硬件/完整G3/原Phase0–7仍未完成。
+
+
+GUI链路E51见`docs/research/gui-link-health-design.md`和`gui-link-health-validation.md`：原80b同session reply1→3时真实open/focus丢失FAIL保留；a29产品修复current DOM有限匹配profile/epoch/session/connection，保展开/焦点/scroll并标历史RTT。clean c4f完整956+11软件、两新v2 GUI双栈390源/六guard及原v2/raw actions双栈/single GUI全部PASS，六次最终invocation/11guest0/31GUI child（30正常0/一旧预期unresolved1）、无forced。新六窗口保三方向/七I/O/packet/fullproof；IPv6c2s client io按原件保留。CLI/helper保持E50、GUIc0b141c6…16996192B。自动规则设计与两源码审查在`docs/research/automatic-sharing-design.md`，status draft/未实现；不得self-RPC伪UID、独立写trigger与Start或只做whole-profile auto-start便宣告完整规则。规则/安装/硬件/完整G3/后续阶段仍待完成。

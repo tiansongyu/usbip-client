@@ -189,6 +189,10 @@ verify confirmed GUI Start/Stop, a nonempty remote catalog and continued QEMU
 HID/FTDI I/O after native windows close. Automatic rules, packaged installation
 and full GUI/hardware acceptance remain unfinished.
 
+[Same-connection RTT tests](docs/research/gui-link-health-validation.md) also
+verify live v2 samples, retained fault history and reading-state preservation
+through selective network loss. A transport reply is separate from USB cleanup.
+
 ## Choose a backend
 
 | Backend | Device source and data path | Status |

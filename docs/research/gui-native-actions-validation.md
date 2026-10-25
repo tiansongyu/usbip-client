@@ -130,3 +130,6 @@ Git bytes; source/ELF/global skill integrity checks passed. Original API/step/HT
 receipts and methods are [preserved](../evidence/gui-native-actions-publication-8fd0094b-20261025/README.md).
 These status receipts do not supply CI logs/ELFs or a new per-platform test total.
 QEMU evidence remains locked to8e8d50d9; subsequent receipt edits are documentation.
+
+
+Subsequent [E51 link-health evidence](gui-link-health-validation.md) adds real framed-v2 RTT/fault presentation and reruns both raw-v1 action pairs on clean c4f72f6e with the updated GUI ELF. E50 source/results above remain separately attributed.

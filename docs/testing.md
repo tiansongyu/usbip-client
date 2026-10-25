@@ -416,3 +416,6 @@ E38见[精确运行报告](research/server-security-observations-validation.md)�
 
 
 GUI确认动作与真实窗口关闭的双栈流程见[runner](../scripts/qemu_gui_actions/README.md)和[E50报告](research/gui-native-actions-validation.md)。新wrapper保留原Native264核验与三I/O/完整Rootproof，真实UID1000 GUI准入、精确Stop、WM_DELETE_WINDOW/actual wait/local join后同job继续I/O；冻结source/head/worktree/三ELF及driver直到实际terminal。原single GUI和默认768MiB Native agent均另行回归，不把guest0、StopAccepted或新进程资源0代替原owner release。
+
+
+GUI同数据链RTT/故障展示见[runner](../scripts/qemu_gui_link/README.md)和[E51](research/gui-link-health-validation.md)。保原v2三方向精确valve/packet/lifecycle及七I/O/15秒窗口；真实旧ELF先复现展开/焦点丢失，再在c4f双栈验证current DOM RTT、历史typed end/独立cleanup、scroll与profile隔离、实际WM close/join。原v2/default768及GUI actions/single回归独立，不放宽旧原件判据。

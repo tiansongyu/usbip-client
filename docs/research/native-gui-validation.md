@@ -186,3 +186,6 @@ HID/FTDI I/O after actual WM_DELETE_WINDOW closes. It reruns both software gates
 and the original agent/single-GUI fixtures on clean8e8d50d9. Earlier E49 results,
 negative-only scope and original failures above remain attributed to their own
 runs; the E49 screenshot is not relabeled as a positive import capture.
+
+
+Later [E51 same-link evidence](gui-link-health-validation.md) fixes actual refresh disclosure/focus loss and validates real v2 RTT/history in both families. E49 originals and their negative-only scope stay unchanged.

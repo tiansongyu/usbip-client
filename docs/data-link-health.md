@@ -112,3 +112,15 @@ Schema 2 requires its fields, including explicit nullable health fields, and rej
 Live probes update bounded in-memory observations. Normal durable transactions checkpoint the latest available sample, and orderly owner completion records the final observation. A crash can therefore leave an older checkpoint, never a guaranteed last probe. Historical samples remain historical after restart. The journal stays capped at 2 MiB; admission remains within its original 1 MiB budget and now reserves up to 2 KiB per health entry for later growth. Retention removes health entries with their sessions. These rules are implemented by the [store](../crates/rustusb-service/src/store.rs) and [runtime](../crates/rustusb-service/src/runtime.rs).
 
 For implementation boundaries and the independent driver/cleanup contract, see the [data-link design](research/data-link-health-design.md). Use the repository's current validation reports for measured results; this operating guide does not replace those evidence records.
+
+## Read health in the native GUI
+
+In the [native console](gui.md), select the authorized profile and open
+**Connections → Data-link health**. Expand an exact session. The GUI preserves
+that connection's expansion, keyboard focus and metadata scroll during refresh.
+Live v2 samples show the actual enqueue-to-reply RTT; raw-v1 says RTT unavailable.
+Retained owner-ended/previous-epoch data is explicitly historical, with typed
+phase/probe/end and recorded RTT. A recorded value is not current responsiveness.
+Read the session's operation error and independent cleanup result separately.
+The [dual-stack native GUI evidence](research/gui-link-health-validation.md)
+covers real same-data-flow faults; it is not a hardware or latency benchmark.

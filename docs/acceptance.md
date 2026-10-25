@@ -132,7 +132,7 @@ Linux 模块加载、usbipd 启停、VPN 和防火墙目前由管理员管理。
 | 4.7 普通 UI、系统服务、最小特权层、UDS / OS ACL、严格输入 | 普通CLI/受限root helper；E30专用broker/独立池；E31非root agent、SO_PEERCRED逐profile/action ACL、实际operator拒绝且资源不变 | 同broker UID仍是整个helper池信任域；systemd隔离、完整多用户/规则矩阵与审计验收未完成；RPC不接受任意路径/端点/凭据/helper Request |
 | 4.8 clap CLI 命令与一致性 | 默认Native；可选virtual/physical/secure命令；E31 agent run/profiles/start/stop-job/stop-session/jobs/sessions/events/audit/discover及安全retry；E32共享前台owner；E33 agent health；E35 logs目录/授权agent读页及follow；E36 diagnostics私有JSON/单profile导出 | peers/config/benchmark未实现；agent需root可信manifest和独立operator规则；帮助按feature区分；doctor含失败仍退出0 |
 | 4.9 Ratatui TUI | 六页普通用户共享API前端；[E48逐项G4软件/仿真审计](research/tui-hotplug-permission-validation.md#g4-requirement-audit) | 键盘/搜索/筛选/排序/刷新/详情/确认与持久偏好；实际热插拔、服务拒绝、失联/原UUID重试已有证据。普通用户设置不编辑管理员策略；真实硬件/完整G3及后续发布门槛未完成 |
-| 4.10 GUI | 原生Tauri预览/共享headless worker/六页/checked preferences，见[E49](research/native-gui-validation.md)和[E50](research/gui-native-actions-validation.md) | 部分：双栈GUI确认Start/精确Stop、非空Remote及窗口关闭后USB I/O已验；v2 GUI RTT、自动规则与完整GUI/G5仍未完成 |
+| 4.10 GUI | 原生Tauri预览/共享headless worker/六页/checked preferences，见[E49](research/native-gui-validation.md)和[E50](research/gui-native-actions-validation.md) | 部分：双栈GUI确认Start/精确Stop、非空Remote及窗口关闭后USB I/O已验；[E51](research/gui-link-health-validation.md)另补v2 RTT/故障历史；自动规则与完整GUI/G5仍未完成 |
 | 4.11 tracing / JSON / 文本 / 级别 / 轮转 / 脱敏 / 诊断 / 指标 | E35可选私有typed NDJSON、最大2KiB记录/256队列/128MiB payload、checked轮转/重启/游标及profile Audit授权读页；业务commit后mirror且不持USB能力，实际owner先清理后join logger。默认stderr/级别保留；E36 bounded闭合JSON/alias/独立已提交视图与真实私有publication，信号/文件失败保留实际结果。E31 audit与E33受限同链RTT另账 | 文件日志不等于永久/不可变审计；年龄保留/压缩/全面秘密审计、吞吐及RTT性能基准待做；永久FS/kernel阻塞不承诺有界退出，raw1不编造probe |
 
 ## 7. 自动测试、互操作、异常、安全与性能范围
@@ -350,3 +350,10 @@ E49最终内容3aafa2c0的root40142928056与GUI40142928072各四native格/实际
 [报告](research/gui-native-actions-validation.md)锁clean8e8d50d9：core956与GUI11软件全通过；两新Native GUI双栈pair各378源/六guard真/两guest0，每pair12真实UID1000进程、六Start、一精确incoming HID Stop、四job Stop、非空Remote搜索/详情和raw-v1 RTT unavailable。24窗口均真实WM_DELETE_WINDOW/实际wait0/local join，关闭Start窗口后同job Running，原264核验/三轮HID-FTDI I/O/两epoch/完整Rootproof及原driver/VHCI基线保留。另原agent IPv4(229源/768MiB)及旧single GUI(372源/70原件385784B)回归PASS，共四次最终invocation/七guest0，无forced；旧GUI的unresolved child预期1独立保留。产品源码与三ELF保持E49，三原夹具FAIL及误诊更正保留；4934原件57902451B归档逐SHA核验。未扩大USB类/硬件矩阵；v2 GUI实测RTT、规则/完整GUI、deb/systemd/安装生命周期、G1G2/完整G3/性能/Windows及原Phase0–7仍未完成。
 
 内容8fd0094b的core40145511838和GUI40145511737各四native格/arch/fullgate步骤全success，Pages40145511774 check/deploy成功；七canonical HTTPS精确Git bytes、377非README输入/三ELF/四global skill/symlink保持。见[发布回执](evidence/gui-native-actions-publication-8fd0094b-20261025/receipt.json)。不补造CI log/执行ELF或每格测试重计数，不将后续文档回执head当QEMU或CI实测head。
+
+
+## 38. E51：GUI同数据链RTT、故障历史与阅读状态
+
+[报告](research/gui-link-health-validation.md)锁clean c4f72f6e：完整core956+GUI11软件通过；两Native v2 GUI双栈各390源/六guard真，每pair三真实UID1000窗口、三方向实际flow blackhole、七HID/FTDI I/O/持续sibling/精确Rootproof与完整baseline/packet audit通过。六新GUI真实wait0/WM_DELETE_WINDOW/local join，真实reply前进中保展开/焦点/scrollTop40、跨profile不转移展开；历史RTT标recorded且不当当前响应。IPv6 c2s client真实io保留，server timeout，不把client改判timeout。另原v2 IPv4(238源/768MiB)、原GUI actions双栈(378源/各264核验/三I/O/12窗口)、旧single GUI(372源/70文件385543B)均PASS；六次最终invocation/11guest0/31 GUI child（30正常0、一旧预期unresolved1）/无forced。原80b刷新丢展开焦点FAIL保留、a29中间PASS独立；5840原件76340871B/18988762B archive逐SHA核验。GUI c0b141c6…，CLI/helper仍E50。规则/完整GUI/包/安装/硬件/完整G3/原Phase0–7保持未完成。
+
+自动规则[设计](research/automatic-sharing-design.md)和两接口审查为draft，仅源码研究：独立管理员automation grant、规则CRUD/CAS/独立retry、触发与Start同事务、手动Stop持久抑制、actual owner/两槽Discover及动态pool缺口已写入；没有规则实现/运行/accepted声明，不以whole-profile auto-start替代完整设备规则。

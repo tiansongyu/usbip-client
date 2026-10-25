@@ -249,3 +249,6 @@ exporter先实际打开受保护caller0700父与fresh0600 partial，再收集与
 
 
 GUI仍经同一headless frontend/应用服务操作，不另持USB资源。E50的[双栈正向核验](research/gui-native-actions-validation.md)通过真实确认Start/精确Stop、非空Remote和WM_DELETE_WINDOW后原owner实际USB I/O验证该边界；测试-only Xlib不进入产品依赖/API。raw-v1显示RTT unavailable，v2 GUI RTT与完整Phase5另验。
+
+
+GUI E51仅修改本地显示：以profile/instance/session/connection匹配当前DOM的展开/scroll并沿原focus key恢复，不积累metadata缓存。history/phase/end与operation/cleanup保持独立，见[验收](research/gui-link-health-validation.md)。自动规则的[后续设计](research/automatic-sharing-design.md)为draft：显式root delegation、同事务准入和动态pool/owner缺口待实现，普通Start/GUI偏好不默授后台自动准入。
