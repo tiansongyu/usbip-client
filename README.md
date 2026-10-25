@@ -41,6 +41,15 @@ resynchronization and generation boundaries.
 
 For Native sharing, administrators must install the distribution's `usbip` / `usbipd` and matching kernel modules. On Ubuntu these tools are usually provided by `linux-tools-common` and `linux-tools-$(uname -r)`. The [Native setup guide](docs/native-guide.md) covers binary installation, helper policy, directory permissions and service setup.
 
+Experimental Ubuntu `.deb` packages provide the CLI/TUI, restricted helper,
+nonroot agent and optional desktop app. Follow the
+[package installation guide](docs/debian-installation.md) to build them or choose
+the matching artifact from a successful [GUI CI run](https://github.com/tiansongyu/usbip-client/actions/workflows/gui.yml).
+Fresh installs leave services disabled/inactive for explicit administrator setup.
+Complete Ubuntu 22.04/24.04
+amd64 [QEMU lifecycle tests](docs/research/debian-installation-validation.md)
+cover installation, upgrade, reboot, removal and retained administrator state.
+
 ## Use
 
 Run the CLI as an ordinary user. The root helper performs only policy-approved privileged operations. The following legacy Native workflow requires both helpers and an administrator-managed VPN or secure tunnel with firewall rules for permitted peers. USB/IP itself has no authentication or encryption.
@@ -210,7 +219,8 @@ on both address families. [Durable refusal tests](docs/research/settled-rule-dec
 also verify explicit draft restoration after timeout and service restart.
 [Process-restart tests](docs/research/frontend-intent-recovery-validation.md) also
 cover whole-GUI SIGKILL/relaunch and last-issued-draft restoration on both families.
-Packaged installation, power-loss durability and full GUI/hardware acceptance
+[Packaged installation](docs/debian-installation.md) now has full Ubuntu amd64
+QEMU lifecycle evidence. Power-loss durability and full GUI/hardware acceptance
 remain unfinished.
 
 [Same-connection RTT tests](docs/research/gui-link-health-validation.md) also
@@ -278,7 +288,7 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Journal upgrades are explicit.** Health uses strict disk2; automatic policy1 upgrades to disk3, and explicit settled-decision policy2 upgrades to disk4. Older agents cannot open upgraded journals. Probes measure the data connection, not USB completion. See [health](docs/data-link-health.md) and [automatic rules](docs/automatic-sharing.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
-- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, packaged installers, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
+- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, arm64 installation acceptance, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
 
 Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
 
@@ -286,6 +296,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 
 | Start here | Details |
 | --- | --- |
+| [Ubuntu packages](docs/debian-installation.md) | Preview packages, explicit provisioning, systemd stop/upgrade and retained deployment state |
 | [Secure broker setup](docs/secure-guide.md) | Mutual TLS, dedicated broker roles, exact device authorization and supervised cleanup |
 | [Shared application service](docs/application-service-guide.md) | Nonroot jobs, authorized profiles, per-connection stop, durable sessions and bounded audit |
 | [Automatic fixed-profile rules](docs/automatic-sharing.md) | Explicit delegation, persistent rules, manual pause and safe mutation retry |

@@ -1,5 +1,7 @@
 # RustUSB 技术架构
 
+新增[Debian/systemd 安装设计](research/debian-installation-design.md)及[两Ubuntu amd64完整验证](research/debian-installation-validation.md)：包不携活跃配置/状态，root helper与固定非零broker分开；Type=exec非ready，mixed TERM/no SIGKILL/infinite stop、agent先于helper实际结束，替换前核真实unit/cgroup。固定路径只创建缺失叶，不递归chown、不清旧记录；无默认授权/启动，UID与配置/凭据/journal跨purge保留。新unit下Native/USBFS I/O、arm64安装、永久阻塞/断电及硬件仍待验收。
+
 状态：已实现结构与分阶段设计约束；2026-10-24。实现范围及验证结果以工作日志为准。
 
 ## 路线

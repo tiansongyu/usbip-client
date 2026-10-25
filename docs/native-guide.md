@@ -1,5 +1,7 @@
 # Native 共享与诊断指南
 
+使用预览包部署时先读[Ubuntu安装指南](debian-installation.md)：helper位于`/usr/libexec/rustusb/rustusb-helper`，由root受限unit运行；新装服务disabled/inactive、无活跃策略。下述`/usr/local/bin`为手工部署替代方案，不与包混管；模块/运行内核工具及设备授权仍由管理员显式准备。两Ubuntu amd64安装生命周期[验收](research/debian-installation-validation.md)不替代新unit内Native USB I/O或真实硬件门槛。
+
 [English README](../README.md) · [中文 README](../README.zh-CN.md)
 
 ## 构建与检查

@@ -2,6 +2,11 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- 静态QA通过451源逐Git/三ELF、20文档253本地targets/49site refs、八site仅index变、四global skill/symlink保持；gate后仅两个被库存显式覆盖的doc payload叙述改变，packaging代码逐22d3、Rust/apps/vendor/locks逐412b保持。真实IAB桌面1280无横溢/newguide键盘outline2px、实际最终normal390与noJS390 doc/client375可读/三静态backend heading可见，normal samples console空。截图API unavailable无像素审查；数次请求390实际仍1280不记mobile通过，按实际新cap/跨call观察最终390，noJS先查JS-assigned role为空也不误判隐藏。五owned tabs全关/reset，owned preview真实INT/wait130。预览方法/原HTTP log与观察单独入外manifest，不改原883成员归档。
+
+- clean fded558a两官方原镜像完整fresh最终全部通过：各42记录/40不同label、两native GUI WM0、原broker实际fsync entered/returned0、实际dpkg升级0、old version/CLI inode保持到释放、真reboot bootID改变、remove/purge与root/helper及agent sentinels/UID/配置凭据/旧job/mask保留；4 actual QEMU0、collect0、无forced/所有guard真。原包仍22d3 v3/v4、三Rust ELF仍f174，不重标旧USB结果。所有actual handles terminal后完整原root1076+GUI18/451 frozen inputs、HEAD/clean guards通过，software源同fded。
+- collector逐883成员/10939952B roundtrip通过，archive2115735B/SHAe014f027bc1d62215e5ab2d87964246eb010b24094a573c5c6f8088eb6334635；九invocation分5原FAIL、2显式非fresh诊断PASS、2完整freshPASS，所有private key/VM image/ELF/deb bytes排除。小段补读global readme-site及refs，4全局文件未修改；按已有英文README/site风格同步preview包入口及真实scope，补英文report/安装指南和中央文档，不将整体Phase5/硬件/ARM安装/newunit Native USB I/O标完成。静态与浏览器、普通SSH push、远端CI/产物与Pages待完成。
+
 - clean cd8ee6fd两项development-only continuation dev02后半段通过：原PID/UID实际journal fsync entered→returned0，真实dpkg wait0、helper保留，GUI WM0；两次真正guest reboot（首QEMU0后同disk再启动）、实际remove/purge、UID/配置凭据hash/旧job/data/mask保留均通过，两项各两QEMU0、collect0、无forced/全部guard真。仍明确fresh_install_acceptance=false，不将跨旧初始夹具的续跑算完整fresh；原两dev01 FAIL不重判。仅新fixture补blocked时dpkg version及CLI实际inode、root helper-state sentinel保留和全部package executable消失的直接断言，原真实journal/unknown物理资源不由sentinel证明。下一步两官方原镜像完整fresh验收。
 
 - a79993d7两项development-only continuation显式克隆原failed来宾磁盘层（原archive/summary不改），记录混合来源/非fresh验收。两者实际GUI native window与WMclose0、ordinary virtual job Start、old/new failed-upgrade拒绝均通过；均在SIGSTOP保持断言FAIL，finally SIGCONT时原PID已结束又ProcessLookupError，旧fixture因此未实际wait升级child，不能补造其exit0。原upgrade日志有真实unit stop receipt/文件替换，但case仍FAIL；两QEMU0、collect0、无forced/三guard真。按Jammy官方systemd.kill核对自动SIGCONT是预期语义，不是产品清理被跳过。

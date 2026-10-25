@@ -5,8 +5,9 @@ the TUI. Local and remote inventories, profile actions, jobs, sessions, audit an
 preferences all use the existing libraries and authenticated application service.
 Settings also edits explicitly delegated fixed-profile automatic rules. This is
 an early preview. [Process-restart recovery](frontend-recovery.md) retains original
-confirmed requests for explicit queries; packaged installation and full GUI
-acceptance remain unfinished.
+confirmed requests for explicit queries. Experimental
+[Ubuntu packages](debian-installation.md) have complete amd64 lifecycle tests;
+full GUI acceptance remains unfinished.
 
 ## Build and open
 
@@ -128,9 +129,11 @@ on both families, followed by explicit original-draft restoration.
 [Process-restart validation](research/frontend-intent-recovery-validation.md) adds
 actual whole-GUI SIGKILL/relaunch, both original namespaces and the last issued
 draft on IPv4/IPv6, with competing-writer/private-directory refusal and shared TUI
-regressions. Unknown/expired outcomes remain conservative. Power-loss durability,
-`.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
-acceptance remain unfinished.
+regressions. Unknown/expired outcomes remain conservative.
+[Package lifecycle validation](research/debian-installation-validation.md) adds
+full Ubuntu 22.04/24.04 amd64 install/upgrade/reboot/remove/purge, actual native
+window close and controlled journal wait. Power-loss durability, arm64 installed
+runtime, full GUI and hardware/Windows acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded
 from the root Native workspace; its root checks do not replace the GUI gate.

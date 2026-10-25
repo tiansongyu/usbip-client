@@ -1,5 +1,7 @@
 # 测试手册与证据要求
 
+E58完整磁盘[安装套件](../scripts/qemu_package/README.md)使用官方签名checksum镜像和真实systemd，独立于原initramfs USB套件；[最终报告](research/debian-installation-validation.md)锁fded两Ubuntu amd64完整cold流程、4 QEMU0、原生GUI0及真实journal fsync有限等待/总wait dpkg、retain/mask检查。旧五FAIL/两开发续跑保留；C LD_PRELOAD仅明确test fixture、不入产品包，不证明永久硬阻塞可取消。运行说明、依赖/隐私边界和未验收范围见套件README。
+
 本手册定义 RustUSB 的自动检查、双 Ubuntu 实机验收、异常、安全和性能测试。命令面向稳定 Rust 及 Linux；本文本身不是已执行测试结果。**硬件与新增端到端场景均需实际执行后登记，不能以编译成功推断 USB 直通成功。** 最终状态以仓库工作记录中的命令、退出码和原始证据为准。
 
 ## 1. 环境与安全前提

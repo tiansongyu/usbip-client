@@ -3,7 +3,8 @@
 The source builder produces separate native `rustusb` and optional `rustusb-gui`
 preview packages. The base includes the CLI/TUI, root helper, nonroot agent units
 and package lifecycle scripts. Building a package is not installation acceptance;
-see the [design](research/debian-installation-design.md) for the current scope.
+see the [full Ubuntu validation](research/debian-installation-validation.md) and
+[design](research/debian-installation-design.md) for the actual scope.
 Ubuntu 22.04/24.04 amd64 and arm64 are targets. Build on the oldest updated
 distribution you intend to support for each architecture; dependencies are derived
 from the actual binaries, including GTK/WebKit for GUI. Do not use an amd64 package

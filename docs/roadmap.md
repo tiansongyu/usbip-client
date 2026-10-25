@@ -1,5 +1,7 @@
 # 分阶段开发与验收计划
 
+E58已实现[Ubuntu基础/GUI .deb及systemd安装流程](debian-installation.md)，[两amd64完整cold安装验收](research/debian-installation-validation.md)与原软件门通过；源码/包/ELF/夹具分别固定，默认不启服务且保留旧状态。四native CI配置产物构建与安装态验收分开；arm64完整安装、新unit内Native/USBFS I/O、断电/旧未知协调、完整GUI/Phase5与硬件门槛继续未完成。
+
 本计划以真实 Linux USB 设备级重定向为目标。阶段严格按证据推进：文档、编译、模拟测试、真实设备枚举和日常可靠使用是不同完成条件。所有未附运行记录的条目都属于**规划 / 未验证**；不会因为创建目录、实现命令入口或依赖具有某项能力而自动完成阶段。
 
 ## 1. 第一阶段技术边界
