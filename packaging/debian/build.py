@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -26,6 +27,60 @@ def copy(source, root, target, mode=0o644):
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, dest)
     dest.chmod(mode)
+
+
+def licenses(stage, name, arch, head):
+    """Conservative target-resolved inventory, including build/dev dependencies."""
+    triple = {'amd64': 'x86_64-unknown-linux-gnu', 'arm64': 'aarch64-unknown-linux-gnu'}[arch]
+    args = ['cargo', 'metadata', '--format-version', '1', '--locked', '--offline', '--filter-platform', triple]
+    args += ['--all-features'] if name == 'rustusb' else ['--manifest-path', str(ROOT/'apps/rustusb-gui/Cargo.toml')]
+    data = json.loads(run(args, cwd=ROOT))
+    resolved = {row['id'] for row in data['resolve']['nodes']}
+    prefix = 'usr/share/doc/'+name+'/third-party/'
+    records = []
+    fallbacks = {('asn1-rs-impl','0.2.0'): 'asn1-rs-impl-0.2.0-MIT.txt',
+                 ('governor','0.10.4'): 'governor-0.10.4-MIT.txt',
+                 ('dlopen2','0.8.2'): 'dlopen2-0.8.2-MIT.txt',
+                 ('dlopen2_derive','0.4.3'): 'dlopen2-0.8.2-MIT.txt',
+                 ('selectors','0.38.0'): 'MPL-2.0.txt'}
+    for package in sorted(data['packages'], key=lambda p: (p['name'],p['version'])):
+        if package['id'] not in resolved: continue
+        directory = Path(package['manifest_path']).parent
+        identifier = package['name']+'-'+package['version']
+        record = {'name': package['name'], 'version': package['version'], 'license': package['license'], 'files': []}
+        sources = []
+        for item in sorted(directory.iterdir()):
+            if item.name.lower().startswith(('license','licence','copying','copyright','notice','unlicense')):
+                sources.extend([item] if item.is_file() else [p for p in sorted(item.rglob('*')) if p.is_file()])
+        if not sources:
+            if package['name'].startswith('rustusb-'):
+                sources = [ROOT/'LICENSE']
+            elif (package['name'], package['version']) in fallbacks:
+                sources = [ROOT/'packaging/licenses'/fallbacks[(package['name'],package['version'])]]
+            else:
+                raise ValueError('missing license text: '+identifier)
+        for source in sources:
+            relative = source.relative_to(directory) if source.is_relative_to(directory) else Path(source.name)
+            target = prefix+identifier+'/'+str(relative)
+            copy(source, stage, target)
+            record['files'].append({'file': str(relative), 'sha256': digest(source)})
+        record['source_url'] = ('https://crates.io/api/v1/crates/'+package['name']+'/'+package['version']+'/download'
+                                if package['source'] else 'https://github.com/tiansongyu/usbip-client/tree/'+head)
+        if package['name'] == 'selectors':
+            # Supply the actual unmodified MPL-covered cached source, not only a link.
+            archive = stage/(prefix+identifier+'/source.tar.gz')
+            with tarfile.open(archive, 'w:gz') as tar:
+                for path in sorted(directory.rglob('*')):
+                    if path.is_file() and not path.is_symlink():
+                        tar.add(path, arcname=identifier+'/'+str(path.relative_to(directory)), recursive=False)
+            record['source_archive_sha256'] = digest(archive)
+        records.append(record)
+    dest = stage/(prefix+'inventory.json')
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps({'scope': 'target-resolved Cargo graph including build/dev dependencies; not a per-ELF linked-only SBOM',
+                                'target': triple, 'source_head': head, 'packages': records}, indent=2)+'\n')
+    copy(ROOT/'packaging/licenses/provenance.json', stage, prefix+'supplemental-license-provenance.json')
+    copy(ROOT/'docs/third-party.md', stage, prefix+'project-third-party.md')
 
 
 def main():
@@ -87,6 +142,7 @@ def main():
                 copy(ROOT/'apps/rustusb-gui/icons/icon.png', stage, 'usr/share/icons/hicolor/64x64/apps/rustusb.png')
                 extra = 'rustusb (= '+args.version+')'
             copy(ROOT/'LICENSE', stage, 'usr/share/doc/'+name+'/copyright')
+            licenses(stage, name, arch, provenance['git_head'])
             shlibs = run(['dpkg-shlibdeps', '-O'] + ['-e'+str(binaries[key]) for key in inputs], cwd=work)
             if not shlibs.startswith('shlibs:Depends=') or '\n' in shlibs:
                 raise ValueError('unexpected dpkg-shlibdeps output')

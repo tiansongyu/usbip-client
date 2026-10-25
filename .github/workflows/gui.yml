@@ -29,7 +29,7 @@ jobs:
         run: |
           rustup toolchain install 1.97.1 --profile minimal --component rustfmt,clippy
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev dpkg-dev binutils
       - name: Verify architecture and actual GTK/WebKit versions
         run: |
           test "$(uname -m)" = "${{ matrix.arch }}"
@@ -39,3 +39,20 @@ jobs:
           pkg-config --modversion gtk+-3.0 webkit2gtk-4.1
       - name: GUI formatting, Clippy, tests, release and rustdoc
         run: scripts/check-gui.sh
+      - name: Build matching base and native preview Debian packages
+        run: |
+          cargo build --workspace --all-features --release --locked
+          python3 packaging/debian/build.py --output target/debian \
+            --version "0.1.0~ci${GITHUB_RUN_NUMBER}+g${GITHUB_SHA:0:12}-1" \
+            --gui apps/rustusb-gui/target/release/rustusb-gui
+          for package in target/debian/*.deb; do
+            dpkg-deb --info "$package"
+            dpkg-deb --contents "$package"
+          done
+      - name: Upload native preview packages and build receipts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: debian-preview-${{ matrix.os }}-${{ matrix.arch }}
+          path: target/debian/
+          if-no-files-found: error
+          retention-days: 14
