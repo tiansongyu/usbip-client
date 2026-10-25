@@ -111,7 +111,8 @@ Both units send TERM to the actual Rust main, disable automatic SIGKILL and wait
 without a stop timeout. A real kernel/filesystem block can therefore block dpkg
 or ordinary reboot indefinitely. Do not call that a successful stop. The gate
 requires the actual booted systemd manager, unified cgroup v2, matching safe unit
-settings, successful main exit and empty original/current cgroup. An already
+settings (including initial SIGTERM and no extra SIGHUP), successful main exit
+and empty original/current cgroup. An already
 inactive administrator mask is verified without unmasking it. Alternate
 `DPKG_ROOT` and offline upgrade/removal are unsupported and fail closed. These
 packages manage their fixed units; migrate separately installed/manual processes

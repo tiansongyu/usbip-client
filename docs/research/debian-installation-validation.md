@@ -6,7 +6,36 @@ experimental base/GUI packages and systemd lifecycle described in the
 [installation guide](../debian-installation.md), within the scope below.
 Phase 5 and the full project remain incomplete.
 
-## Source and artifacts
+## Current signal-guard follow-up
+
+Final package/source and new complete cold validation are now pinned to
+`0ad3a6ee14be720587962150d625e585f3f18909`, using preview **5 → 6**.
+The guard also verifies loaded `KillSignal=15` and `SendSIGHUP=no` before sending
+any signal. The earlier final-KILL check alone did not cover an abrupt initial
+signal override; default shipped units were already correct.
+
+Both Ubuntu amd64 guests repeat the complete fresh lifecycle successfully:
+**44 records / 42 distinct assertions per guest**, four actual QEMU exit0,
+no forced cleanup, all source/ELF/HEAD guards true. Three actual failed upgrades
+per guest (`SendSIGKILL=yes`, `KillSignal=SIGKILL`, `SendSIGHUP=yes`) exercise both
+old prerm/new failed-upgrade gates and preserve the original live broker PID and
+old package before signalling. The journal wait, GUI WMclose0, real reboot,
+remove/purge, retained configuration/UID/journals/sentinels and mask checks pass.
+The original complete software gates at that same clean source again pass
+1076 + 18, zero failed/ignored, with all 451 inputs held and original f174 ELFs.
+
+[Follow-up summary](../evidence/debian-stop-signals-20261025/summary.json),
+[member hashes](../evidence/debian-stop-signals-20261025/members.json) and
+[raw evidence](../evidence/debian-stop-signals-20261025/raw-evidence.tar.gz) contain
+666 reopened/verified members, 8,929,162 uncompressed bytes. The 1,768,564-byte
+archive SHA256 is `78d8d4f794232dd515c0aef09b6bd6f263c7d5a0fbd6e36700a7681396a6e5e3`.
+Only named cooperative unit settings are checked; arbitrary trusted-root changes,
+administrator/kernel kill and permanent blocking retain their existing limits.
+
+The original v3 → v4 evidence below remains attributed to its actual earlier
+source. The new guard does not relabel those executions or expand USB/arm64 scope.
+
+## Original source and artifacts
 
 | Item | Actual source |
 | --- | --- |

@@ -2,6 +2,9 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- clean0ad3a6ee修正后v5→v6两官方镜像完整cold均PASS，各44记录/42不同label；三种不安全信号覆盖均old/new两gate拒绝且原PID active/旧版本不变，再完成真实fsync等待释放、dpkg0、原生GUI WM0、真重启/remove/purge保留；4 QEMU0/无forced/全部guard真。随后同clean0ad3完整root1076+GUI18/451源及HEAD/clean guard全通过，三ELF仍f174。新archive666成员/8929162B roundtrip，1768564B/SHA78d8d4f794232dd515c0aef09b6bd6f263c7d5a0fbd6e36700a7681396a6e5e3，旧e014/883归档不动。
+- 中间e875三workflow都completed/success（core40189385622、GUI40189384846、Pages40189384816），GUI四实际preview artifact已出现，未当新guard验收。使用GitHub专用artifact download API做一个Noble ARM旧artifact传输/receipt探针：12597484538/ZIP10481123B/SHA0f9a948369981fedc415fe8399ac0064d199e6bdb67e7ccf97cb656eaa308497，3成员/receipt source e875/arm64；只解析未执行，不当ARM安装或新guard成品。临时下载cap原响应留.private.json在/tmp，未入公开证据。最终新内容push/CI与四包下载只读检查、live Pages核对仍待完成。
+
 - 内容e8752c85已普通SSH push、clean，Pages40189384816 check121156931327/deploy121157067436成功；core40189385622与GUI40189384846八格仍观测中，原API-01已保存。发布末审发现stop guard虽查SendSIGKILL/no timeout，却漏查初始KillSignal与SendSIGHUP；默认unit正确，管理员覆盖可先发送不合作信号再被事后结果拒绝。先更新设计，补loaded KillSignal=15/SendSIGHUP=no的发信号前检查及三类真实upgrade拒绝（要求原PID/active及旧版本均保持）。这是新增产品修正，原22d3包/fded cold证据保持原scope，需新包、新完整VM与最终软件/远端结果，不以旧通过覆盖新实现。
 
 - 静态QA通过451源逐Git/三ELF、20文档253本地targets/49site refs、八site仅index变、四global skill/symlink保持；gate后仅两个被库存显式覆盖的doc payload叙述改变，packaging代码逐22d3、Rust/apps/vendor/locks逐412b保持。真实IAB桌面1280无横溢/newguide键盘outline2px、实际最终normal390与noJS390 doc/client375可读/三静态backend heading可见，normal samples console空。截图API unavailable无像素审查；数次请求390实际仍1280不记mobile通过，按实际新cap/跨call观察最终390，noJS先查JS-assigned role为空也不误判隐藏。五owned tabs全关/reset，owned preview真实INT/wait130。预览方法/原HTTP log与观察单独入外manifest，不改原883成员归档。

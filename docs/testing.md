@@ -438,3 +438,5 @@ E55 [GUI规则runner](../scripts/qemu_gui_rules/README.md)组合原Native264/三
 ## 前端跨进程请求恢复（E57）
 
 先读[设计](research/frontend-intent-recovery-design.md)、[报告](research/frontend-intent-recovery-validation.md)和[runner](../scripts/qemu_frontend_recovery/README.md)。新双栈组合保E56/E55/原Native264/三I/O/全Rootproof，四次计划whole-GUI SIGKILL/reap137与六actual WM close0分开，不把计划crash当合作join。保原two namespace/protocol/payload/file，最后settled后另杀进程恢复已发draft；真实第二GUI持锁/坏目录拒绝无新UUID或服务写入。readonly窗口显式要求Start disabled，默认旧helper仍Start enabled。三原PTY child明确测试XDG_STATE_HOME，不重置state或改原断言；原GUI/规则/v2/single及TUI动作/故障/basic均双栈另验。冻结source/head/三ELF至所有实际handle terminal，保留两最初FAIL；不把Cargo、guest、native、PTY与USB计数合并。
+
+E58停止信号守卫补充：当前包源/完整cold及软件锁clean0ad3a6ee，preview5→6，两Ubuntu amd64各44记录/42不同断言、四QEMU0/无forced；old/new升级gate在发信号前拒绝SendSIGKILL=yes、初始KillSignal=SIGKILL、SendSIGHUP=yes且原PID仍active。完整1076+18/451 inputs及三f174 ELF保持。原22d3/fded与五FAIL/两诊断继续原归属，见`docs/research/debian-installation-validation.md`当前段和`docs/evidence/debian-stop-signals-20261025`。非任意root配置/OOM/永久阻塞或新USB/ARM安装证明。

@@ -147,3 +147,5 @@ E54补充见`automatic-sharing-rust-qemu-validation.md`：clean42e98ab3同产品
 ## Debian / systemd 安装生命周期
 
 修改packaging或unit前读`docs/research/debian-installation-design.md`、两Debian/systemd research和`debian-installation-validation.md`。包源22d3/最终fded的软件1076+18、451输入、两Ubuntu amd64 cold通过只属所述scope，原五FAIL/两开发续跑不重判。无配置/状态payload、无默认enable/start/restart；仅安全缺失leaf创建、不递归chown，不删UID/凭据/旧journal，异常不拿PID0代USB proof。三条pre-unpack/remove gate保原失败、不让failed-upgrade绕过；实际先agent后helper总wait/cgroup，mixed/no KILL/infinity，已inactive mask保留。SIGSTOP会被manager CONT，只有明确test-only真实fsync gate作有限等待证据；arm64安装、新unit Native/USBFS I/O、断电/永久阻塞/真实硬件仍未验收。
+
+E58停止信号守卫补充：当前包源/完整cold及软件锁clean0ad3a6ee，preview5→6，两Ubuntu amd64各44记录/42不同断言、四QEMU0/无forced；old/new升级gate在发信号前拒绝SendSIGKILL=yes、初始KillSignal=SIGKILL、SendSIGHUP=yes且原PID仍active。完整1076+18/451 inputs及三f174 ELF保持。原22d3/fded与五FAIL/两诊断继续原归属，见`docs/research/debian-installation-validation.md`当前段和`docs/evidence/debian-stop-signals-20261025`。非任意root配置/OOM/永久阻塞或新USB/ARM安装证明。

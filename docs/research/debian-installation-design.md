@@ -102,7 +102,7 @@ return is recorded. Keep the test library/drop-in outside the product package,
 retain the original failures and do not equate this finite controlled wait with
 cancellation of permanent storage or kernel blocks.
 
-Pre-publication guard refinement: default units already use initial SIGTERM and
+Final-delivery guard refinement: default units already use initial SIGTERM and
 no extra SIGHUP, but the package stop guard must inspect both loaded properties
 before signalling. Reject an initial KillSignal other than 15 and SendSIGHUP=yes,
 as well as the existing mode/final-KILL/timeout/restart checks. A final-KILL check
