@@ -1,8 +1,9 @@
 # Automatic sharing: authorization and rule input foundation
 
 2026-10-25. The validation library is implemented at clean
-`52fd127d7ca2e9cb34d20d9d4178917c231af711`. **Automatic sharing is not available
-yet.** This unit adds neither an agent startup option nor rule RPCs, persistence,
+`52fd127d7ca2e9cb34d20d9d4178917c231af711`. **At that revision, automatic sharing was not available
+yet.** The subsequent [fixed-profile runtime](automatic-sharing-runtime-validation.md)
+adds those paths at its own tested revision. This historical unit adds neither an agent startup option nor rule RPCs, persistence,
 a scheduler or GUI rule controls. The complete [design](automatic-sharing-design.md)
 and its remaining delivery gates still apply.
 

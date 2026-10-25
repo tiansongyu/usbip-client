@@ -2,8 +2,10 @@
 
 Status: **draft**,2026-10-25. Initial source review at
 `c4f72f6e02120487077733a4c6eb046094db3248`. The [authorization/input foundation](automatic-sharing-foundation-validation.md)
-is implemented and software-tested at `52fd127d`; rule persistence, execution and GUI
-integration are not implemented or accepted. This design is not runtime evidence.
+is implemented and software-tested at `52fd127d`. The [fixed-profile runtime](automatic-sharing-runtime-validation.md)
+at `20a15a01` adds persistence, CLI/RPC and actual background execution, with Native
+local-rule QEMU evidence. Dynamic pools, physical remote safety receipts and GUI
+integration remain unfinished; this overall design is not accepted or itself runtime evidence.
 Continues original requirements4.3/4.5/4.10 and Phase5.
 Automatic rules must work after a GUI exits and remain subject to both ends'
 administrator policy, exact original device/owner cleanup and storage restrictions.

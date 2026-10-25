@@ -3,7 +3,7 @@
 The Linux Tauri application uses the same headless observation/action worker as
 the TUI. Local and remote inventories, profile actions, jobs, sessions, audit and
 preferences all use the existing libraries and authenticated application service.
-This is an early preview; automatic sharing rules and packaged installation
+This is an early preview; GUI rule editing and packaged installation
 remain unfinished.
 
 ## Build and open
@@ -75,7 +75,7 @@ catalog and actual USB I/O after native windows close. The fixed QEMU HID/FTDI
 cases use raw-v1, which correctly shows RTT unavailable.
 [Framed-v2 validation](research/gui-link-health-validation.md) separately covers
 actual same-connection RTT, history/typed ends after three directional faults,
-and preserved reading state on both address families. Automatic rules,
+and preserved reading state on both address families. GUI rule editing,
 `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
 acceptance remain unfinished.
 

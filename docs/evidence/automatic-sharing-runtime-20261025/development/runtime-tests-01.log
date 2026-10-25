@@ -1,0 +1,51 @@
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+warning: unused imports: `config::Profile` and `store::RequestRecord`
+ --> crates/rustusb-service/src/runtime_automation_tests.rs:4:13
+  |
+4 | use crate::{config::Profile, store::RequestRecord};
+  |             ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `LoadedServerConfig`
+ --> crates/rustusb-service/src/runtime_automation_tests.rs:6:53
+  |
+6 | use rustusb_transport::config::{LoadedClientConfig, LoadedServerConfig};
+  |                                                     ^^^^^^^^^^^^^^^^^^
+
+warning: function `token` is never used
+  --> crates/rustusb-service/src/runtime_automation_tests.rs:19:4
+   |
+19 | fn token(c: char) -> Result<ObservationToken> {
+   |    ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `rustusb-service` (lib test) generated 3 warnings (run `cargo fix --lib -p rustusb-service --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.80s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-70248772e87ba6d5)
+
+running 7 tests
+test runtime::automatic::tests::late_automatic_registration_inherits_suppression_and_old_resume_cannot_clear_it ... ok
+test runtime::automatic::tests::local_whole_pool_freshness_storage_ambiguity_and_occurrence_keys_are_distinct ... ok
+test runtime::automatic::tests::remote_known_profile_safety_and_expired_completion_never_infer_physical_generation ... ok
+test runtime::automatic::tests::explicit_policy_crud_cas_quota_peer_scope_and_revocation_are_real_commits ... ok
+test runtime::automatic::tests::unknown_mutation_keeps_original_uuid_and_authorized_reads_bypass_a_real_store_gate ... ok
+test runtime::automatic::tests::stop_fanout_and_newer_suppression_survive_an_enable_commit_wait ... ok
+test runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it ... FAILED
+
+failures:
+
+---- runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it stdout ----
+
+thread 'runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it' (554901) panicked at crates/rustusb-service/src/runtime_automation_tests.rs:831:9:
+assertion failed: final_state.jobs[0].operation_error.is_none()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 121 filtered out; finished in 2.03s
+
+error: test failed, to rerun pass `-p rustusb-service --lib`

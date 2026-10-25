@@ -1,0 +1,23 @@
+Own jobs until cooperative SIGINT/SIGTERM and their actual cleanup finish
+
+Usage: rustusb agent --config <CONFIG> run [OPTIONS]
+
+Options:
+      --automation-policy <AUTOMATION_POLICY>
+          Explicit root-managed automatic-rule delegation; absent means disabled
+      --json
+          Emit machine-readable JSON to stdout; logs remain on stderr
+      --socket <SOCKET>
+          Root-owned local helper socket [default: /run/rustusb/control.sock]
+      --timeout <TIMEOUT>
+          Discovery timeout covering DNS, connect and response [default: 10]
+      --log-json
+          Emit JSON tracing logs on stderr
+      --log-directory <LOG_DIRECTORY>
+          Write sanitized bounded NDJSON to an existing private directory instead of stderr
+      --log-max-bytes <LOG_MAX_BYTES>
+          Segment byte limit (4096..=8388608); requires a file log directory
+      --log-retain <LOG_RETAIN>
+          Total retained segments including active (2..=16)
+  -h, --help
+          Print help

@@ -107,6 +107,12 @@ Remote catalog reads now run in a bounded independent task group; see the
 [managed catalog validation](docs/research/catalog-supervisor-validation.md) for
 slow-peer responsiveness, audit and shutdown checks.
 
+Optional [fixed-profile rules](docs/automatic-sharing.md) can start an entire
+approved profile in the background. They require explicit administrator
+delegation. [Native local-rule QEMU tests](docs/research/automatic-sharing-runtime-validation.md)
+verify actual I/O and manual pause across restart on IPv4/IPv6. GUI rule editing,
+dynamic device pools and physical remote automatic import remain unfinished.
+
 Optional [offline CRLs](docs/offline-crl.md) can reject revoked peers at new TLS
 verification, including intermediate certificates. Lists are immutable startup
 inputs: renew them through cooperative service restart. Existing connections
@@ -186,7 +192,7 @@ read/audit-only agent. [Validation](docs/research/native-gui-validation.md) cove
 hotplug, actual permission denial/original retry, saved preferences and narrow
 layout. Separate [IPv4/IPv6 action tests](docs/research/gui-native-actions-validation.md)
 verify confirmed GUI Start/Stop, a nonempty remote catalog and continued QEMU
-HID/FTDI I/O after native windows close. Automatic rules, packaged installation
+HID/FTDI I/O after native windows close. GUI rule editing, packaged installation
 and full GUI/hardware acceptance remain unfinished.
 
 [Same-connection RTT tests](docs/research/gui-link-health-validation.md) also
@@ -252,9 +258,9 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Select the intended network mode.** `secure-*` commands require trusted mutual-TLS configuration and device rules. Legacy commands still need external network protection. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
-- **Health has a defined scope.** Probes measure the data connection, not USB completion. The private agent journal upgrades to strict disk2; older agents cannot open that upgraded journal. See the [upgrade and health rules](docs/data-link-health.md).
+- **Journal upgrades are explicit.** Health uses strict disk2; enabling automatic policy upgrades to disk3. Older agents cannot open upgraded journals. Probes measure the data connection, not USB completion. See [health](docs/data-link-health.md) and [automatic rules](docs/automatic-sharing.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
-- **More product work remains.** Full GUI acceptance, automatic sharing rules, packaged installers, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
+- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, packaged installers, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
 
 Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
 
@@ -264,6 +270,7 @@ Unknown or externally created sessions are not automatically adopted. Failed or 
 | --- | --- |
 | [Secure broker setup](docs/secure-guide.md) | Mutual TLS, dedicated broker roles, exact device authorization and supervised cleanup |
 | [Shared application service](docs/application-service-guide.md) | Nonroot jobs, authorized profiles, per-connection stop, durable sessions and bounded audit |
+| [Automatic fixed-profile rules](docs/automatic-sharing.md) | Explicit delegation, persistent rules, manual pause and safe mutation retry |
 | [Data-link health](docs/data-link-health.md) | Opt-in v2 probes, RTT, backpressure observations and epoch-qualified history |
 | [Process logs](docs/logging.md) | Private bounded rotation, authorized pages, follow and independent logging failures |
 | [Private diagnostics](docs/diagnostics.md) | Bounded JSON export, committed profile history, identity aliases and checked publication |

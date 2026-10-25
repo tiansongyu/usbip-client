@@ -419,3 +419,8 @@ GUI确认动作与真实窗口关闭的双栈流程见[runner](../scripts/qemu_g
 
 
 GUI同数据链RTT/故障展示见[runner](../scripts/qemu_gui_link/README.md)和[E51](research/gui-link-health-validation.md)。保原v2三方向精确valve/packet/lifecycle及七I/O/15秒窗口；真实旧ELF先复现展开/焦点丢失，再在c4f双栈验证current DOM RTT、历史typed end/独立cleanup、scroll与profile隔离、实际WM close/join。原v2/default768及GUI actions/single回归独立，不放宽旧原件判据。
+
+
+## 固定profile自动规则（E53）
+
+先读[指南](automatic-sharing.md)与[验收范围](research/automatic-sharing-runtime-validation.md)。自动Native paired仿真保原agent全部264核验/三轮真实HID-FTDI I/O、两epoch、完整Rootproof与driver/VHCI基线，仅server显式升级disk3。分别执行`python3 scripts/qemu_automatic_rules/run.py --family ipv4 --evidence /tmp/NEW-UNIQUE-EVIDENCE`和ipv6（使用不同全新目录）。最终运行使用locked build/clean HEAD；不得把guest0单独当host验收或把旧schema2断言放宽。CLI metadata peer夹具`python3 scripts/test-rule-cli.py --evidence /tmp/NEW-UNIQUE-CLI-EVIDENCE`只证明UUID/query/背压/信号，需普通Linux用户与sudo创建其唯一/run测试目录，不调用helper/USB或实际commit；运行前构建all-features release。虚拟/USBFS自动规则、hotplug/失联扩展、动态pool、GUI编辑及真实硬件仍需独立验收。

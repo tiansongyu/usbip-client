@@ -4,6 +4,11 @@ The experimental Linux `rustusb agent` owns USB/IP jobs independently of the CLI
 
 Native agent ownership, targeted stop and root-proof/restart scenarios retain their [original validation](research/application-service-validation.md). Managed Native, virtual and USBFS brokers also have bounded IPv4/IPv6 [data-link QEMU coverage](research/data-link-health-validation.md); [preparation-stop validation](research/prepare-recording-shutdown-validation.md) covers delayed application records and local Native export cancellation. These reports keep software, simulated USB and hardware acceptance separate. See the [implementation contract](research/application-service-design.md) and [work log](work-log.md) for ownership rules and tested revisions.
 
+For explicitly delegated background operation, see the separate
+[fixed-profile automatic rules guide](automatic-sharing.md). It documents policy
+startup, strict disk3 migration, CLI UUID intent/query output and manual Stop
+pause semantics. No policy means no automatic observation or admission.
+
 ## Observe server authentication
 
 For volatile server authentication counters, use an account with the profile's

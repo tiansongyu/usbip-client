@@ -1,0 +1,33 @@
+   Compiling rustusb-linux v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-linux)
+   Compiling rustusb-logging v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-logging)
+   Compiling rustusb-native v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-native)
+   Compiling rustusb-transport v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-transport)
+   Compiling rustusb-discovery v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-discovery)
+   Compiling rustusb-rust-backend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-rust-backend)
+   Compiling rustusb-daemon v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-daemon)
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+warning: associated function `fixture` is never used
+   --> crates/rustusb-service/src/automation.rs:508:19
+    |
+495 | impl AutomationPolicy {
+    | --------------------- associated function in this implementation
+...
+508 |     pub(crate) fn fixture(bytes: &[u8], config: &LoadedConfig) -> Result<Self> {
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `rustusb-service` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.91s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-70248772e87ba6d5)
+
+running 6 tests
+test rules::tests::crud_cas_and_separate_mutation_history_keep_original_results ... ok
+test rules::tests::disk_versions_have_closed_distinct_required_shapes ... ok
+test rules::tests::unresolved_tombstones_keep_the_original_obligation_and_capacity ... ok
+test rules::tests::occurrence_suppression_survives_start_fifo_and_terminal_job_pruning ... ok
+test rules::tests::origin_request_and_required_nested_fields_cannot_be_forged_or_forgotten ... ok
+test rules::tests::finite_quotas_and_history_eviction_do_not_reapply_a_mutation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 114 filtered out; finished in 0.01s
+

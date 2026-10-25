@@ -1,0 +1,45 @@
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+warning: unused imports: `config::Profile` and `store::RequestRecord`
+ --> crates/rustusb-service/src/runtime_automation_tests.rs:4:13
+  |
+4 | use crate::{config::Profile, store::RequestRecord};
+  |             ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `LoadedServerConfig`
+ --> crates/rustusb-service/src/runtime_automation_tests.rs:6:53
+  |
+6 | use rustusb_transport::config::{LoadedClientConfig, LoadedServerConfig};
+  |                                                     ^^^^^^^^^^^^^^^^^^
+
+warning: function `token` is never used
+  --> crates/rustusb-service/src/runtime_automation_tests.rs:19:4
+   |
+19 | fn token(c: char) -> Result<ObservationToken> {
+   |    ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `rustusb-service` (lib test) generated 3 warnings (run `cargo fix --lib -p rustusb-service --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.49s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-70248772e87ba6d5)
+
+running 1 test
+test runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it ... FAILED
+
+failures:
+
+---- runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it stdout ----
+
+thread 'runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it' (557178) panicked at crates/rustusb-service/src/runtime_automation_tests.rs:831:9:
+early-stop job=Job { id: JobId("2ee83cd2-d97b-409d-a932-929e469db676"), instance_id: InstanceId("00000000-0000-0000-0000-000000000001"), profile: "fixed-profile", operator_uid: 1000, state: Finished, stop_requested: true, operation_error: Some(State) }; sessions=0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 127 filtered out; finished in 2.03s
+
+error: test failed, to rerun pass `-p rustusb-service --lib`

@@ -121,3 +121,15 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 ## 自动规则授权与输入基础
 
 E52见`docs/research/automatic-sharing-foundation-validation.md`：clean52fd127d root978+GUI11/392输入guard通过，仅授权/输入库，无生产执行入口/新QEMU。`AutomationPolicy`只能由root trusted read构造，不加用户JSON/Default旁路；每次启用/触发复核完整固定pool及真实或持久delegated UID的Read/Start/Stop/remote Discover，不以Start/隐式root Read授无限后台操作。RuleSpec/ExpectedRevision解码须保持有界/strict，mutation用struct变体。整体规则仍draft未接journal/RPC/runner；后续不能略去同事务origin+Start、独立mutation retry、manual Stop sticky抑制/持久pause、未决tombstone/旧owner、unsafe/stale拒绝及dynamic pool/GUI/安装验收。新ELF不得套旧QEMU结果。
+
+
+## 自动规则持久运行时
+
+修改前读`docs/research/automatic-sharing-runtime-validation.md`及`automatic-sharing-design.md`的Runtime契约。E53 clean20a15a01 root1019+GUI11/396输入、Native本地规则双栈及原agent/v2 IPv4四QEMU/8guest0均通过；只证明报告锁定范围，virtual/USBFS自动QEMU/物理远端receipt/dynamic pool/GUI/安装/硬件仍未完成。旧早停FAIL、0测试过滤与clippy expect失败保留。
+
+- 显式root policy才启observer/自动准入；严格disk2/3不同完整shape、必需nonnull automation、不降级/不重置旧owner。冻结Job/Session/Metrics/旧audit/log/diagnostic schema。
+- origin/rule/revision/delegated UID/token与原Start job/request/audit和Fired同事务先commit再runner；Start FIFO淘汰不能消除已保origin。mutation独立UUID/CAS/query，unknown/expired不是没副作用，不自动换UUID或重发edit。
+- manual Stop在WAL外sticky代际抑制，Stop事务持久pause；晚auto注册继承，旧Enable commit不得清较新Stop，原定向stop安全sibling保持。disable/delete不假cleanup、未决tomb计quota。
+- local source monotonic完成时刻不由消费/WAL等待刷新；只Current/完整/安全/≤6秒，冻结primitive元组+boot，不以observerepoch/DTO新增字段造新设备。相同Periodic仅内存refresh，不加wire帧。
+- 单auto Discover保原两actual槽/授权/成功audit，disable或丢waiter不提前还槽；fresh真实completion才fire。原DEVLIST不证明all-alt/config安全或物理generation，physical/Native远端必须拒绝自动import直至另有认证完整receipt。
+- observer/network/USB真实owner直接stop并总await，metadata不持能力；pre-backend继承Stop/过期源须以原State/0session结束，不能仅相信backend prepare合作停即从未进入。CLI完整UUID意图先于RPC且非commit，INT/TERM/背压不追加generic JSON或发不完整意图后的RPC。

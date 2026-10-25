@@ -53,7 +53,7 @@ flowchart LR
 
 ## 具体接口契约
 
-`service::automation`已实现独立root授权与有限规则输入的[验证基础](research/automatic-sharing-foundation-validation.md)：完整固定pool绑定、逐次Read/Start/Stop/Discover复核、严格RuleSpec/RuleId/ExpectedRevision/mutation。当前没有生产调用者、规则journal/RPC/后台runner或GUI启用入口，不改Manifest1/disk2/旧DTO；完整[自动规则设计](research/automatic-sharing-design.md)仍draft，必须先落实同事务准入/实际owner与安全条件再开放执行。
+`service::automation`的[E52授权基础](research/automatic-sharing-foundation-validation.md)已接入[E53固定profile运行时](research/automatic-sharing-runtime-validation.md)：显式root policy、严格disk3、独立CRUD/CAS/retry/audit、origin+Start同事务、WAL外manual Stop sticky抑制与实际observer/network/USB owner总join。Native本地自动启动已有双栈QEMU真实I/O；完整固定pool及逐次ACL复核保留，无policy仍不启观察/自动准入且旧disk2保持。物理远端缺all-alt/config receipt而拒绝自动import；dynamic pool/GUI规则编辑/安装等仍未完成，整体设计仍draft。
 
 具体可编译签名见各 crate 公共 API。设计约束：
 
