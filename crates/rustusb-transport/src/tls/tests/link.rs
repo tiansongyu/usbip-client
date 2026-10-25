@@ -1,5 +1,161 @@
 //! Real loopback TCP + memory-DER mTLS contracts; no helper or USB claims.
 
+#[tokio::test]
+async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestResult {
+    use std::{
+        pin::Pin,
+        sync::{
+            Arc, Mutex,
+            atomic::{AtomicBool, Ordering},
+        },
+        task::{Context, Poll, Waker},
+    };
+    use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
+
+    #[derive(Default)]
+    struct ReadGate {
+        blocked: AtomicBool,
+        wake: Mutex<Option<Waker>>,
+    }
+    impl ReadGate {
+        fn release(&self) -> io::Result<()> {
+            self.blocked.store(false, Ordering::Release);
+            if let Some(wake) = self
+                .wake
+                .lock()
+                .map_err(|_| io::Error::other("test read gate poison"))?
+                .take()
+            {
+                wake.wake();
+            }
+            Ok(())
+        }
+    }
+    struct Gated {
+        stream: TcpStream,
+        gate: Arc<ReadGate>,
+    }
+    impl AsyncRead for Gated {
+        fn poll_read(
+            mut self: Pin<&mut Self>,
+            cx: &mut Context<'_>,
+            buf: &mut ReadBuf<'_>,
+        ) -> Poll<io::Result<()>> {
+            if self.gate.blocked.load(Ordering::Acquire) {
+                match self.gate.wake.lock() {
+                    Ok(mut wake) => *wake = Some(cx.waker().clone()),
+                    Err(_) => return Poll::Ready(Err(io::Error::other("test read gate poison"))),
+                }
+                if self.gate.blocked.load(Ordering::Acquire) {
+                    return Poll::Pending;
+                }
+            }
+            Pin::new(&mut self.stream).poll_read(cx, buf)
+        }
+    }
+    impl AsyncWrite for Gated {
+        fn poll_write(
+            mut self: Pin<&mut Self>,
+            cx: &mut Context<'_>,
+            buf: &[u8],
+        ) -> Poll<io::Result<usize>> {
+            Pin::new(&mut self.stream).poll_write(cx, buf)
+        }
+        fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+            Pin::new(&mut self.stream).poll_flush(cx)
+        }
+        fn poll_shutdown(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+            Pin::new(&mut self.stream).poll_shutdown(cx)
+        }
+    }
+
+    let fixture = Fixture::new()?;
+    let (server, client) = endpoints(&fixture)?;
+    let (incoming, outgoing) = sockets().await?;
+    let incoming_tuple = tcp_tuple(&incoming)?;
+    let outgoing_tuple = tcp_tuple(&outgoing)?;
+    let gate = Arc::new(ReadGate::default());
+    let (incoming, outgoing) = tokio::join!(
+        server.accept_with_deadline(incoming, HANDSHAKE_TIMEOUT),
+        client.connect_authenticated(
+            "server.test",
+            Gated {
+                stream: outgoing,
+                gate: gate.clone()
+            }
+        ),
+    );
+    let (incoming, outgoing) = (incoming?, outgoing?);
+    let probes = ProbePolicy::new(Duration::from_secs(1), Duration::from_secs(3))?;
+    let (incoming, outgoing) = tokio::join!(
+        crate::link::server(incoming, incoming_tuple, probes),
+        crate::link::client(outgoing, outgoing_tuple, probes),
+    );
+    let (incoming, mut outgoing) = (incoming?, outgoing?);
+    let (armed, arm) = tokio::sync::oneshot::channel();
+    let (closed, close) = tokio::sync::oneshot::channel();
+    let peer = tokio::spawn(async move {
+        let mut incoming = incoming;
+        let operation = async {
+            let mut request = [0; 7];
+            incoming.io.read_exact(&mut request).await?;
+            assert_eq!(&request, b"request");
+            incoming.io.write_all(b"reply").await?;
+            incoming.io.flush().await?;
+            arm.await
+                .map_err(|_| io::Error::other("test gate controller ended"))?;
+            let mut extra = [0];
+            assert_eq!(incoming.io.read(&mut extra).await?, 0);
+            incoming.io.shutdown().await
+        }
+        .await;
+        if operation.is_err() {
+            incoming.owner.request_stop();
+        }
+        let joined = incoming.owner.join().await;
+        drop(incoming.io);
+        let _ = closed.send(());
+        (operation, joined)
+    });
+    let operation = async {
+        outgoing.io.write_all(b"request").await?;
+        outgoing.io.flush().await?;
+        let mut reply = [0; 5];
+        outgoing.io.read_exact(&mut reply).await?;
+        assert_eq!(&reply, b"reply");
+        gate.blocked.store(true, Ordering::Release);
+        armed
+            .send(())
+            .map_err(|_| io::Error::other("test peer ended before gate"))?;
+        outgoing.io.shutdown().await?;
+        close
+            .await
+            .map_err(|_| io::Error::other("test peer close observer ended"))?;
+        gate.release()?;
+        let mut extra = [0];
+        let count = outgoing.io.read(&mut extra).await?;
+        assert_eq!(count, 0);
+        Ok::<(), io::Error>(())
+    }
+    .await;
+    // Release the real read waiter on every outcome before total owner joins.
+    gate.release()?;
+    if operation.is_err() {
+        outgoing.owner.request_stop();
+    }
+    let joined = outgoing.owner.join().await;
+    drop(outgoing.io);
+    let (peer_operation, peer_joined) = peer.await?;
+    assert!(
+        operation.is_ok(),
+        "delayed client final read: {operation:?}"
+    );
+    assert!(peer_operation.is_ok(), "peer operation: {peer_operation:?}");
+    assert_eq!(joined?.reason, LinkEnd::PeerEof);
+    assert_eq!(peer_joined?.reason, LinkEnd::PeerEof);
+    Ok(())
+}
+
 use super::*;
 use rustusb_core::link_health::{LinkEnd, LinkProtocol, ProbeState};
 use tokio::net::{TcpListener, TcpStream};
