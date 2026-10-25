@@ -36,7 +36,7 @@ def check_terminal(snap):
             t=matches[0]
             require(t['owner_uid']==uid and t['device_key']==session['device_key'] and t['resource_id']==attempt['resource_id'],'Root UID/key/resource equality')
             expected={'native_import':'native_import_released','native_export':'native_export_restored','native_stub':'native_stub_available','usbfs_grant':'physical_baseline_restored'}[attempt['kind']]
-            require(t['proof']==expected and attempt['proof']==expected,'exact independent release criterion and app echo')
+            require(t['proof']==expected and attempt['proof'] in (None,expected),'exact Root release criterion; optional app echo must agree')
             count+=1
     for journal in [snap['native'],snap['physical']]:
         if journal:

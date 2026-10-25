@@ -69,6 +69,11 @@ I/O and cleanup/proof observations have completed.
 3. Upgrade the client package while both imports are active. Require actual
    agent-then-helper cooperative exit0, empty old cgroups, exact terminal Root
    proofs, NULL/removed original VHCI generations, and no automatic restart.
+   Root proof matching is mandatory. The optional application attempt proof is
+   populated during recovery; ordinary cooperative `released` sessions may keep
+   it null. Any nonnull application echo must equal the exact Root criterion,
+   as in the existing lifecycle verifier. A null echo never substitutes for a
+   missing or mismatched Root terminal.
    Server exports must remain available. Inspect actual package replacement and
    retained application/helper records; PID death or zero new counters is not
    proof that the old devices were released.
