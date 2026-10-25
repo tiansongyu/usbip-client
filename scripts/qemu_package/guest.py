@@ -196,6 +196,9 @@ def install():
     backup.rename(runtime)
     prepare_gate()
     run(['systemctl', 'start', 'rustusb-helper.service', 'rustusb-agent.service']); ready()
+    helper_sentinel = Path('/var/lib/rustusb/package-retained-sentinel')
+    helper_sentinel.write_text('retain-administrator-owned-test-file\n'); helper_sentinel.chmod(0o600)
+    (OUT/'helper-sentinel.sha256').write_text(sha(helper_sentinel)+'\n')
     desktop()
     started = agent('start', 'package-virtual')
     check(started['response']['result'] == 'started' and not started['response']['replayed'], 'ordinary operator actually starts virtual job')
@@ -214,6 +217,7 @@ def install():
     run(['systemctl', 'daemon-reload'])
     version = text(['dpkg-query', '-W', '-f=${Version}', 'rustusb'])
     binary = sha('/usr/bin/rustusb')
+    binary_identity = os.stat('/usr/bin/rustusb')
     result = run(['dpkg', '-i', second[0]], (1,))
     check(b'RustUSB: verifying cooperative process stop before failed-upgrade' in result.stdout
           and result.stderr.count(b'unsafe stop-policy override') == 2
@@ -240,6 +244,10 @@ def install():
         check(upgrade.poll() is None and service('rustusb-agent.service', 'ActiveState') == 'deactivating'
               and int(service('rustusb-agent.service', 'MainPID')) == pid, 'actual upgrade waits for original broker journal owner')
         check(service('rustusb-helper.service', 'ActiveState') == 'active' and sha('/usr/bin/rustusb') == binary, 'helper remains during broker cleanup before replacement')
+        observed = os.stat('/usr/bin/rustusb')
+        observed_version = text(['dpkg-query', '-W', '-f=${Version}', 'rustusb'])
+        (OUT/'blocked-package-state.json').write_text(json.dumps({'version':observed_version, 'device':observed.st_dev, 'inode':observed.st_ino, 'broker_pid':pid})+'\n')
+        check(observed_version == version and (observed.st_dev, observed.st_ino) == (binary_identity.st_dev, binary_identity.st_ino), 'old package version and actual CLI inode retained before unpack')
     finally:
         try:
             os.write(controller, b'G')
@@ -281,10 +289,13 @@ def after_reboot():
     run(['systemctl', 'mask', 'rustusb-agent.service'])
     run(['dpkg', '--remove', 'rustusb-gui', 'rustusb'])
     run(['dpkg', '--purge', 'rustusb-gui', 'rustusb'])
-    check(not Path('/usr/bin/rustusb').exists() and not Path('/usr/bin/rustusb-gui').exists(), 'package binaries actually removed')
+    check(all(not Path(path).exists() for path in ['/usr/bin/rustusb', '/usr/bin/rustusb-gui', '/usr/libexec/rustusb/rustusb-helper', '/usr/libexec/rustusb/package-control']), 'all package executables actually removed')
     check(pwd.getpwnam('rustusb').pw_uid == uid['uid'], 'broker UID retained after purge')
     check(all(sha(Path('/etc/rustusb')/name) == value for name, value in hashes.items()), 'all administrator config/credential bytes retained')
     check(sha('/var/lib/rustusb-agent/retained-sentinel') == sentinel and Path('/var/lib/rustusb-agent/state.json').exists(), 'private data and old journal retained after purge')
+    helper_sentinel = Path('/var/lib/rustusb/package-retained-sentinel')
+    check(sha(helper_sentinel) == (OUT/'helper-sentinel.sha256').read_text().strip()
+          and helper_sentinel.stat().st_uid == 0 and helper_sentinel.stat().st_mode & 0o777 == 0o600, 'administrator helper-state sentinel bytes and permissions retained')
     check(os.readlink('/etc/systemd/system/rustusb-agent.service') == '/dev/null', 'administrator mask retained')
     for unit in ('rustusb-agent.service', 'rustusb-helper.service'):
         check(not os.path.lexists('/etc/systemd/system/multi-user.target.wants/'+unit), 'package enable link removed '+unit)

@@ -2,6 +2,8 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- clean cd8ee6fd两项development-only continuation dev02后半段通过：原PID/UID实际journal fsync entered→returned0，真实dpkg wait0、helper保留，GUI WM0；两次真正guest reboot（首QEMU0后同disk再启动）、实际remove/purge、UID/配置凭据hash/旧job/data/mask保留均通过，两项各两QEMU0、collect0、无forced/全部guard真。仍明确fresh_install_acceptance=false，不将跨旧初始夹具的续跑算完整fresh；原两dev01 FAIL不重判。仅新fixture补blocked时dpkg version及CLI实际inode、root helper-state sentinel保留和全部package executable消失的直接断言，原真实journal/unknown物理资源不由sentinel证明。下一步两官方原镜像完整fresh验收。
+
 - a79993d7两项development-only continuation显式克隆原failed来宾磁盘层（原archive/summary不改），记录混合来源/非fresh验收。两者实际GUI native window与WMclose0、ordinary virtual job Start、old/new failed-upgrade拒绝均通过；均在SIGSTOP保持断言FAIL，finally SIGCONT时原PID已结束又ProcessLookupError，旧fixture因此未实际wait升级child，不能补造其exit0。原upgrade日志有真实unit stop receipt/文件替换，但case仍FAIL；两QEMU0、collect0、无forced/三guard真。按Jammy官方systemd.kill核对自动SIGCONT是预期语义，不是产品清理被跳过。
 - 全部actual handles terminal后更新设计/新fixture：guest-only C LD_PRELOAD只对实际broker/agent journal fsync记原PID/UID/FD inode、等控制FIFO再调用real fsync，产品包/三Rust ELF不改；所有断言异常路径finally释放并总wait真实dpkg。库/管理员drop-in明确非产品默认unit、不证明永久硬阻塞可取消。补实际库/source hash、宿主编译记录；前一preflight另纠正failed-upgrade标记应读prerm stdout并要求两次真实stderr拒绝。新完整fresh运行仍待执行，诊断续跑不算fresh。
 
