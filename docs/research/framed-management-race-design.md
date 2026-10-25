@@ -75,3 +75,11 @@ inside existing quiet wrappers. The close phase is interruptible using the
 original stop and bounded by the existing response-timeout policy, with actual
 typed failure on I/O/protocol/timeout. Do not turn any such failure into PeerEof,
 skip partial DATA/FIN, discard unconsumed receive bytes, or lose the outer owner.
+
+The first candidate 41540391 passes the unchanged delayed TLS-read regression
+but fails the original half-close/reverse-drain test (Io instead of PeerEof).
+Retain that failure. Fully consumed DATA can still leave h2 control work such as
+returned window credit; a one-step server abrupt_shutdown is therefore not a
+complete orderly-close strategy. Use h2's normal graceful_shutdown progression
+under the same bounded original owner, preserving its control-frame drain. Do
+not weaken the original half-close assertion or mask its I/O error.

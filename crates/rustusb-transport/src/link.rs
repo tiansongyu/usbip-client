@@ -1071,9 +1071,10 @@ where
                         Poll::Ready(Some(_)) => return Poll::Ready(Err(failed())),
                         Poll::Pending => {}
                     }
-                    // No outstanding application bytes/halves remain. Unlike
-                    // Drop, this sends GOAWAY and polls real TLS shutdown.
-                    c.abrupt_shutdown(h2::Reason::NO_ERROR);
+                    // The application halves are complete, but returned window
+                    // credit/control frames can still be in flight. Preserve
+                    // h2's graceful GOAWAY progression and real TLS shutdown.
+                    c.graceful_shutdown();
                     closing = true;
                 }
                 match c.poll_accept(cx) {

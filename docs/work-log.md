@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- clean41540391 unchanged final-read回归PASS，但完整transport 76PASS/1FAIL：原half-close/reverse-drain测试期望PeerEof实际Io，保留原FAIL，不改原测试。h2完整应用EOS仍可能有窗口credit/control尾部；更新设计，用上游正常graceful_shutdown而非one-step abrupt_shutdown推进原conn控制收尾，仍按原policy/stop核真实结束，不忽略Io。当前尚不能宣称产品修复完整通过。
+
 - cleanfededbe2可控final-TLS-read测试真实FAIL exit101/ConnectionAborted，双方owner已实际join；测试首稿patch多余加号导致fmt parse失败，未启动测试，修正后才commit/run。源码与固定h2 0.4.20/tokio-rustls0.26.6审查支持EOS后过早drop connection的问题；先补设计：FIN flush后释放send ref，完整EOS/消费/flow credit后放completed receive/ping ref，原connection继续执行h2/TLS shutdown，仍严格错误/stop/既有policy界限。官方docs.rs旧版本链接不可访问，改固定h2 Git源码及实际0.26.6文档；不更新依赖，不把该缺陷等同旧加密QEMU根因。
 
 - clean b3cdd482 初始并发Catalog回归actual1 test/256真实TCP/mTLS交换通过，未复现、无产品修复；每独立server32连接低于默认burst64，不混入限速拒绝。继续加client原TCP读可控门：完整reply后暂停read，client FIN继续真实flush，等原server owner实际结束再放行最后TLS读取；保留双方真实join与错误，不宽化EOF。该调度测试用于证实/证伪关闭假说，不以更多盲目重跑代定位。
