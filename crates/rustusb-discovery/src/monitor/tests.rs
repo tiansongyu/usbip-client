@@ -45,6 +45,45 @@ fn views() -> Views {
     }
 }
 
+#[tokio::test]
+async fn identical_periodic_scan_refreshes_source_time_without_a_wire_revision() -> Result<()> {
+    let (sender, receiver) = watch::channel(None);
+    let mut source = views();
+    let mut subscription = DeviceSubscription {
+        receiver,
+        revision: None,
+    };
+    source.publish(
+        &sender,
+        Ok(vec![record("1-2", 1, 4)?]),
+        DiscoveryReason::Initial,
+    )?;
+    let first = subscription.next().await?.snapshot;
+    let mut old = (*first).clone();
+    old.sampled_at = Instant::now() - Duration::from_secs(20);
+    let old = Arc::new(old);
+    source.last = Some(old.clone());
+    sender.send_replace(Some(old.clone()));
+    source.publish(
+        &sender,
+        Ok(vec![record("1-2", 1, 4)?]),
+        DiscoveryReason::Periodic,
+    )?;
+    let current = subscription
+        .latest()
+        .ok_or_else(|| Error::State("latest source metadata missing".into()))?;
+    assert_eq!(current.revision, first.revision);
+    assert_eq!(current.devices, first.devices);
+    assert_eq!(current.counters.scans, 2);
+    assert!(current.sampled_at.duration_since(old.sampled_at) >= Duration::from_secs(20));
+    assert!(
+        tokio::time::timeout(Duration::from_millis(10), subscription.next())
+            .await
+            .is_err()
+    );
+    Ok(())
+}
+
 #[test]
 fn failed_scans_preserve_successful_inventory_and_never_fabricate_removals() -> Result<()> {
     let (sender, receiver) = watch::channel(None);

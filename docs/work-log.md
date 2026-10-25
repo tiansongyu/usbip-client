@@ -1,5 +1,13 @@
 # RustUSB 工作日志
 
+## 2026-10-25：自动共享持久规则与后台触发（开始）
+
+- 上轮E52为实际进展；本轮从clean595c3411完整重读原Phase0–7目标、当前Git/工作日志/核心skill/自动规则设计与相关Runtime/IPC/CLI/monitor源码。沿用rustusb-development与technical-documentation；原README/站点/全局skill保持，未缩减goal、未启动子agent。
+- 先补Runtime实施契约：严格disk3/原disk2保持、独立mutation去重与rule audit、origin+Start同事务、Stop在WAL之外sticky抑制及晚注册继承、真实monitor/两槽Discover总join。DEVLIST缺all-alt/config安全证据，物理远端自动规则必须另有版本化的认证safety receipt；本增量只可自动导入固定虚拟HID/CDC，不能当完整物理远端规则。完整dynamic pool/GUI/安装/硬件等目标继续保留。尚未改代码或声称新测试/QEMU通过。
+- 已接严格disk3/规则journal、原子origin+Start、独立Rules/RuleEvents与mutation retry、CLI显式policy及有限CRUD、单local owner/单自动poll复用原两槽和Stop抑制代际；旧audit/log/diagnostic枚举不扩张。发现原monitor相同Periodic不发布，补进程内sampled_at/latest与同revision刷新，保持公开watch无新增帧。首dirty全workspace/all-features check通过，journal首6/6和discovery9/9通过。runtime首6/7，第二单例诊断仍FAIL：夹具先Stop再启动fact actor，原begin明确拒绝job is stopping，实际Finished/Some(State)/sessions0；两个原FAIL及日志保留，真实网络/owner已join后才断言。修正为精确该旧早停结果，不把任意错误或空资源当USB成功；待重新测试。原源码/硬件/QEMU范围不扩大。
+- 后续定向Runtime12/12与all-features clippy通过；补CLI调用前完整UUID意图帧与独立信号处理，首次parser1/1、compile02通过。一次按文件名过滤journal/runtime实际各0测试（仅编译，不作通过证据），改用真实模块路径；原0输出保留。新paired QEMU wrapper保原264/三I/O/全部Rootproof，仅server显式disk3，新CLI metadata-only peer夹具验证unknown UUID/query/背压/INT/TERM；目前仅Python AST/完整guest dash语法通过，尚无新QEMU/CLI进程成功声明。复用sha2仅加service依赖边，根222库存/外部版本保持，第三方表已补。
+- 正确路径journal7/7（含真实原子文件重开）、Runtime12/12均通过；clippy02因新parser测试使用expect失败，改成传播Result、未压lint，clippy03全workspace/all-targets/all-features通过。测试gate的失败路径也总join原Store holder，并保留目录并发测试的原错误上下文。完整生成guest dash语法/237输入与222库存检查通过；下一步冻结commit执行根/GUI全部gate及实际CLI/QEMU，不将定向通过当完整验收。
+
 ## 2026-10-25：自动共享授权与规则输入基础（开始）
 
 - 从clean fd6c6a0e完整重读原Phase0–7任务、Git/AGENTS/核心skill/架构、automatic-sharing设计与两源码审查；沿用rustusb-development/technical-documentation，原README/网站/全局skill保持，goal不缩减。未启动新agent或USB操作。

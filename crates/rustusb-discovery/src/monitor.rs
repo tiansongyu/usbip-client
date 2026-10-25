@@ -127,7 +127,7 @@ fn increment(value: &mut u64, saturated: &mut bool) {
 }
 
 /// Immutable bounded metadata. Absence of `devices` means no successful scan yet.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DeviceSnapshot {
     /// Fresh observer epoch; revisions from different instances cannot be compared.
     pub instance: String,
@@ -141,6 +141,9 @@ pub struct DeviceSnapshot {
     pub reason: DiscoveryReason,
     /// Milliseconds since this observer started, at the published scan's completion.
     pub sampled_ms: u64,
+    /// Process-local completion time, unaffected by a delayed subscriber/WAL.
+    /// This metadata is not serialized into the public watch wire batches.
+    pub sampled_at: Instant,
     /// Last complete successful observation; stale state never silently clears it.
     pub devices: Option<Arc<[ObservedDevice]>>,
     /// Changes only from successful scans; none are invented on failure.
@@ -167,6 +170,13 @@ pub struct DeviceSubscription {
 }
 
 impl DeviceSubscription {
+    /// Read the latest complete metadata without advancing the wire revision.
+    /// Identical periodic scans refresh completion time while `next` stays quiet.
+    /// This is observation only; the returned snapshot grants no device access.
+    pub fn latest(&self) -> Option<Arc<DeviceSnapshot>> {
+        self.receiver.borrow().clone()
+    }
+
     /// Wait for the next published view. Slow readers may skip revisions.
     ///
     /// Consumers must replace their view from `snapshot` when resynchronization is
@@ -389,6 +399,7 @@ impl Views {
             failure: None,
             reason: DiscoveryReason::Initial,
             sampled_ms: 0,
+            sampled_at: Instant::now(),
             devices: None,
             changes: Vec::new(),
             counters: self.counters.clone(),
@@ -438,6 +449,16 @@ impl Views {
             view.state == state && view.failure == failed && changes.is_empty()
         });
         if same && reason == DiscoveryReason::Periodic {
+            if let Some(previous) = &self.last {
+                let mut current = (**previous).clone();
+                current.sampled_at = Instant::now();
+                current.sampled_ms =
+                    u64::try_from(self.started.elapsed().as_millis()).unwrap_or(u64::MAX);
+                current.counters = self.counters.clone();
+                let snapshot = Arc::new(current);
+                self.last = Some(snapshot.clone());
+                sender.send_replace(Some(snapshot));
+            }
             return Ok(());
         }
         self.revision = self
@@ -451,6 +472,7 @@ impl Views {
             failure: failed,
             reason,
             sampled_ms: u64::try_from(self.started.elapsed().as_millis()).unwrap_or(u64::MAX),
+            sampled_at: Instant::now(),
             devices,
             changes,
             counters: self.counters.clone(),

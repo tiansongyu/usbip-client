@@ -169,7 +169,7 @@ def history_identity(final, starts, held_snapshots, role):
     return expected_sessions
 
 
-def verify(evidence, args):
+def verify(evidence, args, private_schema_versions=None):
     """Independent agent facts: raw application/root journals, kernel rows and bytes."""
     checks = []
     def require(condition, name):
@@ -197,8 +197,12 @@ def verify(evidence, args):
                 count += 1
         return count
     def private_link_history(state, label):
-        require(set(state) == {"schema_version", "sequence", "jobs", "sessions", "audit", "requests", "link_history"}
-                and state["schema_version"] == 2, f"{label} strict private disk2 shape")
+        version = (private_schema_versions or {}).get(label, 2)
+        if version not in [2, 3]: raise RuntimeError("unsupported explicit fixture schema")
+        fields = {"schema_version", "sequence", "jobs", "sessions", "audit", "requests", "link_history"}
+        if version == 3: fields.add("automation")
+        require(set(state) == fields and state["schema_version"] == version
+                and (version == 2 or isinstance(state["automation"], dict)), f"{label} strict private disk{version} shape")
         sessions = {item["id"]: item for item in state["sessions"]}
         history = {item["session_id"]: item for item in state["link_history"]}
         require(len(sessions) == len(state["sessions"]) == len(history) == len(state["link_history"])

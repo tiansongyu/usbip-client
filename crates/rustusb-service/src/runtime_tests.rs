@@ -201,26 +201,26 @@ fn shutdown_poison_still_fans_out_and_returns_an_explicit_error() -> Result<()> 
     Ok(())
 }
 
-fn uuid(value: u64) -> String {
+pub(super) fn uuid(value: u64) -> String {
     format!("00000000-0000-0000-0000-{value:012x}")
 }
 
-fn operator_uid() -> u32 {
+pub(super) fn operator_uid() -> u32 {
     rustix::process::geteuid().as_raw()
 }
 
-fn other_uid() -> u32 {
+pub(super) fn other_uid() -> u32 {
     operator_uid() ^ 0x4000_0000
 }
 
-struct Fixture {
-    root: tempfile::TempDir,
-    path: PathBuf,
-    runtime: Runtime,
+pub(super) struct Fixture {
+    pub(super) root: tempfile::TempDir,
+    pub(super) path: PathBuf,
+    pub(super) runtime: Runtime,
 }
 
 impl Fixture {
-    fn new() -> Result<Self> {
+    pub(super) fn new() -> Result<Self> {
         let root = tempfile::tempdir()?;
         std::fs::set_permissions(root.path(), std::fs::Permissions::from_mode(0o700))?;
         let path = root.path().join("data");
@@ -282,6 +282,8 @@ impl Fixture {
                 InstanceId::new(uuid(1))?,
                 State::default(),
             )),
+            automation: Automation::default(),
+            observers: JoinSet::new(),
         };
         Ok(Self {
             root,

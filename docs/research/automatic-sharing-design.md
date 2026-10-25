@@ -211,3 +211,134 @@ delivery gates above. Software tests for this unit must cover exact pool binding
 duplicate/unknown input, backend mismatch, revoked/foreign/root identities,
 boundaries and strict rule mutation shapes. Actual QEMU automatic firing is not
 claimed by these tests.
+
+## Runtime integration contract (before implementation)
+
+2026-10-25, source `595c3411`. This unit connects the validation boundary to
+actual complete-profile automation. Full dynamic device pools, GUI editing and
+installation remain required subsequent work, not replaced by these rules.
+
+The first paired QEMU increment replaces only the server's manual Start with a
+real local rule. Preserve the original three HID/FTDI I/O rounds, exact Root
+proofs, two epochs and targeted-stop/recovery assertions. Keep the original
+verifier's disk2 default; an explicit new server-only expectation requires the
+entire strict disk3 shape and separately validates automation records. First run
+the old no-policy denial checks, then stop/join that idle agent and enable a
+root-owned policy. Create/Retry must use the original mutation UUID. Read back
+automatic Start through RetryStart, never issue a second Start. A targeted Stop
+must persist pause through restart; only an explicit CAS Enable may rearm the
+second epoch. No fixture-generated start receipt may replace a real RPC reply.
+This validates fixed-pool Native automation, not remote physical safety, dynamic
+pools or physical hardware. Test CLI intent backpressure/signals separately
+against a disposable metadata-only Unix peer; that peer is not a real service
+commit or a USB test.
+
+- Add explicit `agent run --automation-policy PATH`, loaded in the original
+  retained startup task alongside fixed credentials. Preserve old service APIs
+  with automation disabled. No policy means no observer or automatic admission.
+- Disk2 stays byte-for-byte shaped as before when automation has never been
+  enabled. Disk3 requires a strict nonnull automation journal. Freeze separate
+  disk2/disk3 decoders; reject version/shape mixing, missing/null/unknown fields.
+  Preserve strict disk1→2 migration and the existing atomic writer/trust checks.
+  Enabling policy explicitly commits the upgrade before the listener is exposed;
+  removing policy never downgrades disk3 or erases old ownership.
+- Bound the journal to64 rules including unresolved tombstones,4 per operator/
+  profile,256 mutation results,512 retained job origins and256 rule audit events.
+  Keep the original2MiB completion/1MiB admission budgets and health reserve.
+  Prune only resolved deleted rules; retain each live rule's last job, and all
+  unresolved origin obligations. Historical resolved origins may outlive deleted
+  rules. An evicted mutation result never authorizes a new retry mutation.
+- Rule CRUD uses exact revision CAS and a separate request namespace. Persist
+  successful edits and original outcomes before ACK. Retry only reads the
+  original UID/profile mapping, without performing an edit or firing. A missing
+  result is unknown/expired, not proof that a late original cannot commit. The
+  frontend must retain the original UUID and never silently resubmit with a new
+  one. Read-authorized owners may pause/delete after delegation is revoked;
+  create/replace/enable and every firing recheck explicit policy and action ACLs.
+  New CLI `agent rule` operations emit a complete bounded NDJSON intent/query
+  receipt with the original UUID before any RPC dispatch, then the ordinary
+  response envelope. This receipt is not a commit. Register INT/TERM first,
+  retain/join accepted manifest loading, and do not dispatch after a preflight
+  signal or incomplete/blocked intent output. After dispatch, interrupting the
+  caller ends only its wait; an accepted service mutation may still commit.
+  Report uncertainty with the original UUID and suppress generic extra JSON on
+  this new stream. Preserve older Start and other agent command output formats.
+- Extend RPC with independent finite Rules/MutateRule/RetryRuleMutation and
+  RuleEvents variants. Rules and authorized rule-audit reads use a bounded
+  immutable metadata registry outside WAL; denials remain durably audited.
+  Positive rule audit has its own sequence/ring/schema and RPC. Do not add enum
+  variants/fields to the frozen legacy audit/log/diagnostic schemas or mislabel
+  a rule mutation as a device observation. Existing Start/Stop audit remains in
+  the old path; rule firing also records its exact origin in the new journal.
+- Admission reuses the original Start implementation: one transaction contains
+  job, Start request, legacy Start audit, rule/revision/delegated UID/occurrence
+  origin and rule audit. Only then register/spawn the actual original job runner.
+  No live or Recovering profile job, unfinished old owner, or Unconfirmed old
+  session can be bypassed by a fresh scan or new epoch. Same occurrence remains
+  consumed independently of Start's256-entry FIFO. Explicit authorized edits
+  can rearm; failed outcomes do not silently loop on the same occurrence.
+  A local automatic server also waits for any live/unresolved local profile
+  using the same fingerprint, including a Native/USBFS namespace overlap.
+  This prevents simultaneous automatic intents for one physical candidate;
+  original helper exclusivity and fresh mutation checks remain authoritative.
+  After the Start WAL await, recheck observation age and the current local
+  tuple. If it expired, or a Stop was already inherited before backend entry,
+  the supervised task must finish with the existing State failure and no session
+  or backend poll. Do not rely on a backend's cooperative preparation to mean
+  "never started". Stops after backend entry keep its original actual cleanup.
+  Hash explicit frozen primitive tuples, not an extensible DTO's serialization,
+  so adding metadata fields cannot silently manufacture a new occurrence.
+- Valid manual Stop sets a per-profile sticky suppression generation under the
+  existing Controls mutex before cooperative fanout. Persist the profile's rule
+  pauses with that Stop transaction. Late registered automatic jobs inherit
+  suppression, while actual resource cleanup remains independent of WAL waits.
+  Explicit enable/create may clear suppression only after its commit and only
+  if no newer Stop arrived during that await. Disable/delete prevent future
+  firings and preserve current-job cleanup history; they do not assert release.
+- One local monitor is owned by a directly stopped and actually joined task;
+  subscriptions/candidate maps hold metadata only. Only complete Current scans
+  received within6 seconds can contribute to a2..120-second stable condition.
+  Hash boot ID plus ordered exact keys and observation stamps, without serial
+  or raw USB contents. Observer epoch/repeated hints are not new occurrences.
+  Add a process-local monotonic scan-completion timestamp to the in-memory
+  snapshot, leaving wire batches unchanged: arrival at a consumer after a WAL
+  stall must not make an old completed scan fresh again.
+  Identical periodic scans currently suppress wire revisions. Refresh their
+  in-memory completion/counter metadata with the same revision and add a latest
+  snapshot accessor; `next()` must still emit only changed revisions. Automation
+  can then check actual source freshness without adding watch wire chatter.
+  Local candidate checks retain the full existing scanner/helper storage,
+  generation and all-configuration checks; helpers still revalidate mutation.
+- Remote polls retain actual operator Discover authorization, original success
+  audit and the existing two-slot owner path. At most one automatic poll is
+  outstanding, preserving a manual slot; round-robin rules,2-second successful
+  completion delay and exponential2..120-second failure delay are finite.
+  Polls/observations never stop an already owned job merely because it is busy.
+  Remote tokens describe advertised tuples, not physical generations.
+  A remote settle window requires matching successful observations separated by
+  the configured interval and no observed failure/change between them. It fires
+  only on a fresh completed poll, using the completion time captured before any
+  audit/WAL await. It does not promise uninterrupted availability between polls;
+  queued or expired data cannot fire. This defines the formerly draft
+  "continuously fresh" wording as an observation condition, without allowing
+  rule count or one slow peer to make every other rule's settle timer restart
+  forever. No speculative tick can turn a cached remote snapshot into a trigger.
+- DEVLIST lacks all alternate/configuration safety descriptors. For this first
+  runtime increment, only the fixed virtual HID/CDC profiles with matching known
+  descriptor shapes can automatically import. Physical/Native remote keys report
+  SafetyEvidenceUnavailable rather than inferring nonstorage from current class
+  tuples. Full physical remote rules require a separately versioned authenticated
+  safety receipt generated by the actual server's validated device owner, with
+  old peers failing closed; this remains necessary work. Never call these initial
+  rules complete physical remote automation or drop that requirement.
+- Service stop/command EOF directly stop the observer and network owner trees,
+  then actually drain observer/discovery/USB/recovery tasks. No abort or timeout
+  is a join or cleanup receipt. Metadata failures block automation without
+  inventing device absence; permanent OS/DNS/FS blocking keeps prior limits.
+
+Tests must cover strict migration and real atomic files, CRUD/retry/CAS/quota/
+ownership/revocation, same-transaction origin, duplicate/stale/unsafe input,
+manual Stop during a real store gate and late registration, pending mutation
+and actual-owner shutdown. QEMU must validate actual rule-triggered Native
+export/virtual import, real I/O and exact cleanup, followed by original
+regressions. No runtime or QEMU success is claimed by this contract.

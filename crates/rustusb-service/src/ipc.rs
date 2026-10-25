@@ -110,8 +110,20 @@ pub async fn serve(config: LoadedConfig, stop: watch::Receiver<bool>) -> Result<
 /// owners and durable records finish. Log health never substitutes for WAL health.
 pub async fn serve_with_logging(
     config: LoadedConfig,
+    stop: watch::Receiver<bool>,
+    logging: Option<rustusb_logging::LogMonitor>,
+) -> Result<()> {
+    serve_with_automation(config, stop, logging, None).await
+}
+
+/// Run with explicit root-managed automation delegation in addition to existing
+/// OS/profile ACLs. The policy must be loaded in the caller's retained startup
+/// task. Absence disables automation; service shutdown still joins every owner.
+pub async fn serve_with_automation(
+    config: LoadedConfig,
     mut stop: watch::Receiver<bool>,
     logging: Option<rustusb_logging::LogMonitor>,
+    policy: Option<crate::automation::AutomationPolicy>,
 ) -> Result<()> {
     if rustix::process::geteuid().as_raw() != config.manifest.broker_uid
         || config.manifest.broker_uid == 0
@@ -122,12 +134,13 @@ pub async fn serve_with_logging(
     }
     let config = Arc::new(config);
     let controls = Arc::new(Mutex::new(Controls::default()));
-    let runtime = match logging.clone() {
+    let mut runtime = match logging.clone() {
         Some(monitor) => {
             Runtime::open_with_logging(config.clone(), controls.clone(), Some(monitor)).await?
         }
         None => Runtime::open(config.clone(), controls.clone()).await?,
     };
+    runtime.configure_automation(policy).await?;
     let endpoint = Endpoint::bind(&config.manifest).await?;
     let diagnostics = runtime.diagnostics();
     let (sender, receiver) = mpsc::channel(16);
@@ -349,6 +362,41 @@ pub(crate) async fn request(
         }
         // Denied/invalid reads use the existing actor error and audit path.
         // Only authorized successful observations bypass a stalled journal.
+    }
+    // Every authorized rule observation stays independent of WAL, including an
+    // unavailable/empty policy. Mutations/retries retain original actor ordering.
+    let read_rule = match &envelope.request {
+        Request::Rules { profile, .. } => Some((profile, Action::Read)),
+        Request::RuleEvents { profile, .. } => Some((profile, Action::Audit)),
+        _ => None,
+    };
+    if let Some((profile, action)) = read_rule
+        && config.manifest.authorize(uid, profile, action).is_ok()
+    {
+        let response = {
+            let controls = controls
+                .lock()
+                .map_err(|_| Error::State("agent controls lock poisoned".into()))?;
+            let result = match &envelope.request {
+                Request::Rules { after, .. } => {
+                    controls.rules(&config, uid, profile, after.as_ref())
+                }
+                Request::RuleEvents { after, .. } => {
+                    controls.rule_events(&config, uid, profile, *after)
+                }
+                _ => return Err(Error::State("rule read dispatch".into())),
+            };
+            result.unwrap_or_else(|error| ResponseEnvelope {
+                schema_version: 1,
+                journal_healthy: controls.journal_healthy(),
+                response: Response::Error {
+                    code: crate::model::Failure::from_error(&error),
+                },
+            })
+        };
+        let bytes = serde_json::to_vec(&response)
+            .map_err(|_| Error::State("agent rule response encoding".into()))?;
+        return write_frame(&mut stream, &bytes).await;
     }
     // A valid stop reaches its independent watch even if a durable transaction
     // is slow. The response still waits for persistence; it never reports release.

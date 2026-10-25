@@ -20,6 +20,7 @@ pub mod ipc;
 pub mod jobs;
 pub mod model;
 pub mod rpc;
+mod rules;
 mod run_context;
 #[cfg(target_os = "linux")]
 mod runtime;

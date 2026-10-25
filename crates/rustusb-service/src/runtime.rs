@@ -19,6 +19,10 @@ use tokio::{
     task::JoinSet,
 };
 
+#[path = "runtime_automation.rs"]
+mod automatic;
+use automatic::{Automation, RuleRegistry};
+
 pub(crate) struct Command {
     pub uid: u32,
     pub request: Request,
@@ -43,6 +47,7 @@ pub(crate) struct Controls {
     health: BTreeMap<SessionId, HealthEntry>,
     journal_unhealthy: bool,
     shutdown_requested: bool,
+    automation: RuleRegistry,
 }
 impl Controls {
     pub(crate) fn security(
@@ -100,7 +105,7 @@ impl Controls {
     }
 
     fn register_job(&mut self, id: JobId, control: Control) {
-        if self.shutdown_requested {
+        if self.shutdown_requested || self.automation.stops_late_job(&id, &control.profile) {
             control.stop.send_replace(true);
         }
         self.jobs.insert(id, control);
@@ -174,32 +179,41 @@ impl Controls {
         })
     }
 
-    pub fn request(&self, config: &LoadedConfig, uid: u32, request: &Request) -> Result<bool> {
+    pub fn request(&mut self, config: &LoadedConfig, uid: u32, request: &Request) -> Result<bool> {
         let control = match request {
             Request::StopJob { job_id } => self.jobs.get(job_id),
             Request::StopSession { session_id } => self.sessions.get(session_id),
             _ => return Ok(false),
         };
-        let Some(control) = control else {
+        let owner_present = control.is_some();
+        let target = control
+            .map(|c| automatic::StopTarget {
+                profile: c.profile.clone(),
+                job_id: c.job_id.clone(),
+                stoppable: c.stoppable,
+            })
+            .or_else(|| self.automation.stop_target(request));
+        let Some(target) = target else {
             return Ok(false);
         };
         config
             .manifest
-            .authorize(uid, &control.profile, Action::Stop)?;
-        if !control.stoppable {
+            .authorize(uid, &target.profile, Action::Stop)?;
+        if !target.stoppable {
             return Err(Error::Unsupported("this backend requires stopping the export job; individual incoming sessions can be stopped".into()));
         }
-        control.stop.send_replace(true);
+        // Metadata suppression precedes cooperative USB fanout and never waits
+        // for WAL. A later explicit resume cannot clear a newer generation.
+        self.automation.suppress(&target.profile);
+        if let Some(control) = control {
+            control.stop.send_replace(true);
+        }
         if matches!(request, Request::StopJob { .. }) {
-            for session in self
-                .sessions
-                .values()
-                .filter(|s| s.job_id == control.job_id)
-            {
+            for session in self.sessions.values().filter(|s| s.job_id == target.job_id) {
                 session.stop.send_replace(true);
             }
         }
-        Ok(true)
+        Ok(owner_present)
     }
     fn stop_all(&self) {
         for control in self.jobs.values().chain(self.sessions.values()) {
@@ -223,6 +237,8 @@ pub(crate) struct Runtime {
     recovery_cursor: usize,
     logging: Option<rustusb_logging::LogMonitor>,
     diagnostics: Arc<crate::diagnostics::Registry>,
+    automation: Automation,
+    observers: JoinSet<Result<()>>,
 }
 
 // This is metadata plus the original response channel, never a USB capability.
@@ -231,7 +247,8 @@ pub(crate) struct Runtime {
 struct CatalogCompletion {
     uid: u32,
     profile: String,
-    reply: oneshot::Sender<ResponseEnvelope>,
+    destination: automatic::CatalogDestination,
+    completed_at: tokio::time::Instant,
     result: Result<Option<Vec<rustusb_protocol::secure::CatalogDevice>>>,
 }
 
@@ -274,6 +291,8 @@ impl Runtime {
             recovery_cursor: 0,
             logging,
             diagnostics,
+            automation: Automation::default(),
+            observers: JoinSet::new(),
         };
         let mut next = value.state.clone();
         let mut changed = false;
@@ -363,7 +382,8 @@ impl Runtime {
                 },
             );
         }
-        Ok(())
+        drop(controls);
+        self.refresh_rules()
     }
     fn checkpoint_links(&self, next: &mut State) -> Result<()> {
         let controls = self.controls.lock().map_err(|_| lock_error())?;
@@ -438,6 +458,10 @@ impl Runtime {
     ) -> Result<()> {
         let mut stopping = *stop.borrow();
         let (requests_closed, requests_closing) = watch::channel(stopping);
+        if !stopping {
+            self.open_rule_observer(stop.clone(), requests_closing.clone())
+                .await;
+        }
         let mut tick = tokio::time::interval(Duration::from_secs(1));
         if stopping && let Ok(mut controls) = self.controls.lock() {
             controls.begin_shutdown();
@@ -447,6 +471,7 @@ impl Runtime {
                 && self.workers.is_empty()
                 && self.recoveries.is_empty()
                 && self.discoveries.is_empty()
+                && self.observers.is_empty()
             {
                 break;
             }
@@ -457,7 +482,10 @@ impl Runtime {
                 result=self.recoveries.join_next(),if !self.recoveries.is_empty()=>{if let Some(Ok((id,proofs)))=result{self.recovered(id,proofs).await;}},
                 result=self.discoveries.join_next(),if !self.discoveries.is_empty()=>{
                     match result {
-                        Some(Ok(completed))=>self.catalog_finished(completed).await,
+                        Some(Ok(completed))=>{
+                            self.catalog_finished(completed).await;
+                            if !stopping { self.automatic_tick(stop.clone(), requests_closing.clone()).await; }
+                        },
                         Some(Err(_))=>{
                             self.healthy=false;
                             if let Ok(mut controls)=self.controls.lock(){controls.journal_unhealthy=true;}
@@ -466,17 +494,23 @@ impl Runtime {
                         None=>{},
                     }
                 },
+                result=self.observers.join_next(),if !self.observers.is_empty()=>{
+                    self.automation_observer_finished(result);
+                },
                 command=commands.recv(),if !stopping=>{match command {Some(command)=>{
                     self.receive_command(command,stop.clone(),requests_closing.clone()).await;
                 },None=>{stopping=true;requests_closed.send_replace(true);if let Ok(mut controls)=self.controls.lock(){controls.begin_shutdown();}else{self.healthy=false;}}}},
-                _=tick.tick(),if !stopping&&self.healthy&&self.recoveries.is_empty()=>self.start_recovery(),
+                _=tick.tick(),if !stopping&&self.healthy=>{
+                    if self.recoveries.is_empty() { self.start_recovery(); }
+                    self.automatic_tick(stop.clone(), requests_closing.clone()).await;
+                },
             }
         }
-        if self.healthy {
+        if self.healthy && self.automation.owners_healthy() {
             Ok(())
         } else {
             Err(Error::State(
-                "agent stopped with unhealthy durable recording; inspect retained sessions".into(),
+                "agent stopped with unhealthy recording or an owned worker; inspect retained sessions".into(),
             ))
         }
     }
@@ -548,7 +582,8 @@ impl Runtime {
                         CatalogCompletion {
                             uid,
                             profile,
-                            reply,
+                            destination: automatic::CatalogDestination::Rpc(reply),
+                            completed_at: tokio::time::Instant::now(),
                             result,
                         }
                     });
@@ -570,17 +605,24 @@ impl Runtime {
         let CatalogCompletion {
             uid,
             profile,
-            reply,
+            destination,
+            completed_at,
             result,
         } = completed;
         let response = match result {
             Ok(Some(devices)) => {
                 let mut next = self.state.clone();
-                let committed =
-                    match next.audit(uid, Some(profile), None, None, AuditAction::Discover, None) {
-                        Ok(()) => self.persist(next).await,
-                        Err(error) => Err(error),
-                    };
+                let committed = match next.audit(
+                    uid,
+                    Some(profile.clone()),
+                    None,
+                    None,
+                    AuditAction::Discover,
+                    None,
+                ) {
+                    Ok(()) => self.persist(next).await,
+                    Err(error) => Err(error),
+                };
                 match committed {
                     Ok(()) => Response::Catalog { devices },
                     Err(error) => self.command_error(uid, error).await,
@@ -591,11 +633,19 @@ impl Runtime {
             },
             Err(error) => self.command_error(uid, error).await,
         };
-        let _ = reply.send(ResponseEnvelope {
-            schema_version: 1,
-            journal_healthy: self.healthy,
-            response,
-        });
+        match destination {
+            automatic::CatalogDestination::Rpc(reply) => {
+                let _ = reply.send(ResponseEnvelope {
+                    schema_version: 1,
+                    journal_healthy: self.healthy,
+                    response,
+                });
+            }
+            automatic::CatalogDestination::Rule { id, revision } => {
+                self.remote_rule_finished(uid, &profile, id, revision, completed_at, response)
+                    .await
+            }
+        }
     }
 
     async fn dispatch(&mut self, uid: u32, request: Request) -> Result<Response> {
@@ -618,6 +668,30 @@ impl Runtime {
                     })
                     .collect(),
             }),
+            Request::Rules { profile, after } => Ok(self
+                .controls
+                .lock()
+                .map_err(|_| lock_error())?
+                .rules(&self.config, uid, &profile, after.as_ref())?
+                .response),
+            Request::RuleEvents { profile, after } => Ok(self
+                .controls
+                .lock()
+                .map_err(|_| lock_error())?
+                .rule_events(&self.config, uid, &profile, after)?
+                .response),
+            Request::MutateRule {
+                profile,
+                request_id,
+                mutation,
+            } => {
+                self.mutate_rule(uid, profile, request_id, Some(mutation))
+                    .await
+            }
+            Request::RetryRuleMutation {
+                profile,
+                request_id,
+            } => self.mutate_rule(uid, profile, request_id, None).await,
             Request::Start {
                 profile,
                 request_id,
@@ -645,6 +719,9 @@ impl Runtime {
                     },
                 )?;
                 let mut next = self.state.clone();
+                if let Some(automation) = &mut next.automation {
+                    automation.pause_profile(uid, &job.profile, &job_id)?;
+                }
                 if let Some(job) = next.jobs.iter_mut().find(|j| j.id == job_id) {
                     job.stop_requested = true;
                     if owner {
@@ -690,6 +767,9 @@ impl Runtime {
                     },
                 )?;
                 let mut next = self.state.clone();
+                if let Some(automation) = &mut next.automation {
+                    automation.pause_profile(uid, &session.profile, &session.job_id)?;
+                }
                 if let Some(session) = next.sessions.iter_mut().find(|s| s.id == session_id) {
                     session.stop_requested = true;
                 }
@@ -874,6 +954,19 @@ impl Runtime {
         request_id: RequestId,
         retry: bool,
     ) -> Result<Response> {
+        self.start_with_origin(uid, profile, request_id, retry, None)
+            .await
+    }
+
+    async fn start_with_origin(
+        &mut self,
+        uid: u32,
+        profile: String,
+        request_id: RequestId,
+        retry: bool,
+        origin: Option<automatic::RuleAdmission>,
+    ) -> Result<Response> {
+        let automatic_guard = origin.clone();
         self.config
             .manifest
             .authorize(uid, &profile, Action::Start)?;
@@ -882,15 +975,28 @@ impl Runtime {
                 "agent journal unhealthy; new admission refused".into(),
             ));
         }
-        if let Some(old) = self.state.requests.iter().find(|r| r.id == request_id) {
-            if old.uid != uid || old.profile != profile {
+        let old_request = self
+            .state
+            .requests
+            .iter()
+            .find(|r| r.id == request_id)
+            .map(|r| (r.uid, &r.profile, &r.job_id))
+            .or_else(|| {
+                self.state
+                    .automation
+                    .as_ref()
+                    .and_then(|a| a.origins.iter().find(|o| o.request_id == request_id))
+                    .map(|o| (o.operator_uid, &o.profile, &o.job_id))
+            });
+        if let Some((old_uid, old_profile, old_job)) = old_request {
+            if old_uid != uid || *old_profile != profile {
                 return Err(denied());
             }
             let job = self
                 .state
                 .jobs
                 .iter()
-                .find(|j| j.id == old.job_id)
+                .find(|j| j.id == *old_job)
                 .cloned()
                 .ok_or_else(|| Error::State("retained request lost its job".into()))?;
             return Ok(Response::Started {
@@ -900,6 +1006,9 @@ impl Runtime {
         }
         if retry {
             return Ok(Response::RequestExpired { request_id });
+        }
+        if let Some(origin) = &origin {
+            self.check_rule_admission(uid, &profile, origin)?;
         }
         if self
             .state
@@ -925,7 +1034,7 @@ impl Runtime {
         let mut next = self.state.clone();
         next.jobs.push(job.clone());
         next.requests.push(RequestRecord {
-            id: request_id,
+            id: request_id.clone(),
             uid,
             profile: profile.clone(),
             job_id: id.clone(),
@@ -938,9 +1047,27 @@ impl Runtime {
             AuditAction::Start,
             None,
         )?;
+        if let Some(origin) = origin {
+            next.automation
+                .as_mut()
+                .ok_or_else(denied)?
+                .fire(crate::automation::RuleOrigin {
+                    sequence: 0,
+                    rule_id: origin.id,
+                    revision: origin.revision,
+                    operator_uid: uid,
+                    profile: profile.clone(),
+                    observation: origin.token,
+                    request_id,
+                    job_id: id.clone(),
+                })?;
+        }
         next.preflight(true)?;
         self.persist(next).await?;
-        let (sender, receiver) = watch::channel(false);
+        let expired = automatic_guard
+            .as_ref()
+            .is_some_and(|guard| !self.rule_source_current(uid, &profile, guard));
+        let (sender, receiver) = watch::channel(expired);
         self.controls
             .lock()
             .map_err(|_| lock_error())?
@@ -960,10 +1087,19 @@ impl Runtime {
             stop: receiver,
             facts: self.fact_sender.clone(),
         };
+        let automatic = automatic_guard.is_some();
         self.workers.spawn(async move {
-            let result = crate::jobs::run_job(definition, context).await;
+            let result =
+                if automatic && (*context.stop.borrow() || context.stop.has_changed().is_err()) {
+                    Err(Error::State(
+                        "automatic runner suppressed before backend entry".into(),
+                    ))
+                } else {
+                    crate::jobs::run_job(definition, context).await
+                };
             (id, result)
         });
+        self.refresh_rules()?;
         Ok(Response::Started {
             job,
             replayed: false,

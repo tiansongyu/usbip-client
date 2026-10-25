@@ -177,7 +177,9 @@ pub struct Job {
     pub instance_id: InstanceId,
     /// Fixed administrator profile.
     pub profile: String,
-    /// Kernel-reported starting operator UID.
+    /// Kernel-reported manual operator, or the explicit durable rule's delegated
+    /// UID. Automatic starts retain separate RuleOrigin metadata; they do not
+    /// claim that an internal scheduler was a new operator socket peer.
     pub operator_uid: u32,
     /// Actual owner lifecycle.
     pub state: JobState,
@@ -219,7 +221,8 @@ pub enum AuditAction {
 pub struct AuditEvent {
     /// Monotonic sequence within this retained store, never reset on restart.
     pub sequence: u64,
-    /// Kernel-reported operator UID, or the dedicated broker for owner facts.
+    /// Kernel-reported manual operator, explicit rule delegation for automatic
+    /// Start/Discover, or the dedicated broker for owner facts.
     pub actor_uid: u32,
     /// Configured profile, absent for an unrecognized/unauthorized request.
     pub profile: Option<String>,

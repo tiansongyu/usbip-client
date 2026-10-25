@@ -12,6 +12,7 @@ RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件�
 | rustls / tokio-rustls | 精确0.23.46 / 0.26.6，[来源与设计](research/secure-transport-design.md) | rustls Apache-2.0 OR ISC OR MIT；tokio-rustls MIT OR Apache-2.0。官方crate checksum已核，显式ring/std、关闭默认features，仅TLS1.3；现已接入安全USB/IP broker，实际范围见[验收报告](research/secure-usbip-validation.md) |
 | ring / rustls-webpki / rustls-pki-types | 实际解析0.17.14 / 0.103.16 / 1.15.1 | Cargo元数据分别为Apache-2.0 AND ISC、ISC、MIT OR Apache-2.0；ring完整`LICENSE`另列BoringSSL及历史来源条款，须按各crate完整许可分发。不能把密码库和底层unsafe表述为自有MIT实现或FIPS认证 |
 | rcgen | 精确0.14.10，仅新transport测试生成内存证书 | MIT OR Apache-2.0；关闭默认features、启ring，不提交测试私钥，不作为产品证书签发工具 |
+| sha2 | 已锁定0.10.9，MIT OR Apache-2.0 | 自动规则service复用既有SHA-256，对冻结的本地/远程观察元组生成metadata token；不把hash当设备授权或密码学硬件身份。根及GUI锁各新增一条service依赖边，外部版本/source/checksum及222包根库存保持 |
 | x509-parser | 精确0.18.1，[CRL设计](research/offline-crl-design.md)，checksum锁定 | MIT OR Apache-2.0；关闭默认features，仅解析有界完整CRL元数据，签名/链/实际撤销仍由rustls/webpki。该版本和子树已在旧lock中，但此前不是工作区实际normal依赖；本次启用不将其结构解析当成密码认证或无panic证明 |
 | governor | 精确0.10.4，固定VCS `9f3a79dd47dd32acd589c562b8d4fefe99b93372`，[设计与源码](research/authentication-admission-design.md) | MIT；仅std features，显式MonotonicClock、direct非等待GCRA，不使用keyed map、quanta或jitter。新认证quota与原16连接owner预算分开；内部约584年ns horizon保留为依赖边界，所测quota与真实验收见专项报告，不宣称无限运行或完整DoS防护 |
 | OpenSSL CLI | QEMU认证负向使用发行版3.0系列工具，实际版本、ELF及动态库哈希随每次运行记录 | Apache-2.0；仅测试签发一次性证书和独立TLS客户端，不是产品Rust依赖。临时guest镜像不发布，私钥不归档；用法与边界见[测试设计](research/secure-negative-qemu-design.md) |

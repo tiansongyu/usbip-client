@@ -22,7 +22,7 @@ pub(crate) struct RequestRecord {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(try_from = "CurrentDisk")]
 pub(crate) struct State {
     pub schema_version: u32,
     pub sequence: u64,
@@ -31,6 +31,75 @@ pub(crate) struct State {
     pub audit: Vec<AuditEvent>,
     pub requests: Vec<RequestRecord>,
     pub link_history: Vec<crate::health::LinkHistory>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub automation: Option<crate::rules::RuleJournal>,
+}
+
+// Freeze both complete shapes. An optional field on disk2 would let missing or
+// null disk3 authority/history silently masquerade as a legacy record.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Disk2 {
+    schema_version: u32,
+    sequence: u64,
+    jobs: Vec<Job>,
+    sessions: Vec<Session>,
+    audit: Vec<AuditEvent>,
+    requests: Vec<RequestRecord>,
+    link_history: Vec<crate::health::LinkHistory>,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Disk3 {
+    schema_version: u32,
+    sequence: u64,
+    jobs: Vec<Job>,
+    sessions: Vec<Session>,
+    audit: Vec<AuditEvent>,
+    requests: Vec<RequestRecord>,
+    link_history: Vec<crate::health::LinkHistory>,
+    automation: crate::rules::RuleJournal,
+}
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum CurrentDisk {
+    V3(Disk3),
+    V2(Disk2),
+}
+
+impl TryFrom<CurrentDisk> for State {
+    type Error = Error;
+    fn try_from(value: CurrentDisk) -> Result<Self> {
+        let state = match value {
+            CurrentDisk::V2(d) if d.schema_version == 2 => Self {
+                schema_version: 2,
+                sequence: d.sequence,
+                jobs: d.jobs,
+                sessions: d.sessions,
+                audit: d.audit,
+                requests: d.requests,
+                link_history: d.link_history,
+                automation: None,
+            },
+            CurrentDisk::V3(d) if d.schema_version == 3 => Self {
+                schema_version: 3,
+                sequence: d.sequence,
+                jobs: d.jobs,
+                sessions: d.sessions,
+                audit: d.audit,
+                requests: d.requests,
+                link_history: d.link_history,
+                automation: Some(d.automation),
+            },
+            _ => {
+                return Err(Error::InvalidInput(
+                    "agent state version/shape mismatch".into(),
+                ));
+            }
+        };
+        state.validate()?;
+        Ok(state)
+    }
 }
 impl Default for State {
     fn default() -> Self {
@@ -42,6 +111,7 @@ impl Default for State {
             audit: vec![],
             requests: vec![],
             link_history: vec![],
+            automation: None,
         }
     }
 }
@@ -77,6 +147,7 @@ impl State {
             audit: old.audit,
             requests: old.requests,
             link_history: vec![],
+            automation: None,
         };
         state.initialize_legacy_links();
         state.validate()?;
@@ -93,6 +164,14 @@ impl State {
                     .then(rustusb_core::link_health::LinkHealth::raw_v1),
             })
             .collect();
+    }
+    pub(crate) fn enable_automation(&mut self) -> Result<()> {
+        self.validate()?;
+        if self.schema_version == 2 {
+            self.schema_version = 3;
+            self.automation = Some(crate::rules::RuleJournal::default());
+        }
+        Ok(())
     }
     pub fn preflight(&mut self, admission: bool) -> Result<()> {
         self.prune();
@@ -157,6 +236,9 @@ impl State {
         Ok(())
     }
     pub fn prune(&mut self) {
+        if let Some(automation) = &mut self.automation {
+            automation.prune(&self.jobs, &self.sessions);
+        }
         while self
             .sessions
             .iter()
@@ -182,7 +264,12 @@ impl State {
             > MAX_TERMINAL
         {
             if let Some(index) = self.jobs.iter().position(|j| {
-                j.state == JobState::Finished && !self.sessions.iter().any(|s| s.job_id == j.id)
+                j.state == JobState::Finished
+                    && !self.sessions.iter().any(|s| s.job_id == j.id)
+                    && !self
+                        .automation
+                        .as_ref()
+                        .is_some_and(|a| a.rules.iter().any(|r| r.last_job.as_ref() == Some(&j.id)))
             }) {
                 let id = self.jobs.remove(index).id;
                 self.requests.retain(|r| r.job_id != id);
@@ -198,10 +285,15 @@ impl State {
         while self.requests.len() > MAX_REQUESTS {
             self.requests.remove(0);
         }
+        if let Some(automation) = &mut self.automation {
+            automation.prune(&self.jobs, &self.sessions);
+        }
     }
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 2
-            || self.audit.len() > MAX_AUDIT
+        if !matches!(
+            (self.schema_version, &self.automation),
+            (2, None) | (3, Some(_))
+        ) || self.audit.len() > MAX_AUDIT
             || self.requests.len() > MAX_REQUESTS
             || self.sessions.len() > MAX_SESSIONS
             || self.jobs.len() > MAX_SESSIONS
@@ -303,6 +395,20 @@ impl State {
                     .any(|j| j.id == request.job_id && j.profile == request.profile)
             {
                 return Err(Error::InvalidInput("agent request identity".into()));
+            }
+        }
+        if let Some(automation) = &self.automation {
+            automation.validate(&self.jobs, &self.sessions)?;
+            for origin in &automation.origins {
+                if let Some(request) = self.requests.iter().find(|r| r.id == origin.request_id)
+                    && (request.uid != origin.operator_uid
+                        || request.profile != origin.profile
+                        || request.job_id != origin.job_id)
+                {
+                    return Err(Error::InvalidInput(
+                        "agent automatic Start request binding".into(),
+                    ));
+                }
             }
         }
         Ok(())

@@ -679,7 +679,10 @@ async fn execute(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Exit
         Command::Logs(_) | Command::Diagnostics(_) | Command::Devices { watch: true } => true,
         #[cfg(all(feature = "secure-transport", target_os = "linux"))]
         Command::Agent {
-            command: agent::Command::Run | agent::Command::Discover { watch: true, .. },
+            command:
+                agent::Command::Run { .. }
+                | agent::Command::Rule { .. }
+                | agent::Command::Discover { watch: true, .. },
             ..
         } => true,
         #[cfg(feature = "rust-backend")]
@@ -843,6 +846,94 @@ mod tests {
                 .is_err()
             );
         }
+    }
+
+    #[cfg(all(feature = "secure-transport", target_os = "linux"))]
+    #[test]
+    fn agent_rule_commands_keep_explicit_policy_cas_and_query_only_retry() -> Result<()> {
+        let prefix = ["rustusb", "agent", "--config", "/etc/rustusb/agent.json"];
+        let parse = |tail: Vec<&str>| {
+            let mut args = prefix.to_vec();
+            args.extend(tail);
+            Cli::try_parse_from(args)
+        };
+        assert!(parse(vec!["run"]).is_ok());
+        assert!(
+            parse(vec![
+                "run",
+                "--automation-policy",
+                "/etc/rustusb/automation.json"
+            ])
+            .is_ok()
+        );
+        assert!(parse(vec!["rules", "hid"]).is_ok());
+        let id = "00000000-0000-0000-0000-000000000001";
+        assert!(parse(vec!["rule", "hid", "retry", id]).is_ok());
+        assert!(parse(vec!["rule", "hid", "retry", id, "--enabled"]).is_err());
+        assert!(parse(vec!["rule", "hid", "enable", id]).is_err());
+        for revision in ["0", "18446744073709551615"] {
+            assert!(
+                parse(vec![
+                    "rule",
+                    "hid",
+                    "enable",
+                    id,
+                    "--expected-revision",
+                    revision
+                ])
+                .is_err()
+            );
+        }
+        assert!(
+            parse(vec![
+                "rule",
+                "hid",
+                "enable",
+                id,
+                "--expected-revision",
+                "1",
+                "--request-id",
+                id
+            ])
+            .is_ok()
+        );
+        for seconds in ["0", "1", "121"] {
+            assert!(
+                parse(vec![
+                    "rule",
+                    "hid",
+                    "create",
+                    "--name",
+                    "fixture",
+                    "--trigger",
+                    "remote-device-available",
+                    "--settle-seconds",
+                    seconds
+                ])
+                .is_err()
+            );
+        }
+        let created = parse(vec![
+            "rule",
+            "hid",
+            "create",
+            "--name",
+            "fixture",
+            "--trigger",
+            "remote-device-available",
+        ])
+        .map_err(|error| Error::InvalidInput(error.to_string()))?;
+        assert!(matches!(
+            created.command,
+            Command::Agent {
+                command: agent::Command::Rule {
+                    command: agent::RuleCommand::Create { enabled: false, .. },
+                    ..
+                },
+                ..
+            }
+        ));
+        Ok(())
     }
 
     #[cfg(all(feature = "secure-transport", target_os = "linux"))]

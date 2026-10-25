@@ -11,6 +11,36 @@ use serde::{Deserialize, Serialize};
 pub enum Request {
     /// List profiles this kernel UID may read.
     Profiles,
+    /// Read committed rules plus current finite condition metadata independently of WAL.
+    Rules {
+        /// Fixed profile requiring Read; only own rules (or root's admin view).
+        profile: String,
+        /// Exclusive rule cursor; at most sixteen rows.
+        after: Option<RuleId>,
+    },
+    /// Commit a rule edit using this real OS peer and a separate mutation UUID.
+    MutateRule {
+        /// Complete fixed profile effect; no endpoint/key override.
+        profile: String,
+        /// Original mutation namespace identity, retained across unknown responses.
+        request_id: RequestId,
+        /// Closed bounded mutation with exact revision CAS where applicable.
+        mutation: crate::automation::RuleMutation,
+    },
+    /// Query only the original mutation result; an unknown ID never edits a rule.
+    RetryRuleMutation {
+        /// Same original fixed profile.
+        profile: String,
+        /// Same original mutation identity.
+        request_id: RequestId,
+    },
+    /// Read independently sequenced committed rule audit, requiring Audit.
+    RuleEvents {
+        /// Fixed profile; no filesystem path is accepted.
+        profile: String,
+        /// Exclusive automation audit sequence, not the legacy audit cursor.
+        after: u64,
+    },
     /// Start one fixed profile; request IDs deduplicate only within retained history.
     Start {
         /// Fixed profile ID.
@@ -183,6 +213,44 @@ impl From<&rustusb_logging::Error> for LogReadFailure {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "result", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Response {
+    /// Finite current rule metadata; no USB owner or authorization is transferred.
+    Rules {
+        /// Whether an explicit startup automation policy was loaded.
+        policy_enabled: bool,
+        /// This requesting UID's exact grant metadata, if any.
+        #[serde(deserialize_with = "crate::automation::required_option")]
+        grant: Option<crate::automation::AutomationGrantInfo>,
+        /// At most sixteen authorized complete rows.
+        rules: Vec<crate::automation::RuleView>,
+        /// Exclusive continuation or explicit null after the last row.
+        #[serde(deserialize_with = "crate::automation::required_option")]
+        next_after: Option<RuleId>,
+    },
+    /// The original edit committed; later rule state may have advanced.
+    RuleMutationApplied {
+        /// Exact original mutation namespace identity.
+        request_id: RequestId,
+        /// Immutable result of that edit, not a current-job release assertion.
+        outcome: crate::automation::RuleMutationOutcome,
+        /// The original retained result was read without reapplying an edit.
+        replayed: bool,
+    },
+    /// No retained mapping; no new edit performed and no late original excluded.
+    RuleMutationExpired {
+        /// Exact unknown/expired original mutation identity.
+        request_id: RequestId,
+    },
+    /// Finite independently sequenced rule audit, outside the old audit schema.
+    RuleEvents {
+        /// At most sixteen complete committed events.
+        events: Vec<crate::automation::RuleEvent>,
+        /// Next exclusive automation cursor.
+        next_after: u64,
+        /// Earliest retained automation sequence, or current head plus one.
+        oldest_available: u64,
+        /// Requested automation history was evicted.
+        gap: bool,
+    },
     /// Readable fixed profiles.
     Profiles {
         /// At most sixteen entries.

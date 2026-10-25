@@ -92,7 +92,7 @@ pub(super) fn foreground_context(
     )
 }
 
-pub(super) fn device() -> Result<RemoteDevice> {
+pub(crate) fn device() -> Result<RemoteDevice> {
     Ok(RemoteDevice {
         bus_id: BusId::new("1-1")?,
         path: "/test/management-only".into(),
@@ -291,20 +291,30 @@ pub(crate) async fn serve_catalog_sequence(
 // Shared test peer, not a product operation: one real authenticated exchange
 // with the original management FIN/EOF close and actual framed owner join.
 pub(crate) async fn serve_one_catalog(tls: TlsServer, listener: TcpListener) -> TestResult {
-    let (tcp, _) = tokio::time::timeout(Duration::from_secs(3), listener.accept()).await??;
-    let (mut connection, _) =
-        tokio::time::timeout(Duration::from_secs(3), link::accept(&tls, tcp)).await??;
-    if let Err(error) = catalog(&mut connection.io).await {
-        let _ = link::finish(&mut connection.owner).await;
-        return Err(error.into());
+    serve_catalog_count(tls, listener, 1).await
+}
+
+pub(crate) async fn serve_catalog_count(
+    tls: TlsServer,
+    listener: TcpListener,
+    count: u8,
+) -> TestResult {
+    for _ in 0..count {
+        let (tcp, _) = tokio::time::timeout(Duration::from_secs(3), listener.accept()).await??;
+        let (mut connection, _) =
+            tokio::time::timeout(Duration::from_secs(3), link::accept(&tls, tcp)).await??;
+        if let Err(error) = catalog(&mut connection.io).await {
+            let _ = link::finish(&mut connection.owner).await;
+            return Err(error.into());
+        }
+        assert!(
+            link::complete_management(&mut connection.io, &mut connection.owner, async {
+                tokio::time::sleep(Duration::from_secs(3)).await;
+                Err(Error::Timeout("catalog test peer close".into()))
+            },)
+            .await?
+        );
     }
-    assert!(
-        link::complete_management(&mut connection.io, &mut connection.owner, async {
-            tokio::time::sleep(Duration::from_secs(3)).await;
-            Err(Error::Timeout("catalog test peer close".into()))
-        },)
-        .await?
-    );
     Ok(())
 }
 

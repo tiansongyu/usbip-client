@@ -173,6 +173,7 @@ mod tests {
             failure: None,
             reason: DiscoveryReason::UsbHint,
             sampled_ms: 1,
+            sampled_at: std::time::Instant::now(),
             devices: None,
             changes: Vec::new(),
             counters: DiscoveryCounters::default(),

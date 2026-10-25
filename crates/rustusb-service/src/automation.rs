@@ -6,7 +6,10 @@
 //! journal the rule occurrence and original Start intent in one transaction.
 
 use crate::config::{Action, Backend, Credentials, LoadedConfig, valid_label};
-use rustusb_core::{DeviceBackend, DeviceKey, Error, Result, application::RuleId};
+use rustusb_core::{
+    DeviceBackend, DeviceKey, Error, Result,
+    application::{JobId, RequestId, RuleId},
+};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::Path};
 
@@ -98,7 +101,7 @@ impl RuleSpec {
         self.trigger
     }
 
-    /// Required continuously fresh candidate interval in seconds.
+    /// Minimum settling interval between matching fresh condition observations.
     pub fn settle_seconds(&self) -> u16 {
         self.settle_seconds
     }
@@ -193,6 +196,226 @@ pub enum RuleMutation {
     },
 }
 
+/// Hash of bounded observation metadata; not a device identity or capability.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(try_from = "String", into = "String")]
+pub struct ObservationToken(String);
+
+impl ObservationToken {
+    /// Validate exactly64 lowercase hexadecimal digits without accepting raw USB data.
+    pub fn new(value: String) -> Result<Self> {
+        if value.len() != 64
+            || !value
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+        {
+            return Err(Error::InvalidInput("automatic observation token".into()));
+        }
+        Ok(Self(value))
+    }
+    /// Borrow the finite metadata digest; it never authorizes a device operation.
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+impl TryFrom<String> for ObservationToken {
+    type Error = Error;
+    fn try_from(value: String) -> Result<Self> {
+        Self::new(value)
+    }
+}
+impl From<ObservationToken> for String {
+    fn from(value: ObservationToken) -> Self {
+        value.0
+    }
+}
+
+/// Explicit background delegation committed with its original Start intent.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuleOrigin {
+    /// Exact committed rule-audit sequence of this firing.
+    pub sequence: u64,
+    /// Original rule, including after a later edit or retirement.
+    pub rule_id: RuleId,
+    /// Original positive rule revision, not the current editor revision.
+    pub revision: u64,
+    /// UID from the authorized durable rule; not a new SO_PEERCRED claim.
+    pub operator_uid: u32,
+    /// Exact fixed profile effect.
+    pub profile: String,
+    /// Consumed observation tuple, not a physical generation proof.
+    pub observation: ObservationToken,
+    /// Original Start namespace identity, never a mutation retry identity.
+    pub request_id: RequestId,
+    /// Exact job intent committed in the same transaction.
+    pub job_id: JobId,
+}
+
+/// Outcome of a committed rule edit; it does not assert device availability.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuleMutationOutcome {
+    /// The original created or edited identity.
+    pub rule_id: RuleId,
+    /// Revision produced by that edit, even if later edits have occurred.
+    pub revision: u64,
+    /// Future triggering was retired; unresolved current-job history remains.
+    pub deleted: bool,
+}
+
+/// Current automation observation, distinct from a job's operation/cleanup facts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RuleStatus {
+    /// Future triggering was explicitly disabled.
+    Disabled,
+    /// A manual Stop suppressed future triggering until explicit enable.
+    PausedByUser,
+    /// No matching complete safe condition is currently stable.
+    Waiting,
+    /// A fresh matching condition is settling.
+    Candidate,
+    /// A Start intent committed; the original runner is being registered.
+    Admitting,
+    /// The original actual owner is still supervised.
+    Active,
+    /// The once policy already consumed this revision.
+    OnceConsumed,
+    /// The current observation was already consumed.
+    AwaitingNewObservation,
+    /// Current administrator delegation or action permission is absent.
+    BlockedPermission,
+    /// Complete current metadata explicitly blocks safe automation.
+    BlockedUnsafe,
+    /// Remote metadata cannot prove the required full nonstorage classification.
+    SafetyEvidenceUnavailable,
+    /// No sufficiently fresh complete observation is available.
+    Stale,
+    /// Previous ownership or actual release is unresolved.
+    NeedsReconciliation,
+    /// The service is stopping or durable/observation admission is unavailable.
+    Unavailable,
+    /// Another current or unresolved job already occupies the fixed profile.
+    ProfileBusy,
+}
+
+/// One finite rule observation, with current and original identities separated.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuleView {
+    /// Persistent rule identity.
+    pub id: RuleId,
+    /// Exact current revision required by edits.
+    pub revision: u64,
+    /// Authorized original operator, not a claimed request field.
+    pub operator_uid: u32,
+    /// Complete fixed administrator-selected effect.
+    pub profile: String,
+    /// Current bounded definition.
+    pub spec: RuleSpec,
+    /// Future-trigger intent, independent of actual current-job cleanup.
+    pub enabled: bool,
+    /// Sticky manual Stop state; explicit enable is needed to resume.
+    pub paused_by_user: bool,
+    /// Retired future intent with still-retained history.
+    pub deleted: bool,
+    /// Live metadata condition, never release evidence.
+    pub status: RuleStatus,
+    /// Last committed firing, unchanged by an edit or observer restart.
+    #[serde(deserialize_with = "required_option")]
+    pub last_origin: Option<RuleOrigin>,
+    /// Independent job operation facts; sessions retain actual cleanup evidence.
+    #[serde(deserialize_with = "required_option")]
+    pub last_job: Option<crate::model::Job>,
+    /// Fixed latest observation error, not an arbitrary network/USB message.
+    #[serde(deserialize_with = "required_option")]
+    pub observation_error: Option<crate::model::Failure>,
+    /// Fixed failure before automatic job admission; actual job errors stay separate.
+    #[serde(deserialize_with = "required_option")]
+    pub admission_error: Option<crate::model::Failure>,
+}
+
+/// Positive rule audit categories in their own finite sequence/schema.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RuleEventKind {
+    /// A new rule committed.
+    Created,
+    /// A definition changed with exact revision CAS.
+    Replaced,
+    /// Explicit enable/rearm committed.
+    Enabled,
+    /// Future triggering was disabled without claiming actual-job release.
+    Disabled,
+    /// Future intent was retired, preserving unresolved ownership.
+    Deleted,
+    /// Manual Stop durably paused a rule in the same Stop transaction.
+    PausedByStop,
+    /// The exact occurrence and original Start intent committed together.
+    Fired,
+}
+
+/// Payload-free rule audit, independent of frozen legacy audit/log schemas.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuleEvent {
+    /// Monotonic automation sequence, distinct from the legacy audit sequence.
+    pub sequence: u64,
+    /// Actual mutation/Stop peer, or the explicitly delegated firing UID.
+    pub actor_uid: u32,
+    /// Original rule owner; may differ from a stopping peer.
+    pub operator_uid: u32,
+    /// Fixed profile scope.
+    pub profile: String,
+    /// Original rule identity.
+    pub rule_id: RuleId,
+    /// Resulting edit revision or original firing revision.
+    pub revision: u64,
+    /// Closed operation kind.
+    pub kind: RuleEventKind,
+    /// Original mutation/Start identity; null only for a manual Stop pause.
+    #[serde(deserialize_with = "required_option")]
+    pub request_id: Option<RequestId>,
+    /// Exact related Start/Stop job; not a cleanup receipt.
+    #[serde(deserialize_with = "required_option")]
+    pub job_id: Option<JobId>,
+}
+
+/// Public grant metadata for an already authorized UID/profile read.
+/// Deserializing this view cannot create an `AutomationPolicy` or authority.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AutomationGrantInfo {
+    /// Complete fixed effect; a rule cannot narrow this device pool.
+    pub devices: Vec<DeviceKey>,
+    /// Closed administrator-permitted condition kinds.
+    pub triggers: Vec<TriggerKind>,
+    /// Explicit permitted occurrence policies.
+    pub rearm: Vec<RearmKind>,
+    /// Per-operator/profile admission ceiling.
+    pub max_rules: u8,
+}
+
+impl From<&AutomationGrant> for AutomationGrantInfo {
+    fn from(grant: &AutomationGrant) -> Self {
+        Self {
+            devices: grant.devices.iter().cloned().collect(),
+            triggers: grant.triggers.iter().copied().collect(),
+            rearm: grant.rearm.iter().copied().collect(),
+            max_rules: grant.max_rules,
+        }
+    }
+}
+
+pub(crate) fn required_option<'de, D, T>(decoder: D) -> std::result::Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Option::<T>::deserialize(decoder)
+}
+
 /// One immutable administrator delegation, bound to the complete fixed effect.
 /// These metadata contain no credentials, sockets, live owner or USB capability.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -270,6 +493,22 @@ struct GrantFile {
 }
 
 impl AutomationPolicy {
+    pub(crate) fn check_binding(&self, config: &LoadedConfig) -> Result<()> {
+        config.manifest.validate()?;
+        if self.broker_uid != config.manifest.broker_uid {
+            return Err(Error::Permission("automatic policy broker binding".into()));
+        }
+        for grant in &self.grants {
+            grant_binding(config, grant)?;
+        }
+        Ok(())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn fixture(bytes: &[u8], config: &LoadedConfig) -> Result<Self> {
+        Self::bind(bytes, config)
+    }
+
     /// Read a protected root document and bind every grant to loaded fixed inputs.
     ///
     /// This is a blocking startup routine: retain and join its actual blocking
