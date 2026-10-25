@@ -64,6 +64,12 @@ def main():
     credentials = support.credentials(private, out)
     for name in ('ca.der', 'server.der', 'client.der', 'server-key.der'):
         shutil.copyfile(credentials/name, fixture/name)
+    with (out/'fsync-gate-build.log').open('wb') as log:
+        subprocess.run(['cc', '-std=c11', '-shared', '-fPIC', '-O2', '-Wall', '-Wextra', '-Werror',
+                        str(HERE/'fsync-gate.c'), '-ldl', '-o', str(fixture/'fsync-gate.so')],
+                       stdout=log, stderr=subprocess.STDOUT, check=True)
+    (out/'fsync-gate-library.json').write_text(json.dumps({'sha256':sha(fixture/'fsync-gate.so'),
+                                                         'source_sha256':sha(HERE/'fsync-gate.c')})+'\n')
     shutil.copyfile(HERE/'guest.py', fixture/'guest.py')
     key = private/'ssh-key'
     subprocess.run(['ssh-keygen', '-q', '-t', 'ed25519', '-N', '', '-f', str(key)], check=True)

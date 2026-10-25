@@ -6,7 +6,7 @@ their Rootproof/driver/data-path assertions. The test starts a real virtual HID
 export job, but does not import it or claim new USB I/O acceptance.
 
 Host prerequisites: KVM/QEMU x86_64, qemu-img, genisoimage, OpenSSH client,
-OpenSSL and Python 3.10+. Use dated official amd64 qcow2 images. Verify their
+OpenSSL, a native C compiler and Python 3.10+. Use dated official amd64 qcow2 images. Verify their
 SHA256SUMS.gpg with the Ubuntu cloud-image keyring and actual image SHA256; supply
 a JSON receipt with `signature_verified: true`, `sha256`, URL/date/size. The
 runner independently rehashes the actual image; the supplied receipt is not a
@@ -31,9 +31,9 @@ TLS virtual profile. GUI is launched under ordinary UID1000 with actual Xvfb and
 openbox, then receives WM_DELETE_WINDOW; its actual exit must be 0.
 
 The runner records package/source/ELF hashes, actual command bytes/exits, native
-GUI lifecycle, failed old-prerm/new-failed-upgrade refusal, an original SIGSTOPed
-broker holding the real dpkg upgrade, helper availability during that wait,
-cooperative completion after SIGCONT, retained old job, real guest reboot through
+GUI lifecycle, failed old-prerm/new-failed-upgrade refusal, an actual broker
+journal fsync holding the real dpkg upgrade, helper availability during that wait,
+cooperative completion after the real fsync returns, retained old job, real guest reboot through
 QEMU exit0/relaunch and changed boot UUID, enable semantics, remove/purge, retained
 UID/config/credentials/journal, and administrator-mask preservation. It never
 uses an observation timeout as proof that a service stopped. Cleanup still waits
@@ -45,3 +45,13 @@ explicit public evidence files and guest-evidence tar; inspect its members befor
 publication. Configuration/key *hashes* are retained, never private key bytes.
 The acceptance method is by the same author as the package, not an independent
 implementation or a full hardware/architecture/desktop compatibility audit.
+
+The waiting case explicitly installs a guest-only LD_PRELOAD test library and
+administrator drop-in outside the product package. It records original PID/UID
+and the actual journal FD's inode before waiting for one FIFO byte, then calls the
+real libc fsync and records its actual result. It does not return synthetic IO
+success, alter Rust binaries or prove an arbitrary permanent kernel block is
+cancellable. The controller releases the gate in finally and waits for the real
+dpkg child before propagating an assertion failure. SIGSTOP cannot implement this
+wait: systemd deliberately sends SIGCONT immediately after its initial stop
+signal; the original failed diagnostic observations remain preserved.

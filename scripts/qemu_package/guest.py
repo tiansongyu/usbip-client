@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import pwd
 import re
-import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -136,6 +136,22 @@ def desktop():
         for log in logs: log.close()
 
 
+def prepare_gate():
+    """Explicit test-only interposer, separate from the shipped unit/package."""
+    entry = pwd.getpwnam('rustusb')
+    gate = Path('/run/rustusb-package-test'); gate.mkdir(mode=0o755)
+    os.mkfifo(gate/'release', 0o600)
+    (gate/'entry.jsonl').touch(mode=0o600)
+    for path in (gate/'release', gate/'entry.jsonl'):
+        os.chown(path, entry.pw_uid, entry.pw_gid)
+    library = Path('/usr/lib/rustusb-package-test-fsync.so')
+    shutil.copyfile(FIXTURE/'fsync-gate.so', library); library.chmod(0o755)
+    (OUT/'executed-fsync-library.json').write_text(json.dumps({'sha256':sha(library), 'uid':entry.pw_uid})+'\n')
+    override = Path('/etc/systemd/system/rustusb-agent.service.d'); override.mkdir(exist_ok=True)
+    (override/'package-test-gate.conf').write_text('[Service]\nEnvironment=LD_PRELOAD='+str(library)+'\nEnvironment=RUSTUSB_PACKAGE_GATE_UID='+str(entry.pw_uid)+'\n')
+    run(['systemctl', 'daemon-reload'])
+
+
 def install():
     run(['dpkg-query', '-W', 'systemd', 'dpkg', 'init-system-helpers'])
     run(['systemctl', '--version']); run(['uname', '-a'])
@@ -178,6 +194,7 @@ def install():
     check(runtime.is_symlink() and sha(data/'retained-sentinel') == before, 'symlink leaf refused without following or deletion')
     runtime.unlink()  # Explicit removal of this fixture's own test symlink.
     backup.rename(runtime)
+    prepare_gate()
     run(['systemctl', 'start', 'rustusb-helper.service', 'rustusb-agent.service']); ready()
     desktop()
     started = agent('start', 'package-virtual')
@@ -192,7 +209,7 @@ def install():
     else: raise RuntimeError('virtual job not available')
     # Invalid unit override: both old prerm and new failed-upgrade must refuse.
     override = Path('/etc/systemd/system/rustusb-agent.service.d')
-    override.mkdir()
+    override.mkdir(exist_ok=True)
     (override/'unsafe-test.conf').write_text('[Service]\nSendSIGKILL=yes\n')
     run(['systemctl', 'daemon-reload'])
     version = text(['dpkg-query', '-W', '-f=${Version}', 'rustusb'])
@@ -202,21 +219,41 @@ def install():
           and result.stderr.count(b'unsafe stop-policy override') == 2
           and text(['dpkg-query', '-W', '-f=${Version}', 'rustusb']) == version
           and sha('/usr/bin/rustusb') == binary, 'failed prerm and failed-upgrade preserve old package')
-    (override/'unsafe-test.conf').unlink(); override.rmdir()
+    (override/'unsafe-test.conf').unlink()
     run(['systemctl', 'daemon-reload'])
-    # A stopped actual owner keeps dpkg pending; do not treat a deadline as exit.
-    pid = int(service('rustusb-agent.service', 'MainPID')); os.kill(pid, signal.SIGSTOP)
+    # systemd sends SIGCONT after TERM; use a real controlled journal IO wait.
+    pid = int(service('rustusb-agent.service', 'MainPID'))
+    gate = Path('/run/rustusb-package-test')
+    controller = os.open(gate/'release', os.O_RDWR | os.O_NONBLOCK | os.O_CLOEXEC)
+    (gate/'armed').touch(mode=0o644)
     log = (OUT/'blocked-upgrade.log').open('wb')
     upgrade = subprocess.Popen(['dpkg', '-i', *second], stdout=log, stderr=subprocess.STDOUT)
     try:
+        entered = False
+        for _ in range(200):
+            rows = [json.loads(line) for line in (gate/'entry.jsonl').read_text().splitlines()]
+            if any(row['phase'] == 'entered' and row['pid'] == pid and row['uid'] == entry.pw_uid for row in rows):
+                entered = True; break
+            time.sleep(.05)
+        check(entered, 'original broker actual journal fsync entered controlled wait')
         time.sleep(3)
-        check(upgrade.poll() is None and service('rustusb-agent.service', 'ActiveState') == 'deactivating', 'actual upgrade waits for stopped original broker')
+        check(upgrade.poll() is None and service('rustusb-agent.service', 'ActiveState') == 'deactivating'
+              and int(service('rustusb-agent.service', 'MainPID')) == pid, 'actual upgrade waits for original broker journal owner')
         check(service('rustusb-helper.service', 'ActiveState') == 'active' and sha('/usr/bin/rustusb') == binary, 'helper remains during broker cleanup before replacement')
     finally:
-        os.kill(pid, signal.SIGCONT)
-        code = upgrade.wait(); log.close()
-        (OUT/'upgrade-exit.json').write_text(json.dumps({'exit': code})+'\n')
-    check(code == 0, 'upgrade actually exits0 after original broker continues')
+        try:
+            os.write(controller, b'G')
+        finally:
+            try:
+                code = upgrade.wait()
+                (OUT/'upgrade-exit.json').write_text(json.dumps({'exit': code})+'\n')
+            finally:
+                os.close(controller); log.close()
+                shutil.copyfile(gate/'entry.jsonl', OUT/'fsync-gate.jsonl')
+                (gate/'armed').unlink()
+    check(code == 0, 'upgrade actually exits0 after actual fsync release')
+    rows = [json.loads(line) for line in (OUT/'fsync-gate.jsonl').read_text().splitlines()]
+    check(any(row['phase'] == 'returned' and row['pid'] == pid and row['result'] == 0 for row in rows), 'interposer called actual fsync and observed return0')
     for unit in ('rustusb-agent.service', 'rustusb-helper.service'):
         check(service(unit, 'ActiveState') == 'inactive' and service(unit, 'Result') == 'success', 'upgrade leaves '+unit+' cooperatively stopped')
     state = json.loads((data/'state.json').read_text())

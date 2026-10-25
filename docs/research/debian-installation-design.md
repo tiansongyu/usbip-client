@@ -92,6 +92,16 @@ ordering and the two supported systemd versions. Official image provenance:
 [NoCloud datasource](https://docs.cloud-init.io/en/latest/reference/datasources/nocloud.html).
 No complete Phase 1/2/3/5/6/7 or physical G1/G2 acceptance follows from packaging.
 
+Validation refinement: the original SIGSTOP holding assumption failed in the two
+explicit development continuations. The official
+[Jammy kill procedure](https://manpages.ubuntu.com/manpages/jammy/man5/systemd.kill.5.html)
+documents automatic SIGCONT after the initial stop signal. Use an explicitly
+identified guest-only LD_PRELOAD fixture to hold an actual agent journal fsync
+before calling the real syscall; a controller byte releases it and the real
+return is recorded. Keep the test library/drop-in outside the product package,
+retain the original failures and do not equate this finite controlled wait with
+cancellation of permanent storage or kernel blocks.
+
 Research digests: [Debian](debian-lifecycle-research.md), [systemd](systemd-lifecycle-research.md). The new preinst and failed-upgrade prerm must repeat the installed stop gate; a failed old prerm must never fall through to a successful no-op. Configure records potential WantedBy links using deb-systemd-helper update-state, without enabling. Remove disables those recorded links; purge drops only that package bookkeeping, preserving administrator masks. Reject nonempty DPKG_ROOT; upgrades/removals require the actual booted systemd manager, not a shared-run chroot.
 
 Binary distribution also installs a conservative target-resolved Cargo license inventory (including build/dev nodes), original cached license/notice texts and fixed-revision supplemental texts where crates omit them. Ship unmodified selectors MPL source in the GUI package and identify its license steward/source URL; do not portray the inventory as an exact linked-only SBOM. Native GUI CI builds matching base packages after the original GUI gate and uploads preview artifacts for the four existing distro/architecture cells. Artifact builds are not full installed VM/USB acceptance.
