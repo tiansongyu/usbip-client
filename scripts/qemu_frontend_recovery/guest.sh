@@ -28,7 +28,7 @@ recovery_kill() {
 }
 recovery_denied_window() (
     local label=$1 bad=$2
-    GUI_PID='' GUI_DRIVER='' GUI_SESSION='' GUI_PORT=15889
+    GUI_PID='' GUI_DRIVER='' GUI_SESSION='' GUI_PORT=15889 GUI_EXPECT_READONLY=1
     if [ "$bad" = yes ]; then
         mkdir -p /home/operator/recovery-bad/rustusb
         chown -R 1000:1000 /home/operator/recovery-bad

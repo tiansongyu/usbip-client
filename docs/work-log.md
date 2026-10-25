@@ -10,6 +10,8 @@
 
 - clean f174f434完整root1076+GUI18/0fail/0ignore、428输入/三ELF/HEAD与clean guard通过；CLI54a67744…22447632B/helper475b2f97…7525544B/GUI5c9ec587…17897832B。原CLI五实际进程通过。首新IPv4 QEMU实际FAIL（两guest实际0/无forced/六guard真）：server三个计划GUI kill137与重开/草稿步骤已执行，client在第二native实例profiles准备时失败、未执行计划Start/I/O，故不能判旧264或wholecase通过。原始summary与采证不改；大summary误按blacklist打印包含source_inputs导致截断，改为白名单小输出。所有actual handles terminal后只给新fixture补最后HTTP原body保存、保原return code与断言，用实际错误继续诊断，不猜产品修复/不删竞争负向；产品/三ELF不改。一次诊断patch Python引号语法错且set-e停止，无文件写入，改用短独立脚本。
 
+- clean f717b0c0第二IPv4仍实际FAIL、两guest0/无forced/六guard真；新增last-http原件为false，按实际gui_open源码定位其末尾强制等待Start enabled，恰与竞争/坏目录只读场景要求Start disabled相反，不是产品startup失败。仅新wrapper加显式GUI_EXPECT_READONLY分支，负向要求profile正确且Start disabled，默认仍原enabled；不删除竞争场景/不放宽原verifier。两FAIL继续保留，不补造其原UUID/USB成功。产品/三ELF仍逐f174一致，需新clean fresh运行。
+
 ## 2026-10-25：自动规则持久拒绝回执（开始）
 
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。
