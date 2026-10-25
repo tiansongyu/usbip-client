@@ -110,8 +110,11 @@ slow-peer responsiveness, audit and shutdown checks.
 Optional [fixed-profile rules](docs/automatic-sharing.md) can start an entire
 approved profile in the background. They require explicit administrator
 delegation. [Native local-rule QEMU tests](docs/research/automatic-sharing-runtime-validation.md)
-verify actual I/O and manual pause across restart on IPv4/IPv6. GUI rule editing,
-dynamic device pools and physical remote automatic import remain unfinished.
+verify actual I/O and manual pause across restart on IPv4/IPv6.
+[Native GUI rule editing](docs/research/gui-automatic-rules-validation.md) adds
+disabled Create, exact-revision edits, explicit rearm and original-UUID queries
+after a real lost reply. Dynamic pools, physical remote automatic import and
+settled-negative edit recovery remain unfinished.
 
 [Rust-engine rule tests](docs/research/automatic-sharing-rust-qemu-validation.md)
 also cover virtual remote import and USBFS local rules over framed-v2 on both IP
@@ -196,7 +199,9 @@ read/audit-only agent. [Validation](docs/research/native-gui-validation.md) cove
 hotplug, actual permission denial/original retry, saved preferences and narrow
 layout. Separate [IPv4/IPv6 action tests](docs/research/gui-native-actions-validation.md)
 verify confirmed GUI Start/Stop, a nonempty remote catalog and continued QEMU
-HID/FTDI I/O after native windows close. GUI rule editing, packaged installation
+HID/FTDI I/O after native windows close. [GUI rule tests](docs/research/gui-automatic-rules-validation.md)
+now cover fixed-profile edits, renderer reload and real unknown-outcome recovery
+on both address families. Packaged installation, settled-negative rule recovery
 and full GUI/hardware acceptance remain unfinished.
 
 [Same-connection RTT tests](docs/research/gui-link-health-validation.md) also

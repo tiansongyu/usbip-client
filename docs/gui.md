@@ -3,8 +3,9 @@
 The Linux Tauri application uses the same headless observation/action worker as
 the TUI. Local and remote inventories, profile actions, jobs, sessions, audit and
 preferences all use the existing libraries and authenticated application service.
-This is an early preview; GUI rule editing and packaged installation
-remain unfinished.
+Settings also edits explicitly delegated fixed-profile automatic rules. This is
+an early preview; settled-negative rule recovery, packaged installation and full
+GUI acceptance remain unfinished.
 
 ## Build and open
 
@@ -49,7 +50,8 @@ as root. Native Linux GTK/WebKit libraries are separate system dependencies.
 - **Settings:** apply, explicitly save or reload checked user preferences. These
   share the TUI's `~/.config/rustusb/preferences.json` (or absolute XDG directory).
   `--settings-directory` chooses another trusted user location. No preference
-  enables automatic device actions or changes administrator policy.
+  enables automatic device actions or changes administrator policy. The separate
+  Automatic sharing section reads administrator delegation and agent-owned rules.
 
 Start applies the complete fixed profile, regardless of the selected row. Both
 Start and exact Stop show a default-cancel confirmation. Permission is checked
@@ -62,8 +64,37 @@ At narrow window sizes, **Show details / Show list** switches the inventory pane
 Use Tab to focus controls and the scrollable metadata area. Closing the native
 window or SIGINT/SIGTERM signals cooperative local shutdown and joins accepted
 GUI work/observers. Service-owned USB jobs continue independently. An unresolved
-Start makes the frontend exit1 after local joins and prints its safe retry ID;
+Start or rule edit makes the frontend exit1 after local joins and prints its safe retry ID;
 that is separate from the agent's USB cleanup state.
+
+## Edit automatic-sharing rules
+
+An administrator must explicitly provision an [automation policy](automatic-sharing.md)
+for your OS UID/profile. Open Settings and inspect the complete granted device
+pool, permitted conditions/rearm and quota. No policy, no grant, permission failure
+and stale/unavailable metadata have separate qualifications. Rule/event pages are
+sampled independently; open Connections for actual jobs and session cleanup.
+
+Choose **New disabled rule**, enter a 1–64 UTF-8-byte name and a 2–120-second settle
+interval, then confirm. Creation never enables it. Inspect its sampled identity
+and revision before **Edit definition** or **Enable / rearm**. Replacement of an
+enabled definition can affect future triggering. Every confirmation defaults
+Cancel. Refresh preserves your draft's original revision; inspect and explicitly
+choose a latest definition if another operator has changed it.
+
+**Disable future triggers** and **Delete future intent** leave an existing job
+independent. Use Connections to request its stop, then inspect actual release.
+Manual Stop persistently pauses automatic rules; resuming requires explicit
+Enable/rearm under the current administrator grant.
+
+If an edit reply is unknown/refused, keep its displayed profile/UUID and original
+payload. **Query original rule edit** sends only RetryRuleMutation, including
+after renderer reload or profile changes. It never reapplies Create/Replace.
+An expired result does not prove that the original never committed. Generic
+negative replies currently lack a settled durable receipt, so new edits remain
+blocked until the original Applied result is resolved; inspect latest rules/events
+with the administrator. Do not clear the ID or mint a replacement request.
+Retention covers this frontend process, not whole-process crashes/restarts.
 
 ## Validation and limits
 
@@ -75,8 +106,10 @@ catalog and actual USB I/O after native windows close. The fixed QEMU HID/FTDI
 cases use raw-v1, which correctly shows RTT unavailable.
 [Framed-v2 validation](research/gui-link-health-validation.md) separately covers
 actual same-connection RTT, history/typed ends after three directional faults,
-and preserved reading state on both address families. GUI rule editing,
-`.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
+and preserved reading state on both address families. [Rule validation](research/gui-automatic-rules-validation.md)
+adds fixed-profile CRUD, exact revisions, a true lost IPC reply and native renderer
+reload/original query on IPv4/IPv6, with original Native I/O and GUI regressions.
+Settled-negative rule recovery, `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
 acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded

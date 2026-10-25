@@ -254,3 +254,5 @@ GUI仍经同一headless frontend/应用服务操作，不另持USB资源。E50�
 
 
 GUI E51仅修改本地显示：以profile/instance/session/connection匹配当前DOM的展开/scroll并沿原focus key恢复，不积累metadata缓存。history/phase/end与operation/cleanup保持独立，见[验收](research/gui-link-health-validation.md)。自动规则的[后续设计](research/automatic-sharing-design.md)为draft：显式root delegation、同事务准入和动态pool/owner缺口待实现，普通Start/GUI偏好不默授后台自动准入。
+
+E55 [GUI规则](research/gui-automatic-rules-validation.md)通过共享frontend按Settings请求独立Rules/RuleEvents；原TUI默认RPC不增。有限bridge只接typed spec/当前identity与canonical decimal revision，原mutation UUID/payload在Rust保留到精确Applied，Start/Stop独立，issued IPC总await及observer实际join保持。未知/拒绝/Expired仅原Query不重发；通用Error的settled负向/安全协调与进程崩溃持久ID仍未实现，不以此完成整个自动规则或Phase5。

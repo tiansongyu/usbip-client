@@ -1,0 +1,4032 @@
+{
+  "result": "PASS",
+  "software_head": "7ef7f4923dc97bef98a971b1fc248e36cf670a67",
+  "qemu_head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+  "product_source_identical_between_heads": true,
+  "software": [
+    {
+      "name": "core",
+      "argv": [
+        "bash",
+        "scripts/check.sh"
+      ],
+      "exit": 0,
+      "passed": 1027,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "gui",
+      "argv": [
+        "bash",
+        "scripts/check-gui.sh"
+      ],
+      "exit": 0,
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "gate_inputs": 404,
+  "binaries": {
+    "rustusb": {
+      "bytes": 21933280,
+      "sha256": "d6bd57c4daeabdcce23574f158e225fb7b2fb77deebe1bcf546bb9bc858ed034"
+    },
+    "rustusb-helper": {
+      "bytes": 7525544,
+      "sha256": "475b2f97e8b4e31dd1af479193913c637d09dc8c3b1debd13442c0f88f6748f3"
+    },
+    "rustusb-gui": {
+      "bytes": 17410456,
+      "sha256": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4"
+    }
+  },
+  "final_qemu_invocations": 6,
+  "final_actual_guest_exit0": 11,
+  "failed_qemu_invocations": 2,
+  "failed_actual_guest_exit0": 4,
+  "failed_runs_remain_failed": true,
+  "forced_termination": [],
+  "runs": {
+    "failed-dom-ipv4": {
+      "result": "FAIL",
+      "head": "7ef7f4923dc97bef98a971b1fc248e36cf670a67",
+      "input_count": 391,
+      "error": "RuntimeError: guest reported actual failure",
+      "facts": null,
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "failed-verifier-ipv4": {
+      "result": "FAIL",
+      "head": "eedba0d9497b4a2354c996845b7681f1488f4b57",
+      "input_count": 391,
+      "error": "IndexError: list index out of range",
+      "facts": null,
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "new-ipv4": {
+      "result": "PASS",
+      "head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+      "input_count": 391,
+      "error": null,
+      "facts": {
+        "actual_configuration": [
+          {
+            "role": "server",
+            "epoch": 1,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "c1c6508fc2e80c9c0b0fc55d2a804a6071fb6d1bf1e37de5fc9b05bfa2e0336d",
+              "server": "376e7e178be12d55941bed1000d7011c1bfde70dd045b30cd13f767c9a625adc",
+              "client": "00d5846715b62afeb42c5466652d40bc10788e4eb074b0bde79bad07bbe6bf4d"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "server",
+            "epoch": 2,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "c1c6508fc2e80c9c0b0fc55d2a804a6071fb6d1bf1e37de5fc9b05bfa2e0336d",
+              "server": "376e7e178be12d55941bed1000d7011c1bfde70dd045b30cd13f767c9a625adc",
+              "client": "00d5846715b62afeb42c5466652d40bc10788e4eb074b0bde79bad07bbe6bf4d"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 1,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "c1c6508fc2e80c9c0b0fc55d2a804a6071fb6d1bf1e37de5fc9b05bfa2e0336d",
+              "server": "376e7e178be12d55941bed1000d7011c1bfde70dd045b30cd13f767c9a625adc",
+              "client": "00d5846715b62afeb42c5466652d40bc10788e4eb074b0bde79bad07bbe6bf4d"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 2,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "c1c6508fc2e80c9c0b0fc55d2a804a6071fb6d1bf1e37de5fc9b05bfa2e0336d",
+              "server": "376e7e178be12d55941bed1000d7011c1bfde70dd045b30cd13f767c9a625adc",
+              "client": "00d5846715b62afeb42c5466652d40bc10788e4eb074b0bde79bad07bbe6bf4d"
+            },
+            "private_key_bytes_captured": false
+          }
+        ],
+        "scope": "Native-only actual agent ownership/recovery; assertions are audit checks, not USB cases",
+        "checks": [
+          "server final complete S0 no kernel panic/Oops",
+          "server terminal and complete artifacts",
+          "server role-isolated credentials and real entropy/clock",
+          "server fixed operator and broker",
+          "server no legacy trusted-network claim",
+          "server actual privileged helper OS identity",
+          "server denied strict private disk2 shape",
+          "server denied exact one-to-one retained link identities",
+          "server actual new-store absence and public empty resources",
+          "server denied resource invariance",
+          "server typed denial uid",
+          "server typed denial profile",
+          "server actual ownership modes epoch 1",
+          "server actual nonroot process epoch 1",
+          "server no ambient/effective capability epoch 1",
+          "server actual ownership modes epoch 2",
+          "server actual nonroot process epoch 2",
+          "server no ambient/effective capability epoch 2",
+          "server final strict private disk3 shape",
+          "server final exact one-to-one retained link identities",
+          "server final link epoch 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "server final export is not a data link 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "server final link epoch 9923f698-f633-46b4-b639-390b7c48de1c",
+          "server final export is not a data link 9923f698-f633-46b4-b639-390b7c48de1c",
+          "server final link epoch 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server final raw v1 never fabricates RTT or probe 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server final link epoch e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server final raw v1 never fabricates RTT or probe e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server final link epoch 12a6c210-24aa-48f7-8bd8-233db8395e93",
+          "server final export is not a data link 12a6c210-24aa-48f7-8bd8-233db8395e93",
+          "server final link epoch 7c50dd70-b6a1-4753-bb54-8a075af96429",
+          "server final export is not a data link 7c50dd70-b6a1-4753-bb54-8a075af96429",
+          "server final link epoch 6aafbb7e-e685-4728-805c-3918f74bb560",
+          "server final raw v1 never fabricates RTT or probe 6aafbb7e-e685-4728-805c-3918f74bb560",
+          "server final link epoch 5ec50bb4-6233-42dc-8660-630565dfb64c",
+          "server final raw v1 never fabricates RTT or probe 5ec50bb4-6233-42dc-8660-630565dfb64c",
+          "server held0 strict private disk3 shape",
+          "server held0 exact one-to-one retained link identities",
+          "server held0 link epoch 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "server held0 export is not a data link 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "server held0 link epoch 9923f698-f633-46b4-b639-390b7c48de1c",
+          "server held0 export is not a data link 9923f698-f633-46b4-b639-390b7c48de1c",
+          "server held0 link epoch 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server held0 raw v1 never fabricates RTT or probe 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server held0 observed raw data mode 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server held0 link epoch e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server held0 raw v1 never fabricates RTT or probe e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server held0 observed raw data mode e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server held1 strict private disk3 shape",
+          "server held1 exact one-to-one retained link identities",
+          "server held1 link epoch 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "server held1 export is not a data link 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "server held1 link epoch 9923f698-f633-46b4-b639-390b7c48de1c",
+          "server held1 export is not a data link 9923f698-f633-46b4-b639-390b7c48de1c",
+          "server held1 link epoch 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server held1 raw v1 never fabricates RTT or probe 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "server held1 link epoch e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server held1 raw v1 never fabricates RTT or probe e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "server held1 link epoch 12a6c210-24aa-48f7-8bd8-233db8395e93",
+          "server held1 export is not a data link 12a6c210-24aa-48f7-8bd8-233db8395e93",
+          "server held1 link epoch 7c50dd70-b6a1-4753-bb54-8a075af96429",
+          "server held1 export is not a data link 7c50dd70-b6a1-4753-bb54-8a075af96429",
+          "server held1 link epoch 6aafbb7e-e685-4728-805c-3918f74bb560",
+          "server held1 raw v1 never fabricates RTT or probe 6aafbb7e-e685-4728-805c-3918f74bb560",
+          "server held1 observed raw data mode 6aafbb7e-e685-4728-805c-3918f74bb560",
+          "server held1 link epoch 5ec50bb4-6233-42dc-8660-630565dfb64c",
+          "server held1 raw v1 never fabricates RTT or probe 5ec50bb4-6233-42dc-8660-630565dfb64c",
+          "server held1 observed raw data mode 5ec50bb4-6233-42dc-8660-630565dfb64c",
+          "server exact two-epoch history from original start/held identities",
+          "server actual final session cleanup",
+          "server jobs really finished",
+          "server two distinct service epochs",
+          "server root durable active empty",
+          "exact retained root terminal 48e0aca4-4369-446a-a92f-84490ef67b1e/native_export",
+          "root terminal identity 48e0aca4-4369-446a-a92f-84490ef67b1e",
+          "same-boot no-hotplug exact release criterion 48e0aca4-4369-446a-a92f-84490ef67b1e/native_export",
+          "exact retained root terminal 9923f698-f633-46b4-b639-390b7c48de1c/native_export",
+          "root terminal identity 9923f698-f633-46b4-b639-390b7c48de1c",
+          "same-boot no-hotplug exact release criterion 9923f698-f633-46b4-b639-390b7c48de1c/native_export",
+          "exact retained root terminal 8616dfc1-54a7-479f-b128-746b26a71e01/native_stub",
+          "root terminal identity 8616dfc1-54a7-479f-b128-746b26a71e01",
+          "same-boot no-hotplug exact release criterion 8616dfc1-54a7-479f-b128-746b26a71e01/native_stub",
+          "exact retained root terminal e5ea3f40-a760-45a9-a87e-7af5c0513e23/native_stub",
+          "root terminal identity e5ea3f40-a760-45a9-a87e-7af5c0513e23",
+          "same-boot no-hotplug exact release criterion e5ea3f40-a760-45a9-a87e-7af5c0513e23/native_stub",
+          "exact retained root terminal 12a6c210-24aa-48f7-8bd8-233db8395e93/native_export",
+          "root terminal identity 12a6c210-24aa-48f7-8bd8-233db8395e93",
+          "same-boot no-hotplug exact release criterion 12a6c210-24aa-48f7-8bd8-233db8395e93/native_export",
+          "exact retained root terminal 7c50dd70-b6a1-4753-bb54-8a075af96429/native_export",
+          "root terminal identity 7c50dd70-b6a1-4753-bb54-8a075af96429",
+          "same-boot no-hotplug exact release criterion 7c50dd70-b6a1-4753-bb54-8a075af96429/native_export",
+          "exact retained root terminal 6aafbb7e-e685-4728-805c-3918f74bb560/native_stub",
+          "root terminal identity 6aafbb7e-e685-4728-805c-3918f74bb560",
+          "same-boot no-hotplug exact release criterion 6aafbb7e-e685-4728-805c-3918f74bb560/native_stub",
+          "exact retained root terminal 5ec50bb4-6233-42dc-8660-630565dfb64c/native_stub",
+          "root terminal identity 5ec50bb4-6233-42dc-8660-630565dfb64c",
+          "same-boot no-hotplug exact release criterion 5ec50bb4-6233-42dc-8660-630565dfb64c/native_stub",
+          "server every actual attempt has exactly one retained proof",
+          "client final complete S0 no kernel panic/Oops",
+          "client terminal and complete artifacts",
+          "client role-isolated credentials and real entropy/clock",
+          "client fixed operator and broker",
+          "client no legacy trusted-network claim",
+          "client actual privileged helper OS identity",
+          "client denied strict private disk2 shape",
+          "client denied exact one-to-one retained link identities",
+          "client actual new-store absence and public empty resources",
+          "client denied resource invariance",
+          "client typed denial uid",
+          "client typed denial profile",
+          "client actual ownership modes epoch 1",
+          "client actual nonroot process epoch 1",
+          "client no ambient/effective capability epoch 1",
+          "client actual ownership modes epoch 2",
+          "client actual nonroot process epoch 2",
+          "client no ambient/effective capability epoch 2",
+          "client final strict private disk2 shape",
+          "client final exact one-to-one retained link identities",
+          "client final link epoch 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client final raw v1 never fabricates RTT or probe 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client final link epoch 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client final raw v1 never fabricates RTT or probe 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client final link epoch 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client final raw v1 never fabricates RTT or probe 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client final link epoch e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client final raw v1 never fabricates RTT or probe e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client held0 strict private disk2 shape",
+          "client held0 exact one-to-one retained link identities",
+          "client held0 link epoch 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held0 raw v1 never fabricates RTT or probe 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held0 observed raw data mode 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held0 link epoch 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held0 raw v1 never fabricates RTT or probe 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held0 observed raw data mode 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held1 strict private disk2 shape",
+          "client held1 exact one-to-one retained link identities",
+          "client held1 link epoch 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held1 raw v1 never fabricates RTT or probe 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held1 observed raw data mode 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held1 link epoch 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held1 raw v1 never fabricates RTT or probe 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held1 observed raw data mode 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held2 strict private disk2 shape",
+          "client held2 exact one-to-one retained link identities",
+          "client held2 link epoch 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held2 raw v1 never fabricates RTT or probe 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held2 link epoch 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held2 raw v1 never fabricates RTT or probe 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held2 link epoch 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client held2 raw v1 never fabricates RTT or probe 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client held2 observed raw data mode 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client held2 link epoch e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client held2 raw v1 never fabricates RTT or probe e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client held2 observed raw data mode e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client held3 strict private disk2 shape",
+          "client held3 exact one-to-one retained link identities",
+          "client held3 link epoch 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held3 raw v1 never fabricates RTT or probe 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "client held3 link epoch 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held3 raw v1 never fabricates RTT or probe 73c63a89-0582-4931-a727-bcd3089e8220",
+          "client held3 link epoch 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client held3 raw v1 never fabricates RTT or probe 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client held3 observed raw data mode 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "client held3 link epoch e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client held3 raw v1 never fabricates RTT or probe e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client held3 observed raw data mode e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "client exact two-epoch history from original start/held identities",
+          "client actual final session cleanup",
+          "client jobs really finished",
+          "client two distinct service epochs",
+          "client root durable active empty",
+          "exact retained root terminal 7db22e26-68f8-4368-80eb-3df0bf32bb3f/native_import",
+          "root terminal identity 7db22e26-68f8-4368-80eb-3df0bf32bb3f",
+          "same-boot no-hotplug exact release criterion 7db22e26-68f8-4368-80eb-3df0bf32bb3f/native_import",
+          "exact retained root terminal 73c63a89-0582-4931-a727-bcd3089e8220/native_import",
+          "root terminal identity 73c63a89-0582-4931-a727-bcd3089e8220",
+          "same-boot no-hotplug exact release criterion 73c63a89-0582-4931-a727-bcd3089e8220/native_import",
+          "root proof echo 73c63a89-0582-4931-a727-bcd3089e8220",
+          "exact retained root terminal 30d9638d-d55a-431f-ba25-108ec9ddf7fa/native_import",
+          "root terminal identity 30d9638d-d55a-431f-ba25-108ec9ddf7fa",
+          "same-boot no-hotplug exact release criterion 30d9638d-d55a-431f-ba25-108ec9ddf7fa/native_import",
+          "exact retained root terminal e015a554-e1ff-4d3c-938f-b6e423c7135a/native_import",
+          "root terminal identity e015a554-e1ff-4d3c-938f-b6e423c7135a",
+          "same-boot no-hotplug exact release criterion e015a554-e1ff-4d3c-938f-b6e423c7135a/native_import",
+          "client every actual attempt has exactly one retained proof",
+          "exact Native device keys",
+          "actual FTDI exact 35B each way round 1",
+          "actual FTDI exact 35B each way round 2",
+          "actual FTDI exact 35B each way round 3",
+          "actual FTDI host received all 105B",
+          "complete x86_64 evdev records round 1",
+          "real HID down/up round 1",
+          "actual complete Native receipts round 1",
+          "local kernel identity 0e352c00-c82c-454f-84da-b446e242f8d3",
+          "actual helper owner and retained K 0e352c00-c82c-454f-84da-b446e242f8d3",
+          "live app/helper exact capability 0e352c00-c82c-454f-84da-b446e242f8d3",
+          "local kernel identity 303ad337-aa78-4582-a742-7bc6089a19a1",
+          "actual helper owner and retained K 303ad337-aa78-4582-a742-7bc6089a19a1",
+          "live app/helper exact capability 303ad337-aa78-4582-a742-7bc6089a19a1",
+          "complete x86_64 evdev records round 3",
+          "real HID down/up round 3",
+          "actual complete Native receipts round 3",
+          "local kernel identity 19707126-fa4f-48cf-902a-acb7e905f6d8",
+          "actual helper owner and retained K 19707126-fa4f-48cf-902a-acb7e905f6d8",
+          "live app/helper exact capability 19707126-fa4f-48cf-902a-acb7e905f6d8",
+          "local kernel identity e92a87b6-0b0d-4e60-830d-71c9dd7b9d0a",
+          "actual helper owner and retained K e92a87b6-0b0d-4e60-830d-71c9dd7b9d0a",
+          "live app/helper exact capability e92a87b6-0b0d-4e60-830d-71c9dd7b9d0a",
+          "VHCI exact USED/NULL vhci-held-1.txt",
+          "VHCI exact USED/NULL vhci-target-stopped.txt",
+          "VHCI exact USED/NULL vhci-after-kill.txt",
+          "VHCI exact USED/NULL vhci-held-3.txt",
+          "VHCI exact USED/NULL vhci-final.txt",
+          "SIGKILL retained old active application lifecycle (metrics may advance before signal)",
+          "actual single agent SIGKILL reap137",
+          "old serial recovered only from exact Root proof",
+          "actual live old serial before SIGKILL",
+          "recovery preserved old application identity",
+          "exact retained root terminal 73c63a89-0582-4931-a727-bcd3089e8220/native_import",
+          "root terminal identity 73c63a89-0582-4931-a727-bcd3089e8220",
+          "same-boot no-hotplug exact release criterion 73c63a89-0582-4931-a727-bcd3089e8220/native_import",
+          "root proof echo 73c63a89-0582-4931-a727-bcd3089e8220",
+          "new attempts after restart are distinct",
+          "helper capabilities never reused across epochs",
+          "tracked export records epoch 1",
+          "exact export registration keys epoch 1",
+          "original tracked export owner/bound af96dbec-63d0-4438-96c6-cac1e0c3a185",
+          "published pre-export descriptor af96dbec-63d0-4438-96c6-cac1e0c3a185",
+          "original tracked export owner/bound c361c983-23c9-45ed-9989-06739406f924",
+          "published pre-export descriptor c361c983-23c9-45ed-9989-06739406f924",
+          "immutable live export across stub use epoch 1",
+          "actual Native stub observed USED epoch 1",
+          "server physical generation unchanged exported-1",
+          "actual Native occupancy exported-1",
+          "true export unconfigured lifecycle exported-1",
+          "server physical generation unchanged held-1",
+          "actual Native occupancy held-1",
+          "actual imported full IF profile held-1",
+          "complete original driver/configuration/IF generation restored epoch 1",
+          "server actual TERM wait0 epoch 1",
+          "tracked export records epoch 2",
+          "exact export registration keys epoch 2",
+          "original tracked export owner/bound 859038ee-b72b-4bc8-b78d-feaa4b866f36",
+          "published pre-export descriptor 859038ee-b72b-4bc8-b78d-feaa4b866f36",
+          "original tracked export owner/bound ee24f881-7a86-4edb-8fe1-ad2e7226ec0f",
+          "published pre-export descriptor ee24f881-7a86-4edb-8fe1-ad2e7226ec0f",
+          "immutable live export across stub use epoch 2",
+          "actual Native stub observed USED epoch 2",
+          "server physical generation unchanged exported-2",
+          "actual Native occupancy exported-2",
+          "true export unconfigured lifecycle exported-2",
+          "server physical generation unchanged held-3",
+          "actual Native occupancy held-3",
+          "actual imported full IF profile held-3",
+          "complete original driver/configuration/IF generation restored epoch 2",
+          "server actual TERM wait0 epoch 2",
+          "client final actual TERM wait0",
+          "targeted HID stop preserves serial incoming",
+          "incoming stop preserves live published exports",
+          "targeted stop does not replace original export registration",
+          "only requested HID stub retires; serial capability stays exact",
+          "targeted stop retains same serial client receipt and owner",
+          "server actual application byte metrics retained, not USB payload counts",
+          "client actual application byte metrics retained, not USB payload counts"
+        ],
+        "assertion_count": 264,
+        "io_rounds": 3,
+        "hid_key_codes": [
+          2,
+          4
+        ],
+        "serial_each_direction_bytes": 105,
+        "external_link": {
+          "packets": 441,
+          "flows": [
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                41874,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "3f74feb2e0cdf39d3081c41a22ebed430554e05361421f2778eeaf2a435b8faf"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                41874
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "62ea4e368e72e6ff05052f02b7530a7769eb328a118a40260364288027b1f405"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                41876,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "d140437700a687b8331be7593423c11c941489de048efc739fabb132b6ad7993"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                41876
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "d2bcfe683d74d7d14bf7f6218b393b97c67ef4ae24b3c607065bc5ccbad06bd1"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                41888,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 2863,
+              "tls_records": 23,
+              "encrypted_application_records": 21,
+              "stream_sha256": "e39e80c938fc7f1ef7fc3e5ace28e996bfdbcd4cae35438b26f99dbb85b2fcda"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                41888
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "6fc821dae8a12fd86b77b7c521fbe7f0a44bc435c62df0f6b5c87848b40b0eb6"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                41892,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "7e69aafb4714e1997d410773cbb1e91c2a31c3c9de0e06df421553f484a0a47a"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                41892
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "b5d6b9cd82c0418dbd6b752fb6748968b3e43bfa467715a08e6ad2f6a4b8a775"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                41908,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 4594,
+              "tls_records": 44,
+              "encrypted_application_records": 42,
+              "stream_sha256": "975f00b76fdd26a002f7fe31cb92418068b422289b1fe43477238ad18f68fb68"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                41908
+              ],
+              "stream_bytes": 4706,
+              "tls_records": 42,
+              "encrypted_application_records": 40,
+              "stream_sha256": "771bd4f49a145ec68697e287a176fea80bc295667c6982ae7365162ebec0aa35"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                57238,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "9f774d41be06ebd43799d0a63e1912c441ab966d86a7a7660d4e68956176a21a"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                57238
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "a23a634bdb281e61aa10d5bd6a0d9e87bd1edd1c216af40c17a83bc447a28911"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                57252,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 2863,
+              "tls_records": 23,
+              "encrypted_application_records": 21,
+              "stream_sha256": "83907c989666f05ceae08037a3f5a00356b963f4a09896640e89fa21821689be"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                57252
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "d8fc49dddb251d72d0e848901035f0d72b857e7243617cd88cceb9e0283c35b5"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                57256,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "eddf27bb5715699d84f235543bd2b03f7d776dac73552c4f2d961af3f619d473"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                57256
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "7e20df9e3598a4fed7aeb3373cac6ae971b65b8f1628a12141612e3ff877ee93"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                57268,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 4139,
+              "tls_records": 38,
+              "encrypted_application_records": 36,
+              "stream_sha256": "974403dd1b69f63edac828549d981e20c88f9c402397b1556d015550ae09b54d"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                57268
+              ],
+              "stream_bytes": 4247,
+              "tls_records": 36,
+              "encrypted_application_records": 34,
+              "stream_sha256": "d60ca7abc6d5fdda826173c5acc2ea412f49b1e1b3c8a8bd8c944ab47faf32be"
+            }
+          ],
+          "port_3240_rst_families": [
+            4,
+            6
+          ],
+          "ipv6_hop_by_hop_headers": 8,
+          "icmpv6_control_types": {
+            "143_mldv2_report": 8,
+            "133_router_solicitation": 8,
+            "135_neighbor_solicitation": 4,
+            "136_neighbor_advertisement": 4
+          },
+          "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"
+        },
+        "gui_rules": {
+          "checks": [
+            "rules-no-policy: actual GUI UID1000/ELF/no caps/no USB FD",
+            "rules-no-policy: actual driver UID/ELF",
+            "rules-no-policy: native close/actual wait0/local join",
+            "rules-no-policy: native WebKit session",
+            "rules-1: actual GUI UID1000/ELF/no caps/no USB FD",
+            "rules-1: actual driver UID/ELF",
+            "rules-1: native close/actual wait0/local join",
+            "rules-1: native WebKit session",
+            "rules-2: actual GUI UID1000/ELF/no caps/no USB FD",
+            "rules-2: actual driver UID/ELF",
+            "rules-2: native close/actual wait0/local join",
+            "rules-2: native WebKit session",
+            "no forced GUI child",
+            "actual no-policy disabled UI",
+            "closed bridge refuses ungranted Create",
+            "no-policy bridge denial has no agent mutation",
+            "UTF-8 byte validation/focusable error summary",
+            "draft/focus/caret retained across actual advancing refresh",
+            "original typed payload/UUID and accepted slot survive real renderer reload",
+            "actual five-second IPC timeout, original rule UUID retained",
+            "actual agent stopped during unknown response",
+            "late original commits exactly one disabled Create with no Start",
+            "real RetryRuleMutation resolves original committed result",
+            "original query never reapplies edit",
+            "concurrent revision preserves draft and blocks stale edit before IPC",
+            "strict disk3/one rule history/two actual auto jobs; deleted record retired only after actual old cleanup",
+            "real Create/Replace/Enable/rearm/Disable/Delete and original firing revisions",
+            "exact committed independent rule event chain",
+            "epoch1 actual original origin/job/Start binding",
+            "epoch1 actual RetryStart and job continues after native close",
+            "epoch2 actual original origin/job/Start binding",
+            "epoch2 actual RetryStart and job continues after native close",
+            "manual stop pause survives actual agent restart and settle",
+            "disabled: future intent separate from actual active job",
+            "deleted: future intent separate from actual active job",
+            "gui-rule-confirm-inspect-3.json: default Cancel",
+            "gui-rule-confirm-enable-1.json: default Cancel",
+            "gui-rule-confirm-inspect-2.json: default Cancel",
+            "gui-rule-confirm-query.json: default Cancel",
+            "gui-rule-confirm-disable-2.json: default Cancel",
+            "gui-rule-confirm-enable-2.json: default Cancel",
+            "gui-rule-confirm-replace-4.json: default Cancel",
+            "gui-rule-confirm-replace-2.json: default Cancel",
+            "gui-rule-confirm-delete-2.json: default Cancel",
+            "gui-rule-confirm-create.json: default Cancel"
+          ],
+          "assertion_count": 45,
+          "native_processes": 3,
+          "gui_sha256": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4",
+          "scope": "Actual Native GUI, real lost IPC ACK/renderer reload/query, fixed-pool CRUD and original I/O; no settled-negative recovery, dynamic pools, installation or hardware."
+        }
+      },
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "new-ipv6": {
+      "result": "PASS",
+      "head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+      "input_count": 391,
+      "error": null,
+      "facts": {
+        "actual_configuration": [
+          {
+            "role": "server",
+            "epoch": 1,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "a02539282964fb2e01f17072cc88582a98f5e18be01a73ab24fcab708ad74622",
+              "server": "89d8d60e128230b59814ef4548313999d9a1180e956013259339dddb47179dcd",
+              "client": "561fae4154393e7237a71a5f11de6cddb52b14a20ed5bfea1ed896c7d6afd2b7"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "server",
+            "epoch": 2,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "a02539282964fb2e01f17072cc88582a98f5e18be01a73ab24fcab708ad74622",
+              "server": "89d8d60e128230b59814ef4548313999d9a1180e956013259339dddb47179dcd",
+              "client": "561fae4154393e7237a71a5f11de6cddb52b14a20ed5bfea1ed896c7d6afd2b7"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 1,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "a02539282964fb2e01f17072cc88582a98f5e18be01a73ab24fcab708ad74622",
+              "server": "89d8d60e128230b59814ef4548313999d9a1180e956013259339dddb47179dcd",
+              "client": "561fae4154393e7237a71a5f11de6cddb52b14a20ed5bfea1ed896c7d6afd2b7"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 2,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "a02539282964fb2e01f17072cc88582a98f5e18be01a73ab24fcab708ad74622",
+              "server": "89d8d60e128230b59814ef4548313999d9a1180e956013259339dddb47179dcd",
+              "client": "561fae4154393e7237a71a5f11de6cddb52b14a20ed5bfea1ed896c7d6afd2b7"
+            },
+            "private_key_bytes_captured": false
+          }
+        ],
+        "scope": "Native-only actual agent ownership/recovery; assertions are audit checks, not USB cases",
+        "checks": [
+          "server final complete S0 no kernel panic/Oops",
+          "server terminal and complete artifacts",
+          "server role-isolated credentials and real entropy/clock",
+          "server fixed operator and broker",
+          "server no legacy trusted-network claim",
+          "server actual privileged helper OS identity",
+          "server denied strict private disk2 shape",
+          "server denied exact one-to-one retained link identities",
+          "server actual new-store absence and public empty resources",
+          "server denied resource invariance",
+          "server typed denial uid",
+          "server typed denial profile",
+          "server actual ownership modes epoch 1",
+          "server actual nonroot process epoch 1",
+          "server no ambient/effective capability epoch 1",
+          "server actual ownership modes epoch 2",
+          "server actual nonroot process epoch 2",
+          "server no ambient/effective capability epoch 2",
+          "server final strict private disk3 shape",
+          "server final exact one-to-one retained link identities",
+          "server final link epoch 30361739-02d6-43af-b3df-399daae615e4",
+          "server final export is not a data link 30361739-02d6-43af-b3df-399daae615e4",
+          "server final link epoch 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "server final export is not a data link 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "server final link epoch acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server final raw v1 never fabricates RTT or probe acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server final link epoch efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server final raw v1 never fabricates RTT or probe efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server final link epoch d7bb0a71-4529-4a26-afc7-c677f09bb781",
+          "server final export is not a data link d7bb0a71-4529-4a26-afc7-c677f09bb781",
+          "server final link epoch dbd0fe79-11c0-4abc-b642-496957c6a9ee",
+          "server final export is not a data link dbd0fe79-11c0-4abc-b642-496957c6a9ee",
+          "server final link epoch 3d280221-72b1-41a0-8e05-ed232de14495",
+          "server final raw v1 never fabricates RTT or probe 3d280221-72b1-41a0-8e05-ed232de14495",
+          "server final link epoch 17d29005-b799-45e9-b01d-5587a1af3ad6",
+          "server final raw v1 never fabricates RTT or probe 17d29005-b799-45e9-b01d-5587a1af3ad6",
+          "server held0 strict private disk3 shape",
+          "server held0 exact one-to-one retained link identities",
+          "server held0 link epoch 30361739-02d6-43af-b3df-399daae615e4",
+          "server held0 export is not a data link 30361739-02d6-43af-b3df-399daae615e4",
+          "server held0 link epoch 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "server held0 export is not a data link 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "server held0 link epoch acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server held0 raw v1 never fabricates RTT or probe acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server held0 observed raw data mode acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server held0 link epoch efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server held0 raw v1 never fabricates RTT or probe efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server held0 observed raw data mode efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server held1 strict private disk3 shape",
+          "server held1 exact one-to-one retained link identities",
+          "server held1 link epoch 30361739-02d6-43af-b3df-399daae615e4",
+          "server held1 export is not a data link 30361739-02d6-43af-b3df-399daae615e4",
+          "server held1 link epoch 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "server held1 export is not a data link 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "server held1 link epoch acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server held1 raw v1 never fabricates RTT or probe acfd84af-fbcc-4184-8142-3acf918c0661",
+          "server held1 link epoch efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server held1 raw v1 never fabricates RTT or probe efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "server held1 link epoch d7bb0a71-4529-4a26-afc7-c677f09bb781",
+          "server held1 export is not a data link d7bb0a71-4529-4a26-afc7-c677f09bb781",
+          "server held1 link epoch dbd0fe79-11c0-4abc-b642-496957c6a9ee",
+          "server held1 export is not a data link dbd0fe79-11c0-4abc-b642-496957c6a9ee",
+          "server held1 link epoch 3d280221-72b1-41a0-8e05-ed232de14495",
+          "server held1 raw v1 never fabricates RTT or probe 3d280221-72b1-41a0-8e05-ed232de14495",
+          "server held1 observed raw data mode 3d280221-72b1-41a0-8e05-ed232de14495",
+          "server held1 link epoch 17d29005-b799-45e9-b01d-5587a1af3ad6",
+          "server held1 raw v1 never fabricates RTT or probe 17d29005-b799-45e9-b01d-5587a1af3ad6",
+          "server held1 observed raw data mode 17d29005-b799-45e9-b01d-5587a1af3ad6",
+          "server exact two-epoch history from original start/held identities",
+          "server actual final session cleanup",
+          "server jobs really finished",
+          "server two distinct service epochs",
+          "server root durable active empty",
+          "exact retained root terminal 30361739-02d6-43af-b3df-399daae615e4/native_export",
+          "root terminal identity 30361739-02d6-43af-b3df-399daae615e4",
+          "same-boot no-hotplug exact release criterion 30361739-02d6-43af-b3df-399daae615e4/native_export",
+          "exact retained root terminal 871094d4-d116-4fb2-8995-0f786ba0fc3d/native_export",
+          "root terminal identity 871094d4-d116-4fb2-8995-0f786ba0fc3d",
+          "same-boot no-hotplug exact release criterion 871094d4-d116-4fb2-8995-0f786ba0fc3d/native_export",
+          "exact retained root terminal acfd84af-fbcc-4184-8142-3acf918c0661/native_stub",
+          "root terminal identity acfd84af-fbcc-4184-8142-3acf918c0661",
+          "same-boot no-hotplug exact release criterion acfd84af-fbcc-4184-8142-3acf918c0661/native_stub",
+          "exact retained root terminal efe01901-47f3-48e8-b7ce-eb5d250cd48f/native_stub",
+          "root terminal identity efe01901-47f3-48e8-b7ce-eb5d250cd48f",
+          "same-boot no-hotplug exact release criterion efe01901-47f3-48e8-b7ce-eb5d250cd48f/native_stub",
+          "exact retained root terminal d7bb0a71-4529-4a26-afc7-c677f09bb781/native_export",
+          "root terminal identity d7bb0a71-4529-4a26-afc7-c677f09bb781",
+          "same-boot no-hotplug exact release criterion d7bb0a71-4529-4a26-afc7-c677f09bb781/native_export",
+          "exact retained root terminal dbd0fe79-11c0-4abc-b642-496957c6a9ee/native_export",
+          "root terminal identity dbd0fe79-11c0-4abc-b642-496957c6a9ee",
+          "same-boot no-hotplug exact release criterion dbd0fe79-11c0-4abc-b642-496957c6a9ee/native_export",
+          "exact retained root terminal 3d280221-72b1-41a0-8e05-ed232de14495/native_stub",
+          "root terminal identity 3d280221-72b1-41a0-8e05-ed232de14495",
+          "same-boot no-hotplug exact release criterion 3d280221-72b1-41a0-8e05-ed232de14495/native_stub",
+          "exact retained root terminal 17d29005-b799-45e9-b01d-5587a1af3ad6/native_stub",
+          "root terminal identity 17d29005-b799-45e9-b01d-5587a1af3ad6",
+          "same-boot no-hotplug exact release criterion 17d29005-b799-45e9-b01d-5587a1af3ad6/native_stub",
+          "server every actual attempt has exactly one retained proof",
+          "client final complete S0 no kernel panic/Oops",
+          "client terminal and complete artifacts",
+          "client role-isolated credentials and real entropy/clock",
+          "client fixed operator and broker",
+          "client no legacy trusted-network claim",
+          "client actual privileged helper OS identity",
+          "client denied strict private disk2 shape",
+          "client denied exact one-to-one retained link identities",
+          "client actual new-store absence and public empty resources",
+          "client denied resource invariance",
+          "client typed denial uid",
+          "client typed denial profile",
+          "client actual ownership modes epoch 1",
+          "client actual nonroot process epoch 1",
+          "client no ambient/effective capability epoch 1",
+          "client actual ownership modes epoch 2",
+          "client actual nonroot process epoch 2",
+          "client no ambient/effective capability epoch 2",
+          "client final strict private disk2 shape",
+          "client final exact one-to-one retained link identities",
+          "client final link epoch 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client final raw v1 never fabricates RTT or probe 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client final link epoch 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client final raw v1 never fabricates RTT or probe 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client final link epoch 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client final raw v1 never fabricates RTT or probe 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client final link epoch 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client final raw v1 never fabricates RTT or probe 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client held0 strict private disk2 shape",
+          "client held0 exact one-to-one retained link identities",
+          "client held0 link epoch 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held0 raw v1 never fabricates RTT or probe 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held0 observed raw data mode 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held0 link epoch 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held0 raw v1 never fabricates RTT or probe 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held0 observed raw data mode 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held1 strict private disk2 shape",
+          "client held1 exact one-to-one retained link identities",
+          "client held1 link epoch 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held1 raw v1 never fabricates RTT or probe 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held1 observed raw data mode 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held1 link epoch 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held1 raw v1 never fabricates RTT or probe 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held1 observed raw data mode 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held2 strict private disk2 shape",
+          "client held2 exact one-to-one retained link identities",
+          "client held2 link epoch 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held2 raw v1 never fabricates RTT or probe 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held2 link epoch 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held2 raw v1 never fabricates RTT or probe 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held2 link epoch 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client held2 raw v1 never fabricates RTT or probe 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client held2 observed raw data mode 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client held2 link epoch 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client held2 raw v1 never fabricates RTT or probe 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client held2 observed raw data mode 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client held3 strict private disk2 shape",
+          "client held3 exact one-to-one retained link identities",
+          "client held3 link epoch 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held3 raw v1 never fabricates RTT or probe 4774a3c5-766e-49d6-baac-39434006bcee",
+          "client held3 link epoch 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held3 raw v1 never fabricates RTT or probe 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "client held3 link epoch 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client held3 raw v1 never fabricates RTT or probe 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client held3 observed raw data mode 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "client held3 link epoch 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client held3 raw v1 never fabricates RTT or probe 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client held3 observed raw data mode 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "client exact two-epoch history from original start/held identities",
+          "client actual final session cleanup",
+          "client jobs really finished",
+          "client two distinct service epochs",
+          "client root durable active empty",
+          "exact retained root terminal 4774a3c5-766e-49d6-baac-39434006bcee/native_import",
+          "root terminal identity 4774a3c5-766e-49d6-baac-39434006bcee",
+          "same-boot no-hotplug exact release criterion 4774a3c5-766e-49d6-baac-39434006bcee/native_import",
+          "exact retained root terminal 259e3f61-5657-4bd9-b80a-656b0bdcd0d4/native_import",
+          "root terminal identity 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "same-boot no-hotplug exact release criterion 259e3f61-5657-4bd9-b80a-656b0bdcd0d4/native_import",
+          "root proof echo 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "exact retained root terminal 8bb72994-c69b-4ca5-88b9-7f76cf07fa28/native_import",
+          "root terminal identity 8bb72994-c69b-4ca5-88b9-7f76cf07fa28",
+          "same-boot no-hotplug exact release criterion 8bb72994-c69b-4ca5-88b9-7f76cf07fa28/native_import",
+          "exact retained root terminal 18bb9cb9-49b2-4c11-88c0-f08e146c244e/native_import",
+          "root terminal identity 18bb9cb9-49b2-4c11-88c0-f08e146c244e",
+          "same-boot no-hotplug exact release criterion 18bb9cb9-49b2-4c11-88c0-f08e146c244e/native_import",
+          "client every actual attempt has exactly one retained proof",
+          "exact Native device keys",
+          "actual FTDI exact 35B each way round 1",
+          "actual FTDI exact 35B each way round 2",
+          "actual FTDI exact 35B each way round 3",
+          "actual FTDI host received all 105B",
+          "complete x86_64 evdev records round 1",
+          "real HID down/up round 1",
+          "actual complete Native receipts round 1",
+          "local kernel identity 7adff2b7-1175-47a7-b180-817f019cef32",
+          "actual helper owner and retained K 7adff2b7-1175-47a7-b180-817f019cef32",
+          "live app/helper exact capability 7adff2b7-1175-47a7-b180-817f019cef32",
+          "local kernel identity ebe4ac7d-ea8e-432d-b0b1-8b9ff2e086ea",
+          "actual helper owner and retained K ebe4ac7d-ea8e-432d-b0b1-8b9ff2e086ea",
+          "live app/helper exact capability ebe4ac7d-ea8e-432d-b0b1-8b9ff2e086ea",
+          "complete x86_64 evdev records round 3",
+          "real HID down/up round 3",
+          "actual complete Native receipts round 3",
+          "local kernel identity 61e8e69c-20d9-4aab-9887-f86f1465e36b",
+          "actual helper owner and retained K 61e8e69c-20d9-4aab-9887-f86f1465e36b",
+          "live app/helper exact capability 61e8e69c-20d9-4aab-9887-f86f1465e36b",
+          "local kernel identity 6cebb92b-4ce4-43fd-adb5-ed5b744ca5f4",
+          "actual helper owner and retained K 6cebb92b-4ce4-43fd-adb5-ed5b744ca5f4",
+          "live app/helper exact capability 6cebb92b-4ce4-43fd-adb5-ed5b744ca5f4",
+          "VHCI exact USED/NULL vhci-held-1.txt",
+          "VHCI exact USED/NULL vhci-target-stopped.txt",
+          "VHCI exact USED/NULL vhci-after-kill.txt",
+          "VHCI exact USED/NULL vhci-held-3.txt",
+          "VHCI exact USED/NULL vhci-final.txt",
+          "SIGKILL retained old active application lifecycle (metrics may advance before signal)",
+          "actual single agent SIGKILL reap137",
+          "old serial recovered only from exact Root proof",
+          "actual live old serial before SIGKILL",
+          "recovery preserved old application identity",
+          "exact retained root terminal 259e3f61-5657-4bd9-b80a-656b0bdcd0d4/native_import",
+          "root terminal identity 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "same-boot no-hotplug exact release criterion 259e3f61-5657-4bd9-b80a-656b0bdcd0d4/native_import",
+          "root proof echo 259e3f61-5657-4bd9-b80a-656b0bdcd0d4",
+          "new attempts after restart are distinct",
+          "helper capabilities never reused across epochs",
+          "tracked export records epoch 1",
+          "exact export registration keys epoch 1",
+          "original tracked export owner/bound 37d36143-735e-446d-85a8-edd26f16d8a8",
+          "published pre-export descriptor 37d36143-735e-446d-85a8-edd26f16d8a8",
+          "original tracked export owner/bound ac84309c-cf1b-465a-a9df-6c650b0cd76d",
+          "published pre-export descriptor ac84309c-cf1b-465a-a9df-6c650b0cd76d",
+          "immutable live export across stub use epoch 1",
+          "actual Native stub observed USED epoch 1",
+          "server physical generation unchanged exported-1",
+          "actual Native occupancy exported-1",
+          "true export unconfigured lifecycle exported-1",
+          "server physical generation unchanged held-1",
+          "actual Native occupancy held-1",
+          "actual imported full IF profile held-1",
+          "complete original driver/configuration/IF generation restored epoch 1",
+          "server actual TERM wait0 epoch 1",
+          "tracked export records epoch 2",
+          "exact export registration keys epoch 2",
+          "original tracked export owner/bound 1db2b088-daa9-4f04-80e9-e6a604e4ba0f",
+          "published pre-export descriptor 1db2b088-daa9-4f04-80e9-e6a604e4ba0f",
+          "original tracked export owner/bound 8de6482f-de7a-4bb8-93a7-9ab5fb879474",
+          "published pre-export descriptor 8de6482f-de7a-4bb8-93a7-9ab5fb879474",
+          "immutable live export across stub use epoch 2",
+          "actual Native stub observed USED epoch 2",
+          "server physical generation unchanged exported-2",
+          "actual Native occupancy exported-2",
+          "true export unconfigured lifecycle exported-2",
+          "server physical generation unchanged held-3",
+          "actual Native occupancy held-3",
+          "actual imported full IF profile held-3",
+          "complete original driver/configuration/IF generation restored epoch 2",
+          "server actual TERM wait0 epoch 2",
+          "client final actual TERM wait0",
+          "targeted HID stop preserves serial incoming",
+          "incoming stop preserves live published exports",
+          "targeted stop does not replace original export registration",
+          "only requested HID stub retires; serial capability stays exact",
+          "targeted stop retains same serial client receipt and owner",
+          "server actual application byte metrics retained, not USB payload counts",
+          "client actual application byte metrics retained, not USB payload counts"
+        ],
+        "assertion_count": 264,
+        "io_rounds": 3,
+        "hid_key_codes": [
+          2,
+          4
+        ],
+        "serial_each_direction_bytes": 105,
+        "external_link": {
+          "packets": 436,
+          "flows": [
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                36160,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "adb726e4b85d41bca147084c2535e01e47d8a9ef22c5306709fce9c9bca7f281"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                36160
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "e53695524bc59907d39c330c8af9c1131c16b8b654f7f46520a804cfedba303e"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                36170,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "a51c7c6ca5a2043c444dbf05ca4a461582d299d062af2fe8b92727b6ce972e0d"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                36170
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "4de810d3e38fac6d9b779467acf691872c0d4ba04f642c327abb98888d490bcb"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                36180,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 2863,
+              "tls_records": 23,
+              "encrypted_application_records": 21,
+              "stream_sha256": "892151250460ef925676f3b2c2b3999d2163ceac4a2bde54bc0df0d50f8df332"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                36180
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "3cfd26b9ab3c6524bbd3c789a73e1c42f0f7fb8953fe8f387a6c83e69eed547b"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                36186,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "93ce32d8c8e3713df4996c12a0042eedac7f130ce036349f754acdb2fde2ba72"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                36186
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "b10a67579fef69b2a223f0263707a6ca210cd8a3695e506fc71e7ddc6c8fdf1a"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                36200,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 4594,
+              "tls_records": 44,
+              "encrypted_application_records": 42,
+              "stream_sha256": "fc28e531ff950790527b02c1db9a5f1bb1d73eebf8a29349f484253a42088c14"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                36200
+              ],
+              "stream_bytes": 4706,
+              "tls_records": 42,
+              "encrypted_application_records": 40,
+              "stream_sha256": "5bb2c72fc483e1301edb8d326c13f5c0033ce976519edf60aaaa936161ebafa0"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                59314,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "24acfc842cb47782b481061aca6ff2ade86d9e47c9b4d64166712ba79fd1c715"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                59314
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "6c7cada959088cbbc2f84ea8cf638b8abc5c76d9540c13b522f88ca88e02e13b"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                59324,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 2863,
+              "tls_records": 23,
+              "encrypted_application_records": 21,
+              "stream_sha256": "2e0a213e0e9037fb5903fc62a153ad7e9d033bb461f437cf7d84802416e8cc28"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                59324
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "04393dc5257b9541376b07f1ce9b42acab5c8d5d0faffffe895be21d7fa00e6a"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                59332,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "d4b4652125dd14f546dfbfc5c5159ef0b85b09988fa3893a0630e69b21fb26dc"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                59332
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "3abdac5e1185ffdbbe32ae833f0f640f66df0842d030b1212435c7f9d2cc7be2"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                59344,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 4139,
+              "tls_records": 38,
+              "encrypted_application_records": 36,
+              "stream_sha256": "bab4adfb919fcd67b2bac1b8390c1c7749ba6dad9e8cff6ce2e889c3a73fa692"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                59344
+              ],
+              "stream_bytes": 4247,
+              "tls_records": 36,
+              "encrypted_application_records": 34,
+              "stream_sha256": "db992388bcfd59344e0208021d0cd88a445fa7571ae1b4e69d4591235d0d5045"
+            }
+          ],
+          "port_3240_rst_families": [
+            4,
+            6
+          ],
+          "ipv6_hop_by_hop_headers": 8,
+          "icmpv6_control_types": {
+            "143_mldv2_report": 8,
+            "133_router_solicitation": 8,
+            "135_neighbor_solicitation": 1,
+            "136_neighbor_advertisement": 1
+          },
+          "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"
+        },
+        "gui_rules": {
+          "checks": [
+            "rules-no-policy: actual GUI UID1000/ELF/no caps/no USB FD",
+            "rules-no-policy: actual driver UID/ELF",
+            "rules-no-policy: native close/actual wait0/local join",
+            "rules-no-policy: native WebKit session",
+            "rules-1: actual GUI UID1000/ELF/no caps/no USB FD",
+            "rules-1: actual driver UID/ELF",
+            "rules-1: native close/actual wait0/local join",
+            "rules-1: native WebKit session",
+            "rules-2: actual GUI UID1000/ELF/no caps/no USB FD",
+            "rules-2: actual driver UID/ELF",
+            "rules-2: native close/actual wait0/local join",
+            "rules-2: native WebKit session",
+            "no forced GUI child",
+            "actual no-policy disabled UI",
+            "closed bridge refuses ungranted Create",
+            "no-policy bridge denial has no agent mutation",
+            "UTF-8 byte validation/focusable error summary",
+            "draft/focus/caret retained across actual advancing refresh",
+            "original typed payload/UUID and accepted slot survive real renderer reload",
+            "actual five-second IPC timeout, original rule UUID retained",
+            "actual agent stopped during unknown response",
+            "late original commits exactly one disabled Create with no Start",
+            "real RetryRuleMutation resolves original committed result",
+            "original query never reapplies edit",
+            "concurrent revision preserves draft and blocks stale edit before IPC",
+            "strict disk3/one rule history/two actual auto jobs; deleted record retired only after actual old cleanup",
+            "real Create/Replace/Enable/rearm/Disable/Delete and original firing revisions",
+            "exact committed independent rule event chain",
+            "epoch1 actual original origin/job/Start binding",
+            "epoch1 actual RetryStart and job continues after native close",
+            "epoch2 actual original origin/job/Start binding",
+            "epoch2 actual RetryStart and job continues after native close",
+            "manual stop pause survives actual agent restart and settle",
+            "disabled: future intent separate from actual active job",
+            "deleted: future intent separate from actual active job",
+            "gui-rule-confirm-inspect-3.json: default Cancel",
+            "gui-rule-confirm-enable-1.json: default Cancel",
+            "gui-rule-confirm-inspect-2.json: default Cancel",
+            "gui-rule-confirm-query.json: default Cancel",
+            "gui-rule-confirm-disable-2.json: default Cancel",
+            "gui-rule-confirm-enable-2.json: default Cancel",
+            "gui-rule-confirm-replace-4.json: default Cancel",
+            "gui-rule-confirm-replace-2.json: default Cancel",
+            "gui-rule-confirm-delete-2.json: default Cancel",
+            "gui-rule-confirm-create.json: default Cancel"
+          ],
+          "assertion_count": 45,
+          "native_processes": 3,
+          "gui_sha256": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4",
+          "scope": "Actual Native GUI, real lost IPC ACK/renderer reload/query, fixed-pool CRUD and original I/O; no settled-negative recovery, dynamic pools, installation or hardware."
+        }
+      },
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "original-actions-ipv4": {
+      "result": "PASS",
+      "head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+      "input_count": 386,
+      "error": null,
+      "facts": {
+        "actual_configuration": [
+          {
+            "role": "server",
+            "epoch": 1,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "09071bf755c0571d2ebccb8a6dc71145605b2f69c89c713bb6701671c586e6de",
+              "server": "9dacd81e6d636dabff62d391b346a06b14eaac8e7a805f184b70969193c4566e",
+              "client": "53708e51ab2a1753a0b31e3a4a03528d6d5af029f464714a7bf1c1d6dd72cb96"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "server",
+            "epoch": 2,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "09071bf755c0571d2ebccb8a6dc71145605b2f69c89c713bb6701671c586e6de",
+              "server": "9dacd81e6d636dabff62d391b346a06b14eaac8e7a805f184b70969193c4566e",
+              "client": "53708e51ab2a1753a0b31e3a4a03528d6d5af029f464714a7bf1c1d6dd72cb96"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 1,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "09071bf755c0571d2ebccb8a6dc71145605b2f69c89c713bb6701671c586e6de",
+              "server": "9dacd81e6d636dabff62d391b346a06b14eaac8e7a805f184b70969193c4566e",
+              "client": "53708e51ab2a1753a0b31e3a4a03528d6d5af029f464714a7bf1c1d6dd72cb96"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 2,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "09071bf755c0571d2ebccb8a6dc71145605b2f69c89c713bb6701671c586e6de",
+              "server": "9dacd81e6d636dabff62d391b346a06b14eaac8e7a805f184b70969193c4566e",
+              "client": "53708e51ab2a1753a0b31e3a4a03528d6d5af029f464714a7bf1c1d6dd72cb96"
+            },
+            "private_key_bytes_captured": false
+          }
+        ],
+        "scope": "Native-only actual agent ownership/recovery; assertions are audit checks, not USB cases",
+        "checks": [
+          "server final complete S0 no kernel panic/Oops",
+          "server terminal and complete artifacts",
+          "server role-isolated credentials and real entropy/clock",
+          "server fixed operator and broker",
+          "server no legacy trusted-network claim",
+          "server actual privileged helper OS identity",
+          "server denied strict private disk2 shape",
+          "server denied exact one-to-one retained link identities",
+          "server actual new-store absence and public empty resources",
+          "server denied resource invariance",
+          "server typed denial uid",
+          "server typed denial profile",
+          "server actual ownership modes epoch 1",
+          "server actual nonroot process epoch 1",
+          "server no ambient/effective capability epoch 1",
+          "server actual ownership modes epoch 2",
+          "server actual nonroot process epoch 2",
+          "server no ambient/effective capability epoch 2",
+          "server final strict private disk2 shape",
+          "server final exact one-to-one retained link identities",
+          "server final link epoch 05840d38-0954-45f7-9104-2a500a783e07",
+          "server final export is not a data link 05840d38-0954-45f7-9104-2a500a783e07",
+          "server final link epoch 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "server final export is not a data link 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "server final link epoch fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server final raw v1 never fabricates RTT or probe fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server final link epoch a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server final raw v1 never fabricates RTT or probe a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server final link epoch 2eb7386a-93ad-43d1-a627-879633a39c38",
+          "server final export is not a data link 2eb7386a-93ad-43d1-a627-879633a39c38",
+          "server final link epoch 714a2aeb-5bfc-4ca4-972b-00f10425e390",
+          "server final export is not a data link 714a2aeb-5bfc-4ca4-972b-00f10425e390",
+          "server final link epoch ff0a03a1-9412-4ec4-9547-1a8e4ab1136b",
+          "server final raw v1 never fabricates RTT or probe ff0a03a1-9412-4ec4-9547-1a8e4ab1136b",
+          "server final link epoch edc59694-4fca-4817-a3fe-57c6917f4f31",
+          "server final raw v1 never fabricates RTT or probe edc59694-4fca-4817-a3fe-57c6917f4f31",
+          "server held0 strict private disk2 shape",
+          "server held0 exact one-to-one retained link identities",
+          "server held0 link epoch 05840d38-0954-45f7-9104-2a500a783e07",
+          "server held0 export is not a data link 05840d38-0954-45f7-9104-2a500a783e07",
+          "server held0 link epoch 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "server held0 export is not a data link 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "server held0 link epoch fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server held0 raw v1 never fabricates RTT or probe fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server held0 observed raw data mode fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server held0 link epoch a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server held0 raw v1 never fabricates RTT or probe a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server held0 observed raw data mode a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server held1 strict private disk2 shape",
+          "server held1 exact one-to-one retained link identities",
+          "server held1 link epoch 05840d38-0954-45f7-9104-2a500a783e07",
+          "server held1 export is not a data link 05840d38-0954-45f7-9104-2a500a783e07",
+          "server held1 link epoch 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "server held1 export is not a data link 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "server held1 link epoch fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server held1 raw v1 never fabricates RTT or probe fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "server held1 link epoch a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server held1 raw v1 never fabricates RTT or probe a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "server held1 link epoch 2eb7386a-93ad-43d1-a627-879633a39c38",
+          "server held1 export is not a data link 2eb7386a-93ad-43d1-a627-879633a39c38",
+          "server held1 link epoch 714a2aeb-5bfc-4ca4-972b-00f10425e390",
+          "server held1 export is not a data link 714a2aeb-5bfc-4ca4-972b-00f10425e390",
+          "server held1 link epoch ff0a03a1-9412-4ec4-9547-1a8e4ab1136b",
+          "server held1 raw v1 never fabricates RTT or probe ff0a03a1-9412-4ec4-9547-1a8e4ab1136b",
+          "server held1 observed raw data mode ff0a03a1-9412-4ec4-9547-1a8e4ab1136b",
+          "server held1 link epoch edc59694-4fca-4817-a3fe-57c6917f4f31",
+          "server held1 raw v1 never fabricates RTT or probe edc59694-4fca-4817-a3fe-57c6917f4f31",
+          "server held1 observed raw data mode edc59694-4fca-4817-a3fe-57c6917f4f31",
+          "server exact two-epoch history from original start/held identities",
+          "server actual final session cleanup",
+          "server jobs really finished",
+          "server two distinct service epochs",
+          "server root durable active empty",
+          "exact retained root terminal 05840d38-0954-45f7-9104-2a500a783e07/native_export",
+          "root terminal identity 05840d38-0954-45f7-9104-2a500a783e07",
+          "same-boot no-hotplug exact release criterion 05840d38-0954-45f7-9104-2a500a783e07/native_export",
+          "exact retained root terminal 8b1bcea4-05af-4a74-abfd-8717c7be65b9/native_export",
+          "root terminal identity 8b1bcea4-05af-4a74-abfd-8717c7be65b9",
+          "same-boot no-hotplug exact release criterion 8b1bcea4-05af-4a74-abfd-8717c7be65b9/native_export",
+          "exact retained root terminal fe0dde7a-51bf-4e80-855e-eefffec91a05/native_stub",
+          "root terminal identity fe0dde7a-51bf-4e80-855e-eefffec91a05",
+          "same-boot no-hotplug exact release criterion fe0dde7a-51bf-4e80-855e-eefffec91a05/native_stub",
+          "exact retained root terminal a9de1f68-3205-41de-ac1a-7008dac8a774/native_stub",
+          "root terminal identity a9de1f68-3205-41de-ac1a-7008dac8a774",
+          "same-boot no-hotplug exact release criterion a9de1f68-3205-41de-ac1a-7008dac8a774/native_stub",
+          "exact retained root terminal 2eb7386a-93ad-43d1-a627-879633a39c38/native_export",
+          "root terminal identity 2eb7386a-93ad-43d1-a627-879633a39c38",
+          "same-boot no-hotplug exact release criterion 2eb7386a-93ad-43d1-a627-879633a39c38/native_export",
+          "exact retained root terminal 714a2aeb-5bfc-4ca4-972b-00f10425e390/native_export",
+          "root terminal identity 714a2aeb-5bfc-4ca4-972b-00f10425e390",
+          "same-boot no-hotplug exact release criterion 714a2aeb-5bfc-4ca4-972b-00f10425e390/native_export",
+          "exact retained root terminal ff0a03a1-9412-4ec4-9547-1a8e4ab1136b/native_stub",
+          "root terminal identity ff0a03a1-9412-4ec4-9547-1a8e4ab1136b",
+          "same-boot no-hotplug exact release criterion ff0a03a1-9412-4ec4-9547-1a8e4ab1136b/native_stub",
+          "exact retained root terminal edc59694-4fca-4817-a3fe-57c6917f4f31/native_stub",
+          "root terminal identity edc59694-4fca-4817-a3fe-57c6917f4f31",
+          "same-boot no-hotplug exact release criterion edc59694-4fca-4817-a3fe-57c6917f4f31/native_stub",
+          "server every actual attempt has exactly one retained proof",
+          "client final complete S0 no kernel panic/Oops",
+          "client terminal and complete artifacts",
+          "client role-isolated credentials and real entropy/clock",
+          "client fixed operator and broker",
+          "client no legacy trusted-network claim",
+          "client actual privileged helper OS identity",
+          "client denied strict private disk2 shape",
+          "client denied exact one-to-one retained link identities",
+          "client actual new-store absence and public empty resources",
+          "client denied resource invariance",
+          "client typed denial uid",
+          "client typed denial profile",
+          "client actual ownership modes epoch 1",
+          "client actual nonroot process epoch 1",
+          "client no ambient/effective capability epoch 1",
+          "client actual ownership modes epoch 2",
+          "client actual nonroot process epoch 2",
+          "client no ambient/effective capability epoch 2",
+          "client final strict private disk2 shape",
+          "client final exact one-to-one retained link identities",
+          "client final link epoch 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client final raw v1 never fabricates RTT or probe 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client final link epoch e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client final raw v1 never fabricates RTT or probe e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client final link epoch 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client final raw v1 never fabricates RTT or probe 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client final link epoch be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client final raw v1 never fabricates RTT or probe be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client held0 strict private disk2 shape",
+          "client held0 exact one-to-one retained link identities",
+          "client held0 link epoch 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held0 raw v1 never fabricates RTT or probe 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held0 observed raw data mode 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held0 link epoch e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held0 raw v1 never fabricates RTT or probe e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held0 observed raw data mode e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held1 strict private disk2 shape",
+          "client held1 exact one-to-one retained link identities",
+          "client held1 link epoch 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held1 raw v1 never fabricates RTT or probe 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held1 observed raw data mode 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held1 link epoch e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held1 raw v1 never fabricates RTT or probe e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held1 observed raw data mode e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held2 strict private disk2 shape",
+          "client held2 exact one-to-one retained link identities",
+          "client held2 link epoch 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held2 raw v1 never fabricates RTT or probe 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held2 link epoch e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held2 raw v1 never fabricates RTT or probe e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held2 link epoch 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client held2 raw v1 never fabricates RTT or probe 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client held2 observed raw data mode 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client held2 link epoch be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client held2 raw v1 never fabricates RTT or probe be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client held2 observed raw data mode be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client held3 strict private disk2 shape",
+          "client held3 exact one-to-one retained link identities",
+          "client held3 link epoch 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held3 raw v1 never fabricates RTT or probe 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "client held3 link epoch e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held3 raw v1 never fabricates RTT or probe e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "client held3 link epoch 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client held3 raw v1 never fabricates RTT or probe 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client held3 observed raw data mode 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "client held3 link epoch be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client held3 raw v1 never fabricates RTT or probe be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client held3 observed raw data mode be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "client exact two-epoch history from original start/held identities",
+          "client actual final session cleanup",
+          "client jobs really finished",
+          "client two distinct service epochs",
+          "client root durable active empty",
+          "exact retained root terminal 04c562b5-bc19-4520-aa4e-500962d7d7b4/native_import",
+          "root terminal identity 04c562b5-bc19-4520-aa4e-500962d7d7b4",
+          "same-boot no-hotplug exact release criterion 04c562b5-bc19-4520-aa4e-500962d7d7b4/native_import",
+          "exact retained root terminal e3edb304-1d98-4073-a9e8-93a3cbbcb244/native_import",
+          "root terminal identity e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "same-boot no-hotplug exact release criterion e3edb304-1d98-4073-a9e8-93a3cbbcb244/native_import",
+          "root proof echo e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "exact retained root terminal 4f478fc9-1669-4449-ae1c-1ebef9ff77b7/native_import",
+          "root terminal identity 4f478fc9-1669-4449-ae1c-1ebef9ff77b7",
+          "same-boot no-hotplug exact release criterion 4f478fc9-1669-4449-ae1c-1ebef9ff77b7/native_import",
+          "exact retained root terminal be86bfd6-324a-4022-9c37-42c2b933ba4a/native_import",
+          "root terminal identity be86bfd6-324a-4022-9c37-42c2b933ba4a",
+          "same-boot no-hotplug exact release criterion be86bfd6-324a-4022-9c37-42c2b933ba4a/native_import",
+          "client every actual attempt has exactly one retained proof",
+          "exact Native device keys",
+          "actual FTDI exact 35B each way round 1",
+          "actual FTDI exact 35B each way round 2",
+          "actual FTDI exact 35B each way round 3",
+          "actual FTDI host received all 105B",
+          "complete x86_64 evdev records round 1",
+          "real HID down/up round 1",
+          "actual complete Native receipts round 1",
+          "local kernel identity 1c493a07-0c59-4635-8093-e26119d19588",
+          "actual helper owner and retained K 1c493a07-0c59-4635-8093-e26119d19588",
+          "live app/helper exact capability 1c493a07-0c59-4635-8093-e26119d19588",
+          "local kernel identity c9b58bb5-6a33-4706-96cc-accfe9e20c03",
+          "actual helper owner and retained K c9b58bb5-6a33-4706-96cc-accfe9e20c03",
+          "live app/helper exact capability c9b58bb5-6a33-4706-96cc-accfe9e20c03",
+          "complete x86_64 evdev records round 3",
+          "real HID down/up round 3",
+          "actual complete Native receipts round 3",
+          "local kernel identity a250de1b-4f8a-4ea1-bca2-08c71061f0bd",
+          "actual helper owner and retained K a250de1b-4f8a-4ea1-bca2-08c71061f0bd",
+          "live app/helper exact capability a250de1b-4f8a-4ea1-bca2-08c71061f0bd",
+          "local kernel identity a5579af9-1566-415c-ac0e-d4776a326698",
+          "actual helper owner and retained K a5579af9-1566-415c-ac0e-d4776a326698",
+          "live app/helper exact capability a5579af9-1566-415c-ac0e-d4776a326698",
+          "VHCI exact USED/NULL vhci-held-1.txt",
+          "VHCI exact USED/NULL vhci-target-stopped.txt",
+          "VHCI exact USED/NULL vhci-after-kill.txt",
+          "VHCI exact USED/NULL vhci-held-3.txt",
+          "VHCI exact USED/NULL vhci-final.txt",
+          "SIGKILL retained old active application lifecycle (metrics may advance before signal)",
+          "actual single agent SIGKILL reap137",
+          "old serial recovered only from exact Root proof",
+          "actual live old serial before SIGKILL",
+          "recovery preserved old application identity",
+          "exact retained root terminal e3edb304-1d98-4073-a9e8-93a3cbbcb244/native_import",
+          "root terminal identity e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "same-boot no-hotplug exact release criterion e3edb304-1d98-4073-a9e8-93a3cbbcb244/native_import",
+          "root proof echo e3edb304-1d98-4073-a9e8-93a3cbbcb244",
+          "new attempts after restart are distinct",
+          "helper capabilities never reused across epochs",
+          "tracked export records epoch 1",
+          "exact export registration keys epoch 1",
+          "original tracked export owner/bound 04ecc1c6-82fe-45a6-a78b-0d3a91c62eeb",
+          "published pre-export descriptor 04ecc1c6-82fe-45a6-a78b-0d3a91c62eeb",
+          "original tracked export owner/bound f6333fc8-53ab-45c1-a3c1-4f2c91b929aa",
+          "published pre-export descriptor f6333fc8-53ab-45c1-a3c1-4f2c91b929aa",
+          "immutable live export across stub use epoch 1",
+          "actual Native stub observed USED epoch 1",
+          "server physical generation unchanged exported-1",
+          "actual Native occupancy exported-1",
+          "true export unconfigured lifecycle exported-1",
+          "server physical generation unchanged held-1",
+          "actual Native occupancy held-1",
+          "actual imported full IF profile held-1",
+          "complete original driver/configuration/IF generation restored epoch 1",
+          "server actual TERM wait0 epoch 1",
+          "tracked export records epoch 2",
+          "exact export registration keys epoch 2",
+          "original tracked export owner/bound 6290b2fb-c16a-4550-8985-4b4a34376436",
+          "published pre-export descriptor 6290b2fb-c16a-4550-8985-4b4a34376436",
+          "original tracked export owner/bound c2b8b3e9-3d0b-48a7-9864-7b9fe21a61cf",
+          "published pre-export descriptor c2b8b3e9-3d0b-48a7-9864-7b9fe21a61cf",
+          "immutable live export across stub use epoch 2",
+          "actual Native stub observed USED epoch 2",
+          "server physical generation unchanged exported-2",
+          "actual Native occupancy exported-2",
+          "true export unconfigured lifecycle exported-2",
+          "server physical generation unchanged held-3",
+          "actual Native occupancy held-3",
+          "actual imported full IF profile held-3",
+          "complete original driver/configuration/IF generation restored epoch 2",
+          "server actual TERM wait0 epoch 2",
+          "client final actual TERM wait0",
+          "targeted HID stop preserves serial incoming",
+          "incoming stop preserves live published exports",
+          "targeted stop does not replace original export registration",
+          "only requested HID stub retires; serial capability stays exact",
+          "targeted stop retains same serial client receipt and owner",
+          "server actual application byte metrics retained, not USB payload counts",
+          "client actual application byte metrics retained, not USB payload counts"
+        ],
+        "assertion_count": 264,
+        "io_rounds": 3,
+        "hid_key_codes": [
+          2,
+          4
+        ],
+        "serial_each_direction_bytes": 105,
+        "external_link": {
+          "packets": 498,
+          "flows": [
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                46996,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "120eb9f975b012cfd1192b9f322be610e982b51eb3c5c44e34509a42313e9b46"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                46996
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "67afe063d08e4fab8ff136aa1d5da64cc3a969e7c30034d3e79db234b77207f0"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                47000,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "40c352553f1507df711e12abcda6539752c02cd2ad78c040cc67e5726970954b"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                47000
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "a8d5e7063d6d08b77066e37882f0aa53d123c53afadc28d08aca32ffa85b6be7"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                47012,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "bcb7e2c8db7e0b419a7d5fc3311498215a5cd38b6f53fd155d6375a09f17e6e1"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                47012
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "d8f3253bed1e28cb82fc7940c87fcefa43732ca7a375c636d6d6a91314edb177"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                47014,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 2841,
+              "tls_records": 22,
+              "encrypted_application_records": 20,
+              "stream_sha256": "9c4b238b2c04da59413053499c250bb0e823d94777accb72aabd36e9b10e5d74"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                47014
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "077ad74636864b7aa1cb9cab4c790d5537a15d48f5282e1e383b73b9a06824f9"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                47030,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "0eb713f1b40ffa746988fcd522244a2ab17cce2f8e19af05a83f2be07b86eee0"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                47030
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "89e5174d237e43a2399128bdd613a1e843f9a3c9cd46ddc475eca13d05ee7386"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                47038,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 5766,
+              "tls_records": 58,
+              "encrypted_application_records": 56,
+              "stream_sha256": "e55907b67c3b9bfe40c3e9d99fd732e6801d6803adf20c62a951abb4920d2eeb"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                47038
+              ],
+              "stream_bytes": 5690,
+              "tls_records": 56,
+              "encrypted_application_records": 54,
+              "stream_sha256": "dd72d14e4ca60861816ae311667873c898c22270b27a0b09242ce19cc35352be"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                57958,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "63ade00b5a1151dd617c8cbdfcfbc0ded80c92d0ecc2193cef1bf027f93beb88"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                57958
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "6e8332f221313bacd6de6f441d7adc753e2c860e4037fed590d9fce1dbc946ea"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                57962,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 2863,
+              "tls_records": 23,
+              "encrypted_application_records": 21,
+              "stream_sha256": "aa7ddfb7f6d4b1107550a4e3f68535cca949eae83827450ed8e52fa168de2dc8"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                57962
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "107a8ce40771dc15bdeeb62706f9ac4888e3faa4e35b7de61a5fce4683af7552"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                58068,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "b311501c564c67cfefca68d0d204031e0ea0d497d812027c43c58d9dd5d310aa"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                58068
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "05559691833c7f68ac65a4cbc83f127bbe8fdcbb2d8935e1b934fed665896117"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.2",
+                58074,
+                "192.0.2.1",
+                3241
+              ],
+              "stream_bytes": 4349,
+              "tls_records": 41,
+              "encrypted_application_records": 39,
+              "stream_sha256": "d6edf202471fe21e838936787736e849d050b5afb98ae5cf9f31f78dd3391837"
+            },
+            {
+              "tuple": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                58074
+              ],
+              "stream_bytes": 4459,
+              "tls_records": 39,
+              "encrypted_application_records": 37,
+              "stream_sha256": "95d4a45147b6b561014a54c3d8e8e565ed24342649b4ba2454aef996605b5236"
+            }
+          ],
+          "port_3240_rst_families": [
+            4,
+            6
+          ],
+          "ipv6_hop_by_hop_headers": 8,
+          "icmpv6_control_types": {
+            "143_mldv2_report": 8,
+            "133_router_solicitation": 7,
+            "135_neighbor_solicitation": 4,
+            "136_neighbor_advertisement": 4
+          },
+          "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"
+        },
+        "gui_actions": {
+          "checks": [
+            "server/start-server-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/start-server-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/stop-session-hid: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/stop-job-server-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/stop-job-server-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-hid-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-serial-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-hid-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-serial-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/remote-catalog: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/stop-job-hid-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/stop-job-serial-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join"
+          ],
+          "native_processes": 12,
+          "start_requests": 6,
+          "targeted_session_stops": 1,
+          "job_stops": 4,
+          "gui_sha256": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4",
+          "scope": "Real native actions/Remote/WM close and continued original kernel I/O; raw-v1 RTT unavailable, not installation/hardware/full Phase5."
+        }
+      },
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "original-actions-ipv6": {
+      "result": "PASS",
+      "head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+      "input_count": 386,
+      "error": null,
+      "facts": {
+        "actual_configuration": [
+          {
+            "role": "server",
+            "epoch": 1,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "b3cc94f39ffde82f2593c7a3c16f7f92e61e5978248453e3815c683b7b170407",
+              "server": "22bec3a3c1ab5b5dd35d599e2da94e4bfc06a044bb64591f071b5e01aae9160d",
+              "client": "5cc1492479a97b2afe8402b5ea5378c45bf0d3be1c0259c7d231201ea9339a07"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "server",
+            "epoch": 2,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "b3cc94f39ffde82f2593c7a3c16f7f92e61e5978248453e3815c683b7b170407",
+              "server": "22bec3a3c1ab5b5dd35d599e2da94e4bfc06a044bb64591f071b5e01aae9160d",
+              "client": "5cc1492479a97b2afe8402b5ea5378c45bf0d3be1c0259c7d231201ea9339a07"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 1,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "b3cc94f39ffde82f2593c7a3c16f7f92e61e5978248453e3815c683b7b170407",
+              "server": "22bec3a3c1ab5b5dd35d599e2da94e4bfc06a044bb64591f071b5e01aae9160d",
+              "client": "5cc1492479a97b2afe8402b5ea5378c45bf0d3be1c0259c7d231201ea9339a07"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 2,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "b3cc94f39ffde82f2593c7a3c16f7f92e61e5978248453e3815c683b7b170407",
+              "server": "22bec3a3c1ab5b5dd35d599e2da94e4bfc06a044bb64591f071b5e01aae9160d",
+              "client": "5cc1492479a97b2afe8402b5ea5378c45bf0d3be1c0259c7d231201ea9339a07"
+            },
+            "private_key_bytes_captured": false
+          }
+        ],
+        "scope": "Native-only actual agent ownership/recovery; assertions are audit checks, not USB cases",
+        "checks": [
+          "server final complete S0 no kernel panic/Oops",
+          "server terminal and complete artifacts",
+          "server role-isolated credentials and real entropy/clock",
+          "server fixed operator and broker",
+          "server no legacy trusted-network claim",
+          "server actual privileged helper OS identity",
+          "server denied strict private disk2 shape",
+          "server denied exact one-to-one retained link identities",
+          "server actual new-store absence and public empty resources",
+          "server denied resource invariance",
+          "server typed denial uid",
+          "server typed denial profile",
+          "server actual ownership modes epoch 1",
+          "server actual nonroot process epoch 1",
+          "server no ambient/effective capability epoch 1",
+          "server actual ownership modes epoch 2",
+          "server actual nonroot process epoch 2",
+          "server no ambient/effective capability epoch 2",
+          "server final strict private disk2 shape",
+          "server final exact one-to-one retained link identities",
+          "server final link epoch 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "server final export is not a data link 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "server final link epoch 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "server final export is not a data link 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "server final link epoch 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server final raw v1 never fabricates RTT or probe 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server final link epoch 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server final raw v1 never fabricates RTT or probe 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server final link epoch 0d253a08-2909-4fa0-bc5a-bb5cee8af02a",
+          "server final export is not a data link 0d253a08-2909-4fa0-bc5a-bb5cee8af02a",
+          "server final link epoch 20f483aa-4dde-4924-a5be-595bb79f9ca3",
+          "server final export is not a data link 20f483aa-4dde-4924-a5be-595bb79f9ca3",
+          "server final link epoch ee6e3fd1-dbed-48ed-b01b-72c1a4043810",
+          "server final raw v1 never fabricates RTT or probe ee6e3fd1-dbed-48ed-b01b-72c1a4043810",
+          "server final link epoch 7718e0cb-1317-4f30-806d-0dc63ad8abc5",
+          "server final raw v1 never fabricates RTT or probe 7718e0cb-1317-4f30-806d-0dc63ad8abc5",
+          "server held0 strict private disk2 shape",
+          "server held0 exact one-to-one retained link identities",
+          "server held0 link epoch 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "server held0 export is not a data link 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "server held0 link epoch 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "server held0 export is not a data link 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "server held0 link epoch 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server held0 raw v1 never fabricates RTT or probe 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server held0 observed raw data mode 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server held0 link epoch 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server held0 raw v1 never fabricates RTT or probe 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server held0 observed raw data mode 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server held1 strict private disk2 shape",
+          "server held1 exact one-to-one retained link identities",
+          "server held1 link epoch 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "server held1 export is not a data link 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "server held1 link epoch 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "server held1 export is not a data link 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "server held1 link epoch 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server held1 raw v1 never fabricates RTT or probe 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "server held1 link epoch 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server held1 raw v1 never fabricates RTT or probe 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "server held1 link epoch 0d253a08-2909-4fa0-bc5a-bb5cee8af02a",
+          "server held1 export is not a data link 0d253a08-2909-4fa0-bc5a-bb5cee8af02a",
+          "server held1 link epoch 20f483aa-4dde-4924-a5be-595bb79f9ca3",
+          "server held1 export is not a data link 20f483aa-4dde-4924-a5be-595bb79f9ca3",
+          "server held1 link epoch ee6e3fd1-dbed-48ed-b01b-72c1a4043810",
+          "server held1 raw v1 never fabricates RTT or probe ee6e3fd1-dbed-48ed-b01b-72c1a4043810",
+          "server held1 observed raw data mode ee6e3fd1-dbed-48ed-b01b-72c1a4043810",
+          "server held1 link epoch 7718e0cb-1317-4f30-806d-0dc63ad8abc5",
+          "server held1 raw v1 never fabricates RTT or probe 7718e0cb-1317-4f30-806d-0dc63ad8abc5",
+          "server held1 observed raw data mode 7718e0cb-1317-4f30-806d-0dc63ad8abc5",
+          "server exact two-epoch history from original start/held identities",
+          "server actual final session cleanup",
+          "server jobs really finished",
+          "server two distinct service epochs",
+          "server root durable active empty",
+          "exact retained root terminal 9e3017f3-9198-4086-a081-4e78963e4ada/native_export",
+          "root terminal identity 9e3017f3-9198-4086-a081-4e78963e4ada",
+          "same-boot no-hotplug exact release criterion 9e3017f3-9198-4086-a081-4e78963e4ada/native_export",
+          "exact retained root terminal 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7/native_export",
+          "root terminal identity 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7",
+          "same-boot no-hotplug exact release criterion 4856a4e8-c38b-4d6e-b0d6-f4e5a75e5db7/native_export",
+          "exact retained root terminal 925afcf7-c09b-4edd-80b9-49567e95405c/native_stub",
+          "root terminal identity 925afcf7-c09b-4edd-80b9-49567e95405c",
+          "same-boot no-hotplug exact release criterion 925afcf7-c09b-4edd-80b9-49567e95405c/native_stub",
+          "exact retained root terminal 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172/native_stub",
+          "root terminal identity 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172",
+          "same-boot no-hotplug exact release criterion 9e2ae508-07fb-4dd2-8d5e-c5d6f5e48172/native_stub",
+          "exact retained root terminal 0d253a08-2909-4fa0-bc5a-bb5cee8af02a/native_export",
+          "root terminal identity 0d253a08-2909-4fa0-bc5a-bb5cee8af02a",
+          "same-boot no-hotplug exact release criterion 0d253a08-2909-4fa0-bc5a-bb5cee8af02a/native_export",
+          "exact retained root terminal 20f483aa-4dde-4924-a5be-595bb79f9ca3/native_export",
+          "root terminal identity 20f483aa-4dde-4924-a5be-595bb79f9ca3",
+          "same-boot no-hotplug exact release criterion 20f483aa-4dde-4924-a5be-595bb79f9ca3/native_export",
+          "exact retained root terminal ee6e3fd1-dbed-48ed-b01b-72c1a4043810/native_stub",
+          "root terminal identity ee6e3fd1-dbed-48ed-b01b-72c1a4043810",
+          "same-boot no-hotplug exact release criterion ee6e3fd1-dbed-48ed-b01b-72c1a4043810/native_stub",
+          "exact retained root terminal 7718e0cb-1317-4f30-806d-0dc63ad8abc5/native_stub",
+          "root terminal identity 7718e0cb-1317-4f30-806d-0dc63ad8abc5",
+          "same-boot no-hotplug exact release criterion 7718e0cb-1317-4f30-806d-0dc63ad8abc5/native_stub",
+          "server every actual attempt has exactly one retained proof",
+          "client final complete S0 no kernel panic/Oops",
+          "client terminal and complete artifacts",
+          "client role-isolated credentials and real entropy/clock",
+          "client fixed operator and broker",
+          "client no legacy trusted-network claim",
+          "client actual privileged helper OS identity",
+          "client denied strict private disk2 shape",
+          "client denied exact one-to-one retained link identities",
+          "client actual new-store absence and public empty resources",
+          "client denied resource invariance",
+          "client typed denial uid",
+          "client typed denial profile",
+          "client actual ownership modes epoch 1",
+          "client actual nonroot process epoch 1",
+          "client no ambient/effective capability epoch 1",
+          "client actual ownership modes epoch 2",
+          "client actual nonroot process epoch 2",
+          "client no ambient/effective capability epoch 2",
+          "client final strict private disk2 shape",
+          "client final exact one-to-one retained link identities",
+          "client final link epoch ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client final raw v1 never fabricates RTT or probe ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client final link epoch 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client final raw v1 never fabricates RTT or probe 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client final link epoch 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client final raw v1 never fabricates RTT or probe 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client final link epoch c7899248-6044-44de-9966-5d69688c652a",
+          "client final raw v1 never fabricates RTT or probe c7899248-6044-44de-9966-5d69688c652a",
+          "client held0 strict private disk2 shape",
+          "client held0 exact one-to-one retained link identities",
+          "client held0 link epoch ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held0 raw v1 never fabricates RTT or probe ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held0 observed raw data mode ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held0 link epoch 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held0 raw v1 never fabricates RTT or probe 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held0 observed raw data mode 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held1 strict private disk2 shape",
+          "client held1 exact one-to-one retained link identities",
+          "client held1 link epoch ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held1 raw v1 never fabricates RTT or probe ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held1 observed raw data mode ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held1 link epoch 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held1 raw v1 never fabricates RTT or probe 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held1 observed raw data mode 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held2 strict private disk2 shape",
+          "client held2 exact one-to-one retained link identities",
+          "client held2 link epoch ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held2 raw v1 never fabricates RTT or probe ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held2 link epoch 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held2 raw v1 never fabricates RTT or probe 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held2 link epoch 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client held2 raw v1 never fabricates RTT or probe 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client held2 observed raw data mode 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client held2 link epoch c7899248-6044-44de-9966-5d69688c652a",
+          "client held2 raw v1 never fabricates RTT or probe c7899248-6044-44de-9966-5d69688c652a",
+          "client held2 observed raw data mode c7899248-6044-44de-9966-5d69688c652a",
+          "client held3 strict private disk2 shape",
+          "client held3 exact one-to-one retained link identities",
+          "client held3 link epoch ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held3 raw v1 never fabricates RTT or probe ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "client held3 link epoch 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held3 raw v1 never fabricates RTT or probe 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "client held3 link epoch 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client held3 raw v1 never fabricates RTT or probe 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client held3 observed raw data mode 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "client held3 link epoch c7899248-6044-44de-9966-5d69688c652a",
+          "client held3 raw v1 never fabricates RTT or probe c7899248-6044-44de-9966-5d69688c652a",
+          "client held3 observed raw data mode c7899248-6044-44de-9966-5d69688c652a",
+          "client exact two-epoch history from original start/held identities",
+          "client actual final session cleanup",
+          "client jobs really finished",
+          "client two distinct service epochs",
+          "client root durable active empty",
+          "exact retained root terminal ce035e1d-ec2f-4d63-aa00-57c865198b2d/native_import",
+          "root terminal identity ce035e1d-ec2f-4d63-aa00-57c865198b2d",
+          "same-boot no-hotplug exact release criterion ce035e1d-ec2f-4d63-aa00-57c865198b2d/native_import",
+          "exact retained root terminal 625c08bb-3b01-4b40-8b62-ca5a4ad4df38/native_import",
+          "root terminal identity 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "same-boot no-hotplug exact release criterion 625c08bb-3b01-4b40-8b62-ca5a4ad4df38/native_import",
+          "root proof echo 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "exact retained root terminal 2cef0702-cbb1-450c-959a-be12d074d6d2/native_import",
+          "root terminal identity 2cef0702-cbb1-450c-959a-be12d074d6d2",
+          "same-boot no-hotplug exact release criterion 2cef0702-cbb1-450c-959a-be12d074d6d2/native_import",
+          "exact retained root terminal c7899248-6044-44de-9966-5d69688c652a/native_import",
+          "root terminal identity c7899248-6044-44de-9966-5d69688c652a",
+          "same-boot no-hotplug exact release criterion c7899248-6044-44de-9966-5d69688c652a/native_import",
+          "client every actual attempt has exactly one retained proof",
+          "exact Native device keys",
+          "actual FTDI exact 35B each way round 1",
+          "actual FTDI exact 35B each way round 2",
+          "actual FTDI exact 35B each way round 3",
+          "actual FTDI host received all 105B",
+          "complete x86_64 evdev records round 1",
+          "real HID down/up round 1",
+          "actual complete Native receipts round 1",
+          "local kernel identity 7126c0a6-bd41-4fa0-8418-428aa03f29fc",
+          "actual helper owner and retained K 7126c0a6-bd41-4fa0-8418-428aa03f29fc",
+          "live app/helper exact capability 7126c0a6-bd41-4fa0-8418-428aa03f29fc",
+          "local kernel identity 7c7005f3-60d7-4a03-ac3e-ffeef7bcfcda",
+          "actual helper owner and retained K 7c7005f3-60d7-4a03-ac3e-ffeef7bcfcda",
+          "live app/helper exact capability 7c7005f3-60d7-4a03-ac3e-ffeef7bcfcda",
+          "complete x86_64 evdev records round 3",
+          "real HID down/up round 3",
+          "actual complete Native receipts round 3",
+          "local kernel identity 748e8426-f88f-4e4e-92c8-a1462c6e60c5",
+          "actual helper owner and retained K 748e8426-f88f-4e4e-92c8-a1462c6e60c5",
+          "live app/helper exact capability 748e8426-f88f-4e4e-92c8-a1462c6e60c5",
+          "local kernel identity a17aef5a-f59c-4544-94d2-b334bab7215c",
+          "actual helper owner and retained K a17aef5a-f59c-4544-94d2-b334bab7215c",
+          "live app/helper exact capability a17aef5a-f59c-4544-94d2-b334bab7215c",
+          "VHCI exact USED/NULL vhci-held-1.txt",
+          "VHCI exact USED/NULL vhci-target-stopped.txt",
+          "VHCI exact USED/NULL vhci-after-kill.txt",
+          "VHCI exact USED/NULL vhci-held-3.txt",
+          "VHCI exact USED/NULL vhci-final.txt",
+          "SIGKILL retained old active application lifecycle (metrics may advance before signal)",
+          "actual single agent SIGKILL reap137",
+          "old serial recovered only from exact Root proof",
+          "actual live old serial before SIGKILL",
+          "recovery preserved old application identity",
+          "exact retained root terminal 625c08bb-3b01-4b40-8b62-ca5a4ad4df38/native_import",
+          "root terminal identity 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "same-boot no-hotplug exact release criterion 625c08bb-3b01-4b40-8b62-ca5a4ad4df38/native_import",
+          "root proof echo 625c08bb-3b01-4b40-8b62-ca5a4ad4df38",
+          "new attempts after restart are distinct",
+          "helper capabilities never reused across epochs",
+          "tracked export records epoch 1",
+          "exact export registration keys epoch 1",
+          "original tracked export owner/bound 4d915390-b868-46a9-ac91-7de5628511a5",
+          "published pre-export descriptor 4d915390-b868-46a9-ac91-7de5628511a5",
+          "original tracked export owner/bound edb1d4cb-8413-42e4-adbe-79b10ad108c7",
+          "published pre-export descriptor edb1d4cb-8413-42e4-adbe-79b10ad108c7",
+          "immutable live export across stub use epoch 1",
+          "actual Native stub observed USED epoch 1",
+          "server physical generation unchanged exported-1",
+          "actual Native occupancy exported-1",
+          "true export unconfigured lifecycle exported-1",
+          "server physical generation unchanged held-1",
+          "actual Native occupancy held-1",
+          "actual imported full IF profile held-1",
+          "complete original driver/configuration/IF generation restored epoch 1",
+          "server actual TERM wait0 epoch 1",
+          "tracked export records epoch 2",
+          "exact export registration keys epoch 2",
+          "original tracked export owner/bound 00521361-b49c-4b79-b60f-436085df1694",
+          "published pre-export descriptor 00521361-b49c-4b79-b60f-436085df1694",
+          "original tracked export owner/bound 5ad06290-e64c-49a1-82b5-916ab5a88539",
+          "published pre-export descriptor 5ad06290-e64c-49a1-82b5-916ab5a88539",
+          "immutable live export across stub use epoch 2",
+          "actual Native stub observed USED epoch 2",
+          "server physical generation unchanged exported-2",
+          "actual Native occupancy exported-2",
+          "true export unconfigured lifecycle exported-2",
+          "server physical generation unchanged held-3",
+          "actual Native occupancy held-3",
+          "actual imported full IF profile held-3",
+          "complete original driver/configuration/IF generation restored epoch 2",
+          "server actual TERM wait0 epoch 2",
+          "client final actual TERM wait0",
+          "targeted HID stop preserves serial incoming",
+          "incoming stop preserves live published exports",
+          "targeted stop does not replace original export registration",
+          "only requested HID stub retires; serial capability stays exact",
+          "targeted stop retains same serial client receipt and owner",
+          "server actual application byte metrics retained, not USB payload counts",
+          "client actual application byte metrics retained, not USB payload counts"
+        ],
+        "assertion_count": 264,
+        "io_rounds": 3,
+        "hid_key_codes": [
+          2,
+          4
+        ],
+        "serial_each_direction_bytes": 105,
+        "external_link": {
+          "packets": 491,
+          "flows": [
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                42702,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "a4164d6c1670672332112bdabeaa05e6844087dc7790f051378aa903f847eae2"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                42702
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "57ab5034a92e56c5a29ec1ae7d4337ad3e2db36dafabdff278768c0028a0a424"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                42710,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "51f57b54fdd7733964fc7ae96a4745bdf66415f512f01e575195126a129fe806"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                42710
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "a3562d0a29f421256b5c57b039aaaf271bf3694bc3b3884d30cdf34e18a7f739"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                42720,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "0d04d4161e6e7d8805edf51c57a33b7613c539a0d7ad8906becbf7552d219fe1"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                42720
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "894da1e306218cc1ac5292e01b9c4ab59539ec842ca9a500113f8e91a0985101"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                42726,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 2863,
+              "tls_records": 23,
+              "encrypted_application_records": 21,
+              "stream_sha256": "95406a3e5e60aa344825a90fef07a43c3af6f2422119a175a9e6fb9be1c32ada"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                42726
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "9e7cf44f14be3c5407b3fd91b5fdb64e48c387176e17dff66fade4bc0ae8b367"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                42742,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "2dde4b9fedbe2a8b3e6232db9d6daa690226965d103c33a1403ad7a0908b11c4"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                42742
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "8f49dd9b56d15a55f8de260d7fdfdf1014abe2669a8935eefd3bbaa0df7a2a57"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                42756,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 5766,
+              "tls_records": 58,
+              "encrypted_application_records": 56,
+              "stream_sha256": "ac14a692482a9d3e764f4fade128c24c529ae2634c1cc3e91a5ccc4468045143"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                42756
+              ],
+              "stream_bytes": 5690,
+              "tls_records": 56,
+              "encrypted_application_records": 54,
+              "stream_sha256": "233b6bf33f0714ba3aee9535bf77a1567b9553eb054f2244d02de4dd835dc4a0"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                51372,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "155f9ab7d5c1f854e3e274e8f69cae1481914a9f5833a8148588f572eca5ac2c"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                51372
+              ],
+              "stream_bytes": 2428,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "b3d819a3a1d1ea85f0df589d65bba3e79ba58b7523e2fb870ea36d71674b0506"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                51388,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 2841,
+              "tls_records": 22,
+              "encrypted_application_records": 20,
+              "stream_sha256": "bc51dbe932bfb1849b35b7b918af96285bfd20ae21cb8d1e9ffb4f8f29ca652c"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                51388
+              ],
+              "stream_bytes": 3246,
+              "tls_records": 20,
+              "encrypted_application_records": 18,
+              "stream_sha256": "ba9c96823179059e871751f3a1103d54cdc00c8d8e56494a17a199c656966082"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                50708,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 1550,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "aae11b94be09ce63a028ef02dfbfbe20cc3b25a333a024ee1c532553f818109b"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                50708
+              ],
+              "stream_bytes": 2004,
+              "tls_records": 6,
+              "encrypted_application_records": 4,
+              "stream_sha256": "36c4cde6a70b26e1161ba4da9cfaef55f8967b588a3fd514661e621481deb89a"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::2",
+                50716,
+                "fd42:7275:7374::1",
+                3241
+              ],
+              "stream_bytes": 4349,
+              "tls_records": 41,
+              "encrypted_application_records": 39,
+              "stream_sha256": "db57ee9ca1fa6955cba4b4110cf40591108ae38dba95f07d1e2ea9a3dc91f20d"
+            },
+            {
+              "tuple": [
+                6,
+                "fd42:7275:7374::1",
+                3241,
+                "fd42:7275:7374::2",
+                50716
+              ],
+              "stream_bytes": 4459,
+              "tls_records": 39,
+              "encrypted_application_records": 37,
+              "stream_sha256": "d506cb674a119f433d007edfbafce387b3fb0db2149a91c067a45abb6c2867ea"
+            }
+          ],
+          "port_3240_rst_families": [
+            4,
+            6
+          ],
+          "ipv6_hop_by_hop_headers": 8,
+          "icmpv6_control_types": {
+            "143_mldv2_report": 8,
+            "133_router_solicitation": 6,
+            "135_neighbor_solicitation": 1,
+            "136_neighbor_advertisement": 1
+          },
+          "scope": "full external Ethernet capture; contiguous TCP/TLS framing and absence of specified clear management/URB/fixture signatures; no TLS key logging/decryption"
+        },
+        "gui_actions": {
+          "checks": [
+            "server/start-server-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/start-server-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/stop-session-hid: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/stop-job-server-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "server/stop-job-server-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-hid-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-serial-1: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-hid-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/start-serial-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/remote-catalog: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/stop-job-hid-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join",
+            "client/stop-job-serial-2: actual native UID1000/ELF/no-caps/WM_DELETE_WINDOW/wait0/join"
+          ],
+          "native_processes": 12,
+          "start_requests": 6,
+          "targeted_session_stops": 1,
+          "job_stops": 4,
+          "gui_sha256": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4",
+          "scope": "Real native actions/Remote/WM close and continued original kernel I/O; raw-v1 RTT unavailable, not installation/hardware/full Phase5."
+        }
+      },
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "original-link-ipv4": {
+      "result": "PASS",
+      "head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+      "input_count": 398,
+      "error": null,
+      "facts": {
+        "scope": "Native same-data TLS blackhole/cleanup/reuse; no Native pending-URB or hardware claim",
+        "phases": [
+          {
+            "schema_version": 1,
+            "phase": "c2s",
+            "scope": "Actual observed Native phase proof before disarm, not pending-URB proof",
+            "outcomes": [
+              {
+                "role": "client",
+                "session_id": "5efea198-d376-4b60-9879-dd939d8d9704",
+                "connection": {
+                  "connection": 5,
+                  "tcp": {
+                    "local": "192.0.2.2:59584",
+                    "peer": "192.0.2.1:3241"
+                  }
+                },
+                "end": "probe_timeout",
+                "operation_error": "timeout",
+                "cleanup": "verified",
+                "last_probe_enqueued_millis": 6021,
+                "ended_elapsed_millis": 9022,
+                "root_terminal": {
+                  "resource_id": "9b7205ad-bee5-4116-89b6-40785d8d6a07",
+                  "kind": "native_import",
+                  "device_key": "native:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+                  "owner_uid": 2000,
+                  "correlation": {
+                    "instance_id": "bfaa2aa1-29f1-4da8-b239-3e56a77699f2",
+                    "session_id": "5efea198-d376-4b60-9879-dd939d8d9704",
+                    "attempt_id": "648bb30c-9d8d-493a-ae5c-baf8620319b4"
+                  },
+                  "proof": "native_import_released"
+                }
+              },
+              {
+                "role": "server",
+                "session_id": "02e8bce7-7d75-43e7-9fe3-4ad45b3ba4a2",
+                "connection": {
+                  "connection": 5,
+                  "tcp": {
+                    "local": "192.0.2.1:3241",
+                    "peer": "192.0.2.2:59584"
+                  }
+                },
+                "end": "probe_timeout",
+                "operation_error": "timeout",
+                "cleanup": "verified",
+                "last_probe_enqueued_millis": 6023,
+                "ended_elapsed_millis": 9024,
+                "root_terminal": {
+                  "resource_id": "fd1658c3-a05d-4bf4-8ac3-9d2c69421bcc",
+                  "kind": "native_stub",
+                  "device_key": "native:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+                  "owner_uid": 2000,
+                  "correlation": {
+                    "instance_id": "e55a6f9c-97b3-452b-8030-c2dfb29832c1",
+                    "session_id": "02e8bce7-7d75-43e7-9fe3-4ad45b3ba4a2",
+                    "attempt_id": "01dee904-0945-4843-981f-c194d6e9a172"
+                  },
+                  "proof": "native_stub_available"
+                }
+              }
+            ],
+            "source_artifacts": {
+              "client/agent-pre-c2s.json": {
+                "bytes": 9664,
+                "sha256": "5aee4bf0a34d61a5449b6cdc98c8c065f06f296740dc201e9c76bbde971fa52d"
+              },
+              "client/agent-fault-c2s.json": {
+                "bytes": 12786,
+                "sha256": "044d963157b2b3de09531865df892ddd6d7f0082d0e12014c232c778d7bfcdb6"
+              },
+              "client/health-c2s-client-terminal.json": {
+                "bytes": 821,
+                "sha256": "1e6b5a850a517f22467350842ab2f82120cb77320c39a1ab4d297a99084d9bda"
+              },
+              "client/health-c2s-client-pre.json": {
+                "bytes": 807,
+                "sha256": "155c9bc28901c5a49ec42631eab24d7148dc676af4c622f30794b915dc397ea6"
+              },
+              "client/root-pre-c2s.json": {
+                "bytes": 2659,
+                "sha256": "1fe02785ca1d481ff3b017aca13e5b176881884f16207e7859bcb97e1f9a20a1"
+              },
+              "client/root-fault-c2s.json": {
+                "bytes": 1801,
+                "sha256": "96a8858917bf0ae81ed198a58766280d441a5daf14d456cc5d2164197d9737f8"
+              },
+              "client/local-fault-c2s.json": {
+                "bytes": 113,
+                "sha256": "c431ca5248b2d6c170d738827c78256286d181ccbb5cd01c1547845b4ca995bd"
+              },
+              "client/vhci-fault-c2s.txt": {
+                "bytes": 682,
+                "sha256": "0f7629bf9a59353ebc6f3de16c0439dbe71c0b8799f090f9af688bcc4858b22a"
+              },
+              "server/agent-pre-c2s.json": {
+                "bytes": 11507,
+                "sha256": "9819d27f8803df604337876b84c0d23c18abb93c00cab5b393bf7883e50c9ec1"
+              },
+              "server/agent-fault-c2s.json": {
+                "bytes": 16353,
+                "sha256": "0febec5300b7f15a4191a13db892000b4073166abb320b09d5d0408fc8ad1910"
+              },
+              "server/health-c2s-server-terminal.json": {
+                "bytes": 1858,
+                "sha256": "be81bbe920137b93ccc3e67c9dbb4c8c0d38997547c35f32a3baffeb8fcd1177"
+              },
+              "server/health-c2s-server-pre.json": {
+                "bytes": 1842,
+                "sha256": "93ae45cff5bf73682a0f248f0af469462887a0728a1e65be2af86c0d76bc99e6"
+              },
+              "server/root-pre-c2s.json": {
+                "bytes": 4798,
+                "sha256": "c3bf97d369ca026ec04c9601a2b021f2c57bdd7d0eb186c7741e9c32525051ee"
+              },
+              "server/root-fault-c2s.json": {
+                "bytes": 4460,
+                "sha256": "e857fd3d88dd9c09481803e27026e21b64113aea03305551a4a9d6d9287cc3a1"
+              }
+            }
+          },
+          {
+            "schema_version": 1,
+            "phase": "s2c",
+            "scope": "Actual observed Native phase proof before disarm, not pending-URB proof",
+            "outcomes": [
+              {
+                "role": "client",
+                "session_id": "280bf80b-d6ab-48e5-9ea7-f777ee09467e",
+                "connection": {
+                  "connection": 8,
+                  "tcp": {
+                    "local": "192.0.2.2:35824",
+                    "peer": "192.0.2.1:3241"
+                  }
+                },
+                "end": "probe_timeout",
+                "operation_error": "timeout",
+                "cleanup": "verified",
+                "last_probe_enqueued_millis": 5025,
+                "ended_elapsed_millis": 8026,
+                "root_terminal": {
+                  "resource_id": "4f051fea-3f23-4684-bca7-768a26174ab8",
+                  "kind": "native_import",
+                  "device_key": "native:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+                  "owner_uid": 2000,
+                  "correlation": {
+                    "instance_id": "bfaa2aa1-29f1-4da8-b239-3e56a77699f2",
+                    "session_id": "280bf80b-d6ab-48e5-9ea7-f777ee09467e",
+                    "attempt_id": "99c57621-7a42-486a-99f4-9d7ec4aaf546"
+                  },
+                  "proof": "native_import_released"
+                }
+              },
+              {
+                "role": "server",
+                "session_id": "a3b9130a-eed2-4581-a77d-a1fd049080aa",
+                "connection": {
+                  "connection": 8,
+                  "tcp": {
+                    "local": "192.0.2.1:3241",
+                    "peer": "192.0.2.2:35824"
+                  }
+                },
+                "end": "probe_timeout",
+                "operation_error": "timeout",
+                "cleanup": "verified",
+                "last_probe_enqueued_millis": 5025,
+                "ended_elapsed_millis": 8026,
+                "root_terminal": {
+                  "resource_id": "82261fb1-37f7-435b-bc66-05213e1f75e8",
+                  "kind": "native_stub",
+                  "device_key": "native:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+                  "owner_uid": 2000,
+                  "correlation": {
+                    "instance_id": "e55a6f9c-97b3-452b-8030-c2dfb29832c1",
+                    "session_id": "a3b9130a-eed2-4581-a77d-a1fd049080aa",
+                    "attempt_id": "3516ce97-d368-444a-9cc4-7618ab82fde7"
+                  },
+                  "proof": "native_stub_available"
+                }
+              }
+            ],
+            "source_artifacts": {
+              "client/agent-pre-s2c.json": {
+                "bytes": 18953,
+                "sha256": "03d63b6a1463dd3b6077963e83fd14d3ff1c2ac5345ae205d44e066d479db835"
+              },
+              "client/agent-fault-s2c.json": {
+                "bytes": 21574,
+                "sha256": "59a9f1ca84f2884f2be5d584e9dbc589fe68cc3edf4b74f394ead14e96fe93ef"
+              },
+              "client/health-s2c-client-terminal.json": {
+                "bytes": 1528,
+                "sha256": "91f5dc2489f8f86c92f26e10c2b0c3b7daf348eec071d847e523a0274f36d65d"
+              },
+              "client/health-s2c-client-pre.json": {
+                "bytes": 1514,
+                "sha256": "cd7d5b2b463026822b89611470c6ba934be776ba90593007b4de879e639037b4"
+              },
+              "client/root-pre-s2c.json": {
+                "bytes": 3090,
+                "sha256": "eea36c09b0a06def848d27acf1099de3747ddf2fbf1233883bfa7b098c382720"
+              },
+              "client/root-fault-s2c.json": {
+                "bytes": 2232,
+                "sha256": "a7a9274213a8498b802e3a3377155c05273ec591ec2259d6d2413f371450c23a"
+              },
+              "client/local-fault-s2c.json": {
+                "bytes": 113,
+                "sha256": "c431ca5248b2d6c170d738827c78256286d181ccbb5cd01c1547845b4ca995bd"
+              },
+              "client/vhci-fault-s2c.txt": {
+                "bytes": 682,
+                "sha256": "0f7629bf9a59353ebc6f3de16c0439dbe71c0b8799f090f9af688bcc4858b22a"
+              },
+              "server/agent-pre-s2c.json": {
+                "bytes": 20557,
+                "sha256": "4cfe142519412f87545fa5010f8456685b5cf0cc224566a7a55fbdb614892d01"
+              },
+              "server/agent-fault-s2c.json": {
+                "bytes": 24891,
+                "sha256": "2ea08b3cc7ff0af290741b84a498b292100862057122f7a57e421542ffe73c8f"
+              },
+              "server/health-s2c-server-terminal.json": {
+                "bytes": 2574,
+                "sha256": "a4a8de64d5e27cf66d552d7a91de20d1a854ff39adcf959b2353c10df7f68ff5"
+              },
+              "server/health-s2c-server-pre.json": {
+                "bytes": 2558,
+                "sha256": "756504669642ab51b7a0c3c0c872ee6e8703dd2ab00b39dd2442b9f107024e4e"
+              },
+              "server/root-pre-s2c.json": {
+                "bytes": 5290,
+                "sha256": "f23e90d151b25ed8c71c44d897edb0ff4daf174e7169aefa86c0f15e2680c07c"
+              },
+              "server/root-fault-s2c.json": {
+                "bytes": 4879,
+                "sha256": "00ea7ee9c01ecc2e2d005cd425d5587ef8f66029944f2c523ef53269c29dcffa"
+              }
+            }
+          },
+          {
+            "schema_version": 1,
+            "phase": "both",
+            "scope": "Actual observed Native phase proof before disarm, not pending-URB proof",
+            "outcomes": [
+              {
+                "role": "client",
+                "session_id": "5886d2ca-8047-43c5-af95-173eb846a2f9",
+                "connection": {
+                  "connection": 11,
+                  "tcp": {
+                    "local": "192.0.2.2:53922",
+                    "peer": "192.0.2.1:3241"
+                  }
+                },
+                "end": "probe_timeout",
+                "operation_error": "timeout",
+                "cleanup": "verified",
+                "last_probe_enqueued_millis": 10973,
+                "ended_elapsed_millis": 13975,
+                "root_terminal": {
+                  "resource_id": "2e598428-71d5-4897-8d1b-450d0c902b3f",
+                  "kind": "native_import",
+                  "device_key": "native:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+                  "owner_uid": 2000,
+                  "correlation": {
+                    "instance_id": "bfaa2aa1-29f1-4da8-b239-3e56a77699f2",
+                    "session_id": "5886d2ca-8047-43c5-af95-173eb846a2f9",
+                    "attempt_id": "fe8612a9-ccf1-408b-9bae-db3cadca411c"
+                  },
+                  "proof": "native_import_released"
+                }
+              },
+              {
+                "role": "server",
+                "session_id": "3682cf08-e435-4b4c-a9a5-1170a05ed7c6",
+                "connection": {
+                  "connection": 11,
+                  "tcp": {
+                    "local": "192.0.2.1:3241",
+                    "peer": "192.0.2.2:53922"
+                  }
+                },
+                "end": "probe_timeout",
+                "operation_error": "timeout",
+                "cleanup": "verified",
+                "last_probe_enqueued_millis": 11075,
+                "ended_elapsed_millis": 14077,
+                "root_terminal": {
+                  "resource_id": "f7a2f28c-15d1-4058-b166-42f926664de8",
+                  "kind": "native_stub",
+                  "device_key": "native:usb-5fbf41fd3013efd456367d85e23ccb137d6bcf078c4b7558663bf0c761251cc6",
+                  "owner_uid": 2000,
+                  "correlation": {
+                    "instance_id": "e55a6f9c-97b3-452b-8030-c2dfb29832c1",
+                    "session_id": "3682cf08-e435-4b4c-a9a5-1170a05ed7c6",
+                    "attempt_id": "5f036785-1cf6-45de-b07c-70d92157991d"
+                  },
+                  "proof": "native_stub_available"
+                }
+              }
+            ],
+            "source_artifacts": {
+              "client/agent-pre-both.json": {
+                "bytes": 30762,
+                "sha256": "3c2bf38c2095fcb1bd13885c1ee102f2efae7650731583380d664c7c767ffc36"
+              },
+              "client/agent-fault-both.json": {
+                "bytes": 33900,
+                "sha256": "45a51e24ab91bf9072c8b36785a879b37e21e06acc4467bfb9b299b99539532e"
+              },
+              "client/health-both-client-terminal.json": {
+                "bytes": 2239,
+                "sha256": "e755228d57e3f2e475c4d51af13b3f0dabf43670a6e777438ce8901db48782b2"
+              },
+              "client/health-both-client-pre.json": {
+                "bytes": 2224,
+                "sha256": "c2cd1db802000d6585f598920f60bc8d8ff48f9c2755cacc7946da6e2fe5fa02"
+              },
+              "client/root-pre-both.json": {
+                "bytes": 3521,
+                "sha256": "d437c1d68e5134531372415b346441ce7d8453f737aa6e58f943192da9024589"
+              },
+              "client/root-fault-both.json": {
+                "bytes": 2663,
+                "sha256": "eef20c9868676f7f274e32ff09719f9bd8daaee426d495c34b7ff73d5e93463b"
+              },
+              "client/local-fault-both.json": {
+                "bytes": 113,
+                "sha256": "c431ca5248b2d6c170d738827c78256286d181ccbb5cd01c1547845b4ca995bd"
+              },
+              "client/vhci-fault-both.txt": {
+                "bytes": 682,
+                "sha256": "0f7629bf9a59353ebc6f3de16c0439dbe71c0b8799f090f9af688bcc4858b22a"
+              },
+              "server/agent-pre-both.json": {
+                "bytes": 33177,
+                "sha256": "078b629292c43cfb0e2eaa846d8414b8a2978af1f0d836549fb754a26bace57d"
+              },
+              "server/agent-fault-both.json": {
+                "bytes": 37527,
+                "sha256": "ba8ebc260fce18975c56ba59531cc05859bdee7ed5e88e0765f628f54c181b95"
+              },
+              "server/health-both-server-terminal.json": {
+                "bytes": 3288,
+                "sha256": "6992fca723ab7e22b6acf2971c70d695b8fd4b776289ad3c68736a34438c27d2"
+              },
+              "server/health-both-server-pre.json": {
+                "bytes": 3274,
+                "sha256": "eb7ac09c60f74f2739f7aa895aaba11fd60ba001c575924e9665ebe0e29285a6"
+              },
+              "server/root-pre-both.json": {
+                "bytes": 5709,
+                "sha256": "36b6f284efb70002fcae58aee74d96b97e458a22bebf6d127dfb81e1228491eb"
+              },
+              "server/root-fault-both.json": {
+                "bytes": 5298,
+                "sha256": "6360d96f76c890b9daf34d77c26afabcea40fe6f2cf7e5888b011f6d37f5bd86"
+              }
+            }
+          }
+        ],
+        "actual_configuration": [
+          {
+            "role": "server",
+            "epoch": 1,
+            "fixed_metadata_entries": 17,
+            "json_files": [
+              "agent.json",
+              "policy.json",
+              "server.json"
+            ],
+            "public_der_sha256": {
+              "ca": "85015114a814a3a6c4cccc0484422a957e2809fd6efc6b849bbfc05501bd7057",
+              "server": "cbc89c7202c159c992325b2981da02b5a27b92d84b3bc4686a6cb10cab2ef851",
+              "client": "c5c378596052332db3cbbdcf8bc7358862b78b5bca10f853f5ac492543f2afcd"
+            },
+            "private_key_bytes_captured": false
+          },
+          {
+            "role": "client",
+            "epoch": 1,
+            "fixed_metadata_entries": 18,
+            "json_files": [
+              "agent.json",
+              "client-hid.json",
+              "client-serial.json",
+              "policy.json"
+            ],
+            "public_der_sha256": {
+              "ca": "85015114a814a3a6c4cccc0484422a957e2809fd6efc6b849bbfc05501bd7057",
+              "server": "cbc89c7202c159c992325b2981da02b5a27b92d84b3bc4686a6cb10cab2ef851",
+              "client": "c5c378596052332db3cbbdcf8bc7358862b78b5bca10f853f5ac492543f2afcd"
+            },
+            "private_key_bytes_captured": false
+          }
+        ],
+        "packet_audit": {
+          "schema_version": 1,
+          "result": "PACKET_AUDIT_PASS",
+          "family": 4,
+          "scope": "Exact bounded Ethernet/flow/drop/FD journal plus two raw PCAPs. TLS ciphertext framing/signatures only; no decryption. Does not decide heartbeat timing, Catalog semantics, USB I/O or terminal proof.",
+          "valve_sha256": "9b310f407f48cd86ac61bfe1bd71a9ba18bbbd20fb5261c3714594d72b255c96",
+          "packets": 1392,
+          "captures": {
+            "server": {
+              "bytes": 219548,
+              "sha256": "95b3990697257a3e633a53989b380d7c749772bdedc100a35420eec893b2fec8",
+              "packets": 1373
+            },
+            "client": {
+              "bytes": 219548,
+              "sha256": "ff8396b5d52f7554575dc6c64784fd0f2e1a8bc90430c7e534339344b38d1d2b",
+              "packets": 1373
+            }
+          },
+          "initial_network_readiness": {
+            "scope": "Actual initial carrier/operstate and address precondition; not TLS health or USB completion",
+            "roles": [
+              {
+                "role": "server",
+                "poll_count": 36,
+                "guest_uptime": "2.79",
+                "carrier": 1,
+                "operstate": "up",
+                "artifact_sha256": {
+                  "network-ready-observations.jsonl": "96cfbc0b39c73c3842c6071112278f66e1aedaa46006c80d5a7bc7ffc5ed4698",
+                  "network-ready.json": "6377d1007a5aa5f47ceb9043497c45807e9c679c788db83082ff979582778a3a",
+                  "network-ready.txt": "c4f543e3c287234d798a38ed0b3d48125a91419810452be97f0e677a04204bf0"
+                },
+                "ack_host_monotonic_ns": 407197853365006
+              },
+              {
+                "role": "client",
+                "poll_count": 36,
+                "guest_uptime": "3.57",
+                "carrier": 1,
+                "operstate": "up",
+                "artifact_sha256": {
+                  "network-ready-observations.jsonl": "7bf6af960ed49c705b790100a3b41ac7d31cc258cc8351d55c3f9d333bbd684b",
+                  "network-ready.json": "bf9a6cc81336fc429739d9fc97b3aa8c391732cc7ef19bebd2522d8f0f954df1",
+                  "network-ready.txt": "16d92148197783af00329b92dea1b00cf1f40f53f3475df7568cb949f13a1b5c"
+                },
+                "probe_start_sha256": "ce2cbe780f0d472723d797180098b5acd14751127639e46e63288a7479bfa6ba",
+                "probe_start_guest_uptime": "4.26",
+                "ack_host_monotonic_ns": 407198542731477
+              }
+            ],
+            "start_host_monotonic_ns": 407199202359857
+          },
+          "plaintext_3240_refusals": [
+            {
+              "family": 4,
+              "client_flow": [
+                4,
+                "192.0.2.2",
+                44314,
+                "192.0.2.1",
+                3240
+              ],
+              "client_syn_sequence": 244082524,
+              "server_reset_sequence": 0,
+              "server_reset_acknowledgement": 244082525,
+              "server_reset_packet_id": 14
+            },
+            {
+              "family": 6,
+              "client_flow": [
+                6,
+                "fd42:7275:7374::2",
+                59736,
+                "fd42:7275:7374::1",
+                3240
+              ],
+              "client_syn_sequence": 3914978788,
+              "server_reset_sequence": 0,
+              "server_reset_acknowledgement": 3914978789,
+              "server_reset_packet_id": 18
+            }
+          ],
+          "rules": [
+            {
+              "id": "c2s",
+              "flow": [
+                4,
+                "192.0.2.2",
+                59584,
+                "192.0.2.1",
+                3241
+              ],
+              "drops": {
+                "server": 0,
+                "client": 14
+              },
+              "health_sources": [
+                {
+                  "role": "server",
+                  "sha256": "93ae45cff5bf73682a0f248f0af469462887a0728a1e65be2af86c0d76bc99e6",
+                  "session_id": "02e8bce7-7d75-43e7-9fe3-4ad45b3ba4a2",
+                  "instance_id": "e55a6f9c-97b3-452b-8030-c2dfb29832c1",
+                  "identity": {
+                    "connection": 5,
+                    "tcp": {
+                      "local": "192.0.2.1:3241",
+                      "peer": "192.0.2.2:59584"
+                    }
+                  }
+                },
+                {
+                  "role": "client",
+                  "sha256": "155c9bc28901c5a49ec42631eab24d7148dc676af4c622f30794b915dc397ea6",
+                  "session_id": "5efea198-d376-4b60-9879-dd939d8d9704",
+                  "instance_id": "bfaa2aa1-29f1-4da8-b239-3e56a77699f2",
+                  "identity": {
+                    "connection": 5,
+                    "tcp": {
+                      "local": "192.0.2.2:59584",
+                      "peer": "192.0.2.1:3241"
+                    }
+                  }
+                }
+              ],
+              "other_flows": [
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.2",
+                    59566,
+                    "192.0.2.1",
+                    3241
+                  ],
+                  "payload_packets_during_fault": 32
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.1",
+                    3241,
+                    "192.0.2.2",
+                    59566
+                  ],
+                  "payload_packets_during_fault": 32
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.2",
+                    59600,
+                    "192.0.2.1",
+                    3241
+                  ],
+                  "payload_packets_during_fault": 8
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.1",
+                    3241,
+                    "192.0.2.2",
+                    59600
+                  ],
+                  "payload_packets_during_fault": 6
+                }
+              ],
+              "terminal_artifact_sha256": "e36268f59ee3d96c70a48ca29dcd13dde70eb138e27706ec4ae57c29a7d8c85e"
+            },
+            {
+              "id": "s2c",
+              "flow": [
+                4,
+                "192.0.2.2",
+                35824,
+                "192.0.2.1",
+                3241
+              ],
+              "drops": {
+                "server": 14,
+                "client": 0
+              },
+              "health_sources": [
+                {
+                  "role": "server",
+                  "sha256": "756504669642ab51b7a0c3c0c872ee6e8703dd2ab00b39dd2442b9f107024e4e",
+                  "session_id": "a3b9130a-eed2-4581-a77d-a1fd049080aa",
+                  "instance_id": "e55a6f9c-97b3-452b-8030-c2dfb29832c1",
+                  "identity": {
+                    "connection": 8,
+                    "tcp": {
+                      "local": "192.0.2.1:3241",
+                      "peer": "192.0.2.2:35824"
+                    }
+                  }
+                },
+                {
+                  "role": "client",
+                  "sha256": "cd7d5b2b463026822b89611470c6ba934be776ba90593007b4de879e639037b4",
+                  "session_id": "280bf80b-d6ab-48e5-9ea7-f777ee09467e",
+                  "instance_id": "bfaa2aa1-29f1-4da8-b239-3e56a77699f2",
+                  "identity": {
+                    "connection": 8,
+                    "tcp": {
+                      "local": "192.0.2.2:35824",
+                      "peer": "192.0.2.1:3241"
+                    }
+                  }
+                }
+              ],
+              "other_flows": [
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.2",
+                    59566,
+                    "192.0.2.1",
+                    3241
+                  ],
+                  "payload_packets_during_fault": 33
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.1",
+                    3241,
+                    "192.0.2.2",
+                    59566
+                  ],
+                  "payload_packets_during_fault": 31
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.2",
+                    35840,
+                    "192.0.2.1",
+                    3241
+                  ],
+                  "payload_packets_during_fault": 8
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.1",
+                    3241,
+                    "192.0.2.2",
+                    35840
+                  ],
+                  "payload_packets_during_fault": 7
+                }
+              ],
+              "terminal_artifact_sha256": "16e077d1ce153236faa6c67542b1ffdc3cbca367379dbae31da94da97eaa1293"
+            },
+            {
+              "id": "both",
+              "flow": [
+                4,
+                "192.0.2.2",
+                53922,
+                "192.0.2.1",
+                3241
+              ],
+              "drops": {
+                "server": 5,
+                "client": 5
+              },
+              "health_sources": [
+                {
+                  "role": "server",
+                  "sha256": "eb7ac09c60f74f2739f7aa895aaba11fd60ba001c575924e9665ebe0e29285a6",
+                  "session_id": "3682cf08-e435-4b4c-a9a5-1170a05ed7c6",
+                  "instance_id": "e55a6f9c-97b3-452b-8030-c2dfb29832c1",
+                  "identity": {
+                    "connection": 11,
+                    "tcp": {
+                      "local": "192.0.2.1:3241",
+                      "peer": "192.0.2.2:53922"
+                    }
+                  }
+                },
+                {
+                  "role": "client",
+                  "sha256": "c2cd1db802000d6585f598920f60bc8d8ff48f9c2755cacc7946da6e2fe5fa02",
+                  "session_id": "5886d2ca-8047-43c5-af95-173eb846a2f9",
+                  "instance_id": "bfaa2aa1-29f1-4da8-b239-3e56a77699f2",
+                  "identity": {
+                    "connection": 11,
+                    "tcp": {
+                      "local": "192.0.2.2:53922",
+                      "peer": "192.0.2.1:3241"
+                    }
+                  }
+                }
+              ],
+              "other_flows": [
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.2",
+                    59566,
+                    "192.0.2.1",
+                    3241
+                  ],
+                  "payload_packets_during_fault": 33
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.1",
+                    3241,
+                    "192.0.2.2",
+                    59566
+                  ],
+                  "payload_packets_during_fault": 31
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.2",
+                    55664,
+                    "192.0.2.1",
+                    3241
+                  ],
+                  "payload_packets_during_fault": 8
+                },
+                {
+                  "flow": [
+                    4,
+                    "192.0.2.1",
+                    3241,
+                    "192.0.2.2",
+                    55664
+                  ],
+                  "payload_packets_during_fault": 7
+                }
+              ],
+              "terminal_artifact_sha256": "beb5a64b269fdffaa38f11c53319287b0d3a7d0488236aec141e2a99b776e641"
+            }
+          ],
+          "tls_source_directions": [
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                59544,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "c91e978ead5699802bf4f761f816ae8e0d853fb89a4a43f610fea4db3c6b6aa5",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                59544
+              ],
+              "source_bytes": 2589,
+              "sha256": "b277ae36dd6f422494f4889eafad2bafc6f784704c3f78b838f2d13f72bfc30f",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                59560,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "15b16af05add7d3ee245b17a45ef85a56e6097ec6b98f9ee6e4255cc7f35b4c7",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                59560
+              ],
+              "source_bytes": 2589,
+              "sha256": "4ba4e34c262cd018a1c833878d452c4bec4767bd0b532f7c5ffa73fa1fe7160e",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                59566,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 18525,
+              "sha256": "23f1b2aac0ec13ffc10bf1d54c2618e2c45eb0f87b9d2c1be8e67f0323d95b76",
+              "complete_records": 239,
+              "complete_encrypted_records": 237,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                59566
+              ],
+              "source_bytes": 17339,
+              "sha256": "cee18d5742bf277e1c8c9b7282cdc62da7d0c76ad89a93a747f527b50e234b91",
+              "complete_records": 232,
+              "complete_encrypted_records": 230,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                59582,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "3a279ac5570599ecd09589e7bbc5e69d80ff2e41bfab0ff0cc9bbeece7c899af",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                59582
+              ],
+              "source_bytes": 2165,
+              "sha256": "9a3c77e0b0f3cfa0c845cd4b92b1a8f34c9348eb64bd663f0a1bc1da370b91e9",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                59584,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 3636,
+              "sha256": "084f368835dc93f93e1502c181703afa5ebdd285e32f3af85347e0439244583a",
+              "complete_records": 36,
+              "complete_encrypted_records": 34,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                59584
+              ],
+              "source_bytes": 3953,
+              "sha256": "41e22bffbafe6b33581ba2700cb4e8617bbadce0d9911472a3ef27de50513c1a",
+              "complete_records": 34,
+              "complete_encrypted_records": 32,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                59600,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "1a585b00218f1e1bd915929328bf3b89f0a6c8d34cd5a1f993bab9cfeaaf9747",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                59600
+              ],
+              "source_bytes": 1742,
+              "sha256": "5543c3a21e945ddb89d915b9ea71064bb73777501f4efba74a58082132f5570f",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                35810,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "41746efee1770b28d19a9e7f3b747ccdba240eb8ddc6f5aa81662f19264ddbec",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                35810
+              ],
+              "source_bytes": 2165,
+              "sha256": "1132374a8413b8a758fc7d60e9a96cb68e1fe8bf6fc6e8fe14f2cd6c64a0f853",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                35824,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 3475,
+              "sha256": "11d8b13719707bf47c380afeded2aaea49d5b03a1442b35eee685469b1972435",
+              "complete_records": 31,
+              "complete_encrypted_records": 29,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                35824
+              ],
+              "source_bytes": 3914,
+              "sha256": "3c882d80445834dd0444373e8a302e65940e6b0fefcffe7e66a06a7fe068117d",
+              "complete_records": 33,
+              "complete_encrypted_records": 31,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                35840,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "3cab4ea47640be11f7353367f366e54374695a97651c1b5e1d988e51f5818324",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                35840
+              ],
+              "source_bytes": 1742,
+              "sha256": "95363bda846331faecfa9caa1dff892ac808fb174c79ab1c5a74aede34cbd2ae",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                53918,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1842,
+              "sha256": "690080195b3ee75f80b240d493f41a28e293570386a2d4e17a60d723aa4c2499",
+              "complete_records": 11,
+              "complete_encrypted_records": 9,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                53918
+              ],
+              "source_bytes": 2243,
+              "sha256": "abd40521362eea6848c76e3e0a0de2a6ba6a289e3e03028ca3ad03b4a44bb87d",
+              "complete_records": 11,
+              "complete_encrypted_records": 9,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                53922,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 3792,
+              "sha256": "920039201964ac044afb33835f22a33e7697f57eebe8b24002a4eda32e6832b4",
+              "complete_records": 40,
+              "complete_encrypted_records": 38,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                53922
+              ],
+              "source_bytes": 4126,
+              "sha256": "7db160d13d2758e72d35b5447ea0b5105a344c6b44de4efd3da4792a8b076e10",
+              "complete_records": 38,
+              "complete_encrypted_records": 36,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                55664,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "d3b4882a5652965edee5d0a5b2aa071d4e7a43d0b8d716768beb6bbbd0fde8cd",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                55664
+              ],
+              "source_bytes": 1742,
+              "sha256": "caecc8ab35c42a918f37b1bc5800fe0e6beb70edded2f3cd4bb597c558fa6b0a",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                55672,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 1764,
+              "sha256": "5a0fb81df37f45b61d1d0e0d0d1abb626871555b14a0d048bbeedf2a8d3c7759",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                55672
+              ],
+              "source_bytes": 2165,
+              "sha256": "6485c8d72918cee546a944e1aed322080d14ce09646b93d9c4b189df546d5436",
+              "complete_records": 9,
+              "complete_encrypted_records": 7,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.2",
+                55680,
+                "192.0.2.1",
+                3241
+              ],
+              "source_bytes": 3277,
+              "sha256": "b72239d4f888bc526dd2d0e16f72ec4fd70ad647ea4f4465784dd8e320962878",
+              "complete_records": 27,
+              "complete_encrypted_records": 25,
+              "client_hellos": 1,
+              "offered_alpn": [
+                "rustusb-usbip/2"
+              ],
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            },
+            {
+              "flow": [
+                4,
+                "192.0.2.1",
+                3241,
+                "192.0.2.2",
+                55680
+              ],
+              "source_bytes": 3602,
+              "sha256": "3001fbf33505ddd42083f6de9da8b525a764a5975fb37414ee7ed3dd7f9bcfa3",
+              "complete_records": 25,
+              "complete_encrypted_records": 23,
+              "client_hellos": null,
+              "offered_alpn": null,
+              "unconfirmed_tail_bytes_after_target_fault": 0
+            }
+          ]
+        },
+        "io_rounds": 7,
+        "hid_key_codes": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "serial_each_direction_bytes": 245,
+        "native_gui": {
+          "native_processes": 3,
+          "checks": [
+            {
+              "phase": "c2s",
+              "session": "5efea198-d376-4b60-9879-dd939d8d9704",
+              "connection": {
+                "connection": "5",
+                "tcp": {
+                  "peer": "192.0.2.1:3241",
+                  "local": "192.0.2.2:59584"
+                }
+              },
+              "end": "probe_timeout",
+              "operation_error": "timeout",
+              "cleanup": "verified"
+            },
+            {
+              "phase": "s2c",
+              "session": "280bf80b-d6ab-48e5-9ea7-f777ee09467e",
+              "connection": {
+                "connection": "8",
+                "tcp": {
+                  "peer": "192.0.2.1:3241",
+                  "local": "192.0.2.2:35824"
+                }
+              },
+              "end": "probe_timeout",
+              "operation_error": "timeout",
+              "cleanup": "verified"
+            },
+            {
+              "phase": "both",
+              "session": "5886d2ca-8047-43c5-af95-173eb846a2f9",
+              "connection": {
+                "connection": "11",
+                "tcp": {
+                  "peer": "192.0.2.1:3241",
+                  "local": "192.0.2.2:53922"
+                }
+              },
+              "end": "probe_timeout",
+              "operation_error": "timeout",
+              "cleanup": "verified"
+            }
+          ],
+          "scope": "Actual same-data RTT and three direction faults; stable expansion/focus, real WM close/wait0. Original v2 network/USB proof unchanged; no installation/hardware/fullPhase5 claim."
+        }
+      },
+      "binaries": null,
+      "guest_exit_codes": {
+        "server": 0,
+        "client": 0
+      },
+      "single_guest_exit": null,
+      "verification": null
+    },
+    "original-single": {
+      "result": "PASS",
+      "head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+      "input_count": 380,
+      "error": null,
+      "facts": null,
+      "binaries": {
+        "rustusb": "d6bd57c4daeabdcce23574f158e225fb7b2fb77deebe1bcf546bb9bc858ed034",
+        "rustusb-helper": "475b2f97e8b4e31dd1af479193913c637d09dc8c3b1debd13442c0f88f6748f3",
+        "rustusb-gui": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4"
+      },
+      "guest_exit_codes": null,
+      "single_guest_exit": 0,
+      "verification": {
+        "files": 70,
+        "bytes": 370680,
+        "scope": "actual native WebView, read/audit-only real agent, no accepted USB job or data-redirection proof"
+      }
+    }
+  },
+  "archive_files": 5691,
+  "archive_uncompressed_bytes": 71156884,
+  "archive": {
+    "bytes": 17341848,
+    "sha256": "4c5dbe590b9c7098fd353df57378efe0b3d8c8f1f5a057115efdbc377798d331"
+  },
+  "scope": "Native GUI fixed-profile rules, true unknown IPC outcome/renderer reload/original query, CRUD and independent actual jobs/cleanup; original actions, v2 link and single GUI regressions. No settled-negative recovery, crash-persistent UUIDs, dynamic pool, physical remote receipt, installation/hardware/fullPhase5."
+}

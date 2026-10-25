@@ -162,3 +162,18 @@ proofs. Service shutdown directly stops and joins the actual observer, network
 and USB owner trees. Permanent filesystem/kernel/DNS blocking retains the
 existing limits. See the [design](research/automatic-sharing-design.md) and
 [validation boundaries](research/automatic-sharing-runtime-validation.md).
+
+
+## Native GUI editing
+
+Open Settings in the [ordinary-user GUI](gui.md#edit-automatic-sharing-rules).
+The separate Automatic sharing section shows the complete grant and independently
+sampled rules/events. Create defaults disabled; exact revision strings and
+explicit Enable/rearm prevent silently rebasing a stale draft. Query an unknown
+edit only by its original UUID retained in Rust across renderer reload. Refused/
+expired edits remain conservatively blocked because settled-negative receipts
+and safe reconciliation are unfinished. Never reissue Create to resolve a lost
+reply. [Native QEMU evidence](research/gui-automatic-rules-validation.md) covers
+both IP families, actual late commit/query and independent running jobs after
+future-only Disable/Delete and real window close. Dynamic pools and physical
+remote safety receipts remain separate work.

@@ -1,0 +1,25 @@
+Create/edit/pause/retire rules within explicit administrator delegation
+
+Usage: rustusb agent --config <CONFIG> rule [OPTIONS] <PROFILE> <COMMAND>
+
+Commands:
+  create   Create a bounded rule; future triggering is disabled unless --enabled
+  replace  Replace/rearm a definition with CAS; existing manual pauses remain
+  enable   Explicitly enable/rearm future conditions after a committed pause
+  disable  Disable future triggers without asserting actual current-job cleanup
+  delete   Retire future intent while retaining unresolved old ownership
+  retry    Query only the original mutation; unknown/expired never reapplies it
+  help     Print this message or the help of the given subcommand(s)
+
+Arguments:
+  <PROFILE>  
+
+Options:
+      --json                           Emit machine-readable JSON to stdout; logs remain on stderr
+      --socket <SOCKET>                Root-owned local helper socket [default: /run/rustusb/control.sock]
+      --timeout <TIMEOUT>              Discovery timeout covering DNS, connect and response [default: 10]
+      --log-json                       Emit JSON tracing logs on stderr
+      --log-directory <LOG_DIRECTORY>  Write sanitized bounded NDJSON to an existing private directory instead of stderr
+      --log-max-bytes <LOG_MAX_BYTES>  Segment byte limit (4096..=8388608); requires a file log directory
+      --log-retain <LOG_RETAIN>        Total retained segments including active (2..=16)
+  -h, --help                           Print help

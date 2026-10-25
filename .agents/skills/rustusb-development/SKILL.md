@@ -135,3 +135,7 @@ E54补充见`automatic-sharing-rust-qemu-validation.md`：clean42e98ab3同产品
 - local source monotonic完成时刻不由消费/WAL等待刷新；只Current/完整/安全/≤6秒，冻结primitive元组+boot，不以observerepoch/DTO新增字段造新设备。相同Periodic仅内存refresh，不加wire帧。
 - 单auto Discover保原两actual槽/授权/成功audit，disable或丢waiter不提前还槽；fresh真实completion才fire。原DEVLIST不证明all-alt/config安全或物理generation，physical/Native远端必须拒绝自动import直至另有认证完整receipt。
 - observer/network/USB真实owner直接stop并总await，metadata不持能力；pre-backend继承Stop/过期源须以原State/0session结束，不能仅相信backend prepare合作停即从未进入。CLI完整UUID意图先于RPC且非commit，INT/TERM/背压不追加generic JSON或发不完整意图后的RPC。
+
+## GUI 自动规则
+
+修改前读`docs/research/gui-automatic-rules-design.md`和`gui-automatic-rules-validation.md`。E55产品7ef/root1027+GUI15、fixture e668六QEMU/11guest0/34native child（single旧预期1）仅证明固定profile范围。Settings按需独立Rules/RuleEvents，不增TUI默认RPC；revision canonical decimal string→checked u64，typed有限action/完整pool与服务授权保持。新Create禁用/所有edit默认Cancel，disable/delete仅未来；草稿/原revision不自动rebase。原mutation UUID/profile/payload在Rust独立Start/Stop保留到精确Applied；Error/Expired/renderer reload仅原Query不重发，issued IPC总await，退出先实际join并报告未决。首DOM/第二tombstone verifier FAIL保留，回收resolved deleted须保history和原实际proof。settled负向协调、进程崩溃ID、dynamic/物理远端receipt/完整GUI安装硬件未完成。
