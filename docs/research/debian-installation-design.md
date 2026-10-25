@@ -1,0 +1,93 @@
+# Debian installation lifecycle design
+
+2026-10-25, proposed implementation and validation scope. The starting clean
+commit is `412b40ff941d74ff80f1ca0cc4d86aade207a2d4`. Phase 5 remains incomplete.
+
+## Problem and package boundary
+
+The current CLI/helper and separate Tauri GUI have process and initramfs QEMU
+evidence, but no Debian package, systemd unit or full installed Ubuntu reboot
+acceptance. Add `rustusb` (CLI/TUI, restricted helper, administrative lifecycle
+tool, units, examples) and optional `rustusb-gui` (ordinary-user desktop app).
+Build native ELF files first; record their actual hashes and derive shared-library
+dependencies with the build distribution's `dpkg-shlibdeps`. Do not relabel an
+amd64 build as arm64, or claim newer-distribution binaries run on older Ubuntu.
+The GUI package depends on the matching base package and its actual GTK/WebKit
+libraries. No new Rust dependency or USB data path is proposed.
+
+## Default installation and administrator state
+
+Installation creates a dedicated non-login, nonzero `rustusb` system account.
+An existing incompatible account or unexpected directory owner/mode is an error,
+never an excuse for recursive chown. Its UID is a persistent authorization identity
+and is retained on removal. Unit files and binaries are package-owned; examples
+are under `/usr/share/doc/rustusb/`, not installed as live `/etc` conffiles.
+Administrators explicitly provision `/etc/rustusb/policy.json`, the public
+`agent.json`, TLS material and optional rule policy. No package script grants a
+device, guesses an operator UID, generates credentials, starts usbipd, loads
+modules or changes firewall/network policy. Installation and upgrades never
+automatically enable, start or restart either service.
+
+Remove/purge retain administrator configuration, credentials, the broker account,
+helper Native/physical journals and application data, including unresolved old
+epochs. Dpkg removes conffiles before `postrm purge`; therefore sensitive retained
+configuration must never enter the package's conffile payload. No `rm -rf` or
+automatic stale socket deletion is allowed. An administrator may inspect and
+coordinate old records using the existing root proof interfaces; package removal
+does not prove device release or authorize clearing them.
+
+## Service lifecycle
+
+Use systemd directives available in Ubuntu 22.04 systemd 249 as well as Ubuntu
+24.04 systemd 255. The helper runs as root; the application agent runs as the
+dedicated broker. Both invoke their real executable directly with `Type=exec`,
+`Restart=no`, `KillMode=mixed`, `SendSIGKILL=no` and `TimeoutStopSec=infinity`.
+The helper is ordered before the agent; the agent requires the helper. Shutdown
+stops the agent first, preserving the helper for actual cooperative cleanup.
+`Type=exec` means execve succeeded, not that the socket/listener is ready.
+
+A fixed-command root administrative tool checks/creates only the fixed package
+runtime/data directories. It checks protected ancestors and exact final ownership
+and modes and never rewrites an existing tree. Avoid systemd's recursive ownership
+repair through RuntimeDirectory/StateDirectory. The agent's privileged prepare
+step also verifies its root-managed manifest names the actual service UID and
+package endpoint/data paths. Product configuration loaders remain authoritative.
+
+Before upgrade unpack or removal, `prerm` waits for agent stop, verifies the unit's
+successful main exit and empty actual cgroup, then does the same for the helper.
+Any failure stops the package transaction before files change. `systemctl stop`
+return 0 or `inactive` alone is insufficient: ExecStop failures can be hidden and
+finite timeout stops can leave processes behind. No timeout sends SIGKILL. If
+cooperative cleanup is blocked, the package operation remains blocked; an observer
+deadline must not be reported as a completed stop. Retained old state is never
+interpreted as recovered merely because these processes have exited.
+
+Known source limit: the helper currently registers SIGTERM after journal opening
+and listener setup. Unit directives cannot make a permanently blocked startup
+cooperative. The initial package tests must distinguish ready-state cooperative
+stop from startup readiness; no package or hardware claim erases that limitation.
+
+## Validation plan and evidence
+
+1. Preserve the existing complete root and GUI gates and original verifiers.
+2. Inspect both package control/data archives, dependency metadata, permissions,
+   scripts and actual ELF identity. Include malformed path/ownership refusals.
+3. Boot official signed-checksum Ubuntu 22.04 and 24.04 amd64 cloud images with
+   NoCloud data in disposable full-system QEMU disks. Save image provenance,
+   package manager/systemd versions, raw command outputs and actual exits.
+4. Exercise fresh install (no services or live authorization), explicit safe
+   configuration and start, ordinary-user authorized IPC, cooperative stop,
+   upgrade, reboot, remove and purge. Verify UID/config/state retention and no
+   unintended start; test stop failure without deleting evidence. Synthetic USB
+   work stays within disposable guests; do not pass through host USB.
+5. Record failures as failures, source/ELF/package hashes and final clean commit
+   attribution before publication. Full lifecycle/GUI desktop and real USB scope
+   only pass when their actual assertions have executed.
+
+Primary-source research is being saved separately for Debian maintainer-script
+ordering and the two supported systemd versions. Official image provenance:
+[Jammy release](https://cloud-images.ubuntu.com/releases/jammy/release/),
+[Noble release](https://cloud-images.ubuntu.com/releases/noble/release/),
+[signed checksum verification](https://ubuntu.com/docs/public-images/public-images-how-to/verify-image-checksum/),
+[NoCloud datasource](https://docs.cloud-init.io/en/latest/reference/datasources/nocloud.html).
+No complete Phase 1/2/3/5/6/7 or physical G1/G2 acceptance follows from packaging.

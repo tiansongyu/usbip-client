@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-25：Debian 安装生命周期（开始）
+
+- 上轮E57是已验证实际进展；本轮从clean412b40ff重读完整Phase0–7目标、Git/工作日志、核心skill与既有GUI安装研究。使用technical-documentation和writing-technical-design；后者明确要求独立组件并行研究，故只委托Debian/systemd两只读research，不委托产品修改。先保存debian-installation-design：基础/GUI分包、默认不启服务/不授设备、固定路径检查/不递归chown、真实合作停止先于替换文件、配置/凭据/旧未决记录与UID跨remove/purge保留。完整Ubuntu磁盘guest与当前initramfs验收分开；两官方dated镜像及签名正在下载核验，无新安装/服务/USB结果。
+- 两次过大读输出截断，改小段核关键源码；猜不存在packaging与旧GUI配置路径的只读命令报错保留，无文件写入。helper启动期TERM注册晚于journal初始化是现有源码边界，unit不能把它包装为ready或硬阻塞可取消。
+
 ## 2026-10-25：前端跨进程原请求恢复（开始）
 
 - 上轮E56为已验证实际进展；从clean5962456d重读完整Phase0–7目标、Git/工作日志/核心skill、共享worker/state/checked preferences与GUI/规则/settled设计及既有两audit。沿用技术设计/UI错误恢复技能，单项搜索明确恢复下一步的指导适用；不新增agent/外部技术栈或重建README/site/global skill。先写frontend-intent-recovery-design：共享TUI/GUI私有XDG state、两原UUID/payload/protocol与最后draft、稳定endpoint/OFD锁、先实际持久后IPC、只原Query恢复，不以local metadata授USB能力或证明cleanup；Stop保持独立精确target。当前只有设计，无新实现或验收通过。XDG0.8及Linux flock/fsync主资料核对；先前大输出截断的关键源码按小段补读，猜两不存在QEMU路径的rg报错无副作用。
