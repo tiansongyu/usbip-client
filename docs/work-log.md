@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-25：自动规则持久拒绝回执（开始）
+
+- 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。
+- 先写settled-rule-decisions-design：独立root2 trusted入口/startup opt-in和严格disk4，不改原root1/disk2/3；新有限decision/query协议及正负ID统一去重，原positive journal保持，失败先核已commit原正向/healthy，再原Store持久拒绝，未知writer不得伪Rejected。GUI保原query协议/UUID/payload，精确Rejected后显式恢复draft且不rebase；计划真实暂停前端poll造成service CAS、IPC超时/renderer reload/agent重启后的原查询与旧Native I/O。当前仅设计，尚无新产品/测试成功；全目标active。
+
 ## 2026-10-25：GUI 自动共享规则编辑（开始）
 
 - 从clean4de41e0f重读完整Phase0–7任务、当前Git/日志/核心skill与共享state/worker/bridge、规则RPC/journal和原GUI/QEMU契约。沿用UI错误恢复与技术文档技能，本轮读取writing-technical-design；复用既有已审架构，不新增依赖或子agent，不重建README/站点/global skill，不缩减goal。
