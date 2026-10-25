@@ -97,6 +97,14 @@ def one(args):
         server_setup=guest('server','setup','server',args.backend,args.family)
         keys=server_setup['device_keys'];keyfile=private/'device-keys.json';save(keyfile,keys);client.upload([keyfile])
         client_setup=guest('client','setup','client',args.backend,args.family)
+        for role,vm in vms.items():
+            qmp=secure.physical.Qmp(vm.private/'qmp.sock',time.monotonic()+10,vm.process)
+            try:
+                qmp.call('object-del',{'id':'capture'})
+                qmp.call('object-add',{'qom-type':'filter-dump','id':'capture','netdev':'data','file':str(vm.out/'data.pcap')})
+            finally:qmp.close()
+        save(out/'capture-window.json',{'start':'both actual address/DAD/route readiness checks completed; before either product unit starts',
+            'boot_capture_retained':True,'packet_filtering_or_rewriting':False,'end':'actual original QEMU exit'})
         for role in vms:
             guest(role,'start-services')
             guest(role,'denied','server' if role=='server' else 'hid')
@@ -150,7 +158,7 @@ def one(args):
                 if role=='client':
                     removed=check_empty_vhci(upgraded['after'],held)
                     client.run('test ! -e '+shlex.quote('/sys/bus/usb/devices/'+removed[0])+' && test ! -e '+shlex.quote('/sys/bus/usb/devices/'+removed[1]),'old-local-generations-absent')
-                    guest('server','ready','server')
+                    guest('server','server-idle')
                     guest('client','start-services')
                 else:
                     require(upgraded['after']['host']==server_setup['baseline'],'original server driver/config/interface/node/generation baseline restored')

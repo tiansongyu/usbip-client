@@ -178,12 +178,14 @@ def jobs(action,profiles):
         assert response['journal_healthy'] and response['response']['result']==('started' if action=='start' else 'stop_accepted')
     return responses
 
-def ready(role):
+def ready(role,idle=False):
     for _ in range(300):
         all_sessions=[s for p in (['server'] if role=='server' else ['hid','serial']) for s in agent('sessions',p)['response']['sessions']]
         live=[s for s in all_sessions if not s['terminal']]
         desired=[s for s in live if s['role']=='export' and s['state']=='Available'] if role=='server' else [s for s in live if s['state']=='Connected' and s['evidence']=='local_enumeration']
-        if len(desired)==2:return {'sessions':all_sessions,'snapshot':snapshot()}
+        imports=[s for s in all_sessions if s['role']=='incoming']
+        if len(desired)==2 and (not idle or (len(imports)==2 and all(s['terminal'] and s['cleanup']=='verified' for s in imports))):
+            return {'sessions':all_sessions,'snapshot':snapshot()}
         time.sleep(.1)
     raise RuntimeError('actual session readiness observation limit; owners still require cleanup')
 
@@ -230,6 +232,7 @@ def main():
     elif a.action=='start-services':result=start()
     elif a.action=='start-jobs':result=jobs('start',a.args)
     elif a.action=='ready':result=ready(a.args[0])
+    elif a.action=='server-idle':result=ready('server',idle=True)
     elif a.action=='snapshot':result=snapshot()
     elif a.action=='probe':result=probe(int(a.args[0]))
     elif a.action=='denied':

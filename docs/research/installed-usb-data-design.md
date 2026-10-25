@@ -40,6 +40,15 @@ ftdi_sio modules explicitly as guest administrator; package scripts must not
 start usbipd or load modules. Native and USBFS own disjoint device pools and run
 in separate cases, never stacked on one device.
 
+Retain the entire boot data-NIC capture separately. Start a new unfiltered capture
+after both actual DAD/source-route readiness checks and before either product unit
+starts; end only at real QEMU exit. The original strict TLS classifier applies to
+this complete product window unchanged. Full-OS early boot can contain zero-source
+MLD traffic outside its older initramfs contract; do not rewrite/remove packets or
+relax that verifier to reclassify a failed whole-boot run. After client upgrade,
+wait for both original incoming owners to become terminal with verified cleanup
+before reimport; published export availability alone is not an engine release.
+
 ## Planned matrix
 
 | Backend / link | Server | Client |
