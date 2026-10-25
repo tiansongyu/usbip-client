@@ -59,15 +59,18 @@ def verify(evidence,args):
         assert re.search(r'^Uid:\s+1000\s+1000\s+1000\s+1000$',actor,re.M)
         assert all(re.search(r'^'+c+r':\s+0000000000000000$',actor,re.M)for c in ['CapInh','CapPrm','CapEff','CapAmb'])
         assert gui_sha in actor and 'TARGET=/dev/bus/usb/'not in actor
-        driver=(folder/(prefix+'-driver-actor.txt')).read_text();assert link.sha(DRIVER)in driver
+        driver=(folder/(prefix+'-driver-actor.txt')).read_text();assert link.sha(DRIVER)in driver and re.search(r'^Uid:\s+1000\s+1000\s+1000\s+1000$',driver,re.M)
+        assert read(prefix+'-session.json')['value']['capabilities']['browserName']=='wry'
         assert (folder/(prefix+'.wait')).read_text().strip()=='0'and 'local worker joined'in(folder/(prefix+'.stderr')).read_text()
         assert 'protocol=WM_DELETE_WINDOW'in(folder/(prefix+'-close.txt')).read_text()and 'sent=1'in(folder/(prefix+'-close.txt')).read_text()
+        assert re.search(r'timestamp=[1-9][0-9]*',(folder/(prefix+'-close.txt')).read_text())
         assert (folder/(prefix+'-pre-stat.txt')).read_text().split()[21]==(folder/(prefix+'-terminal-stat.txt')).read_text().split()[21]
         expanded=read(prefix+'-expanded.json')['value'];before=read(prefix+'-refreshed.json')['value'];after=read(prefix+'-terminal-dom.json')['value']
         assert all(v['open']and v['focused']for v in [expanded,before,after])
         assert int(before['health']['link']['last_reply_sequence'])>int(expanded['health']['link']['last_reply_sequence'])
         original=read(f'health-{phase}-client-pre.json')['response']['sessions'];target=before['health'];same=[s for s in original if s['session_id']==target['session_id']];assert len(same)==1
-        assert target['instance_id']==same[0]['instance_id']and target['link']['identity']==same[0]['link']['identity']
+        expected_identity={**same[0]['link']['identity'],'connection':str(same[0]['link']['identity']['connection'])}
+        assert target['instance_id']==same[0]['instance_id']and target['link']['identity']==expected_identity
         assert target['availability']=='live'and target['link']['phase']=='open'and target['link']['end']is None
         assert before['rtt']=='Last enqueue-to-reply RTT: '+target['link']['last_round_trip_micros']+' µs'
         ended=after['health'];assert ended['session_id']==target['session_id']and ended['instance_id']==target['instance_id']and ended['link']['identity']==target['link']['identity']
