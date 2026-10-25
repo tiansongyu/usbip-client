@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- clean c59c58d1完整门禁FAIL：core exit101，新真实并发Catalog group0/wave0 Io，service133/1FAIL；root已完成260个passed段但不可当全通过。GUI18/exit0，719输入与HEAD/clean guards true，CLI/helper仍原ELF、GUI已变059fc6，混合构建产物不用于验收构包。选定修复仍不足，保留原FAIL。按h2 active-stream graceful契约更新设计：在接受CONNECT1且双half仍open时立即宣布不再接新流，控制RTT在active流内推进；原EOS后只总poll原conn到TLS实际完成，不再idle发NO_ERROR/graceful adapter。不改ALPN/业务流/旧判据、不吞IO。
+
 - clean d329fe32最终transport82 PASS/0failed/ignored；原feded测试文件全部原字节为当前前缀（仅末尾追加无FIN abort负向），原half-close函数保持；真实shutdown release/stop/timeout/BrokenPipe四场景总join并核真实drop/typed结果。预先固定32轮 × 两原函数=64实际test进程全0，HEAD/clean guards true，debug ELF sha05d30066。当前仅特定transport修复证据，不称E59加密失败已定因或一般无竞态；最终设计重写以选定契约为主，历史候选/规格变更/FAIL保留。重写patch同一路径delete/add组合被工具原子拒绝后改exact update，无源文件损失。完整软件和安装态回归待运行。
 
 - d6707a77 retained refs + completed single-stream NO_ERROR的transport78/1FAIL，原half-close和有限pause真实TLS正常路径均PASS；唯一FAIL是前一graceful-PONG方案特有负向预期LocalDataStall，实际PeerEof。最终选择无需新stream grace RTT的完成流收尾：恢复feded原最强gate测试原文及PeerEof判据，不改原half-close；独立底层AsyncWrite.shutdown真实门测release/stop/timeout/IO，不以不存在PONG交换编造deadline失败。前所有候选/规格调整/FAIL都保留，无任意IO成功化。

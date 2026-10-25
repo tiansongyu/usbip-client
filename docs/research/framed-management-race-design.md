@@ -77,3 +77,21 @@ explicit public evidence without keys/disks, commit and normally push. Global
 README/site skill remains shared. Hardware G1/G2, installed ARM runtime, Windows
 USB, storage/ISO, permanent blocked-kernel/FS cancellation, power loss and full
 phases remain unverified.
+
+## Complete-gate finding and refined lifecycle
+
+The c59c58d1 full root gate fails the actual concurrent production Catalog test
+with I/O (group0/wave0); GUI18 passes. This invalidates delivery of that candidate
+despite its focused82/64 passes. Keep the failed full gate and mixed post-gate
+ELF identities; do not build acceptance packages from them.
+
+Refine the fixed-one-stream lifecycle using h2's documented active-stream graceful
+shutdown: immediately after accepting CONNECT stream1 and issuing its non-EOS
+response, announce that no further streams will be accepted. Both halves of that
+existing stream are still open, so the MAX-ID GOAWAY/PING progression occurs
+while it is active, not after idle EOF. Existing stream1 continues Catalog or
+IMPORT/USB traffic unchanged. Keep polling the original connection through actual
+TLS shutdown after its normal complete EOS/credit/FIN boundary. This removes the
+late-idle close adapter and NO_ERROR-abrupt candidate. No added stream, ALPN
+version, retry, sleep, ownership relaxation or I/O suppression is introduced.
+All original regressions and the production concurrent Catalog remain mandatory.

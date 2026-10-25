@@ -511,9 +511,7 @@ impl Drop for LinkIo {
     }
 }
 
-// The flag requests connection shutdown only after the single stream has fully
-// drained. The unique driver retains and polls the actual h2/TLS owner.
-type Connection = Box<dyn FnMut(&mut Context<'_>, bool) -> Poll<io::Result<()>> + Send>;
+type Connection = Pin<Box<dyn Future<Output = io::Result<()>> + Send>>;
 
 struct DriverGuard(Arc<Shared>);
 impl Drop for DriverGuard {
@@ -815,7 +813,7 @@ async fn driver(
             _ = stop.changed() => {},
             _ = &mut notified => {},
             result = poll_fn(|cx| {
-                let result = connection(cx, false);
+                let result = connection.as_mut().poll(cx);
                 if shared.write_pending(observed_pending(&mut flush)).is_err() { return Poll::Ready(Err(failed())); }
                 result
             }), if !connection_done => {
@@ -858,7 +856,7 @@ async fn driver(
                 if !*stop.borrow_and_update() { let _ = stop.changed().await; }
             } => LinkEnd::LocalStop,
             result = tokio::time::timeout(policy.response_timeout, poll_fn(|cx| {
-                let result = connection(cx, true);
+                let result = connection.as_mut().poll(cx);
                 if shared.write_pending(observed_pending(&mut flush)).is_err() {
                     return Poll::Ready(Err(failed()));
                 }
@@ -986,11 +984,11 @@ where
         .with_mut(|c| c.ping_pong().map(Quiet::new))
         .flatten()
         .ok_or(Error::LinkDriverFailed)?;
-    let connection: Connection = Box::new(move |cx, _closing| {
+    let connection: Connection = Box::pin(poll_fn(move |cx| {
         connection
             .with_mut(|c| Pin::new(c).poll(cx).map(|r| r.map_err(h2_error)))
             .unwrap_or_else(|| Poll::Ready(Err(failed())))
-    });
+    }));
     start(connection, receive, send, ping, flush, tuple, policy)
 }
 
@@ -1046,34 +1044,22 @@ where
         .with_mut(|c| c.ping_pong().map(Quiet::new))
         .flatten()
         .ok_or(Error::LinkDriverFailed)?;
-    let mut closing = false;
-    let connection: Connection = Box::new(move |cx, finish| {
+    // This fixed protocol admits exactly the already-open CONNECT stream1.
+    // Announce no future streams while both halves are still active, so h2
+    // finishes its grace exchange before idle EOF rather than racing it.
+    connection
+        .with_mut(|c| c.graceful_shutdown())
+        .ok_or(Error::LinkDriverFailed)?;
+    let connection: Connection = Box::pin(poll_fn(move |cx| {
         connection
-            .with_mut(|c| {
-                if finish && !closing {
-                    // Preserve rejection of an already-observed extra stream
-                    // or connection error before initiating this bounded close.
-                    match c.poll_accept(cx) {
-                        Poll::Ready(None) => return Poll::Ready(Ok(())),
-                        Poll::Ready(Some(Err(error))) => return Poll::Ready(Err(h2_error(error))),
-                        Poll::Ready(Some(Ok(_))) => return Poll::Ready(Err(failed())),
-                        Poll::Pending => {}
-                    }
-                    // The single application stream is already fully closed.
-                    // Keep its references alive through NO_ERROR GOAWAY/flush
-                    // and actual TLS shutdown; no new stream is admitted.
-                    c.abrupt_shutdown(h2::Reason::NO_ERROR);
-                    closing = true;
-                }
-                match c.poll_accept(cx) {
-                    Poll::Pending => Poll::Pending,
-                    Poll::Ready(None) => Poll::Ready(Ok(())),
-                    Poll::Ready(Some(Err(error))) => Poll::Ready(Err(h2_error(error))),
-                    Poll::Ready(Some(Ok(_))) => Poll::Ready(Err(failed())),
-                }
+            .with_mut(|c| match c.poll_accept(cx) {
+                Poll::Pending => Poll::Pending,
+                Poll::Ready(None) => Poll::Ready(Ok(())),
+                Poll::Ready(Some(Err(error))) => Poll::Ready(Err(h2_error(error))),
+                Poll::Ready(Some(Ok(_))) => Poll::Ready(Err(failed())),
             })
             .unwrap_or_else(|| Poll::Ready(Err(failed())))
-    });
+    }));
     start(connection, receive, send, ping, flush, tuple, policy)
 }
 
