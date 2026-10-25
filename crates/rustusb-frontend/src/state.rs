@@ -1,4 +1,5 @@
 use crate::Options;
+use crate::automation::{RulesPage, UnresolvedRule};
 use rustusb_core::application::{JobId, RequestId, SessionId};
 use rustusb_discovery::DeviceSnapshot;
 use rustusb_service::{
@@ -18,6 +19,15 @@ pub enum Mutation {
     StopJob(JobId),
     /// StopSession: finite frontend operation.
     StopSession(SessionId),
+    /// Edit one fixed profile with a distinct retained mutation UUID.
+    Rule {
+        /// Complete fixed profile effect.
+        profile: String,
+        /// Typed bounded definition or exact revision mutation.
+        mutation: rustusb_service::automation::RuleMutation,
+    },
+    /// Query the original rule mutation; never resubmit its payload.
+    ResolveRule,
 }
 #[derive(Debug)]
 /// Finite frontend control; validate user-controlled strings/options before queueing.
@@ -28,6 +38,15 @@ pub enum Command {
     Profile(String),
     /// Remote: finite frontend operation.
     Remote(bool),
+    /// Request independently qualified rule metadata while Settings is active.
+    Rules(bool),
+    /// Switch GUI observation surfaces in one admitted operation.
+    Observe {
+        /// Request the authenticated remote observer.
+        remote: bool,
+        /// Request bounded rule metadata.
+        rules: bool,
+    },
     /// Options: finite frontend operation.
     Options(Options),
     /// SaveSettings: finite frontend operation.
@@ -58,6 +77,10 @@ pub enum PageKind {
     Sessions,
     /// Audit: finite frontend operation.
     Audit,
+    /// Independently paginated automatic rules.
+    Rules,
+    /// Independently sequenced automatic-rule audit.
+    RuleEvents,
 }
 #[derive(Debug, Clone)]
 /// Original issued Start identity retained until a real Started response.
@@ -120,6 +143,10 @@ pub struct Snapshot {
     pub remote_page: bool,
     /// Original issued Start intent retained until a real Started reply.
     pub unresolved: Option<Unresolved>,
+    /// Bounded independently qualified automatic-sharing metadata.
+    pub rules: RulesPage,
+    /// Original issued rule edit, separate from Start and preferences.
+    pub unresolved_rule: Option<UnresolvedRule>,
 }
 impl Snapshot {
     /// Initialize an unsampled view; no operation has been issued.
@@ -150,6 +177,8 @@ impl Snapshot {
             remote_status: "Open Remote to discover".into(),
             remote_page: false,
             unresolved: None,
+            rules: RulesPage::default(),
+            unresolved_rule: None,
         }
     }
     /// Retain pages with explicit stale status and discard live-health claims.
@@ -160,9 +189,17 @@ impl Snapshot {
         self.audit_status = "Stale: agent unavailable; retained page".into();
         self.journal = None;
         self.health.clear();
+        self.rules.current = false;
+        self.rules.status = "Stale: agent unavailable; retained rule page".into();
+        self.rules.events_status = "Stale: agent unavailable; retained event page".into();
     }
     /// Discard metadata/cursors from the previous selection.
     pub fn clear_profile(&mut self) {
+        let requested = self.rules.requested;
+        self.rules = RulesPage {
+            requested,
+            ..RulesPage::default()
+        };
         self.jobs.clear();
         self.sessions.clear();
         self.health.clear();
@@ -205,6 +242,8 @@ impl Snapshot {
             }
             Mutation::StopJob(job_id) => Some(Request::StopJob { job_id }),
             Mutation::StopSession(session_id) => Some(Request::StopSession { session_id }),
+            Mutation::Rule { profile, mutation } => self.rule_request(profile, mutation, fresh?),
+            Mutation::ResolveRule => self.rule_retry(),
         }
     }
     /// Apply the actual service reply, keeping cleanup and admission distinct.

@@ -1,8 +1,9 @@
-use rustusb_core::application::{JobId, SessionId};
+use rustusb_core::application::{JobId, RuleId, SessionId};
 use rustusb_frontend::{
     Options,
     state::{Command, Envelope, Mutation, PageKind, Snapshot, text},
 };
+use rustusb_service::automation::{ExpectedRevision, RuleMutation, RuleSpec, RuleView};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::sync::Mutex;
@@ -73,6 +74,31 @@ pub(crate) enum Action {
     Remote {
         active: bool,
     },
+    Automation {
+        active: bool,
+    },
+    Surface {
+        remote: bool,
+        rules: bool,
+    },
+    RuleCreate {
+        spec: RuleSpec,
+    },
+    RuleReplace {
+        id: String,
+        revision: String,
+        spec: RuleSpec,
+    },
+    RuleSetEnabled {
+        id: String,
+        revision: String,
+        enabled: bool,
+    },
+    RuleDelete {
+        id: String,
+        revision: String,
+    },
+    RuleResolve {},
     Start {},
     StopJob {
         id: String,
@@ -97,6 +123,8 @@ pub(crate) enum Section {
     Jobs,
     Sessions,
     Audit,
+    Rules,
+    RuleEvents,
 }
 impl Action {
     fn command(self, view: &Snapshot) -> Result<Command, String> {
@@ -107,6 +135,67 @@ impl Action {
             }
             Self::Profile { .. } => return Err("Select a readable profile".into()),
             Self::Remote { active } => Command::Remote(active),
+            Self::Automation { active } => Command::Rules(active),
+            Self::Surface { remote, rules } => {
+                if remote && rules {
+                    return Err("Choose one observation surface".into());
+                }
+                Command::Observe { remote, rules }
+            }
+            Self::RuleResolve {} if view.unresolved_rule.is_some() => {
+                Command::Mutate(Mutation::ResolveRule)
+            }
+            Self::RuleResolve {} => return Err("No original rule edit to query".into()),
+            Self::RuleCreate { spec } => {
+                rule_grant(view, &spec)?;
+                rule_command(
+                    view,
+                    RuleMutation::Create {
+                        spec,
+                        enabled: false,
+                    },
+                )?
+            }
+            Self::RuleReplace { id, revision, spec } => {
+                let (rule, expected_revision) = observed_rule(view, &id, &revision)?;
+                rule_grant(view, &spec)?;
+                rule_command(
+                    view,
+                    RuleMutation::Replace {
+                        rule_id: rule.id.clone(),
+                        expected_revision,
+                        spec,
+                    },
+                )?
+            }
+            Self::RuleSetEnabled {
+                id,
+                revision,
+                enabled,
+            } => {
+                let (rule, expected_revision) = observed_rule(view, &id, &revision)?;
+                if enabled {
+                    rule_grant(view, &rule.spec)?;
+                }
+                rule_command(
+                    view,
+                    RuleMutation::SetEnabled {
+                        rule_id: rule.id.clone(),
+                        expected_revision,
+                        enabled,
+                    },
+                )?
+            }
+            Self::RuleDelete { id, revision } => {
+                let (rule, expected_revision) = observed_rule(view, &id, &revision)?;
+                rule_command(
+                    view,
+                    RuleMutation::Delete {
+                        rule_id: rule.id.clone(),
+                        expected_revision,
+                    },
+                )?
+            }
             Self::Start {} => Command::Mutate(Mutation::Start(
                 view.profile.clone().ok_or("No readable profile selected")?,
             )),
@@ -143,6 +232,8 @@ impl Action {
                     Section::Jobs => PageKind::Jobs,
                     Section::Sessions => PageKind::Sessions,
                     Section::Audit => PageKind::Audit,
+                    Section::Rules => PageKind::Rules,
+                    Section::RuleEvents => PageKind::RuleEvents,
                 };
                 if next {
                     Command::Next(kind)
@@ -152,6 +243,61 @@ impl Action {
             }
         })
     }
+}
+
+fn rule_command(view: &Snapshot, mutation: RuleMutation) -> Result<Command, String> {
+    if view.unresolved_rule.is_some() {
+        return Err("Original rule edit unresolved; query only its original UUID".into());
+    }
+    if !view.rules.requested || !view.rules.current {
+        return Err("Refresh the current rule page before editing".into());
+    }
+    Ok(Command::Mutate(Mutation::Rule {
+        profile: view.profile.clone().ok_or("No readable profile selected")?,
+        mutation,
+    }))
+}
+fn rule_grant(view: &Snapshot, spec: &RuleSpec) -> Result<(), String> {
+    let grant = view
+        .rules
+        .grant
+        .as_ref()
+        .ok_or("No automation grant for this profile")?;
+    if view.rules.policy_enabled != Some(true)
+        || !grant.triggers.contains(&spec.trigger())
+        || !grant.rearm.contains(&spec.rearm())
+    {
+        return Err("Rule is outside the administrator's fixed-profile grant".into());
+    }
+    Ok(())
+}
+fn observed_rule<'a>(
+    view: &'a Snapshot,
+    id: &str,
+    revision: &str,
+) -> Result<(&'a RuleView, ExpectedRevision), String> {
+    let id = RuleId::new(id).map_err(|_| "Invalid rule ID")?;
+    if revision.is_empty()
+        || revision.len() > 20
+        || revision.starts_with('0')
+        || !revision.bytes().all(|b| b.is_ascii_digit())
+    {
+        return Err("Revision must be a canonical positive decimal string".into());
+    }
+    let value = revision
+        .parse::<u64>()
+        .map_err(|_| "Invalid rule revision")?;
+    let revision = ExpectedRevision::new(value).map_err(|_| "Exhausted rule revision")?;
+    let rule = view
+        .rules
+        .rules
+        .iter()
+        .find(|r| r.id == id && Some(&r.profile) == view.profile.as_ref() && !r.deleted)
+        .ok_or("Rule is outside the current page; refresh first")?;
+    if rule.revision != value {
+        return Err("Rule revision changed; inspect the latest state before editing again".into());
+    }
+    Ok((rule, revision))
 }
 
 pub(crate) fn local_origin(url: &tauri::Url) -> bool {
@@ -245,6 +391,8 @@ fn projection(view: &Snapshot, sequence: u64) -> Result<String, String> {
             "status":view.status,"jobs_status":view.jobs_status,"sessions_status":view.sessions_status,"audit_status":view.audit_status,
             "local_status":view.local_status,"remote_status":view.remote_status,"remote_page":view.remote_page,
             "unresolved":view.unresolved.as_ref().map(|i|json!({"profile":i.profile,"request_id":i.request_id}))
+            ,"rules":{"requested":view.rules.requested,"current":view.rules.current,"policy_enabled":view.rules.policy_enabled,"grant":view.rules.grant,"rules":view.rules.rules,"next_rule":view.rules.next_rule,"status":view.rules.status,"events":view.rules.events,"next_event":view.rules.next_event,"events_status":view.rules.events_status,"result":view.rules.result}
+            ,"unresolved_rule":view.unresolved_rule.as_ref().map(|i|json!({"profile":i.profile,"request_id":i.request_id,"mutation":i.mutation}))
         }),
         MAX_VIEW,
     )
@@ -280,6 +428,198 @@ pub(crate) async fn stopped(mut receiver: watch::Receiver<bool>) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn rule_view() -> Result<Snapshot, Box<dyn std::error::Error>> {
+        use rustusb_service::automation::{
+            AutomationGrantInfo, RearmKind, RuleStatus, TriggerKind,
+        };
+        let mut view = Snapshot::new(Options::default());
+        view.profile = Some("fixed".into());
+        view.rules.requested = true;
+        view.rules.current = true;
+        view.rules.policy_enabled = Some(true);
+        view.rules.grant = Some(AutomationGrantInfo {
+            devices: vec![],
+            triggers: vec![TriggerKind::LocalProfileReady],
+            rearm: vec![RearmKind::Once],
+            max_rules: 4,
+        });
+        view.rules.rules.push(RuleView {
+            id: RuleId::new("00000000-0000-4000-8000-000000000001")?,
+            revision: 9_007_199_254_740_993,
+            operator_uid: 1000,
+            profile: "fixed".into(),
+            spec: RuleSpec::new(
+                "keyboard".into(),
+                TriggerKind::LocalProfileReady,
+                2,
+                RearmKind::Once,
+            )?,
+            enabled: false,
+            paused_by_user: false,
+            deleted: false,
+            status: RuleStatus::Disabled,
+            last_origin: None,
+            last_job: None,
+            observation_error: None,
+            admission_error: None,
+        });
+        Ok(view)
+    }
+    #[test]
+    fn exact_rule_revisions_reject_lossy_or_noncanonical_inputs()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let view = rule_view()?;
+        let id = view.rules.rules[0].id.to_string();
+        for revision in [
+            "",
+            "0",
+            "01",
+            "+1",
+            " 1",
+            "1e3",
+            "9007199254740992",
+            "18446744073709551615",
+            "18446744073709551616",
+            "999999999999999999999999",
+        ] {
+            assert!(
+                Action::RuleDelete {
+                    id: id.clone(),
+                    revision: revision.into()
+                }
+                .command(&view)
+                .is_err()
+            );
+        }
+        match (Action::RuleDelete {
+            id,
+            revision: "9007199254740993".into(),
+        })
+        .command(&view)?
+        {
+            Command::Mutate(Mutation::Rule {
+                mutation:
+                    RuleMutation::Delete {
+                        expected_revision, ..
+                    },
+                ..
+            }) => assert_eq!(expected_revision.get(), 9_007_199_254_740_993),
+            _ => return Err("wrong exact mutation".into()),
+        }
+        Ok(())
+    }
+    #[test]
+    fn rule_admission_requires_current_identity_and_never_invents_a_grant()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let mut view = rule_view()?;
+        let rule = view.rules.rules[0].clone();
+        view.rules.current = false;
+        assert!(
+            Action::RuleCreate {
+                spec: rule.spec.clone()
+            }
+            .command(&view)
+            .is_err()
+        );
+        view.rules.current = true;
+        view.rules.grant = None;
+        assert!(
+            Action::RuleSetEnabled {
+                id: rule.id.to_string(),
+                revision: rule.revision.to_string(),
+                enabled: true
+            }
+            .command(&view)
+            .is_err()
+        );
+        // Losing a grant must not prevent a still-authorized future-only disable/delete.
+        assert!(
+            Action::RuleSetEnabled {
+                id: rule.id.to_string(),
+                revision: rule.revision.to_string(),
+                enabled: false
+            }
+            .command(&view)
+            .is_ok()
+        );
+        view.profile = Some("another".into());
+        assert!(
+            Action::RuleDelete {
+                id: rule.id.to_string(),
+                revision: rule.revision.to_string()
+            }
+            .command(&view)
+            .is_err()
+        );
+        Ok(())
+    }
+    #[test]
+    fn rule_actions_are_closed_and_create_is_always_disabled()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let view = rule_view()?;
+        let spec = view.rules.rules[0].spec.clone();
+        assert!(matches!(
+            Action::RuleCreate { spec: spec.clone() }.command(&view)?,
+            Command::Mutate(Mutation::Rule {
+                mutation: RuleMutation::Create { enabled: false, .. },
+                ..
+            })
+        ));
+        for extra in [
+            json!({"enabled":true}),
+            json!({"request_id":"chosen"}),
+            json!({"operator_uid":0}),
+            json!({"path":"/tmp/policy"}),
+        ] {
+            let mut value = json!({"action":"rule_create","spec":spec});
+            value
+                .as_object_mut()
+                .ok_or("object missing")?
+                .extend(extra.as_object().ok_or("extra missing")?.clone());
+            assert!(serde_json::from_value::<Action>(value).is_err());
+        }
+        assert!(
+            serde_json::from_value::<Action>(json!({"action":"rule_delete","id":"x","revision":1}))
+                .is_err()
+        );
+        assert!(serde_json::from_value::<Action>(json!({"action":"rule_create","spec":{"name":"x","trigger":"local_profile_ready","settle_seconds":2,"rearm":"once","script":"run"}})).is_err());
+        assert!(
+            Action::Surface {
+                remote: true,
+                rules: true
+            }
+            .command(&view)
+            .is_err()
+        );
+        Ok(())
+    }
+    #[test]
+    fn rule_identity_survives_renderer_loss_and_blocks_new_edits()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let mut view = rule_view()?;
+        let spec = view.rules.rules[0].spec.clone();
+        let request =
+            rustusb_core::application::RequestId::new("00000000-0000-4000-8000-000000000002")?;
+        view.rule_request(
+            "original".into(),
+            RuleMutation::Create {
+                spec: spec.clone(),
+                enabled: false,
+            },
+            request.clone(),
+        );
+        assert!(Action::RuleCreate { spec }.command(&view).is_err());
+        assert!(matches!(
+            Action::RuleResolve {}.command(&view)?,
+            Command::Mutate(Mutation::ResolveRule)
+        ));
+        let value: Value = serde_json::from_str(&projection(&view, 1)?)?;
+        assert_eq!(value["unresolved_rule"]["request_id"], request.to_string());
+        assert_eq!(value["unresolved_rule"]["profile"], "original");
+        assert_eq!(value["rules"]["rules"][0]["revision"], "9007199254740993");
+        assert_eq!(value["pending"], "1");
+        Ok(())
+    }
     #[test]
     fn admission_retains_slot_after_queue_is_drained() -> Result<(), String> {
         let (tx, mut rx) = mpsc::channel(1);

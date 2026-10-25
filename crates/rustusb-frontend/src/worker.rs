@@ -1,7 +1,7 @@
 use crate::{Settings, state::*};
 use rustusb_core::{
     Error, Result,
-    application::{JobId, RequestId, SessionId},
+    application::{JobId, RequestId, RuleId, SessionId},
 };
 use rustusb_discovery::{DeviceMonitor, DeviceSubscription};
 use rustusb_service::{
@@ -22,6 +22,8 @@ struct Worker {
     job_after: Option<JobId>,
     session_after: Option<SessionId>,
     audit_after: u64,
+    rule_after: Option<RuleId>,
+    rule_event_after: u64,
     remote_page: bool,
     remote: Option<CatalogMonitor>,
     subscription: Option<CatalogSubscription>,
@@ -150,7 +152,7 @@ impl Worker {
         if self.allowed(Action::Audit) {
             match self
                 .read(Request::Audit {
-                    profile,
+                    profile: profile.clone(),
                     after: self.audit_after,
                 })
                 .await
@@ -180,13 +182,96 @@ impl Worker {
             self.view.next_audit = None;
             self.view.audit_status = "Audit permission unavailable".into();
         }
+        self.refresh_rules().await;
         self.ensure_remote().await;
+    }
+    async fn refresh_rules(&mut self) {
+        if !self.view.rules.requested {
+            return;
+        }
+        let Some(profile) = self.view.profile.clone() else {
+            return;
+        };
+        self.view.rules.current = false;
+        match self
+            .read(Request::Rules {
+                profile: profile.clone(),
+                after: self.rule_after.clone(),
+            })
+            .await
+        {
+            Ok(Response::Rules {
+                policy_enabled,
+                grant,
+                rules,
+                next_after,
+            }) if rules.len() <= 16 => {
+                self.view.rules.policy_enabled = Some(policy_enabled);
+                self.view.rules.grant = grant;
+                self.view.rules.rules = rules;
+                self.view.rules.next_rule = next_after;
+                self.view.rules.current = true;
+                self.view.rules.status = if !policy_enabled {
+                    "Policy disabled by administrator"
+                } else if self.view.rules.grant.is_none() {
+                    "No automation grant for this OS peer/profile"
+                } else {
+                    "Current rule page (up to 16); whole fixed profile"
+                }
+                .into();
+            }
+            result => {
+                if denied(&result) {
+                    self.view.rules.grant = None;
+                    self.view.rules.rules.clear();
+                    self.view.rules.next_rule = None;
+                    self.view.rules.policy_enabled = None;
+                }
+                self.view.rules.status = read_status(&result);
+            }
+        }
+        if !self.allowed(Action::Audit) {
+            self.view.rules.events.clear();
+            self.view.rules.next_event = None;
+            self.view.rules.events_status = "Rule audit permission unavailable".into();
+            return;
+        }
+        match self
+            .read(Request::RuleEvents {
+                profile,
+                after: self.rule_event_after,
+            })
+            .await
+        {
+            Ok(Response::RuleEvents {
+                events,
+                next_after,
+                oldest_available,
+                gap,
+            }) if events.len() <= 16 => {
+                self.view.rules.next_event = (!events.is_empty()
+                    && next_after > self.rule_event_after)
+                    .then_some(next_after);
+                self.view.rules.events = events;
+                self.view.rules.events_status =
+                    format!("Rule audit page; gap={gap}; oldest={oldest_available}");
+            }
+            result => {
+                if denied(&result) {
+                    self.view.rules.events.clear();
+                    self.view.rules.next_event = None;
+                }
+                self.view.rules.events_status = read_status(&result);
+            }
+        }
     }
     async fn reset(&mut self) {
         self.close_remote().await;
         self.job_after = None;
         self.session_after = None;
         self.audit_after = 0;
+        self.rule_after = None;
+        self.rule_event_after = 0;
         self.view.clear_profile();
     }
     async fn close_remote(&mut self) {
@@ -260,6 +345,29 @@ impl Worker {
                 self.view.remote_page = active;
                 self.ensure_remote().await;
             }
+            Command::Rules(active) => {
+                self.view.rules.requested = active;
+                if active {
+                    self.refresh_rules().await;
+                } else {
+                    self.view.rules.current = false;
+                    self.view.rules.status =
+                        "Paused: Settings is off-page; retained metadata".into();
+                }
+            }
+            Command::Observe { remote, rules } => {
+                self.remote_page = remote;
+                self.view.remote_page = remote;
+                self.view.rules.requested = rules;
+                self.ensure_remote().await;
+                if rules {
+                    self.refresh_rules().await;
+                } else {
+                    self.view.rules.current = false;
+                    self.view.rules.status =
+                        "Paused: Settings is off-page; retained metadata".into();
+                }
+            }
             Command::Options(options) => {
                 self.view.options = options;
                 self.close_remote().await;
@@ -288,6 +396,16 @@ impl Worker {
                             self.audit_after = cursor
                         }
                     }
+                    PageKind::Rules => {
+                        if let Some(cursor) = self.view.rules.next_rule.clone() {
+                            self.rule_after = Some(cursor);
+                        }
+                    }
+                    PageKind::RuleEvents => {
+                        if let Some(cursor) = self.view.rules.next_event {
+                            self.rule_event_after = cursor;
+                        }
+                    }
                 }
                 self.refresh().await;
             }
@@ -296,6 +414,8 @@ impl Worker {
                     PageKind::Jobs => self.job_after = None,
                     PageKind::Sessions => self.session_after = None,
                     PageKind::Audit => self.audit_after = 0,
+                    PageKind::Rules => self.rule_after = None,
+                    PageKind::RuleEvents => self.rule_event_after = 0,
                 };
                 self.refresh().await;
             }
@@ -356,7 +476,16 @@ impl Worker {
         self.view.status = self.view.preferences_status.clone();
     }
     async fn mutate(&mut self, action: Mutation) {
-        let fresh = if matches!(&action, Mutation::Start(_)) && self.view.unresolved.is_none() {
+        let is_rule = matches!(&action, Mutation::Rule { .. } | Mutation::ResolveRule);
+        if matches!(&action, Mutation::Rule { .. }) && self.view.unresolved_rule.is_some() {
+            self.view.rules.result =
+                "Original rule edit unresolved; query only its original UUID".into();
+            self.view.status = self.view.rules.result.clone();
+            return;
+        }
+        let needs_id = (matches!(&action, Mutation::Start(_)) && self.view.unresolved.is_none())
+            || matches!(&action, Mutation::Rule { .. });
+        let fresh = if needs_id {
             match tokio::task::spawn_blocking(|| {
                 RequestId::new(std::fs::read_to_string("/proc/sys/kernel/random/uuid")?.trim_end())
             })
@@ -364,7 +493,8 @@ impl Worker {
             {
                 Ok(Ok(id)) => Some(id),
                 _ => {
-                    self.view.status = "Could not generate start request identity".into();
+                    self.view.status =
+                        "Could not generate request identity; no request issued".into();
                     return;
                 }
             }
@@ -379,6 +509,12 @@ impl Worker {
         };
         self.view.status =
             "Request issued; result pending; service jobs outlive this frontend".into();
+        if is_rule {
+            self.view.rules.result = self.view.status.clone();
+            self.view.rules.current = false;
+            self.view.rules.status =
+                "Rule edit/query issued; refresh current rules before a new edit".into();
+        }
         self.publish();
         // Deliberately do not race an issued mutation against frontend shutdown.
         match ipc::call(&self.manifest, request).await {
@@ -388,13 +524,20 @@ impl Worker {
                 ..
             }) => {
                 self.view.journal = Some(journal_healthy);
-                self.view.mutation_response(response);
+                if is_rule {
+                    self.view.rule_response(response);
+                } else {
+                    self.view.mutation_response(response);
+                }
             }
             Err(error) => {
                 self.view.status = format!(
                     "Response unknown ({:?}); inspect jobs; use only original retry identity",
                     Failure::from_error(&error)
-                )
+                );
+                if is_rule {
+                    self.view.rules.result = self.view.status.clone();
+                }
             }
         }
     }
@@ -402,6 +545,7 @@ impl Worker {
 fn failure(code: Failure) -> Error {
     match code {
         Failure::Permission => Error::Permission("agent denied".into()),
+        Failure::Unsupported => Error::Unsupported("agent operation unavailable".into()),
         _ => Error::State(format!("agent {code:?}")),
     }
 }
@@ -459,6 +603,8 @@ pub async fn run(
         job_after: None,
         session_after: None,
         audit_after: 0,
+        rule_after: None,
+        rule_event_after: 0,
         remote_page: false,
         remote: None,
         subscription: None,
@@ -506,11 +652,21 @@ pub async fn run(
         Ok(owner) => owner.shutdown().await,
         Err(_) => Ok(()),
     };
+    let mut unresolved = Vec::new();
     if let Some(intent) = worker.view.unresolved {
-        return Err(Error::State(format!(
+        unresolved.push(format!(
             "start outcome unresolved: profile {} request_id {}; reconcile jobs or use agent start --retry --request-id",
             intent.profile, intent.request_id
-        )));
+        ));
+    }
+    if let Some(intent) = worker.view.unresolved_rule {
+        unresolved.push(format!(
+            "rule edit outcome unresolved: profile {} request_id {}; reconcile rules/events or use agent rule retry; no edit resubmitted",
+            intent.profile, intent.request_id
+        ));
+    }
+    if !unresolved.is_empty() {
+        return Err(Error::State(unresolved.join("; ")));
     }
     local_result?;
     worker.join_error.map_or(Ok(()), Err)

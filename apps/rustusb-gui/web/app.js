@@ -4,6 +4,7 @@
   const $ = id => document.getElementById(id);
   const pages = ['Local devices', 'Remote devices', 'Connections', 'Activity', 'System', 'Settings'];
   let view = null, page = 0, selected = null, detail = null, detailKey = null;
+  let ruleDraft = null, ruleEditor = null, preferencesForm = null;
   let waiting = null, dispatching = false, query = '', eligible = false, showDetails = false, destroyed = false;
   const node = (tag, text, className) => {
     const element = document.createElement(tag);
@@ -26,7 +27,7 @@
     $('profile').disabled = disabled || !view?.profiles?.length;
     $('start').disabled = disabled || !view?.profile;
     $('start').textContent = view?.unresolved ? 'Resolve original start' : 'Start profile';
-    document.querySelectorAll('[data-action]').forEach(button => { button.disabled = disabled; });
+    document.querySelectorAll('[data-action]').forEach(button => { button.disabled = disabled || button.dataset.unavailable === 'true'; });
   }
   async function confirm(title, description, command) {
     if (busy()) return;
@@ -35,7 +36,7 @@
     dialog.showModal();
     dialog.querySelector('[value="cancel"]').focus();
     await new Promise(resolve => dialog.addEventListener('close', resolve, { once: true }));
-    if (dialog.returnValue === 'confirm') await action(command);
+    if (dialog.returnValue === 'confirm') { if (typeof command === 'function') command(); else await action(command); }
   }
   const button = (label, callback, className) => {
     const item = node('button', label, className); item.type = 'button'; item.dataset.action = 'true';
@@ -94,7 +95,7 @@
   function pager(section, next) {
     const bar = node('div', null, 'pager');
     bar.append(button('First page', () => action({ action: 'page', section, next: false })), button('Next page', () => action({ action: 'page', section, next: true })));
-    bar.lastChild.disabled = busy() || !next; return bar;
+    unavailable(bar.lastChild, !next); return bar;
   }
   function renderConnections(disclosures) {
     const content = $('content');
@@ -139,22 +140,113 @@
     const facts = [['Application', 'RustUSB · native Linux console'], ['Process privilege', 'Ordinary user; the agent independently authorizes every IPC operation'], ['Agent', view.status], ['Journal', view.journal === null ? 'Not sampled' : view.journal ? 'Last response healthy' : 'Unhealthy; new admission refused'], ['Local observation', view.local_status], ['Remote observation', view.remote_status], ['Refresh', view.options.auto_refresh ? `After completion + ${view.options.refresh_seconds}s` : 'Automatic service polling paused'], ['USB ownership', 'Agent jobs continue after this window closes'], ['Compatibility', 'Discovery is metadata. Use the documented device-specific test evidence.']];
     facts.forEach(([term, value]) => list.append(node('dt', term), node('dd', value))); $('content').append(list); $('section-status').textContent = 'Current frontend observations; no hardware compatibility claim';
   }
+  function unavailable(item, value) {
+    item.dataset.unavailable = String(value); item.disabled = busy() || value; return item;
+  }
+  function ruleError(message, field) {
+    const summary = $('rule-errors');
+    if (summary) { summary.textContent = message; summary.hidden = false; summary.focus(); }
+    else notice(message);
+    if (field) field.setAttribute('aria-invalid', 'true');
+  }
+  function newRuleDraft(rule = null) {
+    const grant = view.rules.grant;
+    ruleDraft = { profile: view.profile, id: rule?.id || null, revision: rule?.revision || null,
+      spec: rule ? { ...rule.spec } : { name: '', trigger: grant?.triggers[0] || 'local_profile_ready', settle_seconds: '2', rearm: grant?.rearm[0] || 'once' } };
+    ruleEditor = null; renderPage(); $('rule-name')?.focus();
+  }
+  function renderRuleEditor() {
+    if (!ruleDraft) return null;
+    if (ruleEditor) return ruleEditor;
+    const form = node('form', null, 'settings rule-editor'); form.noValidate = true;
+    const errors = node('p', '', 'unresolved'); errors.id = 'rule-errors'; errors.dataset.focus = 'rule-errors'; errors.tabIndex = -1; errors.hidden = true; errors.setAttribute('role', 'alert');
+    form.append(node('h3', ruleDraft.id ? 'Edit definition' : 'New disabled rule'),
+      node('p', `Draft profile: ${ruleDraft.profile}${ruleDraft.id ? ` · Rule ${ruleDraft.id} · Original revision ${ruleDraft.revision}` : ''}. Drafts remain in this window; refresh never rebases them.`, 'section-note'), errors);
+    const fields = {};
+    for (const [key, title, choices] of [['name', 'Rule name (1–64 UTF-8 bytes)', null], ['trigger', 'Condition', ['local_profile_ready', 'remote_device_available']], ['settle_seconds', 'Settle interval (2–120 seconds)', null], ['rearm', 'Rearm policy', ['once', 'new_observation']]]) {
+      const input = node(choices ? 'select' : 'input'); input.id = `rule-${key === 'settle_seconds' ? 'settle' : key}`; input.dataset.focus = input.id;
+      if (choices) choices.forEach(value => { const option = node('option', value); option.value = value; input.append(option); });
+      else { input.type = 'text'; input.maxLength = key === 'name' ? 64 : 3; if (key !== 'name') input.inputMode = 'numeric'; }
+      input.value = ruleDraft.spec[key]; fields[key] = input;
+      input.setAttribute('aria-describedby', 'rule-errors');
+      input.addEventListener('input', () => { ruleDraft.spec[key] = input.value; input.removeAttribute('aria-invalid'); errors.hidden = true; });
+      const label = node('label', title); label.htmlFor = input.id; label.append(input); form.append(label);
+    }
+    const submit = button(ruleDraft.id ? 'Save definition' : 'Create disabled rule', () => {
+      const spec = { ...ruleDraft.spec };
+      if (!spec.name || spec.name.trim() !== spec.name || new TextEncoder().encode(spec.name).length > 64 || /[\u0000-\u001f\u007f-\u009f]/u.test(spec.name)) { ruleError('Enter a name of 1–64 UTF-8 bytes, without outer spaces or control characters.', fields.name); return; }
+      if (!/^[0-9]{1,3}$/.test(spec.settle_seconds) || Number(spec.settle_seconds) < 2 || Number(spec.settle_seconds) > 120) { ruleError('Settle interval must be 2–120 whole seconds.', fields.settle_seconds); return; }
+      if (ruleDraft.profile !== view.profile) { ruleError('This draft belongs to another profile. Return to its profile or choose New disabled rule.'); return; }
+      if (!view.rules.current) { ruleError('Rule metadata is stale. Refresh the selected profile before submitting.'); return; }
+      if (ruleDraft.id && !view.rules.rules.some(r => r.id === ruleDraft.id && r.revision === ruleDraft.revision && !r.deleted)) { ruleError('The rule revision changed. Your draft is retained. Inspect the latest definition before choosing Edit definition again.'); return; }
+      spec.settle_seconds = Number(spec.settle_seconds);
+      const command = ruleDraft.id ? { action: 'rule_replace', id: ruleDraft.id, revision: ruleDraft.revision, spec } : { action: 'rule_create', spec };
+      confirm(ruleDraft.id ? 'Replace this rule definition?' : 'Create a disabled rule?', `Complete fixed profile ${ruleDraft.profile}. ${ruleDraft.id ? `Rule ${ruleDraft.id}, revision ${ruleDraft.revision}. Replacing an enabled rule can change future triggering.` : 'The rule remains disabled until explicit Enable / rearm.'} Current jobs and their cleanup are independent.`, command);
+    });
+    submit.id = 'rule-submit'; form.append(submit);
+    form.addEventListener('submit', event => { event.preventDefault(); submit.click(); });
+    ruleEditor = form; return form;
+  }
+  function renderRules() {
+    const meta = view.rules, content = $('content'), block = node('section', null, 'block automation');
+    block.append(node('h2', 'Automatic sharing'), node('p', meta.status, 'section-note'),
+      node('p', 'Rules affect the administrator’s complete fixed profile. Disable and Delete change future intent; use Connections to stop an existing job and inspect actual cleanup.', 'section-note'));
+    const result = node('p', meta.result, 'section-note'); result.id = 'rule-result'; result.setAttribute('role', 'status'); block.append(result);
+    if (meta.grant) {
+      block.append(node('p', `Granted device pool (${meta.grant.devices.length}); quota ${meta.grant.max_rules} rules. Conditions: ${meta.grant.triggers.join(', ')}. Rearm: ${meta.grant.rearm.join(', ')}.`, 'section-note'));
+      const pool = node('ul'); meta.grant.devices.forEach(key => pool.append(node('li', key, 'data-id'))); block.append(pool);
+    }
+    const canCreate = meta.current && meta.policy_enabled === true && !!meta.grant && !view.unresolved_rule;
+    const create = button('New disabled rule', () => { if (ruleDraft) confirm('Replace the current draft?', 'The current unsaved draft will be replaced with a new disabled-rule draft for the selected profile.', () => newRuleDraft()); else newRuleDraft(); }); create.id = 'rule-new'; block.append(unavailable(create, !canCreate));
+    if (ruleDraft) {
+      const editor = renderRuleEditor();
+      unavailable(editor.querySelector('#rule-submit'), !canCreate || ruleDraft.profile !== view.profile);
+      block.append(editor);
+    }
+    if (!meta.rules.length) block.append(empty('No rules in this sampled page. An administrator automation grant is required to create one.'));
+    for (const rule of meta.rules) {
+      const row = node('section', null, 'block rule-row'); row.dataset.ruleId = rule.id;
+      row.append(node('h3', rule.spec.name), node('p', `${rule.id} · revision ${rule.revision} · ${rule.status}`, 'data-id'),
+        node('p', `Future intent: ${rule.deleted ? 'deleted' : rule.enabled ? 'enabled' : 'disabled'} · Manually paused: ${rule.paused_by_user} · Last job: ${rule.last_job ? `${rule.last_job.id} (${rule.last_job.state})` : 'none reported'}`, 'section-note'));
+      const inspect = node('details'); inspect.append(node('summary', 'Definition, origin and last job'), json(rule)); row.append(inspect);
+      const controls = node('div', null, 'settings-actions');
+      const edit = button('Edit definition', () => {
+        if (ruleDraft) confirm('Replace the current draft?', 'Your unsaved draft will be replaced with this sampled definition. Its exact revision will be retained.', () => newRuleDraft(rule));
+        else newRuleDraft(rule);
+      }); edit.dataset.ruleAction = 'edit';
+      controls.append(unavailable(edit, !canCreate || rule.deleted));
+      for (const [label, change, enabled] of [['Enable / rearm', 'rule_set_enabled', true], ['Disable future triggers', 'rule_set_enabled', false], ['Delete future intent', 'rule_delete', null]]) {
+        const command = { action: change, id: rule.id, revision: rule.revision }; if (enabled !== null) command.enabled = enabled;
+        const control = button(label, () => confirm(`${label}?`, `Complete profile ${rule.profile}, rule ${rule.id}, exact revision ${rule.revision}. ${enabled === true ? 'Explicitly rearm future consideration under the administrator grant.' : 'This does not stop or release the current job.'}`, command));
+        control.dataset.ruleAction = enabled === null ? 'delete' : enabled ? 'enable' : 'disable';
+        controls.append(unavailable(control, !meta.current || !!view.unresolved_rule || rule.deleted || (enabled === true && !canCreate)));
+      }
+      row.append(controls); block.append(row);
+    }
+    block.append(pager('rules', meta.next_rule), node('h3', 'Rule events'), node('p', meta.events_status, 'section-note'));
+    if (meta.events.length) block.append(table(['Sequence', 'Change / revision', 'Rule', 'Original request / job'], meta.events.map(e => [e.sequence, `${e.kind} / ${e.revision}`, e.rule_id, `${e.request_id || 'none'} / ${e.job_id || 'none'}`])));
+    else block.append(empty('No rule events in this sampled page.'));
+    block.append(pager('rule_events', meta.next_event)); content.append(block);
+  }
   function renderSettings() {
-    const form = node('form', null, 'settings');
-    form.append(node('h2', 'Frontend preferences'), node('p', 'These preferences control observation only. They do not grant access, change TLS policy or start USB sharing.', 'section-note'));
-    const seconds = node('input'); seconds.type = 'number'; seconds.min = '2'; seconds.max = '120'; seconds.required = true; seconds.value = view.options.refresh_seconds;
-    const interval = node('label', 'Refresh delay (seconds)'); interval.append(seconds);
-    const automatic = node('input'); automatic.type = 'checkbox'; automatic.checked = view.options.auto_refresh;
-    const auto = node('label', 'Automatic service refresh'); auto.prepend(automatic); form.append(interval, auto);
-    const controls = node('div', null, 'settings-actions');
-    controls.append(button('Apply', () => { if (form.reportValidity()) action({ action: 'options', refresh_seconds: Number(seconds.value), auto_refresh: automatic.checked }); }), button('Save checked preferences', () => action({ action: 'save_settings' })), button('Reload', () => action({ action: 'reload_settings' })), button('Defaults', () => action({ action: 'options', refresh_seconds: 2, auto_refresh: true })));
-    form.append(controls, node('p', view.preferences_status, 'section-note'));
-    form.addEventListener('submit', event => event.preventDefault()); $('content').append(form);
-    $('content').append(node('h2', 'Access and sharing policy'), node('p', 'Profiles and permissions are administrator-managed. Automatic sharing rules are not implemented in this preview.', 'section-note'));
-    $('section-status').textContent = 'Checked user preferences are shared with the TUI; no automatic device actions';
+    if (!preferencesForm) {
+      const form = node('form', null, 'settings');
+      form.append(node('h2', 'Frontend preferences'), node('p', 'These preferences control observation only. They do not grant access, change TLS policy or start USB sharing.', 'section-note'));
+      const seconds = node('input'); seconds.type = 'number'; seconds.min = '2'; seconds.max = '120'; seconds.required = true; seconds.value = view.options.refresh_seconds; seconds.dataset.focus = 'preference-seconds';
+      const interval = node('label', 'Refresh delay (seconds)'); interval.append(seconds);
+      const automatic = node('input'); automatic.type = 'checkbox'; automatic.checked = view.options.auto_refresh; automatic.dataset.focus = 'preference-auto';
+      const auto = node('label', 'Automatic service refresh'); auto.prepend(automatic); form.append(interval, auto);
+      const controls = node('div', null, 'settings-actions');
+      controls.append(button('Apply', () => { if (form.reportValidity()) action({ action: 'options', refresh_seconds: Number(seconds.value), auto_refresh: automatic.checked }); }), button('Save checked preferences', () => action({ action: 'save_settings' })), button('Reload', () => { preferencesForm = null; action({ action: 'reload_settings' }); }), button('Defaults', () => { preferencesForm = null; action({ action: 'options', refresh_seconds: 2, auto_refresh: true }); }));
+      form.append(controls); form.addEventListener('submit', event => event.preventDefault()); preferencesForm = form;
+    }
+    $('content').append(preferencesForm, node('p', view.preferences_status, 'section-note')); renderRules();
+    $('section-status').textContent = 'Checked frontend preferences and separately authorized agent-owned sharing rules';
   }
   function renderPage() {
-    const focusKey = document.activeElement.dataset.focus;
+    const focusedBefore = document.activeElement;
+    const focusKey = focusedBefore.dataset.focus;
+    const selection = focusedBefore.tagName === 'INPUT' && focusedBefore.type === 'text' ? [focusedBefore.selectionStart, focusedBefore.selectionEnd] : null;
     const scrollTop = $('main').scrollTop;
     // Current DOM only: do not retain obsolete profiles/sessions or health samples.
     const disclosures = new Map([...$('content').querySelectorAll('details[data-health-key]')].map(details => [details.dataset.healthKey, { open: details.open, scrollTop: details.querySelector('pre').scrollTop }]));
@@ -165,18 +257,27 @@
     if (view.unresolved) {
       const warning = node('div', `Unresolved Start · ${view.unresolved.profile} · ${view.unresolved.request_id}. Only the original retry identity will be used; inspect jobs before continuing.`, 'unresolved'); $('content').append(warning);
     }
+    if (view.unresolved_rule) {
+      const intent = view.unresolved_rule;
+      const warning = node('section', null, 'unresolved');
+      warning.append(node('p', `Unresolved rule edit · ${intent.profile} · ${intent.request_id}. New edits are blocked. Query only this original UUID; an expired result does not prove that the original never committed.`),
+        button('Query original rule edit', () => confirm('Query the original rule edit?', `Read only profile ${intent.profile}, request ${intent.request_id}. No rule edit is resubmitted.`, { action: 'rule_resolve' })));
+      const details = node('details'); details.append(node('summary', 'Original retained edit'), json(intent.mutation)); warning.append(details); $('content').append(warning);
+    }
     if (page < 2) renderInventory(); else if (page === 2) renderConnections(disclosures); else if (page === 3) renderActivity(); else if (page === 4) renderSystem(); else renderSettings();
     updateControls();
     if (focusKey) {
       const focused = [...document.querySelectorAll('[data-focus]')].find(element => element.dataset.focus === focusKey);
       focused?.focus({ preventScroll: true });
+      if (focused && selection) focused.setSelectionRange(...selection);
     }
     $('main').scrollTop = scrollTop;
   }
   function apply(next) {
-    const previousSettings = JSON.stringify([view?.options, view?.preferences_status]);
+    const changedOptions = JSON.stringify(view?.options) !== JSON.stringify(next.options);
     const previousRevision = view?.local?.revision; const previousInstance = view?.local?.instance;
     view = next;
+    if (changedOptions) preferencesForm = null;
     if (view.pending !== null) waiting = view.pending;
     if (waiting !== null && BigInt(view.acknowledged) >= BigInt(waiting)) waiting = null;
     $('status').textContent = `${view.status}${busy() ? ' · Action pending…' : ''}`;
@@ -191,9 +292,8 @@
     }
     $('profile').value = view.profile || '';
     if (selectedProfile && selectedProfile !== view.profile) { selected = null; detail = null; detailKey = null; }
-    // Do not destroy focused inputs or a user's current preference edits on each sample.
-    if (page !== 5 || previousSettings !== JSON.stringify([view.options, view.preferences_status])) renderPage();
-    else updateControls();
+    // Persistent form nodes retain drafts; restore focus/caret while refreshing metadata.
+    renderPage();
     if (page === 0 && selected && (previousRevision !== view.local?.revision || previousInstance !== view.local?.instance)) loadDetail(selected);
   }
   async function poll() {
@@ -208,8 +308,8 @@
     item.addEventListener('click', async () => {
       if (index === page) return;
       if (busy()) { notice('Wait for the accepted action before changing pages.'); return; }
-      const wasRemote = page === 1; page = index; selected = null; detail = null; detailKey = null; showDetails = false; renderPage();
-      if (wasRemote !== (page === 1)) await action({ action: 'remote', active: page === 1 });
+      page = index; selected = null; detail = null; detailKey = null; showDetails = false; renderPage();
+      await action({ action: 'surface', remote: page === 1, rules: page === 5 });
     }); $('navigation').append(item);
   });
   $('refresh').addEventListener('click', () => action({ action: 'refresh' }));

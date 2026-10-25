@@ -4,6 +4,8 @@
 
 mod preferences;
 pub use preferences::Settings;
+/// Automatic-rule observations and separately retained edit identity.
+pub mod automation;
 /// Finite commands and latest metadata shared by native frontends.
 pub mod state;
 /// Actual observer/IPC worker, which callers must stop and join.

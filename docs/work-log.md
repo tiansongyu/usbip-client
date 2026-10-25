@@ -1,5 +1,13 @@
 # RustUSB 工作日志
 
+## 2026-10-25：GUI 自动共享规则编辑（开始）
+
+- 从clean4de41e0f重读完整Phase0–7任务、当前Git/日志/核心skill与共享state/worker/bridge、规则RPC/journal和原GUI/QEMU契约。沿用UI错误恢复与技术文档技能，本轮读取writing-technical-design；复用既有已审架构，不新增依赖或子agent，不重建README/站点/global skill，不缩减goal。
+- 先写gui-automatic-rules-design：Settings独立有界Rules/RuleEvents、完整grant pool、严格字符串revision与默认禁用Create；原rule UUID/payload在Rust保留，Stop/Start独立，Resolve仅原查询。当前通用Error不能证明持久负向，故Error/Expired不自动丢原UUID或重发；完整负向恢复另有缺口。当前仅设计，尚无新实现/测试/QEMU成功。
+- 只读检查一次rg给了不存在tests目录exit2，后置&&的文档未读，已单独读真实native-gui-design；若干大输出被截断，不作为完整阅读证据，相关实现按小段重读。无USB/代码副作用。
+- dirty开发共享frontend10/10通过（原6+新4身份/拒绝/分页重置/独立StartStop），GUI首fmt因测试match的struct literal缺括号FAIL、未启动后续test且无test log，修语法后第二GUI15/15通过；原GLib34依赖告警保留未压制。一次猜styles.css不存在exit1，rg确认实际app.css后读取。新metadata按需采样且TUI默认不增加RPC，完整gate/native/QEMU仍待冻结后执行，不把定向通过当验收。
+- 新scripts/qemu_gui_rules组合原Native264/三I/O/全Rootproof，原verifier不改；三实际native进程计划验证无policy、CRUD/Stop独立、draft焦点/UTF8、真实agent STOP→IPC超时→renderer reload→CONT后原UUID查询与WM close。完整生成guest59537B/dash语法及391输入首次preflight通过，之后补guest等待3s/设计方法，需冻结再查。dirty all-feature Clippy通过；一次空context文档patch失败无写入，随后按真实段落修正。尚无新QEMU或完整gate结果。
+
 ## 2026-10-25：Rust engines 自动规则与 v2 故障矩阵（开始）
 
 - 上轮E53为实际进展；从clean7de3c242完整重读原Phase0–7目标、Git/日志/核心skill与当前规则/agent/v2夹具、两接口audit。沿用rustusb-development/technical-documentation；不启动子agent，不重建已完成README/展示站/global skill，不缩减goal。
