@@ -95,9 +95,9 @@ def verify(evidence, args):
     require(resolved['unresolved_rule'] is None and resolved['rules']['result'].startswith('Resolved original rule '), 'real RetryRuleMutation resolves original committed result')
     require(get('gui-rule-before-resolve.json')['automation'] == get('gui-rule-after-resolve.json')['automation'], 'original query never reapplies edit')
     require('revision changed' in get('gui-rule-stale-draft.json')['value']['text'] and get('gui-rule-stale-draft.json')['value']['name'] == 'Preserved stale draft' and get('gui-rule-stale-before.json')['automation'] == get('gui-rule-stale-after.json')['automation'], 'concurrent revision preserves draft and blocks stale edit before IPC')
-    final = get('agent-stopped-2.json'); journal = final['automation']; rule = journal['rules'][0]
-    require(set(journal) == {'sequence','rules','mutations','origins','events'} and len(journal['rules']) == 1 and len(journal['origins']) == len(final['jobs']) == 2, 'strict disk3/one rule/two actual auto jobs')
-    require(rule['revision'] == 9 and rule['deleted'] and not rule['enabled'] and [o['revision'] for o in journal['origins']] == [5,7], 'real Create/Replace/Enable/rearm/Disable/Delete and original firing revisions')
+    final = get('agent-stopped-2.json'); journal = final['automation']; rule = get('gui-rule-deleted-active.json')['value']['rules']['rules'][0]
+    require(set(journal) == {'sequence','rules','mutations','origins','events'} and journal['rules'] == [] and len(journal['mutations']) == 8 and {m['outcome']['rule_id'] for m in journal['mutations']} == {rule['id']} and len(journal['origins']) == len(final['jobs']) == 2, 'strict disk3/one rule history/two actual auto jobs; deleted record retired only after actual old cleanup')
+    require(rule['revision'] == '9' and journal['mutations'][-1]['outcome'] == {'rule_id':rule['id'],'revision':9,'deleted':True} and rule['deleted'] and not rule['enabled'] and [o['revision'] for o in journal['origins']] == [5,7], 'real Create/Replace/Enable/rearm/Disable/Delete and original firing revisions')
     require([e['kind'] for e in journal['events']] == ['created','replaced','disabled','replaced','enabled','fired','paused_by_stop','enabled','fired','disabled','deleted'], 'exact committed independent rule event chain')
     for epoch, revision in [(1,5),(2,7)]:
         state = get(f'agent-auto-admitted-{epoch}.json'); origin = next(o for o in state['automation']['origins'] if o['revision'] == revision)

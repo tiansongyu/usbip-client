@@ -74,6 +74,10 @@ query the original UUID and leave its journal unchanged. A failure trap resumes
 the stopped guest agent before original cleanup. Do not proxy OS peer identity.
 Concurrent CLI revision advancement tests stale-draft rejection before dispatch;
 it is not a claim to have deterministically raced the GUI against service CAS.
+Capture Delete while its old job is actually running. After the original owner
+cleanup, the existing journal intentionally retires a resolved deleted record;
+verify its retained mutation/origin/event history and exact cleanup instead of
+requiring that resolved tombstone to remain forever.
 
 Archive failures and source/ELF provenance. Hardware G1/G2, dynamic pools,
 physical remote safety receipts, settled-negative edit recovery, packaging and
