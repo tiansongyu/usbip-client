@@ -1,5 +1,9 @@
 # RustUSB 工作日志
 
+## 2026-10-25：前端跨进程原请求恢复（开始）
+
+- 上轮E56为已验证实际进展；从clean5962456d重读完整Phase0–7目标、Git/工作日志/核心skill、共享worker/state/checked preferences与GUI/规则/settled设计及既有两audit。沿用技术设计/UI错误恢复技能，单项搜索明确恢复下一步的指导适用；不新增agent/外部技术栈或重建README/site/global skill。先写frontend-intent-recovery-design：共享TUI/GUI私有XDG state、两原UUID/payload/protocol与最后draft、稳定endpoint/OFD锁、先实际持久后IPC、只原Query恢复，不以local metadata授USB能力或证明cleanup；Stop保持独立精确target。当前只有设计，无新实现或验收通过。XDG0.8及Linux flock/fsync主资料核对；先前大输出截断的关键源码按小段补读，猜两不存在QEMU路径的rg报错无副作用。
+
 ## 2026-10-25：自动规则持久拒绝回执（开始）
 
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。
