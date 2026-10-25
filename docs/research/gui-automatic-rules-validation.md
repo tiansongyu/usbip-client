@@ -173,3 +173,21 @@ fallback with all three backends/commands/new text visible. An initial lazy imag
 and a role query without JavaScript are recorded without inventing failures.
 Temporary tabs/viewport and the owned preview server(actual SIGINT wait130) are
 reclaimed. See [browser observations](../evidence/gui-automatic-rules-20261025/browser-review.json).
+
+## Publication receipt
+
+Content19e42d4d was normally pushed to the authorized SSH remote with exact
+remote main/clean checks. Core run40166034989 and GUI run40166034972 each complete
+successfully on all four native Ubuntu/architecture jobs, including their actual
+architecture/full-gate steps. Pages40166035035 check/deploy also succeeds. Seven
+canonical HTTPS resources return200 with exact Git bytes;404 source mappings,
+three local release ELFs, eight site files and four global skill files/symlink
+remain checked. The two fixture-source changes are mapped to their actual QEMU
+head rather than called unchanged software inputs.
+
+[Primary API/HTTP receipt](../evidence/gui-automatic-rules-publication-19e42d4d-20261025/receipt.json)
+and its38-file/486,081B manifest preserve original responses/methods. No CI logs,
+executed CI ELFs or per-platform test recount were downloaded. Completed GUI/
+Pages/core job-final files are exact copies of their completed fourth/second/fifth
+responses; these copies are not additional API requests. Final receipt-only
+commits do not become the local tested product or completed CI content head.

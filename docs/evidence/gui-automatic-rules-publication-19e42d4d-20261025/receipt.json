@@ -1,0 +1,97 @@
+{
+  "result": "PASS",
+  "content_head": "19e42d4d542936edc3366f8ef8d8f76707c7a50c",
+  "local_gate_head": "7ef7f4923dc97bef98a971b1fc248e36cf670a67",
+  "qemu_head": "e668c045fb223efffff0d450d957b59d9e6bef75",
+  "utc": "2026-10-25T05:45:52.513751+00:00",
+  "workflows": {
+    "40166034989": {
+      "name": "RustUSB software checks",
+      "jobs": [
+        {
+          "id": 121087162515,
+          "name": "check (ubuntu-22.04-arm, aarch64)",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087162659,
+          "name": "check (ubuntu-24.04, x86_64)",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087162680,
+          "name": "check (ubuntu-22.04, x86_64)",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087162717,
+          "name": "check (ubuntu-24.04-arm, aarch64)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "40166034972": {
+      "name": "RustUSB native GUI checks",
+      "jobs": [
+        {
+          "id": 121087162459,
+          "name": "check (ubuntu-24.04-arm, aarch64)",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087162600,
+          "name": "check (ubuntu-22.04, x86_64)",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087162696,
+          "name": "check (ubuntu-24.04, x86_64)",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087162738,
+          "name": "check (ubuntu-22.04-arm, aarch64)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "40166035035": {
+      "name": "Project website",
+      "jobs": [
+        {
+          "id": 121087162839,
+          "name": "check",
+          "conclusion": "success"
+        },
+        {
+          "id": 121087225201,
+          "name": "deploy",
+          "conclusion": "success"
+        }
+      ]
+    }
+  },
+  "https_exact_resources": 7,
+  "software_inputs_mapped": 404,
+  "fixture_inputs_advanced": [
+    "scripts/qemu_gui_rules/guest.sh",
+    "scripts/qemu_gui_rules/run.py"
+  ],
+  "site_files": 8,
+  "global_skill_files": 4,
+  "binaries": {
+    "rustusb": {
+      "bytes": 21933280,
+      "sha256": "d6bd57c4daeabdcce23574f158e225fb7b2fb77deebe1bcf546bb9bc858ed034"
+    },
+    "rustusb-helper": {
+      "bytes": 7525544,
+      "sha256": "475b2f97e8b4e31dd1af479193913c637d09dc8c3b1debd13442c0f88f6748f3"
+    },
+    "rustusb-gui": {
+      "bytes": 17410456,
+      "sha256": "4c300afc5688bb4c8537cdf69af9f1fa93215bbc4218aa7c59799a99e98ff5a4"
+    }
+  },
+  "scope": "Original GitHub workflow/job API status, actual architecture and full gate step success; seven canonical HTTPS/Git exact bodies. No downloaded CI logs/ELFs or per-platform test recount. Final receipt-only commit does not become the tested source."
+}
