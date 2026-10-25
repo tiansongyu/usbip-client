@@ -2,6 +2,9 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- 最终内容84b751d2普通push/clean；core40192148876四格121165224341/224487/224528/224684、GUI40192148818四格121165223963/224124/224152/224249及Pages40192148853 check121165224186/deploy121165323274均actual completed/success，必需arch/fullgate/build/upload steps通过。四ZIP共42485490B实际下载并逐API digest核：12599060418/12598746964/12598299355/12598133315；八deb/十二ELF独立read-only查architecture、receipt hash/size、当前controller/unit/desktop source及license文件。未执行/安装CI ELF，不与本地v5/v6 .deb混为同字节。七canonical HTTPS全200且逐Git84b精确；本地451 source映射/三f174 ELF/八site/四global skill保持。
+- pub collector首因自己的literal PRIVATE KEY/?se=检测规则扫到自身代码产生false-positive（不是实际secret），部分目录移至/tmp保留、旧方法另存，再将runtime-data扫描与方法源码分开；新45成员732909B receipt收集通过，无临时下载cap/ZIP/deb/ELF/VM/privatekey入Git。补旧preview先执行旧prerm的迁移边界，不能声称新preinst能阻止其此前信号；三负向仅corrected v5/v6。最后仅回执/文档提交普通push，CI与Pages结果继续锁84b、cold/software锁0ad3，不重标后续回执提交。完整Phase0–7继续active。
+
 - clean0ad3a6ee修正后v5→v6两官方镜像完整cold均PASS，各44记录/42不同label；三种不安全信号覆盖均old/new两gate拒绝且原PID active/旧版本不变，再完成真实fsync等待释放、dpkg0、原生GUI WM0、真重启/remove/purge保留；4 QEMU0/无forced/全部guard真。随后同clean0ad3完整root1076+GUI18/451源及HEAD/clean guard全通过，三ELF仍f174。新archive666成员/8929162B roundtrip，1768564B/SHA78d8d4f794232dd515c0aef09b6bd6f263c7d5a0fbd6e36700a7681396a6e5e3，旧e014/883归档不动。
 - 中间e875三workflow都completed/success（core40189385622、GUI40189384846、Pages40189384816），GUI四实际preview artifact已出现，未当新guard验收。使用GitHub专用artifact download API做一个Noble ARM旧artifact传输/receipt探针：12597484538/ZIP10481123B/SHA0f9a948369981fedc415fe8399ac0064d199e6bdb67e7ccf97cb656eaa308497，3成员/receipt source e875/arm64；只解析未执行，不当ARM安装或新guard成品。临时下载cap原响应留.private.json在/tmp，未入公开证据。最终新内容push/CI与四包下载只读检查、live Pages核对仍待完成。
 

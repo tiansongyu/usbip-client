@@ -6,6 +6,18 @@ experimental base/GUI packages and systemd lifecycle described in the
 [installation guide](../debian-installation.md), within the scope below.
 Phase 5 and the full project remain incomplete.
 
+Publication for content
+[`84b751d2`](https://github.com/tiansongyu/usbip-client/commit/84b751d2d9d1bd2c0eb4ceba8dc65855e66d8fa4)
+is verified: [core run 40192148876](https://github.com/tiansongyu/usbip-client/actions/runs/40192148876)
+and [GUI/package run 40192148818](https://github.com/tiansongyu/usbip-client/actions/runs/40192148818)
+each complete all four native cells successfully; [Pages 40192148853](https://github.com/tiansongyu/usbip-client/actions/runs/40192148853)
+also succeeds. Four actual ZIP artifacts/eight `.deb` files were downloaded and
+checked against API/receipt hashes, native ELF architectures, current controller
+and unit source, and license inventories. Seven canonical live HTTPS assets are
+Git-exact. [Publication receipt](../evidence/debian-publication-84b751d2-20261025/receipt.json)
+retains 45 raw/API/HTTP/method members. This is artifact inspection, not CI ELF
+execution, per-platform test recount or arm64 installation acceptance.
+
 ## Current signal-guard follow-up
 
 Final package/source and new complete cold validation are now pinned to

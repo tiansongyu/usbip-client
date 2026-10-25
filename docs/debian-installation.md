@@ -90,6 +90,13 @@ command and the cooperative stop settings. Existing disk3/disk4 policy must not
 be silently downgraded. `Type=exec` acknowledges execution, not listener readiness;
 use the actual profile query and service logs to verify readiness.
 
+Successful [native GUI CI runs](https://github.com/tiansongyu/usbip-client/actions/workflows/gui.yml)
+publish separate Ubuntu 22.04/24.04 amd64/arm64 preview artifacts for 14 days.
+Select the matching distribution and architecture. The
+[publication receipt](evidence/debian-publication-84b751d2-20261025/receipt.json)
+records four downloaded ZIPs/eight packages and read-only ELF/source/license
+checks; CI binaries were not installed in the amd64 VM cases.
+
 ## Upgrade, stop and remove
 
 Upgrade with explicit reviewed local packages, as for installation. The old prerm,
@@ -119,6 +126,12 @@ packages manage their fixed units; migrate separately installed/manual processes
 explicitly before adopting them. Unit exit0 is a process lifecycle observation,
 not a USB release proof; legacy kernel sessions and unresolved old records still
 require the original root coordination interfaces.
+
+An older preview executes its own old prerm before the new package's preinst.
+Before upgrading an earlier installation, inspect and restore the documented
+cooperative settings and explicitly stop/verify its original owners. A new
+preinst cannot retroactively prevent an older script from sending a signal.
+The three signal-override negative tests use the corrected v5/v6 gates.
 
 Remove/purge disable recorded WantedBy links but preserve administrator masks,
 configuration, keys, broker account/UID and both services' persistent journals.
