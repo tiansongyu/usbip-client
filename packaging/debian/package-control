@@ -17,7 +17,8 @@ UNITS = ('rustusb-agent.service', 'rustusb-helper.service')
 ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C', 'LC_ALL': 'C'}
 PROPERTIES = ('LoadState', 'ActiveState', 'SubState', 'Result', 'MainPID',
               'ControlPID', 'ControlGroup', 'ExecMainCode', 'ExecMainStatus',
-              'InvocationID', 'KillMode', 'SendSIGKILL', 'TimeoutStopUSec', 'Restart')
+              'InvocationID', 'KillMode', 'KillSignal', 'SendSIGHUP', 'SendSIGKILL',
+              'TimeoutStopUSec', 'Restart')
 
 
 def command(*args):
@@ -144,7 +145,8 @@ def stop():
                     or before['ControlPID'] != '0'):
                 raise ValueError(f'{unit}: masked unit still has an active owner')
         elif before['LoadState'] != 'not-found':
-            if (before['KillMode'] != 'mixed' or before['SendSIGKILL'] != 'no'
+            if (before['KillMode'] != 'mixed' or before['KillSignal'] != '15'
+                    or before['SendSIGHUP'] != 'no' or before['SendSIGKILL'] != 'no'
                     or before['TimeoutStopUSec'] != 'infinity' or before['Restart'] != 'no'):
                 raise ValueError(f'{unit}: unsafe stop-policy override; inspect before package operation')
             command('/usr/bin/systemctl', 'stop', unit)

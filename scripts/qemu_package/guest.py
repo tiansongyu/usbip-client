@@ -213,16 +213,21 @@ def install():
     # Invalid unit override: both old prerm and new failed-upgrade must refuse.
     override = Path('/etc/systemd/system/rustusb-agent.service.d')
     override.mkdir(exist_ok=True)
-    (override/'unsafe-test.conf').write_text('[Service]\nSendSIGKILL=yes\n')
-    run(['systemctl', 'daemon-reload'])
     version = text(['dpkg-query', '-W', '-f=${Version}', 'rustusb'])
     binary = sha('/usr/bin/rustusb')
     binary_identity = os.stat('/usr/bin/rustusb')
-    result = run(['dpkg', '-i', second[0]], (1,))
-    check(b'RustUSB: verifying cooperative process stop before failed-upgrade' in result.stdout
-          and result.stderr.count(b'unsafe stop-policy override') == 2
-          and text(['dpkg-query', '-W', '-f=${Version}', 'rustusb']) == version
-          and sha('/usr/bin/rustusb') == binary, 'failed prerm and failed-upgrade preserve old package')
+    original_pid = service('rustusb-agent.service', 'MainPID')
+    for setting in ('SendSIGKILL=yes', 'KillSignal=SIGKILL', 'SendSIGHUP=yes'):
+        (override/'unsafe-test.conf').write_text('[Service]\n'+setting+'\n')
+        run(['systemctl', 'daemon-reload'])
+        result = run(['dpkg', '-i', second[0]], (1,))
+        check(b'RustUSB: verifying cooperative process stop before failed-upgrade' in result.stdout
+              and result.stderr.count(b'unsafe stop-policy override') == 2
+              and text(['dpkg-query', '-W', '-f=${Version}', 'rustusb']) == version
+              and sha('/usr/bin/rustusb') == binary
+              and service('rustusb-agent.service', 'MainPID') == original_pid
+              and service('rustusb-agent.service', 'ActiveState') == 'active',
+              'old/new upgrade gates reject '+setting+' before signalling original broker')
     (override/'unsafe-test.conf').unlink()
     run(['systemctl', 'daemon-reload'])
     # systemd sends SIGCONT after TERM; use a real controlled journal IO wait.

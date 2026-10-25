@@ -102,6 +102,16 @@ return is recorded. Keep the test library/drop-in outside the product package,
 retain the original failures and do not equate this finite controlled wait with
 cancellation of permanent storage or kernel blocks.
 
+Pre-publication guard refinement: default units already use initial SIGTERM and
+no extra SIGHUP, but the package stop guard must inspect both loaded properties
+before signalling. Reject an initial KillSignal other than 15 and SendSIGHUP=yes,
+as well as the existing mode/final-KILL/timeout/restart checks. A final-KILL check
+alone cannot prevent an administrator override from selecting an abrupt initial
+signal. Add actual rejected upgrade attempts for initial SIGKILL and extra HUP;
+each must preserve the live original broker and old package before any stop.
+This is a check of named cooperative settings, not protection from arbitrary
+trusted-root unit/executable changes or kernel/administrator kill.
+
 Research digests: [Debian](debian-lifecycle-research.md), [systemd](systemd-lifecycle-research.md). The new preinst and failed-upgrade prerm must repeat the installed stop gate; a failed old prerm must never fall through to a successful no-op. Configure records potential WantedBy links using deb-systemd-helper update-state, without enabling. Remove disables those recorded links; purge drops only that package bookkeeping, preserving administrator masks. Reject nonempty DPKG_ROOT; upgrades/removals require the actual booted systemd manager, not a shared-run chroot.
 
 Binary distribution also installs a conservative target-resolved Cargo license inventory (including build/dev nodes), original cached license/notice texts and fixed-revision supplemental texts where crates omit them. Ship unmodified selectors MPL source in the GUI package and identify its license steward/source URL; do not portray the inventory as an exact linked-only SBOM. Native GUI CI builds matching base packages after the original GUI gate and uploads preview artifacts for the four existing distro/architecture cells. Artifact builds are not full installed VM/USB acceptance.

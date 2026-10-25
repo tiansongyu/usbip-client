@@ -2,6 +2,8 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- 内容e8752c85已普通SSH push、clean，Pages40189384816 check121156931327/deploy121157067436成功；core40189385622与GUI40189384846八格仍观测中，原API-01已保存。发布末审发现stop guard虽查SendSIGKILL/no timeout，却漏查初始KillSignal与SendSIGHUP；默认unit正确，管理员覆盖可先发送不合作信号再被事后结果拒绝。先更新设计，补loaded KillSignal=15/SendSIGHUP=no的发信号前检查及三类真实upgrade拒绝（要求原PID/active及旧版本均保持）。这是新增产品修正，原22d3包/fded cold证据保持原scope，需新包、新完整VM与最终软件/远端结果，不以旧通过覆盖新实现。
+
 - 静态QA通过451源逐Git/三ELF、20文档253本地targets/49site refs、八site仅index变、四global skill/symlink保持；gate后仅两个被库存显式覆盖的doc payload叙述改变，packaging代码逐22d3、Rust/apps/vendor/locks逐412b保持。真实IAB桌面1280无横溢/newguide键盘outline2px、实际最终normal390与noJS390 doc/client375可读/三静态backend heading可见，normal samples console空。截图API unavailable无像素审查；数次请求390实际仍1280不记mobile通过，按实际新cap/跨call观察最终390，noJS先查JS-assigned role为空也不误判隐藏。五owned tabs全关/reset，owned preview真实INT/wait130。预览方法/原HTTP log与观察单独入外manifest，不改原883成员归档。
 
 - clean fded558a两官方原镜像完整fresh最终全部通过：各42记录/40不同label、两native GUI WM0、原broker实际fsync entered/returned0、实际dpkg升级0、old version/CLI inode保持到释放、真reboot bootID改变、remove/purge与root/helper及agent sentinels/UID/配置凭据/旧job/mask保留；4 actual QEMU0、collect0、无forced/所有guard真。原包仍22d3 v3/v4、三Rust ELF仍f174，不重标旧USB结果。所有actual handles terminal后完整原root1076+GUI18/451 frozen inputs、HEAD/clean guards通过，software源同fded。
