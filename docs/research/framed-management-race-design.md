@@ -45,3 +45,33 @@ not a claim about the failed encrypted capture, a TLS reset, or its root cause.
 
 This investigation does not replace missing hardware G1/G2, installed ARM runtime,
 Windows USB, storage/ISO, power-loss recovery or the full Phase0–7 objective.
+
+## Reproduced defect and selected correction
+
+At clean `fededbe2`, the real TCP/mTLS delayed-final-read test actually fails
+with client ConnectionAborted after both original owners have been joined. The
+preceding 256 concurrent production Catalogs at clean b3cdd482 passed and did not
+reproduce it. Retain that failing test unchanged. This establishes a transport
+defect; it does not identify the contents/cause of the old encrypted E59 failure.
+
+The current driver drops its h2/TLS connection immediately after authenticated
+stream EOS, consumed receive bytes and local FIN flush. Application END_STREAM
+is not an executed TLS shutdown. The fixed h2 0.4.20 source is
+[`b0e890842ac16d3c76836fd4fcc06421acb15fa7`](https://github.com/hyperium/h2/blob/b0e890842ac16d3c76836fd4fcc06421acb15fa7/src/proto/connection.rs):
+the client polls shutdown when stream references are gone, and the server's
+explicit no-error close continues polling its codec through actual shutdown.
+Tokio-rustls 0.26.6 polls close_notify and underlying shutdown; its
+[buffered-write contract](https://docs.rs/tokio-rustls/0.26.6/tokio_rustls/)
+also requires actual flush. No dependency update or copied upstream code.
+
+After the original local FIN is flushed, release only its completed h2 send
+handle (subsequent shutdown stays idempotent). After the original receive EOS,
+trailers, consumed bytes and returned flow credit, drop the completed receive
+and ping handles, retain the unique connection, and poll actual h2/TLS close.
+The client can then close naturally without retained stream references. The
+server requests NO_ERROR GOAWAY only after this complete single-stream boundary;
+it still rejects an observed extra stream/error. Keep all h2 operations/drops
+inside existing quiet wrappers. The close phase is interruptible using the
+original stop and bounded by the existing response-timeout policy, with actual
+typed failure on I/O/protocol/timeout. Do not turn any such failure into PeerEof,
+skip partial DATA/FIN, discard unconsumed receive bytes, or lose the outer owner.

@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- cleanfededbe2可控final-TLS-read测试真实FAIL exit101/ConnectionAborted，双方owner已实际join；测试首稿patch多余加号导致fmt parse失败，未启动测试，修正后才commit/run。源码与固定h2 0.4.20/tokio-rustls0.26.6审查支持EOS后过早drop connection的问题；先补设计：FIN flush后释放send ref，完整EOS/消费/flow credit后放completed receive/ping ref，原connection继续执行h2/TLS shutdown，仍严格错误/stop/既有policy界限。官方docs.rs旧版本链接不可访问，改固定h2 Git源码及实际0.26.6文档；不更新依赖，不把该缺陷等同旧加密QEMU根因。
+
 - clean b3cdd482 初始并发Catalog回归actual1 test/256真实TCP/mTLS交换通过，未复现、无产品修复；每独立server32连接低于默认burst64，不混入限速拒绝。继续加client原TCP读可控门：完整reply后暂停read，client FIN继续真实flush，等原server owner实际结束再放行最后TLS读取；保留双方真实join与错误，不宽化EOF。该调度测试用于证实/证伪关闭假说，不以更多盲目重跑代定位。
 
 - E60从clean1e67e70f重读完整Phase0–7目标，核Git/日志/AGENTS/核心skill与应用服务、v2关闭设计及既有实际Catalog失败契约；上轮是已验证进展，非blocked。新framed-management-race-design先规定真实生产discovery并发/mTLS和必要时可控调度重现，不以顺序IMPORT/重试/宽化EOF或原verifier改判换通过。当前只有假说：short-management driver完成后直接drop h2/TLS可能影响对端最后收尾；原加密包未解密，不称根因。无新agent委托，无产品修改/新测试PASS。
