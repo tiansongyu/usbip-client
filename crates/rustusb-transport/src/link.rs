@@ -346,7 +346,7 @@ impl Drop for LinkOwner {
 /// Bounded application bytes over stream1, without a public h2/TLS extraction API.
 pub struct LinkIo {
     receive: DuplexStream,
-    send: Quiet<h2::SendStream<Bytes>>,
+    send: Option<Quiet<h2::SendStream<Bytes>>>,
     flush: FlushMonitor,
     shared: Arc<Shared>,
     data_enqueued: u64,
@@ -414,16 +414,19 @@ impl AsyncWrite for LinkIo {
         let wanted = bytes.len().min(FRAME);
         let capacity = this
             .send
-            .with_mut(|send| {
-                send.reserve_capacity(wanted);
-                if send.capacity() > 0 {
-                    return Poll::Ready(Ok(send.capacity()));
-                }
-                match send.poll_capacity(cx) {
-                    Poll::Pending => Poll::Pending,
-                    Poll::Ready(Some(Ok(capacity))) => Poll::Ready(Ok(capacity)),
-                    Poll::Ready(_) => Poll::Ready(Err(failed())),
-                }
+            .as_mut()
+            .and_then(|send| {
+                send.with_mut(|send| {
+                    send.reserve_capacity(wanted);
+                    if send.capacity() > 0 {
+                        return Poll::Ready(Ok(send.capacity()));
+                    }
+                    match send.poll_capacity(cx) {
+                        Poll::Pending => Poll::Pending,
+                        Poll::Ready(Some(Ok(capacity))) => Poll::Ready(Ok(capacity)),
+                        Poll::Ready(_) => Poll::Ready(Err(failed())),
+                    }
+                })
             })
             .unwrap_or_else(|| Poll::Ready(Err(failed())));
         if let Err(error) = this.shared.update(|h| {
@@ -448,9 +451,12 @@ impl AsyncWrite for LinkIo {
         };
         let sent = this
             .send
-            .with_mut(|send| {
-                send.send_data(Bytes::copy_from_slice(&bytes[..count]), false)
-                    .map_err(|_| failed())
+            .as_mut()
+            .and_then(|send| {
+                send.with_mut(|send| {
+                    send.send_data(Bytes::copy_from_slice(&bytes[..count]), false)
+                        .map_err(|_| failed())
+                })
             })
             .unwrap_or_else(|| Err(failed()));
         if let Err(e) = sent {
@@ -483,7 +489,10 @@ impl AsyncWrite for LinkIo {
         if !this.fin_enqueued {
             let result = this
                 .send
-                .with_mut(|send| send.send_data(Bytes::new(), true).map_err(|_| failed()))
+                .as_mut()
+                .and_then(|send| {
+                    send.with_mut(|send| send.send_data(Bytes::new(), true).map_err(|_| failed()))
+                })
                 .unwrap_or_else(|| Err(failed()));
             if let Err(e) = result {
                 this.shared.fail(LinkEnd::Protocol);
@@ -499,6 +508,10 @@ impl AsyncWrite for LinkIo {
         }
         let result = this.flush.poll_flushed(cx, this.data_enqueued, true);
         if matches!(result, Poll::Ready(Ok(()))) {
+            // The actual FIN fence is complete. Retaining this finished h2
+            // reference would prevent the client's connection from shutting
+            // down after the receive half also drains. Keep the readable I/O.
+            drop(this.send.take());
             this.shared.local_fin_flushed.store(true, Ordering::Release);
             this.shared.wake.notify_one();
         }
@@ -511,7 +524,9 @@ impl Drop for LinkIo {
     }
 }
 
-type Connection = Pin<Box<dyn Future<Output = io::Result<()>> + Send>>;
+// The flag requests connection shutdown only after the single stream has fully
+// drained. The unique driver retains and polls the actual h2/TLS owner.
+type Connection = Box<dyn FnMut(&mut Context<'_>, bool) -> Poll<io::Result<()>> + Send>;
 
 struct DriverGuard(Arc<Shared>);
 impl Drop for DriverGuard {
@@ -607,7 +622,7 @@ fn start(
     Ok(Link {
         io: LinkIo {
             receive: reader,
-            send,
+            send: Some(send),
             flush,
             shared: shared.clone(),
             data_enqueued: 0,
@@ -773,7 +788,7 @@ async fn driver(
     let mut pending: Option<(u64, Instant)> = None;
     let mut sequence = 0_u64;
     let mut next_probe = Instant::now() + policy.interval;
-    let end = loop {
+    let mut end = loop {
         let notified = shared.wake.notified();
         tokio::pin!(notified);
         notified.as_mut().enable();
@@ -813,7 +828,7 @@ async fn driver(
             _ = stop.changed() => {},
             _ = &mut notified => {},
             result = poll_fn(|cx| {
-                let result = connection.as_mut().poll(cx);
+                let result = connection(cx, false);
                 if shared.write_pending(observed_pending(&mut flush)).is_err() { return Poll::Ready(Err(failed())); }
                 result
             }), if !connection_done => {
@@ -847,13 +862,35 @@ async fn driver(
             },
         }
     };
+    // Only completed receive/credit and ping handles are released here. The
+    // connection stays owned until its actual codec/TLS shutdown finishes.
+    drop(pump);
+    drop(ping);
+    if end == LinkEnd::PeerEof && !connection_done {
+        end = tokio::select! {
+            biased;
+            _ = async {
+                if !*stop.borrow_and_update() { let _ = stop.changed().await; }
+            } => LinkEnd::LocalStop,
+            result = tokio::time::timeout(policy.response_timeout, poll_fn(|cx| {
+                let result = connection(cx, true);
+                if shared.write_pending(observed_pending(&mut flush)).is_err() {
+                    return Poll::Ready(Err(failed()));
+                }
+                result
+            })) => match result {
+                Ok(Ok(())) => LinkEnd::PeerEof,
+                Ok(Err(error)) if error.kind() == io::ErrorKind::InvalidData => LinkEnd::Protocol,
+                Ok(Err(_)) => LinkEnd::Io,
+                Err(_) => LinkEnd::LocalDataStall,
+            },
+        };
+    }
     if end != LinkEnd::PeerEof && !shared.observation.failed.load(Ordering::Acquire) {
         shared.fail(end);
     }
     // Close every actual network/h2 reference before publishing terminal facts.
     drop(connection);
-    drop(pump);
-    drop(ping);
     if shared.observation.failed.load(Ordering::Acquire) {
         return Err(Error::LinkDriverFailed);
     }
@@ -962,11 +999,11 @@ where
         .with_mut(|c| c.ping_pong().map(Quiet::new))
         .flatten()
         .ok_or(Error::LinkDriverFailed)?;
-    let connection: Connection = Box::pin(poll_fn(move |cx| {
+    let connection: Connection = Box::new(move |cx, _closing| {
         connection
             .with_mut(|c| Pin::new(c).poll(cx).map(|r| r.map_err(h2_error)))
             .unwrap_or_else(|| Poll::Ready(Err(failed())))
-    }));
+    });
     start(connection, receive, send, ping, flush, tuple, policy)
 }
 
@@ -1022,15 +1059,31 @@ where
         .with_mut(|c| c.ping_pong().map(Quiet::new))
         .flatten()
         .ok_or(Error::LinkDriverFailed)?;
-    let connection: Connection = Box::pin(poll_fn(move |cx| {
+    let mut closing = false;
+    let connection: Connection = Box::new(move |cx, finish| {
         connection
-            .with_mut(|c| match c.poll_accept(cx) {
-                Poll::Pending => Poll::Pending,
-                Poll::Ready(None) => Poll::Ready(Ok(())),
-                Poll::Ready(Some(_)) => Poll::Ready(Err(failed())),
+            .with_mut(|c| {
+                if finish && !closing {
+                    // Preserve rejection of an already-observed extra stream
+                    // or connection error before initiating this bounded close.
+                    match c.poll_accept(cx) {
+                        Poll::Ready(None) => return Poll::Ready(Ok(())),
+                        Poll::Ready(Some(_)) => return Poll::Ready(Err(failed())),
+                        Poll::Pending => {}
+                    }
+                    // No outstanding application bytes/halves remain. Unlike
+                    // Drop, this sends GOAWAY and polls real TLS shutdown.
+                    c.abrupt_shutdown(h2::Reason::NO_ERROR);
+                    closing = true;
+                }
+                match c.poll_accept(cx) {
+                    Poll::Pending => Poll::Pending,
+                    Poll::Ready(None) => Poll::Ready(Ok(())),
+                    Poll::Ready(Some(_)) => Poll::Ready(Err(failed())),
+                }
             })
             .unwrap_or_else(|| Poll::Ready(Err(failed())))
-    }));
+    });
     start(connection, receive, send, ping, flush, tuple, policy)
 }
 
