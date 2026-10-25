@@ -51,7 +51,7 @@ Windows USB, storage/ISO, power-loss recovery or the full Phase0–7 objective.
 At clean `fededbe2`, the real TCP/mTLS delayed-final-read test actually fails
 with client ConnectionAborted after both original owners have been joined. The
 preceding 256 concurrent production Catalogs at clean b3cdd482 passed and did not
-reproduce it. Retain that failing test unchanged. This establishes a transport
+reproduce it. Retain that original test source and failing verdict. This establishes a transport
 defect; it does not identify the contents/cause of the old encrypted E59 failure.
 
 The current driver drops its h2/TLS connection immediately after authenticated
@@ -83,3 +83,15 @@ returned window credit; a one-step server abrupt_shutdown is therefore not a
 complete orderly-close strategy. Use h2's normal graceful_shutdown progression
 under the same bounded original owner, preserving its control-frame drain. Do
 not weaken the original half-close assertion or mask its I/O error.
+
+At 800f94c9 the original half-close passes; the delayed-network-read test's
+client now succeeds, but the deliberately stalled server correctly reports
+LocalDataStall instead of its test's assumed healthy PeerEof. h2's documented
+graceful close waits for a control PONG/one RTT, which the gate intentionally
+withholds until that owner ends. Correct this **test specification**, preserving
+the original source/101 result: add one case releasing the gate after actual FIN
+flush and requiring both actual owners PeerEof, and one withholding reads until
+the real close deadline and requiring server LocalDataStall and client clean EOF.
+Verify the revised negative against the original pre-fix production link source;
+it must still fail there. Do not accept arbitrary errors, remove the original
+half-close test, add ignores or call a timeout a successful peer completion.

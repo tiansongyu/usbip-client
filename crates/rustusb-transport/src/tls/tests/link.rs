@@ -1,7 +1,6 @@
 //! Real loopback TCP + memory-DER mTLS contracts; no helper or USB claims.
 
-#[tokio::test]
-async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestResult {
+async fn delayed_final_tls_read(withhold_until_timeout: bool) -> TestResult {
     use std::{
         pin::Pin,
         sync::{
@@ -94,6 +93,7 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
     let (incoming, mut outgoing) = (incoming?, outgoing?);
     let (armed, arm) = tokio::sync::oneshot::channel();
     let (closed, close) = tokio::sync::oneshot::channel();
+    let (fin_flushed, flushed) = tokio::sync::oneshot::channel();
     let peer = tokio::spawn(async move {
         let mut incoming = incoming;
         let operation = async {
@@ -106,7 +106,9 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
                 .map_err(|_| io::Error::other("test gate controller ended"))?;
             let mut extra = [0];
             assert_eq!(incoming.io.read(&mut extra).await?, 0);
-            incoming.io.shutdown().await
+            incoming.io.shutdown().await?;
+            let _ = fin_flushed.send(());
+            Ok::<(), io::Error>(())
         }
         .await;
         if operation.is_err() {
@@ -128,9 +130,15 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
             .send(())
             .map_err(|_| io::Error::other("test peer ended before gate"))?;
         outgoing.io.shutdown().await?;
-        close
-            .await
-            .map_err(|_| io::Error::other("test peer close observer ended"))?;
+        if withhold_until_timeout {
+            close
+                .await
+                .map_err(|_| io::Error::other("test peer close observer ended"))?;
+        } else {
+            flushed
+                .await
+                .map_err(|_| io::Error::other("test peer FIN observer ended"))?;
+        }
         gate.release()?;
         let mut extra = [0];
         let count = outgoing.io.read(&mut extra).await?;
@@ -152,11 +160,64 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
     );
     assert!(peer_operation.is_ok(), "peer operation: {peer_operation:?}");
     assert_eq!(joined?.reason, LinkEnd::PeerEof);
-    assert_eq!(peer_joined?.reason, LinkEnd::PeerEof);
+    assert_eq!(
+        peer_joined?.reason,
+        if withhold_until_timeout {
+            LinkEnd::LocalDataStall
+        } else {
+            LinkEnd::PeerEof
+        }
+    );
     Ok(())
 }
 
+#[tokio::test]
+async fn delayed_final_tls_read_resumes_both_actual_graceful_owners() -> TestResult {
+    delayed_final_tls_read(false).await
+}
+
+#[tokio::test]
+async fn withheld_final_tls_read_reports_actual_peer_close_timeout() -> TestResult {
+    // The peer's graceful shutdown requires its h2 control reply. Deliberately
+    // blocking that real network read must not become a healthy peer completion.
+    delayed_final_tls_read(true).await
+}
+
 use super::*;
+#[tokio::test]
+async fn peer_aborted_without_stream_fin_remains_a_real_tls_io_error() -> TestResult {
+    let fixture = Fixture::new()?;
+    let (server, client) = endpoints(&fixture)?;
+    let (incoming, outgoing) = sockets().await?;
+    let (incoming, outgoing) = tokio::join!(
+        server.accept_link(incoming),
+        client.connect_link("server.test", outgoing)
+    );
+    let (mut incoming, mut outgoing) = (incoming?, outgoing?);
+    incoming.io.write_all(b"reply").await?;
+    incoming.io.flush().await?;
+    incoming.owner.request_stop();
+    let stopped = incoming.owner.join().await;
+    drop(incoming.io);
+    let operation = async {
+        let mut reply = [0; 5];
+        outgoing.io.read_exact(&mut reply).await?;
+        assert_eq!(&reply, b"reply");
+        let mut extra = [0];
+        outgoing.io.read(&mut extra).await
+    }
+    .await;
+    let joined = outgoing.owner.join().await;
+    drop(outgoing.io);
+    assert_eq!(stopped?.reason, LinkEnd::LocalStop);
+    assert!(
+        operation.is_err(),
+        "unframed peer abort must not become clean EOF"
+    );
+    assert_eq!(joined?.reason, LinkEnd::Io);
+    Ok(())
+}
+
 use rustusb_core::link_health::{LinkEnd, LinkProtocol, ProbeState};
 use tokio::net::{TcpListener, TcpStream};
 

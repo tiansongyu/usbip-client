@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- clean800f94c9 transport仍76PASS/1FAIL，但原half-close已PASS；新gate client读取/owner已好，原测试错误要求在故意阻断h2 graceful PONG直到server结束时仍server PeerEof，实际为有界LocalDataStall。对照固定h2 go_away_gracefully的一RTT契约后明确修订测试规格：FIN已flush即放行的正向要求两端PeerEof，保持读阻断的负向要求server LocalDataStall/正常client EOF，不能把timeout算健康。原feded测试源码/失败与415候选失败保存；将以旧产品link.rs独立control验证新负向仍真正失败。新patch首次文档anchor不匹配原子拒绝后分开修正，无测试运行。原half-close始终不改。
+
 - clean41540391 unchanged final-read回归PASS，但完整transport 76PASS/1FAIL：原half-close/reverse-drain测试期望PeerEof实际Io，保留原FAIL，不改原测试。h2完整应用EOS仍可能有窗口credit/control尾部；更新设计，用上游正常graceful_shutdown而非one-step abrupt_shutdown推进原conn控制收尾，仍按原policy/stop核真实结束，不忽略Io。当前尚不能宣称产品修复完整通过。
 
 - cleanfededbe2可控final-TLS-read测试真实FAIL exit101/ConnectionAborted，双方owner已实际join；测试首稿patch多余加号导致fmt parse失败，未启动测试，修正后才commit/run。源码与固定h2 0.4.20/tokio-rustls0.26.6审查支持EOS后过早drop connection的问题；先补设计：FIN flush后释放send ref，完整EOS/消费/flow credit后放completed receive/ping ref，原connection继续执行h2/TLS shutdown，仍严格错误/stop/既有policy界限。官方docs.rs旧版本链接不可访问，改固定h2 Git源码及实际0.26.6文档；不更新依赖，不把该缺陷等同旧加密QEMU根因。
