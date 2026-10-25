@@ -7,6 +7,7 @@
 - 已实现AutomationPolicy唯一受信read入口、不可由用户JSON构造的授权对象、完整固定pool/backend绑定和逐次ACL复核；RuleSpec/ExpectedRevision/RuleId及四类严格mutation输入均无执行副作用。dirty开发定向10/10测试通过；首all-features clippy因测试中单项clone构造slice失败，按建议改from_ref，保留该失败，不压lint。补compile-fail doc约束普通JSON不能变成授权；最终完整gate尚待执行。
 - clean52fd127d完整scripts/check.sh通过978（原956+10unit/1compile-fail各default/all两次），独立GUI11通过，均0fail/ignore；392输入/HEAD/clean guard全真，真实outer wait0后才改文档。CLI7417838a…20317600B/helper475b2f97…7525544B/GUI807d7e2c…16995504B；GLib原34依赖warning保留。五个原gate/summary/方法273838B先逐字复制入公开evidence；未造失败clippy完整文件日志。无USB操作或新QEMU，旧c4f结果不重归属新ELF；文档批量patch因长行context不匹配未写入，改拆分应用。原同事务journal/触发/owner/GUI/dynamic pool/安装/硬件等目标不缩减。文档/全局skill保持核对及普通push/CI待执行。
 - E52英文报告/架构/验收/roadmap/AGENTS/核心skill同步基础库与未接运行时边界。文档QA10文件/190本地target、392冻结输入/三ELF一致；旧config/store/model/RPC/IPC/runtime/CLI agent/GUI JS及两锁逐fd6字节相同，英文README/八site/四global skill与Codex symlink保持。八个gate/方法/QA/实际CLI help原件282519B及逐SHA manifest公开入库；无新GUI窗口或QEMU/硬件宣称。下一步普通SSH推送并核四平台CI和Pages状态，不将后续文档head重归属52fd本地测试。
+- 内容1b332c5d普通SSH push/远端main精确/clean。core40151207871四格121042953839/953868/953909/953937及GUI40151207859四格121042953576/953745/953788/953813，实际arch/fullgate均completed/success；Pages40151207842 check121042953683/deploy121043040353也成功，无重跑。七canonical HTTPS均200逐Git精确，392输入/三ELF/八site/四global skill/symlink保持。41原API/HTTP/command/method876582B逐SHA归档publication-1b目录，running与final分开，不造CI logs/ELFs/每格测试数量；最终只提交发布回执，不重归属52fd本地软件或1b CI。原完整goal继续active，自动规则运行时/GUI/dynamic pool/安装/硬件等仍需完成。
 
 ## 2026-10-25：GUI同数据链RTT与故障展示（开始）
 

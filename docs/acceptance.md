@@ -363,3 +363,5 @@ E49最终内容3aafa2c0的root40142928056与GUI40142928072各四native格/实际
 ## 39. E52：自动规则授权与输入基础
 
 [报告](research/automatic-sharing-foundation-validation.md)锁clean52fd127d：完整root978+GUI11软件通过、392输入/HEAD/clean guard真；10unit及1compile-fail在default/all-features各执行一次。严格独立root policy、全pool/backend绑定、逐次ACL与UID复核、有限RuleSpec/RuleId/ExpectedRevision及四mutation输入已实现；用户JSON不能构造授权。没有生产调用者、启动/RPC/规则持久化/自动触发/GUI启用，不改旧Manifest1/disk2/Job/Session/Metrics/IPC1。首开发clippy测试clone lint失败及修正留work log；无新QEMU/硬件，不将E51归给新ELF。完整规则的同事务准入、抑制、实际owner、动态pool、GUI/安装及原Phase0–7门槛保持。
+
+内容1b332c5d的core40151207871及GUI40151207859各四native格/实际arch与fullgate均success，Pages40151207842 check/deploy也成功；七canonical HTTPS逐Git精确、392输入/三ELF/八site/四global skill/symlink保持。见[发布回执](evidence/automatic-sharing-foundation-publication-1b332c5d-20261025/receipt.json)。不造CI logs/ELFs或每平台重计数，最终纯文档head不重归属52fd软件或1b CI。

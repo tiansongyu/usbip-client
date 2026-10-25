@@ -105,3 +105,23 @@ QEMU trigger/duplicate/restart/storage/generation/real-I/O tests and Native/USBF
 dynamic-pool proofs. Package/systemd lifecycle, real hardware G1/G2, full G3/G5
 and the original later phases remain open. The overall design is still draft;
 this library does not complete automatic sharing.
+
+## Publication receipt
+
+Content `1b332c5d611d3db9a68c8f1e9da34af1e7668f46` was pushed normally to
+the authorized SSH remote. The [software workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40151207871)
+and [GUI workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40151207859)
+completed successfully on Ubuntu 22.04/24.04, x86_64/aarch64. Each of the eight
+jobs has successful actual architecture and full-gate steps. The
+[Pages workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40151207842)
+also completed its check and deploy jobs successfully.
+
+The [receipt](../evidence/automatic-sharing-foundation-publication-1b332c5d-20261025/receipt.json)
+and manifest preserve 41 original API/HTTP/command/method files, 876,582 bytes,
+including running and terminal responses separately. Seven canonical HTTPS
+resources returned 200 with exact Git bytes; 392 inputs, three local ELFs, eight
+website files and four global skill files/symlink remained intact. CI logs and
+CI-built ELFs were not fetched; no per-platform test counts are inferred from
+job status. Local 978+11 remains attributed to clean `52fd127d`. The final receipt
+commit contains documentation/evidence only and is not relabeled as the tested
+source or the content head of these CI runs.
