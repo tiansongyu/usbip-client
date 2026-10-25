@@ -115,3 +115,14 @@ the server's PING progression. Test the complete-stream NO_ERROR close again
 while retaining all original stream references (unlike 41540391). This is a
 bounded candidate experiment, not a passed fix, and must satisfy both original
 half-close and new real-TLS cases before it can be selected.
+
+The retained-reference NO_ERROR candidate d6707a77 passes both normal cases;
+its only failed assertion is the provisional graceful-PING-specific timeout
+expectation (actual healthy PeerEof). For a fixed single stream already fully
+drained, no new-stream grace RTT is needed. Restore the **original fededbe2
+delayed-read regression verbatim**, preserving its stronger one-sided-completion
+ordering and healthy outcome. Keep the aborted-without-FIN negative. Test actual
+close stop/timeout/error with a gate on the underlying AsyncWrite shutdown call,
+not by assuming a GOAWAY/PONG handshake that is no longer requested. All prior
+candidate failures/specification changes remain visible; no original half-close
+assertion, malformed-data rule or actual I/O error is relaxed.

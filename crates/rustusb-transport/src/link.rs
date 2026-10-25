@@ -181,13 +181,6 @@ fn h2_error(error: h2::Error) -> io::Error {
     let kind = error
         .get_io()
         .map_or(io::ErrorKind::InvalidData, |e| e.kind());
-    #[cfg(test)]
-    eprintln!(
-        "test-only h2 connection: kind={kind:?} reason={:?} reset={} goaway={}",
-        error.reason(),
-        error.is_reset(),
-        error.is_go_away()
-    );
     io::Error::new(kind, "framed connection failed")
 }
 fn observation_error() -> io::Error {
@@ -856,8 +849,8 @@ async fn driver(
             },
         }
     };
-    // Only completed receive/credit and ping handles are released here. The
-    // connection stays owned until its actual codec/TLS shutdown finishes.
+    // Keep completed stream/ping references alive while the actual connection
+    // performs its codec/TLS shutdown; publish only after every owner drops.
     if end == LinkEnd::PeerEof && !connection_done {
         end = tokio::select! {
             biased;

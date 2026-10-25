@@ -6,6 +6,9 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 #[path = "quiet_tests.rs"]
 mod quiet_tests;
 
+#[path = "close_tests.rs"]
+mod close_tests;
+
 pub(super) fn tuple() -> TcpTuple {
     use std::net::{Ipv4Addr, SocketAddrV4};
     TcpTuple {
