@@ -1,0 +1,295 @@
+{
+  "utc": "2026-10-25T13:16:03.422299+00:00",
+  "paired_runs": 14,
+  "passed": 4,
+  "failed_retained": 10,
+  "actual_qemu_exits0": 28,
+  "os_preparation_qemu_exits0": 2,
+  "passing_io_rounds": 12,
+  "passing_root_proofs": 52,
+  "software": {
+    "head": "d6e68915b94789f8bfc354d21d25eaddfe48f46b",
+    "utc": "2026-10-25T13:13:13.654412+00:00",
+    "result": "PASS",
+    "commands": [
+      {
+        "name": "core",
+        "argv": [
+          "bash",
+          "scripts/check.sh"
+        ],
+        "exit": 0,
+        "passed": 1076,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "name": "gui",
+        "argv": [
+          "bash",
+          "scripts/check-gui.sh"
+        ],
+        "exit": 0,
+        "passed": 18,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "binaries": {
+      "target/release/rustusb": {
+        "sha256": "54a67744f657fa79f4c184341db77f89affda88a35c470e62f5225ed92259bd8",
+        "bytes": 22447632
+      },
+      "target/release/rustusb-helper": {
+        "sha256": "475b2f97e8b4e31dd1af479193913c637d09dc8c3b1debd13442c0f88f6748f3",
+        "bytes": 7525544
+      },
+      "apps/rustusb-gui/target/release/rustusb-gui": {
+        "sha256": "5c9ec587bf2bcb385da6af26824567572f094cbc000c9a472b7787ce6bef9ba9",
+        "bytes": 17897832
+      }
+    },
+    "guards": {
+      "head": true,
+      "clean": true,
+      "inputs": true
+    }
+  },
+  "software_input_count": 717,
+  "matrix": [
+    {
+      "run": "rustusb-installed-usb-native-v4-attempt1-20261025",
+      "passed": false,
+      "head": "90916bdecad87a92ed1c23ace9c4299929bc0654",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 136, in one\n    upgraded=guest(role,'upgrade',args.upgrade.name);check_terminal(upgraded['after'])\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 39, in check_terminal\n    require(t['proof']==expected and attempt['proof']==expected,'exact independent release criterion and app echo')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 23, in require\n    if not ok:raise RuntimeError(message)\nRuntimeError: exact independent release criterion and app echo\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-native-v4-attempt2-20261025",
+      "passed": false,
+      "head": "66daec8b6c0b84440fd89cc9849ba63be87476ef",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 140, in one\n    require(after[name]['InvocationID']==before[name]['InvocationID'],'same original unit invocation retired')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 23, in require\n    if not ok:raise RuntimeError(message)\nRuntimeError: same original unit invocation retired\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-native-v4-attempt3-20261025",
+      "passed": false,
+      "head": "3a2770558da0ee96570cfce95efcb547992d86a9",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "client_root_proofs": 6,
+      "server_root_proofs": 10,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 185, in one\n    review=secure.pcap_review(vm.out/'data.pcap','ipv'+str(args.family),identifiers,expected_alpn=b'rustusb-usbip/2')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py\", line 391, in pcap_review\n    control = ipv6_control(packet, tcp, router_alert, extensions)\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py\", line 285, in ipv6_control\n    raise RuntimeError(\"invalid MLDv2 link scope/Router Alert\")\nRuntimeError: invalid MLDv2 link scope/Router Alert\n"
+    },
+    {
+      "run": "rustusb-installed-usb-native-v4-attempt4-20261025",
+      "passed": false,
+      "head": "dd9390c460615c3489c24f265c33eb97bc1ee9bd",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 124, in one\n    held=guest('client','ready','client')['snapshot'];check_held(held,keys)\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 85, in guest\n    value=json.loads(vms[role].run(command,label))\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/vm.py\", line 60, in run\n    if result.returncode not in expected:raise RuntimeError(f'{self.role} {label} exit {result.returncode}')\nRuntimeError: client ready-client exit 1\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-native-v4-attempt5-20261025",
+      "passed": true,
+      "head": "d6e68915b94789f8bfc354d21d25eaddfe48f46b",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "client_root_proofs": 6,
+      "server_root_proofs": 10,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-installed-usb-native-v6-attempt1-20261025",
+      "passed": false,
+      "head": "66daec8b6c0b84440fd89cc9849ba63be87476ef",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 6,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 103, in one\n    guest('server','start-jobs','server');guest('server','ready','server')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 85, in guest\n    value=json.loads(vms[role].run(command,label))\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/vm.py\", line 59, in run\n    if result.returncode not in expected:raise RuntimeError(f'{self.role} {label} exit {result.returncode}')\nRuntimeError: server ready-server exit 1\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-native-v6-attempt2-20261025",
+      "passed": false,
+      "head": "3a2770558da0ee96570cfce95efcb547992d86a9",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 6,
+      "client_root_proofs": 6,
+      "server_root_proofs": 10,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 185, in one\n    review=secure.pcap_review(vm.out/'data.pcap','ipv'+str(args.family),identifiers,expected_alpn=b'rustusb-usbip/2')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py\", line 391, in pcap_review\n    control = ipv6_control(packet, tcp, router_alert, extensions)\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py\", line 285, in ipv6_control\n    raise RuntimeError(\"invalid MLDv2 link scope/Router Alert\")\nRuntimeError: invalid MLDv2 link scope/Router Alert\n"
+    },
+    {
+      "run": "rustusb-installed-usb-native-v6-attempt3-20261025",
+      "passed": true,
+      "head": "dd9390c460615c3489c24f265c33eb97bc1ee9bd",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 6,
+      "client_root_proofs": 6,
+      "server_root_proofs": 10,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-installed-usb-usbfs-v4-attempt1-20261025",
+      "passed": false,
+      "head": "66daec8b6c0b84440fd89cc9849ba63be87476ef",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 4,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 140, in one\n    require(after[name]['InvocationID']==before[name]['InvocationID'],'same original unit invocation retired')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 23, in require\n    if not ok:raise RuntimeError(message)\nRuntimeError: same original unit invocation retired\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-usbfs-v4-attempt2-20261025",
+      "passed": false,
+      "head": "3a2770558da0ee96570cfce95efcb547992d86a9",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 4,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 116, in one\n    held=guest('client','ready','client')['snapshot'];check_held(held,keys)\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 85, in guest\n    value=json.loads(vms[role].run(command,label))\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/vm.py\", line 59, in run\n    if result.returncode not in expected:raise RuntimeError(f'{self.role} {label} exit {result.returncode}')\nRuntimeError: client ready-client exit 1\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-usbfs-v4-attempt3-20261025",
+      "passed": true,
+      "head": "dd9390c460615c3489c24f265c33eb97bc1ee9bd",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 4,
+      "client_root_proofs": 6,
+      "server_root_proofs": 4,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-installed-usb-usbfs-v6-attempt1-20261025",
+      "passed": false,
+      "head": "66daec8b6c0b84440fd89cc9849ba63be87476ef",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 6,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 111, in one\n    catalog=guest('client','discover')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 85, in guest\n    value=json.loads(vms[role].run(command,label))\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/vm.py\", line 59, in run\n    if result.returncode not in expected:raise RuntimeError(f'{self.role} {label} exit {result.returncode}')\nRuntimeError: client discover exit 1\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-installed-usb-usbfs-v6-attempt2-20261025",
+      "passed": false,
+      "head": "3a2770558da0ee96570cfce95efcb547992d86a9",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 6,
+      "client_root_proofs": 6,
+      "server_root_proofs": 4,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 185, in one\n    review=secure.pcap_review(vm.out/'data.pcap','ipv'+str(args.family),identifiers,expected_alpn=b'rustusb-usbip/2')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py\", line 391, in pcap_review\n    control = ipv6_control(packet, tcp, router_alert, extensions)\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu/run-secure-qemu.py\", line 285, in ipv6_control\n    raise RuntimeError(\"invalid MLDv2 link scope/Router Alert\")\nRuntimeError: invalid MLDv2 link scope/Router Alert\n"
+    },
+    {
+      "run": "rustusb-installed-usb-usbfs-v6-attempt3-20261025",
+      "passed": true,
+      "head": "dd9390c460615c3489c24f265c33eb97bc1ee9bd",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 6,
+      "client_root_proofs": 6,
+      "server_root_proofs": 4,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    }
+  ],
+  "archive": {
+    "sha256": "35311dabe4610d4b1364d322a82319428e7cb1be19797562f4f58a1a0ef6007c",
+    "bytes": 4305493,
+    "members": 3322
+  },
+  "privacy": {
+    "exact_private_keys_checked": 100,
+    "private_disks_keys_debs_elfs_archived": false,
+    "archive_roundtrip": true
+  }
+}

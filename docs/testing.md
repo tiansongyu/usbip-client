@@ -1,5 +1,7 @@
 # 测试手册与证据要求
 
+E59[完整安装服务USB套件](../scripts/qemu_installed_usb/README.md)与[报告](research/installed-usb-data-validation.md)：两Ubuntu amd64交叉Native/USBFS双栈四PASS/八guest0、十二实际HID/FTDI轮次、双方live包升级、52原Rootproof及基线；十原FAIL/二十guest0单列保留，Native/v4间歇首次import IO仍未定位。完整软件1094/717输入锁clean d6e68915，三USB pair锁dd9390c4、Native/v4锁d6e68915，不重归属。boot PCAP与完整product-window分别保留，原strict classifier不改；真实硬件/ARM安装/完整Phase5未完成。
+
 E58完整磁盘[安装套件](../scripts/qemu_package/README.md)使用官方签名checksum镜像和真实systemd，独立于原initramfs USB套件；[最终报告](research/debian-installation-validation.md)锁fded两Ubuntu amd64完整cold流程、4 QEMU0、原生GUI0及真实journal fsync有限等待/总wait dpkg、retain/mask检查。旧五FAIL/两开发续跑保留；C LD_PRELOAD仅明确test fixture、不入产品包，不证明永久硬阻塞可取消。运行说明、依赖/隐私边界和未验收范围见套件README。
 
 本手册定义 RustUSB 的自动检查、双 Ubuntu 实机验收、异常、安全和性能测试。命令面向稳定 Rust 及 Linux；本文本身不是已执行测试结果。**硬件与新增端到端场景均需实际执行后登记，不能以编译成功推断 USB 直通成功。** 最终状态以仓库工作记录中的命令、退出码和原始证据为准。

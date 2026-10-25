@@ -49,6 +49,9 @@ Fresh installs leave services disabled/inactive for explicit administrator setup
 Complete Ubuntu 22.04/24.04
 amd64 [QEMU lifecycle tests](docs/research/debian-installation-validation.md)
 cover installation, upgrade, reboot, removal and retained administrator state.
+Separate [installed USB data tests](docs/research/installed-usb-data-validation.md)
+cover Native/USBFS HID and FTDI I/O plus live upgrades on IPv4/IPv6. Retained
+intermittent import failures remain under investigation.
 
 ## Use
 

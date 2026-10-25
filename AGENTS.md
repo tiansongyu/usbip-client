@@ -1,5 +1,7 @@
 # RustUSB 开发约定
 
+E59完整安装服务USB证据见`docs/research/installed-usb-data-validation.md`：Native/USBFS双栈四targeted pair/八guest0、三轮HID/FTDI/双方live升级/52完整Rootproof及baseline通过，三pair锁dd9390c4、Native/v4锁d6e68915；十原FAIL/二十guest0保留，Native/v4间歇首次import IO仍未定位，不称修复。clean d6e68915完整软件1076+18/717输入与原三ELF保持。DAD/prefsrc和原incoming terminal/verified屏障、boot/product-window完整PCAP分账、原strict classifier/Rootproof不弱化；新进程0不替代旧释放。G1/G2、arm64安装、永久阻塞/断电及完整Phase5仍未完成。
+
 E58安装约定与证据见`docs/research/debian-installation-validation.md`：包源22d3、clean fded原软件1076+18/451输入及两官方Ubuntu amd64完整cold生命周期通过（4 QEMU0/无forced）；五早期FAIL/两开发续跑不改判。包默认不启服务/授权，不递归chown，不清配置/凭据/UID/旧journal；prerm/new preinst/failed-upgrade必须总wait真实agent再helper并核cgroup，masked inactive不自动unmask。SIGSTOP不能作systemd stop保持门（manager发CONT）；受控真实fsync fixture仅测试，不入产品包。Native/USBFS新unit I/O、arm64安装、永久阻塞/断电、旧未知协调及G1/G2仍待完成。
 
 目标：Rust 管理的真实 USB 设备重定向，Linux 优先。任务原文见 `docs/requirements.md`，分阶段执行，不将长期规划标成已完成。

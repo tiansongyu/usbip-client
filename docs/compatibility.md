@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+E59[完整安装服务数据验收](research/installed-usb-data-validation.md)补Native/USBFS HID/FTDI × IPv4/IPv6四pair，Ubuntu22.04/24.04 amd64交叉角色，三轮实际I/O、client/server live包升级、52原Rootproof及恢复基线通过。三pair归clean dd9390c4，Native/v4归clean d6e68915；十原FAIL保留，间歇首次import IO未定位，不称已修复。prepared OS不替代E58cold安装；不扩大硬件/ISO/ARM或一般设备兼容性。
+
 E58[Ubuntu包运行验收](research/debian-installation-validation.md)新增真实systemd PID1的amd64完整22.04/24.04磁盘guest，分别内核5.15.0-198/6.8.0-147、systemd249.11/255.4、GTK3.24.33/3.24.41与WebKit2.50.4/2.52.6；同Jammy构建的v3→v4基础/GUI包安装升级/重启/移除与实际窗口退出通过。它不扩大USB设备兼容矩阵，不是arm64安装或新unit内Native/USBFS数据验收。
 
 新增[E46持久设置/终端确认](research/tui-settings-actions-validation.md)：950软件/235源，四Native双栈pair/8guest0与58实际PTY/原三轮I/O通过；不扩大USB设备/平台、GUI/完整G4/G3或硬件兼容范围。

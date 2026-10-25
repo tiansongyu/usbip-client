@@ -5,6 +5,8 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 
 # RustUSB 核心开发
 
+完整Ubuntu安装服务USB夹具见`scripts/qemu_installed_usb/README.md`与`docs/research/installed-usb-data-validation.md`。E59四Native/USBFS双栈targeted pair通过（三pair dd9390c4、Native/v4 d6e68915），八guest0/十二I/O轮/双方live升级/52原Rootproof；十原FAIL及Native/v4未定位间歇import IO不能重判或称修复。clean d6e68915全软件1094/717输入、原ELF保持。动态broker UID/原units，DAD/source route就绪；client升级后等原incoming terminal/verified，export Available不代释放。捕获完整boot和product-window，原classifier不改；原invocation journal stop/deactivate与PID/cgroup、Root exact kind/correlation/key/UID/resource/criterion分层核。正常released app proof可null但原Root必有；不扩为硬件/ARM/永久阻塞/完整Phase5验收。
+
 先读仓库根 `AGENTS.md`、`docs/architecture.md` 和相关 `docs/research/` 审计；范围以 `docs/requirements.md` 为准，进度见 `docs/work-log.md`。技能目录相对于仓库根，不依赖用户全局安装。其他 Agent 必须由 AGENTS.md 显式进入本文件。
 
 ## 数据通路与上游边界
