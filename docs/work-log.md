@@ -2,6 +2,8 @@
 
 ## 2026-10-25：完整安装服务的 USB 数据路径（开始）
 
+- clean bc2b8da8 两个仅OS准备来宾实际QEMU0，APT/模块版本和派生盘hash留待显式采证。初稿patch缺少一行前缀、复制后的import替换anchor不匹配、工作日志英文标题anchor不匹配，三次均原子拒绝，非USB测试失败；修正后继续。v7构包成功但新夹具当时untracked，只作开发产物，不称clean构包；夹具commit后再构建。新scripts/qemu_installed_usb使用动态broker、原systemd units、普通operator、三轮真实I/O与双方live升级及Rootproof。当前尚无installed-data PASS。
+
 - 上轮E58为已验证进展；从clean5e867949重读完整Phase0–7目标，核Git/工作日志/核心skill、安装设计与units及既有agent/secure I/O夹具。沿用rustusb-development/technical-documentation，无新agent委托；只读历史注释大输出有截断，关键路径改分段补读，未覆盖其他工作。先写installed-usb-data-design：两完整Ubuntu交叉角色、Native/USBFS双栈四pair、真实HID/FTDI三轮I/O、实际client/server包升级合作清理与完整Rootproof/原kernel-driver基线，不以新进程0代旧恢复。可先建立仅OS依赖的私有派生基底并记录来源，非新cold安装验收。当前只有设计，尚无本轮新USB/安装/软件通过。README/site/global skill已交付，保留原版本与硬件/ARM/Windows未完成边界。
 
 ## 2026-10-25：Debian 安装生命周期（开始）
