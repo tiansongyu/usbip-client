@@ -119,7 +119,7 @@ new physical-generation rule test. The independent v2 run never enables rules.
 
 ## Documentation and showcase checks
 
-Static QA checked16 documentation files,231 local targets and43 site link/asset
+Static QA checked16 documentation files,232 local targets and43 site link/asset
 references, actual CLI help, all396 frozen inputs and the same three ELFs. Only
 site copy changed; its CSS, JS and original assets remain unchanged. The four
 global `readme-site` files and Codex discovery symlink retain their original hashes.
@@ -162,3 +162,22 @@ installation/systemd/upgrade/uninstall/reboot, real G1/G2 hardware, full G3,
 performance/compatibility expansion and Windows support. Earlier independent
 evidence remains scoped to its original revision and ELF. The full Phase0–7
 objective remains active.
+
+## Publication receipt
+
+Content `d395c3964b6da7873571fe81805a94ade1fcdfdb` was pushed normally over SSH.
+Core run40160168287 and GUI run40160168167 both completed successfully on all
+four Ubuntu22.04/24.04 x86_64/aarch64 jobs; actual architecture and full-gate steps
+were checked. Pages run40160168210 check/deploy also succeeded. Seven canonical
+HTTPS resources return200 and exactly match that content head. All396 frozen
+inputs, three ELFs, eight site files and four global skill files remain intact.
+
+The [original publication receipt](../evidence/automatic-sharing-runtime-publication-d395c396-20261025/receipt.json)
+retains42 API/HTTP/method files,437254 bytes, with per-file hashes. One attempt to
+fetch an in-progress CI job log returned404; no CI logs or executable hashes were
+downloaded or inferred. The first collector expected the wrong deployment step
+label and failed before creating the archive directory. The original API showed
+the successful `Deploy website` step; the corrected collector checks that exact
+name. Neither collection issue changes any workflow's result. Local software and
+QEMU evidence stays locked to20a15a01; the final receipt-only documentation commit
+is not another tested code/CI revision.
