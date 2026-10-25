@@ -2,6 +2,8 @@
 
 ## 2026-10-25：完整安装服务的 USB 数据路径（开始）
 
+- clean66daec8b四pair全部保留FAIL/8QEMU0及三guard true：Native/v4和USBFS/v4各首轮真实I/O及client升级后，新夹具错误要求daemon-reload仍保留inactive InvocationID；Native/v6 listener准备I/O失败、USBFS/v6 discovery timeout。私有data PCAP显示client使用NAT的fec0源而静态地址仍DAD，server route无法回包；补显式DAD/carrier与exact prefsrc/dev就绪检查，不添加产品重试。用原INVOCATION_ID的PID1成功deactivate/stop journal事件、原PID消失/cgroup空及实际dpkg gate stderr核合作顺序；daemon-reload清空metadata不等于失败或成功凭据。补原live UID/caps/ELF、exact catalog与原PCAP严格classifier/双栈3240拒绝。原verifier不改，原FAIL不重判。
+
 - clean90916bde首Native/v4 pair真实第一轮HID/FTDI I/O及client live包升级完成，但新host verifier误要求正常released session回填attempt.proof而FAIL；两QEMU0、HEAD/clean/ELF guards全部true。保存完整原FAIL，Root已有两条精确native_import_released，app正常释放proof可null而非recovery回填；对照旧verifier与runtime源码后修正新夹具，只允许null或完全相同echo，强制Root原kind/correlation/key/UID/resource/criterion匹配不变。不是产品修复，也不将首run重判PASS。
 
 - clean bc2b8da8 两个仅OS准备来宾实际QEMU0，APT/模块版本和派生盘hash留待显式采证。初稿patch缺少一行前缀、复制后的import替换anchor不匹配、工作日志英文标题anchor不匹配，三次均原子拒绝，非USB测试失败；修正后继续。v7构包成功但新夹具当时untracked，只作开发产物，不称clean构包；夹具commit后再构建。新scripts/qemu_installed_usb使用动态broker、原systemd units、普通operator、三轮真实I/O与双方live升级及Rootproof。当前尚无installed-data PASS。

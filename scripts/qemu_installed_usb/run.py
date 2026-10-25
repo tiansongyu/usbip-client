@@ -101,6 +101,7 @@ def one(args):
             guest(role,'start-services')
             guest(role,'denied','server' if role=='server' else 'hid')
         guest('server','start-jobs','server');guest('server','ready','server')
+        guest('client','plaintext-refused')
         for cycle in [1,2,3]:
             print('actual installed USB I/O round '+str(cycle),flush=True)
             if cycle==3:
@@ -110,6 +111,7 @@ def one(args):
                 guest('client','start-services')
             catalog=guest('client','discover')
             require(catalog['journal_healthy'],'authenticated discovery is healthy')
+            require(catalog['response']['result']=='catalog' and {d['device_key'] for d in catalog['response']['devices']}==set(keys),'exact authenticated approved catalog')
             guest('client','start-jobs','hid','serial')
             held=guest('client','ready','client')['snapshot'];check_held(held,keys)
             guest('server','snapshot')
@@ -135,10 +137,16 @@ def one(args):
                 print(role+': upgrade with actual live USB owners',flush=True)
                 upgraded=guest(role,'upgrade',args.upgrade.name);check_terminal(upgraded['after'])
                 before=upgraded['before'];after=upgraded['after']['units']
+                stopped_events={}
                 for name in before:
                     require(int(before[name]['MainPID'])>0 and before[name]['ActiveState']=='active','actual original unit owner')
-                    require(after[name]['InvocationID']==before[name]['InvocationID'],'same original unit invocation retired')
-                require(int(after['rustusb-agent.service']['ExecMainExitTimestampMonotonic'])<=int(after['rustusb-helper.service']['ExecMainExitTimestampMonotonic']),'actual agent exit precedes helper exit')
+                    require(not after[name]['InvocationID'] or after[name]['InvocationID']==before[name]['InvocationID'],'any retained invocation must match original')
+                    events=[json.loads(line) for line in upgraded['journal'].splitlines()]
+                    stopped_events[name]=[e for e in events if e.get('_PID')=='1' and e.get('UNIT')==name and e.get('INVOCATION_ID')==before[name]['InvocationID'] and e.get('MESSAGE_ID')=='9d1aaa27d60140bd96365438aad20286' and e.get('JOB_TYPE')=='stop' and e.get('JOB_RESULT')=='done']
+                    require(len(stopped_events[name])==1,'original invocation exact successful stop event')
+                    deactivated=[e for e in events if e.get('_PID')=='1' and e.get('UNIT')==name and e.get('INVOCATION_ID')==before[name]['InvocationID'] and e.get('MESSAGE_ID')=='7ad2d189f7e94e70a38c781354912448']
+                    require(len(deactivated)==1,'original invocation exact successful deactivation')
+                require(int(stopped_events['rustusb-agent.service'][0]['__MONOTONIC_TIMESTAMP'])<int(stopped_events['rustusb-helper.service'][0]['__MONOTONIC_TIMESTAMP']),'actual agent stop precedes helper stop')
                 if role=='client':
                     removed=check_empty_vhci(upgraded['after'],held)
                     client.run('test ! -e '+shlex.quote('/sys/bus/usb/devices/'+removed[0])+' && test ! -e '+shlex.quote('/sys/bus/usb/devices/'+removed[1]),'old-local-generations-absent')
@@ -169,6 +177,16 @@ def one(args):
         result['head_guard']=git('rev-parse','HEAD')==initial
         result['clean_guard']=not git('status','--porcelain')
         result['frozen_file_guard']=all(sha(Path(p))==digest for p,digest in frozen.items())
+        if result['passed']:
+            try:
+                devices=data['client']['discover'][0]['response']['devices']
+                identifiers={(x['device']['bus_number']<<16)|x['device']['device_number'] for x in devices}
+                for role,vm in vms.items():
+                    review=secure.pcap_review(vm.out/'data.pcap','ipv'+str(args.family),identifiers,expected_alpn=b'rustusb-usbip/2')
+                    save(out/(role+'-pcap-review.json'),review)
+                result['pcap_review_passed']=True
+            except BaseException:
+                result['passed']=False;result['pcap_failure']=traceback.format_exc()
         result['passed']=result['passed'] and all(x==0 for x in result['qemu_exits'].values()) and all(result[k] for k in ['head_guard','clean_guard','frozen_file_guard'])
         save(out/'summary.json',result);print(json.dumps(result),flush=True)
     return 0 if result['passed'] else 1

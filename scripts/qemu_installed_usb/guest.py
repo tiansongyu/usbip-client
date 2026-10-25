@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import pwd
 import select
+import socket
 import stat
 import struct
 import subprocess
@@ -78,6 +79,10 @@ def unit_status():
         data=dict(line.split('=',1) for line in run(['systemctl','show',name,'--property='+','.join(fields)]).splitlines())
         cgroup=Path('/sys/fs/cgroup'+data['ControlGroup']) if data['ControlGroup'] else None
         data['cgroup_processes']=[int(x) for p in (cgroup.rglob('cgroup.procs') if cgroup and cgroup.exists() else []) for x in p.read_text().split()]
+        process=Path('/proc')/data['MainPID']
+        if int(data['MainPID'])>0 and process.exists():
+            data['process']={'status':(process/'status').read_text(),'stat':(process/'stat').read_text(),
+                'exe':str((process/'exe').resolve()),'exe_sha256':hashlib.sha256((process/'exe').read_bytes()).hexdigest()}
         result[name]=data
     return result
 
@@ -105,6 +110,16 @@ def setup(role,backend,family):
     run(['ip','link','set',interface,'up'])
     for address in ['192.0.2.'+('1' if role=='server' else '2')+'/24','fd42:7275:7374::'+('1' if role=='server' else '2')+'/64']:
         run(['ip','addr','add',address,'dev',interface])
+    own6='fd42:7275:7374::'+('1' if role=='server' else '2')
+    for _ in range(200):
+        addresses=json.loads(run(['ip','-j','addr','show','dev',interface]))
+        usable=[a for row in addresses for a in row['addr_info'] if a['local']==own6 and not a.get('tentative') and not a.get('dadfailed') and 'tentative' not in a.get('flags',[]) and 'dadfailed' not in a.get('flags',[])]
+        if usable and (Path('/sys/class/net')/interface/'carrier').read_text().strip()=='1':break
+        time.sleep(.05)
+    else:raise RuntimeError('actual IPv6 DAD/carrier did not become ready')
+    peer6='fd42:7275:7374::'+('2' if role=='server' else '1')
+    route=json.loads(run(['ip','-j','-6','route','get',peer6]))
+    assert len(route)==1 and route[0]['dev']==interface and route[0]['prefsrc']==own6,route
     for mod in ['usbip_host','vhci_hcd','usbhid','ftdi_sio']:run(['modprobe',mod])
     for name in ['ca.der','server.der','client.der',role+'-key.der']:
         target=CONFIG/name
@@ -147,6 +162,7 @@ def setup(role,backend,family):
         'operators':[{'uid':1000,'profiles':[p['id'] for p in profiles],'actions':['read','start','stop','discover','audit']}]})
     return {'role':role,'backend':backend,'family':family,'uid':uid,'device_keys':device_keys,
         'baseline':host_baseline(keys) if role=='server' else None,'vhci':vhci(),
+        'addresses':addresses,'ipv6_route':route,
         'versions':run(['dpkg-query','-W','systemd','dpkg','rustusb'])+run(['uname','-a'])+run(['usbip','version']),
         'units':{name:run(['systemctl','cat',name]) for name in UNITS},
         'public_config':{p.name:read(p) for p in CONFIG.glob('*.json')},
@@ -224,9 +240,23 @@ def main():
         run(['systemctl','stop','rustusb-agent.service','rustusb-helper.service']);result=stopped()
     elif a.action=='upgrade':
         before=unit_status()
-        output=run(['dpkg','-i',str(HERE/a.args[0])])
-        result={'before':before,'dpkg_stdout':output,'after':stopped(),'version':run(['dpkg-query','-W','rustusb']),
+        package=subprocess.run(['dpkg','-i',str(HERE/a.args[0])],capture_output=True,text=True)
+        assert package.returncode==0,{'exit':package.returncode,'stdout':package.stdout,'stderr':package.stderr}
+        originals={}
+        for name,old in before.items():
+            cgroup=Path('/sys/fs/cgroup'+old['ControlGroup'])
+            originals[name]={'cgroup_processes':[int(x) for p in cgroup.rglob('cgroup.procs') for x in p.read_text().split()] if cgroup.exists() else [],
+                'original_pid_exists':Path('/proc/'+old['MainPID']).exists()}
+            assert originals[name]=={'cgroup_processes':[],'original_pid_exists':False}
+        result={'before':before,'dpkg_stdout':package.stdout,'dpkg_stderr':package.stderr,'dpkg_exit':package.returncode,
+            'original_owners':originals,'after':stopped(),'version':run(['dpkg-query','-W','rustusb']),
             'journal':run(['journalctl','-u','rustusb-agent','-u','rustusb-helper','-b','--no-pager','-o','json'])}
+    elif a.action=='plaintext-refused':
+        result=[]
+        for family,address in [(socket.AF_INET,'192.0.2.1'),(socket.AF_INET6,'fd42:7275:7374::1')]:
+            with socket.socket(family,socket.SOCK_STREAM) as s:
+                s.settimeout(3);rc=s.connect_ex((address,3240));assert rc==111,rc
+                result.append({'family':int(family),'address':address,'port':3240,'errno':rc})
     elif a.action=='discover':result=agent('discover','hid')
     else:raise RuntimeError('unknown fixture action')
     print(json.dumps(result))
