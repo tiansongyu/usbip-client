@@ -185,7 +185,22 @@ pub(super) async fn complete_management(
         result = interrupted => result.map(|()| false),
         result = rustusb_protocol::secure::finish_framed_management(io) => result.map(|()| true),
     };
-    let (closed, _) = join(owner, !matches!(result, Ok(true))).await;
+    let (closed, health) = join(owner, !matches!(result, Ok(true))).await;
+    #[cfg(test)]
+    if closed.is_err() {
+        eprintln!(
+            "test-only management close: fin_eof_complete={} owner_error={} phase_end={:?}",
+            matches!(result, Ok(true)),
+            closed.is_err(),
+            health.as_ref().map(|h| (
+                h.phase,
+                h.end,
+                h.stats.as_ref().map(|s| s.receive_pending_bytes)
+            ))
+        );
+    }
+    #[cfg(not(test))]
+    let _ = health;
     match (result, closed) {
         (Err(error), _) | (_, Err(error)) => Err(error),
         (Ok(completed), Ok(())) => Ok(completed),
