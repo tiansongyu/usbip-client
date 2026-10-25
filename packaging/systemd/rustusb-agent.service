@@ -1,0 +1,26 @@
+[Unit]
+Description=RustUSB unprivileged application service
+ConditionPathExists=/etc/rustusb/agent.json
+BindsTo=rustusb-helper.service
+After=rustusb-helper.service
+PartOf=rustusb-helper.service
+
+[Service]
+Type=exec
+User=rustusb
+Group=rustusb
+ExecStartPre=+/usr/bin/python3 -I /usr/libexec/rustusb/package-control prepare-agent
+ExecStart=/usr/bin/rustusb agent --config /etc/rustusb/agent.json run
+UMask=0077
+KillSignal=SIGTERM
+KillMode=mixed
+SendSIGKILL=no
+TimeoutStopSec=infinity
+Restart=no
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+LimitCORE=0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+[ -z "${DPKG_ROOT:-}" ] || { echo 'RustUSB: alternate DPKG_ROOT is unsupported' >&2; exit 1; }
+case "$1" in
+  configure)
+    /usr/bin/python3 -I /usr/libexec/rustusb/package-control account
+    # Record potential enable links while unit files exist; never enable/start.
+    deb-systemd-helper update-state rustusb-agent.service rustusb-helper.service
+    if test -d /run/systemd/system; then systemctl --system daemon-reload; fi
+    echo 'RustUSB installed disabled/stopped. Provision explicit policy/TLS/manifest before starting services.'
+    ;;
+  abort-upgrade|abort-remove|abort-deconfigure)
+    echo 'RustUSB: transaction aborted; retained stopped state and administrator records.'
+    ;;
+  *) echo 'RustUSB: unsupported postinst operation' >&2; exit 1 ;;
+esac

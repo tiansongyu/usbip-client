@@ -1,0 +1,24 @@
+[Unit]
+Description=RustUSB restricted privileged helper
+ConditionPathExists=/etc/rustusb/policy.json
+Before=rustusb-agent.service
+
+[Service]
+Type=exec
+User=root
+Group=root
+ExecStartPre=/usr/bin/python3 -I /usr/libexec/rustusb/package-control prepare-helper
+ExecStart=/usr/libexec/rustusb/rustusb-helper --config /etc/rustusb/policy.json --socket /run/rustusb/control.sock --physical-state-dir /var/lib/rustusb/physical --native-state-dir /var/lib/rustusb/native
+UMask=0077
+KillSignal=SIGTERM
+KillMode=mixed
+SendSIGKILL=no
+TimeoutStopSec=infinity
+Restart=no
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+LimitCORE=0
+
+[Install]
+WantedBy=multi-user.target

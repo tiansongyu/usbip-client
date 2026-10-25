@@ -1,0 +1,184 @@
+#!/usr/bin/python3 -I
+"""Root-only, fixed-command package preparation and actual systemd stop gate.
+
+No device operations, recursive ownership repair, signal escalation, state
+deletion or caller-supplied path. This is not a USB release/recovery proof.
+"""
+import grp
+import json
+import os
+from pathlib import Path
+import pwd
+import stat
+import subprocess
+import sys
+
+UNITS = ('rustusb-agent.service', 'rustusb-helper.service')
+ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C', 'LC_ALL': 'C'}
+PROPERTIES = ('LoadState', 'ActiveState', 'SubState', 'Result', 'MainPID',
+              'ControlPID', 'ControlGroup', 'ExecMainCode', 'ExecMainStatus',
+              'InvocationID', 'KillMode', 'SendSIGKILL', 'TimeoutStopUSec', 'Restart')
+
+
+def command(*args):
+    return subprocess.run(args, env=ENV, check=True, text=True,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def directory(path, uid, gid, mode):
+    """Create an absent leaf only; refuse evidence-changing repairs."""
+    path = Path(path)
+    for parent in reversed(path.parents):
+        info = parent.lstat()
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022:
+            raise ValueError(f'unprotected ancestor: {parent}')
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        # All ancestors are root protected; no recursive mkdir or chown.
+        path.mkdir(mode=mode)
+        os.chown(path, uid, gid, follow_symlinks=False)
+        os.chmod(path, mode, follow_symlinks=False)
+        info = path.lstat()
+    if (not stat.S_ISDIR(info.st_mode) or info.st_uid != uid
+            or info.st_gid != gid or stat.S_IMODE(info.st_mode) != mode):
+        raise ValueError(f'unexpected existing directory owner/mode: {path}')
+
+
+def account():
+    try:
+        entry = pwd.getpwnam('rustusb')
+    except KeyError:
+        # A pre-existing unrelated group is not adopted or repaired.
+        try:
+            grp.getgrnam('rustusb')
+        except KeyError:
+            command('/usr/sbin/adduser', '--system', '--group', '--home',
+                    '/var/lib/rustusb-agent', '--no-create-home', 'rustusb')
+        else:
+            raise ValueError('rustusb group exists without the package account')
+        entry = pwd.getpwnam('rustusb')
+    group = grp.getgrnam('rustusb')
+    if (entry.pw_uid == 0 or entry.pw_gid != group.gr_gid
+            or entry.pw_dir != '/var/lib/rustusb-agent'
+            or entry.pw_shell not in ('/usr/sbin/nologin', '/bin/false')
+            or group.gr_mem):
+        raise ValueError('incompatible rustusb account/group; no automatic repair')
+    return entry
+
+
+def checked_manifest(entry):
+    path = Path('/etc/rustusb/agent.json')
+    for parent in reversed(path.parents):
+        info = parent.lstat()
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022:
+            raise ValueError('unprotected manifest ancestor')
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK)
+    with os.fdopen(fd, 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_nlink != 1
+                or info.st_mode & 0o022 or info.st_size > 65536):
+            raise ValueError('unsafe or oversized public manifest')
+        def pairs(values):
+            result = {}
+            for key, value in values:
+                if key in result:
+                    raise ValueError('duplicate manifest key')
+                result[key] = value
+            return result
+        data = json.loads(stream.read(65537), object_pairs_hook=pairs)
+    if (type(data.get('broker_uid')) is not int or data['broker_uid'] != entry.pw_uid
+            or data.get('control_directory') != '/run/rustusb-agent'
+            or data.get('data_directory') != '/var/lib/rustusb-agent'
+            or data.get('helper_socket') != '/run/rustusb/control.sock'):
+        raise ValueError('manifest must name package UID and fixed endpoint/data paths')
+
+
+def show(unit):
+    result = subprocess.run(('/usr/bin/systemctl', 'show', unit,
+                             '--property=' + ','.join(PROPERTIES)), env=ENV,
+                            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    values = dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
+    if result.returncode and values.get('LoadState') != 'not-found':
+        raise ValueError(f'cannot inspect {unit}: {result.stderr.strip()}')
+    if any(key not in values for key in PROPERTIES):
+        raise ValueError(f'incomplete systemd observation: {unit}')
+    return values
+
+
+def empty_cgroup(name):
+    if not name:
+        return
+    if not name.startswith('/') or '..' in Path(name).parts:
+        raise ValueError('unexpected cgroup path')
+    root = Path('/sys/fs/cgroup')
+    if not (root / 'cgroup.controllers').is_file():
+        raise ValueError('package stop gate requires unified cgroup v2')
+    path = root / name.lstrip('/')
+    if not path.exists():
+        return
+    if path.is_symlink() or not path.is_dir():
+        raise ValueError('unexpected service cgroup')
+    for current, dirs, files in os.walk(path, followlinks=False):
+        if any((Path(current) / item).is_symlink() for item in dirs):
+            raise ValueError('unexpected cgroup symlink')
+        if 'cgroup.procs' not in files:
+            raise ValueError('cannot inspect actual cgroup processes')
+        if (Path(current) / 'cgroup.procs').read_text().strip():
+            raise ValueError('actual service cgroup is not empty')
+
+
+def stop():
+    if not Path('/run/systemd/system').is_dir() or Path('/proc/1/comm').read_text().strip() != 'systemd':
+        raise ValueError('upgrade/removal requires the booted systemd manager; offline roots unsupported')
+    for unit in UNITS:
+        before = show(unit)
+        if before['LoadState'] != 'not-found':
+            if (before['KillMode'] != 'mixed' or before['SendSIGKILL'] != 'no'
+                    or before['TimeoutStopUSec'] != 'infinity' or before['Restart'] != 'no'):
+                raise ValueError(f'{unit}: unsafe stop-policy override; inspect before package operation')
+            command('/usr/bin/systemctl', 'stop', unit)
+        after = show(unit)
+        if (after['ActiveState'] != 'inactive' or after['SubState'] != 'dead'
+                or after['Result'] not in ('', 'success')
+                or after['MainPID'] != '0' or after['ControlPID'] != '0'
+                or after['ExecMainCode'] not in ('0', '1') or after['ExecMainStatus'] != '0'):
+            raise ValueError(f'{unit}: stop not verified: {json.dumps(after, sort_keys=True)}')
+        if (before['InvocationID'] and after['InvocationID']
+                and before['InvocationID'] != after['InvocationID']):
+            raise ValueError(f'{unit}: invocation changed during stop')
+        empty_cgroup(before['ControlGroup'])
+        empty_cgroup(after['ControlGroup'])
+        print(json.dumps({'unit': unit, 'before': before, 'after': after,
+                          'process_stop_verified': True, 'usb_release_proof': False}), flush=True)
+
+
+def main():
+    if os.geteuid() != 0 or len(sys.argv) != 2:
+        raise ValueError('root and one fixed administrative command required')
+    if os.environ.get('DPKG_ROOT'):
+        raise ValueError('alternate DPKG_ROOT is unsupported')
+    action = sys.argv[1]
+    if action == 'account':
+        account()
+        directory('/etc/rustusb', 0, 0, 0o755)
+    elif action == 'prepare-helper':
+        directory('/run/rustusb', 0, 0, 0o755)
+        directory('/var/lib/rustusb', 0, 0, 0o700)
+    elif action == 'prepare-agent':
+        entry = account()
+        checked_manifest(entry)
+        directory('/run/rustusb-agent', entry.pw_uid, entry.pw_gid, 0o711)
+        directory('/var/lib/rustusb-agent', entry.pw_uid, entry.pw_gid, 0o700)
+    elif action == 'stop':
+        stop()
+    else:
+        raise ValueError('unknown fixed command')
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
+        print(f'RustUSB package operation refused: {error}', file=sys.stderr, flush=True)
+        sys.exit(1)

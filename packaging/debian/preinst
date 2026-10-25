@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+[ -z "${DPKG_ROOT:-}" ] || { echo 'RustUSB: alternate DPKG_ROOT is unsupported' >&2; exit 1; }
+case "$1" in
+  upgrade)
+    test -f /usr/libexec/rustusb/package-control || { echo 'RustUSB: installed lifecycle gate missing; explicit migration required' >&2; exit 1; }
+    /usr/bin/python3 -I /usr/libexec/rustusb/package-control stop
+    ;;
+  install|abort-upgrade) ;;
+  *) echo 'RustUSB: unsupported preinst operation' >&2; exit 1 ;;
+esac

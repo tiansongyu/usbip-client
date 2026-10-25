@@ -2,6 +2,8 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- 两只读组件研究完成，保存Debian/systemd digest与固定上游引用；DPKG failed-upgrade可绕过失败old prerm、conffile先于postrm消失及d-s-h mask默认等均进设计。实现基础/GUI .deb builder、隔离Python固定命令目录准备/真实cgroup stop gate、无自动启动的两unit、显式生命周期脚本与英文指南；不改Rust数据通路。首development build成功，实际GUI help纠正desktop为--manifest，64px icon按真实尺寸安装；初稿误用不存在native-gui.md改为实际gui.md。两官方dated image gpgv/sha通过，Jammy2099e63d/730529792B、Noble04e8f246/621284352B。完整VM新fixture包含实际ordinary GUI WM close、停止失败old/new fallback、SIGSTOP真实upgrade等待/CONT、reboot/remove/purge；目前尚未运行，不作通过声明。
+
 - 上轮E57是已验证实际进展；本轮从clean412b40ff重读完整Phase0–7目标、Git/工作日志、核心skill与既有GUI安装研究。使用technical-documentation和writing-technical-design；后者明确要求独立组件并行研究，故只委托Debian/systemd两只读research，不委托产品修改。先保存debian-installation-design：基础/GUI分包、默认不启服务/不授设备、固定路径检查/不递归chown、真实合作停止先于替换文件、配置/凭据/旧未决记录与UID跨remove/purge保留。完整Ubuntu磁盘guest与当前initramfs验收分开；两官方dated镜像及签名正在下载核验，无新安装/服务/USB结果。
 - 两次过大读输出截断，改小段核关键源码；猜不存在packaging与旧GUI配置路径的只读命令报错保留，无文件写入。helper启动期TERM注册晚于journal初始化是现有源码边界，unit不能把它包装为ready或硬阻塞可取消。
 

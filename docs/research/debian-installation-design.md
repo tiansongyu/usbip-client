@@ -42,7 +42,7 @@ Use systemd directives available in Ubuntu 22.04 systemd 249 as well as Ubuntu
 24.04 systemd 255. The helper runs as root; the application agent runs as the
 dedicated broker. Both invoke their real executable directly with `Type=exec`,
 `Restart=no`, `KillMode=mixed`, `SendSIGKILL=no` and `TimeoutStopSec=infinity`.
-The helper is ordered before the agent; the agent requires the helper. Shutdown
+The helper is ordered before the agent; BindsTo/After/PartOf on the agent stop new broker work if the helper exits and propagate explicit helper restart. This cannot restore an already-dead helper. Shutdown
 stops the agent first, preserving the helper for actual cooperative cleanup.
 `Type=exec` means execve succeeded, not that the socket/listener is ready.
 
@@ -91,3 +91,5 @@ ordering and the two supported systemd versions. Official image provenance:
 [signed checksum verification](https://ubuntu.com/docs/public-images/public-images-how-to/verify-image-checksum/),
 [NoCloud datasource](https://docs.cloud-init.io/en/latest/reference/datasources/nocloud.html).
 No complete Phase 1/2/3/5/6/7 or physical G1/G2 acceptance follows from packaging.
+
+Research digests: [Debian](debian-lifecycle-research.md), [systemd](systemd-lifecycle-research.md). The new preinst and failed-upgrade prerm must repeat the installed stop gate; a failed old prerm must never fall through to a successful no-op. Configure records potential WantedBy links using deb-systemd-helper update-state, without enabling. Remove disables those recorded links; purge drops only that package bookkeeping, preserving administrator masks. Reject nonempty DPKG_ROOT; upgrades/removals require the actual booted systemd manager, not a shared-run chroot.

@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+[ -z "${DPKG_ROOT:-}" ] || { echo 'RustUSB: alternate DPKG_ROOT is unsupported' >&2; exit 1; }
+case "$1" in
+  remove|purge)
+    if test "$1" = purge; then action=purge; else action=disable; fi
+    deb-systemd-helper "$action" rustusb-agent.service rustusb-helper.service
+    for unit in rustusb-agent.service rustusb-helper.service; do
+      link="/etc/systemd/system/multi-user.target.wants/$unit"
+      test ! -e "$link" && test ! -L "$link" || { echo 'RustUSB: enable link removal not verified' >&2; exit 1; }
+    done
+    echo 'RustUSB: administrator configuration, credentials, UID and journals retained; USB release is not implied.'
+    ;;
+  upgrade|failed-upgrade|abort-install|abort-upgrade|disappear) ;;
+  *) echo 'RustUSB: unsupported postrm operation' >&2; exit 1 ;;
+esac
+if test -d /run/systemd/system; then systemctl --system daemon-reload; fi
