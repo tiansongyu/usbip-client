@@ -1,5 +1,9 @@
 # RustUSB 工作日志
 
+## 2026-10-25：完整安装服务的 USB 数据路径（开始）
+
+- 上轮E58为已验证进展；从clean5e867949重读完整Phase0–7目标，核Git/工作日志/核心skill、安装设计与units及既有agent/secure I/O夹具。沿用rustusb-development/technical-documentation，无新agent委托；只读历史注释大输出有截断，关键路径改分段补读，未覆盖其他工作。先写installed-usb-data-design：两完整Ubuntu交叉角色、Native/USBFS双栈四pair、真实HID/FTDI三轮I/O、实际client/server包升级合作清理与完整Rootproof/原kernel-driver基线，不以新进程0代旧恢复。可先建立仅OS依赖的私有派生基底并记录来源，非新cold安装验收。当前只有设计，尚无本轮新USB/安装/软件通过。README/site/global skill已交付，保留原版本与硬件/ARM/Windows未完成边界。
+
 ## 2026-10-25：Debian 安装生命周期（开始）
 
 - 最终内容84b751d2普通push/clean；core40192148876四格121165224341/224487/224528/224684、GUI40192148818四格121165223963/224124/224152/224249及Pages40192148853 check121165224186/deploy121165323274均actual completed/success，必需arch/fullgate/build/upload steps通过。四ZIP共42485490B实际下载并逐API digest核：12599060418/12598746964/12598299355/12598133315；八deb/十二ELF独立read-only查architecture、receipt hash/size、当前controller/unit/desktop source及license文件。未执行/安装CI ELF，不与本地v5/v6 .deb混为同字节。七canonical HTTPS全200且逐Git84b精确；本地451 source映射/三f174 ELF/八site/四global skill保持。
