@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- 7c45dadf固定96进程审计80PASS/16FAIL（guards全部true），其单独256Catalog亦FAIL；530c93ab临时typed stage证实fin_eof_complete=false、真实ownerEndedIo/receivepending0，不能将其降警告或只凭catalog解析成功。继续设计原transport双向drain：h2 codec写shutdown不等于对端read关闭，ClosingIo原S写关闭后有界读到真实TLS EOF，错误全保留、64KiB尾部/1KiB scratch/32 reads per poll，尾部不作为USB数据/不日志/不声称h2尾帧语义验证。更新gate为收到真实server write-shutdown时确认owner仍live再允许peer进展；原owner先于peer进展的测试源码/FAIL保持历史，要求旧candidate独立control失败，新测试更强保留真实owner寿命。原half-close/noFIN断言不放宽。
+
 - b9fc7a6c actual transport81/1FAIL，仅无FIN真实TLS abort类别Protocol而非原断言Io；原TLS gate/half-close均PASS，新256生产并发Catalog单独PASS。h2在GOAWAY后可把网络错误转到RecvStream，旧pump抹成Protocol；修正DATA/trailer与driver保留h2 typed I/O kind，malformed及显式fatal仍原类别，不打印h2 raw信息、不放宽abort断言。
 
 - clean c59c58d1完整门禁FAIL：core exit101，新真实并发Catalog group0/wave0 Io，service133/1FAIL；root已完成260个passed段但不可当全通过。GUI18/exit0，719输入与HEAD/clean guards true，CLI/helper仍原ELF、GUI已变059fc6，混合构建产物不用于验收构包。选定修复仍不足，保留原FAIL。按h2 active-stream graceful契约更新设计：在接受CONNECT1且双half仍open时立即宣布不再接新流，控制RTT在active流内推进；原EOS后只总poll原conn到TLS实际完成，不再idle发NO_ERROR/graceful adapter。不改ALPN/业务流/旧判据、不吞IO。

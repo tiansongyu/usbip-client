@@ -930,6 +930,7 @@ where
     S: AsyncRead + AsyncWrite + Unpin + Send + 'static,
 {
     let (io, flush) = TrackingIo::new(verified, Side::Client);
+    let io = crate::close::ClosingIo::new(io);
     let builder = Quiet::new(client_builder());
     let handshake = builder
         .with(|b| b.handshake::<_, Bytes>(io))
@@ -1003,6 +1004,7 @@ where
     S: AsyncRead + AsyncWrite + Unpin + Send + 'static,
 {
     let (io, flush) = TrackingIo::new(verified, Side::Server);
+    let io = crate::close::ClosingIo::new(io);
     let builder = Quiet::new(server_builder());
     let handshake = builder
         .with(|b| b.handshake::<_, Bytes>(io))

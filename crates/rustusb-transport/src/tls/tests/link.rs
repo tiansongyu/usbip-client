@@ -1,7 +1,7 @@
 //! Real loopback TCP + memory-DER mTLS contracts; no helper or USB claims.
 
 #[tokio::test]
-async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestResult {
+async fn completed_framed_peer_write_close_retains_owner_until_final_tls_read() -> TestResult {
     use std::{
         pin::Pin,
         sync::{
@@ -16,8 +16,21 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
     struct ReadGate {
         blocked: AtomicBool,
         wake: Mutex<Option<Waker>>,
+        closed: AtomicBool,
+        closed_wake: tokio::sync::Notify,
     }
     impl ReadGate {
+        async fn write_closed(&self) {
+            loop {
+                let changed = self.closed_wake.notified();
+                tokio::pin!(changed);
+                changed.as_mut().enable();
+                if self.closed.load(Ordering::Acquire) {
+                    return;
+                }
+                changed.await;
+            }
+        }
         fn release(&self) -> io::Result<()> {
             self.blocked.store(false, Ordering::Release);
             if let Some(wake) = self
@@ -65,7 +78,12 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
             Pin::new(&mut self.stream).poll_flush(cx)
         }
         fn poll_shutdown(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-            Pin::new(&mut self.stream).poll_shutdown(cx)
+            let result = Pin::new(&mut self.stream).poll_shutdown(cx);
+            if matches!(result, Poll::Ready(Ok(()))) {
+                self.gate.closed.store(true, Ordering::Release);
+                self.gate.closed_wake.notify_waiters();
+            }
+            result
         }
     }
 
@@ -75,8 +93,15 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
     let incoming_tuple = tcp_tuple(&incoming)?;
     let outgoing_tuple = tcp_tuple(&outgoing)?;
     let gate = Arc::new(ReadGate::default());
+    let server_gate = Arc::new(ReadGate::default());
     let (incoming, outgoing) = tokio::join!(
-        server.accept_with_deadline(incoming, HANDSHAKE_TIMEOUT),
+        server.accept_with_deadline(
+            Gated {
+                stream: incoming,
+                gate: server_gate.clone()
+            },
+            HANDSHAKE_TIMEOUT
+        ),
         client.connect_authenticated(
             "server.test",
             Gated {
@@ -92,8 +117,8 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
         crate::link::client(outgoing, outgoing_tuple, probes),
     );
     let (incoming, mut outgoing) = (incoming?, outgoing?);
+    let peer_monitor = incoming.monitor.clone();
     let (armed, arm) = tokio::sync::oneshot::channel();
-    let (closed, close) = tokio::sync::oneshot::channel();
     let peer = tokio::spawn(async move {
         let mut incoming = incoming;
         let operation = async {
@@ -114,7 +139,6 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
         }
         let joined = incoming.owner.join().await;
         drop(incoming.io);
-        let _ = closed.send(());
         (operation, joined)
     });
     let operation = async {
@@ -128,9 +152,14 @@ async fn completed_framed_peer_close_survives_delayed_final_tls_read() -> TestRe
             .send(())
             .map_err(|_| io::Error::other("test peer ended before gate"))?;
         outgoing.io.shutdown().await?;
-        close
+        tokio::time::timeout(Duration::from_secs(2), server_gate.write_closed())
             .await
-            .map_err(|_| io::Error::other("test peer close observer ended"))?;
+            .map_err(|_| io::Error::other("actual peer write close not observed"))?;
+        if *peer_monitor.ended().borrow() {
+            return Err(io::Error::other(
+                "peer owner ended before actual final read",
+            ));
+        }
         gate.release()?;
         let mut extra = [0];
         let count = outgoing.io.read(&mut extra).await?;

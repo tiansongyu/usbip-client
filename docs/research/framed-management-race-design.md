@@ -105,3 +105,32 @@ Preserve its typed IO kind (without formatting raw h2 errors) through DATA/trail
 reads and driver classification. Invalid framing/trailers remain Protocol;
 explicit counter/metadata fatal reasons retain precedence. Do not weaken the
 abort test or accept arbitrary failures as success.
+
+## Actual peer transport drain
+
+The 7c45dadf 96-process fixed stability audit is80 PASS/16 FAIL; its production
+Catalog failures include ConnectionAborted. Test-only stage metadata at530c93ab
+confirms FIN/EOF was **not complete**, original owner ended Io and pending app
+bytes0. Do not demote that failure to a warning or accept a parsed reply alone.
+
+h2 codec shutdown completes its write side; immediately dropping the connection
+can still close its read side while the peer finishes control/TLS shutdown.
+Add an internal ClosingIo around TrackingIo (outside its write-fence observer):
+first poll the original underlying shutdown, then keep the same transport alive
+while reading to real EOF. TLS still verifies records/close_notify and every
+actual error propagates; no reset/UnexpectedEof is accepted. The h2 connection is
+already in its closing state: bounded tail bytes are discarded, never adopted as
+USB/application data or logged. This is transport drain, not a second h2 parser
+or a claim that post-connection tail frames were semantically validated. Limit
+the tail to65536 bytes, fixed1KiB scratch and32 reads per poll; outer original
+handshake/driver stop/deadline bounds remain. Do not add another network/device
+owner, monitor capability, dependency, schema or unsafe access.
+
+The TLS scheduling regression must now release its client read gate after the
+server's **actual write shutdown receipt**, asserting the server owner is still
+alive until peer progress, then require both actual owners to finish normally.
+Its former owner-before-peer-progress assumption conflicts with an actual
+bidirectional drain; preserve that original source/FAIL and verify the stronger
+retention regression fails against the pre-drain candidate as a control. Keep
+the original half-close and exact no-FIN error assertions intact. Add direct
+drain EOF, pending/retry, I/O-error and byte-budget tests.

@@ -11,6 +11,7 @@
 
 mod acl;
 mod admission;
+mod close;
 pub mod config;
 mod flush;
 mod link;
