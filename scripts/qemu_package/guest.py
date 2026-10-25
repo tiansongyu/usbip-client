@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import pwd
+import re
 import signal
 import subprocess
 import sys
@@ -14,7 +15,8 @@ FIXTURE = Path('/var/tmp/rustusb-package-fixture')
 OUT = Path('/var/tmp/rustusb-package-evidence')
 OUT.mkdir(mode=0o700, exist_ok=True)
 EVENTS = OUT/'checks.jsonl'
-INDEX = len(list(OUT.glob('command-*.json')))
+INDEX = max((int(match.group(1)) for path in OUT.glob('command-*.json')
+             if (match := re.fullmatch(r'command-([0-9]+)\.json', path.name))), default=0)
 
 
 def check(condition, label):
@@ -167,10 +169,15 @@ def install():
     run(['/usr/bin/python3', '-I', '/usr/libexec/rustusb/package-control', 'prepare-agent'], (1,))
     check(data.stat().st_uid == 0 and sha(data/'retained-sentinel') == before, 'wrong owner refused without recursive chown')
     os.chown(data, entry.pw_uid, entry.pw_gid)
-    runtime = Path('/run/rustusb-agent'); runtime.symlink_to(data, target_is_directory=True)
+    runtime = Path('/run/rustusb-agent')
+    backup = Path('/run/rustusb-agent-fixture-backup')
+    check(not os.path.lexists(backup), 'fixture runtime backup is absent')
+    runtime.rename(backup)  # Earlier failed preparation created this leaf; preserve it.
+    runtime.symlink_to(data, target_is_directory=True)
     run(['/usr/bin/python3', '-I', '/usr/libexec/rustusb/package-control', 'prepare-agent'], (1,))
     check(runtime.is_symlink() and sha(data/'retained-sentinel') == before, 'symlink leaf refused without following or deletion')
     runtime.unlink()  # Explicit removal of this fixture's own test symlink.
+    backup.rename(runtime)
     run(['systemctl', 'start', 'rustusb-helper.service', 'rustusb-agent.service']); ready()
     desktop()
     started = agent('start', 'package-virtual')
@@ -191,7 +198,10 @@ def install():
     version = text(['dpkg-query', '-W', '-f=${Version}', 'rustusb'])
     binary = sha('/usr/bin/rustusb')
     result = run(['dpkg', '-i', second[0]], (1,))
-    check(b'failed-upgrade' in result.stderr and text(['dpkg-query', '-W', '-f=${Version}', 'rustusb']) == version and sha('/usr/bin/rustusb') == binary, 'failed prerm and failed-upgrade preserve old package')
+    check(b'RustUSB: verifying cooperative process stop before failed-upgrade' in result.stdout
+          and result.stderr.count(b'unsafe stop-policy override') == 2
+          and text(['dpkg-query', '-W', '-f=${Version}', 'rustusb']) == version
+          and sha('/usr/bin/rustusb') == binary, 'failed prerm and failed-upgrade preserve old package')
     (override/'unsafe-test.conf').unlink(); override.rmdir()
     run(['systemctl', 'daemon-reload'])
     # A stopped actual owner keeps dpkg pending; do not treat a deadline as exit.

@@ -2,6 +2,8 @@
 
 ## 2026-10-25：Debian 安装生命周期（开始）
 
+- clean22d3c485的Jammy dev02与Noble dev01都实际FAIL：两者APT安装成功、九项已到达断言通过，均在构造symlink时FileExistsError，因为前一次prepare-agent已创建安全runtime leaf后才拒绝data目录。尚无GUI/job/upgrade/reboot通过；两QEMU0、回收0、无forced、三guard真，原件完整。所有actual handles terminal后仅新fixture将这个原目录移到自有backup、测试symlink后原样还原，不改产品来配合测试；编号取实际max避免多阶段复用覆盖，CI新加base构建将超时预算从20扩到30分钟。v3/v4四包静态审查通过。只读原428输入map首断言误以为GUI workflow在旧库存内失败（实际不在），更正后428源/两10117 fixture/三原ELF映射通过，Rust/apps/vendor/locks逐412b未变。
+
 - clean7cdc007f首Jammy全VM dev01未完成：cloud-init0、APT update0（32.2MB/5分23秒），install仍下载时作者误据无partial文件推断停滞并主动SIGINT，实际child-2/guest脚本1；确认dpkg-query无rustusb，未进产品安装。回收成功、QEMU实际0/无forced/三guard真。完整APT原件复核显示已Get到179项，故不是产品FAIL或完全网络中断，保留取消/网络观察与原summary，不补判成功。四deb静态audit通过（539/964成员，188/345许可节点）。
 - 所有actual handle terminal后，仅本轮脚本/包管理改进：stdout/stderr实时落文件、APT仅fixture网络timeout和no-recommends/无翻译索引，服务cleanup仍无限等；补实际wrong-owner/symlink负向。预审修正既存mask完全inactive时不unmask、仍核实际owner/cgroup/exit；专用GID须非零、明确cgroup2、configure/abort文案不虚称一定disabled/stopped；CI显式fetch后offline许可库存，未修改Rust/三ELF。需新的clean完整VM运行。
 
