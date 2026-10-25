@@ -182,7 +182,12 @@ fn h2_error(error: h2::Error) -> io::Error {
         .get_io()
         .map_or(io::ErrorKind::InvalidData, |e| e.kind());
     #[cfg(test)]
-    eprintln!("test-only h2 connection I/O kind: {kind:?}");
+    eprintln!(
+        "test-only h2 connection: kind={kind:?} reason={:?} reset={} goaway={}",
+        error.reason(),
+        error.is_reset(),
+        error.is_go_away()
+    );
     io::Error::new(kind, "framed connection failed")
 }
 fn observation_error() -> io::Error {
@@ -1070,7 +1075,8 @@ where
                     // or connection error before initiating this bounded close.
                     match c.poll_accept(cx) {
                         Poll::Ready(None) => return Poll::Ready(Ok(())),
-                        Poll::Ready(Some(_)) => return Poll::Ready(Err(failed())),
+                        Poll::Ready(Some(Err(error))) => return Poll::Ready(Err(h2_error(error))),
+                        Poll::Ready(Some(Ok(_))) => return Poll::Ready(Err(failed())),
                         Poll::Pending => {}
                     }
                     // The application halves are complete, but returned window
@@ -1082,7 +1088,8 @@ where
                 match c.poll_accept(cx) {
                     Poll::Pending => Poll::Pending,
                     Poll::Ready(None) => Poll::Ready(Ok(())),
-                    Poll::Ready(Some(_)) => Poll::Ready(Err(failed())),
+                    Poll::Ready(Some(Err(error))) => Poll::Ready(Err(h2_error(error))),
+                    Poll::Ready(Some(Ok(_))) => Poll::Ready(Err(failed())),
                 }
             })
             .unwrap_or_else(|| Poll::Ready(Err(failed())))
