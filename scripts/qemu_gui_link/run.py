@@ -67,6 +67,7 @@ def verify(evidence,args):
         assert (folder/(prefix+'-pre-stat.txt')).read_text().split()[21]==(folder/(prefix+'-terminal-stat.txt')).read_text().split()[21]
         expanded=read(prefix+'-expanded.json')['value'];before=read(prefix+'-refreshed.json')['value'];after=read(prefix+'-terminal-dom.json')['value']
         assert all(v['open']and v['focused']for v in [expanded,before,after])
+        assert all(v['metadataScrollTop']==40 for v in [expanded,before,after])
         assert int(before['health']['link']['last_reply_sequence'])>int(expanded['health']['link']['last_reply_sequence'])
         original=read(f'health-{phase}-client-pre.json')['response']['sessions'];target=before['health'];same=[s for s in original if s['session_id']==target['session_id']];assert len(same)==1
         expected_identity={**same[0]['link']['identity'],'connection':str(same[0]['link']['identity']['connection'])}
@@ -77,7 +78,11 @@ def verify(evidence,args):
         assert ended['availability']=='owner_ended'and ended['link']['phase']=='ended'and ended['link']['end']is not None
         snapshot=read(prefix+'-terminal-snapshot.json')['value'];session=[s for s in snapshot['sessions']if s['id']==target['session_id']];assert len(session)==1 and session[0]['terminal']and session[0]['cleanup']=='verified'
         assert ended['link']['end']in after['summary']and 'history'in after['summary']and 'ended'in after['summary']
+        assert after['rtt'].startswith('Last recorded enqueue-to-reply RTT: ')and '(not a current responsiveness result)'in after['rtt']
         checks.append({'phase':phase,'session':target['session_id'],'connection':target['link']['identity'],'end':ended['link']['end'],'operation_error':session[0]['operation_error'],'cleanup':session[0]['cleanup']})
+    for profile in ['serial','hid']:
+        switch=read('gui-link-profile-'+profile+'.json')['value'];assert switch['profile']==profile and switch['details']and all(not d['open']for d in switch['details'])
+        expected={s['id']for s in read('agent-pre-c2s.json')['sessions']if s['profile']==profile and not s['terminal']};assert {d['health']['session_id']for d in switch['details']}==expected
     assert 'GUI_FORCED_CHILD'not in(evidence/'client-evidence.log').read_text()
     assert (folder/'gui-operator-key-unreadable.txt').read_text().strip()=='0'
     facts['native_gui']={'native_processes':3,'checks':checks,'scope':'Actual same-data RTT and three direction faults; stable expansion/focus, real WM close/wait0. Original v2 network/USB proof unchanged; no installation/hardware/fullPhase5 claim.'}
