@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-25：自动共享授权与规则输入基础（开始）
+
+- 从clean fd6c6a0e完整重读原Phase0–7任务、Git/AGENTS/核心skill/架构、automatic-sharing设计与两源码审查；沿用rustusb-development/technical-documentation，原README/网站/全局skill保持，goal不缩减。未启动新agent或USB操作。
+- 先补实施契约，选择独立root policy及严格有限规则输入。首单元不接agent启动/RPC/GUI启用/后台runner，不改Manifest1/disk2/旧DTO；避免出现已可启用但不执行的规则入口。每次授权复核完整固定pool、真实UID及Read/Start/Stop/Discover，ACL撤销阻断授权而非全部启动；同事务journal/手动抑制/真实观察与owner/dynamic pool/GUI/安装仍是后续必要工作。尚无新验证或完成声明。
+- 已实现AutomationPolicy唯一受信read入口、不可由用户JSON构造的授权对象、完整固定pool/backend绑定和逐次ACL复核；RuleSpec/ExpectedRevision/RuleId及四类严格mutation输入均无执行副作用。dirty开发定向10/10测试通过；首all-features clippy因测试中单项clone构造slice失败，按建议改from_ref，保留该失败，不压lint。补compile-fail doc约束普通JSON不能变成授权；最终完整gate尚待执行。
+
 ## 2026-10-25：GUI同数据链RTT与故障展示（开始）
 
 - 上一轮E50为实际进展；本轮从clean0281f853完整重读原Phase0–7任务、当前Git/AGENTS/核心skill/架构、GUI动作与v2原契约/源码。沿用rustusb-development/ui-ux-pro-max/technical-documentation；原英文README/站点/global skill保持，完整goal不缩减。

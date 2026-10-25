@@ -82,6 +82,10 @@ identity!(
     "One control request in an explicit bounded deduplication window."
 );
 identity!(
+    RuleId,
+    "One automatic rule identity; it grants no background execution authority."
+);
+identity!(
     ResourceId,
     "One helper-issued resource identity, not a bearer capability."
 );
