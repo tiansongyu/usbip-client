@@ -17,6 +17,8 @@
 
 - 静态QA首PASS428源/28文档/269 targets/46 site refs、三ELF、八site仅index、四global skill/symlink，CLI/TUI/GUI实际help通过。真实IAB1280/390无横溢、新链接实际keyboard focus2px、mobile选择原flow-mobile SVG，390无JS三static panels/新文案/命令可读；首below-fold GUI图仍deferred（没有误判loaded），另实际click到GUI heading后三图全部loaded。normal error/warn空，三个owned tab关闭、viewport reset、owned server实际INT wait130。按desktop范围查skill quick-reference critical/high与pro-rules，不冒称mobile/完整a11y；两原生PNG仍后续positive/deleted归属。
 
+- 60主证据manifest成员44655249B全部tracked/exact后内容1dde4f15普通SSH push，远端main精确/clean。core40179821668四格121128294659/294845/294868/294882与GUI40179821669四格121128294669/294775/294784/295032 actual arch/fullgate及所有job success；Pages40179821682 check121128294843/deploy121128397410 success。七canonical HTTPS全200逐Git精确，428源按f174/10117两fixture映射、三ELF/八site/四global skill/symlink保持；29原API/HTTP/方法371538B publication-1dde逐SHA归档，编号响应均实际调用/receipt明确所选观察，无复制冒充新调用。无CI logs/CI执行ELF/每平台重计；最后只回执/文档普通push，软件f174/QEMU10117/CI1dde不重标。原完整Phase0–7继续active，安装体验等下一阶段工作保留。
+
 ## 2026-10-25：自动规则持久拒绝回执（开始）
 
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。

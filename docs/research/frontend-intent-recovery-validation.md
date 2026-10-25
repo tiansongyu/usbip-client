@@ -188,3 +188,22 @@ to the native-GUI section. The initial below-fold image was correctly deferred.
 The390px CSP no-script view retains all three static panels, new copy and build
 commands. Three owned tabs close, viewport resets and the actual preview server
 joins after SIGINT/exit130. No new clipboard/motion or full accessibility claim.
+
+## Published CI and Pages receipt
+
+Content head `1dde4f15d619a5bd42813cf0194207222b9ae5f7` is normally pushed to
+`main`. [Core CI](https://github.com/tiansongyu/usbip-client/actions/runs/40179821668)
+and [GUI CI](https://github.com/tiansongyu/usbip-client/actions/runs/40179821669)
+each complete four native Ubuntu22.04/24.04 x86_64/aarch64 jobs successfully,
+including the actual architecture/environment and full gate steps.
+[Pages](https://github.com/tiansongyu/usbip-client/actions/runs/40179821682) check and
+deploy succeed. [Original receipt](../evidence/frontend-intent-recovery-publication-1dde4f15-20261025/receipt.json)
+retains29 API/HTTP/method files,371,538B, with exact member hashes.
+
+All seven canonical HTTPS resources return200 and match Git bytes. The428 frozen
+inputs map exactly to f174f434/10117a0e (only the two new fixture files advanced),
+and the three ELFs, eight site files, four global skill files/symlink remain exact.
+No CI logs, executed CI ELF sampling or per-platform test recount is claimed.
+Local software belongs to f174f434, QEMU to10117a0e, CI/Pages to1dde4f15; the final
+receipt-only commit is separate and does not change those assignments. Remaining
+full-objective limitations above stay open.
