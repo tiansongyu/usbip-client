@@ -40,7 +40,7 @@ original strict preferences document and regression tests.
 
 Derive a bounded filename from a fixed domain tag and the loaded Manifest's
 control socket path, not renderer input. Store schema1, actual operator UID,
-expected broker UID and required nonnull closed slots for pending Start, pending
+expected broker UID, the exact endpoint digest and required nonnull closed slots for pending Start, pending
 rule and last rule receipt. Cap the document at16KiB. Validate profile syntax,
 canonical IDs, original protocol, typed payload and exact outcome/rejection
 invariants; reject unknown/missing/null/oversize fields and conflicting receipt/
@@ -54,7 +54,7 @@ checks. A second frontend may observe and request exact Stop; it cannot create
 new UUID work or clear the original writer's recovery file. It may read retained
 identities and explicitly query them, retaining local slots if it cannot commit
 a matching local update. Different endpoints remain independent. Broker/UID
-mismatch, malformed files, directory replacement or unexpected previous bytes
+mismatch or copied endpoint context, malformed files, directory replacement or unexpected previous bytes
 block writes and do not reset/overwrite records.
 
 [flock(2)](https://man7.org/linux/man-pages/man2/flock.2.html) binds the lock to the
@@ -116,7 +116,10 @@ receipts are user metadata, not independent authoritative cleanup/audit evidence
 Keep all original gates/verifiers. Unit tests cover strict byte/type/trust/identity
 bounds, original pending and last-draft roundtrips, per-endpoint exclusion, changed
 broker/previous-file refusal, real child kill/reap/reopen, failed publication and
-matching Start result admission. Preserve original preference tests. Bridge tests
+matching Start result admission. Preserve original preference tests. The three
+existing disposable PTY drivers explicitly set an owned test XDG_STATE_HOME; PID1
+does not supply an ordinary-user HOME. Retain their original confirmation, real
+UID/ELF/wait/termios and USB assertions, and never reset records between PTYs. Bridge tests
 cover local unavailable/busy admission and original query/Stop independence.
 
 At a clean frozen source/three ELFs, run complete root and separate GUI gates.

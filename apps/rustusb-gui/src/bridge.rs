@@ -196,9 +196,18 @@ impl Action {
                     },
                 )?
             }
-            Self::Start {} => Command::Mutate(Mutation::Start(
-                view.profile.clone().ok_or("No readable profile selected")?,
-            )),
+            Self::Start {} => {
+                if view.unresolved.is_none() && !view.recovery_writable {
+                    return Err(view.recovery_status.clone());
+                }
+                Command::Mutate(Mutation::Start(
+                    view.unresolved
+                        .as_ref()
+                        .map(|i| i.profile.clone())
+                        .or_else(|| view.profile.clone())
+                        .ok_or("No readable profile selected")?,
+                ))
+            }
             Self::StopJob { id } => {
                 let id = JobId::new(&id).map_err(|_| "Invalid job ID")?;
                 if !view.jobs.iter().any(|j| j.id == id) {
@@ -246,6 +255,9 @@ impl Action {
 }
 
 fn rule_command(view: &Snapshot, mutation: RuleMutation) -> Result<Command, String> {
+    if !view.recovery_writable {
+        return Err(view.recovery_status.clone());
+    }
     if view.journal == Some(false) {
         return Err(
             "Agent journal unhealthy; new edits unavailable; original queries remain available"
@@ -391,21 +403,22 @@ fn projection(view: &Snapshot, sequence: u64) -> Result<String, String> {
         json!({"state":format!("{:?}",snapshot.state),"instance":snapshot.instance,"revision":snapshot.revision,"sampled_ms":snapshot.sampled_ms,"failure":snapshot.failure.map(|f|format!("{f:?}")),"devices":devices})
     });
     let remote = view.remote.as_ref().map(|s|json!({"instance":s.instance,"revision":s.revision,"state":s.state,"sampled_ms":s.sampled_ms,"failure":s.failure,"devices":s.devices.as_deref()}));
-    encode(
-        json!({
-            "revision":view.revision,"acknowledged":view.acknowledged,"pending":(sequence > view.acknowledged).then_some(sequence),"profiles":view.profiles,"profile":view.profile,
-            "options":view.options,"saved_options":view.saved_options,"preferences_status":view.preferences_status,
-            "local":local,"remote":remote,"jobs":view.jobs,"sessions":view.sessions,"health":view.health,"audit":view.audit,
-            "next_job":view.next_job,"next_session":view.next_session,"next_audit":view.next_audit,"journal":view.journal,
-            "status":view.status,"jobs_status":view.jobs_status,"sessions_status":view.sessions_status,"audit_status":view.audit_status,
-            "local_status":view.local_status,"remote_status":view.remote_status,"remote_page":view.remote_page,
-            "unresolved":view.unresolved.as_ref().map(|i|json!({"profile":i.profile,"request_id":i.request_id}))
-            ,"rules":{"requested":view.rules.requested,"current":view.rules.current,"decision_support":view.rules.decision_support,"decision_support_status":view.rules.decision_support_status,"policy_enabled":view.rules.policy_enabled,"grant":view.rules.grant,"rules":view.rules.rules,"next_rule":view.rules.next_rule,"status":view.rules.status,"events":view.rules.events,"next_event":view.rules.next_event,"events_status":view.rules.events_status,"result":view.rules.result}
-            ,"unresolved_rule":view.unresolved_rule
-            ,"last_rule_decision":view.last_rule_decision.as_ref().map(|r|json!({"original":r.original,"decision":r.decision,"replayed":r.replayed}))
-        }),
-        MAX_VIEW,
-    )
+    let mut value = json!({
+        "revision":view.revision,"acknowledged":view.acknowledged,"pending":(sequence > view.acknowledged).then_some(sequence),"profiles":view.profiles,"profile":view.profile,
+        "options":view.options,"saved_options":view.saved_options,"preferences_status":view.preferences_status,
+        "local":local,"remote":remote,"jobs":view.jobs,"sessions":view.sessions,"health":view.health,"audit":view.audit,
+        "next_job":view.next_job,"next_session":view.next_session,"next_audit":view.next_audit,"journal":view.journal,
+        "status":view.status,"jobs_status":view.jobs_status,"sessions_status":view.sessions_status,"audit_status":view.audit_status,
+        "local_status":view.local_status,"remote_status":view.remote_status,"remote_page":view.remote_page,
+        "unresolved":view.unresolved.as_ref().map(|i|json!({"profile":i.profile,"request_id":i.request_id}))
+        ,"rules":{"requested":view.rules.requested,"current":view.rules.current,"decision_support":view.rules.decision_support,"decision_support_status":view.rules.decision_support_status,"policy_enabled":view.rules.policy_enabled,"grant":view.rules.grant,"rules":view.rules.rules,"next_rule":view.rules.next_rule,"status":view.rules.status,"events":view.rules.events,"next_event":view.rules.next_event,"events_status":view.rules.events_status,"result":view.rules.result}
+        ,"unresolved_rule":view.unresolved_rule
+        ,"last_rule_decision":view.last_rule_decision.as_ref().map(|r|json!({"original":r.original,"decision":r.decision,"replayed":r.replayed}))
+    });
+    let fields = value.as_object_mut().ok_or("Invalid snapshot projection")?;
+    fields.insert("recovery_writable".into(), json!(view.recovery_writable));
+    fields.insert("recovery_status".into(), json!(view.recovery_status));
+    encode(value, MAX_VIEW)
 }
 // JavaScript never receives lossy u64 counters or observation identities.
 fn stringify_numbers(value: &mut Value) {
@@ -443,6 +456,7 @@ mod tests {
             AutomationGrantInfo, RearmKind, RuleStatus, TriggerKind,
         };
         let mut view = Snapshot::new(Options::default());
+        view.recovery_writable = true;
         view.profile = Some("fixed".into());
         view.rules.requested = true;
         view.rules.current = true;
@@ -809,6 +823,64 @@ mod tests {
             assert!(!local_origin(&url.parse()?));
         }
         assert!(local_origin(&"tauri://localhost/index.html".parse()?));
+        Ok(())
+    }
+    #[test]
+    fn local_recovery_admission_keeps_original_queries_and_exact_stop_independent()
+    -> Result<(), Box<dyn std::error::Error>> {
+        use rustusb_core::application::{InstanceId, RequestId};
+        use rustusb_frontend::{automation::UnresolvedRule, state::Unresolved};
+        use rustusb_service::model::{Job, JobState};
+        let mut view = rule_view()?;
+        view.recovery_writable = false;
+        view.recovery_status = "fixture unavailable local writer".into();
+        assert!(Action::Start {}.command(&view).is_err());
+        assert!(
+            Action::RuleCreate {
+                spec: view.rules.rules[0].spec.clone()
+            }
+            .command(&view)
+            .is_err()
+        );
+        let id = JobId::new("00000000-0000-4000-8000-000000000101")?;
+        view.jobs.push(Job {
+            id: id.clone(),
+            instance_id: InstanceId::new("00000000-0000-4000-8000-000000000102")?,
+            profile: "fixed".into(),
+            operator_uid: 1000,
+            state: JobState::Running,
+            stop_requested: false,
+            operation_error: None,
+        });
+        assert!(matches!(
+            Action::StopJob { id: id.to_string() }.command(&view)?,
+            Command::Mutate(Mutation::StopJob(_))
+        ));
+        let request = RequestId::new("00000000-0000-4000-8000-000000000103")?;
+        view.unresolved = Some(Unresolved {
+            profile: "original".into(),
+            request_id: request.clone(),
+        });
+        view.profile = None;
+        assert!(
+            matches!(Action::Start {}.command(&view)?, Command::Mutate(Mutation::Start(p)) if p == "original")
+        );
+        view.unresolved_rule = Some(UnresolvedRule {
+            profile: "original".into(),
+            request_id: request,
+            mutation: RuleMutation::Create {
+                spec: view.rules.rules[0].spec.clone(),
+                enabled: false,
+            },
+            settled_protocol: true,
+        });
+        assert!(matches!(
+            Action::RuleResolve {}.command(&view)?,
+            Command::Mutate(Mutation::ResolveRule)
+        ));
+        let value: Value = serde_json::from_str(&projection(&view, 0)?)?;
+        assert_eq!(value["recovery_writable"], false);
+        assert_eq!(value["recovery_status"], "fixture unavailable local writer");
         Ok(())
     }
 }

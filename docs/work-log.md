@@ -4,6 +4,10 @@
 
 - 上轮E56为已验证实际进展；从clean5962456d重读完整Phase0–7目标、Git/工作日志/核心skill、共享worker/state/checked preferences与GUI/规则/settled设计及既有两audit。沿用技术设计/UI错误恢复技能，单项搜索明确恢复下一步的指导适用；不新增agent/外部技术栈或重建README/site/global skill。先写frontend-intent-recovery-design：共享TUI/GUI私有XDG state、两原UUID/payload/protocol与最后draft、稳定endpoint/OFD锁、先实际持久后IPC、只原Query恢复，不以local metadata授USB能力或证明cleanup；Stop保持独立精确target。当前只有设计，无新实现或验收通过。XDG0.8及Linux flock/fsync主资料核对；先前大输出截断的关键源码按小段补读，猜两不存在QEMU路径的rg报错无副作用。
 
+- 已接两原UUID/原payload/protocol/last draft的checked state与同endpoint/OFD writer、先持久后IPC、restart只原Query、独立Stop及JS/Rust/worker准入；原Start实际回执另核原request/profile/UID。共用原preferences原子文件原语，strict prefs与六原测试保持；仅增加现有sha2 workspace依赖边，两锁各一行，无新外部包。首fmt因新tests尚未落盘未过，随后check通过；frontend首22通过，TUI旧确认fixture因未设recovery writable一FAIL，明确新状态后frontend22/TUI9通过。GUI前两次因大json宏递归limit compile FAIL（第二次原样发生于patch猜错projection函数名、Python已先写TUI而未写bridge，随后shell继续了旧编译）；实际拆分map投影后GUI12+原GLib6通过，原34依赖告警不压制，root all-feature Clippy通过。原错误/log保留，不改gate。后续设计补强endpoint digest也必须存入文档并严格匹配，避免误拷不同endpoint；尚无本轮完整gate/QEMU成功。
+
+- endpoint绑定补强后frontend23/TUI9定向通过；新guest71146B/402输入的前两次dash preflight通过，尚无QEMU运行。新wrapper保E56/E55/原264，计划四个whole-GUI SIGKILL/reap137（Start、正rule、负rule、已settled后last draft）与六WM close0、两OS UID1000 readonly负向；新增verifier明确磁盘整数到原native十进制字符串投影比较，未放宽原服务/Rootproof判据。组合检查补独立第二driver端口的status探测；发现三原PTY夹具PID1无普通HOME，先补设计，再仅child checked setenv显式测试XDG_STATE_HOME（不删/重置record、不改旧断言），需完整TUI回归。只读定位曾猜不存在qemu_agent目录、qemu_tui/guest-init.sh及pyte venv bin路径，改用实际source/package目录，无产品副作用。
+
 ## 2026-10-25：自动规则持久拒绝回执（开始）
 
 - 上轮E55为已验证实际进展；本轮从clean a2986504完整重读Phase0–7目标、Git/工作日志/核心skill与Store/Runtime/规则/GUI当前状态及两source audit。沿用rustusb-development、技术设计/文档与既有UI错误恢复技能，无新agent/依赖，不重建README/site/global skill、不缩减goal。

@@ -1,4 +1,8 @@
-use crate::{Settings, state::*};
+use crate::{
+    Settings,
+    recovery::{Recovery, Retained},
+    state::*,
+};
 use rustusb_core::{
     Error, Result,
     application::{JobId, RequestId, RuleId, SessionId},
@@ -29,6 +33,7 @@ struct Worker {
     subscription: Option<CatalogSubscription>,
     join_error: Option<Error>,
     settings: Option<Settings>,
+    recovery: Option<Recovery>,
 }
 impl Worker {
     fn publish(&mut self) {
@@ -498,6 +503,62 @@ impl Worker {
         }
         self.view.status = self.view.preferences_status.clone();
     }
+    async fn initialize_recovery(&mut self) {
+        let Some(directory) = Recovery::default_directory() else {
+            self.view.recovery_status = "No absolute XDG state/home location; new Start/rule edits unavailable. Set XDG_STATE_HOME and restart; Stop remains available".into();
+            return;
+        };
+        let manifest = self.manifest.clone();
+        match tokio::task::spawn_blocking(move || Recovery::open(directory, &manifest)).await {
+            Ok(Ok(recovery)) => {
+                recovery.retained.clone().restore(&mut self.view);
+                self.view.recovery_writable = recovery.writable();
+                self.view.recovery_status = recovery.status();
+                self.recovery = Some(recovery);
+            }
+            Ok(Err(error)) => self.view.recovery_status = format!("Local request recovery unavailable: {error}. Preserve/repair the private file and restart; new Start/rule edits blocked, Stop remains available"),
+            Err(_) => self.view.recovery_status = "Local request reader failed; inspect private state and restart; new Start/rule edits blocked".into(),
+        }
+    }
+    async fn save_recovery(&mut self) -> bool {
+        let Some(mut recovery) = self.recovery.take() else {
+            self.view.recovery_writable = false;
+            return false;
+        };
+        let retained = Retained::from_view(&self.view);
+        // Ownership and the actual lock stay in the accepted closure until return.
+        match tokio::task::spawn_blocking(move || {
+            let result = recovery.save(retained);
+            (recovery, result)
+        })
+        .await
+        {
+            Ok((recovery, result)) => {
+                self.view.recovery_writable = recovery.writable();
+                self.view.recovery_status = match &result {
+                    Ok(()) => recovery.status(),
+                    Err(error) => format!("{}; {error}", recovery.status()),
+                };
+                self.recovery = Some(recovery);
+                result.is_ok()
+            }
+            Err(_) => {
+                self.view.recovery_writable = false;
+                self.view.recovery_status = "Local request writer failed; preserve original identity, inspect private state and restart".into();
+                false
+            }
+        }
+    }
+    fn unresolved_error(&self) -> Option<Error> {
+        let mut unresolved = Vec::new();
+        if let Some(intent) = &self.view.unresolved {
+            unresolved.push(format!("start outcome unresolved: profile {} request_id {}; reconcile jobs or use agent start --retry --request-id", intent.profile, intent.request_id));
+        }
+        if let Some(intent) = &self.view.unresolved_rule {
+            unresolved.push(format!("rule edit outcome unresolved: profile {} request_id {}; reconcile rules/events or use agent rule {} {}retry {}; no edit resubmitted", intent.profile, intent.request_id, intent.profile, if intent.settled_protocol { "--settled " } else { "" }, intent.request_id));
+        }
+        (!unresolved.is_empty()).then(|| Error::State(unresolved.join("; ")))
+    }
     async fn mutate(&mut self, action: Mutation) {
         let is_rule = matches!(&action, Mutation::Rule { .. } | Mutation::ResolveRule);
         if matches!(&action, Mutation::Rule { .. }) && self.view.unresolved_rule.is_some() {
@@ -508,6 +569,13 @@ impl Worker {
         }
         let needs_id = (matches!(&action, Mutation::Start(_)) && self.view.unresolved.is_none())
             || matches!(&action, Mutation::Rule { .. });
+        if needs_id && !self.view.recovery_writable {
+            self.view.status = self.view.recovery_status.clone();
+            if is_rule {
+                self.view.rules.result = self.view.status.clone();
+            }
+            return;
+        }
         let fresh = if needs_id {
             match tokio::task::spawn_blocking(|| {
                 RequestId::new(std::fs::read_to_string("/proc/sys/kernel/random/uuid")?.trim_end())
@@ -530,6 +598,16 @@ impl Worker {
         let Some(request) = self.view.mutation_request(action, fresh) else {
             return;
         };
+        if needs_id && !self.save_recovery().await {
+            self.view.status = "New IPC not dispatched: local request recording failed; original UUID retained for inspection/query".into();
+            if is_rule {
+                self.view.rules.result = self.view.status.clone();
+            }
+            return;
+        }
+        if *self.stop.borrow() {
+            return;
+        }
         self.view.status =
             "Request issued; result pending; service jobs outlive this frontend".into();
         if is_rule {
@@ -540,7 +618,10 @@ impl Worker {
         }
         self.publish();
         // Deliberately do not race an issued mutation against frontend shutdown.
-        match ipc::call(&self.manifest, request).await {
+        let original = Retained::from_view(&self.view);
+        let records_identity =
+            is_rule || matches!(&request, Request::Start { .. } | Request::RetryStart { .. });
+        match ipc::call(&self.manifest, request.clone()).await {
             Ok(ResponseEnvelope {
                 journal_healthy,
                 response,
@@ -550,7 +631,14 @@ impl Worker {
                 if is_rule {
                     self.view.rule_response(response);
                 } else {
-                    self.view.mutation_response(response);
+                    self.view.mutation_response_to(&request, response);
+                }
+                if records_identity && !self.save_recovery().await {
+                    original.restore(&mut self.view);
+                    self.view.status.push_str("; local settlement recording failed, original UUID retained for query; inspect local recovery status");
+                    if is_rule {
+                        self.view.rules.result = self.view.status.clone();
+                    }
                 }
             }
             Err(error) => {
@@ -634,9 +722,15 @@ pub async fn run(
         subscription: None,
         join_error: None,
         settings,
+        recovery: None,
     };
     if *worker.stop.borrow() {
         return Ok(());
+    }
+    worker.initialize_recovery().await;
+    worker.publish();
+    if *worker.stop.borrow() {
+        return worker.unresolved_error().map_or(Ok(()), Err);
     }
     let owner = DeviceMonitor::open().await;
     let mut local = owner.as_ref().ok().map(DeviceMonitor::subscribe);
@@ -676,21 +770,8 @@ pub async fn run(
         Ok(owner) => owner.shutdown().await,
         Err(_) => Ok(()),
     };
-    let mut unresolved = Vec::new();
-    if let Some(intent) = worker.view.unresolved {
-        unresolved.push(format!(
-            "start outcome unresolved: profile {} request_id {}; reconcile jobs or use agent start --retry --request-id",
-            intent.profile, intent.request_id
-        ));
-    }
-    if let Some(intent) = worker.view.unresolved_rule {
-        unresolved.push(format!(
-            "rule edit outcome unresolved: profile {} request_id {}; reconcile rules/events or use agent rule {} {}retry {}; no edit resubmitted",
-            intent.profile, intent.request_id, intent.profile, if intent.settled_protocol { "--settled " } else { "" }, intent.request_id
-        ));
-    }
-    if !unresolved.is_empty() {
-        return Err(Error::State(unresolved.join("; ")));
+    if let Some(error) = worker.unresolved_error() {
+        return Err(error);
     }
     local_result?;
     worker.join_error.map_or(Ok(()), Err)

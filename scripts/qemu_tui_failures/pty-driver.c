@@ -42,7 +42,7 @@ int main(int argc,char **argv){
     struct termios before,after;struct winsize size={.ws_row=30,.ws_col=120};
     if(openpty(&master,&slave,NULL,NULL,&size)||tcgetattr(slave,&before))return 3;
     pid_t pid=fork();if(pid<0)return 3;
-    if(!pid){close(master);if(setsid()<0||ioctl(slave,TIOCSCTTY,0)<0)return 3;for(int i=0;i<3;i++)if(dup2(slave,i)<0)return 3;if(slave>2)close(slave);setenv("TERM","xterm-256color",1);
+    if(!pid){close(master);if(setsid()<0||ioctl(slave,TIOCSCTTY,0)<0)return 3;for(int i=0;i<3;i++)if(dup2(slave,i)<0)return 3;if(slave>2)close(slave);setenv("TERM","xterm-256color",1);if(setenv("XDG_STATE_HOME","/tmp/rustusb-tui-state-1000",1))_exit(3);
     execl("/usr/bin/rustusb","rustusb","tui","--config","/etc/rustusb/agent.json","--no-preferences","--no-auto-refresh",NULL);
     _exit(127);}
     char path[512],source[128];snprintf(path,sizeof path,"%s.raw",prefix);int output=open(path,O_CREAT|O_EXCL|O_WRONLY,0600);if(output<0){kill(pid,SIGKILL);waitpid(pid,NULL,0);return 3;}

@@ -24,6 +24,7 @@ fn untrusted_text_never_becomes_terminal_control_and_dimensions_are_bounded()
 #[test]
 fn confirmation_defaults_to_cancel_and_repeated_events_do_not_submit() {
     let mut snapshot = Snapshot::new(Options::default());
+    snapshot.recovery_writable = true;
     snapshot.profile = Some("test".into());
     let mut app = App::new(snapshot.options);
     let (tx, mut rx) = mpsc::channel(1);
@@ -369,5 +370,38 @@ fn keyboard_filter_sort_and_uuid_search_keep_stop_target_exact()
     }
     assert!(rx.try_recv().is_err());
     assert!(snapshot.jobs.iter().all(|j| !j.stop_requested));
+    Ok(())
+}
+
+#[test]
+fn unavailable_local_recovery_blocks_new_start_but_preserves_original_query() -> Result<()> {
+    let mut snapshot = Snapshot::new(Options::default());
+    snapshot.profile = Some("test".into());
+    snapshot.recovery_status = "fixture local writer unavailable".into();
+    let mut app = App::new(snapshot.options);
+    let (tx, mut rx) = mpsc::channel(1);
+    app.key(
+        KeyEvent::new(KeyCode::Char('e'), KeyModifiers::NONE),
+        &snapshot,
+        &tx,
+    );
+    assert!(app.confirm.is_none());
+    assert_eq!(app.message, snapshot.recovery_status);
+    assert!(rx.try_recv().is_err());
+    snapshot.unresolved = Some(rustusb_frontend::state::Unresolved {
+        profile: "original".into(),
+        request_id: RequestId::new("00000000-0000-4000-8000-000000000001")?,
+    });
+    snapshot.profile = None;
+    app.key(
+        KeyEvent::new(KeyCode::Char('e'), KeyModifiers::NONE),
+        &snapshot,
+        &tx,
+    );
+    assert!(
+        app.confirm
+            .as_ref()
+            .is_some_and(|c| c.label.contains("Resolve ONLY original") && !c.accepted)
+    );
     Ok(())
 }

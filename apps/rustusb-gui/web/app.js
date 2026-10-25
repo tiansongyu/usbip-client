@@ -25,7 +25,7 @@
     const disabled = busy() || !view;
     $('refresh').disabled = disabled;
     $('profile').disabled = disabled || !view?.profiles?.length;
-    $('start').disabled = disabled || !view?.profile;
+    $('start').disabled = disabled || (!view?.unresolved && (!view?.profile || !view?.recovery_writable));
     $('start').textContent = view?.unresolved ? 'Resolve original start' : 'Start profile';
     document.querySelectorAll('[data-action]').forEach(button => { button.disabled = disabled || button.dataset.unavailable === 'true'; });
   }
@@ -137,7 +137,7 @@
   }
   function renderSystem() {
     const list = node('dl', null, 'system-list');
-    const facts = [['Application', 'RustUSB · native Linux console'], ['Process privilege', 'Ordinary user; the agent independently authorizes every IPC operation'], ['Agent', view.status], ['Journal', view.journal === null ? 'Not sampled' : view.journal ? 'Last response healthy' : 'Unhealthy; new admission refused'], ['Local observation', view.local_status], ['Remote observation', view.remote_status], ['Refresh', view.options.auto_refresh ? `After completion + ${view.options.refresh_seconds}s` : 'Automatic service polling paused'], ['USB ownership', 'Agent jobs continue after this window closes'], ['Compatibility', 'Discovery is metadata. Use the documented device-specific test evidence.']];
+    const facts = [['Application', 'RustUSB · native Linux console'], ['Process privilege', 'Ordinary user; the agent independently authorizes every IPC operation'], ['Agent', view.status], ['Local request recovery', view.recovery_status], ['Journal', view.journal === null ? 'Not sampled' : view.journal ? 'Last response healthy' : 'Unhealthy; new admission refused'], ['Local observation', view.local_status], ['Remote observation', view.remote_status], ['Refresh', view.options.auto_refresh ? `After completion + ${view.options.refresh_seconds}s` : 'Automatic service polling paused'], ['USB ownership', 'Agent jobs continue after this window closes'], ['Compatibility', 'Discovery is metadata. Use the documented device-specific test evidence.']];
     facts.forEach(([term, value]) => list.append(node('dt', term), node('dd', value))); $('content').append(list); $('section-status').textContent = 'Current frontend observations; no hardware compatibility claim';
   }
   function unavailable(item, value) {
@@ -197,7 +197,7 @@
       block.append(node('p', `Granted device pool (${meta.grant.devices.length}); quota ${meta.grant.max_rules} rules. Conditions: ${meta.grant.triggers.join(', ')}. Rearm: ${meta.grant.rearm.join(', ')}.`, 'section-note'));
       const pool = node('ul'); meta.grant.devices.forEach(key => pool.append(node('li', key, 'data-id'))); block.append(pool);
     }
-    const canCreate = meta.current && view.journal !== false && typeof meta.decision_support === 'boolean' && meta.policy_enabled === true && !!meta.grant && !view.unresolved_rule;
+    const canCreate = view.recovery_writable && meta.current && view.journal !== false && typeof meta.decision_support === 'boolean' && meta.policy_enabled === true && !!meta.grant && !view.unresolved_rule;
     const receipt = view.last_rule_decision;
     if (receipt?.decision.decision === 'rejected') {
       const previous = receipt.original, change = previous.mutation;
@@ -234,7 +234,7 @@
         const command = { action: change, id: rule.id, revision: rule.revision }; if (enabled !== null) command.enabled = enabled;
         const control = button(label, () => confirm(`${label}?`, `Complete profile ${rule.profile}, rule ${rule.id}, exact revision ${rule.revision}. ${enabled === true ? 'Explicitly rearm future consideration under the administrator grant.' : 'This does not stop or release the current job.'}`, command));
         control.dataset.ruleAction = enabled === null ? 'delete' : enabled ? 'enable' : 'disable';
-        controls.append(unavailable(control, !meta.current || view.journal === false || typeof meta.decision_support !== 'boolean' || !!view.unresolved_rule || rule.deleted || (enabled === true && !canCreate)));
+        controls.append(unavailable(control, !view.recovery_writable || !meta.current || view.journal === false || typeof meta.decision_support !== 'boolean' || !!view.unresolved_rule || rule.deleted || (enabled === true && !canCreate)));
       }
       row.append(controls); block.append(row);
     }
@@ -255,7 +255,7 @@
       controls.append(button('Apply', () => { if (form.reportValidity()) action({ action: 'options', refresh_seconds: Number(seconds.value), auto_refresh: automatic.checked }); }), button('Save checked preferences', () => action({ action: 'save_settings' })), button('Reload', () => { preferencesForm = null; action({ action: 'reload_settings' }); }), button('Defaults', () => { preferencesForm = null; action({ action: 'options', refresh_seconds: 2, auto_refresh: true }); }));
       form.append(controls); form.addEventListener('submit', event => event.preventDefault()); preferencesForm = form;
     }
-    $('content').append(preferencesForm, node('p', view.preferences_status, 'section-note')); renderRules();
+    $('content').append(preferencesForm, node('p', view.preferences_status, 'section-note'), node('p', view.recovery_status, 'section-note')); renderRules();
     $('section-status').textContent = 'Checked frontend preferences and separately authorized agent-owned sharing rules';
   }
   function renderPage() {
@@ -269,6 +269,7 @@
     $('search-bar').hidden = page > 1;
     document.querySelectorAll('nav button').forEach((button, i) => { if (page === i) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current'); });
     if (!view) { $('content').append(empty('Waiting for the native application bridge.')); return; }
+    if (!view.recovery_writable) $('content').append(node('p', view.recovery_status, 'unresolved'));
     if (view.unresolved) {
       const warning = node('div', `Unresolved Start · ${view.unresolved.profile} · ${view.unresolved.request_id}. Only the original retry identity will be used; inspect jobs before continuing.`, 'unresolved'); $('content').append(warning);
     }

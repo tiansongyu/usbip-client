@@ -251,6 +251,11 @@ impl App {
             _ => {
                 let mut rows = vec![
                     row(
+                        "recovery",
+                        "Local request recovery",
+                        &snapshot.recovery_status,
+                    ),
+                    row(
                         "preferences",
                         &format!("Preferences: {}", snapshot.preferences_status),
                         &format!(
@@ -485,6 +490,8 @@ impl App {
                         ),
                         accepted: false,
                     });
+                } else if !snapshot.recovery_writable {
+                    self.message = snapshot.recovery_status.clone();
                 } else if let Some(profile) = &snapshot.profile {
                     let backend = snapshot
                         .profiles

@@ -59,7 +59,8 @@ impl Default for RulesPage {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 /// Original issued rule edit, retained independently of renderer and Start state.
 pub struct UnresolvedRule {
     /// Original fixed profile; selection changes never redirect a query.
@@ -72,7 +73,8 @@ pub struct UnresolvedRule {
     pub settled_protocol: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 /// Last exact settled receipt plus its original bounded payload for explicit review.
 pub struct RuleDecisionReceipt {
     /// Original user intent; restoring a draft never submits it.
@@ -110,7 +112,7 @@ fn matches_outcome(mutation: &RuleMutation, outcome: &RuleMutationOutcome) -> bo
         }
     }
 }
-fn matches_decision(intent: &UnresolvedRule, decision: &RuleDecision) -> bool {
+pub(crate) fn matches_decision(intent: &UnresolvedRule, decision: &RuleDecision) -> bool {
     match decision {
         RuleDecision::Applied { outcome } => matches_outcome(&intent.mutation, outcome),
         RuleDecision::Rejected { sequence, failure } => {

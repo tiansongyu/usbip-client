@@ -3,6 +3,7 @@
 #![cfg(target_os = "linux")]
 
 mod preferences;
+mod recovery;
 pub use preferences::Settings;
 /// Automatic-rule observations and separately retained edit identity.
 pub mod automation;

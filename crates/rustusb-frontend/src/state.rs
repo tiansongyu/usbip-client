@@ -82,7 +82,8 @@ pub enum PageKind {
     /// Independently sequenced automatic-rule audit.
     RuleEvents,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 /// Original issued Start identity retained until a real Started response.
 pub struct Unresolved {
     /// Currently selected fixed profile; no device key override.
@@ -103,6 +104,10 @@ pub struct Snapshot {
     pub saved_options: Option<Options>,
     /// Last checked preference read/write result for operator display.
     pub preferences_status: String,
+    /// Whether this worker owns a healthy checked local request writer.
+    pub recovery_writable: bool,
+    /// Independent local retry-recording status; no service/cleanup authority.
+    pub recovery_status: String,
     /// Read-authorized fixed profiles returned by the actual agent.
     pub profiles: Vec<ProfileInfo>,
     /// Currently selected fixed profile; no device key override.
@@ -178,6 +183,8 @@ impl Snapshot {
             local_status: "Initializing".into(),
             remote_status: "Open Remote to discover".into(),
             remote_page: false,
+            recovery_writable: false,
+            recovery_status: "Initializing checked local request recovery".into(),
             unresolved: None,
             rules: RulesPage::default(),
             unresolved_rule: None,
@@ -256,11 +263,28 @@ impl Snapshot {
             Mutation::ResolveRule => self.rule_retry(),
         }
     }
+    /// Check the actual issued request before accepting an original Start result.
+    pub fn mutation_response_to(
+        &mut self,
+        request: &rustusb_service::rpc::Request,
+        response: rustusb_service::rpc::Response,
+    ) {
+        use rustusb_service::rpc::{Request, Response};
+        if matches!(&response, Response::Started { .. })
+            && !matches!(request,
+            Request::Start { profile, request_id } | Request::RetryStart { profile, request_id }
+                if self.unresolved.as_ref().is_some_and(|i| i.profile == *profile && i.request_id == *request_id))
+        {
+            self.status = "Unrelated Start receipt; original UUID retained".into();
+            return;
+        }
+        self.mutation_response(response);
+    }
     /// Apply the actual service reply, keeping cleanup and admission distinct.
     pub fn mutation_response(&mut self, response: rustusb_service::rpc::Response) {
         use rustusb_service::rpc::Response;
         self.status=match response {
-            Response::Started{job,replayed}=>{
+            Response::Started{job,replayed} if self.unresolved.as_ref().is_some_and(|i| i.profile == job.profile && job.operator_uid == rustix::process::geteuid().as_raw())=>{
                 self.unresolved=None;
                 format!("{} job {}; inspect actual session state",if replayed{"Resolved original"}else{"Admitted"},job.id)
             }
