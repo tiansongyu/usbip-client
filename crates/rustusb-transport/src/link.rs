@@ -1066,10 +1066,10 @@ where
                         Poll::Ready(Some(Ok(_))) => return Poll::Ready(Err(failed())),
                         Poll::Pending => {}
                     }
-                    // The application halves are complete, but returned window
-                    // credit/control frames can still be in flight. Preserve
-                    // h2's graceful GOAWAY progression and real TLS shutdown.
-                    c.graceful_shutdown();
+                    // The single application stream is already fully closed.
+                    // Keep its references alive through NO_ERROR GOAWAY/flush
+                    // and actual TLS shutdown; no new stream is admitted.
+                    c.abrupt_shutdown(h2::Reason::NO_ERROR);
                     closing = true;
                 }
                 match c.poll_accept(cx) {

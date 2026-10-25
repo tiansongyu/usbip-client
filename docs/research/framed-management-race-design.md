@@ -107,3 +107,11 @@ publishing the final outcome. No application buffer or peer control work is
 discarded; do not mask BrokenPipe. Keep the normal graceful server progression,
 existing stop/timeout and strict owner outcomes. Temporary test-only diagnostics
 print typed IO kind/reason flags only and will be removed before delivery.
+
+805c267a still fails both normal cases. Source inspection further identifies
+that h2 graceful_shutdown queues an idle MAX-ID GOAWAY plus shutdown PING; its
+client closes once GOAWAY has no remaining active streams, potentially before
+the server's PING progression. Test the complete-stream NO_ERROR close again
+while retaining all original stream references (unlike 41540391). This is a
+bounded candidate experiment, not a passed fix, and must satisfy both original
+half-close and new real-TLS cases before it can be selected.
