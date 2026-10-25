@@ -348,3 +348,5 @@ E49最终内容3aafa2c0的root40142928056与GUI40142928072各四native格/实际
 ## 37. E50：GUI双栈正向操作与真实窗口退出
 
 [报告](research/gui-native-actions-validation.md)锁clean8e8d50d9：core956与GUI11软件全通过；两新Native GUI双栈pair各378源/六guard真/两guest0，每pair12真实UID1000进程、六Start、一精确incoming HID Stop、四job Stop、非空Remote搜索/详情和raw-v1 RTT unavailable。24窗口均真实WM_DELETE_WINDOW/实际wait0/local join，关闭Start窗口后同job Running，原264核验/三轮HID-FTDI I/O/两epoch/完整Rootproof及原driver/VHCI基线保留。另原agent IPv4(229源/768MiB)及旧single GUI(372源/70原件385784B)回归PASS，共四次最终invocation/七guest0，无forced；旧GUI的unresolved child预期1独立保留。产品源码与三ELF保持E49，三原夹具FAIL及误诊更正保留；4934原件57902451B归档逐SHA核验。未扩大USB类/硬件矩阵；v2 GUI实测RTT、规则/完整GUI、deb/systemd/安装生命周期、G1G2/完整G3/性能/Windows及原Phase0–7仍未完成。
+
+内容8fd0094b的core40145511838和GUI40145511737各四native格/arch/fullgate步骤全success，Pages40145511774 check/deploy成功；七canonical HTTPS精确Git bytes、377非README输入/三ELF/四global skill/symlink保持。见[发布回执](evidence/gui-native-actions-publication-8fd0094b-20261025/receipt.json)。不补造CI log/执行ELF或每格测试重计数，不将后续文档回执head当QEMU或CI实测head。

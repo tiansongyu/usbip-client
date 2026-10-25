@@ -116,3 +116,17 @@ acceptance, `.deb`/systemd deployment, configuration/install/upgrade/uninstall/
 reinstall/reboot lifecycle, real hardware G1/G2, complete G3, broader performance
 and Windows USB/driver work remain required. CI/Pages publication receipts are
 recorded separately; local/QEMU success is not deployment evidence.
+
+## Publication
+
+Content `8fd0094b31ace722d15a32841200df47036bcb45` was pushed through the authorized
+SSH remote. [Core CI](https://github.com/tiansongyu/usbip-client/actions/runs/40145511838)
+and [independent GUI CI](https://github.com/tiansongyu/usbip-client/actions/runs/40145511737)
+each completed all four native Ubuntu22.04/24.04 × x86_64/aarch64 jobs successfully,
+including their actual architecture/full-gate steps.
+[Pages](https://github.com/tiansongyu/usbip-client/actions/runs/40145511774) check
+and deployment succeeded. Seven canonical HTTPS resources returned200 with exact
+Git bytes; source/ELF/global skill integrity checks passed. Original API/step/HTTP
+receipts and methods are [preserved](../evidence/gui-native-actions-publication-8fd0094b-20261025/README.md).
+These status receipts do not supply CI logs/ELFs or a new per-platform test total.
+QEMU evidence remains locked to8e8d50d9; subsequent receipt edits are documentation.
