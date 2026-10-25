@@ -342,6 +342,76 @@ pub(crate) async fn serve_held_catalog(
     Ok(())
 }
 
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn concurrent_catalogs_keep_complete_replies_and_join_every_actual_owner() -> TestResult {
+    // Each independent server receives only 32 authenticated connections, below
+    // its default admission burst. The production client is never retried.
+    let mut failures = Vec::new();
+    for group in 0..8 {
+        let (tls, client) = credentials(true)?;
+        let listener = TcpListener::bind("127.0.0.1:0").await?;
+        let config = Arc::new(loaded(client, listener.local_addr()?)?);
+        let server = tokio::spawn(async move {
+            let mut peers = tokio::task::JoinSet::new();
+            let mut failures = Vec::new();
+            for peer in 0..32 {
+                let accepted =
+                    tokio::time::timeout(Duration::from_secs(5), listener.accept()).await;
+                let tcp = match accepted {
+                    Ok(Ok((tcp, _))) => tcp,
+                    other => {
+                        failures.push(format!("accept {peer}: {other:?}"));
+                        break;
+                    }
+                };
+                let tls = tls.clone();
+                peers.spawn(async move {
+                    let (mut connection, _) = link::accept(&tls, tcp).await?;
+                    if let Err(error) = catalog(&mut connection.io).await {
+                        let (closed, _) = link::finish(&mut connection.owner).await;
+                        return Err(Error::State(format!(
+                            "catalog write: {error}; owner cleanup: {closed:?}"
+                        )));
+                    }
+                    link::complete_management(&mut connection.io, &mut connection.owner, async {
+                        tokio::time::sleep(Duration::from_secs(5)).await;
+                        Err(Error::Timeout("concurrent Catalog close".into()))
+                    })
+                    .await
+                    .map(|_| ())
+                });
+            }
+            // Always join every accepted real connection even after a failure.
+            while let Some(result) = peers.join_next().await {
+                match result {
+                    Ok(Ok(())) => {}
+                    other => failures.push(format!("server owner: {other:?}")),
+                }
+            }
+            failures
+        });
+        for wave in 0..8 {
+            let mut clients = tokio::task::JoinSet::new();
+            for _ in 0..4 {
+                let config = config.clone();
+                clients.spawn(async move { discover(&config, Duration::from_secs(5)).await });
+            }
+            while let Some(result) = clients.join_next().await {
+                match result {
+                    Ok(Ok(catalog)) if catalog.len() == 1 => {}
+                    other => failures.push(format!("group {group} wave {wave}: {other:?}")),
+                }
+            }
+        }
+        failures.extend(server.await?);
+    }
+    assert!(
+        failures.is_empty(),
+        "actual concurrent Catalog failures: {failures:?}"
+    );
+    Ok(())
+}
+
 #[tokio::test]
 async fn actual_client_refusal_keeps_original_failure_without_helper_attempt() -> TestResult {
     // Two independent authenticated connections: catalog, then an IMPORT that
