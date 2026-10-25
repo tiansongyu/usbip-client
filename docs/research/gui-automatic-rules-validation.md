@@ -191,3 +191,5 @@ executed CI ELFs or per-platform test recount were downloaded. Completed GUI/
 Pages/core job-final files are exact copies of their completed fourth/second/fifth
 responses; these copies are not additional API requests. Final receipt-only
 commits do not become the local tested product or completed CI content head.
+
+Later [E56 settled-decision validation](settled-rule-decisions-validation.md) closes the bounded durable-refusal gap with explicit root2/disk4 opt-in. This E55 report, source assignments and original failures remain unchanged; whole frontend crash persistence and wider acceptance remain open.

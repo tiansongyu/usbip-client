@@ -147,3 +147,5 @@ cargo build --workspace --release
 终端E47见[未知启动/失联验收](research/tui-failure-retry-validation.md)：clean4ee6be3e完整952软件/235源，两故障与两原E46正常动作Native双栈pair/8guest0、76实际UID1000 PTY通过。实际Start超时后同agent恢复，UI只确认原UUID RetryStart；精确job current/stale/current，首次Profiles失联不再保留Current或旧journal/health。原38477360两guest0/19PTY但整体FAIL保留，不改其裁决；原264核验/三轮I/O/完整Rootproof不弱化。SIGSTOP不证明wire-loss或永久OS阻塞；UI热插拔/权威拒绝、完整G4/G3/硬件与后续阶段仍待完成。
 
 E55 [GUI规则验收](research/gui-automatic-rules-validation.md)：clean7ef产品/root1027+GUI15软件，clean e668仅fixture修订且产品/三ELF不变，双栈规则与原GUI actions双栈/v2/single六QEMU/11guest0；34 native child含原single预期未决1。真实5s IPC超时/renderer reload/原UUID查询、CRUD/独立job/原264三I/O通过，首DOM同步FAIL与第二tombstone verifier FAIL保留。settled负向回执/安全协调、进程崩溃ID持久化、dynamic pool、物理远端receipt、完整GUI/包/安装/硬件及后续完整Phase仍待完成。
+
+E56 [持久拒绝与原草稿恢复](research/settled-rule-decisions-validation.md)：clean650c53a8 root1054+GUI17/410输入、八QEMU/15guest0/40native child通过；显式root2/disk4，真实超时/reload/服务重启后原查询及原revision恢复，不放宽原264/I/O/Rootproof。闭合有限settled负向缺口，整个前端进程崩溃ID、dynamic pool、物理远端安全receipt、完整GUI/安装/性能/硬件G1/G2/Windows及原完整Phase0–7仍待完成。

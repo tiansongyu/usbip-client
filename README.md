@@ -113,8 +113,9 @@ delegation. [Native local-rule QEMU tests](docs/research/automatic-sharing-runti
 verify actual I/O and manual pause across restart on IPv4/IPv6.
 [Native GUI rule editing](docs/research/gui-automatic-rules-validation.md) adds
 disabled Create, exact-revision edits, explicit rearm and original-UUID queries
-after a real lost reply. Dynamic pools, physical remote automatic import and
-settled-negative edit recovery remain unfinished.
+after a real lost reply. Opt-in [settled decisions](docs/research/settled-rule-decisions-validation.md)
+add durable refusals, service-restart queries and explicit original-draft recovery.
+Dynamic pools and physical remote automatic import remain unfinished.
 
 [Rust-engine rule tests](docs/research/automatic-sharing-rust-qemu-validation.md)
 also cover virtual remote import and USBFS local rules over framed-v2 on both IP
@@ -201,8 +202,10 @@ layout. Separate [IPv4/IPv6 action tests](docs/research/gui-native-actions-valid
 verify confirmed GUI Start/Stop, a nonempty remote catalog and continued QEMU
 HID/FTDI I/O after native windows close. [GUI rule tests](docs/research/gui-automatic-rules-validation.md)
 now cover fixed-profile edits, renderer reload and real unknown-outcome recovery
-on both address families. Packaged installation, settled-negative rule recovery
-and full GUI/hardware acceptance remain unfinished.
+on both address families. [Durable refusal tests](docs/research/settled-rule-decisions-validation.md)
+also verify explicit draft restoration after timeout and service restart.
+Whole frontend crash persistence, packaged installation and full GUI/hardware
+acceptance remain unfinished.
 
 [Same-connection RTT tests](docs/research/gui-link-health-validation.md) also
 verify live v2 samples, retained fault history and reading-state preservation
@@ -267,7 +270,7 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Select the intended network mode.** `secure-*` commands require trusted mutual-TLS configuration and device rules. Legacy commands still need external network protection. `trusted_network: true` records an administrator's declaration; it does not create a secure channel. Restrict both IPv4 and IPv6 access before starting `usbipd`, which listens on wildcard addresses.
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
-- **Journal upgrades are explicit.** Health uses strict disk2; enabling automatic policy upgrades to disk3. Older agents cannot open upgraded journals. Probes measure the data connection, not USB completion. See [health](docs/data-link-health.md) and [automatic rules](docs/automatic-sharing.md).
+- **Journal upgrades are explicit.** Health uses strict disk2; automatic policy1 upgrades to disk3, and explicit settled-decision policy2 upgrades to disk4. Older agents cannot open upgraded journals. Probes measure the data connection, not USB completion. See [health](docs/data-link-health.md) and [automatic rules](docs/automatic-sharing.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
 - **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, packaged installers, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
 

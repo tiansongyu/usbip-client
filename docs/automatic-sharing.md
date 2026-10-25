@@ -2,8 +2,10 @@
 
 The optional application agent can persist bounded rules and start an entire
 administrator-selected profile when its condition is observed. Rules continue
-after the requesting CLI exits. This is an early CLI/service feature;
-**GUI rule editing and dynamic device pools remain unfinished**.
+after the requesting CLI exits. [Native GUI editing](gui.md) covers fixed-profile
+rules. Optional [settled decisions](research/settled-rule-decisions-validation.md)
+add durable refusal receipts and explicit draft restoration. Dynamic device pools
+and physical remote automatic import remain unfinished.
 
 [Native local-rule validation](research/automatic-sharing-runtime-validation.md)
 covers actual IPv4/IPv6 QEMU HID/FTDI I/O, manual pause across restart and explicit
@@ -120,6 +122,68 @@ separate from Start's request namespace.
 settle/rearm and preserves an existing manual pause. Explicit Enable rearms and
 clears that pause only after its commit, provided no newer Stop arrived during
 the commit. A revision conflict makes no edit; reread before deciding what to do.
+
+## Opt in to settled edit decisions
+
+The original policy above remains strict schema1/disk3. To enable bounded durable
+refusal results, explicitly install a separate root schema2 policy with the same
+exact `broker_uid` and `grants`, plus required `settled_rule_results: true`:
+
+```sh
+jq '.schema_version=2 | .settled_rule_results=true' automation.json > automation-decisions.json
+cat automation-decisions.json
+sudo install -o root -g root -m 0644 automation-decisions.json /etc/rustusb/automation-decisions.json
+```
+
+Stop and actually join the existing agent, then run as its configured broker:
+
+```sh
+rustusb agent --config /etc/rustusb/agent.json run \
+  --automation-decisions-policy /etc/rustusb/automation-decisions.json
+```
+
+The two policy options conflict. Only this explicit opt-in initially upgrades
+application disk2/3 to **strict disk4** before opening the listener. Back up and
+plan the upgrade: older agents cannot open disk4. Removing policy does not erase
+or downgrade retained history. This version is independent of TLS and helper
+journal versions. Support metadata reports the retained format, not a grant.
+
+Select the new edit protocol explicitly; keep the entire two-frame output:
+
+```sh
+rustusb agent --config /etc/rustusb/agent.json rule lab-server --settled create \
+  --name "Lab Native pool" --trigger local-profile-ready \
+  --settle-seconds 2 --rearm once | tee rule-decision.jsonl
+REQUEST_ID=$(jq -r 'select(.event=="rule_decision_intent")|.request_id' rule-decision.jsonl)
+rustusb agent --config /etc/rustusb/agent.json rule lab-server --settled retry "$REQUEST_ID"
+```
+
+The intent contains `protocol:"settled"`; it is not a commit. Query only the
+original UUID using its original protocol and profile. An exact `RuleDecided`
+Applied result identifies its rule/revision/effect; an exact Rejected result is
+an already persisted refusal, with an independent positive sequence and Failure.
+The CLI prints that response and exits1 for Rejected. Replays and queries never
+apply edits or duplicate a refusal/audit. The service checks committed positive
+history first, so a publication error after commit cannot become Rejected.
+Uncertain persistence remains an unknown generic error, never a settled refusal.
+
+The separate refusal journal retains at most256 results. Expired or generic
+errors still do not prove that an original never committed. Preserve the UUID
+and original payload; do not resolve uncertainty by resubmitting a fresh request.
+Rejections grant no USB authority and prove no job/session cleanup.
+
+The GUI samples support independently. Explicit legacy support retains the old
+conservative path; unknown support or a known unhealthy journal blocks new edits
+before creating UUIDs. Original queries and independent Stop remain available.
+After an exact durable refusal, **Restore rejected draft** defaults Cancel and
+restores the original profile, definition and revision. Inspect current rules,
+then explicitly choose any latest revision before confirming another edit; there
+is no silent rebase or resubmission. Rust retains this identity/draft across a
+renderer reload, but whole frontend-process crash persistence is unfinished.
+
+[Validation](research/settled-rule-decisions-validation.md) records actual dual-stack
+GUI timeout, renderer reload, service restart and original decision queries,
+with the old Native I/O and regression proofs preserved.
 
 ## Conditions, stopping and recovery
 

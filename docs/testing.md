@@ -428,3 +428,7 @@ GUI同数据链RTT/故障展示见[runner](../scripts/qemu_gui_link/README.md)�
 E54 [Rust规则矩阵](research/automatic-sharing-rust-qemu-validation.md)使用`python3 scripts/qemu_automatic_rust/run.py --backend virtual --family ipv4 --evidence /tmp/NEW-UNIQUE-RUST-EVIDENCE`，分别选virtual/usbfs和ipv4/ipv6、每次全新目录。先执行`python3 scripts/qemu_automatic_rust/preflight.py`，保原v2 valve/packet/lifecycle/七I/O；仅新明确role期望disk3，原默认严格disk2不变。Virtual只自动远端固定profile，USBFS只本地完整pool，不解除物理远端安全限制；真实硬件/GUI/dynamic等另验。
 
 E55 [GUI规则runner](../scripts/qemu_gui_rules/README.md)组合原Native264/三I/O/全部Rootproof，通过真实guest agent STOP→5s IPC timeout→renderer reload→CONT后late Create→原UUID Query；不是fake response或代理UID。需普通host、实际WebKit driver、每次全新evidence路径，双栈并保留原GUI actions/GUI link/single回归；完整gates与source/head/三ELF/driver冻结直至实际terminal。首两FAIL不可改判，deleted旧owner清理后允许原journal退休，只在active Delete采样与保留history/实际proof核验。范围及精确source见[报告](research/gui-automatic-rules-validation.md)。
+
+## 持久规则决策（E56）
+
+先读[设计](research/settled-rule-decisions-design.md)、[报告](research/settled-rule-decisions-validation.md)与[runner](../scripts/qemu_rule_decisions/README.md)。`python3 scripts/qemu_rule_decisions/run.py --family ipv4 --evidence /tmp/NEW-UNIQUE-DECISION-EVIDENCE`，ipv6另用全新目录。仅显式参数允许完整disk4，原默认strict2/E55 strict3不变；保原264/三I/O/Rootproof。实际暂停poll造成观察2/service3，agent STOP/IPC超时/renderer reload→CONT真实持久拒绝→合作wait/重启→原GUI及CLI query（CLI预期1）→默认Cancel恢复原revision2，不合成receipt或代理UID。冻结所有source/HEAD/三ELF/driver至全部actual terminal；完整root/独立GUI及原规则双栈、动作双栈、v2/single回归分别记账。有限负向不是USB cleanup、全进程崩溃恢复或硬件验收。

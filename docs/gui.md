@@ -87,14 +87,21 @@ independent. Use Connections to request its stop, then inspect actual release.
 Manual Stop persistently pauses automatic rules; resuming requires explicit
 Enable/rearm under the current administrator grant.
 
-If an edit reply is unknown/refused, keep its displayed profile/UUID and original
-payload. **Query original rule edit** sends only RetryRuleMutation, including
-after renderer reload or profile changes. It never reapplies Create/Replace.
-An expired result does not prove that the original never committed. Generic
-negative replies currently lack a settled durable receipt, so new edits remain
-blocked until the original Applied result is resolved; inspect latest rules/events
-with the administrator. Do not clear the ID or mint a replacement request.
-Retention covers this frontend process, not whole-process crashes/restarts.
+If an edit reply is unknown, keep its displayed profile/UUID and original
+payload. **Query original rule edit** retains that exact protocol and identity,
+including after renderer reload or profile changes. It never reapplies an edit.
+Generic Error/Expired replies do not prove refusal and keep new edits blocked.
+
+Administrators can explicitly enable [settled decisions](automatic-sharing.md#opt-in-to-settled-edit-decisions)
+with root policy2/disk4. An exact persisted Applied or Rejected result resolves
+the original intent. After Rejected, **Restore rejected draft** defaults Cancel,
+identifies the original request and restores its original profile/revision; it
+neither rebases nor submits. Inspect current rules and explicitly choose a latest
+revision before another confirmation. A legacy disk3 agent retains conservative retry;
+an old agent unable to answer support is read-only for new GUI edits. Unknown
+support and known unhealthy journals block new edits before creating UUIDs.
+Original queries and independent Stop remain available. Retention covers this
+frontend process and renderer reload, not whole-process crashes/restarts.
 
 ## Validation and limits
 
@@ -109,8 +116,11 @@ actual same-connection RTT, history/typed ends after three directional faults,
 and preserved reading state on both address families. [Rule validation](research/gui-automatic-rules-validation.md)
 adds fixed-profile CRUD, exact revisions, a true lost IPC reply and native renderer
 reload/original query on IPv4/IPv6, with original Native I/O and GUI regressions.
-Settled-negative rule recovery, `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and hardware/Windows
-acceptance remain unfinished.
+[Settled-decision validation](research/settled-rule-decisions-validation.md) adds
+actual stale-revision refusal, timeout/reload, service restart and original query
+on both families, followed by explicit original-draft restoration. Whole frontend
+crash persistence, `.deb`/systemd, install/upgrade/uninstall/reboot, full GUI and
+hardware/Windows acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded
 from the root Native workspace; its root checks do not replace the GUI gate.

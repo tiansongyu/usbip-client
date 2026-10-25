@@ -1,6 +1,7 @@
 # Settled automatic-rule mutation results
 
-Status: implementation contract,2026-10-25, before source changes. Continues the
+Status: implementation contract written before source changes,2026-10-25;
+[scoped local validation](settled-rule-decisions-validation.md) now passes at clean650c53a8. Continues the
 full original Phase0–7 objective and [automatic-rule design](automatic-sharing-design.md).
 [E55](gui-automatic-rules-validation.md) deliberately retains generic Error/
 Expired identities because `Runtime::persist` can return a registry error after

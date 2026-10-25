@@ -1,0 +1,173 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling rustusb-service v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-service)
+   Compiling rustusb-frontend v0.1.0 (/home/ubuntu/github/usbip-client/crates/rustusb-frontend)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.12s
+     Running unittests src/lib.rs (target/debug/deps/rustusb_frontend-0974b1a1d78a7cac)
+
+running 13 tests
+test automation::tests::expired_refused_and_profile_reset_only_query_the_original ... ok
+test automation::tests::only_an_exact_positive_rule_receipt_clears_rule_identity ... ok
+test automation::tests::only_valid_exact_settled_rejection_clears_identity_and_retains_the_original_draft ... ok
+test automation::tests::positive_outcome_must_match_original_rule_revision_and_delete_effect ... ok
+test automation::tests::settled_query_protocol_and_payload_survive_profile_loss_and_uncertain_receipts ... ok
+test automation::tests::original_payload_and_uuid_precede_issue_and_new_edits_are_blocked ... ok
+test automation::tests::start_stop_and_rule_queries_keep_separate_namespaces ... ok
+test preferences::tests::xdg_selection_ignores_relative_values_and_never_invents_a_home ... ok
+test preferences::tests::links_modes_and_ancestor_redirection_are_refused ... ok
+test preferences::tests::concurrent_replacement_before_publish_is_retained_and_own_temp_is_removed ... ok
+test preferences::tests::strict_schema_bounds_and_unknown_files_are_never_overwritten ... ok
+test preferences::tests::cooperative_save_lock_uses_a_fresh_open_description ... ok
+test preferences::tests::missing_load_is_read_only_and_atomic_roundtrip_retains_only_user_options ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/rustusb_service-70248772e87ba6d5)
+
+running 143 tests
+test automation::tests::bounded_rule_definition_roundtrips_without_device_or_identity_authority ... ok
+test automation::tests::invalid_names_intervals_and_arbitrary_rule_fields_are_rejected ... ok
+test catalog::tests::interval_backoff_and_revision_bounds_do_not_wrap_or_burst ... ok
+test automation::tests::mutations_are_closed_struct_variants_with_checked_ids_and_revisions ... ok
+test config::tests::exact_profile_action_and_os_uid_are_required ... ok
+test catalog::tests::malformed_duplicate_and_oversized_catalogs_fail_closed ... ok
+test catalog::tests::stale_retains_success_and_denial_clears_without_fabricated_removals ... ok
+test config::tests::malformed_or_ambiguous_manifests_fail_before_credentials ... ok
+test catalog::tests::slow_subscriber_gets_full_latest_view_and_terminal_publication_before_close ... ok
+test catalog::tests::key_order_is_stable_and_address_is_not_a_physical_generation ... ok
+test foreground::tests::control_errors_do_not_reflect_payload_and_unknown_fields_fail ... ok
+test diagnostics::registry::tests::audit_filter_is_exact_profile_or_own_denial_even_for_root ... ok
+test foreground::tests::independent_terminal_errors_preserve_all_original_context ... ok
+test health::tests::frozen_raw_observation_never_gains_live_rtt_or_changes_source ... ok
+test health::tests::maximum_fixed_sample_fits_reserved_space_and_rtt_can_decrease ... ok
+test jobs::client::tests::all_recording_failures_are_retained ... ok
+test ipc::tests::oversized_empty_and_unknown_requests_fail_without_allocating_unboundedly ... ok
+test ipc::tests::unix_credentials_and_framing_come_from_the_actual_connection ... ok
+test jobs::client::tests::link_failure_during_an_accepted_ack_cleans_before_waiting_for_that_same_ack ... ok
+test jobs::client::tests::foreground_half_close_still_drains_the_actual_reverse_stream ... ok
+test automation::tests::policy::manual_start_root_and_other_uids_do_not_gain_automation ... ok
+test automation::tests::policy::grants_bind_entire_loaded_effect_and_never_hold_credentials ... ok
+test jobs::client::tests::managed_mode_retires_both_halves_at_the_first_eof ... ok
+test automation::tests::policy::complete_pool_limit_and_user_owned_policy_trust_are_preserved ... ok
+test automation::tests::policy::subset_extra_duplicate_and_cross_backend_device_selections_fail_closed ... ok
+test jobs::native::prepare_tests::known_identity_failure_is_not_erased_by_simultaneous_stop ... ok
+test diagnostics::registry::tests::actual_snapshot_lifetime_keeps_global_and_uid_quota_after_end_and_expiry ... ok
+test jobs::io::tests::real_duplex_bytes_are_counted_and_first_eof_closes_both_sides ... ok
+test jobs::native::prepare_tests::local_available_stop_keeps_the_safe_sibling_owned_and_available ... ok
+test diagnostics::registry::tests::permissions_precede_registry_and_foreign_end_is_indistinguishable ... ok
+test diagnostics::registry::tests::counter_overflow_poison_and_strict_nullable_are_explicit ... ok
+test catalog::tests::actual_owner_quota_drop_and_metadata_subscription_do_not_retain_the_socket ... ok
+test diagnostics::registry::tests::coherent_complete_filtered_pages_survive_new_commits ... ok
+test catalog::tests::framed_stop_joins_before_releasing_the_actual_reverse_fin_gate ... ok
+test automation::tests::policy::changed_loaded_uid_pool_or_credential_kind_cannot_reuse_a_grant ... ok
+test jobs::recording::tests::simultaneous_stop_does_not_poll_or_discard_the_original_record ... ok
+test jobs::recording::tests::interrupted_real_resource_message_keeps_the_original_rejection ... ok
+test jobs::rust_server::tests::cdc_payload_bounds_and_control_errors_remain_redacted ... ok
+test automation::tests::policy::policy_schema_grant_and_byte_limits_are_explicit ... ok
+test automation::tests::policy::every_admission_rechecks_acl_revocation_and_rule_scope ... ok
+test jobs::native::tests::vanished_foreground_stop_sender_skips_the_real_helper ... ok
+test jobs::rust_server::tests::finish_attempts_all_received_grants_before_any_recording_and_retains_errors ... ok
+test jobs::native::tests::stopped_recording_keeps_its_ack_but_does_not_hold_cleanup_lock ... ok
+test jobs::native::tests::all_close_tasks_start_while_a_sibling_record_ack_is_delayed ... ok
+test jobs::native::tests::shutdown_releases_both_streams_even_without_peer_eof ... ok
+test jobs::native::tests::export_invalidation_ends_idle_relay_with_error ... ok
+test jobs::native::tests::data_link_failure_releases_real_streams_and_lock_before_retained_ack ... ok
+test jobs::native::tests::relay_copies_both_directions_and_first_eof_releases_other_half ... ok
+test jobs::native::tests::stopped_foreground_prepare_skips_the_real_helper_and_creates_no_export ... ok
+test jobs::rust_server::tests::invalid_physical_selection_and_network_policy_precede_helper_io ... ok
+test jobs::native::tests::received_export_stop_closes_before_original_resource_ack ... ok
+test jobs::rust_server::tests::rejected_begin_receipt_is_recording_failure_before_any_owner ... ok
+test jobs::rust_server::tests::soft_cleanup_deadline_is_not_finished_until_real_terminal ... ok
+test jobs::rust_server::tests::blocked_output_receipt_does_not_block_real_foreground_cleanup ... ok
+test jobs::native::prepare_tests::available_ack_stall_drops_listener_and_closes_both_exports ... ok
+test rule_rejections::tests::strict_rejection_records_cannot_overlap_positive_history_or_claim_persistence_failure ... ok
+test jobs::rust_server::tests::typed_controls_preserve_ack_error_and_ordered_shutdown ... ok
+test jobs::rust_server::tests::held_available_ack_releases_actual_listener_and_lease_before_original_record ... ok
+test jobs::rust_server::tests::failed_ready_delivery_keeps_actual_cleanup_and_no_success_event ... ok
+test run_context::tests::explicit_foreground_has_no_correlation_or_durable_admission ... ok
+test run_context::tests::sticky_stop_interrupts_unacknowledged_output_delivery ... ok
+test run_context::tests::managed_admission_really_waits_and_propagates_rejection ... ok
+test run_context::tests::vanished_foreground_reader_reports_an_error_instead_of_fake_ack ... ok
+test rules::tests::unresolved_tombstones_keep_the_original_obligation_and_capacity ... ok
+test rules::tests::disk_versions_have_closed_distinct_required_shapes ... ok
+test rules::tests::crud_cas_and_separate_mutation_history_keep_original_results ... ok
+test rule_rejections::tests::rejection_eviction_is_bounded_and_an_expired_identity_is_not_a_negative_receipt ... ok
+test rules::tests::occurrence_suppression_survives_start_fifo_and_terminal_job_pruning ... ok
+test rules::tests::origin_request_and_required_nested_fields_cannot_be_forged_or_forgotten ... ok
+test rules::tests::finite_quotas_and_history_eviction_do_not_reapply_a_mutation ... ok
+test runtime::automatic::tests::late_automatic_registration_inherits_suppression_and_old_resume_cannot_clear_it ... ok
+test runtime::automatic::tests::local_whole_pool_freshness_storage_ambiguity_and_occurrence_keys_are_distinct ... ok
+test jobs::native::prepare_tests::local_stop_before_helper_is_a_local_skip_without_new_attempt ... ok
+test jobs::native::prepare_tests::received_identity_failure_survives_verified_close_in_session_finish ... ok
+test jobs::native::prepare_tests::simultaneous_stop_retains_unpolled_resource_until_actual_close ... ok
+test jobs::native::prepare_tests::later_begin_and_attempt_ack_stalls_release_the_prepared_sibling ... ok
+test jobs::native::prepare_tests::reserved_unsent_local_stop_retains_uncertainty_without_stopping_sibling ... ok
+test jobs::native::prepare_tests::received_collection_stops_two_exports_during_resource_ack ... ok
+test jobs::native::prepare_tests::local_resource_stop_keeps_the_safe_sibling_owned_and_available ... ok
+test jobs::native::prepare_tests::cleanup_and_late_resource_errors_remain_distinct_and_ordered ... ok
+test runtime::automatic::tests::decisions::root2_requires_its_explicit_complete_shape_and_original_grant_checks ... ok
+test jobs::management_tests::discovery_stop_during_peer_fin_wait_retains_and_joins_the_driver ... ok
+test jobs::management_tests::hostname_endpoint_does_not_replace_independent_tls_service_name ... ok
+test jobs::management_tests::actual_client_refusal_keeps_original_failure_without_helper_attempt ... ok
+test jobs::native::tests::actual_native_catalog_and_short_refusal_finish_on_the_same_tls_owner ... ok
+test jobs::client::tests::stopped_import_attempt_closes_actual_tls_before_late_ack_and_never_calls_helper ... ok
+test runtime::tests::diagnostics::additive_diagnostic_rpc_is_strict_and_old_ipc_one_shapes_are_unchanged ... ok
+test runtime::tests::catalog::stalled_catalog_does_not_delay_an_unrelated_supervisor_request ... ok
+test diagnostics::registry::tests::row_and_frame_budgets_reject_oversized_rows_without_false_empty_end ... ok
+test runtime::automatic::tests::decisions::actual_writer_identity_failure_never_returns_a_settled_rejection ... ok
+test rules::tests::real_atomic_disk3_reopen_preserves_intent_and_rejects_corruption_without_reset ... ok
+test runtime::tests::catalog::shutdown_joins_framed_catalog_while_the_peer_keeps_reverse_fin_open ... ok
+test runtime::tests::diagnostics::failed_actual_commit_never_enters_diagnostic_publication ... ok
+test runtime::automatic::tests::remote_known_profile_safety_and_expired_completion_never_infer_physical_generation ... ok
+test runtime::tests::legacy_state_migrates_strictly_without_changing_public_session_or_metrics ... ok
+test runtime::tests::diagnostics::unknown_profile_denial_uses_actual_uid_actor_and_durable_audit ... ok
+test runtime::automatic::tests::decisions::permission_rejection_is_durable_once_and_cannot_change_after_grant_or_protocol_change ... ok
+test runtime::automatic::tests::decisions::authorized_support_rpc_uses_real_peer_and_bypasses_the_held_store_and_actor ... ok
+test jobs::native::prepare_tests::native_tls_local_stop_refuses_import_keeps_busy_and_empty_catalog_listener ... ok
+test runtime::tests::finished_job_with_retained_child_is_not_pruned_into_an_orphan ... ok
+test runtime::tests::explicit_retry_never_starts_unknown_or_expired_requests ... ok
+test runtime::automatic::tests::decisions::explicit_root2_and_disk4_migration_freeze_legacy_shapes_and_reopen_real_store ... ok
+test runtime::tests::logging::denied_log_request_uses_actual_uid_and_existing_durable_denial_path ... ok
+test runtime::tests::shutdown_late_registration_inherits_the_same_sticky_stop ... ok
+test runtime::tests::shutdown_late_session_inherits_its_already_stopped_job ... ok
+test runtime::tests::shutdown_poison_still_fans_out_and_returns_an_explicit_error ... ok
+test runtime::tests::previous_epoch_health_is_historical_and_export_is_not_a_data_link ... ok
+test runtime::automatic::tests::retained_origin_resolves_start_retry_after_fifo_eviction_without_new_admission ... ok
+test runtime::automatic::tests::overlapping_native_usbfs_scope_blocks_live_and_unconfirmed_metadata ... ok
+test runtime::automatic::tests::decisions::cas_and_capacity_rejections_leave_rules_unchanged_until_an_explicit_new_edit ... ok
+test store::platform::tests::bounded_audit_preserves_monotonic_cursor_gap ... ok
+test runtime::automatic::tests::explicit_policy_crud_cas_quota_peer_scope_and_revocation_are_real_commits ... ok
+test runtime::tests::diagnostics::poisoned_diagnostics_preserve_actual_commit_and_existing_log_mirror ... ok
+test store::platform::tests::strict_legacy_file_is_atomically_upgraded_and_never_downgraded ... ok
+test runtime::tests::catalog::unhealthy_journal_refuses_catalog_without_starting_a_worker ... ok
+test store::platform::tests::corrupt_changed_symlink_and_hardlink_state_are_never_reset ... ok
+test runtime::tests::unauthorized_stop_does_not_signal_and_is_durably_audited ... ok
+test store::platform::tests::atomic_restart_lock_and_sequence_are_real_filesystem_operations ... ok
+test runtime::automatic::tests::actual_read_only_observer_stops_and_returns_worker_permit_before_wal_ack ... ok
+test runtime::automatic::tests::unknown_mutation_keeps_original_uuid_and_authorized_reads_bypass_a_real_store_gate ... ok
+test runtime::tests::logging::denied_security_rpc_uses_actual_uid_and_durable_denial_without_counter_access ... ok
+test runtime::tests::verified_finish_from_error_audits_recovering_before_disconnected ... ok
+test runtime::tests::logging::committed_audit_mirror_is_exact_once_and_failed_commit_is_not_projected ... ok
+test runtime::tests::logging::actual_uid_security_reads_and_unsupported_bypass_a_real_blocked_store ... ok
+test runtime::tests::link_reads_remain_authorized_and_bounded_while_the_real_store_is_blocked ... ok
+test runtime::automatic::tests::decisions::committed_positive_wins_over_a_real_postcommit_registry_error ... ok
+test runtime::automatic::tests::decisions::committed_rejection_survives_a_real_postcommit_registry_error ... ok
+test runtime::automatic::tests::automatic_poll_keeps_its_actual_slot_after_disable_and_leaves_one_manual_slot ... ok
+test runtime::automatic::tests::firing_intent_is_atomic_and_a_stop_during_commit_stops_late_registration ... ok
+test runtime::automatic::tests::stop_fanout_and_newer_suppression_survive_an_enable_commit_wait ... ok
+test runtime::tests::diagnostics::actual_store_wait_keeps_old_coherent_pages_and_fast_stop_independent ... ok
+test runtime::tests::logging::delayed_commit_never_projects_early_and_closed_logger_does_not_poison_business ... ok
+test runtime::tests::canonical_retention_matches_memory_store_and_reopened_disk ... ok
+test runtime::tests::shutdown_fanout_reaches_owned_stream_before_stalled_store_ack ... ok
+test runtime::tests::catalog::authenticated_catalog_reply_waits_for_real_audit_commit_in_both_link_versions ... ok
+test runtime::tests::catalog::orphaned_catalogs_keep_capacity_and_shutdown_joins_them_for_both_stop_sources ... ok
+test runtime::tests::logging::actual_uid_log_pages_and_fast_stop_work_while_real_store_is_blocked ... ok
+test runtime::tests::admission_capacity_refusal_keeps_journal_healthy_and_allows_finish ... ok
+test runtime::tests::health_growth_is_reserved_inside_the_existing_admission_budget ... ok
+test catalog::tests::actual_refused_connection_retains_old_catalog_and_recovery_resynchronizes ... ok
+test runtime::automatic::tests::two_real_authenticated_observations_admit_one_durable_job_and_stop_joins_it ... ok
+test jobs::management_tests::foreground_security_observes_real_listener_overload_cancel_and_job_restart ... ok
+test catalog::tests::actual_raw_and_framed_refresh_address_then_empty_without_usb ... ok
+
+test result: ok. 143 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.02s
+

@@ -9,6 +9,11 @@
 - frontend保原protocol/UUID/payload，原Applied须校验rule/revision/deleted，Rejected须正sequence且非Persistence；last receipt在Rust保原draft供显式恢复，未知support不降级发新edit、旧policy1明确false仍保守legacy。旧peer无法回答support时新GUI只读，已先补设计说明。只读检查曾误给CLI lib.rs及runtime/tests.rs、rules_tests.rs不存在，rg确认真实binary/flat测试路径后再读；无源码副作用。大输出截断后关键owner audit/Store/Runtime按小段补读。
 - 新qemu_rule_decisions组合E55/原Native全部264，明确schema4参数才允许新增完整字段，默认严格2/原E55默认3保留。先暂停GUI polling使观察2与实际service3不同，真实agent STOP/5s timeout/renderer reload、CONT后durable拒绝、合作wait/restart再原Query、默认Cancel恢复原revision2并继续原positive CRUD/I/O；无合成receipt/代理UID。完整生成guest64168B/dash语法及397输入preflight通过，尚未启动新QEMU；原E55方法只加显式schema参数，不改默认判据。 后续完整生成64924B/dash语法通过，补实际--settled CLI原查询两帧/预期exit1与全journal不变；known-unhealthy在GUI发新UUID前阻断、原Query/Stop独立。一次组合patch因fmt后context不匹配整批未写，按真实代码定位后修正。
 
+- clean650c53a8完整root1054+GUI17/0fail/0ignore、410输入及HEAD/clean guard通过；CLI33406632…22149112B/helper475b2f97…7525544B/GUI0a492b38…17572584B，原34 GLib告警不压制。原CLI五实际进程通过。八QEMU首次全部PASS/15guest实际0/无forced/40native child（39正常0与原single未决1），新双栈原264+46 GUI+27 decision/三I/O、原规则双栈strict3、动作双栈、v2/single保原判据；所有实际handles terminal，无新失败运行。
+- 归档5966文件73866742B，tar18151179B/SHAa2e8586ec11abd01316cca26845fb05baf0b0a5f929fe131a153be5abbf6f1d7，逐member roundtrip和所有source/三ELF精确Git650c核验；无密钥/ELF/rootfs/宿主USB raw。两真实1180×760 PNG已查看，分别为后续positive/finaldeleted画面，并非中间拒绝截图/完整a11y验收。英文指南、英中README/现有site与架构/roadmap/测试/验收同步有限settled能力；global README skill保持，whole-process crash/dynamic/物理远端receipt/安装硬件/完整目标不缩减。静态QA、普通push及远端CI/Pages待实际完成。
+
+- 静态QA首次通过410源/24文档/257 targets/45 site refs、三ELF、八site仅index、四global skill/symlink；真实IAB1280/390无横溢，新report link键盘焦点2px，三observed images loaded。CSP实际新tab为1280（不冒称mobile），三static panel/命令/新文案在无JS下可读，normal console error/warn空。两owned tabs关闭、viewport reset、owned server实际SIGINT wait130；两PNG归属不变。文档读取有大输出截断，按需要小段补读，不作为全部已读或新测试失败。
+
 ## 2026-10-25：GUI 自动共享规则编辑（开始）
 
 - 从clean4de41e0f重读完整Phase0–7任务、当前Git/日志/核心skill与共享state/worker/bridge、规则RPC/journal和原GUI/QEMU契约。沿用UI错误恢复与技术文档技能，本轮读取writing-technical-design；复用既有已审架构，不新增依赖或子agent，不重建README/站点/global skill，不缩减goal。
