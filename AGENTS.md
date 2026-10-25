@@ -76,3 +76,5 @@ GUI正向E50见`docs/research/gui-native-actions-validation.md`与`gui-native-ac
 
 
 GUI链路E51见`docs/research/gui-link-health-design.md`和`gui-link-health-validation.md`：原80b同session reply1→3时真实open/focus丢失FAIL保留；a29产品修复current DOM有限匹配profile/epoch/session/connection，保展开/焦点/scroll并标历史RTT。clean c4f完整956+11软件、两新v2 GUI双栈390源/六guard及原v2/raw actions双栈/single GUI全部PASS，六次最终invocation/11guest0/31GUI child（30正常0/一旧预期unresolved1）、无forced。新六窗口保三方向/七I/O/packet/fullproof；IPv6c2s client io按原件保留。CLI/helper保持E50、GUIc0b141c6…16996192B。自动规则设计与两源码审查在`docs/research/automatic-sharing-design.md`，status draft/未实现；不得self-RPC伪UID、独立写trigger与Start或只做whole-profile auto-start便宣告完整规则。规则/安装/硬件/完整G3/后续阶段仍待完成。
+
+自动规则E52授权/输入基础见`docs/research/automatic-sharing-foundation-validation.md`：clean52fd127d完整root978+GUI11软件通过/392输入guard真，增加10unit与1compile-fail各两次。独立root policy唯一trusted read、完整固定pool绑定、逐次ACL/UID复核、有限RuleSpec/RuleId/ExpectedRevision及四mutation输入已实现，无新依赖；没有生产调用者/agent启动选项/RPC/journal/后台触发/GUI启用，不改旧Manifest1/disk2/DTO。无新QEMU/硬件结果，不将旧c4f证据归给新ELF；下一步同事务准入/抑制/actual owner/dynamic pool/GUI/安装等原门槛不略。

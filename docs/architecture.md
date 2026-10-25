@@ -53,6 +53,8 @@ flowchart LR
 
 ## 具体接口契约
 
+`service::automation`已实现独立root授权与有限规则输入的[验证基础](research/automatic-sharing-foundation-validation.md)：完整固定pool绑定、逐次Read/Start/Stop/Discover复核、严格RuleSpec/RuleId/ExpectedRevision/mutation。当前没有生产调用者、规则journal/RPC/后台runner或GUI启用入口，不改Manifest1/disk2/旧DTO；完整[自动规则设计](research/automatic-sharing-design.md)仍draft，必须先落实同事务准入/实际owner与安全条件再开放执行。
+
 具体可编译签名见各 crate 公共 API。设计约束：
 
 ```rust,ignore

@@ -359,3 +359,7 @@ E49最终内容3aafa2c0的root40142928056与GUI40142928072各四native格/实际
 自动规则[设计](research/automatic-sharing-design.md)和两接口审查为draft，仅源码研究：独立管理员automation grant、规则CRUD/CAS/独立retry、触发与Start同事务、手动Stop持久抑制、actual owner/两槽Discover及动态pool缺口已写入；没有规则实现/运行/accepted声明，不以whole-profile auto-start替代完整设备规则。
 
 内容b6607956的core40148272068与GUI40148272076各四native格及arch/fullgate全success，Pages40148272107 check/deploy成功；七canonical HTTPS逐Git精确、389非README输入/三ELF/四global skill/symlink保持。见[发布回执](evidence/gui-link-health-publication-b6607956-20261025/receipt.json)。不伪造CI logs/ELF/每平台重计数，不将后续纯文档head当c4f QEMU或b660 CI实测head。
+
+## 39. E52：自动规则授权与输入基础
+
+[报告](research/automatic-sharing-foundation-validation.md)锁clean52fd127d：完整root978+GUI11软件通过、392输入/HEAD/clean guard真；10unit及1compile-fail在default/all-features各执行一次。严格独立root policy、全pool/backend绑定、逐次ACL与UID复核、有限RuleSpec/RuleId/ExpectedRevision及四mutation输入已实现；用户JSON不能构造授权。没有生产调用者、启动/RPC/规则持久化/自动触发/GUI启用，不改旧Manifest1/disk2/Job/Session/Metrics/IPC1。首开发clippy测试clone lint失败及修正留work log；无新QEMU/硬件，不将E51归给新ELF。完整规则的同事务准入、抑制、实际owner、动态pool、GUI/安装及原Phase0–7门槛保持。

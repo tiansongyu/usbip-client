@@ -1,8 +1,10 @@
 # Agent-owned automatic sharing rules
 
-Status: **draft**,2026-10-25. Source review at
-`c4f72f6e02120487077733a4c6eb046094db3248`; not implemented or accepted, and not
-runtime evidence. Continues original requirements4.3/4.5/4.10 and Phase5.
+Status: **draft**,2026-10-25. Initial source review at
+`c4f72f6e02120487077733a4c6eb046094db3248`. The [authorization/input foundation](automatic-sharing-foundation-validation.md)
+is implemented and software-tested at `52fd127d`; rule persistence, execution and GUI
+integration are not implemented or accepted. This design is not runtime evidence.
+Continues original requirements4.3/4.5/4.10 and Phase5.
 Automatic rules must work after a GUI exits and remain subject to both ends'
 administrator policy, exact original device/owner cleanup and storage restrictions.
 
@@ -164,7 +166,7 @@ this dynamic device-rule requirement or all Phase5.
    reinstall/reboot acceptance. Full G5, real hardware and later phases stay open
    until their own complete evidence exists.
 
-All decisions above remain draft pending implementation/review and real evidence.
+The overall design remains draft pending integration/review and real evidence.
 The original full objective is not replaced by these delivery increments.
 
 ## Implementation contract: authorization and rule input foundation
