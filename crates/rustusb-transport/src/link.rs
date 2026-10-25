@@ -181,6 +181,8 @@ fn h2_error(error: h2::Error) -> io::Error {
     let kind = error
         .get_io()
         .map_or(io::ErrorKind::InvalidData, |e| e.kind());
+    #[cfg(test)]
+    eprintln!("test-only h2 connection I/O kind: {kind:?}");
     io::Error::new(kind, "framed connection failed")
 }
 fn observation_error() -> io::Error {
