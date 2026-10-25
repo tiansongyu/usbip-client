@@ -96,7 +96,7 @@
     bar.append(button('First page', () => action({ action: 'page', section, next: false })), button('Next page', () => action({ action: 'page', section, next: true })));
     bar.lastChild.disabled = busy() || !next; return bar;
   }
-  function renderConnections() {
+  function renderConnections(disclosures) {
     const content = $('content');
     for (const [title, items, section, status] of [['Jobs', view.jobs, 'jobs', view.jobs_status], ['Device sessions', view.sessions, 'sessions', view.sessions_status]]) {
       const block = node('section', null, 'block'); block.append(node('h2', title), node('p', status, 'section-note'));
@@ -112,8 +112,21 @@
     }
     const health = node('section', null, 'block'); health.append(node('h2', 'Data-link health'), node('p', 'Independent link samples; raw-v1 has no heartbeat RTT. A transport reply does not prove USB completion.', 'section-note'));
     if (!view.health.length) health.append(empty('No link-health sample available.'));
-    else view.health.forEach(item => { const details = node('details'); details.append(node('summary', `${item.session_id} · ${item.availability}`), node('p', item.link?.last_round_trip_micros == null ? 'RTT unavailable' : `Last enqueue-to-reply RTT: ${item.link.last_round_trip_micros} µs`, 'section-note'), json(item)); health.append(details); });
+    else view.health.forEach(item => {
+      const key = JSON.stringify([view.profile, item.instance_id, item.session_id, item.link?.identity?.connection ?? null]);
+      const details = node('details'); details.dataset.healthKey = key; details.open = disclosures.get(key)?.open ?? false;
+      const historical = item.availability === 'owner_ended' || item.availability === 'previous_epoch';
+      const qualification = historical ? `retained history (${item.availability})` : item.availability;
+      const linkState = item.link?.protocol === 'raw_v1' ? 'raw-v1 probes unavailable' : [item.link?.phase, item.link?.probe, item.link?.end].filter(Boolean).join(' · ');
+      const summary = node('summary', `${item.session_id} · ${qualification}${linkState ? ` · ${linkState}` : ''}`);
+      summary.dataset.focus = `health-summary:${key}`;
+      const recorded = historical || item.link?.phase === 'ended';
+      const rtt = item.link?.last_round_trip_micros == null ? 'RTT unavailable' : `${recorded ? 'Last recorded' : 'Last'} enqueue-to-reply RTT: ${item.link.last_round_trip_micros} µs${recorded ? ' (not a current responsiveness result)' : ''}`;
+      const metadata = json(item); metadata.dataset.focus = `health-metadata:${key}`;
+      details.append(summary, node('p', rtt, 'section-note'), metadata); health.append(details);
+    });
     content.append(health); $('section-status').textContent = 'Jobs, sessions and link health are sampled independently';
+    health.querySelectorAll('details[data-health-key]').forEach(details => { details.querySelector('pre').scrollTop = disclosures.get(details.dataset.healthKey)?.scrollTop ?? 0; });
   }
   function renderActivity() {
     const content = $('content'); content.append(node('p', view.audit_status, 'section-note'));
@@ -143,6 +156,8 @@
   function renderPage() {
     const focusKey = document.activeElement.dataset.focus;
     const scrollTop = $('main').scrollTop;
+    // Current DOM only: do not retain obsolete profiles/sessions or health samples.
+    const disclosures = new Map([...$('content').querySelectorAll('details[data-health-key]')].map(details => [details.dataset.healthKey, { open: details.open, scrollTop: details.querySelector('pre').scrollTop }]));
     $('page-title').textContent = pages[page]; $('content').replaceChildren(); $('inventory-count').textContent = '';
     $('search-bar').hidden = page > 1;
     document.querySelectorAll('nav button').forEach((button, i) => { if (page === i) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current'); });
@@ -150,7 +165,7 @@
     if (view.unresolved) {
       const warning = node('div', `Unresolved Start · ${view.unresolved.profile} · ${view.unresolved.request_id}. Only the original retry identity will be used; inspect jobs before continuing.`, 'unresolved'); $('content').append(warning);
     }
-    if (page < 2) renderInventory(); else if (page === 2) renderConnections(); else if (page === 3) renderActivity(); else if (page === 4) renderSystem(); else renderSettings();
+    if (page < 2) renderInventory(); else if (page === 2) renderConnections(disclosures); else if (page === 3) renderActivity(); else if (page === 4) renderSystem(); else renderSettings();
     updateControls();
     if (focusKey) {
       const focused = [...document.querySelectorAll('[data-focus]')].find(element => element.dataset.focus === focusKey);

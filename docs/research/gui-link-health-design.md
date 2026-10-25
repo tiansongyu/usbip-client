@@ -28,6 +28,11 @@ Keep any FAIL as an original, not a post-hoc PASS. Source shows renderPage rebui
 the Connections subtree on every update; implementation must preserve disclosure
 state and focus using stable profile/session identities, without retaining old
 health samples as live. Memory must stay bounded to the current sampled page.
+Capture only current DOM disclosure/scroll state before replacement, keyed by
+profile, instance, session and connection; restore focus through existing finite
+data-focus keys. No accumulating global map or authority-bearing cache. Retained
+owner-ended/previous-epoch samples get explicit history and phase/end labels;
+a stored RTT is labeled recorded, never current responsiveness.
 
 While the same GUI/agent/session is alive, arm the original exact flow drop.
 After the original actual cleanup barrier, capture the same GUI's ended link,
