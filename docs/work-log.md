@@ -7,6 +7,7 @@
 - 只读检查一次rg给了不存在tests目录exit2，后置&&的文档未读，已单独读真实native-gui-design；若干大输出被截断，不作为完整阅读证据，相关实现按小段重读。无USB/代码副作用。
 - dirty开发共享frontend10/10通过（原6+新4身份/拒绝/分页重置/独立StartStop），GUI首fmt因测试match的struct literal缺括号FAIL、未启动后续test且无test log，修语法后第二GUI15/15通过；原GLib34依赖告警保留未压制。一次猜styles.css不存在exit1，rg确认实际app.css后读取。新metadata按需采样且TUI默认不增加RPC，完整gate/native/QEMU仍待冻结后执行，不把定向通过当验收。
 - 新scripts/qemu_gui_rules组合原Native264/三I/O/全Rootproof，原verifier不改；三实际native进程计划验证无policy、CRUD/Stop独立、draft焦点/UTF8、真实agent STOP→IPC超时→renderer reload→CONT后原UUID查询与WM close。完整生成guest59537B/dash语法及391输入首次preflight通过，之后补guest等待3s/设计方法，需冻结再查。dirty all-feature Clippy通过；一次空context文档patch失败无写入，随后按真实段落修正。尚无新QEMU或完整gate结果。
+- clean7ef7f492完整root1027+GUI15/404输入与HEAD/clean guard通过，CLI d6bd57c4…21933280B/helper475b2f97…7525544B/GUI4c300afc…17410456B。首新IPv4 QEMU实际FAIL、2guest0/无forced/六guard真，原264及USB I/O尚未完成：fixture等到Rust snapshot但DOM仍旧，no-policy DOM实际Not sampled，随后New按钮仍禁用、script的rule-name为null导致真实WebDriver500。原日志/失败/实际wait保留，矩阵在首FAIL停止；无后续组合伪通过。待全handle实际terminal后仅强化fixture实际DOM/按钮/修订屏障，产品Rust/JS/CSS及三ELF不改；原raw错误不是产品成功。
 
 ## 2026-10-25：Rust engines 自动规则与 v2 故障矩阵（开始）
 

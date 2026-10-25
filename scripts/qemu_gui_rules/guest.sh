@@ -1,9 +1,14 @@
 #!/bin/sh
 # Disposable native UI fixture only; every edit uses the original real agent RPC.
 gui_rules_settings() {
+    gui_dom '!document.getElementById("refresh").disabled'
     gui_js 'document.querySelectorAll("nav button")[5].click();return true;' /run/gui-rules-settings.json
     gui_wait '.rules.current and .pending==null' /run/gui-rules-settings-ready.json
-    gui_dom 'document.getElementById("rule-new")'
+    if jq -e '.value.rules.policy_enabled and .value.rules.grant!=null' /run/gui-rules-settings-ready.json >/dev/null; then
+        gui_dom 'document.getElementById("rule-new") && !document.getElementById("rule-new").disabled && !document.getElementById("refresh").disabled'
+    else
+        gui_dom 'document.querySelector(".automation .section-note")?.textContent==="Policy disabled by administrator" && document.getElementById("rule-new").disabled && !document.getElementById("refresh").disabled'
+    fi
 }
 gui_rules_no_policy() {
     gui_open rules-no-policy server
@@ -26,7 +31,7 @@ gui_rule_submit() {
 }
 gui_rule_revision() {
     gui_wait ".pending==null and .unresolved_rule==null and .rules.current and (.rules.rules|length)==1 and .rules.rules[0].revision==\"$1\"" "/tmp/gui-rule-revision-$1.json"
-    gui_dom '!document.getElementById("refresh").disabled'
+    gui_dom "document.querySelector('.rule-row .data-id')?.textContent.includes('revision $1 ·') && !document.getElementById('refresh').disabled"
 }
 gui_rule_edit() {
     gui_js 'document.querySelector("[data-rule-action=edit]").click();return document.getElementById("confirmation").open;' /run/gui-rule-edit.json
