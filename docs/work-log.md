@@ -2,6 +2,8 @@
 
 ## 2026-10-25：完整安装服务的 USB 数据路径
 
+- E59发布：normal SSH push到指定origin，remote main确认为content a028cb1bc20f6500db586b6f516c5263cceb040d；core40197552464四native Ubuntu jobs、GUI40197552421四native jobs、Pages40197552419 check/deploy全部completed/success（10jobs）。四Debian artifact metadata确认，不下载/执行/安装或重新宣称ARM运行支持；旧84b产物检查保持原归属。线上首页+六runtime asset及pinned README/report共9次HTTP200且源字节一致。两初始通用遍历把隐藏.nojekyll marker当HTTP资源404，错误维护README假说在实际文件列表后丢弃；改显式runtime后通过，原观察保留。发布证据31成员/685253B逐hash/size验证，研究报告补原content CI/HTTP回执；最终receipt只记录，不重归属d6软件/dd+d6 QEMU，也不将未定位import间歇问题标修复。
+
 - 最终cached diff检查发现report及两个Python夹具末尾空行；此前命令串未set-e而继续本地commit，保留原commit，补独立格式修正并用set-e/全基线diff重核后才push。无Rust/包/行为改变，旧QEMU/软件仍锁实际dd9390/d6e689，不重写证据。
 
 - 本地文档页面检查254、JS语法、diff检查通过；desktop1280/doc1265、新link键盘focus2px；fresh viewport能力后actual390/doc375及script-omitted私有副本三backend headings/命令/限制可见。最初stale视口仍1280不算窄屏；两次src锚点不匹配原子断言失败后按实际app.js修正，仅私有副本改动。四owned tabs关闭、viewport reset、loopback preview经INT实际exit0；无新pixel截图宣称。交付前全局skill四文件与symlink再核保持。

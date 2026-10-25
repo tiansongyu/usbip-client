@@ -177,6 +177,22 @@ not mobile evidence. Four owned tabs close, viewport resets, and the owned
 loopback preview actually exits0 after INT. No new pixel screenshot review is
 claimed. Publication is recorded separately after actual push/deployment.
 
+Content commit `a028cb1bc20f6500db586b6f516c5263cceb040d` was normally pushed and
+confirmed as remote main. Its [core CI](https://github.com/tiansongyu/usbip-client/actions/runs/40197552464),
+[GUI CI](https://github.com/tiansongyu/usbip-client/actions/runs/40197552421)
+and [Pages workflow](https://github.com/tiansongyu/usbip-client/actions/runs/40197552419)
+all complete successfully: four native Ubuntu jobs per software workflow and
+both Pages jobs. Four Debian artifact metadata records are retained; this
+delivery does not download, inspect or run those CI binaries. The previous
+artifact inspection remains at its original revision. Live HTML and six runtime
+assets, plus pinned English README/report, all return200 and match source bytes.
+Two initial generic asset traversals requested the hidden `.nojekyll` deployment
+marker and got404; the corrected explicit runtime selection passes. The original
+errors and discarded maintenance-README hypothesis are retained. See the
+[publication receipt](../evidence/installed-usb-publication-a028cb1b-20261025/summary.json)
+and its 31-member exact public manifest. This later receipt does not reattribute
+local1094 tests or QEMU runs to a028cb1b or to the receipt commit.
+
 These observations do not establish repeat-failure freedom, real G1/G2 devices,
 arm64 installed runtime, arbitrary Composite/ISO support, storage safety,
 permanent blocked-kernel/FS cancellation, power-loss recovery, full Phase1/2/3/5
