@@ -2,6 +2,8 @@
 
 ## 2026-10-25：完整安装服务的 USB 数据路径
 
+- 最终cached diff检查发现report及两个Python夹具末尾空行；此前命令串未set-e而继续本地commit，保留原commit，补独立格式修正并用set-e/全基线diff重核后才push。无Rust/包/行为改变，旧QEMU/软件仍锁实际dd9390/d6e689，不重写证据。
+
 - 本地文档页面检查254、JS语法、diff检查通过；desktop1280/doc1265、新link键盘focus2px；fresh viewport能力后actual390/doc375及script-omitted私有副本三backend headings/命令/限制可见。最初stale视口仍1280不算窄屏；两次src锚点不匹配原子断言失败后按实际app.js修正，仅私有副本改动。四owned tabs关闭、viewport reset、loopback preview经INT实际exit0；无新pixel截图宣称。交付前全局skill四文件与symlink再核保持。
 
 - E59交付验证：Native/v4独立clean d6e68915 PASS，新增清理前观察，无产品修复；另三pair仍锁dd9390c4。四PASS各三轮真实HID press/release与FTDI双向35B、两次live dpkg升级、原agent先helper合作stop事件/原PID-cgroup、52完整Rootproof、驱动/接口/配置/node/generation基线、双端原strict ALPN2 PCAP各30流全部通过。四PASS八QEMU0；共十四pair/28 QEMU0，十FAIL不重判；OS准备另两QEMU0。Native/v4间歇首import IO未定位，后PASS不证明解决。core1076+GUI18共1094、0failed/ignored，原完整check.sh/check-gui.sh均0，717全部tracked非evidence输入/HEAD/clean守卫true，三ELF与测试包保持。显式归档3322成员/22,624,065 rawB，tar4,305,493B sha35311dabe4610d4b1364d322a82319428e7cb1be19797562f4f58a1a0ef6007c；全hash/size回读、100真实私钥字节排查及archive额外UID/caps/units/I/O/升级审计通过，keys/disks/debs/ELFs未入Git。v6 sha1dc950、v8clean90916bde sha d36f460f，v7未安装开发构包保留原dirty归属。英文报告与README/website/testing/compatibility/roadmap/AGENTS/项目skill更新；全局readme-site四文件/symlink完全保持，真实硬件/ARM安装/Windows及完整阶段未完成。发布与页面验证待下文实际结果。

@@ -181,4 +181,3 @@ These observations do not establish repeat-failure freedom, real G1/G2 devices,
 arm64 installed runtime, arbitrary Composite/ISO support, storage safety,
 permanent blocked-kernel/FS cancellation, power-loss recovery, full Phase1/2/3/5
 acceptance or Windows USB. Prior results retain their own exact revisions.
-

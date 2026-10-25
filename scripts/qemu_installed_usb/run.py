@@ -210,4 +210,3 @@ if __name__=='__main__':
     parser.add_argument('--base',type=Path,required=True);parser.add_argument('--upgrade',type=Path,required=True)
     parser.add_argument('--backend',choices=['native','usbfs'],required=True);parser.add_argument('--family',type=int,choices=[4,6],required=True)
     raise SystemExit(one(parser.parse_args()))
-

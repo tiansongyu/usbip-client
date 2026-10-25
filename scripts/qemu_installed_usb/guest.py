@@ -271,4 +271,3 @@ def main():
     else:raise RuntimeError('unknown fixture action')
     print(json.dumps(result))
 if __name__=='__main__':main()
-
