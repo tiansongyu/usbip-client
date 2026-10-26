@@ -125,6 +125,7 @@ try:
         if part1.exists() and part2.exists():break
         time.sleep(.1)
     assert part1.exists() and part2.exists()
+    command(['udevadm','settle','--timeout=30'])
     policy={'allowed_uids':[0,1000],'export_device_ids':[target['id']],'peers':[],'trusted_network':True}
     (RUN/'policy.json').write_text(json.dumps(policy));(RUN/'policy.json').chmod(0o600)
     log=(OUT/'helper.log').open('wb')
@@ -144,6 +145,7 @@ try:
     assert snapshot(target['bus_id'])==baseline
     for mode,node in [('fd',part2),('mapping',rw),('thread-fd',part2)]:
         p,tid=holder(mode,node)
+        save('holder-proc-'+str(p.pid)+'.json',{'maps':Path('/proc/'+str(p.pid)+'/maps').read_text(),'mountinfo':Path('/proc/'+str(p.pid)+'/mountinfo').read_text(),'direct_map_files':Path('/proc/'+str(tid)+'/map_files').is_dir(),'nested_map_files':Path('/proc/'+str(p.pid)+'/task/'+str(tid)+'/map_files').is_dir()})
         data=inspect(mode)
         assert found(data,'mapping' if mode=='mapping' else 'block_fd',node,p.pid,tid)
         if mode=='thread-fd':assert tid!=p.pid and not found(data,'block_fd',node,p.pid,p.pid)
@@ -181,6 +183,7 @@ try:
     data=inspect('crypt-holder')
     assert any(b['dm_hint']=='crypt' for b in data['blocks']) and found(data,'holder',part1)
     command(['dmsetup','remove','rustusb-e65-crypt']);mapper=False
+    command(['udevadm','settle','--timeout=30'])
     final=inspect('released')
     assert not final['busy_observed']
     assert snapshot(target['bus_id'])==baseline

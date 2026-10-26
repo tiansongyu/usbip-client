@@ -12,6 +12,9 @@ fn task_start(value: &str, tid: u32) -> Option<u64> {
 
 fn mount_devices(text: &str) -> std::result::Result<BTreeSet<DeviceNumber>, ()> {
     let mut result = BTreeSet::new();
+    if text.is_empty() {
+        return Err(());
+    }
     for (index, row) in text.lines().enumerate() {
         if index >= 4096 {
             return Err(());
@@ -24,7 +27,6 @@ fn mount_devices(text: &str) -> std::result::Result<BTreeSet<DeviceNumber>, ()> 
             || fields.len() != separator + 4
             || decimal::<u64>(fields[0]).is_none()
             || decimal::<u64>(fields[1]).is_none()
-            || !fields[3].starts_with('/')
             || !fields[4].starts_with('/')
         {
             return Err(());
@@ -166,6 +168,9 @@ pub(super) fn scan(
                 if mount_views.insert((namespace, root))
                     && let Some(text) = budget.text(&thread.join("mountinfo"), MAX_FILE)
                 {
+                    if text.is_empty() {
+                        budget.issue("mountinfo_invalid_or_limit");
+                    }
                     for (index, row) in text.lines().enumerate() {
                         if index >= 4096 {
                             budget.issue("mountinfo_invalid_or_limit");
@@ -186,8 +191,23 @@ pub(super) fn scan(
             } else {
                 budget.issue("mount_view_unreadable_or_gone");
             }
+            // map_files is absent from the nested task/TID inode table. The
+            // top-level numeric lookup also accepts TIDs, including non-leaders.
+            let direct = proc.join(tid.to_string());
+            let direct_start = budget
+                .text(&direct.join("stat"), 4096)
+                .and_then(|s| task_start(&s, tid));
             for (directory, mapping) in [("fd", false), ("map_files", true)] {
-                for path in budget.entries(&thread.join(directory)) {
+                if mapping && direct_start != Some(start) {
+                    budget.issue("mapping_task_identity_changed_or_unreadable");
+                    continue;
+                }
+                let directory = if mapping {
+                    direct.join(directory)
+                } else {
+                    thread.join(directory)
+                };
+                for path in budget.entries(&directory) {
                     if !budget.available() {
                         break;
                     }
@@ -220,6 +240,13 @@ pub(super) fn scan(
                         }),
                     }
                 }
+            }
+            if budget
+                .text(&direct.join("stat"), 4096)
+                .and_then(|s| task_start(&s, tid))
+                != Some(start)
+            {
+                budget.issue("mapping_task_identity_changed_or_unreadable");
             }
             // cwd/root and executable references can survive without an FD entry.
             for field in ["cwd", "root", "exe"] {
@@ -301,7 +328,12 @@ mod tests {
                 minor: 17
             }]))
         );
+        assert_eq!(
+            mount_devices("12 1 0:4 net:[4026531992] /run/netns/a rw - nsfs nsfs rw"),
+            Ok(BTreeSet::from([DeviceNumber { major: 0, minor: 4 }]))
+        );
         for bad in [
+            "",
             "12 1 8:1 / / rw - ext4",
             "12 1 8:-1 / / rw - ext4 /dev/x rw",
             "12 1 8:1 / / rw ext4 /dev/x rw",

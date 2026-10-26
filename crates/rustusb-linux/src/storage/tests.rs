@@ -120,13 +120,18 @@ fn second_thread_mount_and_mapping_failures_are_not_treated_as_empty() -> Result
         write(&task.join("ns/mnt"), "namespace fixture")?;
         fs::create_dir_all(task.join("root"))?;
         fs::create_dir_all(task.join("fd"))?;
-        fs::create_dir_all(task.join("map_files"))?;
+        let direct = proc.join(tid.to_string());
+        fs::create_dir_all(direct.join("map_files"))?;
+        fs::copy(task.join("stat"), direct.join("stat"))?;
         if tid == 124 {
             write(
                 &task.join("mountinfo"),
                 "12 1 8:16 / /mnt rw - ext4 /dev/sdb rw\n",
             )?;
-            symlink(temp.path().join("absent"), task.join("map_files/1234-5678"))?;
+            symlink(
+                temp.path().join("absent"),
+                direct.join("map_files/1234-5678"),
+            )?;
         } else {
             write(
                 &task.join("mountinfo"),

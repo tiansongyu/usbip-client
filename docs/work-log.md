@@ -2,6 +2,8 @@
 
 ## 2026-10-26：USB 存储占用检查与交接设计（开始）
 
+- clean ce840a81完整core1148+GUI18=1166/752输入及所有guard通过。首Jammy QEMU host82863实际exit1：裸块mmap未识别，helper0/QEMU0和四guard真不覆盖FAIL。固定Linux源码确认map_files仅在top-level PID表，原nested task/TID路径不存在；修改设计后修复，保留原件。另审查nsfs动态root路径解析，未采原mountinfo不声称全部issue根因已证实。初idle中真实udev raw FD占用保留，后续显式udevadm settle作为前置条件，不过滤Busy。
+
 - 新增Linux只读检查模块、严格InspectStorage/root-only helper分支与CLI storage-inspect；单actual blocking worker配额不随waiter丢失释放，helper停机总join。报告保留LUN/分区/holder、各线程mount/FD/map_files/cwd/root/exe/swap与独立限制；不读存储内容、不授导出。初fmt括号错误exit1、Errno转换编译exit101及两条Clippy折叠建议exit101均保留；修后定向15项（12新增+3原storage）通过，严格三crate all-features Clippy通过。后补两个inventory/limit测试将由完整gate执行，未预称通过。
 - 独立QEMU夹具已编写并完成Python语法检查，含两LUN/两分区、真实C raw mmap/线程FD、命名空间、swap、dm-crypt、权限/导出拒绝与原driver基线。新镜像只用private普通文件；来宾限定破坏操作前验证精确合成USB祖先和64MiB容量。尚无本轮QEMU结果。
 
