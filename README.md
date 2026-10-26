@@ -45,6 +45,11 @@ with Ctrl-C. Add `--json` for complete versioned batches. The
 [local observation guide](docs/local-device-monitor.md) explains stale data,
 resynchronization and generation boundaries.
 
+Administrators can use [storage inspection](docs/storage-inspection.md) to see
+observed LUNs, partitions, mounts, handles, mappings and swap. The root-only
+`storage-inspect` command does not change drivers or approve export. **Storage
+sharing remains disabled**, including when no use is observed.
+
 For Native sharing, administrators must install the distribution's `usbip` / `usbipd` and matching kernel modules. On Ubuntu these tools are usually provided by `linux-tools-common` and `linux-tools-$(uname -r)`. The [Native setup guide](docs/native-guide.md) covers binary installation, helper policy, directory permissions and service setup.
 
 Experimental Ubuntu `.deb` packages provide the CLI/TUI, restricted helper,
@@ -269,6 +274,12 @@ cargo build --workspace --release --all-features --locked
 Follow the [physical server guide](docs/rust-physical-server.md) to authorize exact device fingerprints. Its persistent grant journal preserves unresolved original state across helper restarts and blocks new grants until resolved. Root-only reconciliation verifies administrator-restored state. A separate, default-off policy enables original-driver recovery after the owner exits, limited to the saved generation, configuration and alternate settings.
 
 ## What is verified
+
+[Storage inspection validation](docs/research/storage-inspection-validation.md)
+passes 12 scenario groups on each Ubuntu 22.04/24.04 x86_64 QEMU guest, plus an
+existing Native USB data regression. The fixed source has 1,166 local software
+test executions. The first missing-mapping failure is retained; these results
+do not establish safe storage forwarding.
 
 [ARM64 virtual HID/CDC tests](docs/research/arm64-virtual-data-validation.md) now
 pass IPv4 and IPv6 on Ubuntu 22.04/24.04: four actual I/O cycles, eight distinct

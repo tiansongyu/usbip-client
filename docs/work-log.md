@@ -2,7 +2,13 @@
 
 ## 2026-10-26：USB 存储占用检查与交接设计（开始）
 
-- clean ce840a81完整core1148+GUI18=1166/752输入及所有guard通过。首Jammy QEMU host82863实际exit1：裸块mmap未识别，helper0/QEMU0和四guard真不覆盖FAIL。固定Linux源码确认map_files仅在top-level PID表，原nested task/TID路径不存在；修改设计后修复，保留原件。另审查nsfs动态root路径解析，未采原mountinfo不声称全部issue根因已证实。初idle中真实udev raw FD占用保留，后续显式udevadm settle作为前置条件，不过滤Busy。
+- 原件最终归档721成员/3770712gzip B，SHAfe1f1fda43e2e9391382b922fbc09b3a30d0016646bd7a9f9bfe96a0db3f58e7；Linux105与USB83原件逐hash核验，三private SSH key逐bytes排除，原Native384清单原件不变，无ELF/盘/包/私钥。初collection成功版本的清单与方法另保留，最终补入read-only shape probe失败记录，未改原运行数据。见`evidence/storage-inspection-20261026/manifest.json`。
+- 文档QA 17文件/682本地链接与锚点检查、site/Node/diff通过，399产品输入及三ELF不变；四global readme-site与Codex发现symlink正确。实际CUA 1280/390无横溢、新入口/限制、ArrowRight焦点选中、CSP禁脚本三panel/build均在；截图不可用，未重跑clipboard/reduced-motion，CSS/JS/assets未改。61/62关闭、viewport reset已请求、owned preview77836实际0。QA原件与回执前快照见`evidence/storage-inspection-docs-20261026/manifest.json`。尚未宣称本次远端CI/Pages完成。
+
+- clean c55a6c57第二次完整1166/752输入通过；两Ubuntu fixed QEMU各12场景/10报告/6实际holder子进程0，host44529/55378实际0、两helper/QEMU0及四guard真。真实裸块VMA、线程unshare FD、命名空间、swap、crypt holder和存储导出拒绝通过；报告始终保Unknown限制/实际coverage issues，无存储放行。
+- 原Native IPv4数据回归actual8711 exit0，两guest0、两HID/FTDI轮/四channel/各向70B、原严格加密及baseline/释放判据通过；same full-gate三ELF、752 outer/249 inner输入保持。独立同作者原件审查actual64623 exit0，逐Git核所有来源、384 Native原件及报告/退出，无新USB执行或独立安全审计声明。
+
+- clean ce840a81完整core1148+GUI18=1166/752输入及所有guard通过。首Jammy QEMU host82863实际exit1：裸块mmap未识别，helper0/QEMU0和四guard真不覆盖FAIL。固定Linux源码确认map_files仅在top-level PID表，原nested task/TID路径不存在；修改设计后修复，保留原件。另审查nsfs动态root路径解析，未采原mountinfo不声称全部issue根因已证实。初idle中两个其他进程的raw FD占用保留；未采其exe，不能归因为udev。此前本条把它们称作udev证据不足，现纠正。后续显式udevadm settle作为前置条件，不过滤Busy。
 
 - 新增Linux只读检查模块、严格InspectStorage/root-only helper分支与CLI storage-inspect；单actual blocking worker配额不随waiter丢失释放，helper停机总join。报告保留LUN/分区/holder、各线程mount/FD/map_files/cwd/root/exe/swap与独立限制；不读存储内容、不授导出。初fmt括号错误exit1、Errno转换编译exit101及两条Clippy折叠建议exit101均保留；修后定向15项（12新增+3原storage）通过，严格三crate all-features Clippy通过。后补两个inventory/limit测试将由完整gate执行，未预称通过。
 - 独立QEMU夹具已编写并完成Python语法检查，含两LUN/两分区、真实C raw mmap/线程FD、命名空间、swap、dm-crypt、权限/导出拒绝与原driver基线。新镜像只用private普通文件；来宾限定破坏操作前验证精确合成USB祖先和64MiB容量。尚无本轮QEMU结果。

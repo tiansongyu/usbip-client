@@ -1,6 +1,6 @@
 # USB storage inspection and handoff design
 
-Status: proposed full storage handoff; bounded read-only inspection selected for implementation. Baseline: `2eca4522104eef7ccbf23dffba2ef1120bf4349c`, 2026-10-26. Requirement [4.6](../requirements.md) remains incomplete. No storage export permission is added by this design's first increment.
+Status: proposed full storage handoff; bounded read-only inspection implemented and [validated](storage-inspection-validation.md). Baseline: `2eca4522104eef7ccbf23dffba2ef1120bf4349c`, 2026-10-26. Requirement [4.6](../requirements.md) remains incomplete. No storage export permission is added by this design's first increment.
 
 ## Problem and scope
 
@@ -40,7 +40,7 @@ The report is schema 1 metadata with:
 - Separate finite issue codes for unreadable/malformed inputs, disappearing identities, incomplete inventories and resource limits.
 - Permanent limitations: non-atomic scan; hidden/pinned namespaces and non-FD kernel references; filesystem/encryption signatures not probed; unenumerated LUNs; unknown device-enforced write protection. No finding is an export approval.
 
-Initial planned limits: 64 block nodes, 32 LUNs, 256 usage records, 8,192 tasks, 65,536 total directory entries, 16 MiB aggregate text, 1 MiB per proc text file, and 10 seconds checked between operations. Final constants and measured response sizes belong in the implementation/validation report. Work stopped at a limit produces a partial report with an issue; it does not discard earlier busy findings.
+Implemented limits: 64 block nodes, 32 LUNs, 256 usage records, 8,192 tasks, 65,536 total directory entries, 16 MiB aggregate text, 1 MiB per proc text file, and 10 seconds checked between operations. The response is rejected above 60 KiB before the ordinary 64 KiB IPC frame writer. Work stopped at a limit produces a partial report with an issue; it does not discard earlier busy findings.
 
 ## Full storage handoff remains proposed
 

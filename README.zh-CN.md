@@ -1,5 +1,7 @@
 # RustUSB
 
+新增[存储占用检查](docs/storage-inspection.md)：root-only、只读、有界，报告LUN/分区/holder、可见线程的挂载/FD/映射和swap；空观察与coverage issues不授导出许可。[验证](docs/research/storage-inspection-validation.md)锁clean c55a6c57，本地1166次软件检查、两Ubuntu x86_64 QEMU各12场景与原Native IPv4数据回归通过，首Jammy mmap失败保留。存储共享、完整需求4.6及硬件/全Phase仍未完成。
+
 本轮 E64 [ARM64 虚拟 HID/CDC 验证](docs/research/arm64-virtual-data-validation.md)通过 IPv4/IPv6 两个 pair：Ubuntu 22.04/24.04 互换角色，四轮真实按键及 CDC 注入/发送/回显、八个独立导入 channel、原进程退出和内核释放、双端严格 PCAP 均通过。夹具分别锁 1bb65475/3fc08f9c，实际 ARM 包仍锁 ed1e8fef；742 输入及所有 guard 通过。首 IPv6 因 dpkg 锁冲突 FAIL，连同后续 collector 两次误报保留；六个 guest 退出0不等于三个 pair 全通过。软件1138仍属E63。真实硬件、ARM虚拟故障/managed专项、完整GUI、存储/ISO/性能/Windows及全部目标继续未完成。
 
 E63[授权导入PM与新USB验收](docs/research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入；amd64/arm64、Native/USBFS、IPv4/IPv6八正向installed类别、24轮HID/FTDI及104完整Rootproof/双方live升级/PCAP通过，三原legacy/virtual pair另过。ARM USBFS-v6正向显式加xHCI追踪，原安装前kernel stall/forced abort仍FAIL且原因未修；原E62九FAIL保留。硬件G1/G2、ARM虚拟CDC/完整GUI、存储/ISO/性能/Windows与完整目标仍未完成；下列旧E记录保留历史范围。

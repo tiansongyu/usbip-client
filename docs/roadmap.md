@@ -1,5 +1,7 @@
 # 分阶段开发与验收计划
 
+新增[存储占用检查](storage-inspection.md)：root-only、只读、有界，报告LUN/分区/holder、可见线程的挂载/FD/映射和swap；空观察与coverage issues不授导出许可。[验证](research/storage-inspection-validation.md)锁clean c55a6c57，本地1166次软件检查、两Ubuntu x86_64 QEMU各12场景与原Native IPv4数据回归通过，首Jammy mmap失败保留。存储共享、完整需求4.6及硬件/全Phase仍未完成。
+
 本轮 E64 [ARM64 虚拟 HID/CDC 验证](research/arm64-virtual-data-validation.md)通过 IPv4/IPv6 两个 pair：Ubuntu 22.04/24.04 互换角色，四轮真实按键及 CDC 注入/发送/回显、八个独立导入 channel、原进程退出和内核释放、双端严格 PCAP 均通过。夹具分别锁 1bb65475/3fc08f9c，实际 ARM 包仍锁 ed1e8fef；742 输入及所有 guard 通过。首 IPv6 因 dpkg 锁冲突 FAIL，连同后续 collector 两次误报保留；六个 guest 退出0不等于三个 pair 全通过。软件1138仍属E63。真实硬件、ARM虚拟故障/managed专项、完整GUI、存储/ISO/性能/Windows及全部目标继续未完成。
 
 此前E63[导入运行时PM验证](research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入、八installed正向类别/16guest0（三轮HID/FTDI、双端live升级、104完整Rootproof/基线/PCAP）与三legacy/virtual回归/6guest0通过。覆盖两Ubuntu、两架构、Native/USBFS及双栈；ARM USBFS-v6正向显式加启动xHCI trace，前次安装产品前kernel stall/forced abort仍FAIL/2guest0，未修启动不稳定。ARM虚拟CDC/完整GUI故障、真实G1/G2、存储/ISO/性能/Windows及完整Phase0–7继续未完成；下列旧E条目保留历史时点。
