@@ -1,5 +1,7 @@
 # 需求逐项验收审计
 
+E62[ARM USB调查](research/arm64-usb-data-validation.md)保留八原矩阵FAIL及一trace FAIL、18paired guest0；两次原软件1114/734源通过，不能替代I/O。五local guest0的原Linux USB/IP对照见导入键盘auto/suspended时无输入、只对该VHCI设备写on后恢复；不是产品修复或原矩阵通过。ARM完整I/O/live-upgrade/PCAP仍未验收，下一步先审查两import路径的PM/权限/partial cleanup。
+
 最新E61[ARM64冷安装](research/arm64-installed-validation.md)补两Ubuntu实际aarch64完整包生命周期/普通用户GUI WM0/真实fsync升级/重启/remove-purge，四QEMU0、每case42不同断言与全部guards；软件1114/731输入和cold锁clean76b4，ARM payload锁CI0316及独立同源控制字段升版。ARM USB数据、ARM完整GUI动作/故障矩阵、硬件和完整Phase0–7仍缺，不将安装通过扩大为USB兼容。
 
 此前E59[安装服务USB数据](research/installed-usb-data-validation.md)与E60[framed关闭](research/framed-management-race-validation.md)已补amd64 Native/USBFS双栈实际I/O/live升级及原Root/baseline/PCAP；E60另证实协调两端旧preview升级。所有早期FAIL、混合新版client/旧server FAIL和未证明的原间歇加密故障根因保持原裁决。以下旧表/记录仍锁其当时source，最新条目不追溯重标历史。

@@ -2,6 +2,11 @@
 
 ## 2026-10-26：ARM64 Native/USBFS 数据路径（开始）
 
+- cleanbed49原full gate仍1096+18=1114/734 inputs全PASS；四attempt2均导入HID/FTDI后首轮FAIL，原guest216空events，前一35B RX断言已过而TX未执行，host25s接收timeout为后果。八QEMU0/全部guard真；原句柄72131/40757/32380/71939均terminal1。另一Native/v4仅加QEMU输入元数据追踪仍FAIL/两QEMU0/guard真，key到达但无HID消费。未据枚举或guest0改判。
+- 五无RustUSB/TLS的单ARM guest均实际QEMU0/HEAD-clean-input真：首trace名称错未测试；第二原QMP本地HID成功，后root marker删除失败使第二方法未执行；原usbipd+usbip localhost两种注入均空events；xhci见注入前端点stop/内核URB unlink。最后物理1-1始终active/auto，导入3-1 auto/suspended/2000ms时空events，仅对3-1写on后active且同key1/100ms精确press/release成功。host整体仍1（含原负向），不是矩阵PASS或产品fix；全部owner实际join后才改docs，无全局PM/hostUSB/budget变化。
+- 固定Linux5.15 PM文档与QEMUv6.2.0支持runtime suspend解释；原矩阵无PM属性采样，不补造逐case因果。下一步先审查tool attach及secure anonymous import的generation/权限/partial cleanup，再实施per-import PM策略。八原FAIL及一trace FAIL保持。两次组合文档patch因附带未知末尾anchor原子拒绝，随后拆分写入，无部分覆盖；源下载429/404与诊断错误不作通过证据。
+- 主档1782成员/11,499,611 rawB，gzip2,383,972B/SHA c2987ddde8c9a40f7acc9c5b9ac821b55833b193af2e28cbc4efb2cd626956be，成员回读及68实际key-file字节/私钥/cap marker排除通过；九paired18guest0与五local5guest0分账。英文入口/站点仅补调查链接和未完成范围，全局readme-site保持。产品PM修复/新ARM包/四case正向/硬件G1/G2及完整目标仍未完成。
+
 - E62从clean73d8f9a0重读完整原目标，核Git/日志/核心skill与原installed/ARM/frame关闭设计、源码和实际输入。上轮ARM cold/软件/发布是已验证进展，非blocked；当前无活跃本地cargo/QEMU，32CPU/41GiB available可承载四独立pair。先写ARM USB设计，保持原guest/Root/driver/PCAP/并发IMPORT/失败判据；四Native/USBFS双栈×Jammy/Noble交叉role，预备盘只优化OS不替代cold。
 - 明确使用原Jammy native ARM CI0316 base在两OS运行和formal同源+armtest1升级，CLIff77/helpercf3e，Noble自己的CI ELF不冒称USB已测；实际UID必须动态读取。仅替换host VM import到已有ArmVm，额外冻结adapter/tools/firmware/parent disks/packages/源码与原HEAD/三hostELFs。当前只有设计，未有新ARM USB I/O裁决。
 - 新usb.py exact单一VM import组合原runner，保存原/生成/adapter与全部输入hash；原summary不改写，额外arm-verdict同时要求原PASS与source/tools/parents/packages/HEAD-clean守卫。沿用原ArmVm真实aarch64/dpkg/PID1与总wait；源码compile/组合compile、bare --help、259静态检查、diff与实际device help四设备确认通过。仍无新ARM USB I/O结果；commit后先原完整root/GUI，再同一source固定四pair。

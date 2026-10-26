@@ -1,5 +1,7 @@
 # 测试手册与证据要求
 
+E62[ARM USB调查](research/arm64-usb-data-validation.md)仍未验收：八原矩阵与一追踪pair失败，十八guest0/guard真不改判；原Linux USB/IP隔离对照见导入键盘runtime suspend，per-device on后恢复输入。产品PM策略及四case完整I/O/live-upgrade/PCAP回归待完成，软件1114/734源独立记账。
+
 E61[ARM64冷安装](research/arm64-installed-validation.md)在clean76b4完成Ubuntu22.04/24.04两actual ARM case、四QEMU0/无forced，49/50条均42不同断言，包括普通用户GUI WM0、真实fsync等待/return0、三unsafe stop拒绝、真reboot/remove/purge与retention。完整原core1096+GUI18/731输入/三原ELF同source通过；两product-free prep锁dd3、原ARM binary包锁CI0316、formal控制字段升版独立记账，不是native重编或旧代码迁移。全部原guest/C/GUI budget保持，host平台/观测等待适配显式；ARM USB I/O、硬件及完整阶段仍缺。
 
 E60[framed关闭报告](research/framed-management-race-validation.md)记录clean473fb3c7完整core1096+GUI18共1114/722输入与实际三ELF；四new/new Native/USBFS双栈pair锁clean1b59、独立coordinated v6→v10锁clean393，五PASS/十guest0/十五I/O/70完整Rootproof。第六mixed pair原FAIL/两guest0，所有guards真；old control独立target/test overlay实际101，固定96进程/8192Catalog全通过但不是USBcase。原失败、shared-target污染排除、旧failed gate计数修正和原加密QEMU原因未证实均保留。原check/Root/PCAP不弱化，升级两端后再启动导入；硬件/ARM/整体阶段仍未完成。

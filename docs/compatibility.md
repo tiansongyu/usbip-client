@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+E62[ARM USB调查](research/arm64-usb-data-validation.md)仍未验收：八原矩阵与一追踪pair失败，十八guest0/guard真不改判；原Linux USB/IP隔离对照见导入键盘runtime suspend，per-device on后恢复输入。产品PM策略及四case完整I/O/live-upgrade/PCAP回归待完成，软件1114/734源独立记账。
+
 E61[ARM64安装态](research/arm64-installed-validation.md)补Ubuntu22.04/24.04实际aarch64系统中的base/GUI包完整cold lifecycle、普通用户窗口和WM0、受控fsync升级/真实重启/remove/purge，四QEMU0、guard真；软件1114/731输入与运行夹具锁76b4，ARM ELF来自对应CI0316，两+armtest1为payload/脚本不变的控制字段升版。动态broker UID实际112/108，不沿用AMD或prepare的UID。新增安装/GUI runtime证据不证明ARM USB数据、物理板卡或全部GUI动作兼容。
 
 E60[framed关闭与preview迁移](research/framed-management-race-validation.md)：新CLI866b0751/helper475b2f97在四Native/USBFS双栈new/new和一Native/v4协调旧preview升级PASS，五pair十五实际HID/FTDI轮次/70完整Rootproof；mixed新client/旧server FAIL，不能凭相同ALPN声称rolling兼容。必须两端合作升级后才重启imports。软件1114锁clean473，QEMU分别锁1b59/393；原E59间歇原因未证明，设备种类/ARM/硬件范围不扩大。

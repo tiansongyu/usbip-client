@@ -17,6 +17,11 @@ RustUSB is a **development preview**. Linux Native is the default backend; optio
 
 Use Linux with Git, native build tools and [Rust via rustup](https://rustup.rs/). The repository pins Rust 1.97.1. Ubuntu 22.04/24.04 on x86_64 and aarch64 have native software CI; USB kernel integration has been tested in x86_64 QEMU guests.
 
+[ARM64 USB data testing](docs/research/arm64-usb-data-validation.md) remains
+unvalidated: devices enumerate, but HID input fails after runtime suspend in an
+isolated Linux USB/IP control. A per-device diagnostic resume restores input;
+the production fix and complete data matrix are still pending.
+
 ```sh
 git clone https://github.com/tiansongyu/usbip-client.git
 cd usbip-client

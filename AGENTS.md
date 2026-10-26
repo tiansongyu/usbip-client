@@ -1,5 +1,7 @@
 # RustUSB 开发约定
 
+ARM USB数据E62见`docs/research/arm64-usb-data-validation.md`：37b四MAC失败/bed49四HID失败及一trace均保FAIL，18paired guest0/全guard真不代I/O；两原full gate1114/734源。五单guest对照中原Linux USB/IP导入kbd auto/suspended无事件，仅该VHCI设备on后恢复；尚无产品PM修复或四case完整正向。修改Native tool/anonymous import前先读此报告与design，保持pinned generation/授权/partial cleanup，禁止全局autosuspend或替代node变更；硬件/全阶段仍未完成。
+
 ARM安装夹具改动先读`docs/research/arm64-installed-validation-design.md`与`arm64-installed-validation.md`。E61 clean76b4完整1114/731输入、两Ubuntu ARM64 cold各42不同断言/四QEMU0/无forced通过；原guest/C/GUI budget不改，host virt-6.2/cortex-a72/TCG/私有VARS及实际owner观测等待适配显式。实际ARM guest GCC编译原C并核源/运行库SHA，不能上传AMD .so冒ARM；两原CI0316包+formal +armtest1只Version/GUI Depends改变，payload/scripts严格相同，独立derived receipt不得伪native rebuild。broker UID实际112/108动态核，不沿用其他case。原prep锁dd3，cold/软件锁76b4，后续文档不重标；ARM USB I/O、硬件/性能/完整阶段未完成。
 
 E60见`docs/research/framed-management-race-{design,validation}.md`：active stream1时server graceful禁止新stream，原EOS/消费/credit/真FIN fence后继续poll唯一connection；ClosingIo外置TrackingIo，同transport真write关闭后有界peer TLS EOF drain，64KiB/1KiB/每poll32读，不声称尾部h2语义验证，不放宽close_notify/IO/stop/deadline。clean473完整1114/722输入及CLI866b/helper475/GUI7bdb；clean1b59四new/new双栈+clean393协调v6→v10五PASS/10guest0/15I/O/70Rootproof，mixed第六FAIL/2guest0不得改判或推同ALPN兼容。独立old530+精确test overlay101，shared-target两污染run排除、旧c59计数393pass/1fail修正不改FAIL；96固定进程全PASS非USBcase。原E59加密原因未证明；保持原Root/driver/PCAP与硬件/ARM/完整阶段边界。

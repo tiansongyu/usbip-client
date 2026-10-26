@@ -5,6 +5,8 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 
 # RustUSB 核心开发
 
+ARM USB数据E62见`docs/research/arm64-usb-data-validation.md`：37b四MAC失败/bed49四HID失败及一trace均保FAIL，18paired guest0/全guard真不代I/O；两原full gate1114/734源。五单guest对照中原Linux USB/IP导入kbd auto/suspended无事件，仅该VHCI设备on后恢复；尚无产品PM修复或四case完整正向。修改Native tool/anonymous import前先读此报告与design，保持pinned generation/授权/partial cleanup，禁止全局autosuspend或替代node变更；硬件/全阶段仍未完成。
+
 ARM64完整系统验收先读`docs/research/arm64-installed-validation-design.md`与`docs/research/arm64-installed-validation.md`。E61 clean76b4原软件1114/731输入与两Ubuntu cold、四QEMU0、每case42不同断言通过；ARM USB I/O/硬件/完整阶段未验收。原guest/C/GUI budgets保持，显式TCG/virt-6.2/cortex-a72/私有VARS和实际owner等待；真实ARM guest编译原fsync C并核AArch64/源与运行库hash。CI0316 ARM payload与+armtest1控制字段升版独立收据，Version/GUI Depends之外data/scripts必须字节/权限/owner/link相同；不是native rebuild或旧代码迁移。实际UID动态读（cold112/108），禁止从AMD/prepare拷常数或凭新进程0推旧释放。
 
 修改framed management关闭先读`docs/research/framed-management-race-design.md`与`framed-management-race-validation.md`。E60保唯一原connection到真双向关闭：active stream1开始server graceful，原EOS/消费/credit/FIN flush后ClosingIo外置TrackingIo同transport write shutdown+peer TLS EOF，64KiB bounded discard/1KiB/每poll32读，不作尾部h2语义保证。无新owner/FD/权限/schema，IO/close_notify/stop/deadline/quiet保留，raw1不改。1114软件/722输入锁473，五PASS/70Rootproof锁四1b59+一393；mixed FAIL须协调两端升级再启导入，不downgrade。old control仅test overlay且独立target101；跨checkout禁共用target作来源证据，污染两run排除。原失败、c59计数修正及E59加密根因未证实保持，不能宣称硬件/ARM/整体阶段完成。

@@ -1,0 +1,5 @@
+# ARM64 USB data evidence
+
+All original paired verdicts are preserved, including initial failed network setup. Inherited summaries are never rewritten; ARM outer guards are required for acceptance. Source, tools, parents, package/ELF identities, both software gates, guest observations and complete boot/product-window PCAP are separated. Exact member hashes/sizes are verified by archive read-back. Private images, disks, variables, keys, debs and ELFs are excluded. Synthetic ARM64 guest I/O is separate from physical board/device acceptance.
+
+Eight acceptance pairs and one traced diagnostic pair remain failed. Five separate local QEMU diagnostics also retain original partial/negative host verdicts. A local official-Linux USB/IP control records suspended imported HID with no events, then exact events after changing only that VHCI device to power/control=on. This is diagnosis, not a shipped product fix or a passing ARM matrix. All 23 actual QEMU exits are zero, separately from host outcomes. The same-author audit checks 3324 source/member/input observations without importing the original verifier; it is not another test execution or independent security audit.

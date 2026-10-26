@@ -81,3 +81,19 @@ failure or the old encrypted Catalog defect. Correct only the adapter's data MAC
 to the original guest contract. Keep management61 (used by E61 preparation), the
 original guest, proof/driver/PCAP and import concurrency unchanged. Repeat the
 four cases under a new clean source/output after the actual old owners terminate.
+
+## Measured I/O failure and next boundary
+
+Corrected cases and one input-traced pair remain FAIL at the first HID round.
+Exact FTDI RX precedes the failed empty-event assertion; TX has not executed.
+All18 paired QEMU processes exit0 with unchanged guards. Five local diagnostics
+separate QMP routing from original-Linux USB/IP import. The latter reproduces
+missing input without RustUSB/TLS: imported keyboard is runtime-suspended;
+changing only its power/control to on restores exact events. All five guests
+exit0; negative/partial host verdicts remain. See the
+[actual report](arm64-usb-data-validation.md).
+
+Before product changes, review NativeBackend tool attach and anonymous Import
+commit, pinned generation, privilege and partial cleanup. A future PM policy
+must affect only the authorized imported generation, without global autosuspend
+changes or unrelated node mutation. Manual resume is not an accepted fix.

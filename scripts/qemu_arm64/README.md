@@ -71,3 +71,8 @@ adds actual ARM platform/identity plus frozen source/tools/parents/packages.
 `arm-verdict.json` requires both the unchanged inherited verdict and all extra
 guards. Never relabel an inherited FAIL from guest exits or cleanup alone.
 See the [matrix design](../../docs/research/arm64-usb-data-design.md).
+
+The [actual investigation](../../docs/research/arm64-usb-data-validation.md)
+retains eight failed acceptance pairs and one traced diagnostic pair. Original
+Linux USB/IP controls reproduce suspended imported HID input; per-device resume
+restores events only in that diagnostic. This is not a passing ARM data matrix.
