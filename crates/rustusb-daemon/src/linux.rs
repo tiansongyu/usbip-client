@@ -33,9 +33,33 @@ pub(crate) struct ManagedState {
     exports: HashMap<String, Device>,
     ports: HashMap<VhciPort, NativeSession>,
     released_ports: HashSet<VhciPort>,
+    // At most one failed new receipt can collide with a different old owner:
+    // no further import starts before its independent release is verified.
+    conflicted_import: Option<NativeSession>,
 }
 
 impl ManagedState {
+    fn retain_failed_import(&mut self, session: NativeSession) -> Result<()> {
+        if let Some(old) = self.ports.get(&session.port)
+            && !same_session(old, &session)
+        {
+            if self
+                .conflicted_import
+                .as_ref()
+                .is_some_and(|prior| !same_session(prior, &session))
+            {
+                return Err(Error::State(
+                    "another import conflict is unresolved; no ownership was overwritten".into(),
+                ));
+            }
+            self.conflicted_import = Some(session);
+            return Err(Error::State("failed import conflicts with an old owner; both receipts retained; administrator reconciliation required".into()));
+        }
+        self.released_ports.remove(&session.port);
+        self.ports.entry(session.port).or_insert(session);
+        Ok(())
+    }
+
     fn authorize_current_binding(&self, device: &Device) -> Result<()> {
         match self.exports.get(&device.id) {
             Some(owned) if same_device_generation(owned, device) => Ok(()),
@@ -57,6 +81,11 @@ impl ManagedState {
     }
 
     fn released_port_candidates(&self, current: &[NativeSession]) -> Result<Vec<NativeSession>> {
+        if self.conflicted_import.is_some() {
+            return Err(Error::State(
+                "import conflict remains unresolved; no new import may start".into(),
+            ));
+        }
         let mut candidates = Vec::new();
         for owned in self.ports.values() {
             let observed = current.iter().find(|session| session.port == owned.port)
@@ -452,13 +481,37 @@ impl App {
                     .map_err(|_| Error::Timeout("prior managed session cleanup is incomplete; no new import was started; inspect kernel state".into()))??;
                 // The backend must verify a unique before/after port, remote
                 // device ID, current USB identity and native endpoint record.
-                let session = self.backend.attach_session(peer, bus_id).await?;
+                let session = match self.backend.attach_session_detailed(peer, bus_id).await {
+                    Ok(session) => session,
+                    Err(failure) => {
+                        if failure
+                            .cleanup
+                            .as_ref()
+                            .is_none_or(|result| result.is_err())
+                            && let Some(session) = &failure.observed
+                            && let Err(retention) = state.retain_failed_import(session.clone())
+                        {
+                            return Err(Error::State(format!("{failure}; {retention}")));
+                        }
+                        return Err(failure.into_error());
+                    }
+                };
                 let port = session.port;
                 if state.ports.contains_key(&port) {
                     // An external administrator can still change kernel state
                     // between snapshots. Only this operation's freshly verified
                     // receipt may authorize compensation; never use the old map.
                     let cleanup = self.backend.detach_session(&session).await;
+                    if let Err(error) = &cleanup {
+                        // Keep the old owner and this distinct failed-new
+                        // receipt; never use one generation's proof for both.
+                        let retention = state.retain_failed_import(session);
+                        if let Err(retention) = retention {
+                            return Err(Error::State(format!(
+                                "new import conflicted with a managed record; cleanup could not be confirmed: {error}; {retention}"
+                            )));
+                        }
+                    }
                     return Err(Error::State(match cleanup {
                         Ok(()) => "new import conflicted with a managed record; the newly verified connection was released; prior ownership requires reconciliation".into(),
                         Err(error) => format!("new import conflicted with a managed record; cleanup of the newly verified connection could not be confirmed: {error}; administrator reconciliation required"),
@@ -512,6 +565,13 @@ impl App {
     }
 
     async fn reconcile_released_ports(&self, state: &mut ManagedState) -> Result<()> {
+        if let Some(conflict) = &state.conflicted_import {
+            if !self.backend.session_cleanup_complete(conflict).await? {
+                return Err(Error::State("conflicting imported generation is not released; no new import started; administrator reconciliation required".into()));
+            }
+            state.conflicted_import = None;
+            // The ordinary map below still needs its own, separate proof.
+        }
         let current = self.backend.port_states().await?;
         let candidates = state.released_port_candidates(&current)?;
         for owned in candidates {
@@ -1455,6 +1515,42 @@ mod tests {
                 inode,
             }),
         })
+    }
+
+    #[test]
+    fn failed_import_receipts_retain_ownership_and_clear_only_the_new_owner_tombstone() -> Result<()>
+    {
+        let known = session(0, 11)?;
+        let mut state = ManagedState::default();
+        state.released_ports.insert(known.port);
+        state.retain_failed_import(known.clone())?;
+        assert_eq!(state.ports.get(&known.port), Some(&known));
+        assert!(!state.released_ports.contains(&known.port));
+        state.retain_failed_import(known.clone())?;
+        assert_eq!(state.ports.len(), 1);
+        assert!(state.conflicted_import.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn failed_new_generation_cannot_overwrite_old_owner_or_enable_another_import() -> Result<()> {
+        let old = session(0, 11)?;
+        let new = session(0, 12)?;
+        let mut state = ManagedState::default();
+        state.ports.insert(old.port, old.clone());
+        assert!(state.retain_failed_import(new.clone()).is_err());
+        assert_eq!(state.ports.get(&old.port), Some(&old));
+        assert_eq!(state.conflicted_import.as_ref(), Some(&new));
+        assert!(
+            state
+                .released_port_candidates(std::slice::from_ref(&old))
+                .is_err()
+        );
+        assert!(state.retain_failed_import(session(0, 13)?).is_err());
+        assert_eq!(state.ports.get(&old.port), Some(&old));
+        assert_eq!(state.conflicted_import.as_ref(), Some(&new));
+        assert!(state.released_ports.is_empty());
+        Ok(())
     }
 
     #[test]

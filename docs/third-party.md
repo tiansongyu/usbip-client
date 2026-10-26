@@ -1,8 +1,10 @@
 # 第三方来源与许可证
 
+E63 Native导入PM不新增依赖、外部版本或vendor改动；复用已锁定rustix1.1.5 safe open/openat与标准File。固定Linuxv5.15/v6.8 PM/USB源码、原许可和主来源读取收据仅保存在[研究证据](evidence/native-import-power-research-20261026/summary.json)中，保留各文件GPL/SPDX与COPYING/GPL-2.0/Linux-syscall-note，不重标MIT、不链接进产品。新Rust策略独立实现固定sysfs接口；官方源码用于行为审查。
+
 E58不新增Rust包/version/checksum。Debian builder使用现有dpkg-dev/binutils与原Python3/systemd/adduser接口，原源码研究见[Debian](research/debian-lifecycle-research.md)/[systemd](research/systemd-lifecycle-research.md)，不复制其GPL/LGPL实现进产品。预览包另携目标解析Cargo graph（含build/dev，非逐ELF SBOM）的原license/notice、固定upstream补充文本/provenance，缺文本明确拒绝；GUI携selectors0.38.0未改MPL source与Mozilla原文本。全锁root222/GUI475并非188/345本机target节点，不能混算依赖数；实际包/许可字节检查见[验收](research/debian-installation-validation.md)。
 
-RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件。可选 Rust 虚拟后端按 MIT 选择性复用固定 jiegec 的 HID report 描述符，源码注明来源、修改与版权，完整许可见 [LICENSES/jiegec-usbip-MIT.txt](../LICENSES/jiegec-usbip-MIT.txt)。公开协议其余部分独立实现。本清单是工程登记，不代替发布时逐文件合规审查。
+RustUSB 自有产品代码采用 MIT。未将 Linux GPL 用户态/内核源文件复制进产品实现；研究证据中保留原许可的上游文本不属于MIT重许可。可选 Rust 虚拟后端按 MIT 选择性复用固定 jiegec 的 HID report 描述符，源码注明来源、修改与版权，完整许可见 [LICENSES/jiegec-usbip-MIT.txt](../LICENSES/jiegec-usbip-MIT.txt)。公开协议其余部分独立实现。本清单是工程登记，不代替发布时逐文件合规审查。
 
 | 组件 | 固定研究版本 / 来源 | 许可证与处理 |
 | --- | --- | --- |

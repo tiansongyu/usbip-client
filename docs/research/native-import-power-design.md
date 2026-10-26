@@ -52,7 +52,7 @@ bus/PM state and exact events, not independent per-stage inode receipts.
 Implement a private Linux-only helper in rustusb-native, conceptually:
 
 ```rust,ignore
-fn prevent_import_autosuspend(
+fn prevent_autosuspend(
     devices: &Path,
     session: &NativeSession,
     expected_uid: u32,
@@ -108,7 +108,7 @@ pub struct NativeAttachFailure {
     pub cleanup: Option<Result<()>>,
 }
 // Existing attach_session keeps Result<NativeSession>.
-// attach_session_detailed returns Result<NativeSession, NativeAttachFailure>.
+// attach_session_detailed returns std::result::Result<NativeSession, NativeAttachFailure>.
 ```
 
 This is not a serialized protocol/DTO change. Before an exact newly created
@@ -131,6 +131,15 @@ requires explicit reconciliation and must block new imports. A released receipt
 does not become an active managed entry. The compatibility wrapper still reports
 failure with context; direct callers needing partial ownership use the detailed
 method. Implement Display/source without printing a raw session/USB payload.
+
+The current port map cannot hold two generations at one port. Retain a failed
+new receipt that collides with a different old owner in one additional bounded
+in-memory conflict slot; preserve the old map entry. Block new imports while
+that slot is unresolved, so it cannot grow or be overwritten. Clearing it needs
+its own NULL+old-generation-gone proof; separately verify the old map receipt
+before removing that entry. Do not let cleanup of a new generation erase the
+old owner's metadata. Clear an idempotent-release tombstone only when registering
+an actual unreleased new owner. No wire or persistent schema is introduced.
 
 Normal helper requests are owned by its JoinSet and awaited through shutdown;
 they have no whole-operation EOF cancellation. The public async backend still

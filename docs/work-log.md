@@ -2,6 +2,11 @@
 
 ## 2026-10-26：Native 导入设备运行时电源策略（开始）
 
+- 实现private固定per-import delay=-1：目录FD按原sysfs dev/inode、地址/VID/PID钉住，逐单组件NOFOLLOW/CLOEXEC、根owner/权限/type、有限读取、单次精确store/原FD读回/active及原alias复核，无全局参数/源设备/旧journal写入或新USB FD能力。secure在self.local/profile后纳入原blocking owner，前后取消与原row/generation再核保留。
+- Legacy新增非serialized NativeAttachFailure/attach_session_detailed，旧API兼容；已完整核验的新receipt在PM worker/失败补偿后仍独立保留。owned backend guard随实际worker到结束；PM/后核失败仅同锁按原receipt补偿，NULL+gone判据不变。helper保留未释放失败session并清旧release tombstone；同port不同旧owner绝不覆盖，单个额外conflict metadata槽阻挡下一import，各自release须各自原proof。无wire/持久schema/权限/ALPN变更，公开future其他await点的原取消协调限制保持。
+- 初次定向编译101是四处Errno缺显式std::io转换；第二运行5PASS/2FAIL因host umask使正向文件夹具组可写而被严格guard拒绝；固定夹具权限后七安全unit全PASS，原日志/选择源快照保留。随后Native48全过，再新增真正blocking-gate取消/成功补偿/失败补偿typed receipt与helper冲突metadata测试，Native51+daemon99共150定向全PASS/0failed/ignored（actual77240）。首Clippy101仅test clone切片，改from_ref后同两包all-targets/all-features -Dwarnings通过（actual54266）。这些是开发dirty选择源结果，尚非clean完整gate/新ARM正向。
+- 源码审查后细化bounded conflict与错误上下文，设计先于对应实现更新；组合文档patch因末尾长行anchor不符原子拒绝后拆分成功，无部分覆盖。Linux研究许可单列，Cargo manifests/locks与vendor无新增依赖变更。下一先固定实现commit/原完整root+GUI，再实际新native ARM包和原四data case；原E62八FAIL/trace FAIL及硬件/全Phase仍不改判。
+
 - E63从clean84045dfb重读完整Phase0–7原目标、AGENTS/核心skill、E62失败原件及两import源码。前轮E62定位/发布是实际进展，非blocked。按writing-technical-design显式要求两独立组件只读审查；沿docs/research、不按模板新增逐组件skill。两agent仅研究Linux5.15/6.8 PM与既有Native ownership/rustix1.1.5，不改仓库/运行测试/操作host。
 - clean840新original-Linux单ARM对照原session69621实际terminal0/QEMU0/HEAD-clean-input全真：auto/2000ms/suspended期望空events；只对导入3-1写delay=-1后active且精确key1 press/release；再control=auto仍active/精确events，预定[false,true,true]全部符合。物理设备参数不改、无RustUSB/TLS/hostUSB；只采同一连续import的bus/PM状态，无每阶段独立inode采样，不能当产品generation证明或原ARM矩阵PASS。
 - 固定源审查证实delay负值有独立usage hold，目标USB枚举在device_add前启use_autosuspend；sysfs写会丢resume错误，须读回并核active，缺属性/EIO不能静默视为禁PM。secure已有blocking owner/Observed/真实shutdown；legacy新PM失败若直接?会丢已知session，必须同锁补偿并向helper保留未释放receipt。提出兼容wrapper+非serialized详细失败结果，不改wire/journal/权限。设计先落`research/native-import-power-design.md`，仍proposed/未验收。

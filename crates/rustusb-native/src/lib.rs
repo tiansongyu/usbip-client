@@ -13,6 +13,7 @@ pub mod diagnostics;
 /// Strong original-attribute Native server channels for an authorized broker.
 #[cfg(target_os = "linux")]
 pub mod export_channel;
+mod import_power;
 
 use rustusb_core::{BusId, Error, ExportBackend, ImportBackend, Peer, Result, VhciPort};
 use rustusb_protocol::RemoteDevice;
@@ -29,7 +30,7 @@ use tokio::{
     fs,
     io::{AsyncRead, AsyncReadExt},
     process::Command,
-    sync::Mutex,
+    sync::{Mutex, OwnedMutexGuard},
     time::{Instant, sleep},
 };
 
@@ -77,6 +78,65 @@ pub struct NativeSession {
     /// An observation without this receipt cannot authorize destructive operations.
     #[serde(default)]
     pub local_device_generation: Option<LocalDeviceGeneration>,
+}
+
+/// A Native attach failure with any exact newly observed session and actual cleanup outcome.
+/// This is local metadata, not authorization or proof that an observation is still current.
+#[derive(Debug)]
+pub struct NativeAttachFailure {
+    /// Original operation error, retained independently of cleanup.
+    pub operation: Error,
+    /// Complete new receipt verified by this operation, if reached; may already be released.
+    pub observed: Option<NativeSession>,
+    /// Actual compensation result; None means it was not performed or not established.
+    pub cleanup: Option<Result<()>>,
+}
+impl std::fmt::Display for NativeAttachFailure {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.operation)?;
+        match &self.cleanup {
+            Some(Ok(())) => write!(f, "; newly imported session release verified"),
+            Some(Err(error)) => write!(
+                f,
+                "; imported session cleanup could not be verified: {error}; administrator reconciliation required"
+            ),
+            None if self.observed.is_some() => write!(
+                f,
+                "; known imported session remains unconfirmed; administrator reconciliation required"
+            ),
+            None => Ok(()),
+        }
+    }
+}
+impl std::error::Error for NativeAttachFailure {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(&self.operation)
+    }
+}
+impl NativeAttachFailure {
+    /// Preserve original pre-compensation errors for the compatible adapter API.
+    /// Detailed callers should retain the separate observed/cleanup fields first.
+    pub fn into_error(self) -> Error {
+        if self.cleanup.is_some() {
+            Error::State(self.to_string())
+        } else {
+            self.operation
+        }
+    }
+}
+
+async fn blocking_mutation<T: Send + 'static>(
+    guard: OwnedMutexGuard<()>,
+    work: impl FnOnce() -> T + Send + 'static,
+) -> Result<(OwnedMutexGuard<()>, T)> {
+    tokio::task::spawn_blocking(move || {
+        let value = work();
+        (guard, value)
+    })
+    .await
+    .map_err(|_| {
+        Error::State("import power worker failed; original session requires reconciliation".into())
+    })
 }
 
 #[derive(Debug)]
@@ -235,9 +295,31 @@ impl NativeBackend {
 
     /// Import and return the uniquely identified, enumerated session created by this operation.
     /// Checks DEVLIST metadata, an initially free port, kernel devid, local VID/PID,
-    /// and the native utility's endpoint record. Failure never claims or detaches an uncertain port.
+    /// the native utility's endpoint record and an active per-generation runtime power policy.
+    /// Failure never claims or detaches an uncertain port. Detailed partial ownership
+    /// and independent compensation results are available through `attach_session_detailed`.
     pub async fn attach_session(&self, peer: Peer, bus_id: BusId) -> Result<NativeSession> {
-        let _lock = self.mutation.lock().await;
+        self.attach_session_detailed(peer, bus_id)
+            .await
+            .map_err(NativeAttachFailure::into_error)
+    }
+
+    /// Attach with the same validation and per-generation runtime power policy.
+    /// On failure, retains any complete new receipt and the actual independent
+    /// compensation result. Callers must keep an unreleased observed receipt;
+    /// it never authorizes control without the usual fresh identity checks.
+    /// Normal helper ownership awaits this method; dropping a public future
+    /// cannot roll back prior kernel effects and still requires reconciliation.
+    pub async fn attach_session_detailed(
+        &self,
+        peer: Peer,
+        bus_id: BusId,
+    ) -> std::result::Result<NativeSession, NativeAttachFailure> {
+        let mut observed = None;
+        let mut cleanup = None;
+        let result: Result<NativeSession> = async {
+
+        let lock = self.mutation.clone().lock_owned().await;
         if format!("{} {} {}\n", peer.host, peer.port, bus_id).len() >= 100 {
             return Err(Error::InvalidInput(
                 "endpoint metadata exceeds the native utility's 100-byte record buffer".into(),
@@ -301,7 +383,28 @@ impl NativeBackend {
                         port = session.port.0,
                         "kernel enumeration verified"
                     );
-                    return Ok((*session).clone());
+                    let session = (*session).clone();
+                    observed = Some(session.clone());
+                    let devices = self.configuration.devices.clone();
+                    let work_session = session.clone();
+                    let uid = self.power_owner_uid();
+                    let (lock, power) = blocking_mutation(lock, move || import_power::prevent_autosuspend(&devices, &work_session, uid)).await?;
+                    let completed: Result<()> = async {
+                        power?;
+                        let current = self.port_states().await?;
+                        if !current.iter().any(|row| same_identity(&session, row)) {
+                            return Err(Error::State("import identity changed during runtime power policy".into()));
+                        }
+                        if !self.record_matches(session.port, &peer, &bus_id).await? {
+                            return Err(Error::State("native endpoint record changed during power policy".into()));
+                        }
+                        Ok(())
+                    }.await;
+                    if let Err(error) = completed {
+                        cleanup = Some(self.detach_checked_locked(&lock, session.port, Some(&session)).await);
+                        return Err(error);
+                    }
+                    return Ok(session);
                 }
                 return Err(Error::State("kernel attached but native endpoint record is missing or mismatched; reconciliation required".into()));
             }
@@ -310,6 +413,20 @@ impl NativeBackend {
             }
             sleep(self.configuration.poll_interval).await;
         }
+            }.await;
+        result.map_err(|operation| NativeAttachFailure {
+            operation,
+            observed,
+            cleanup,
+        })
+    }
+
+    fn power_owner_uid(&self) -> u32 {
+        #[cfg(all(test, target_os = "linux"))]
+        if !self.configuration.require_root_tool {
+            return rustix::process::geteuid().as_raw();
+        }
+        0
     }
 
     /// Release a previously claimed session only if its current identity still matches.
@@ -340,7 +457,17 @@ impl NativeBackend {
     }
 
     async fn detach_checked(&self, port: VhciPort, expected: Option<&NativeSession>) -> Result<()> {
-        let _lock = self.mutation.lock().await;
+        let lock = self.mutation.clone().lock_owned().await;
+        self.detach_checked_locked(&lock, port, expected).await
+    }
+
+    // The guard is retained across the complete original identity/release proof.
+    async fn detach_checked_locked(
+        &self,
+        _guard: &OwnedMutexGuard<()>,
+        port: VhciPort,
+        expected: Option<&NativeSession>,
+    ) -> Result<()> {
         let before = self.port_states().await?;
         let state = before
             .iter()
@@ -1127,6 +1254,31 @@ mod tests {
             std::fs::write(root.join("devices/9-1/idVendor"), "1234\n")?;
             std::fs::write(root.join("devices/9-1/idProduct"), "abcd\n")?;
             std::fs::write(root.join("devices/9-1/devnum"), "2\n")?;
+            std::fs::create_dir_all(root.join("devices/9-1/power"))?;
+            std::fs::set_permissions(
+                root.join("devices/9-1"),
+                std::fs::Permissions::from_mode(0o700),
+            )?;
+            std::fs::set_permissions(
+                root.join("devices/9-1/power"),
+                std::fs::Permissions::from_mode(0o700),
+            )?;
+            // These files model an already active/disabled policy, not kernfs
+            // replacing a decimal value. Actual transitions require QEMU.
+            std::fs::write(root.join("devices/9-1/power/autosuspend_delay_ms"), "-1\n")?;
+            std::fs::write(root.join("devices/9-1/power/runtime_status"), "active\n")?;
+            for name in [
+                "idVendor",
+                "idProduct",
+                "devnum",
+                "power/autosuspend_delay_ms",
+                "power/runtime_status",
+            ] {
+                std::fs::set_permissions(
+                    root.join("devices/9-1").join(name),
+                    std::fs::Permissions::from_mode(0o600),
+                )?;
+            }
             std::fs::create_dir_all(root.join("platform/vhci_hcd.0"))?;
             std::fs::write(root.join("platform/vhci_hcd.0/nports"), "2\n")?;
             std::fs::write(root.join("platform/vhci_hcd.0/status"), EMPTY)?;
@@ -1888,6 +2040,103 @@ mod tests {
         assert!(!same_generation_present(&original).await?);
         Ok(())
     }
+    #[tokio::test]
+    async fn cancelled_power_waiter_keeps_exclusion_until_actual_worker_ends() -> Result<()> {
+        let mutation = Arc::new(Mutex::new(()));
+        let guard = mutation.clone().lock_owned().await;
+        let (started, entered) = tokio::sync::oneshot::channel();
+        let (release, wait) = std::sync::mpsc::channel();
+        let waiter = tokio::spawn(blocking_mutation(guard, move || -> Result<()> {
+            started
+                .send(())
+                .map_err(|_| Error::State("power test waiter disappeared".into()))?;
+            wait.recv_timeout(Duration::from_secs(5))
+                .map_err(|_| Error::State("power test gate was not released".into()))?;
+            Ok(())
+        }));
+        tokio::time::timeout(Duration::from_secs(3), entered)
+            .await
+            .map_err(|_| Error::Timeout("power test worker did not enter".into()))?
+            .map_err(|_| Error::State("power test worker ended early".into()))?;
+        waiter.abort();
+        let cancelled = waiter.await.is_err();
+        let locked = mutation.try_lock().is_err();
+        // Release even when the invariant regresses, before asserting it.
+        release
+            .send(())
+            .map_err(|_| Error::State("power test worker lost gate".into()))?;
+        let _done = tokio::time::timeout(Duration::from_secs(3), mutation.lock())
+            .await
+            .map_err(|_| Error::Timeout("actual power worker did not end".into()))?;
+        assert!(cancelled && locked);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn power_failure_releases_only_the_exact_fully_observed_new_session() -> Result<()> {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let body = format!(
+            "if test \"$1\" = detach; then\ncat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{EMPTY}STATE\nrm -r \"$BASE/devices/9-1\"\nelse\ncat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{ATTACHED}STATE\nprintf '%s %s %s\\n' \"$5\" \"$2\" \"$7\" >\"$BASE/records/port0\"\nfi"
+        );
+        let fixture = Fixture::new(&body)?;
+        std::fs::write(fixture.path("devices/9-1/power/runtime_status"), "error\n")?;
+        let (peer, server) = remote_peer().await?;
+        let result = fixture
+            .backend
+            .attach_session_detailed(peer, BusId::new("1-2")?)
+            .await;
+        let Err(failure) = result else {
+            return Err(Error::State("power failure unexpectedly attached".into()));
+        };
+        assert!(failure.operation.to_string().contains("runtime active"));
+        assert!(failure.observed.is_some());
+        assert!(matches!(failure.cleanup, Some(Ok(()))));
+        assert!(failure.to_string().contains("release verified"));
+        assert!(fixture.backend.sessions().await?.is_empty());
+        assert!(!fixture.path("devices/9-1").exists());
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn power_failure_keeps_operation_and_failed_cleanup_with_original_receipt() -> Result<()>
+    {
+        let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;
+        let body = format!(
+            "if test \"$1\" = detach; then exit 17; fi\ncat >\"$BASE/platform/vhci_hcd.0/status\" <<'STATE'\n{ATTACHED}STATE\nprintf '%s %s %s\\n' \"$5\" \"$2\" \"$7\" >\"$BASE/records/port0\""
+        );
+        let fixture = Fixture::new(&body)?;
+        std::fs::write(
+            fixture.path("devices/9-1/power/runtime_status"),
+            "suspended\n",
+        )?;
+        let (peer, server) = remote_peer().await?;
+        let Err(failure) = fixture
+            .backend
+            .attach_session_detailed(peer, BusId::new("1-2")?)
+            .await
+        else {
+            return Err(Error::State("power failure unexpectedly attached".into()));
+        };
+        let Some(observed) = &failure.observed else {
+            return Err(Error::State("known partial import receipt was lost".into()));
+        };
+        assert_eq!(fixture.backend.sessions().await?, vec![observed.clone()]);
+        assert!(matches!(failure.cleanup, Some(Err(_))));
+        let message = failure.to_string();
+        assert!(
+            message.contains("runtime active")
+                && message.contains("cleanup")
+                && message.contains("reconciliation required")
+        );
+        assert!(!message.contains("9-1"));
+        let source = std::error::Error::source(&failure)
+            .ok_or_else(|| Error::State("original typed error source was lost".into()))?;
+        assert_eq!(source.to_string(), failure.operation.to_string());
+        server.await.map_err(|e| Error::State(e.to_string()))??;
+        Ok(())
+    }
+
     #[tokio::test]
     async fn unsafe_record_directory_is_rejected_before_running_attach_tool() -> Result<()> {
         let _process_fixture = crate::PROCESS_FIXTURE_LOCK.lock().await;

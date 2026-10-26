@@ -782,6 +782,15 @@ impl ImportChannel {
                         self.initial
                             .profile(&local, &self.remote, &controller, devices, 0)?;
                     if self.profile.is_some() {
+                        require(
+                            !cancel.load(Ordering::Acquire),
+                            "Native channel cancelled before runtime power policy",
+                        )?;
+                        crate::import_power::prevent_autosuspend(devices, &local, 0)?;
+                        require(
+                            !cancel.load(Ordering::Acquire),
+                            "Native channel cancelled during runtime power policy",
+                        )?;
                         // A full profile must belong to the same row and local generation
                         // observed before it. Re-read both; do not adopt a later device.
                         let after = rows(&controller)?;
