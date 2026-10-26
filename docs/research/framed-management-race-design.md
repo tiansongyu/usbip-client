@@ -96,3 +96,21 @@ Archive explicit public evidence without keys/disks, commit and normally push.
 Global README/site skill remains shared. Real G1/G2, installed ARM, Windows USB,
 storage/ISO, permanent kernel/FS blocking, power loss and complete phases remain
 unverified.
+
+## Final installed validation plan
+
+The unchanged full root and separate GUI gates pass at clean473fb3c7:
+1096+18 executions, zero failed/ignored,722 frozen tracked non-evidence inputs
+and all HEAD/clean/input guards. Actual CLI866b0751/helper475b2f97/GUI7bdb41f7
+ELFs are independently recorded in the software receipt. Base v9 and upgrade v10
+are built from those exact ELFs at that same clean source; package controls/units
+and installed-fixture assertions are unchanged.
+
+Run the original full-OS fixture for Native/USBFS × IPv4/IPv6 using v9→v10.
+Each retains three actual I/O rounds, client/server live upgrades, old invocation/
+cgroup observations, exact original Root proofs, baselines and unmodified PCAP
+classifier. Separately run Native/IPv4 v6→v10 to observe mixed old/new preview
+migration; do not infer compatibility from same ALPN or a package replacement.
+Retain its actual verdict even if negative, and do not silently downgrade or
+relax close_notify/Root criteria. This documentation-only plan update does not
+reattribute the earlier software run or package build to a later fixture HEAD.

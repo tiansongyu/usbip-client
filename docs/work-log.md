@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- clean473fb3c7完整原check.sh/check-gui.sh PASS：core1096/GUI18共1114，0failed/ignored，722 tracked非evidence输入及HEAD/clean/inputs guards真；CLI866b07513577/helper475b2f97/GUI7bdb41f76f38，新包v9 sha b442e76e9bab、v10 sha90c61d4340d2皆同clean473和实际ELF。仅文档补明原installed fixture四Native/USBFS双栈v9→v10及独立Native/v4 v6→v10混合迁移，原断言/PCAP不动。后续QEMU须各自实际裁决，文档head不重归属473软件/包；没有新hardware或ARM安装验收。
+
 - clean c89dec61 final transport85 PASS，真实TLS peer缺close_notify仍sticky UnexpectedEof；同源固定32轮原half-close/新actual-close-owner/生产concurrent Catalog共96进程全部0且每次exactly1 test，含8192真实Catalog交换；HEAD/clean/debug双binary guards true。旧control独立target实际101再次确认无更宽化测试；当前设计重写为最终active-stream graceful + 同transport有界peer drain，候选失败/无效构建归属全保留。完整root/GUI和最终包QEMU尚未通过，不称已交付或解决旧加密QEMU根因。
 
 - 2026-10-26恢复：用户暂停后已明确resume，沿原53027句柄取得独立target旧control实际exit101（0pass/1fail，owner ended before actual final read），不是观测timeout重启；clean c1b8a1e7，无活跃遗留测试。继续84项fresh重编来源基线，补实际TLS己方write关闭、peer只TCP关闭未close_notify时必须UnexpectedEof且sticky的负向；原gate/half-close不改。新测试首patch模组路径anchor不符原子拒绝后按实际mod声明修正；G1/G2/ARM安装/Windows/full目标未完成。
