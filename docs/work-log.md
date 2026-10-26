@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-26：ARM64 虚拟 HID/CDC 数据验证（开始）
+
+- 从干净 d5b5ad47 继续完整 Phase 0–7 目标。E63 的 ARM Native/USBFS 和 x86_64 virtual 证据保持原范围；本轮补 actual ARM64 virtual HID/CDC 双栈输入输出、并发导入、释放和重连。先写 `research/arm64-virtual-data-design.md`，不改产品或原物理夹具判据。
+- 使用已核验的 ed1 原生 ARM CI Jammy 包、两 Ubuntu prepared COW 系统和原 ARM VM owner。新夹具采用现有 foreground 控制，动态 broker UID；不把没有 durable correlation 的前台模式写成 managed Root 证明。文档按 technical-documentation 与 humanizer-zh 检查，保留事实、路径及历史失败。
+
+
 ## 2026-10-26：文档表达偏好补充
 
 - 收到新的全局 Humanizer-zh 约定后，完整读取 `/home/ubuntu/.agents/skills/humanizer-zh/SKILL.md`，复核英文 README 的新增说明与 E63 报告。仅修正报告正文中数字与英文单词连写，以及退出码的表达；标题、表格、链接目标、行内代码和全部数字序列经前后比较均相同，历史证据原件保留。README、站点和产品代码未改。
