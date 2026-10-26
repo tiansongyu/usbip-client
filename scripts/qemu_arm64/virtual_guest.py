@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Disposable guest-root test controller; product children use the broker UID."""
 import hashlib
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -21,6 +22,58 @@ HERE = common.HERE
 PUBLIC = HERE / 'public'
 CONFIG = common.CONFIG
 KEYS = ['virtual:hid', 'virtual:cdc-acm']
+
+
+def install_ready():
+    """Observe guest package owners; never remove their lock or kill them."""
+    common.run(['systemctl', 'stop', 'apt-daily.timer', 'apt-daily-upgrade.timer'])
+    paths = [Path('/var/lib/dpkg/lock-frontend'), Path('/var/lib/dpkg/lock')]
+    deadline = time.monotonic() + 120
+    ready = False
+    while time.monotonic() < deadline:
+        observation = {'monotonic': time.monotonic(), 'locks': {}, 'units': {}}
+        descriptors = []
+        try:
+            for path in paths:
+                fd = os.open(path, os.O_RDWR | os.O_CLOEXEC)
+                descriptors.append(fd)
+                metadata = os.fstat(fd)
+                key = f'{os.major(metadata.st_dev):02x}:{os.minor(metadata.st_dev):02x}:{metadata.st_ino}'
+                lock_rows = [line for line in Path('/proc/locks').read_text().splitlines()
+                             if key in line.split()]
+                owners = {}
+                for line in lock_rows:
+                    fields = line.split()
+                    index = fields.index(key)
+                    pid = fields[index - 1]
+                    p = Path('/proc') / pid
+                    try:
+                        owners[pid] = {'comm': (p / 'comm').read_text(), 'stat': (p / 'stat').read_text(),
+                                       'status': (p / 'status').read_text(), 'exe': str((p / 'exe').resolve())}
+                    except FileNotFoundError:
+                        owners[pid] = {'exited_during_observation': True}
+                available = False
+                try:
+                    fcntl.lockf(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    available = True
+                except BlockingIOError:
+                    pass
+                observation['locks'][str(path)] = {'available': available, 'rows': lock_rows, 'owners': owners}
+            for unit in ['apt-daily.service', 'apt-daily-upgrade.service']:
+                value = common.run(['systemctl', 'show', unit, '--property=ActiveState,SubState,MainPID,Result'])
+                observation['units'][unit] = dict(line.split('=', 1) for line in value.splitlines())
+            ready = (all(value['available'] for value in observation['locks'].values())
+                     and all(value['ActiveState'] in ('inactive', 'failed')
+                             for value in observation['units'].values()))
+            observation['ready'] = ready
+            print(json.dumps(observation), flush=True)
+        finally:
+            for fd in descriptors:
+                os.close(fd)
+        if ready:
+            return
+        time.sleep(1)
+    raise RuntimeError('package installation readiness limit exceeded; owners were not signalled')
 
 
 def require(ok, message):
@@ -409,4 +462,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if sys.argv[1:] == ['--install-ready']:
+        install_ready()
+    else:
+        require(not sys.argv[1:], 'unknown controller arguments')
+        main()

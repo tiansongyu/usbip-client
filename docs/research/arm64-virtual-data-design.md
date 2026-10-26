@@ -70,3 +70,20 @@ actual source identities separately from this fixture commit.
 This is an ARM64 virtual-profile test, not real hardware G1/G2, managed-job or
 package-upgrade coverage, a performance result, full fault coverage or completion
 of Phase 2 or the full project.
+
+## Installation readiness after the first IPv6 trial
+
+At clean `1bb65475`, IPv4 passed the full fixture. The first IPv6 trial failed
+before client installation: `dpkg` returned 2 because PID 1268 held its frontend
+lock. Both VMs subsequently exited zero. The recorded output identifies the
+conflicting PID, but not the process's executable or the reason it acquired the
+lock; the later guest shutdown cannot reconstruct that evidence.
+
+Add a guest-only readiness step before the unchanged `dpkg -i` command. Stop the
+two package-maintenance timers to prevent a new scheduled invocation, then wait
+for any already-running maintenance services and actual POSIX dpkg locks to
+retire. Record each observation, the locks' current owners and process metadata.
+Do not remove lock files, signal their owners, retry a failed installation or
+change USB/product observation budgets. A separate 120-second readiness limit
+is a failed precondition if exceeded. The original failed trial remains intact;
+the new IPv6 run uses a new output directory and its own exact source identity.

@@ -165,6 +165,8 @@ def one(args):
             print(role + ': actual ARM package installation', flush=True)
             vm.upload([HERE / 'virtual_guest.py', ROOT / 'scripts/qemu_installed_usb/guest.py', args.package,
                        *(certs / n for n in ['ca.der', 'server.der', 'client.der', role + '-key.der'])])
+            vm.run('sudo python3 /var/tmp/rustusb-installed-fixture/virtual_guest.py --install-ready',
+                   'installation-readiness')
             vm.run('sudo dpkg -i ' + shlex.quote('/var/tmp/rustusb-installed-fixture/' + args.package.name), 'install')
             controller = Controller(vm)
             controllers[role] = controller

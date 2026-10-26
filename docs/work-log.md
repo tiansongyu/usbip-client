@@ -2,6 +2,9 @@
 
 ## 2026-10-26：ARM64 虚拟 HID/CDC 数据验证（开始）
 
+- clean 1bb65475 首 IPv4 全部通过，actual host 24417 exit0、两 controller/两 QEMU 均0，742输入/包/工具/父盘/三主机ELF guard全真；两轮真实HID及各35B CDC注入/发送/回显、四独立导入channel与严格26方向TLS flows通过。首 IPv6 actual99768 exit1，client dpkg前端锁被PID1268持有、安装exit2，未执行产品数据；两QEMU0不改变FAIL。原件完整保留，未采到该PID的可执行文件，不能断言持锁程序。
+- 先更新设计，再补guest安装就绪观察：只停两apt定时器，等待现有service与两POSIX锁自然释放并采PID状态，不删锁、不发信号、不重试dpkg；独立120秒前置预算不改USB超时或判据。新IPv6将用独立目录和source head；没有产品修复声明。Debian FAQ网页只读请求返回403，不把未读页面写成研究依据。
+
 - 新增独立 ARM virtual host/guest 夹具，沿用原 VM、证书生成和严格 PCAP 分类器；原 Native/USBFS runner 与 guest 不改。两轮真实 HID/CDC、唯一 channel/实际 UID/PID/starttime/ELF、内核行与代际、竞争拒绝、原进程 wait 和释放条件分别核验。语法解析与 CLI help 通过，尚未运行 QEMU；Rust/依赖/主机 release ELF 不改，软件仍引用 E63 原完整 gate，不能重标为本轮新执行。
 
 - 从干净 d5b5ad47 继续完整 Phase 0–7 目标。E63 的 ARM Native/USBFS 和 x86_64 virtual 证据保持原范围；本轮补 actual ARM64 virtual HID/CDC 双栈输入输出、并发导入、释放和重连。先写 `research/arm64-virtual-data-design.md`，不改产品或原物理夹具判据。
