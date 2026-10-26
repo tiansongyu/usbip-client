@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-26：ARM64完整安装环境（开始）
+
+- E61从clean f9fdcdf9重读完整原目标，检查Git/日志/核心skill/验收/安装设计与现有Vm。上轮为已验证修复、原软件/QEMU/四平台CI与Pages发布进展，非blocked。当前aarch64只有原生CI，无安装/内核USB接受证据；host无qemu-system-aarch64/ARM固件，现有QEMU6.2，磁盘剩余404GiB。先写ARM64验收设计，保持完整Phase0–7/硬件范围，不缩成环境准备通过。
+- 查QEMU固定v6.2.0 virt原文及两Ubuntu dated ARM64镜像目录；拟用virt-6.2/cortex-a72/TCG、匹配QEMU与EDK2临时解包，不改host root/service/USB。读取工具目录前一次exec指定尚不存在workdir，进程创建被拒绝、没有下载动作；随后先建目录再开始原下载。GitHub专用artifact下载响应只存.private，禁止signed cap进入日志/Git。当前只有设计与依赖准备，尚无新boot/install/USB PASS。
+
 ## 2026-10-26：framed关闭证据与交付收尾
 
 - content0316de7638c68b9360ec719194e9e0c4ae0fe454普通SSH push指定origin并核remote main；core40260772607四native jobs全成功、每实际decoded log1096/0/0，GUI40260772624四native全成功/各18/0/0且原包build/upload成功，Pages40260772646 check/deploy成功。四artifact仅metadata，未下载/安装/执行，不推新ARM运行结论。线上首页+六runtime与三个pinned source共10HTTP200/逐source字节一致，live DOM新link/两端升级/混合失败可见。发布25成员102,477,620 rawB，逐hash/size回读、无signed cap/privatekey marker，gzip SHA5b61636caf8f0e32cde808d2ff5de58b4ee5b329a32f62155fd9e59b407e45a3；八完整CI decoded log留档。后续仅receipt/docs提交不重归属473软件/1b59+393QEMU/0316远端结果，完整目标保持active。
