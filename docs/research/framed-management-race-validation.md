@@ -140,3 +140,30 @@ Real-device G1/G2, installed ARM runtime, general device compatibility, storage
 and ISO, Windows USB, permanent kernel/FS blocking, power-loss durability and
 complete Phase0–7 acceptance remain open. E59's original encrypted failure cause
 remains unproven. Remote CI/Pages publication is recorded separately after push.
+
+## Publication receipt
+
+Content `0316de7638c68b9360ec719194e9e0c4ae0fe454` is normally pushed to the
+authorized SSH remote and independently verified as remote main. Core run
+[40260772607](https://github.com/tiansongyu/usbip-client/actions/runs/40260772607)
+passes on Ubuntu22.04/24.04 × x86_64/aarch64, each complete job log recording
+1096 passed/0 failed/0 ignored. GUI run
+[40260772624](https://github.com/tiansongyu/usbip-client/actions/runs/40260772624)
+passes its four native jobs, each18/0/0, including the original package build and
+artifact upload. Pages run
+[40260772646](https://github.com/tiansongyu/usbip-client/actions/runs/40260772646)
+passes check/deploy. Four Debian artifact metadata entries are retained; their
+binaries are not downloaded, installed or executed by this receipt.
+
+Seven deployed runtime files and three pinned source documents return HTTP200
+and exactly match content0316. Live DOM confirms the new validation link,
+two-endpoint upgrade requirement and retained mixed failure. Local desktop1280,
+actual390, keyboard2px and script-omitted390 checks are in the local evidence;
+no new screenshot/pixel claim is made. The
+[publication receipt](../evidence/framed-close-publication-0316de76-20261026/receipt.json)
+retains25 exact members (102,477,620 raw bytes), including eight decoded job logs,
+all statuses, artifact metadata and HTTP observations, with round-trip hashes.
+Its archive SHA256 is
+`5b61636caf8f0e32cde808d2ff5de58b4ee5b329a32f62155fd9e59b407e45a3`.
+The subsequent receipt commit does not relabel local software473, USB1b59/393,
+or this remote content0316 execution.

@@ -2,6 +2,8 @@
 
 ## 2026-10-26：framed关闭证据与交付收尾
 
+- content0316de7638c68b9360ec719194e9e0c4ae0fe454普通SSH push指定origin并核remote main；core40260772607四native jobs全成功、每实际decoded log1096/0/0，GUI40260772624四native全成功/各18/0/0且原包build/upload成功，Pages40260772646 check/deploy成功。四artifact仅metadata，未下载/安装/执行，不推新ARM运行结论。线上首页+六runtime与三个pinned source共10HTTP200/逐source字节一致，live DOM新link/两端升级/混合失败可见。发布25成员102,477,620 rawB，逐hash/size回读、无signed cap/privatekey marker，gzip SHA5b61636caf8f0e32cde808d2ff5de58b4ee5b329a32f62155fd9e59b407e45a3；八完整CI decoded log留档。后续仅receipt/docs提交不重归属473软件/1b59+393QEMU/0316远端结果，完整目标保持active。
+
 - 沿原coordinated session91525终态日志/summary核clean393ce5ce PASS，两QEMU0、三I/O、client6/server12完整Rootproof、原baseline/strict PCAP/guards真；句柄已回收Unknown process不触发重跑。原四new/new PASS仍锁1b59、软件1114/722和两包仍锁473，mixed第六pair仍FAIL。无活跃cargo/QEMU后才改文档。
 - 显式归档2250成员/17,844,276 rawB，gzip3,271,453B/SHA74685363f6d729f2f2a569a20539a30d3db70cd0c1d436bc8c8af21102f22d19；包含所有候选/失败/隔离old control/三组固定轮次/两full gate/六pair/方法源码。逐成员hash/size回读及42实际私钥字节排除通过，keys/disks/debs/ELFs不入Git。额外audit逐原check_terminal/held/NULL核70positive Rootproof、真实UID/caps/运行ELF/原invocation stop顺序与driver baseline；failed mixed cleanup与operation分账，global readme-site四文件/symlink保持。
 - audit首稿误把server ready次数当cycle导致missing ready3，改读原每cycle server-snapshot，保留开发诊断；第二次audit通过。文档组合patch因testing标题错误原子拒绝、无部分写入，按真实标题后成功。未改产品/原测试判据。英文report/README/site及安装迁移指南、architecture/testing/compat/roadmap/AGENTS/项目skill同步事实与限制。发布与页面检查待实际结果。
