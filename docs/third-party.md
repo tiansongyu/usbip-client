@@ -27,6 +27,8 @@ RustUSB 自有代码采用 MIT。未复制 Linux GPL 用户态/内核源文件�
 
 QEMU仅用于开发审计，未随产品捆绑。上游QEMU脚本下载/构造的内核、busybox和工具有各自许可证，生成的临时镜像不作为本仓库发布物。
 
+E61 ARM64测试额外使用发行版qemu-system-arm6.2+dfsg-2ubuntu6.31与EDK2/qemu-efi-aarch64 2022.02-3ubuntu0.22.04.7，均仅临时解包运行，未随产品或证据捆绑二进制。QEMU/固件保留各自GPL/BSD等逐文件许可，不以本仓库MIT重许可；实际发行版copyright清单及包SHA256随[环境证据](evidence/arm64-environment-20261026/summary.json)保存。无Rust依赖、Cargo.lock或vendor变化，未复制上游实现进入产品核心。
+
 认证准入新增固定governor0.10.4及14个锁package，当前全feature清单174包且无缺失license metadata。它的normal子树禁用quanta/dashmap/rand/getrandom，但不将此扩大为TLS/ring全树无随机源；实际编入、源码、feature和后续验收分别记账。
 
 主机名回退未新增外部依赖或改变Cargo.lock，清单保持174包。复用固定Tokio1.54.1 TCP/actual blocking pool和平台std/NSS，test-util仅新增protocol dev feature。固定Tokio、Rust1.97.1与glibc2.35源码只读研究原件及各自许可保存在[E40证据](research/dual-stack-connect-validation.md)，未将glibc源码移入MIT产品；Ubuntu精确patch源码404的审查限制保留。

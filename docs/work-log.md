@@ -6,6 +6,9 @@
 - 查QEMU固定v6.2.0 virt原文及两Ubuntu dated ARM64镜像目录；拟用virt-6.2/cortex-a72/TCG、匹配QEMU与EDK2临时解包，不改host root/service/USB。读取工具目录前一次exec指定尚不存在workdir，进程创建被拒绝、没有下载动作；随后先建目录再开始原下载。GitHub专用artifact下载响应只存.private，禁止signed cap进入日志/Git。当前只有设计与依赖准备，尚无新boot/install/USB PASS。
 - 原APT下载/两镜像下载真实进程均0；qemu-system-arm6.2+dfsg-2ubuntu6.31及EDK2 2022.02-3ubuntu0.22.04.7逐APT SHA256匹配、仅临时解包，ldd无missing，virt-6.2/cortex-a72/两64MiB pflash确认。两official ARM64 image按原dated signed SUMS重新gpgv/逐真实bytes SHA256通过；CI0316 Jammy/Noble ARM ZIP皆API digest/size匹配解包，尚未执行。首下载脚本误把file_uri对象当路径实际exit1，原脚本/日志保留；检查schema后使用私有download_url完成，不输出cap。
 - 新arm_vm仅继承原Vm的seed/disk/SSH/commands/close，总wait不改；显式TCG/virt-6.2/cortex-a72/私有VARS与virtio disk/seed，guest先核aarch64/arm64/systemd。prepare exact import anchor组合原OS方法，原guest命令/clean/head/owner判据保留、生成方法hash，两个Python compile与diff预检通过。当前还没有实际ARM boot/prep裁决；commit后冻结source再运行。
+- clean dd3f93d8 原session72096实际terminal0：两ARM Ubuntu原prepare均PASS/两QEMU0/HEAD-clean真，uname aarch64/dpkg arm64/PID1及匹配usbip_host/vhci/usbhid/FTDI/xHCI模块、tools2.0真；Noble派生disk e56d1589，Jammy11afa405。Jammy同一APT从29MB→59MB→完整下载/initramfs/flash-kernel，未因等待重启；所有只读observer保留，Noble同期SSH255与其原合作poweroff/成功分账。两个正式owner全部terminal后才修改tracked源码。
+- 同时只在/tmp准备未来方法/输入：原CI两版本+armtest1审计重包四deb成功，严格只有Version/GUI Depends控制字段改动，逐data member bytes/modes/UID/GID/link及维护脚本全部相同；独立derived receipt不伪造CI build。冷安装prototype原anchor组合/compile/help预检0，原guest/C/GUI budget不改；原C将ARM来宾GCC实际编译并核AArch64/source/libhash，host观测间隔总持原owner。记录独立计划后现纳入正式设计，尚无实际冷安装/GUI/升级/USB PASS。另只读核f9三remote workflow已success，不与0316原CI计数混算。
+- 正式derive.py按显式source/output产生四独立新deb并再次逐data/control验证成功，记录generator hash；正式冷安装package.py generated compile/help预检通过，增加独立adapter/tool/输入包HEAD-clean冻结核验，不替换原guest/C或原GUI budget。组合patch一次README尾上下文漏前缀导致原子拒绝，无部分写入，拆分后正常。当前原ARM prep均terminal，无活跃cargo/QEMU；环境证据归档与完整软件/实际冷安装待下文。
 
 ## 2026-10-26：framed关闭证据与交付收尾
 

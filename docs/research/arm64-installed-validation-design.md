@@ -69,3 +69,39 @@ remote0316 receipts keep their original identities. This plan is not acceptance.
   [installed USB method](installed-usb-data-design.md) and
   [framed-close migration contract](framed-management-race-validation.md) remain
   authoritative for unchanged product lifecycle and mixed-preview restrictions.
+
+## Selected package and cold-install method
+
+At clean dd3f93d8, both original ARM64 product-free preparations pass, each actual
+QEMU0 with HEAD/clean guards. This proves boot, actual aarch64/arm64/systemd and
+matching USB/IP tools/modules, not RustUSB installation or USB I/O. Original
+prepared-disk hashes are independently recorded; no source changed while owners
+were live. Jammy's slow module transfer and initramfs generation retained the
+same owner throughout; a separate Noble SSH observer returning255 during its
+normal poweroff does not override the original successful preparation.
+
+Use the two original matching Ubuntu ARM CI0316 base/GUI pairs as first packages.
+For the second installation, derive `+armtest1` Debian revisions by changing only
+control Version and GUI's exact base-version Depends. Every original/derived data
+tar member's bytes, mode, owner and link and every maintainer script must compare
+equal; all other control bytes must compare equal. Keep an independent derivation
+receipt referencing original ZIP/API/build/package/ELF hashes. This is a same-source
+package upgrade test, not a native rebuild, old-code migration or original receipt
+relabeling. Four actual packages and six actual AArch64 ELFs have been inspected
+against the original CI receipts; no binary has yet been executed by these checks.
+
+The cold adapter composes exact checked original host-runner anchors, retaining
+the original guest.py/C source and all product assertions, including native GUI
+budgets. Compile the exact fsync-gate.c with actual guest ARM GCC before product
+installation, check AArch64 and source/library hashes, and retain its true syscall
+entry/release/result0 semantics. Do not upload an amd64 shared object as an ARM
+test fixture. Both cold cases use original signed official images, not prepared
+disks. The original amd64 host/guest/C files stay unchanged.
+
+ARM host launch selects persistent private pflash variables and the explicit
+virt-6.2/cortex-a72/TCG platform. Host SSH and QEMU observation intervals retain
+and poll the original actual owner, without counting an observation limit as
+termination or restarting it. This adaptation is not byte-identical original
+host code; guest assertion outcomes are unchanged. Save exact generated source,
+anchor list, adapter/tool hashes and independent HEAD/clean/tool guards. Retain
+every original failure. No TCG timing is a native ARM performance promise.
