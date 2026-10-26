@@ -1,0 +1,59 @@
+# USB storage inspection and handoff design
+
+Status: proposed full storage handoff; bounded read-only inspection selected for implementation. Baseline: `2eca4522104eef7ccbf23dffba2ef1120bf4349c`, 2026-10-26. Requirement [4.6](../requirements.md) remains incomplete. No storage export permission is added by this design's first increment.
+
+## Problem and scope
+
+The current discovery layer rejects storage interfaces, storage drivers and block descendants. Native and USBFS admission preserve these blockers. That prevents unsafe sharing but does not implement U-disk sharing or explain who is using a disk. The next increment adds an administrator command, `rustusb storage-inspect <device-id>`, returning bounded observations for one current USB fingerprint. It does not unmount, flush, open a block device, change a driver, set read-only flags, load modules, enter namespaces or grant an export capability.
+
+The report separates known usage, inspection failures and inherent blind spots. An empty usage list means only **no use observed in this scan**. There is no `safe`, `eligible`, `cleanup_verified` or export-token result. A later export must establish its own authorization, exact generation and actual ownership barriers. Existing Device, Session, journal and USB/IP schemas remain unchanged.
+
+## Fixed primary-source findings
+
+Research uses Linux v5.15 `8bb7eca972ad531c9b149c0a51ab43a417385813`, Linux v6.8 `e8f897f4afef0031fe618a8e94127a0934896aba`, and QEMU v6.2.0 `44f28df24767cf9dca1ddc9b23157737c4cbb645`. Ubuntu kernels may contain downstream changes; execution evidence must record actual kernels. Research copies retain original licenses and hashes; no GPL implementation is copied into the MIT Rust sources.
+
+| Finding | Design consequence | Primary source |
+| --- | --- | --- |
+| Userspace `O_EXCL` participates in block holder claims; ordinary raw opens do not acquire that claim. | A successful exclusive open is not an all-writer fence. | [Linux block/bdev.c](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/block/bdev.c) |
+| `BLKROSET` changes Linux block-object state. USB/IP submits raw USB requests without consulting that old block object. | Report kernel block RO separately from device-enforced write protection; neither infer remote RO nor add an unsafe “read-only export” switch. | [block ioctl](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/block/ioctl.c#L383), [stub RX](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/usbip/stub_rx.c#L455) |
+| BOT removal calls SCSI shutdown, whose cache-sync result is ignored; UAS kills pending traffic before removal. Block `fsync` maps unsupported flush to success. | Driver removal, block-node disappearance and `fsync` success do not independently prove checked device-cache persistence. | [BOT](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/storage/usb.c#L831), [UAS](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/storage/uas.c#L1199), [sd shutdown](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/scsi/sd.c#L3870), [fsync](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/block/fops.c#L538) |
+| Threads can have distinct FD tables. Mountinfo is relative to the task's root, even within the same mount namespace. Namespace references can survive without a resident task. | Inspect visible threads, identify namespace/root view, and never describe task enumeration as global coverage. | [proc FD](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/proc/fd.c), [mountinfo](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/proc_namespace.c), [nsfs](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/nsfs.c) |
+| A bare block mmap's maps device field describes the inode's filesystem, not its block `rdev`. `map_files` access may require capabilities root in a container lacks. | Inspect mapping-target metadata; failure remains an explicit coverage issue, not an empty result. | [task_mmu.c](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/proc/task_mmu.c), [map_files access](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/fs/proc/base.c) |
+| io_uring registered files and SCM_RIGHTS queues can retain references outside current FD tables. A proc scan is not atomic with another task opening a file. | Keep these limitations in every report, including a scan without observed errors. | [io_uring file table](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/io_uring/filetable.c), [SCM](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/net/core/scm.c) |
+| BOT MaxLUN failure falls back to zero; SCSI discovery may be asynchronous. Stock usbip unbind attempts local-driver rebind. | Observed LUNs are not a completeness certificate; uncertain remote writes require a separate quarantine/recovery path. | [MaxLUN](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/drivers/usb/storage/transport.c#L1075), [unbind](https://github.com/torvalds/linux/blob/e8f897f4afef0031fe618a8e94127a0934896aba/tools/usb/usbip/src/usbip_unbind.c#L61) |
+
+## Inspection contract
+
+`rustusb-linux::storage` owns synchronous Linux observation. The root helper exposes one strict `InspectStorage { device_id }` request; UID 0 is checked before discovery, quota acquisition or proc reads. Ordinary operators and the configured broker are denied. The request contains no filesystem roots, PID, path, command or mount options. The production API has fixed `/sys` and `/proc` roots; fixture roots remain private test implementation details.
+
+One actual blocking worker per helper owns its permit until it returns. Accepted work is awaited even if the client disappears; shutdown joins the original connection task and worker. No helper mutation mutex, USB FD or journal lock is held. Limits bound iteration, retained data and time between filesystem operations; they cannot interrupt a kernel operation that never returns. The existing bounded response writer rejects an oversized report rather than silently truncating it.
+
+The library verifies sysfs/procfs filesystem types, pins the selected USB directory, and records inode/device identity plus bus address. The initial fingerprint must select exactly one discovered device. It walks real descendant directories without following general driver/subsystem links, records SCSI LUN addresses, block devices and partitions, and follows block holder links to mapped consumers. Major/minor identity, kernel-reported RO and a DM UUID **category hint** are metadata; no filesystem contents, full DM UUID, serial, label or key is returned. Missing attributes, graph changes and limits are explicit issues. Initial/final inventory comparison detects some changes, not every ABA event or transient access.
+
+Usage checks inspect visible `/proc/TGID/task/TID` entries. Each record identifies PID/TID/start-time and an observed device number; it never includes a file path, command line or file contents. Mountinfo uses numeric filesystem device identity; FD and mapping checks use target metadata (`rdev` for device files, `dev` for filesystem files). Swap rows are resolved only as metadata observations, with inaccessible/unresolvable entries reported. Per-task metadata failures and changed identities preserve incomplete coverage. Holder relationships themselves count as observed use. They also extend checks to mounted/open mapped filesystems.
+
+The report is schema 1 metadata with:
+
+- Target fingerprint, bus ID, pinned generation and elapsed observation time.
+- Observed LUNs and block graph, including partitions, holders, slave device numbers, RO state and optional `crypt`/`lvm`/`other` DM hint.
+- Bounded usage records: holder, mount, raw block/character FD, filesystem FD, mapping and swap observations.
+- Separate finite issue codes for unreadable/malformed inputs, disappearing identities, incomplete inventories and resource limits.
+- Permanent limitations: non-atomic scan; hidden/pinned namespaces and non-FD kernel references; filesystem/encryption signatures not probed; unenumerated LUNs; unknown device-enforced write protection. No finding is an export approval.
+
+Initial planned limits: 64 block nodes, 32 LUNs, 256 usage records, 8,192 tasks, 65,536 total directory entries, 16 MiB aggregate text, 1 MiB per proc text file, and 10 seconds checked between operations. Final constants and measured response sizes belong in the implementation/validation report. Work stopped at a limit produces a partial report with an issue; it does not discard earlier busy findings.
+
+## Full storage handoff remains proposed
+
+The eventual writable path needs an administrator-selected expendable device and explicit policy; it cannot simply remove discovery blockers. Before any claim it must identify all interfaces/LUNs/partitions/mapped holders, obtain operator cooperation for unmount/service shutdown, and establish an actual exclusion boundary for old and new filesystem, raw block, SG/bsg and USBFS operations. Neither proc scans, block RO nor userspace `O_EXCL` establish that boundary alone. A dedicated pre-authorized controller/arrival policy is a candidate experiment, not an implemented guarantee.
+
+The design must then drain outstanding work and check each LUN's cache command result under the same fence, record exact USB/block generations and handoff intent, and only then transfer ownership to the selected Native or USBFS path. A composite device is claimed as a whole. Native and USBFS require separate receipts and tests; local block RO must never become a claimed remote write filter.
+
+On completion, client unmount/cache acknowledgement, transport closure, actual old owner release, device persistence and permission for local re-enumeration are distinct facts. Disconnect/crash/unknown writes enter a storage-specific quarantine state. Stock Native unbind/rebind and USBFS original-driver restoration are insufficient as unconditional storage recovery. No automatic remount, writable reconnect, modifying fsck or replay is authorized by this design. Persistent recovery requires a separate accepted implementation and fault evidence.
+
+## Validation plan
+
+Unit and isolated filesystem fixtures cover numeric parsing, malformed/oversized mount and swap rows, all-LUN/partition traversal, holder cycles, mapped encryption hints, per-thread usage, inaccessible mappings, identity changes and retained Busy results under limits. Helper tests cover strict request fields, root-only admission before observation, actual-worker quota and shutdown ownership. Existing storage rejection tests remain.
+
+Disposable QEMU Ubuntu guests provide actual BOT multi-LUN and partition enumeration, a busy second LUN, filesystem/file-FD and raw-FD usage, a separate mount namespace, swap, and a DM crypt hint where supported. All backing disks are new private regular files. Formatting, mapping, mounts and raw device opens occur only inside the guest after exact synthetic ancestry/capacity checks. A read-only QEMU backing is independently labelled; it does not certify hardware write protection. No host device, loop mount, module, account or service is changed.
+
+No new positive export or USB storage I/O is claimed by inspection validation. High-speed UAS and SuperSpeed UAS are separate future cases: audited VHCI stream stubs do not justify USB3 UAS support. Future cache tests use flush-enabled backing, not QEMU `-snapshot` (which uses unsafe cache semantics). All failures remain evidence, and source/HEAD/ELF ownership is frozen for each actual gate/QEMU run.

@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-26：USB 存储占用检查与交接设计（开始）
+
+- 从干净 `2eca4522104eef7ccbf23dffba2ef1120bf4349c` 继续完整 Phase0–7 目标，重新读取原始需求。当前存储全面拒绝仅是保护，不是需求4.6完成。本轮选定 root-only 只读检查；完整可写交接仍 proposed，见 `research/storage-inspection-design.md`。
+- 使用 writing-technical-design、核心开发、technical-documentation 和 humanizer-zh。按设计技能要求并行研究固定 Linux5.15/6.8 块层所有权、USB/BOT/UAS交接与QEMU6.2；只读研究在 `/tmp`，未操作宿主设备或开始QEMU。发现 O_EXCL 不挡普通raw FD、驱动解绑不证明缓存成功、stock Native unbind会尝试恢复本地驱动；不以扫描/RO/cleanup proof代替写入排他与数据一致性。
+- 实施前记录接口、权限、实际blocking owner、容量和可见性边界。现有Native/USBFS存储拒绝、旧wire/journal/Session与硬件未验状态保持；检查成功仅代表报告生成，不授导出许可。尚无本轮产品测试或QEMU结果。
+
 ## 2026-10-26：ARM64 虚拟 HID/CDC 数据验证（开始）
 
 - 内容 dd880309 普通SSH push actual88154 exit0，remote核对8280 exit0精确同HEAD/clean。software40304757716四native job121511010294/010792/010803/010868、GUI40304757398四job121511008964/009157/009349/009425、Pages40304757421的check121511008474/deploy121511235345全部completed/success。只核primary run/job/step，不重算各平台1138或冒充完整CI日志/新USB执行。八canonical HTTPS响应200逐dd site bytes相同；公开tab8实读1280×720/新报告及失败文案/无横溢，console空。
