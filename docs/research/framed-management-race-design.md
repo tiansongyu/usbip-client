@@ -114,3 +114,14 @@ migration; do not infer compatibility from same ALPN or a package replacement.
 Retain its actual verdict even if negative, and do not silently downgrade or
 relax close_notify/Root criteria. This documentation-only plan update does not
 reattribute the earlier software run or package build to a later fixture HEAD.
+
+The four v9→v10 paired runs at1b59ee74 pass every original assertion (eight
+QEMU0, twelve actual I/O rounds,52 exact Root proofs). The independent v6→v10
+mixed pair fails at the second Catalog after the client upgrade; both QEMU0 and
+all source/ELF guards remain true. Keep it failed. No same-ALPN compatibility or
+automatic downgrade is inferred; old previews do not complete the new peer-close
+contract. Validate a separate coordinated Native/IPv4 migration: perform old
+v6 actual I/O, upgrade the client while stopping its imports, then upgrade the
+server before restarting the client. Repeat new/new I/O, explicitly stop both
+and reuse for a third round. Keep the original Root/driver/PCAP/upgrade checks;
+this adds orchestration only and does not rewrite the mixed failure.

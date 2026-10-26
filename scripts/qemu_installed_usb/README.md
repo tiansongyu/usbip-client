@@ -26,3 +26,11 @@ timeout. Operator1000 uses real application IPC; operator1002 must be rejected.
 Three rounds use only synthetic QEMU keyboard/FTDI fixtures. Upgrade client and
 server with live imports/exports respectively. Match Root kind, correlation,
 resource, key and broker UID; zero new counters cannot prove an old release.
+
+For the separate Native/IPv4 coordinated migration, use `coordinated.py` with the
+same `--prepared`, `--output`, `--base` and `--upgrade` paths. It keeps the original
+assertions, moves the server upgrade before restarting the upgraded client, and
+explicitly stops/reuses both ends before round3. It does not retry a failed mixed
+version connection. Exact composition anchors, generated source and hashes are
+retained in the output. Treat its result independently of the original matrix;
+same ALPN is not evidence that an older preview meets the peer-close contract.

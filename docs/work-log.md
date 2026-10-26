@@ -2,6 +2,10 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- 新coordinated.py仅host编排，exact anchors组合原run.py；原upgrade owner检查抽取原字节复用，原Root/PCAP/asserts不削弱；生成源码/原方法/生成器hash保留。client升级停导入后原server升级/恢复核验完成才启动new/new；第三轮前显式停两端并核原baseline再reuse。py_compile/help/generated compile预检通过。首次组合patch README上下文漏前缀导致原子拒绝，无部分文件/guest动作；拆分后正常。该迁移仍待实际run，不改判原mixed FAIL。
+
+- clean1b59ee74原fixture四v9→v10 Native/USBFS双栈PASS/8QEMU0，十二实际I/O轮、52完整原Rootproof/基线/双端strict PCAP与所有guards真；独立v6→v10混合pair原FAIL，client升级后第二Catalog IO失败/2QEMU0/guards真。原失败不改判，不能称同ALPN自动兼容，也不降级放过TLS EOF。新增独立coordinated迁移设计：原v6实际I/O后先client合作升级停导入，server也升级完才启动new client，保持两轮new/new真实I/O和最后显式stop/reuse；只改host编排，保留原判据。
+
 - clean473fb3c7完整原check.sh/check-gui.sh PASS：core1096/GUI18共1114，0failed/ignored，722 tracked非evidence输入及HEAD/clean/inputs guards真；CLI866b07513577/helper475b2f97/GUI7bdb41f76f38，新包v9 sha b442e76e9bab、v10 sha90c61d4340d2皆同clean473和实际ELF。仅文档补明原installed fixture四Native/USBFS双栈v9→v10及独立Native/v4 v6→v10混合迁移，原断言/PCAP不动。后续QEMU须各自实际裁决，文档head不重归属473软件/包；没有新hardware或ARM安装验收。
 
 - clean c89dec61 final transport85 PASS，真实TLS peer缺close_notify仍sticky UnexpectedEof；同源固定32轮原half-close/新actual-close-owner/生产concurrent Catalog共96进程全部0且每次exactly1 test，含8192真实Catalog交换；HEAD/clean/debug双binary guards true。旧control独立target实际101再次确认无更宽化测试；当前设计重写为最终active-stream graceful + 同transport有界peer drain，候选失败/无效构建归属全保留。完整root/GUI和最终包QEMU尚未通过，不称已交付或解决旧加密QEMU根因。
