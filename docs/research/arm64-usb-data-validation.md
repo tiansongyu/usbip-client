@@ -1,5 +1,7 @@
 # ARM64 installed USB data investigation
 
+This is the historical E62 failed investigation. The later [E63 per-import PM implementation and validation](native-import-power-validation.md) supplies fresh positive data evidence while retaining every verdict below. Its traced USBFS/IPv6 success and separate forced pre-product boot failure are explicitly distinguished.
+
 2026-10-26. **The ARM64 Native/USBFS × IPv4/IPv6 data matrix has not passed.**
 After a network adapter correction, both devices enumerate but the first I/O
 round fails. A separate original-Linux USB/IP control reproduces an imported

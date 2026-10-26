@@ -1,5 +1,7 @@
 # 分阶段开发与验收计划
 
+最新E63[导入运行时PM验证](research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入、八installed正向类别/16guest0（三轮HID/FTDI、双端live升级、104完整Rootproof/基线/PCAP）与三legacy/virtual回归/6guest0通过。覆盖两Ubuntu、两架构、Native/USBFS及双栈；ARM USBFS-v6正向显式加启动xHCI trace，前次安装产品前kernel stall/forced abort仍FAIL/2guest0，未修启动不稳定。ARM虚拟CDC/完整GUI故障、真实G1/G2、存储/ISO/性能/Windows及完整Phase0–7继续未完成；下列旧E条目保留历史时点。
+
 E62[ARM USB调查](research/arm64-usb-data-validation.md)仍未验收：八原矩阵与一追踪pair失败，十八guest0/guard真不改判；原Linux USB/IP隔离对照见导入键盘runtime suspend，per-device on后恢复输入。产品PM策略及四case完整I/O/live-upgrade/PCAP回归待完成，软件1114/734源独立记账。
 
 E61[两Ubuntu ARM64冷安装](research/arm64-installed-validation.md)完成实际安装、原生GUI WM0、受控真实fsync升级、重启和remove/purge/保留状态，四QEMU0/42不同断言/所有guard；同clean76b4完整1114/731输入通过。原ARM CI包与同源控制字段升版各锁实际身份。下一步仍需ARM Native/USBFS数据I/O，硬件G1/G2、全GUI/Phase5、性能/存储/ISO、Windows与完整Phase0–7保持原范围。

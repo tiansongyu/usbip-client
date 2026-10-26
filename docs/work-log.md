@@ -1,5 +1,17 @@
 # RustUSB 工作日志
 
+## 2026-10-26：授权导入 PM 的软件与双架构数据验收
+
+- clean ed1e8fef原完整core1120+GUI18=1138/738输入及HEAD-clean-source guard通过，三实际host ELF锁1a22/aebc/2551；全部QEMU期间仓库/源码/ELF保持冻结，actual owners全部终结后才写证据/文档。产品commit已普通SSH push，四原生core40284815248/GUI40284815259与旧站点Pages40284815276全部success；仅primary run/job/step metadata，不重算每平台测试数或伪造full CI log。
+- 两Ubuntu交叉role、amd64/arm64、Native/USBFS、IPv4/IPv6八positive installed类别通过原并发双IMPORT、24轮精确HID/FTDI（各向840B）、双端live upgrade、104完整Rootproof/driver-config-alt-node-generation baseline和boot/product PCAP。ARM包为新ed1 native CI Jammy载荷在两kernel运行，Noble另下载但不冒USB已执行；同源码控制字段升版，非旧代码迁移/GUI动作。
+- 原ARM USBFS-v6的Noble server在SSH/产品安装前xHCI死亡及soft lockup/RCU stall；核exact PID/command/exe后QMP powerdown接受但持续卡死，再显式QMP quit。原runner与ARM outer均FAIL、两actual guest0/全guard真，forced诊断保留；原exec42660最终结果在上次截断工具响应后已drained，后来poll Unknown，不补造该未见host exitcode。其他七positive实际owner exit0；原FAIL不改判。
+- 随后唯一独立USBFS-v6 trial显式加metadata xHCI从boot追踪，保原2CPU/TCG/virt/firmware/devices/budgets/guest/全部判据；actual57580 exit0、两guest0及三层verdict PASS。仅该instrumented trial补第八正向类别，不称原boot问题修复或稳定性验证。三原legacy Linux-server HID/secure virtual双栈回归actual70760/50652/50690均exit0/6guest0，复用完整gate同三ELF，--skip-build与738输入outer guard明确。主数据共11正向+1失败pair/24guest0，研究单guest另档。
+- amd64原双native builder都0，但宽GUI payload audit实际1：selectors0.38.0 source.tar.gz两gzip mtime不同、解压bytes同；原FAIL与差异保留。矩阵改用严格原derive的五项显式架构/命名组合，逐payload/mode/owner/link/scripts相同的formal control-only pair；不改包产品代码/放宽审计。
+- 主档4193成员46,982,969 rawB，gzip9,525,575B/SHA12cfd2940d1844b1d2b14bf82db3f85e1a1a3a2ee2b7a4668ba0083ae3095edb；逐member readback、63实际private-key文件与signed capability值排除通过。原开发/包装/boot FAIL、方法/生成源码/完整1138与ed1执行源皆保留；无key/cap/disk/firmware/deb/ELF入Git。英文README/专项报告/现有站点事实与项目入口同步，沿用已装全局readme-site，网站运行assets/四skill源不改。新页面QA/本轮发布尚未宣称成功。
+- 这是完整Phase0–7目标实际进展，原E62九FAIL/E59加密根因未证实保持；ARM虚拟CDC/完整GUI faults、真实G1/G2、存储/ISO/性能/Windows与全目标继续未完成，goal active。
+
+- 原件只读复核前两方法FAIL保留：首把合法tracked .agents/.github归档源也判hidden，次发现collector自身stdout在归档时为空、末尾print后才写入。第三方法保持所有成员hash/738 Gitblob/其余3454原件bytes严格核验，仅该精确空成员独立核当前stdout等于预定summary archive/privacy完整JSON；不改主档/产品/验收。24原I/O轮及104摘要proof复核通过，非另一次USB执行/独立安全审计。17文档源681target、266site/Node/diff通过，722软件输入不变/仅16文档变；7runtime assets加.nojekyll与预览逐bytes同，四global skill/symlink不变。CUA1280×720/390×844与ArrowRight/Home选中focus、CSP no-script三backend/命令/新限制文案通过；initial lazy GUI未加载、随后全部图及mobileSVG360实际加载均留观测。screenshot Unavailable不称pixel，clipboard/reduced-motion未重跑。tabs57/58关闭、viewport实读reset1280×720；owned preview精确PID SIGINT、actual38591 exit130为预期清理。尚无本次新HTML远端发布成功声明。
+
 ## 2026-10-26：Native 导入设备运行时电源策略（开始）
 
 - 实现private固定per-import delay=-1：目录FD按原sysfs dev/inode、地址/VID/PID钉住，逐单组件NOFOLLOW/CLOEXEC、根owner/权限/type、有限读取、单次精确store/原FD读回/active及原alias复核，无全局参数/源设备/旧journal写入或新USB FD能力。secure在self.local/profile后纳入原blocking owner，前后取消与原row/generation再核保留。

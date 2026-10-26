@@ -5,6 +5,8 @@ date: 2026-10-26
 
 # Keep an authorized imported USB device active
 
+Implementation and limited QEMU validation are recorded in [the E63 report](native-import-power-validation.md). The design status remains proposed; full hardware and project acceptance are not implied. The following initial diagnosis retains its original scope.
+
 The E62 ARM matrix remains failed. Its isolated original-Linux USB/IP control
 identifies imported HID runtime suspend; E63 adds a clean84045dfb control that
 expects no events at auto/2000ms/suspended, then exact events after only imported

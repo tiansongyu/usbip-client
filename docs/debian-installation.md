@@ -7,8 +7,10 @@ see the [full Ubuntu validation](research/debian-installation-validation.md) and
 [design](research/debian-installation-design.md) for the actual scope.
 Separate [ARM64 cold-installation validation](research/arm64-installed-validation.md)
 covers both Ubuntu versions with matching native CI packages, an audited
-same-source revision upgrade, actual GUI close and real reboot. ARM USB I/O
-remains a separate unvalidated gate.
+same-source revision upgrade, actual GUI close and real reboot. Later
+[installed USB data validation](research/native-import-power-validation.md) covers
+Native/USBFS HID/FTDI on both architectures with live upgrades. Its traced ARM64
+USBFS/IPv6 pass and separate pre-product boot failure retain their exact scope.
 Ubuntu 22.04/24.04 amd64 and arm64 are targets. Build on the oldest updated
 distribution you intend to support for each architecture; dependencies are derived
 from the actual binaries, including GTK/WebKit for GUI. Do not use an amd64 package

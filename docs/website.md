@@ -132,3 +132,16 @@ Content `91ecc44f` completed Pages 40121403729 check/deploy and all four native
 software jobs in 40121403621. Six canonical HTTPS resources match its Git bytes;
 the seven site sources are unchanged. No new browser/pixel verification is
 claimed; see the [publication receipt](evidence/offline-crl-publication-91ecc44-20261024/manifest.json).
+
+
+## Imported USB runtime-power evidence (2026-10-26)
+
+The [English README](../README.md) and existing showcase now link the
+[scoped import-power implementation and validation](research/native-import-power-validation.md):
+1138 local software executions, eight positive installed USB categories across
+amd64/arm64 and both backends/networks, plus three original paired regressions.
+The traced ARM64 USBFS/IPv6 success keeps the earlier forced pre-product boot
+failure explicit. Earlier inventory figures keep their own revisions. The CSS,
+JavaScript, images, workflow and four global readme-site source files are unchanged.
+This is factual maintenance using the previously examined rstop hierarchy;
+publication of this updated HTML is checked separately.

@@ -1,5 +1,7 @@
 # RustUSB
 
+E63[授权导入PM与新USB验收](docs/research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入；amd64/arm64、Native/USBFS、IPv4/IPv6八正向installed类别、24轮HID/FTDI及104完整Rootproof/双方live升级/PCAP通过，三原legacy/virtual pair另过。ARM USBFS-v6正向显式加xHCI追踪，原安装前kernel stall/forced abort仍FAIL且原因未修；原E62九FAIL保留。硬件G1/G2、ARM虚拟CDC/完整GUI、存储/ISO/性能/Windows与完整目标仍未完成；下列旧E记录保留历史范围。
+
 E61新增[ARM64完整冷安装验收](docs/research/arm64-installed-validation.md)：Ubuntu22.04/24.04实际aarch64来宾均通过安装、普通用户GUI关闭、真实fsync升级等待、重启、remove/purge与保留状态；四QEMU0、无forced，均42不同断言。软件1114/731输入与cold锁clean76b4；匹配原生CI0316包及同源控制字段升版单独记账。ARM USB数据I/O、真实硬件和完整阶段仍未验收。
 
 此前E58的[Ubuntu 预览安装包与 systemd 指南](docs/debian-installation.md)：基础 CLI/TUI/helper/非 root agent 与可选 GUI 分包，默认不启服务/不授设备。clean fded558a 完整 root1076+GUI18/451输入通过；Ubuntu22.04/24.04 amd64 两项官方原镜像完整安装、升级、真重启、remove/purge 与原生GUI WMclose0通过，4 QEMU0、无forced，见[验收](docs/research/debian-installation-validation.md)。五原失败、两开发续跑分账保留；真实硬件、arm64安装态及整个Phase5仍未完成。

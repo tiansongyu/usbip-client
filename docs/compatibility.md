@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+最新E63[导入运行时PM验证](research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入、八installed正向类别/16guest0（三轮HID/FTDI、双端live升级、104完整Rootproof/基线/PCAP）与三legacy/virtual回归/6guest0通过。覆盖两Ubuntu、两架构、Native/USBFS及双栈；ARM USBFS-v6正向显式加启动xHCI trace，前次安装产品前kernel stall/forced abort仍FAIL/2guest0，未修启动不稳定。ARM虚拟CDC/完整GUI故障、真实G1/G2、存储/ISO/性能/Windows及完整Phase0–7继续未完成；下列旧E条目保留历史时点。
+
 E62[ARM USB调查](research/arm64-usb-data-validation.md)仍未验收：八原矩阵与一追踪pair失败，十八guest0/guard真不改判；原Linux USB/IP隔离对照见导入键盘runtime suspend，per-device on后恢复输入。产品PM策略及四case完整I/O/live-upgrade/PCAP回归待完成，软件1114/734源独立记账。
 
 E61[ARM64安装态](research/arm64-installed-validation.md)补Ubuntu22.04/24.04实际aarch64系统中的base/GUI包完整cold lifecycle、普通用户窗口和WM0、受控fsync升级/真实重启/remove/purge，四QEMU0、guard真；软件1114/731输入与运行夹具锁76b4，ARM ELF来自对应CI0316，两+armtest1为payload/脚本不变的控制字段升版。动态broker UID实际112/108，不沿用AMD或prepare的UID。新增安装/GUI runtime证据不证明ARM USB数据、物理板卡或全部GUI动作兼容。

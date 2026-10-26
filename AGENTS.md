@@ -1,5 +1,7 @@
 # RustUSB 开发约定
 
+E63最新见`docs/research/native-import-power-{design,validation}.md`：clean ed1e8fef原完整1138软件/738输入、八installed正向类别/104Rootproof与三legacy/virtual回归通过；共11正向+1failed boot pair/24guest0。ARM USBFS-v6正向仅独立metadata xHCI trace trial，原pre-product kernel stall/forced QMP quit保FAIL，不能称boot修复。只改新授权pinned VHCI generation delay=-1且active/identity复核；两原owner/typed partial receipt/同锁补偿/有界冲突与原NULL+gone proof保持，无全局/源设备/旧journal/新FD/wire/schema。未支持PM拒绝，不假取消永久sysfs阻塞；legacy其他await点原drop协调限制保持。E62旧失败/原加密原因未证实及硬件/完整目标不改判。下文旧条目是各轮历史范围。
+
 ARM USB数据E62见`docs/research/arm64-usb-data-validation.md`：37b四MAC失败/bed49四HID失败及一trace均保FAIL，18paired guest0/全guard真不代I/O；两原full gate1114/734源。五单guest对照中原Linux USB/IP导入kbd auto/suspended无事件，仅该VHCI设备on后恢复；尚无产品PM修复或四case完整正向。修改Native tool/anonymous import前先读此报告与design，保持pinned generation/授权/partial cleanup，禁止全局autosuspend或替代node变更；硬件/全阶段仍未完成。
 
 ARM安装夹具改动先读`docs/research/arm64-installed-validation-design.md`与`arm64-installed-validation.md`。E61 clean76b4完整1114/731输入、两Ubuntu ARM64 cold各42不同断言/四QEMU0/无forced通过；原guest/C/GUI budget不改，host virt-6.2/cortex-a72/TCG/私有VARS及实际owner观测等待适配显式。实际ARM guest GCC编译原C并核源/运行库SHA，不能上传AMD .so冒ARM；两原CI0316包+formal +armtest1只Version/GUI Depends改变，payload/scripts严格相同，独立derived receipt不得伪native rebuild。broker UID实际112/108动态核，不沿用其他case。原prep锁dd3，cold/软件锁76b4，后续文档不重标；ARM USB I/O、硬件/性能/完整阶段未完成。

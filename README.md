@@ -15,12 +15,13 @@ RustUSB is a **development preview**. Linux Native is the default backend; optio
 
 ## Build from source
 
-Use Linux with Git, native build tools and [Rust via rustup](https://rustup.rs/). The repository pins Rust 1.97.1. Ubuntu 22.04/24.04 on x86_64 and aarch64 have native software CI; USB kernel integration has been tested in x86_64 QEMU guests.
+Use Linux with Git, native build tools and [Rust via rustup](https://rustup.rs/). The repository pins Rust 1.97.1. Ubuntu 22.04/24.04 on x86_64 and aarch64 have native software CI and targeted QEMU USB data evidence.
 
-[ARM64 USB data testing](docs/research/arm64-usb-data-validation.md) remains
-unvalidated: devices enumerate, but HID input fails after runtime suspend in an
-isolated Linux USB/IP control. A per-device diagnostic resume restores input;
-the production fix and complete data matrix are still pending.
+[Installed USB data validation](docs/research/native-import-power-validation.md)
+covers simulated HID/FTDI on both architectures, Native/USBFS and IPv4/IPv6,
+including live upgrades. A scoped import-power fix keeps each authorized local
+generation active. One ARM64 case passes with explicit xHCI tracing; an earlier
+pre-product kernel boot stall remains failed and unresolved.
 
 ```sh
 git clone https://github.com/tiansongyu/usbip-client.git
@@ -269,7 +270,14 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
-The latest [local inventory report](docs/research/local-device-monitor-validation.md)
+The [import-power validation](docs/research/native-import-power-validation.md)
+records **1138 software test executions** and **eight positive installed USB
+pairs** at clean `ed1e8fef`, with 24 complete HID/FTDI I/O rounds and 104 exact
+Root release proofs. Three original legacy/virtual paired regressions also pass.
+The independent traced ARM64 USBFS/IPv6 success keeps its earlier forced boot
+failure separate. QEMU devices are simulated; real hardware acceptance is pending.
+
+The earlier [local inventory report](docs/research/local-device-monitor-validation.md)
 records **872 software test executions at clean `c0346d6`** and **two separate
 QEMU guest runs at clean `f66da6b`**, covering default and all-features builds.
 An actual UID2000 CLI observes kernel USB events, interface driver changes,
@@ -299,8 +307,8 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Use dedicated test devices.** Storage, hubs and incomplete or unsafe metadata are rejected. Do not export your active keyboard, management network adapter or production equipment.
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Journal upgrades are explicit.** Health uses strict disk2; automatic policy1 upgrades to disk3, and explicit settled-decision policy2 upgrades to disk4. Older agents cannot open upgraded journals. Probes measure the data connection, not USB completion. See [health](docs/data-link-health.md) and [automatic rules](docs/automatic-sharing.md).
-- **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or aarch64 USB kernel behavior.
-- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, arm64 installation acceptance, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
+- **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or real ARM hardware compatibility.
+- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, full ARM GUI actions/faults, ARM virtual CDC data, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
 
 Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
 

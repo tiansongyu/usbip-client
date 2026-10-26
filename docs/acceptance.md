@@ -1,5 +1,7 @@
 # 需求逐项验收审计
 
+E63[导入PM修复验收](research/native-import-power-validation.md)：clean ed1e8fef原core1120+GUI18=1138/738输入通过；amd64/arm64 × Native/USBFS × IPv4/IPv6八positive installed pair（三轮I/O/双方live升级/104完整Rootproof/PCAP）及三原legacy/virtual回归通过。ARM USBFS-v6正向为显式xHCI追踪诊断，前次pre-product boot soft lockup经forced QMP quit仍保FAIL。共11正向+1失败pair/24guest0，不由exit0改FAIL；原E62失败保留，硬件/完整目标仍未完成。下列旧E条目保留各自当轮范围。
+
 E62[ARM USB调查](research/arm64-usb-data-validation.md)保留八原矩阵FAIL及一trace FAIL、18paired guest0；两次原软件1114/734源通过，不能替代I/O。五local guest0的原Linux USB/IP对照见导入键盘auto/suspended时无输入、只对该VHCI设备写on后恢复；不是产品修复或原矩阵通过。ARM完整I/O/live-upgrade/PCAP仍未验收，下一步先审查两import路径的PM/权限/partial cleanup。
 
 最新E61[ARM64冷安装](research/arm64-installed-validation.md)补两Ubuntu实际aarch64完整包生命周期/普通用户GUI WM0/真实fsync升级/重启/remove-purge，四QEMU0、每case42不同断言与全部guards；软件1114/731输入和cold锁clean76b4，ARM payload锁CI0316及独立同源控制字段升版。ARM USB数据、ARM完整GUI动作/故障矩阵、硬件和完整Phase0–7仍缺，不将安装通过扩大为USB兼容。
