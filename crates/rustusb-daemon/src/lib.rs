@@ -35,6 +35,8 @@ mod native_export;
 #[cfg(target_os = "linux")]
 mod native_state;
 #[cfg(target_os = "linux")]
+mod storage;
+#[cfg(target_os = "linux")]
 pub use native_channel::{
     NativeImportHandle, NativeImportReceipt, SecureImportTarget, prepare_native_import,
     prepare_native_import_tracked,
@@ -57,6 +59,11 @@ pub const STATUS_SCHEMA_VERSION: u32 = 1;
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
+    /// Read bounded storage-use metadata for one current device; root only, never an export permit.
+    InspectStorage {
+        /// Candidate fingerprint; no arbitrary filesystem paths.
+        device_id: String,
+    },
     /// Observe one exact broker-owned recorded operation; does not transfer ownership.
     InspectBrokerOperation {
         /// Concrete capability namespace.
@@ -204,6 +211,9 @@ pub enum Request {
 #[derive(Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 enum RequestWire {
+    InspectStorage {
+        device_id: String,
+    },
     /// Observe one exact broker-owned recorded operation; does not transfer ownership.
     InspectBrokerOperation {
         /// Concrete capability namespace.
@@ -318,6 +328,7 @@ impl<'de> Deserialize<'de> for Request {
         deserializer: D,
     ) -> std::result::Result<Self, D::Error> {
         Ok(match RequestWire::deserialize(deserializer)? {
+            RequestWire::InspectStorage { device_id } => Self::InspectStorage { device_id },
             RequestWire::InspectBrokerOperation { kind, correlation } => {
                 Self::InspectBrokerOperation { kind, correlation }
             }

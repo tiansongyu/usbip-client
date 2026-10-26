@@ -501,3 +501,7 @@ fn fingerprint(vendor: u16, product: u16, serial: Option<&str>, topology: &str) 
     }
     format!("usb-{:x}", hash.finalize())
 }
+
+/// Root-only bounded storage-use observations; never an export capability.
+#[cfg(target_os = "linux")]
+pub mod storage;

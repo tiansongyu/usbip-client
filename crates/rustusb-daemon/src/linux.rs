@@ -108,6 +108,7 @@ pub(crate) struct App {
     pub(crate) state: Arc<Mutex<ManagedState>>,
     pub(crate) native_state: Option<Arc<std::sync::Mutex<super::native_state::Store>>>,
     pub(crate) native_exports: super::native_export::Registry,
+    pub(crate) storage_slots: Arc<Semaphore>,
     pub(crate) native_stop: tokio::sync::watch::Sender<bool>,
     #[cfg(feature = "physical-usb")]
     pub(crate) journal: Option<Arc<std::sync::Mutex<super::journal::Store>>>,
@@ -371,7 +372,8 @@ impl App {
             })?;
         let export = matches!(&req, Request::Export { .. });
         match req {
-            Request::InspectBrokerOperation { .. }
+            Request::InspectStorage { .. }
+            | Request::InspectBrokerOperation { .. }
             | Request::BrokerPending { .. }
             | Request::PrepareNativeImportTracked { .. }
             | Request::PrepareNativeExportTracked { .. }
@@ -978,6 +980,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
             Ok(frame) => match serde_json::from_slice::<Request>(&frame).map_err(json_error) {
                 Ok(req) => {
                     operation = match &req {
+                        Request::InspectStorage { .. } => "inspect_storage",
                         Request::InspectBrokerOperation { .. } => "inspect_broker_operation",
                         Request::BrokerPending { .. } => "broker_pending",
                         Request::PrepareNativeImportTracked { .. } => {
@@ -1011,6 +1014,9 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                         Request::Sessions => "sessions",
                         Request::Status => "status",
                     };
+                    if let Request::InspectStorage { device_id } = req {
+                        return super::storage::serve(stream, app, uid, device_id).await;
+                    }
                     if matches!(
                         req,
                         Request::InspectBrokerOperation { .. } | Request::BrokerPending { .. }
@@ -1413,6 +1419,7 @@ pub(super) async fn serve(
         state: Arc::new(Mutex::new(ManagedState::default())),
         native_state,
         native_exports: Default::default(),
+        storage_slots: Arc::new(Semaphore::new(1)),
         native_stop,
         #[cfg(feature = "physical-usb")]
         journal,
@@ -1685,6 +1692,7 @@ mod tests {
             state: Arc::new(Mutex::new(ManagedState::default())),
             native_state: None,
             native_exports: Default::default(),
+            storage_slots: Arc::new(Semaphore::new(1)),
             native_stop: tokio::sync::watch::channel(false).0,
             #[cfg(feature = "physical-usb")]
             journal: None,
@@ -2055,6 +2063,7 @@ mod tests {
                 state: Arc::new(Mutex::new(ManagedState::default())),
                 native_state: None,
                 native_exports: Default::default(),
+                storage_slots: Arc::new(Semaphore::new(1)),
                 native_stop: tokio::sync::watch::channel(false).0,
                 journal: None,
                 handoffs: Arc::new(std::sync::Mutex::new(HashSet::new())),

@@ -2,6 +2,9 @@
 
 ## 2026-10-26：USB 存储占用检查与交接设计（开始）
 
+- 新增Linux只读检查模块、严格InspectStorage/root-only helper分支与CLI storage-inspect；单actual blocking worker配额不随waiter丢失释放，helper停机总join。报告保留LUN/分区/holder、各线程mount/FD/map_files/cwd/root/exe/swap与独立限制；不读存储内容、不授导出。初fmt括号错误exit1、Errno转换编译exit101及两条Clippy折叠建议exit101均保留；修后定向15项（12新增+3原storage）通过，严格三crate all-features Clippy通过。后补两个inventory/limit测试将由完整gate执行，未预称通过。
+- 独立QEMU夹具已编写并完成Python语法检查，含两LUN/两分区、真实C raw mmap/线程FD、命名空间、swap、dm-crypt、权限/导出拒绝与原driver基线。新镜像只用private普通文件；来宾限定破坏操作前验证精确合成USB祖先和64MiB容量。尚无本轮QEMU结果。
+
 - 从干净 `2eca4522104eef7ccbf23dffba2ef1120bf4349c` 继续完整 Phase0–7 目标，重新读取原始需求。当前存储全面拒绝仅是保护，不是需求4.6完成。本轮选定 root-only 只读检查；完整可写交接仍 proposed，见 `research/storage-inspection-design.md`。
 - 使用 writing-technical-design、核心开发、technical-documentation 和 humanizer-zh。按设计技能要求并行研究固定 Linux5.15/6.8 块层所有权、USB/BOT/UAS交接与QEMU6.2；只读研究在 `/tmp`，未操作宿主设备或开始QEMU。发现 O_EXCL 不挡普通raw FD、驱动解绑不证明缓存成功、stock Native unbind会尝试恢复本地驱动；不以扫描/RO/cleanup proof代替写入排他与数据一致性。
 - 实施前记录接口、权限、实际blocking owner、容量和可见性边界。现有Native/USBFS存储拒绝、旧wire/journal/Session与硬件未验状态保持；检查成功仅代表报告生成，不授导出许可。尚无本轮产品测试或QEMU结果。

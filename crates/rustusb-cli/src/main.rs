@@ -124,6 +124,8 @@ enum Command {
         #[arg(long)]
         config: PathBuf,
     },
+    /// Inspect storage use and coverage gaps (root only; never grants export).
+    StorageInspect { device_id: String },
     /// Inspect unresolved secure Native channels through the root helper (root only).
     NativePending {
         /// Continue a previous bounded page using its next_after value.
@@ -323,6 +325,15 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
             backend,
             control_stdin,
         } => secure_server::run(&cli.socket, config.clone(), *backend, *control_stdin).await,
+        Command::StorageInspect { device_id } => {
+            invoke(
+                &cli,
+                Request::InspectStorage {
+                    device_id: device_id.clone(),
+                },
+            )
+            .await
+        }
         Command::NativePending { after } => {
             invoke(
                 &cli,
