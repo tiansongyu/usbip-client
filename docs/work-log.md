@@ -4,6 +4,8 @@
 
 - E61从clean f9fdcdf9重读完整原目标，检查Git/日志/核心skill/验收/安装设计与现有Vm。上轮为已验证修复、原软件/QEMU/四平台CI与Pages发布进展，非blocked。当前aarch64只有原生CI，无安装/内核USB接受证据；host无qemu-system-aarch64/ARM固件，现有QEMU6.2，磁盘剩余404GiB。先写ARM64验收设计，保持完整Phase0–7/硬件范围，不缩成环境准备通过。
 - 查QEMU固定v6.2.0 virt原文及两Ubuntu dated ARM64镜像目录；拟用virt-6.2/cortex-a72/TCG、匹配QEMU与EDK2临时解包，不改host root/service/USB。读取工具目录前一次exec指定尚不存在workdir，进程创建被拒绝、没有下载动作；随后先建目录再开始原下载。GitHub专用artifact下载响应只存.private，禁止signed cap进入日志/Git。当前只有设计与依赖准备，尚无新boot/install/USB PASS。
+- 原APT下载/两镜像下载真实进程均0；qemu-system-arm6.2+dfsg-2ubuntu6.31及EDK2 2022.02-3ubuntu0.22.04.7逐APT SHA256匹配、仅临时解包，ldd无missing，virt-6.2/cortex-a72/两64MiB pflash确认。两official ARM64 image按原dated signed SUMS重新gpgv/逐真实bytes SHA256通过；CI0316 Jammy/Noble ARM ZIP皆API digest/size匹配解包，尚未执行。首下载脚本误把file_uri对象当路径实际exit1，原脚本/日志保留；检查schema后使用私有download_url完成，不输出cap。
+- 新arm_vm仅继承原Vm的seed/disk/SSH/commands/close，总wait不改；显式TCG/virt-6.2/cortex-a72/私有VARS与virtio disk/seed，guest先核aarch64/arm64/systemd。prepare exact import anchor组合原OS方法，原guest命令/clean/head/owner判据保留、生成方法hash，两个Python compile与diff预检通过。当前还没有实际ARM boot/prep裁决；commit后冻结source再运行。
 
 ## 2026-10-26：framed关闭证据与交付收尾
 
