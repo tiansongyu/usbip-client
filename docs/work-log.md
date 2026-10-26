@@ -2,6 +2,9 @@
 
 ## 2026-10-26：ARM64 虚拟 HID/CDC 数据验证（开始）
 
+- 内容 dd880309 普通SSH push actual88154 exit0，remote核对8280 exit0精确同HEAD/clean。software40304757716四native job121511010294/010792/010803/010868、GUI40304757398四job121511008964/009157/009349/009425、Pages40304757421的check121511008474/deploy121511235345全部completed/success。只核primary run/job/step，不重算各平台1138或冒充完整CI日志/新USB执行。八canonical HTTPS响应200逐dd site bytes相同；公开tab8实读1280×720/新报告及失败文案/无横溢，console空。
+- 发布原件44份1,068,258rawB，gzip108,714B/SHA132f31dfa39651b408a37ce1a61e1e69f81f663e7167883561c24734afa41e08，见`evidence/arm64-virtual-publication-dd880309-20261026/manifest.json`。20 QA源映射dd，仅work-log在检查后加入QA回执，其余逐bytes同。最后仅提交此回执和软件计数的local限定说明再普通push；不把后续文档commit当已观测CI。完整原Phase0–7取得实际进展，硬件/其他未验范围及goal active保持。
+
 - 文档QA：12文件548本地/仓库target、270站点检查、实际app.js Node语法及diff检查全0，603归档成员逐原件/Gitblob一致；初Node命令误用不存在main.js的exit1另留转录。CUA桌面1280/窄屏390新链接/限制与无横溢、ArrowRight选中/焦点/query、CSP无脚本三panel及命令通过；截图Unavailable，未重跑clipboard/reduced-motion。临时59/60关闭，preview50778实际exit0；本地关闭前reset仍观测390，保留公开tab8另实读1280×720。四global readme-site文件与Codex发现symlink不变。尚未宣称此次远端CI/Pages完成。
 
 - 新 clean3fc08f9c IPv6 actual61147 exit0、两controller/两QEMU0，完整两轮HID/CDC/26方向TLS与四guard通过；两guest安装readiness都首采ready，不声称已测持锁等待或消除所有安装竞态。结合原1bb IPv4正向，共四轮、八channel、每方向及echo各140B；首v6 FAIL保持。产品/241 Rust与manifest输入未改，无新Cargo计数。

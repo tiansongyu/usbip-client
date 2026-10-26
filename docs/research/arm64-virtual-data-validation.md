@@ -28,7 +28,7 @@ the helper hash is `a3b8f928c9e23e40b3d149a93ef419bb7a09ae5fb1d5d1b71ad9487a9b00
 Installed ELF headers and live process hashes match that receipt. No product Rust,
 Cargo or vendor source changed. The existing **1138 software test executions**
 belong to the [E63 gates](native-import-power-validation.md); they were not rerun
-or recounted for this fixture-only change.
+locally or recounted for these QEMU trials.
 
 The guests execute actual aarch64 kernels `5.15.0-198-generic` and
 `6.8.0-147-generic` under QEMU 6.2, `virt-6.2`, cortex-a72 and TCG. Each has two
@@ -114,3 +114,28 @@ Real-device G1/G2, ARM virtual fault coverage and managed-job variants, full ARM
 GUI actions/faults, storage, isochronous transfers, performance and Windows USB
 support remain unvalidated. Earlier installation, import-power and boot failures
 retain their original verdicts. The Phase 0–7 goal remains active.
+
+## Publication receipt
+
+Content commit `dd88030956ab0a8a5177abec08dff04d5b088385` was pushed normally
+to the authorized repository, with matching remote main and a clean worktree.
+Its four native [software jobs](https://github.com/tiansongyu/usbip-client/actions/runs/40304757716),
+four native [GUI jobs](https://github.com/tiansongyu/usbip-client/actions/runs/40304757398),
+and both [Pages jobs](https://github.com/tiansongyu/usbip-client/actions/runs/40304757421)
+completed successfully. These are primary run/job/step observations; complete CI
+logs were not downloaded and per-platform test counts were not reconstructed.
+They do not change the QEMU binary or fixture revisions above.
+
+Eight canonical HTTPS responses returned 200 with bytes identical to that
+commit's site files. The live browser shows the new report and preserved
+installation-failure statement at 1280×720, with no horizontal overflow or
+reported warning/error console entries. Local checks also cover the 390-pixel
+layout, ArrowRight focus/selection and all three backend panels under a script-
+blocking CSP. Screenshots were unavailable; clipboard and reduced-motion checks
+were not rerun for this text-only site change. The global `readme-site` skill's
+four files and discovery symlink remain unchanged.
+
+[Publication evidence](../evidence/arm64-virtual-publication-dd880309-20261026/summary.json)
+contains 44 original metadata, HTTP and method files. This final receipt is a
+documentation update, not another USB execution or an observed CI result for
+its later commit.
