@@ -21,6 +21,9 @@ struct Args {
     /// Separate root-only secure Native channel intents, retained across restarts.
     #[arg(long, default_value = "/var/lib/rustusb/native")]
     native_state_dir: PathBuf,
+    /// Enable separate root-only controller policy history; never authorizes USB targets.
+    #[arg(long)]
+    controller_state_dir: Option<PathBuf>,
     /// Write bounded sanitized NDJSON to an existing root-owned mode0700 directory.
     #[arg(long, conflicts_with = "log_json")]
     log_directory: Option<PathBuf>,
@@ -75,11 +78,12 @@ fn main() -> std::process::ExitCode {
             return std::process::ExitCode::FAILURE;
         }
     };
-    let result = runtime.block_on(rustusb_daemon::serve_with_state(
+    let result = runtime.block_on(rustusb_daemon::serve_with_controller_state(
         &args.config,
         &args.socket,
         &args.physical_state_dir,
         &args.native_state_dir,
+        args.controller_state_dir.as_deref(),
     ));
     let mut failed = false;
     if let Err(error) = result {

@@ -108,6 +108,7 @@ pub(crate) struct App {
     pub(crate) state: Arc<Mutex<ManagedState>>,
     pub(crate) native_state: Option<Arc<std::sync::Mutex<super::native_state::Store>>>,
     pub(crate) native_exports: super::native_export::Registry,
+    pub(crate) controllers: Option<Arc<super::controller::Service>>,
     pub(crate) storage_slots: Arc<Semaphore>,
     pub(crate) native_stop: tokio::sync::watch::Sender<bool>,
     #[cfg(feature = "physical-usb")]
@@ -372,7 +373,8 @@ impl App {
             })?;
         let export = matches!(&req, Request::Export { .. });
         match req {
-            Request::InspectStorage { .. }
+            Request::Controller { .. }
+            | Request::InspectStorage { .. }
             | Request::InspectBrokerOperation { .. }
             | Request::BrokerPending { .. }
             | Request::PrepareNativeImportTracked { .. }
@@ -980,6 +982,7 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
             Ok(frame) => match serde_json::from_slice::<Request>(&frame).map_err(json_error) {
                 Ok(req) => {
                     operation = match &req {
+                        Request::Controller { .. } => "controller",
                         Request::InspectStorage { .. } => "inspect_storage",
                         Request::InspectBrokerOperation { .. } => "inspect_broker_operation",
                         Request::BrokerPending { .. } => "broker_pending",
@@ -1014,6 +1017,9 @@ async fn serve_connection(mut stream: UnixStream, app: Arc<App>) -> Result<()> {
                         Request::Sessions => "sessions",
                         Request::Status => "status",
                     };
+                    if let Request::Controller { command } = req {
+                        return super::controller::serve(stream, app, uid, command).await;
+                    }
                     if let Request::InspectStorage { device_id } = req {
                         return super::storage::serve(stream, app, uid, device_id).await;
                     }
@@ -1342,6 +1348,7 @@ pub(super) async fn serve(
     socket: &Path,
     physical_state: &Path,
     native_state: &Path,
+    controller_state: Option<&Path>,
 ) -> Result<()> {
     if !rustix::process::geteuid().is_root() {
         return Err(Error::Permission(
@@ -1364,6 +1371,18 @@ pub(super) async fn serve(
                 .await
                 .map_err(|_| Error::State("Native journal initialization task failed".into()))??,
         )))
+    } else {
+        None
+    };
+    let controllers = if let Some(path) = controller_state {
+        let path = path.to_owned();
+        Some(Arc::new(
+            tokio::task::spawn_blocking(move || super::controller::Service::open(&path))
+                .await
+                .map_err(|_| {
+                    Error::State("controller store initialization worker failed".into())
+                })??,
+        ))
     } else {
         None
     };
@@ -1419,6 +1438,7 @@ pub(super) async fn serve(
         state: Arc::new(Mutex::new(ManagedState::default())),
         native_state,
         native_exports: Default::default(),
+        controllers,
         storage_slots: Arc::new(Semaphore::new(1)),
         native_stop,
         #[cfg(feature = "physical-usb")]
@@ -1692,6 +1712,7 @@ mod tests {
             state: Arc::new(Mutex::new(ManagedState::default())),
             native_state: None,
             native_exports: Default::default(),
+            controllers: None,
             storage_slots: Arc::new(Semaphore::new(1)),
             native_stop: tokio::sync::watch::channel(false).0,
             #[cfg(feature = "physical-usb")]
@@ -2063,6 +2084,7 @@ mod tests {
                 state: Arc::new(Mutex::new(ManagedState::default())),
                 native_state: None,
                 native_exports: Default::default(),
+                controllers: None,
                 storage_slots: Arc::new(Semaphore::new(1)),
                 native_stop: tokio::sync::watch::channel(false).0,
                 journal: None,
@@ -2121,5 +2143,93 @@ mod tests {
     fn root_socket_validation_rejects_user_writable_directory() {
         assert!(protected_directory(Path::new("/tmp"), 0).is_err());
         assert!(protected_directory(Path::new("relative"), 0).is_err());
+    }
+}
+
+// Called only with the original global mutation owner retained by the worker.
+pub(crate) fn controller_conflicts(
+    app: &App,
+    state: &ManagedState,
+    pin: &rustusb_native::controller::PinnedController,
+) -> Result<()> {
+    let mut paths = app.native_exports.export_scopes()?;
+    if let Some(store) = &app.native_state {
+        paths.extend(
+            store
+                .lock()
+                .map_err(|_| Error::State("Native journal lock poisoned".into()))?
+                .export_scopes()?,
+        );
+    }
+    for path in paths {
+        if pin.contains_original_device(&path)? {
+            return Err(Error::State(
+                "controller has an unresolved Native export; reconcile its original owner first"
+                    .into(),
+            ));
+        }
+    }
+    for device in state.exports.values() {
+        let topology = device.topology.as_str();
+        if legacy_controller_scope(topology)? == pin.canonical_path() {
+            return Err(Error::State(
+                "controller has an active legacy export".into(),
+            ));
+        }
+    }
+    #[cfg(feature = "physical-usb")]
+    if let Some(store) = &app.journal {
+        let records = store
+            .lock()
+            .map_err(|_| Error::State("physical journal lock poisoned".into()))?
+            .records()?;
+        for record in records {
+            if pin.contains_physical_generation(
+                &record.baseline.bus_id,
+                &record.baseline.receipt,
+                &record.owner.boot_id,
+            )? {
+                return Err(Error::State("controller has an unresolved physical grant; reconcile its original owner first".into()));
+            }
+        }
+    }
+    Ok(())
+}
+fn legacy_controller_scope(topology: &str) -> Result<PathBuf> {
+    let (controller, ports) = topology
+        .split_once("/ports/")
+        .ok_or_else(|| Error::State("unknown legacy controller scope".into()))?;
+    let path = Path::new(controller);
+    if !controller.starts_with("devices/")
+        || !path.components().all(|c| matches!(c, Component::Normal(_)))
+        || format!("1-{ports}").parse::<rustusb_core::BusId>().is_err()
+    {
+        return Err(Error::State("invalid legacy controller scope".into()));
+    }
+    Ok(Path::new("/sys").join(path))
+}
+
+#[cfg(test)]
+mod controller_scope_tests {
+    use super::*;
+    #[test]
+    fn legacy_scope_is_saved_topology_not_a_new_device_lookup() -> Result<()> {
+        assert_eq!(
+            legacy_controller_scope("devices/pci0000:00/0000:00:06.0/ports/1.2")?,
+            Path::new("/sys/devices/pci0000:00/0000:00:06.0")
+        );
+        assert_ne!(
+            legacy_controller_scope("devices/pci0000:00/0000:00:06.00/ports/1.2")?,
+            Path::new("/sys/devices/pci0000:00/0000:00:06.0")
+        );
+        for s in [
+            "",
+            "/sys/devices/pci/ports/1",
+            "devices/pci/../other/ports/1",
+            "devices/pci/ports/1/extra",
+        ] {
+            assert!(legacy_controller_scope(s).is_err(), "{s}");
+        }
+        Ok(())
     }
 }

@@ -1,6 +1,16 @@
 # RustUSB 工作日志
 
-## 2026-10-26：持久控制器管理实现（开始）
+## 2026-10-26：持久控制器管理实现（进行中）
+
+- 实现已接入root-only CLI/helper、显式可选state目录、独立有界持久历史、真实blocking owner与所选控制器旧owner范围检查。全部20项定向测试及第二轮workspace/all-targets/all-features Clippy通过；准备固定实现提交后运行完整gate和实际产品QEMU，尚不宣称新USB/硬件验收。
+
+- 合并定向Native/helper范围测试20项通过；首次all-features Clippy实际101为manual_strip，保留原log/源，改为strip_prefix而不改解析条件。
+
+- helper第二轮实际101：2项通过/6项store夹具失败，测试anchor本身受umask影响为组可写；原log/夹具副本保留，显式设置临时anchor0700。实际blocking owner取消测试已通过，未将该局部通过称为完整gate。
+
+- helper首次定向编译实际101：新增scope方法漏导入PathBuf，且误把既有String topology当Option；保留原log/两受影响源后按实际类型修正。Native第三轮8项已通过；仍无新QEMU结果。
+
+- 控制器层首次定向测试实际101：2通过/3失败，临时夹具继承组可写目录/文件而被可信对象检查拒绝。原log与首次源码副本保留；修夹具明确0755/0644，不放宽生产权限检查。尚无完整gate或QEMU结果。
 
 - 从clean0c3dd04c继续，完整重读原Phase0–7目标、当前工作日志/核心skill和相关源码。上一轮实际验证与发布属于进展；全目标继续active。先记录[实施契约](research/controller-enrollment-implementation.md)，再实现root-only opt-in controller管理，不能以更窄的只读报告代替实际持久意图与默认授权写入。
 - 沿用rustusb-development、writing-technical-design、technical-documentation及humanizer-zh。按设计skill明确要求，两已有agent分别只读审查现有持久file机制/真实worker所有权与Linux pinned sysfs/boot解析，仅写各自/tmp，不生成逐组件技能、不并行改产品。现有storage拒绝保持，未来target/release仍必须完成；本轮尚无产品实现或新验证结果。

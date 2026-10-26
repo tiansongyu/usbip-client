@@ -14,6 +14,10 @@ Arming requires the actual boot command line to select device default denial, th
 
 Only the fixed `authorized_default` and `interface_authorized_default` attributes may receive a single checked write of `0\n`. A short/error store is an uncertain mutation; it is never completed by writing a suffix. Every root/attribute is opened through trusted pinned directories, with fixed basenames, NOFOLLOW, ownership/type/filesystem checks, and before/after identity and value verification. The complete root set is re-observed. No method writes device authorization, defaults1, PCI unbind/reset or boot configuration.
 
+Original scope is checked under the same mutation guard. Durable and live Native exports use their saved canonical paths, including registrations that have not bound yet; VHCI imports are excluded. Legacy exports use their saved topology. Physical grants lack a historical controller path, so only the original same-boot sysfs generation and address can establish scope. Missing/replaced generations are unknown and require the existing explicit grant reconciliation; known other-controller records do not block this controller. Enrollment never retires these owners implicitly or substitutes a current Bus ID for an old device.
+
+The kernel observer retains every directory ancestor as well as each root interface. Two complete matching observations, with boot/global checks at both ends and an unchanged hub driver, are required. This detects observed changes; it is not an atomic kernel snapshot or exclusion of an external administrator.
+
 ## Durable state and request outcomes
 
 Use a separate schema and directory, not the Native channel or USBFS resource journal. Reuse their protected-file operations: bounded bytes before strict decoding, root0700 directory, root0600 regular files with one link, lifetime flock, identity/bytes checks, fixed temporary file, atomic rename and directory fsync. An uncertain commit poisons further mutation. Missing/corrupt existing state does not initialize a fresh history.

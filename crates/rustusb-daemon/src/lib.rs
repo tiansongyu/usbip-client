@@ -29,6 +29,8 @@ pub use physical::PhysicalGrant;
 #[cfg(target_os = "linux")]
 mod ancillary;
 #[cfg(target_os = "linux")]
+pub mod controller;
+#[cfg(target_os = "linux")]
 mod native_channel;
 #[cfg(target_os = "linux")]
 mod native_export;
@@ -59,6 +61,12 @@ pub const STATUS_SCHEMA_VERSION: u32 = 1;
 #[derive(Debug, Clone, Serialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Request {
+    /// Root-only explicit controller policy management; never a USB target grant.
+    #[cfg(target_os = "linux")]
+    Controller {
+        /// Bounded administrator operation.
+        command: controller::Command,
+    },
     /// Read bounded storage-use metadata for one current device; root only, never an export permit.
     InspectStorage {
         /// Candidate fingerprint; no arbitrary filesystem paths.
@@ -211,6 +219,10 @@ pub enum Request {
 #[derive(Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 enum RequestWire {
+    #[cfg(target_os = "linux")]
+    Controller {
+        command: controller::Command,
+    },
     InspectStorage {
         device_id: String,
     },
@@ -328,6 +340,8 @@ impl<'de> Deserialize<'de> for Request {
         deserializer: D,
     ) -> std::result::Result<Self, D::Error> {
         Ok(match RequestWire::deserialize(deserializer)? {
+            #[cfg(target_os = "linux")]
+            RequestWire::Controller { command } => Self::Controller { command },
             RequestWire::InspectStorage { device_id } => Self::InspectStorage { device_id },
             RequestWire::InspectBrokerOperation { kind, correlation } => {
                 Self::InspectBrokerOperation { kind, correlation }
@@ -820,6 +834,7 @@ pub async fn serve(config: &Path, socket: &Path) -> Result<()> {
             socket,
             Path::new("/var/lib/rustusb/physical"),
             Path::new("/var/lib/rustusb/native"),
+            None,
         )
         .await
     }
@@ -836,7 +851,14 @@ pub async fn serve(config: &Path, socket: &Path) -> Result<()> {
 pub async fn serve_with_physical_state(config: &Path, socket: &Path, state: &Path) -> Result<()> {
     #[cfg(target_os = "linux")]
     {
-        linux::serve(config, socket, state, Path::new("/var/lib/rustusb/native")).await
+        linux::serve(
+            config,
+            socket,
+            state,
+            Path::new("/var/lib/rustusb/native"),
+            None,
+        )
+        .await
     }
     #[cfg(not(target_os = "linux"))]
     {
@@ -1038,7 +1060,7 @@ pub async fn serve_with_state(
 ) -> Result<()> {
     #[cfg(target_os = "linux")]
     {
-        linux::serve(config, socket, physical, native).await
+        linux::serve(config, socket, physical, native, None).await
     }
     #[cfg(not(target_os = "linux"))]
     {
@@ -1106,5 +1128,26 @@ mod secure_policy_tests {
         assert!(p.authorize_physical(&id).is_err());
         assert!(p.authorize_secure_physical(1000, &id).is_err());
         Ok(())
+    }
+}
+
+/// Run with an optional separate root-only controller policy store.
+/// Omission disables controller management and does not retire or restore policy.
+/// The administrator, never an RPC caller, chooses the path.
+pub async fn serve_with_controller_state(
+    config: &Path,
+    socket: &Path,
+    physical: &Path,
+    native: &Path,
+    controller: Option<&Path>,
+) -> Result<()> {
+    #[cfg(target_os = "linux")]
+    {
+        linux::serve(config, socket, physical, native, controller).await
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = (config, socket, physical, native, controller);
+        Err(Error::Unsupported("Linux root helper required".into()))
     }
 }

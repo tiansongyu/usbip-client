@@ -340,6 +340,14 @@ async fn prepare_export(
 }
 #[derive(Default)]
 pub(crate) struct Registry(Mutex<BTreeMap<String, Arc<Live>>>);
+impl Registry {
+    pub(crate) fn export_scopes(&self) -> Result<Vec<PathBuf>> {
+        Ok(lock(&self.0)?
+            .values()
+            .map(|live| live.registration.generation.sysfs_path.clone())
+            .collect())
+    }
+}
 struct State {
     capability: ExportCapability,
     slot: Option<String>,

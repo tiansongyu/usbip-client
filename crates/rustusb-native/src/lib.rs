@@ -8,6 +8,9 @@
 /// Anonymous kernel channels for a separately authorized secure broker.
 #[cfg(target_os = "linux")]
 pub mod channel;
+/// Administrator-owned PCI controller default-denial policy.
+#[cfg(target_os = "linux")]
+pub mod controller;
 /// Read-only Linux tools, modules, and kernel-interface diagnosis.
 pub mod diagnostics;
 /// Strong original-attribute Native server channels for an authorized broker.

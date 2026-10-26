@@ -129,7 +129,7 @@ pub(crate) struct ExportRecord {
     pub stub: Option<StubRecord>,
 }
 
-fn validate_directory(directory: &File, uid: u32) -> Result<()> {
+pub(crate) fn validate_directory(directory: &File, uid: u32) -> Result<()> {
     let metadata = directory.metadata()?;
     if !metadata.is_dir() || metadata.uid() != uid || metadata.mode() & 0o022 != 0 {
         return Err(Error::Permission(
@@ -141,7 +141,7 @@ fn validate_directory(directory: &File, uid: u32) -> Result<()> {
 
 // Traverse each component through its parent FD. No untrusted ancestor, symlink,
 // or '..' is accepted. Only the private test entry point uses an anchor above /.
-fn open_directory(path: &Path, anchor: &Path, uid: u32) -> Result<(File, bool)> {
+pub(crate) fn open_directory(path: &Path, anchor: &Path, uid: u32) -> Result<(File, bool)> {
     if !path.is_absolute() || !anchor.is_absolute() {
         return Err(Error::InvalidInput(
             "Native channel journal path must be absolute".into(),
@@ -201,7 +201,7 @@ fn open_directory(path: &Path, anchor: &Path, uid: u32) -> Result<(File, bool)> 
     Ok((directory, final_created))
 }
 
-fn validate_file(metadata: &std::fs::Metadata, uid: u32) -> Result<()> {
+pub(crate) fn validate_file(metadata: &std::fs::Metadata, uid: u32) -> Result<()> {
     if !metadata.is_file()
         || metadata.uid() != uid
         || metadata.nlink() != 1
@@ -215,7 +215,7 @@ fn validate_file(metadata: &std::fs::Metadata, uid: u32) -> Result<()> {
     Ok(())
 }
 
-fn identity_at(directory: &File, name: &str, uid: u32) -> Result<Option<(u64, u64)>> {
+pub(crate) fn identity_at(directory: &File, name: &str, uid: u32) -> Result<Option<(u64, u64)>> {
     let stat = match rustix::fs::statat(directory, name, AtFlags::SYMLINK_NOFOLLOW) {
         Ok(stat) => stat,
         Err(rustix::io::Errno::NOENT) => return Ok(None),
@@ -233,7 +233,7 @@ fn identity_at(directory: &File, name: &str, uid: u32) -> Result<Option<(u64, u6
     Ok(Some((stat.st_dev, stat.st_ino)))
 }
 
-fn open_file(directory: &File, name: &str, uid: u32, create: bool) -> Result<File> {
+pub(crate) fn open_file(directory: &File, name: &str, uid: u32, create: bool) -> Result<File> {
     let prior = identity_at(directory, name, uid)?;
     if !create && prior.is_none() {
         return Err(std::io::Error::from(std::io::ErrorKind::NotFound).into());
@@ -281,6 +281,15 @@ pub(crate) struct Store {
     fail_after_rename: bool,
 }
 impl Store {
+    pub(crate) fn export_scopes(&mut self) -> Result<Vec<std::path::PathBuf>> {
+        self.healthy()?;
+        Ok(self
+            .exports
+            .values()
+            .map(|r| r.registration.generation.sysfs_path.clone())
+            .collect())
+    }
+
     pub(crate) fn open(path: &Path) -> Result<Self> {
         Self::open_anchored(path, Path::new("/"), 0)
     }
@@ -835,7 +844,13 @@ mod tests {
         let uid = rustix::process::geteuid().as_raw();
         let record = export_fixture("00000000-0000-4000-8000-000000000001")?;
         let mut store = Store::open_anchored(&path, root.path(), uid)?;
+        assert!(store.export_scopes()?.is_empty());
         store.reserve_export(record.clone())?;
+        assert!(record.bound.is_none());
+        assert_eq!(
+            store.export_scopes()?,
+            vec![record.registration.generation.sysfs_path.clone()]
+        );
         assert!(
             store
                 .reserve_export(export_fixture("00000000-0000-4000-8000-000000000003")?)
@@ -844,6 +859,10 @@ mod tests {
         drop(store);
         let mut reopened = Store::open_anchored(&path, root.path(), uid)?;
         assert!(reopened.unresolved.contains(&record.lease_id));
+        assert_eq!(
+            reopened.export_scopes()?,
+            vec![record.registration.generation.sysfs_path.clone()]
+        );
         assert_eq!(reopened.pending(None)?["records"][0]["kind"], "export");
         assert!(
             reopened

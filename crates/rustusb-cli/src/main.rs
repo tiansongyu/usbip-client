@@ -9,6 +9,8 @@ mod tui;
 mod catalog_watch;
 
 #[cfg(target_os = "linux")]
+mod controller;
+#[cfg(target_os = "linux")]
 mod device_watch;
 mod diagnostics;
 mod event_output;
@@ -75,6 +77,9 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Manage explicit root-only controller denial policy; does not enable storage exports.
+    #[cfg(target_os = "linux")]
+    Controller(controller::Args),
     /// Open the ordinary-user terminal frontend of the existing application service.
     #[cfg(all(feature = "tui", target_os = "linux"))]
     Tui(tui::Args),
@@ -309,6 +314,16 @@ async fn run(cli: Cli, monitor: Option<rustusb_logging::LogMonitor>) -> Result<(
     #[cfg(not(all(feature = "secure-transport", target_os = "linux")))]
     let _ = &monitor;
     match &cli.command {
+        #[cfg(target_os = "linux")]
+        Command::Controller(args) => {
+            invoke(
+                &cli,
+                Request::Controller {
+                    command: args.request()?,
+                },
+            )
+            .await
+        }
         #[cfg(all(feature = "tui", target_os = "linux"))]
         Command::Tui(args) => tui::run(args.clone(), cli.json).await,
         Command::Diagnostics(args) => {
