@@ -2,6 +2,8 @@
 
 ## 2026-10-26：ARM64 虚拟 HID/CDC 数据验证（开始）
 
+- 新增独立 ARM virtual host/guest 夹具，沿用原 VM、证书生成和严格 PCAP 分类器；原 Native/USBFS runner 与 guest 不改。两轮真实 HID/CDC、唯一 channel/实际 UID/PID/starttime/ELF、内核行与代际、竞争拒绝、原进程 wait 和释放条件分别核验。语法解析与 CLI help 通过，尚未运行 QEMU；Rust/依赖/主机 release ELF 不改，软件仍引用 E63 原完整 gate，不能重标为本轮新执行。
+
 - 从干净 d5b5ad47 继续完整 Phase 0–7 目标。E63 的 ARM Native/USBFS 和 x86_64 virtual 证据保持原范围；本轮补 actual ARM64 virtual HID/CDC 双栈输入输出、并发导入、释放和重连。先写 `research/arm64-virtual-data-design.md`，不改产品或原物理夹具判据。
 - 使用已核验的 ed1 原生 ARM CI Jammy 包、两 Ubuntu prepared COW 系统和原 ARM VM owner。新夹具采用现有 foreground 控制，动态 broker UID；不把没有 durable correlation 的前台模式写成 managed Root 证明。文档按 technical-documentation 与 humanizer-zh 检查，保留事实、路径及历史失败。
 

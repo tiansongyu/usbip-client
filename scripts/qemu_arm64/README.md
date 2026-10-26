@@ -76,3 +76,22 @@ The [actual investigation](../../docs/research/arm64-usb-data-validation.md)
 retains eight failed acceptance pairs and one traced diagnostic pair. Original
 Linux USB/IP controls reproduce suspended imported HID input; per-device resume
 restores events only in that diagnostic. This is not a passing ARM data matrix.
+
+For virtual HID/CDC, use the separate foreground fixture. It runs no emulated
+source USB peripherals and preserves the physical matrix above. The package and
+native build receipt are explicitly pinned to the E63 `ed1e8fef` ARM payload:
+
+```sh
+python3 scripts/qemu_arm64/virtual.py --tool-root /private/extracted-tools/usr-root \
+  --prepared /private/arm64-prepared --output /private/arm-virtual-v4 \
+  --package /private/ci-pairs/jammy/rustusb_0.1.0~ci31+ged1e8fef84c0-1_arm64.deb \
+  --build-receipt /private/ci-pairs/jammy/build-0.1.0~ci31+ged1e8fef84c0-1.json \
+  --family 4
+```
+
+Repeat with `--family 6` and a new output directory to reverse the Ubuntu roles.
+The [validation design](../../docs/research/arm64-virtual-data-design.md) specifies
+the actual HID/CDC bytes, owner/receipt checks, strict packet classifier and
+evidence boundaries. The controller keeps product child handles through TERM
+and actual wait; its observation timeout never counts as a successful stop.
+The resulting evidence is separate from managed jobs, upgrades and real hardware.
