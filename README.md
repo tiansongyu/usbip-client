@@ -270,6 +270,12 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
+[ARM64 virtual HID/CDC tests](docs/research/arm64-virtual-data-validation.md) now
+pass IPv4 and IPv6 on Ubuntu 22.04/24.04: four actual I/O cycles, eight distinct
+import channels and complete release checks. The first IPv6 installation attempt
+failed on a package-manager lock and remains recorded separately. These tests use
+the existing `ed1e8fef` ARM binaries; they add no new software-test count.
+
 The [import-power validation](docs/research/native-import-power-validation.md)
 records **1138 software test executions** and **eight positive installed USB
 pairs** at clean `ed1e8fef`, with 24 complete HID/FTDI I/O rounds and 104 exact
@@ -308,7 +314,7 @@ Each report retains its tested revision and original failures. Actual USB cleanu
 - **Recovery has explicit limits.** The optional Rust services support cooperative shutdown; USBFS also protects unresolved grants. Opt-in recovery has two QEMU positive scenarios and three additional [upgrade, revocation and external-claim checks](docs/research/physical-driver-autorestore-negatives.md). These validate fixed simulated-device cases. General crash recovery, arbitrary FD revocation and power-loss durability testing remain unfinished.
 - **Journal upgrades are explicit.** Health uses strict disk2; automatic policy1 upgrades to disk3, and explicit settled-decision policy2 upgrades to disk4. Older agents cannot open upgraded journals. Probes measure the data connection, not USB completion. See [health](docs/data-link-health.md) and [automatic rules](docs/automatic-sharing.md).
 - **Compatibility is device-specific.** The experimental USBFS backend does not support isochronous transfers. QEMU results do not establish arbitrary HID, serial, composite, camera or audio support, or real ARM hardware compatibility.
-- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, full ARM GUI actions/faults, ARM virtual CDC data, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
+- **More product work remains.** Full GUI acceptance, dynamic/physical remote rules, full ARM GUI actions/faults, ARM virtual fault coverage, Windows USB support and the remaining hardware/security gates are on the [roadmap](docs/roadmap.md).
 
 Unknown or externally created sessions are not automatically adopted. Failed or cancelled operations may have side effects; inspect current device, session and kernel state before retrying. See the [security model](docs/security.md) and [Native guide](docs/native-guide.md) for ownership and recovery rules.
 

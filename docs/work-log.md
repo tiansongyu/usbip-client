@@ -2,6 +2,12 @@
 
 ## 2026-10-26：ARM64 虚拟 HID/CDC 数据验证（开始）
 
+- 文档QA：12文件548本地/仓库target、270站点检查、实际app.js Node语法及diff检查全0，603归档成员逐原件/Gitblob一致；初Node命令误用不存在main.js的exit1另留转录。CUA桌面1280/窄屏390新链接/限制与无横溢、ArrowRight选中/焦点/query、CSP无脚本三panel及命令通过；截图Unavailable，未重跑clipboard/reduced-motion。临时59/60关闭，preview50778实际exit0；本地关闭前reset仍观测390，保留公开tab8另实读1280×720。四global readme-site文件与Codex发现symlink不变。尚未宣称此次远端CI/Pages完成。
+
+- 新 clean3fc08f9c IPv6 actual61147 exit0、两controller/两QEMU0，完整两轮HID/CDC/26方向TLS与四guard通过；两guest安装readiness都首采ready，不声称已测持锁等待或消除所有安装竞态。结合原1bb IPv4正向，共四轮、八channel、每方向及echo各140B；首v6 FAIL保持。产品/241 Rust与manifest输入未改，无新Cargo计数。
+- 同作者只读原件方法 actual28661 exit0，逐742×2 Gitblob、52两侧请求响应、raw input_event/CDC bytes/channel/UID/PID/starttime/释放复核通过，不算另一执行或独立安全审计。collector首两次因自身source字面marker误报，未写archive，保留方法及tool转录；第三次保持实际21key逐bytes排除，并用有material的PEM/cap模式，603成员2,694,777rawB、gzip915,944B/SHA9a2a98da6236408ac9226665e6b73d0333e165e31fea2f1d9c4a728290e72ff3全部回读一致。原失败、实际source、完整public原件均已归档。
+- 英文专项报告、README英中、原展示页及验收/测试/兼容/路线图/核心约定已同步；原rstop式结构和已装全局readme-site保留，历史E63证据不重归属。尚未宣称此次文档QA或发布完成。完整Phase0–7继续active。
+
 - clean 1bb65475 首 IPv4 全部通过，actual host 24417 exit0、两 controller/两 QEMU 均0，742输入/包/工具/父盘/三主机ELF guard全真；两轮真实HID及各35B CDC注入/发送/回显、四独立导入channel与严格26方向TLS flows通过。首 IPv6 actual99768 exit1，client dpkg前端锁被PID1268持有、安装exit2，未执行产品数据；两QEMU0不改变FAIL。原件完整保留，未采到该PID的可执行文件，不能断言持锁程序。
 - 先更新设计，再补guest安装就绪观察：只停两apt定时器，等待现有service与两POSIX锁自然释放并采PID状态，不删锁、不发信号、不重试dpkg；独立120秒前置预算不改USB超时或判据。新IPv6将用独立目录和source head；没有产品修复声明。Debian FAQ网页只读请求返回403，不把未读页面写成研究依据。
 

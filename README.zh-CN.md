@@ -1,5 +1,7 @@
 # RustUSB
 
+本轮 E64 [ARM64 虚拟 HID/CDC 验证](docs/research/arm64-virtual-data-validation.md)通过 IPv4/IPv6 两个 pair：Ubuntu 22.04/24.04 互换角色，四轮真实按键及 CDC 注入/发送/回显、八个独立导入 channel、原进程退出和内核释放、双端严格 PCAP 均通过。夹具分别锁 1bb65475/3fc08f9c，实际 ARM 包仍锁 ed1e8fef；742 输入及所有 guard 通过。首 IPv6 因 dpkg 锁冲突 FAIL，连同后续 collector 两次误报保留；六个 guest 退出0不等于三个 pair 全通过。软件1138仍属E63。真实硬件、ARM虚拟故障/managed专项、完整GUI、存储/ISO/性能/Windows及全部目标继续未完成。
+
 E63[授权导入PM与新USB验收](docs/research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入；amd64/arm64、Native/USBFS、IPv4/IPv6八正向installed类别、24轮HID/FTDI及104完整Rootproof/双方live升级/PCAP通过，三原legacy/virtual pair另过。ARM USBFS-v6正向显式加xHCI追踪，原安装前kernel stall/forced abort仍FAIL且原因未修；原E62九FAIL保留。硬件G1/G2、ARM虚拟CDC/完整GUI、存储/ISO/性能/Windows与完整目标仍未完成；下列旧E记录保留历史范围。
 
 E61新增[ARM64完整冷安装验收](docs/research/arm64-installed-validation.md)：Ubuntu22.04/24.04实际aarch64来宾均通过安装、普通用户GUI关闭、真实fsync升级等待、重启、remove/purge与保留状态；四QEMU0、无forced，均42不同断言。软件1114/731输入与cold锁clean76b4；匹配原生CI0316包及同源控制字段升版单独记账。ARM USB数据I/O、真实硬件和完整阶段仍未验收。

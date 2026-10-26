@@ -1,0 +1,1392 @@
+{
+  "schema_version": 1,
+  "cases": {
+    "ipv4": {
+      "passed": true,
+      "fixture_head": "1bb65475a642f08c48abe1ff696f3a73cac3063a",
+      "product_head": "ed1e8fef84c096feaa337484a4b75f145d6db278",
+      "family": 4,
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "controller_exits": {
+        "client": 0,
+        "server": 0
+      },
+      "cycles": [
+        {
+          "io": {
+            "cycle": 1,
+            "rx_hex": "525553545553422d52582d312d303030313a303132333435363738396162636465660a",
+            "tx_hex": "525553545553422d54582d312d303030313a666564636261393837363534333231300a",
+            "echo_hex": "525553545553422d54582d312d303030313a666564636261393837363534333231300a",
+            "transitions": [
+              [
+                4,
+                4,
+                458782
+              ],
+              [
+                1,
+                2,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                4,
+                4,
+                458782
+              ],
+              [
+                1,
+                2,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "locals": {
+              "hid": {
+                "path": "/sys/bus/usb/devices/1-1",
+                "generation": {
+                  "device": 24,
+                  "inode": 30178,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-1:1.0"
+                ],
+                "drivers": [
+                  "usbhid"
+                ],
+                "node": "/dev/input/event1",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 573,
+                  "uid": 0,
+                  "gid": 995,
+                  "mode": 432,
+                  "rdev": 3393
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              },
+              "serial": {
+                "path": "/sys/bus/usb/devices/1-2",
+                "generation": {
+                  "device": 24,
+                  "inode": 30605,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-2:1.0",
+                  "1-2:1.1"
+                ],
+                "drivers": [
+                  "cdc_acm",
+                  "cdc_acm"
+                ],
+                "node": "/dev/ttyACM0",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 584,
+                  "uid": 0,
+                  "gid": 20,
+                  "mode": 432,
+                  "rdev": 42496
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              }
+            }
+          },
+          "released": {
+            "waits": [
+              {
+                "pid": 1493,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:hid",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "7601f699-35f5-4278-8e3d-8c36b9c675ce",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 29412,
+                            "filesystem_device": 24,
+                            "inode": 29392,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 0
+                        },
+                        "kernel_socket_inode": 13346,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 3,
+                              "number": 0,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-1",
+                          "local_device_address": 2,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 30178
+                          },
+                          "port": 0,
+                          "product_id": 1,
+                          "remote_device_id": 65537,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:hid",
+                        "remote": {
+                          "bus_id": "1-1",
+                          "bus_number": 1,
+                          "class": 0,
+                          "configuration": 1,
+                          "device_number": 1,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 3,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-1",
+                          "product_id": 1,
+                          "protocol": 0,
+                          "speed": 2,
+                          "subclass": 0,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              },
+              {
+                "pid": 1504,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:cdc-acm",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "4f7ca086-6449-4347-8d93-f38e0c06efbe",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 29412,
+                            "filesystem_device": 24,
+                            "inode": 29392,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 1
+                        },
+                        "kernel_socket_inode": 13385,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 2,
+                              "number": 0,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "alternate": 0,
+                              "class": 10,
+                              "number": 1,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-2",
+                          "local_device_address": 3,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 30605
+                          },
+                          "port": 1,
+                          "product_id": 2,
+                          "remote_device_id": 65538,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:cdc-acm",
+                        "remote": {
+                          "bus_id": "1-2",
+                          "bus_number": 1,
+                          "class": 239,
+                          "configuration": 1,
+                          "device_number": 2,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 2,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "class": 10,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-2",
+                          "product_id": 2,
+                          "protocol": 1,
+                          "speed": 2,
+                          "subclass": 2,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              }
+            ],
+            "snapshot": {
+              "journal": {
+                "schema_version": 1,
+                "records": [],
+                "exports": []
+              },
+              "vhci": [
+                {
+                  "path": "/sys/devices/platform/vhci_hcd.0/status",
+                  "text": "hub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n"
+                }
+              ]
+            },
+            "gone": {
+              "1-1": true,
+              "1-2": true
+            }
+          }
+        },
+        {
+          "io": {
+            "cycle": 2,
+            "rx_hex": "525553545553422d52582d322d303030313a303132333435363738396162636465660a",
+            "tx_hex": "525553545553422d54582d322d303030313a666564636261393837363534333231300a",
+            "echo_hex": "525553545553422d54582d322d303030313a666564636261393837363534333231300a",
+            "transitions": [
+              [
+                4,
+                4,
+                458783
+              ],
+              [
+                1,
+                3,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                4,
+                4,
+                458783
+              ],
+              [
+                1,
+                3,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "locals": {
+              "hid": {
+                "path": "/sys/bus/usb/devices/1-1",
+                "generation": {
+                  "device": 24,
+                  "inode": 30814,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-1:1.0"
+                ],
+                "drivers": [
+                  "usbhid"
+                ],
+                "node": "/dev/input/event1",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 597,
+                  "uid": 0,
+                  "gid": 995,
+                  "mode": 432,
+                  "rdev": 3393
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              },
+              "serial": {
+                "path": "/sys/bus/usb/devices/1-2",
+                "generation": {
+                  "device": 24,
+                  "inode": 31114,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-2:1.0",
+                  "1-2:1.1"
+                ],
+                "drivers": [
+                  "cdc_acm",
+                  "cdc_acm"
+                ],
+                "node": "/dev/ttyACM0",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 609,
+                  "uid": 0,
+                  "gid": 20,
+                  "mode": 432,
+                  "rdev": 42496
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              }
+            }
+          },
+          "released": {
+            "waits": [
+              {
+                "pid": 1526,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:hid",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "1e795b9d-4107-48a2-986b-e6b180bf55f9",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 29412,
+                            "filesystem_device": 24,
+                            "inode": 29392,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 0
+                        },
+                        "kernel_socket_inode": 13418,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 3,
+                              "number": 0,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-1",
+                          "local_device_address": 4,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 30814
+                          },
+                          "port": 0,
+                          "product_id": 1,
+                          "remote_device_id": 65537,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:hid",
+                        "remote": {
+                          "bus_id": "1-1",
+                          "bus_number": 1,
+                          "class": 0,
+                          "configuration": 1,
+                          "device_number": 1,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 3,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-1",
+                          "product_id": 1,
+                          "protocol": 0,
+                          "speed": 2,
+                          "subclass": 0,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              },
+              {
+                "pid": 1534,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:cdc-acm",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "33aa8e32-329a-4375-a513-99529e1af6ff",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 29412,
+                            "filesystem_device": 24,
+                            "inode": 29392,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 1
+                        },
+                        "kernel_socket_inode": 13440,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 2,
+                              "number": 0,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "alternate": 0,
+                              "class": 10,
+                              "number": 1,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-2",
+                          "local_device_address": 5,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 31114
+                          },
+                          "port": 1,
+                          "product_id": 2,
+                          "remote_device_id": 65538,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:cdc-acm",
+                        "remote": {
+                          "bus_id": "1-2",
+                          "bus_number": 1,
+                          "class": 239,
+                          "configuration": 1,
+                          "device_number": 2,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 2,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "class": 10,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-2",
+                          "product_id": 2,
+                          "protocol": 1,
+                          "speed": 2,
+                          "subclass": 2,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              }
+            ],
+            "snapshot": {
+              "journal": {
+                "schema_version": 1,
+                "records": [],
+                "exports": []
+              },
+              "vhci": [
+                {
+                  "path": "/sys/devices/platform/vhci_hcd.0/status",
+                  "text": "hub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n"
+                }
+              ]
+            },
+            "gone": {
+              "1-1": true,
+              "1-2": true
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "data_checks_passed": true,
+      "guards": {
+        "head": true,
+        "clean": true,
+        "inputs": true,
+        "packages_tools_parents_host_elfs": true
+      },
+      "packet_checks_passed": true
+    },
+    "ipv6-install-failure": {
+      "passed": false,
+      "fixture_head": "1bb65475a642f08c48abe1ff696f3a73cac3063a",
+      "product_head": "ed1e8fef84c096feaa337484a4b75f145d6db278",
+      "family": 6,
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "controller_exits": {
+        "server": 0
+      },
+      "cycles": [],
+      "errors": [
+        "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_arm64/virtual.py\", line 168, in one\n    vm.run('sudo dpkg -i ' + shlex.quote('/var/tmp/rustusb-installed-fixture/' + args.package.name), 'install')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/vm.py\", line 60, in run\n    if result.returncode not in expected:raise RuntimeError(f'{self.role} {label} exit {result.returncode}')\nRuntimeError: client install exit 2\n"
+      ],
+      "guards": {
+        "head": true,
+        "clean": true,
+        "inputs": true,
+        "packages_tools_parents_host_elfs": true
+      }
+    },
+    "ipv6-ready": {
+      "passed": true,
+      "fixture_head": "3fc08f9c2366ea18deb76b5f25e2ff5c7bd9e317",
+      "product_head": "ed1e8fef84c096feaa337484a4b75f145d6db278",
+      "family": 6,
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "controller_exits": {
+        "client": 0,
+        "server": 0
+      },
+      "cycles": [
+        {
+          "io": {
+            "cycle": 1,
+            "rx_hex": "525553545553422d52582d312d303030313a303132333435363738396162636465660a",
+            "tx_hex": "525553545553422d54582d312d303030313a666564636261393837363534333231300a",
+            "echo_hex": "525553545553422d54582d312d303030313a666564636261393837363534333231300a",
+            "transitions": [
+              [
+                4,
+                4,
+                458782
+              ],
+              [
+                1,
+                2,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                4,
+                4,
+                458782
+              ],
+              [
+                1,
+                2,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "locals": {
+              "hid": {
+                "path": "/sys/bus/usb/devices/1-1",
+                "generation": {
+                  "device": 24,
+                  "inode": 21110,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-1:1.0"
+                ],
+                "drivers": [
+                  "usbhid"
+                ],
+                "node": "/dev/input/event1",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 576,
+                  "uid": 0,
+                  "gid": 107,
+                  "mode": 432,
+                  "rdev": 3393
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              },
+              "serial": {
+                "path": "/sys/bus/usb/devices/1-2",
+                "generation": {
+                  "device": 24,
+                  "inode": 21528,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-2:1.0",
+                  "1-2:1.1"
+                ],
+                "drivers": [
+                  "cdc_acm",
+                  "cdc_acm"
+                ],
+                "node": "/dev/ttyACM0",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 586,
+                  "uid": 0,
+                  "gid": 20,
+                  "mode": 432,
+                  "rdev": 42496
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              }
+            }
+          },
+          "released": {
+            "waits": [
+              {
+                "pid": 1533,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:hid",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "c0dc8aaa-d3fc-4d73-a142-668aea7c8834",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 20397,
+                            "filesystem_device": 24,
+                            "inode": 20377,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 0
+                        },
+                        "kernel_socket_inode": 23535,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 3,
+                              "number": 0,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-1",
+                          "local_device_address": 2,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 21110
+                          },
+                          "port": 0,
+                          "product_id": 1,
+                          "remote_device_id": 65537,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:hid",
+                        "remote": {
+                          "bus_id": "1-1",
+                          "bus_number": 1,
+                          "class": 0,
+                          "configuration": 1,
+                          "device_number": 1,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 3,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-1",
+                          "product_id": 1,
+                          "protocol": 0,
+                          "speed": 2,
+                          "subclass": 0,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              },
+              {
+                "pid": 1541,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:cdc-acm",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "cf73e3e8-4bc9-4acd-bd41-6f1785e26584",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 20397,
+                            "filesystem_device": 24,
+                            "inode": 20377,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 1
+                        },
+                        "kernel_socket_inode": 23545,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 2,
+                              "number": 0,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "alternate": 0,
+                              "class": 10,
+                              "number": 1,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-2",
+                          "local_device_address": 3,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 21528
+                          },
+                          "port": 1,
+                          "product_id": 2,
+                          "remote_device_id": 65538,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:cdc-acm",
+                        "remote": {
+                          "bus_id": "1-2",
+                          "bus_number": 1,
+                          "class": 239,
+                          "configuration": 1,
+                          "device_number": 2,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 2,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "class": 10,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-2",
+                          "product_id": 2,
+                          "protocol": 1,
+                          "speed": 2,
+                          "subclass": 2,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              }
+            ],
+            "snapshot": {
+              "journal": {
+                "schema_version": 1,
+                "records": [],
+                "exports": []
+              },
+              "vhci": [
+                {
+                  "path": "/sys/devices/platform/vhci_hcd.0/status",
+                  "text": "hub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n"
+                }
+              ]
+            },
+            "gone": {
+              "1-1": true,
+              "1-2": true
+            }
+          }
+        },
+        {
+          "io": {
+            "cycle": 2,
+            "rx_hex": "525553545553422d52582d322d303030313a303132333435363738396162636465660a",
+            "tx_hex": "525553545553422d54582d322d303030313a666564636261393837363534333231300a",
+            "echo_hex": "525553545553422d54582d322d303030313a666564636261393837363534333231300a",
+            "transitions": [
+              [
+                4,
+                4,
+                458783
+              ],
+              [
+                1,
+                3,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                4,
+                4,
+                458783
+              ],
+              [
+                1,
+                3,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "locals": {
+              "hid": {
+                "path": "/sys/bus/usb/devices/1-1",
+                "generation": {
+                  "device": 24,
+                  "inode": 21737,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-1:1.0"
+                ],
+                "drivers": [
+                  "usbhid"
+                ],
+                "node": "/dev/input/event1",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 598,
+                  "uid": 0,
+                  "gid": 107,
+                  "mode": 432,
+                  "rdev": 3393
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              },
+              "serial": {
+                "path": "/sys/bus/usb/devices/1-2",
+                "generation": {
+                  "device": 24,
+                  "inode": 22037,
+                  "uid": 0,
+                  "gid": 0,
+                  "mode": 493,
+                  "rdev": 0
+                },
+                "interfaces": [
+                  "1-2:1.0",
+                  "1-2:1.1"
+                ],
+                "drivers": [
+                  "cdc_acm",
+                  "cdc_acm"
+                ],
+                "node": "/dev/ttyACM0",
+                "node_metadata": {
+                  "device": 5,
+                  "inode": 609,
+                  "uid": 0,
+                  "gid": 20,
+                  "mode": 432,
+                  "rdev": 42496
+                },
+                "power": {
+                  "control": "on",
+                  "autosuspend_delay_ms": "-1",
+                  "runtime_status": "active"
+                }
+              }
+            }
+          },
+          "released": {
+            "waits": [
+              {
+                "pid": 1559,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:hid",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "81fd6391-baaa-435d-9fc2-54c3fc401755",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 20397,
+                            "filesystem_device": 24,
+                            "inode": 20377,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 0
+                        },
+                        "kernel_socket_inode": 23882,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 3,
+                              "number": 0,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-1",
+                          "local_device_address": 4,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 21737
+                          },
+                          "port": 0,
+                          "product_id": 1,
+                          "remote_device_id": 65537,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:hid",
+                        "remote": {
+                          "bus_id": "1-1",
+                          "bus_number": 1,
+                          "class": 0,
+                          "configuration": 1,
+                          "device_number": 1,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 3,
+                              "protocol": 1,
+                              "subclass": 1
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-1",
+                          "product_id": 1,
+                          "protocol": 0,
+                          "speed": 2,
+                          "subclass": 0,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              },
+              {
+                "pid": 1567,
+                "exit": 0,
+                "observation_timeout": false,
+                "events": [
+                  {
+                    "device_key": "virtual:cdc-acm",
+                    "event": "connected",
+                    "receipt": {
+                      "channel_id": "5fbd8348-bfec-484d-b72a-b3ae88f8e2ae",
+                      "kernel": {
+                        "intent": {
+                          "controller": {
+                            "attribute_device": 24,
+                            "attribute_inode": 20397,
+                            "filesystem_device": 24,
+                            "inode": 20377,
+                            "path": "/sys/devices/platform/vhci_hcd.0"
+                          },
+                          "port": 1
+                        },
+                        "kernel_socket_inode": 23893,
+                        "profile": {
+                          "configuration": 1,
+                          "interfaces": [
+                            {
+                              "alternate": 0,
+                              "class": 2,
+                              "number": 0,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "alternate": 0,
+                              "class": 10,
+                              "number": 1,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ]
+                        },
+                        "session": {
+                          "local_bus_id": "1-2",
+                          "local_device_address": 5,
+                          "local_device_generation": {
+                            "filesystem_device": 24,
+                            "inode": 22037
+                          },
+                          "port": 1,
+                          "product_id": 2,
+                          "remote_device_id": 65538,
+                          "status": 6,
+                          "vendor_id": 4660
+                        }
+                      },
+                      "target": {
+                        "device_key": "virtual:cdc-acm",
+                        "remote": {
+                          "bus_id": "1-2",
+                          "bus_number": 1,
+                          "class": 239,
+                          "configuration": 1,
+                          "device_number": 2,
+                          "device_version": 256,
+                          "interfaces": [
+                            {
+                              "class": 2,
+                              "protocol": 0,
+                              "subclass": 2
+                            },
+                            {
+                              "class": 10,
+                              "protocol": 0,
+                              "subclass": 0
+                            }
+                          ],
+                          "num_configurations": 1,
+                          "path": "/virtual/rustusb/1-2",
+                          "product_id": 2,
+                          "protocol": 1,
+                          "speed": 2,
+                          "subclass": 2,
+                          "vendor_id": 4660
+                        },
+                        "server_id": "qemu-server"
+                      }
+                    },
+                    "schema_version": 1,
+                    "server_id": "qemu-server",
+                    "transport": "mtls"
+                  },
+                  {
+                    "cleanup_verified": true,
+                    "event": "disconnected",
+                    "schema_version": 1,
+                    "transport": "mtls"
+                  }
+                ]
+              }
+            ],
+            "snapshot": {
+              "journal": {
+                "schema_version": 1,
+                "records": [],
+                "exports": []
+              },
+              "vhci": [
+                {
+                  "path": "/sys/devices/platform/vhci_hcd.0/status",
+                  "text": "hub port sta spd dev      sockfd local_busid\nhs  0000 004 000 00000000 000000 0-0\nhs  0001 004 000 00000000 000000 0-0\nhs  0002 004 000 00000000 000000 0-0\nhs  0003 004 000 00000000 000000 0-0\nhs  0004 004 000 00000000 000000 0-0\nhs  0005 004 000 00000000 000000 0-0\nhs  0006 004 000 00000000 000000 0-0\nhs  0007 004 000 00000000 000000 0-0\nss  0008 004 000 00000000 000000 0-0\nss  0009 004 000 00000000 000000 0-0\nss  0010 004 000 00000000 000000 0-0\nss  0011 004 000 00000000 000000 0-0\nss  0012 004 000 00000000 000000 0-0\nss  0013 004 000 00000000 000000 0-0\nss  0014 004 000 00000000 000000 0-0\nss  0015 004 000 00000000 000000 0-0\n"
+                }
+              ]
+            },
+            "gone": {
+              "1-1": true,
+              "1-2": true
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "data_checks_passed": true,
+      "guards": {
+        "head": true,
+        "clean": true,
+        "inputs": true,
+        "packages_tools_parents_host_elfs": true
+      },
+      "packet_checks_passed": true
+    }
+  },
+  "read_only_audit": {
+    "scope": "Same-author read-only original evidence cross-check, not another USB execution or independent security audit.",
+    "method_sha256": "353d3197946999dee35e556ca3ee9e09eac5ed0fd2a7c7c14d2c9bd42f987cef",
+    "cases": [
+      {
+        "family": 4,
+        "fixture_head": "1bb65475a642f08c48abe1ff696f3a73cac3063a",
+        "product_head": "ed1e8fef84c096feaa337484a4b75f145d6db278",
+        "mapped_inputs": 742,
+        "paired_raw_requests_responses": 26,
+        "unique_original_channels": 4,
+        "io_cycles": 2,
+        "injected_bytes": 70,
+        "client_out_bytes": 70,
+        "echo_bytes": 70,
+        "qemu_exits": {
+          "server": 0,
+          "client": 0
+        },
+        "broker_uids": {
+          "server": 112,
+          "client": 108
+        },
+        "passed": true
+      },
+      {
+        "family": 6,
+        "fixture_head": "3fc08f9c2366ea18deb76b5f25e2ff5c7bd9e317",
+        "product_head": "ed1e8fef84c096feaa337484a4b75f145d6db278",
+        "mapped_inputs": 742,
+        "paired_raw_requests_responses": 26,
+        "unique_original_channels": 4,
+        "io_cycles": 2,
+        "injected_bytes": 70,
+        "client_out_bytes": 70,
+        "echo_bytes": 70,
+        "qemu_exits": {
+          "server": 0,
+          "client": 0
+        },
+        "broker_uids": {
+          "server": 108,
+          "client": 112
+        },
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "archive": {
+    "file": "originals.tar.gz",
+    "sha256": "9a2a98da6236408ac9226665e6b73d0333e165e31fea2f1d9c4a728290e72ff3",
+    "bytes": 915944,
+    "members": 603,
+    "raw_bytes": 2694777
+  },
+  "privacy": {
+    "actual_private_key_files_excluded_and_scanned": 21,
+    "member_roundtrip": true,
+    "disks_firmware_packages_executables_excluded": true,
+    "nested_public_tar_members_verified": true
+  }
+}

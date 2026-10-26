@@ -1,6 +1,8 @@
 # 兼容性与支持证据
 
-最新E63[导入运行时PM验证](research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入、八installed正向类别/16guest0（三轮HID/FTDI、双端live升级、104完整Rootproof/基线/PCAP）与三legacy/virtual回归/6guest0通过。覆盖两Ubuntu、两架构、Native/USBFS及双栈；ARM USBFS-v6正向显式加启动xHCI trace，前次安装产品前kernel stall/forced abort仍FAIL/2guest0，未修启动不稳定。ARM虚拟CDC/完整GUI故障、真实G1/G2、存储/ISO/性能/Windows及完整Phase0–7继续未完成；下列旧E条目保留历史时点。
+本轮 E64 [ARM64 虚拟 HID/CDC 验证](research/arm64-virtual-data-validation.md)通过 IPv4/IPv6 两个 pair：Ubuntu 22.04/24.04 互换角色，四轮真实按键及 CDC 注入/发送/回显、八个独立导入 channel、原进程退出和内核释放、双端严格 PCAP 均通过。夹具分别锁 1bb65475/3fc08f9c，实际 ARM 包仍锁 ed1e8fef；742 输入及所有 guard 通过。首 IPv6 因 dpkg 锁冲突 FAIL，连同后续 collector 两次误报保留；六个 guest 退出0不等于三个 pair 全通过。软件1138仍属E63。真实硬件、ARM虚拟故障/managed专项、完整GUI、存储/ISO/性能/Windows及全部目标继续未完成。
+
+此前E63[导入运行时PM验证](research/native-import-power-validation.md)：clean ed1e8fef完整1138软件/738输入、八installed正向类别/16guest0（三轮HID/FTDI、双端live升级、104完整Rootproof/基线/PCAP）与三legacy/virtual回归/6guest0通过。覆盖两Ubuntu、两架构、Native/USBFS及双栈；ARM USBFS-v6正向显式加启动xHCI trace，前次安装产品前kernel stall/forced abort仍FAIL/2guest0，未修启动不稳定。ARM虚拟CDC/完整GUI故障、真实G1/G2、存储/ISO/性能/Windows及完整Phase0–7继续未完成；下列旧E条目保留历史时点。
 
 E62[ARM USB调查](research/arm64-usb-data-validation.md)仍未验收：八原矩阵与一追踪pair失败，十八guest0/guard真不改判；原Linux USB/IP隔离对照见导入键盘runtime suspend，per-device on后恢复输入。产品PM策略及四case完整I/O/live-upgrade/PCAP回归待完成，软件1114/734源独立记账。
 

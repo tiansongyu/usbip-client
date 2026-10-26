@@ -1,5 +1,7 @@
 # 需求逐项验收审计
 
+本轮 E64 [ARM64 虚拟 HID/CDC 验证](research/arm64-virtual-data-validation.md)通过 IPv4/IPv6 两个 pair：Ubuntu 22.04/24.04 互换角色，四轮真实按键及 CDC 注入/发送/回显、八个独立导入 channel、原进程退出和内核释放、双端严格 PCAP 均通过。夹具分别锁 1bb65475/3fc08f9c，实际 ARM 包仍锁 ed1e8fef；742 输入及所有 guard 通过。首 IPv6 因 dpkg 锁冲突 FAIL，连同后续 collector 两次误报保留；六个 guest 退出0不等于三个 pair 全通过。软件1138仍属E63。真实硬件、ARM虚拟故障/managed专项、完整GUI、存储/ISO/性能/Windows及全部目标继续未完成。
+
 E63[导入PM修复验收](research/native-import-power-validation.md)：clean ed1e8fef原core1120+GUI18=1138/738输入通过；amd64/arm64 × Native/USBFS × IPv4/IPv6八positive installed pair（三轮I/O/双方live升级/104完整Rootproof/PCAP）及三原legacy/virtual回归通过。ARM USBFS-v6正向为显式xHCI追踪诊断，前次pre-product boot soft lockup经forced QMP quit仍保FAIL。共11正向+1失败pair/24guest0，不由exit0改FAIL；原E62失败保留，硬件/完整目标仍未完成。下列旧E条目保留各自当轮范围。
 
 E62[ARM USB调查](research/arm64-usb-data-validation.md)保留八原矩阵FAIL及一trace FAIL、18paired guest0；两次原软件1114/734源通过，不能替代I/O。五local guest0的原Linux USB/IP对照见导入键盘auto/suspended时无输入、只对该VHCI设备写on后恢复；不是产品修复或原矩阵通过。ARM完整I/O/live-upgrade/PCAP仍未验收，下一步先审查两import路径的PM/权限/partial cleanup。
