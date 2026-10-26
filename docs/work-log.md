@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-26：ARM64 Native/USBFS 数据路径（开始）
+
+- E62从clean73d8f9a0重读完整原目标，核Git/日志/核心skill与原installed/ARM/frame关闭设计、源码和实际输入。上轮ARM cold/软件/发布是已验证进展，非blocked；当前无活跃本地cargo/QEMU，32CPU/41GiB available可承载四独立pair。先写ARM USB设计，保持原guest/Root/driver/PCAP/并发IMPORT/失败判据；四Native/USBFS双栈×Jammy/Noble交叉role，预备盘只优化OS不替代cold。
+- 明确使用原Jammy native ARM CI0316 base在两OS运行和formal同源+armtest1升级，CLIff77/helpercf3e，Noble自己的CI ELF不冒称USB已测；实际UID必须动态读取。仅替换host VM import到已有ArmVm，额外冻结adapter/tools/firmware/parent disks/packages/源码与原HEAD/三hostELFs。当前只有设计，未有新ARM USB I/O裁决。
+
 ## 2026-10-26：ARM64 包生命周期与 GUI 安装验收
 
 - E61 content96a93c38172c9646cae688524b276ee7f3ba1bdb已normal SSH push并核remote main。core40268921591四native与GUI40268921583四native全部success，实际arch/fullgate与GUI build/upload步骤逐核；Pages40268921580 check/deploy成功。四新artifact仅metadata，未下载/执行，不逐新CI格重计tests；真正执行ARM包仍原CI0316+formal controls-only revision。十canonical HTTP（七runtime/三pinned docs）全200/源字节一致，线上ARMlink与ARM I/O未验边界可见。发布13成员/144599 rawB/gzip8715B，SHAef003a89d89d49a0d5ca911d914535b4c15cb4f24a1382905b4416a841cca89f逐成员hash/size回读通过。最终仅receipt/docs提交不重归属cold+软件76b4/prepdd3/原ARM payload0316，完整目标继续active，下一ARM Native/USBFS数据I/O仍待执行。
