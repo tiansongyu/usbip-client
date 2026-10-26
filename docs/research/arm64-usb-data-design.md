@@ -69,3 +69,15 @@ hardware performance benchmark. References: [original installed design](installe
 [ARM cold evidence](arm64-installed-validation.md),
 [framed close/migration](framed-management-race-validation.md),
 and the E61 design's fixed QEMU/Ubuntu primary sources.
+
+## First measured environment failure
+
+All four initial pairs at clean37b5fc4a fail during server setup before any USB
+import: original guest.py searches data MAC52:54:00:59:00:21/22, but the ARM
+adapter's unexercised data-NIC branch selected prefix61. All eight actual QEMU
+processes exit0 and all original/outer guards pass; these operations remain FAIL.
+This identifies a test-platform network-identity mismatch, not an ARM USB kernel
+failure or the old encrypted Catalog defect. Correct only the adapter's data MAC
+to the original guest contract. Keep management61 (used by E61 preparation), the
+original guest, proof/driver/PCAP and import concurrency unchanged. Repeat the
+four cases under a new clean source/output after the actual old owners terminate.

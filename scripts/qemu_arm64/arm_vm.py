@@ -29,7 +29,7 @@ class ArmVm(Vm):
               '-drive','file='+str(self.disk)+',if=none,id=os,format=qcow2','-device','virtio-blk-pci,drive=os',
               '-drive','file='+str(self.private/'seed.iso')+',if=none,id=seed,format=raw,readonly=on','-device','virtio-blk-pci,drive=seed',
               '-netdev',f'user,id=management,hostfwd=tcp:127.0.0.1:{self.port}-:22','-device','virtio-net-pci,netdev=management,mac=52:54:00:61:00:10','-no-reboot']
-        if self.link is not None:args+=['-netdev',f'socket,id=data,fd={self.link.fileno()}','-device','e1000,netdev=data,mac=52:54:00:61:00:'+('21' if self.role=='server' else '22'),'-object','filter-dump,id=capture,netdev=data,file='+str(self.out/'boot-data.pcap')]
+        if self.link is not None:args+=['-netdev',f'socket,id=data,fd={self.link.fileno()}','-device','e1000,netdev=data,mac=52:54:00:59:00:'+('21' if self.role=='server' else '22'),'-object','filter-dump,id=capture,netdev=data,file='+str(self.out/'boot-data.pcap')]
         args+=['-qmp','unix:'+str(self.private/'qmp.sock')+',server=on,wait=off']
         if self.usb:args+=['-device','qemu-xhci,id=usb','-device','usb-kbd,id=installed-kbd,bus=usb.0,port=1','-chardev','socket,id=ftdi,path='+str(self.private/'ftdi.sock')+',server=on,wait=off','-device','usb-serial,id=installed-ftdi,bus=usb.0,port=2,chardev=ftdi,always-plugged=on']
         (self.out/'qemu-command.json').write_text(json.dumps(args,indent=2)+'\n')
