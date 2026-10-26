@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-26：文档表达偏好补充
+
+- 收到新的全局 Humanizer-zh 约定后，完整读取 `/home/ubuntu/.agents/skills/humanizer-zh/SKILL.md`，复核英文 README 的新增说明与 E63 报告。仅修正报告正文中数字与英文单词连写，以及退出码的表达；标题、表格、链接目标、行内代码和全部数字序列经前后比较均相同，历史证据原件保留。README、站点和产品代码未改。
+- 前一发布回执8e5afc4e已正常推送，实际26049 exit0；随后远端查询61563实际exit0确认本地/远端一致、工作区干净、三host ELF、8站点源和四global readme-site源/发现链接一致。本次表达修订单独提交，技术验证仍归ed1，已观察的内容CI与线上页面仍归45c01bb2。
+
 ## 2026-10-26：导入 PM 验证与英文入口发布回执
 
 - 内容45c01bb2正常SSH push实际81099 exit0、远端main精确一致/primary clean；17最终文档快照逐commit blob相同，原三host ELF、722未改输入与四global readme-site源/Codex发现symlink不变。实际软件与USB执行仍锁ed1e8fef，不把内容提交重标为执行源。

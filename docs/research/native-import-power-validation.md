@@ -40,8 +40,8 @@ regular-file unit fixtures do not emulate kernfs store semantics.
 
 ## Actual installed matrix
 
-All executions below use clean `ed1e8fef`. IPv4 places the server on Ubuntu22.04
-and client on24.04; IPv6 reverses them. Actual vendor kernels are
+All executions below use clean `ed1e8fef`. IPv4 places the server on Ubuntu 22.04
+and client on 24.04; IPv6 reverses them. Actual vendor kernels are
 5.15.0-198/6.8.0-147. Each positive pair keeps the original concurrent HID/FTDI
 imports, three complete I/O rounds, client then server live package upgrade,
 exact Root correlation/kind/UID/key/resource/release criterion, driver/config/alt
@@ -59,8 +59,8 @@ and node/generation baseline, and strict boot/product-window PCAP checks.
 | arm64 | USBFS | IPv6, original attempt | **FAIL before product installation; forced abort** | Two0 | Not executed |
 | arm64 | USBFS | IPv6, independent boot trace | PASS, diagnostic instrumentation explicit | Two0 | 10 |
 
-Eight positive pairs provide24 complete HID press/release and FTDI rounds,
-840 exact serial bytes in each direction and104 Root release proofs. They are
+Eight positive pairs provide 24 complete HID press/release and FTDI rounds,
+840 exact serial bytes in each direction and 104 Root release proofs. They are
 not nine positive pairs. The original ARM adapter, guest and verifiers are
 unchanged. The independent diagnostic adds only selected metadata xHCI trace
 events from QEMU boot; its generated boot method, trace names, original-source
@@ -71,24 +71,24 @@ The failed Noble server boot reports xHCI controller death, soft lockup and RCU
 stalls before SSH and before uploading/installing any product package. A verified
 QMP `system_powerdown` is accepted but does not stop the stalled guest. A later
 explicit QMP `quit` forcibly ends that exact saved command/PID. The original
-runner reports FAIL and collects both actual exits0; neither those exits nor
+runner reports FAIL and collects both actual exits with code 0; neither those exits nor
 the subsequent traced PASS changes its verdict. The underlying boot instability
 has not been diagnosed or fixed. No repeated uninstrumented retry is presented
 as a fix.
 
 Three additional original paired regressions pass at the same source and frozen
 host ELFs: legacy Linux `usbipd` → RustUSB Native client HID, plus secure virtual
-HID/CDC on IPv4 and IPv6. Each has two actual exits0. They reuse the complete
+HID/CDC on IPv4 and IPv6. Each has two actual exits with code 0. They reuse the complete
 locked all-features release build with `--skip-build`, explicitly recorded by an
 outer source/HEAD/clean/three-ELF guard. They are separate from the installed
 matrix and from Cargo counts. In total the main archive contains eleven positive
-pairs and one failed pair,24 actual QEMU exits0. The earlier single-guest
+pairs and one failed pair, with 24 actual QEMU exits with code 0. The earlier single-guest
 original-Linux control belongs to the separate research archive.
 
 ## Software and package provenance
 
 Original `scripts/check.sh` and `scripts/check-gui.sh` pass at clean `ed1e8fef`:
-core1120 + GUI18 = **1138 test executions**, zero failed/ignored,738 tracked
+core 1120 + GUI 18 = **1138 test executions**, zero failed/ignored, with 738 tracked
 non-evidence inputs and all HEAD/clean/input guards true. Host release SHA256:
 
 | ELF | SHA256 |
@@ -105,7 +105,7 @@ source snapshots are included without labeling dirty runs as clean full gates.
 amd64 uses the actual Jammy host-built base
 `0.1.0~pm1+ged1e8fef84c0-1`, plus a strict control-only `+pmtest1` derivative.
 An earlier independent base/upgrade GUI archive comparison **fails** because
-selectors0.38.0's bundled source gzip timestamps differ; decompressed source
+selectors 0.38.0's bundled source gzip timestamps differ; decompressed source
 bytes match. That broad audit remains failed. The installed matrix uses the
 separately audited formal derivative, which preserves every payload member,
 mode, owner, link and maintainer script. No packaging code is changed to hide
@@ -123,11 +123,11 @@ upgrades exercise lifecycle with the same code payload, not old-code migration
 or GUI operation. Product-free prepared disks and E61 cold-installation evidence
 keep their earlier source provenance.
 
-[Core CI40284815248](https://github.com/tiansongyu/usbip-client/actions/runs/40284815248)
-and [GUI CI40284815259](https://github.com/tiansongyu/usbip-client/actions/runs/40284815259)
+[Core CI 40284815248](https://github.com/tiansongyu/usbip-client/actions/runs/40284815248)
+and [GUI CI 40284815259](https://github.com/tiansongyu/usbip-client/actions/runs/40284815259)
 complete successfully on all four native Ubuntu/architecture jobs. Primary
 run/job/step metadata is retained; full CI logs and per-platform test totals
-are not reconstructed from metadata. Pages40284815276 passes for `ed1e8fef`'s
+are not reconstructed from metadata. Pages 40284815276 passes for `ed1e8fef`'s
 earlier site content, not this later documentation update.
 
 ## Retained limits and evidence
@@ -141,10 +141,10 @@ changes, or cancellation of a permanently blocked sysfs/kernel callback. Public
 legacy async callers retain the previously documented broader reconciliation
 limitation at other effectful await points.
 
-The main archive contains4193 exact members/46,982,969 raw bytes;
-gzip9,525,575 bytes, SHA256
+The main archive contains 4193 exact members/46,982,969 raw bytes;
+gzip 9,525,575 bytes, SHA256
 `12cfd2940d1844b1d2b14bf82db3f85e1a1a3a2ee2b7a4668ba0083ae3095edb`.
-Every member is read back against original bytes/length/SHA. Actual63 private-key
+Every member is read back against original bytes/length/SHA. All 63 actual private-key
 files and signed capability values are checked for exclusion. No disks, firmware,
 private credentials, packages or executables are published. This integrity check
 is not a separate security audit or another USB execution.
