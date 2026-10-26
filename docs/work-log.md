@@ -2,6 +2,8 @@
 
 ## 2026-10-26：持久控制器授权与USBFS能力边界（开始）
 
+- 新guest-only夹具使用RO合成盘，明确root初始打开后降为UID/GID65534、无附加组/CapEff，固定GET_DESCRIPTOR18和fresh open/RO ioctl/绑定前后错误分账；实际probe close/wait及两QEMU boot进程去重记录。common Vm新增默认空的boot设备扩展点，仅新子类冷启动附盘；将运行原正常路径回归。Python compile、C严格语法检查、diff通过，尚无运行结果。
+
 - 上轮实际实现/验证/发布属于进展；从clean c6850e7d重读完整原需求，目标仍为全部Phase0–7。本轮先验证跨HCD/reboot的接入前策略与USBFS句柄边界，见`research/storage-controller-enrollment-design.md`，不把上游机制当产品存储完成。
 - 按writing-technical-design要求复用两个独立研究agent，仅写各自/tmp。发现generic unbind会经USB_DEVICE_REMOVE清USBFS已登记状态，先前“旧FD跨Native bind必然存活”的笼统推断撤回；绑定前/后两cohort必须独立实测。chmod前已通过VFS检查但尚未登记的open仍有竞态，单个ENODEV不能证明全部撤销。
 - 运行时双default0不跨HCD重建；boot usbcore.authorized_default=0候选影响全机USB，只在隔离guest显式设置，产品不得自动改宿主启动项。拟区分持久intent与当前boot/PCI/HCD/target receipt，先实测正反对照、真实reboot及非root实际FD。尚无本轮新测试裁决或产品放行。

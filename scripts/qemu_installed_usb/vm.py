@@ -30,11 +30,16 @@ class Vm:
         self.options=['-i',str(self.key),'-p',str(self.port),'-o','StrictHostKeyChecking=no','-o','UserKnownHostsFile='+str(self.private/'known_hosts'),'-o','ConnectTimeout=3','-o','BatchMode=yes']
         self.ssh=['ssh',*self.options,'ubuntu@127.0.0.1']
 
+    def boot_device_args(self):
+        """Additional test-owned devices present from power-on; empty by default."""
+        return []
+
     def boot(self):
         console=(self.out/'serial.log').open('ab');errors=(self.out/'qemu.stderr').open('ab');self.handles.extend([console,errors])
         args=['qemu-system-x86_64','-enable-kvm','-cpu','host','-m','2048','-smp','2','-display','none','-serial','stdio','-monitor','none','-drive','file='+str(self.disk)+',if=virtio,format=qcow2','-drive','file='+str(self.private/'seed.iso')+',media=cdrom,readonly=on','-netdev',f'user,id=management,hostfwd=tcp:127.0.0.1:{self.port}-:22','-device','virtio-net-pci,netdev=management,mac=52:54:00:59:00:10','-no-reboot']
         if self.link is not None:args+=['-netdev',f'socket,id=data,fd={self.link.fileno()}','-device','e1000,netdev=data,mac=52:54:00:59:00:'+('21' if self.role=='server' else '22'),'-object','filter-dump,id=capture,netdev=data,file='+str(self.out/'boot-data.pcap')]
         args+=['-qmp','unix:'+str(self.private/'qmp.sock')+',server=on,wait=off']
+        args+=self.boot_device_args()
         if self.usb:args+=['-device','qemu-xhci,id=usb','-device','usb-kbd,id=installed-kbd,bus=usb.0,port=1','-chardev','socket,id=ftdi,path='+str(self.private/'ftdi.sock')+',server=on,wait=off','-device','usb-serial,id=installed-ftdi,bus=usb.0,port=2,chardev=ftdi,always-plugged=on']
         (self.out/'qemu-command.json').write_text(json.dumps(args,indent=2)+'\n')
         self.process=subprocess.Popen(args,pass_fds=(() if self.link is None else (self.link.fileno(),)),stdin=subprocess.DEVNULL,stdout=console,stderr=errors)
