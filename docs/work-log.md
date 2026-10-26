@@ -2,6 +2,8 @@
 
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
+- 2026-10-26恢复：用户暂停后已明确resume，沿原53027句柄取得独立target旧control实际exit101（0pass/1fail，owner ended before actual final read），不是观测timeout重启；clean c1b8a1e7，无活跃遗留测试。继续84项fresh重编来源基线，补实际TLS己方write关闭、peer只TCP关闭未close_notify时必须UnexpectedEof且sticky的负向；原gate/half-close不改。新测试首patch模组路径anchor不符原子拒绝后按实际mod声明修正；G1/G2/ARM安装/Windows/full目标未完成。
+
 - 15c8d099旧530c产品加exact新gate overlay的control实际exit101/owner ended before final read，原双方句柄先join；但共享target导致随后main suite显示82而源码应84，不能归属新ClosingIo（单个随后Catalog PASS亦不计）。已仅清理transport/service构建缓存，独立记录后main -v实际重编得到84PASS/0failed/ignored及当前源路径。旧control将改全新专属target复核，不再跨checkout复用产物。当前只信用fresh重编84，原错误归属结果保留不改判；cfg(test)阶段diagnostic已去除。门禁解析亦须包括FAILED段（旧c59摘要只累计ok段260，真实另133pass/1fail，仍原FAIL）。
 
 - 7c45dadf固定96进程审计80PASS/16FAIL（guards全部true），其单独256Catalog亦FAIL；530c93ab临时typed stage证实fin_eof_complete=false、真实ownerEndedIo/receivepending0，不能将其降警告或只凭catalog解析成功。继续设计原transport双向drain：h2 codec写shutdown不等于对端read关闭，ClosingIo原S写关闭后有界读到真实TLS EOF，错误全保留、64KiB尾部/1KiB scratch/32 reads per poll，尾部不作为USB数据/不日志/不声称h2尾帧语义验证。更新gate为收到真实server write-shutdown时确认owner仍live再允许peer进展；原owner先于peer进展的测试源码/FAIL保持历史，要求旧candidate独立control失败，新测试更强保留真实owner寿命。原half-close/noFIN断言不放宽。
