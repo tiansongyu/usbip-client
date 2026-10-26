@@ -1,5 +1,7 @@
 # RustUSB 技术架构
 
+新增[控制器策略管理](controller-policy.md)及[产品验证](research/controller-enrollment-validation.md)：clean26faa790 的两种 Ubuntu QEMU 通过，八个虚拟机进程正常退出；同源软件1193+18通过。root 显式持久意图、真实blocking owner、重启历史与新代际重新协调已实现。控制器策略不授予目标设备访问，存储交接、安全释放、早期权限历史、硬件与完整Phase0–7仍未完成。
+
 [存储接入前隔离设计](research/storage-arrival-quarantine-design.md)仍为proposed；[四组最终QEMU机制验证](research/storage-arrival-quarantine-validation.md)采用专用新HCD先拒绝设备/接口授权，再绑定精确Native代际。它没有产品入口；HCD重建、旧USBFS能力、持久策略与完整交接仍待设计/验收，存储blockers保持。
 
 新增[只读存储检查](research/storage-inspection-design.md)：Linux固定sysfs/procfs观察、严格root-only helper请求、一个actual blocking worker配额及原connection/shutdown总join，绕过mutation/journal锁；独立schema1 metadata不改Device/Session/持久记录，也不发USB能力。现有Native/USBFS存储拒绝保持。

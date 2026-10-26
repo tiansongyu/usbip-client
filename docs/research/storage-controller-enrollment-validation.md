@@ -4,6 +4,8 @@ Ubuntu 22.04 and 24.04 pass the controller-policy and descriptor-lifetime experi
 
 These are stock Linux mechanism results. **RustUSB storage export remains disabled.** The [product enrollment design](storage-controller-enrollment-design.md) remains proposed. No enrollment API, durable controller grant, general live-disk handoff or storage release protocol is implemented by this change.
 
+The later [product controller-policy validation](controller-enrollment-validation.md) implements explicit durable enrollment and reconciliation. This E67 report retains its original mechanism-only scope.
+
 ## Environment and execution
 
 Tests ran on 2026-10-26 using fresh COW descendants of the product-free [arrival experiment](storage-arrival-quarantine-validation.md) parents. Each policy guest has a dedicated xHCI at PCI `0000:00:06.0` and a new read-only 64 MiB ordinary-file disk. No filesystem is mounted or formatted. Host devices, modules, services, accounts and boot settings are untouched.

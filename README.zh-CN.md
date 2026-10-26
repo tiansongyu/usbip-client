@@ -1,5 +1,7 @@
 # RustUSB
 
+新增[控制器策略管理](docs/controller-policy.md)：root 显式登记持久意图，helper 重启、控制器重建或新内核启动后须重新协调。[两种 Ubuntu 的产品 QEMU 验证](docs/research/controller-enrollment-validation.md)通过，包含产品设定默认值后的原生 USB/IP 只读 I/O；同源软件共 1,211 次测试执行。存储导出和安全释放仍未完成。
+
 [启动策略与USBFS句柄实验](docs/research/storage-controller-enrollment-validation.md)在两种Ubuntu通过，另有两组原存储I/O回归通过。运行时策略会在控制器重建后丢失，绑定前后的句柄须分别处理；产品存储共享仍未启用。
 
 [存储接入前隔离实验](docs/research/storage-arrival-quarantine-validation.md)已完成两Ubuntu的四组最终QEMU机制验证，三次早期失败完整保留。它使用原生Linux工具，不代表RustUSB已经支持存储共享。

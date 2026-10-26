@@ -2,6 +2,8 @@
 
 Status: proposed product design. The [guest-only prerequisite experiments](storage-controller-enrollment-validation.md) now pass on both Ubuntu versions; no product enrollment API is added. Baseline: `c6850e7d6e866f1b72fff7a29e370a290895013f`, 2026-10-26. This continues requirement 4.6 and the [arrival experiment](storage-arrival-quarantine-validation.md); it does not enable RustUSB storage sharing or replace the full storage handoff requirement.
 
+The later [implementation contract](controller-enrollment-implementation.md) and [product validation](controller-enrollment-validation.md) deliver the controller-policy layer. The target-admission and storage-release portions of this original design remain proposed.
+
 ## Durable intent is not a live controller grant
 
 A future root-owned enrollment record selects an administrator-reserved controller and its deployment policy. It cannot itself authorize a device. A separate receipt must identify the current boot, PCI object, every associated root HCD, and verified device/interface defaults. Reboot, controller removal or HCD replacement invalidates that receipt and all dependent device grants, even if a bus number or PCI address is reused.

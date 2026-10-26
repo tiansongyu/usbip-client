@@ -1,6 +1,6 @@
 # Persistent controller enrollment implementation
 
-Status: implementation contract, 2026-10-26; not yet validated. Baseline `0c3dd04c`. This implements the controller-policy layer of the [storage design](storage-controller-enrollment-design.md), using the [E67 mechanism evidence](storage-controller-enrollment-validation.md). The full storage handoff requirement remains separate: a controller record does not authorize a USB target, revoke old USBFS operations, drain media caches or release a storage session.
+Status: implemented and [validated](controller-enrollment-validation.md) at clean `26faa790`; contract started 2026-10-26. Baseline `0c3dd04c`. This implements the controller-policy layer of the [storage design](storage-controller-enrollment-design.md), using the [E67 mechanism evidence](storage-controller-enrollment-validation.md). The full storage handoff requirement remains separate: a controller record does not authorize a USB target, revoke old USBFS operations, drain media caches or release a storage session.
 
 ## Administrator workflow and scope
 

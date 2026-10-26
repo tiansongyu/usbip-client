@@ -5,7 +5,9 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 
 # RustUSB 核心开发
 
-存储启动策略/USBFS边界见`docs/research/storage-controller-enrollment-validation.md`：clean54a6b7a1两策略/两原I/O回归、八正常QEMU0及软件1166通过。已登记pre-bind FD因generic notify失效，post-bind FD可跨deauthorize保留EP0访问；不得笼统宣称所有旧FD跨bind存活或全部撤销。runtime0不跨HCD重建，boot0仍须接口default0；open/sync-control竞态、完整早期权限历史与产品enrollment/release未解决。
+控制器持久策略见`docs/controller-policy.md`与`docs/research/controller-enrollment-validation.md`：clean26faa790 两Ubuntu产品QEMU/八正常进程0及软件1211通过。root-only opt-in、Pending先于固定0写、实际blocking guard/permit、历史query与新epoch重新协调；default无physical-usb且旧physical路径存在须拒绝controller启动。保留两完整观察、祖先/root-interface pins、失败inspect撤销prepare与原scope匹配，不把receipt当目标授权。存储导出/安全release、ACL全历史/旧USBFS竞态、硬件及完整Phase0–7仍未完成。
+
+存储启动策略/USBFS边界见`docs/research/storage-controller-enrollment-validation.md`：clean54a6b7a1两策略/两原I/O回归、八正常QEMU0及软件1166通过。已登记pre-bind FD因generic notify失效，post-bind FD可跨deauthorize保留EP0访问；不得笼统宣称所有旧FD跨bind存活或全部撤销。runtime0不跨HCD重建，boot0仍须接口default0；open/sync-control竞态、完整早期权限历史与产品storage admission/release未解决；控制器enrollment后续见上文。
 
 存储接入前机制见`docs/research/storage-arrival-quarantine-{design,validation}.md`：最终05f26ffb四组/八正常guest0，软件1166锁3b9；仅上游工具、产品存储仍拒绝。三次早期FAIL保留，两client强制QMP退出不当正常关机。非零LUN sense限制、HCD重建/旧USBFS能力/硬件/完整交接未解决。相关修改先读报告，不把机制PASS当产品准入。
 

@@ -1,5 +1,13 @@
 # RustUSB 工作日志
 
+## 2026-10-27：持久控制器管理验证与文档
+
+- clean26faa790 的最终完整core/GUI gate实际exit0，1193+18=1211次测试执行、778个输入稳定；旧b7ff08f2的1206次仍保原来源。两Ubuntu产品QEMU全部PASS，server各三次真实boot/client各一次，共八原进程正常exit0、采证/内核日志/来源/产物/只读backing校验全通过。每pair四个原helper正常wait0、37次真实CLI wait/六预期拒绝；快速CLI只有file hash，不补造live exe采样。
+- 实际产品完成root-only登记、精确重放/query、非空retire拒绝、helper新epoch历史无pins、HCD重建及真实reboot后显式reconcile，最后空控制器retire且保持0。单独stock Native路径在产品defaults下完成每方向1MiB只读direct read和sg_sync0，不将夹具手工bind/authorize、source热拔或空retire当产品存储准入/安全释放。完整原Phase0–7继续active。
+- 两源审查及修复、所有开发失败、旧/新完整gate、两QEMU原件和方法已归档580成员/21,164,079B；见[证据清单](evidence/controller-enrollment-20261027/README.md)。同作者原件核对不导入原runner，逐Git输入、实际请求/历史/退出及两1MiB数据hash通过；首次audit误匹配install argv与归档自匹配key-marker均保留，未发现泄露私钥。
+- 新英文[操作指南](controller-policy.md)/[验证报告](research/controller-enrollment-validation.md)、README英中、架构/安全/兼容/测试/路线图/验收和开发约定同步。沿用原readme-site全局skill与展示页，只增真实产品能力/限制和链接。文档QA原16文件699本地/仓库target、288site、Node/diff和实际CLI/helper help通过；首次误查不存在404.html的404为方法失败，修方法后八HTTP观察含CSP通过。764未改测试输入、三release/parents和四global skill/source及发现symlink保持。
+- CUA实际1280×720/390×844新文案、链接/2px键盘焦点、响应图与无横溢通过；CSP禁脚本实际1280三panel/commands可读，scripted console为空。截图接口Unavailable，不称pixel；clipboard/reduced-motion/全部旧tab交互未重跑。临时65/66关闭、公开8保留，reset初读390后公开页实读1280×720；owned preview3082461实际SIGINT wait0。最终新增日志/报告文字后707个本地target及diff检查通过；[文档QA归档](evidence/controller-enrollment-docs-20261027/manifest.json)共56成员。尚未宣称本轮远端CI或Pages成功。
+
 ## 2026-10-26：持久控制器管理实现（进行中）
 
 - 第二位审查确认原四项修复；另补已观察inspect错误后撤销旧prepare及历史bus/port链一致性检查，避免在恢复旧值后沿用旧准备。default历史缺口1项定向通过，新增两项内核负向连同原项共12项定向通过；未放宽可能存在的wakeup目录，等真实QEMU证据。

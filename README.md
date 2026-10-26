@@ -275,11 +275,19 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
+[Controller policy management](docs/controller-policy.md) now persists explicit
+root-only enrollment and requires fresh reconciliation after helper restart,
+controller replacement or reboot. [Product QEMU validation](docs/research/controller-enrollment-validation.md)
+passes on Ubuntu 22.04/24.04, including actual stock USB/IP read-only I/O under
+the product-established defaults. The fixed source passes **1,211 software test
+executions**. Controller policy does not enable storage exports or prove safe
+media release.
+
 [Boot-policy and USBFS lifetime experiments](docs/research/storage-controller-enrollment-validation.md)
 pass on Ubuntu 22.04/24.04 in QEMU: controller recreation loses runtime policy,
 boot denial survives it, and pre-bind/post-bind descriptors behave differently.
 Two original storage I/O regressions also pass. These are prerequisites for
-future storage enrollment; they do not enable product storage sharing.
+the separate storage handoff work; they do not enable product storage sharing.
 
 [Storage arrival experiments](docs/research/storage-arrival-quarantine-validation.md)
 verify source isolation, actual two-LUN I/O and LUN0 cache-error propagation on

@@ -1,6 +1,8 @@
 # 兼容性与支持证据
 
-[启动策略与USBFS句柄验证](research/storage-controller-enrollment-validation.md)锁clean54a6b7a1：两Ubuntu策略试验及两组原正常I/O回归通过，八QEMU正常退出；同源软件1148+18通过。运行时defaults不跨HCD重建，boot设备默认0仍需单独设接口默认0；已登记pre-bind FD变ENODEV，post-bind FD仍可GET_DESCRIPTOR。open/同步control竞态仅源码推导，早期规则/ACL全历史未验证，产品enrollment与存储交接仍未实现。
+新增[控制器策略管理](controller-policy.md)及[产品验证](research/controller-enrollment-validation.md)：clean26faa790 的两种 Ubuntu QEMU 通过，八个虚拟机进程正常退出；同源软件1193+18通过。root 显式持久意图、真实blocking owner、重启历史与新代际重新协调已实现。控制器策略不授予目标设备访问，存储交接、安全释放、早期权限历史、硬件与完整Phase0–7仍未完成。
+
+[启动策略与USBFS句柄验证](research/storage-controller-enrollment-validation.md)锁clean54a6b7a1：两Ubuntu策略试验及两组原正常I/O回归通过，八QEMU正常退出；同源软件1148+18通过。运行时defaults不跨HCD重建，boot设备默认0仍需单独设接口默认0；已登记pre-bind FD变ENODEV，post-bind FD仍可GET_DESCRIPTOR。open/同步control竞态仅源码推导，早期规则/ACL全历史未验证，该轮未实现产品enrollment；后续控制器层见上文，完整存储交接仍未完成。
 
 新增[存储接入前隔离验证](research/storage-arrival-quarantine-validation.md)：clean05f26ffb在两Ubuntu方向完成normal/flush四组上游机制试验，八guest正常退出；实际多LUN读写、源端隔离、daemon死亡后同内核连接继续I/O、定向reset与LUN0缓存错误通过。三次早期FAIL保留，其中两client阻塞后由QMP强制回收。产品不运行、不解除存储拒绝；软件1166次仍锁3b9c5b2b，硬件与完整存储交接未完成。
 
