@@ -1,6 +1,6 @@
 # Storage arrival isolation: Native mechanism experiment
 
-Status: proposed product design; isolated mechanism experiment planned. Baseline: `0865f65848d3cac986e5366ff55b19d3d1c0e352`, 2026-10-26. This continues requirement 4.6 and real device-level storage forwarding. It does not remove any RustUSB storage admission blocker or claim complete storage safety.
+Status: proposed product design; isolated mechanism experiments completed with the scope and failures in the [validation report](storage-arrival-quarantine-validation.md). Baseline: `0865f65848d3cac986e5366ff55b19d3d1c0e352`, 2026-10-26. This continues requirement 4.6 and real device-level storage forwarding. It does not remove any RustUSB storage admission blocker or claim complete storage safety.
 
 ## Why the next boundary is before arrival
 

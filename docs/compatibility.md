@@ -1,5 +1,7 @@
 # 兼容性与支持证据
 
+新增[存储接入前隔离验证](research/storage-arrival-quarantine-validation.md)：clean05f26ffb在两Ubuntu方向完成normal/flush四组上游机制试验，八guest正常退出；实际多LUN读写、源端隔离、daemon死亡后同内核连接继续I/O、定向reset与LUN0缓存错误通过。三次早期FAIL保留，其中两client阻塞后由QMP强制回收。产品不运行、不解除存储拒绝；软件1166次仍锁3b9c5b2b，硬件与完整存储交接未完成。
+
 新增[存储占用检查](storage-inspection.md)：root-only、只读、有界，报告LUN/分区/holder、可见线程的挂载/FD/映射和swap；空观察与coverage issues不授导出许可。[验证](research/storage-inspection-validation.md)锁clean c55a6c57，本地1166次软件检查、两Ubuntu x86_64 QEMU各12场景与原Native IPv4数据回归通过，首Jammy mmap失败保留。存储共享、完整需求4.6及硬件/全Phase仍未完成。
 
 本轮 E64 [ARM64 虚拟 HID/CDC 验证](research/arm64-virtual-data-validation.md)通过 IPv4/IPv6 两个 pair：Ubuntu 22.04/24.04 互换角色，四轮真实按键及 CDC 注入/发送/回显、八个独立导入 channel、原进程退出和内核释放、双端严格 PCAP 均通过。夹具分别锁 1bb65475/3fc08f9c，实际 ARM 包仍锁 ed1e8fef；742 输入及所有 guard 通过。首 IPv6 因 dpkg 锁冲突 FAIL，连同后续 collector 两次误报保留；六个 guest 退出0不等于三个 pair 全通过。软件1138仍属E63。真实硬件、ARM虚拟故障/managed专项、完整GUI、存储/ISO/性能/Windows及全部目标继续未完成。

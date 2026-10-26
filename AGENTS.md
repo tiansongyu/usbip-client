@@ -1,5 +1,7 @@
 # RustUSB 开发约定
 
+存储接入前机制见`docs/research/storage-arrival-quarantine-{design,validation}.md`：最终05f26ffb四组/八正常guest0，软件1166锁3b9；仅上游工具、产品存储仍拒绝。三次早期FAIL保留，两client强制QMP退出不当正常关机。非零LUN sense限制、HCD重建/旧USBFS能力/硬件/完整交接未解决。相关修改先读报告，不把机制PASS当产品准入。
+
 E64补充见`docs/research/arm64-virtual-data-{design,validation}.md`：ARM foreground virtual双栈两PASS/四I/O轮/八独立channel/四guest0，source分别1bb65475/3fc08f9c、包仍ed1，742输入guard全真。首IPv6 dpkg锁FAIL/两guest0保留；新guest仅安装前等锁，不删锁/杀owner/重试dpkg。无managed durable correlation，不伪造Root terminal；完整硬件/故障/GUI/后续Phase仍未完成。
 
 

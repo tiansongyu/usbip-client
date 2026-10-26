@@ -275,6 +275,13 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
+[Storage arrival experiments](docs/research/storage-arrival-quarantine-validation.md)
+verify source isolation, actual two-LUN I/O and LUN0 cache-error propagation on
+both Ubuntu versions using stock Linux USB/IP in QEMU. Three failed trials remain
+recorded, including a QEMU nonzero-LUN sense limitation and forced cleanup of two
+blocked guests. This is upstream mechanism research; product storage sharing
+remains disabled.
+
 [Storage inspection validation](docs/research/storage-inspection-validation.md)
 passes 12 scenario groups on each Ubuntu 22.04/24.04 x86_64 QEMU guest, plus an
 existing Native USB data regression. The fixed source has 1,166 local software

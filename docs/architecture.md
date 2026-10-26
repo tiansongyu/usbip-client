@@ -1,5 +1,7 @@
 # RustUSB 技术架构
 
+[存储接入前隔离设计](research/storage-arrival-quarantine-design.md)仍为proposed；[四组最终QEMU机制验证](research/storage-arrival-quarantine-validation.md)采用专用新HCD先拒绝设备/接口授权，再绑定精确Native代际。它没有产品入口；HCD重建、旧USBFS能力、持久策略与完整交接仍待设计/验收，存储blockers保持。
+
 新增[只读存储检查](research/storage-inspection-design.md)：Linux固定sysfs/procfs观察、严格root-only helper请求、一个actual blocking worker配额及原connection/shutdown总join，绕过mutation/journal锁；独立schema1 metadata不改Device/Session/持久记录，也不发USB能力。现有Native/USBFS存储拒绝保持。
 
 E63[每个授权导入代际的PM策略](research/native-import-power-validation.md)已接两Native路径：只对已钉住的local VHCI generation单次写delay=-1、原FD读回/active与identity复核；secure沿原blocking owner/Observed/shutdown，legacy owned锁随实际worker且typed partial receipt/同锁补偿，helper保留未释放/冲突metadata。无新USB FD、wire/schema或授权，原NULL+gone释放判据不变；永久kernel/sysfs阻塞与其他await点的原取消协调限制保持。

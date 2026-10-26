@@ -57,3 +57,7 @@ E57 frontend另直接复用已锁定sha20.10.9作本地endpoint文件名/上下�
 ## Storage inspection research (2026-10-26)
 
 The [storage inspection evidence](evidence/storage-inspection-20261026/manifest.json) includes fixed Linux v5.15/v6.8 and QEMU v6.2.0 research originals, source manifests and license notices. These GPL research copies are separate from the MIT product implementation. No new product dependency or copied kernel implementation is introduced. Existing rustix filesystem/process wrappers provide the metadata calls; the disposable C reference holder is an original test fixture. See the [design](research/storage-inspection-design.md) for exact upstream commits and limitations.
+
+## Storage arrival mechanism research
+
+The [arrival validation](research/storage-arrival-quarantine-validation.md) retains Linux v5.15/v6.8, QEMU v6.2.0 and sg3-utils 1.46 research originals with source receipts and license files in its evidence archive. These GPL upstream files are not copied into MIT product implementation. The guest-only claim probe is local test code; no new product dependency or patched emulator is introduced. The QEMU nonzero-LUN REQUEST SENSE limitation is documented, not silently corrected or accepted as an equivalent fault result.

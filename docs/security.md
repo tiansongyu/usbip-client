@@ -189,3 +189,7 @@ ReadLogs先核Unix peer及profile Audit权限，游标不授予权限；只返�
 
 
 E48使用真实OS peer的Read/Audit-only固定profile：Start与原UUID RetryStart均返回Permission并留下两durable denied、零准入；UI显示拒绝且退出保守报告未决身份，不能以确认或窗口关闭推断释放。三偏好重载只读受检用户文件，root/JSON/nonTTY启动被拒；没有授予编辑管理员策略/凭据的权限。 见[验收与审计](research/tui-hotplug-permission-validation.md)。
+
+## Storage arrival experiment boundary
+
+The [Native arrival experiment](research/storage-arrival-quarantine-validation.md) tests a fresh device under preconfigured device/interface authorization denial on a dedicated guest controller. It does not fence privileged external changes or previously delegated writable USBFS descriptors; HCD recreation/reboot may reset defaults. Source isolation, client cache-command result, transport closure and physical durability are separate claims. Product storage admission remains denied. The two blocked failed guests and their forced disposal are retained as failures.

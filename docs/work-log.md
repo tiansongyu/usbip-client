@@ -1,6 +1,12 @@
 # RustUSB 工作日志
 
-## 2026-10-26：存储接入前隔离机制（开始）
+## 2026-10-26：存储接入前隔离机制验证
+
+- 证据归档1442成员/153243821原始字节，gzip7418238字节，SHA756a4740564dbdd5a7ca89da9d30a82487e75d52e8dcd85f4bf1a455ce57e846；逐成员回读一致，20份实际私钥字节排除，无盘/包/ELF。英文验证报告、README/站点及中文入口/架构/验收/安全/测试/技能已同步，全球readme-site四文件及发现链接保持。
+- 文档QA15文件/692本地链接锚点、site279/JS/diff通过；实际CUA子路径preview在1280/doc1265与390/doc375无横溢，新链接Tab焦点2px，三图已载、warn/error样本空。未重跑pixel、clipboard、reduced-motion或禁JS；CSS/JS未改。tab63关闭、viewport reset请求、preview22693实际0。产品路径与c55不变、三release hash同原gate；本段回执后的增补只含证据说明。尚未预称本内容远端CI/Pages完成。
+
+- clean05f26ffb最终四组normal/flush均PASS：host66382/30188/27795/41472实际exit0，八guest正常0及四guard真。LUN0首sg_sync11/精确0x35与0xb00/06/一次QMP write-report，显式第二write/sync0分账；normal每pair三轮I/O与daemon真实wait-9后同socket继续I/O、定向reset/源隔离通过。旧3b9 normal两组另保，不混入最终矩阵。产品源码/三ELF不变，未宣称存储放行或全Phase完成。
+- 同作者只读审查核九原run、三个源码版本逐Git输入（759/760/760）、62 Linux及142 USB来源收据、所有成功run完整64MiB RW预期与RO零盘hash；原软件1148+18通过。审查首轮误把usbipd.log当JSON、次轮hash-string与hash/size对象未归一化，均保失败方法与原件，修后exit0；一次prep list误读为dict的只读错误也保留。不是独立安全审计或新增USB运行。
 
 - clean3b9完整软件1148+GUI18共1166次通过；两Ubuntu方向normal机制各三轮真实I/O、逐LUN同步、同内核socket在daemon死亡后继续I/O、定向reset隔离及离线backing读回通过，四guest正常0。两同源flush试验FAIL：QEMU确有LUN1 0xb/00/06和一次EIO，客户端却exit5；固定源码REQUEST SENSE对非零LUN返回25/00，不能放宽判据。下一独立试验交换fault布局为RW LUN0/RO LUN1，normal布局保持，不宣称修复非零LUN错误传递。
 - 两flush失败后的source先关机，client未detach，随后LVM/kernel worker阻塞；无栈，内部根因未定。保存原serial/QMP/进程身份后对两个自有client显式QMP quit，原host76596/12601实际exit1（chunk2e310f/878b98）；QEMU0是forced，不是正常关机。原result及窄integrity=true保持原件，报告必须补充hang/forced事实。两runner全部结束后才修改设计和夹具；后续在源关机前detach已知client，并把blocked-task列为失败。
