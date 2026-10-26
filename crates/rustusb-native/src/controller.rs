@@ -866,7 +866,11 @@ impl PinnedController {
     }
     /// Read the original controller again, rejecting identity drift. No policy is changed.
     pub fn inspect(&mut self) -> Result<Inspection> {
-        self.observe()
+        let result = self.observe();
+        if result.is_err() {
+            self.initial = None;
+        }
+        result
     }
     /// Require an exact selector/boot and a current pre-arrival device-denial policy.
     pub fn prepare(&mut self, selector: &Selector, boot: &str) -> Result<Inspection> {
@@ -960,18 +964,33 @@ fn original_controller(path: &Path, sys: &Path) -> Result<PathBuf> {
             .ok_or_else(|| Error::State("invalid original controller encoding".into()))?;
         if let Some(number) = name.strip_prefix("usb") {
             require(
-                decimal(number)? > 0 && controller != sys.join("devices"),
+                (1..=65535).contains(&decimal(number)?) && controller != sys.join("devices"),
                 "invalid original USB root scope",
             )?;
             let mut count = 0;
+            let mut prior: Option<String> = None;
             for child in components {
                 let Component::Normal(child) = child else {
                     return Err(Error::State("invalid original USB path".into()));
                 };
-                child
+                let child = child
                     .to_str()
-                    .ok_or_else(|| Error::State("invalid original USB path".into()))?
-                    .parse::<BusId>()?;
+                    .ok_or_else(|| Error::State("invalid original USB path".into()))?;
+                let id = child.parse::<BusId>()?;
+                let (bus, ports) = id
+                    .as_str()
+                    .split_once('-')
+                    .ok_or_else(|| Error::State("invalid original USB path".into()))?;
+                require(bus == number, "original USB bus does not match its root")?;
+                let port = if let Some(parent) = &prior {
+                    child.strip_prefix(&format!("{parent}.")).ok_or_else(|| {
+                        Error::State("inconsistent original USB port chain".into())
+                    })?
+                } else {
+                    ports
+                };
+                require(decimal(port)? > 0, "invalid original USB port segment")?;
+                prior = Some(child.to_owned());
                 count += 1;
             }
             require(count > 0 && count <= 8, "incomplete original USB path")?;

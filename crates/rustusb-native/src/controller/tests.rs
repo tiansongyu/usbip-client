@@ -486,3 +486,42 @@ fn physical_scope_requires_original_boot_generation_and_address() -> Result<()> 
     }
     Ok(())
 }
+
+#[test]
+fn failed_inspection_revokes_preparation_even_if_values_are_restored() -> Result<()> {
+    let f = Fixture::new()?;
+    let target = f.arrival()?;
+    let mut pin = f.open()?;
+    let s = pin.inspect()?;
+    pin.prepare(&s.selector, &s.boot_id)?;
+    fs::write(target.join("authorized"), "1\n")?;
+    assert!(pin.inspect().is_err());
+    fs::write(target.join("authorized"), "0\n")?;
+    assert!(pin.arm().is_err());
+    assert_eq!(
+        fs::read(f.pci.join("usb1/interface_authorized_default"))?,
+        b"1\n"
+    );
+    pin.prepare(&s.selector, &s.boot_id)?;
+    pin.arm()?;
+    Ok(())
+}
+#[test]
+fn malformed_historical_port_chains_never_exclude_an_owner() -> Result<()> {
+    let f = Fixture::new()?;
+    let pin = f.open()?;
+    for suffix in [
+        "usb2/3-1",
+        "usb2/2-1/2-9.2",
+        "usb2/2-1.2",
+        "usb2/2-1/2-1.2.3",
+        "usb99999/99999-1",
+    ] {
+        assert!(
+            pin.contains_original_device(&f.sys.join("devices/other").join(suffix))
+                .is_err(),
+            "{suffix}"
+        );
+    }
+    Ok(())
+}

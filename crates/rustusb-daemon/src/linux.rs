@@ -1355,6 +1355,10 @@ pub(super) async fn serve(
             "only the restricted helper, installed by an administrator, may run as root".into(),
         ));
     }
+    #[cfg(not(feature = "physical-usb"))]
+    if controller_state.is_some() {
+        require_no_unreadable_physical_history(physical_state)?;
+    }
     let policy = read_policy(config)?;
     let native_exists = match fs::symlink_metadata(native_state) {
         Ok(_) => true,
@@ -2230,6 +2234,32 @@ mod controller_scope_tests {
         ] {
             assert!(legacy_controller_scope(s).is_err(), "{s}");
         }
+        Ok(())
+    }
+}
+
+#[cfg(not(feature = "physical-usb"))]
+fn require_no_unreadable_physical_history(path: &Path) -> Result<()> {
+    match fs::symlink_metadata(path){
+        Err(error) if error.kind()==std::io::ErrorKind::NotFound=>Ok(()),
+        Err(error)=>Err(error.into()),
+        Ok(_)=>Err(Error::Unsupported("controller management cannot exclude old physical grants in this build; use a helper with physical-usb to inspect and reconcile the existing physical state".into())),
+    }
+}
+#[cfg(all(test, not(feature = "physical-usb")))]
+mod controller_feature_tests {
+    use super::*;
+    #[test]
+    fn existing_physical_history_cannot_disappear_in_a_default_build() -> Result<()> {
+        use std::os::unix::fs::symlink;
+        let root = tempfile::tempdir()?;
+        let path = root.path().join("physical");
+        require_no_unreadable_physical_history(&path)?;
+        fs::create_dir(&path)?;
+        assert!(require_no_unreadable_physical_history(&path).is_err());
+        fs::remove_dir(&path)?;
+        symlink(root.path().join("missing-target"), &path)?;
+        assert!(require_no_unreadable_physical_history(&path).is_err());
         Ok(())
     }
 }

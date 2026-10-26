@@ -2,6 +2,10 @@
 
 ## 2026-10-26：持久控制器管理实现（进行中）
 
+- 第二位审查确认原四项修复；另补已观察inspect错误后撤销旧prepare及历史bus/port链一致性检查，避免在恢复旧值后沿用旧准备。default历史缺口1项定向通过，新增两项内核负向连同原项共12项定向通过；未放宽可能存在的wakeup目录，等真实QEMU证据。
+
+- clean b7ff08f2 的完整core/GUI脚本实际均exit0，HEAD/clean/全部选定输入保持；独立源码复核另发现default helper未编译physical journal时会忽略此前USBFS历史。先补设计：controller opt-in且physical路径存在/无法检查时拒绝启动，再实现和测试，旧gate通过不代此缺口已修复。
+
 - 实现已接入root-only CLI/helper、显式可选state目录、独立有界持久历史、真实blocking owner与所选控制器旧owner范围检查。全部20项定向测试及第二轮workspace/all-targets/all-features Clippy通过；准备固定实现提交后运行完整gate和实际产品QEMU，尚不宣称新USB/硬件验收。
 
 - 合并定向Native/helper范围测试20项通过；首次all-features Clippy实际101为manual_strip，保留原log/源，改为strip_prefix而不改解析条件。

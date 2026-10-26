@@ -8,6 +8,8 @@ Add an explicit helper `--controller-state-dir` option. Without it the controlle
 
 The administrator first inspects a canonical PCI address and obtains its exact observed selector, current boot UUID and controller/root-hub identities. Enrollment supplies that selection, an explicit policy UUID, an explicit request UUID and an expected revision. Reconcile and retire also require explicit request UUIDs and revisions. A query for the original policy/request identity never retries a mutation or generates a new identity.
 
+A helper built without `physical-usb` cannot inspect the physical journal. With controller management enabled, it must refuse startup if the configured physical-state path exists or cannot be checked; use a capable helper to reconcile that history first. This check precedes creation of controller state. Omitted controller management preserves the existing startup behavior.
+
 The first implementation supports a dedicated PCI xHCI controller with both logical root hubs, selected by canonical BDF plus PCI vendor/device/subsystem identifiers. The actual driver must be `xhci_hcd` and class must be xHCI. It accepts no driver name, sysfs path, attribute value, boot option or shell command from RPC. Production sysfs/procfs roots are fixed. Tests alone use private filesystem roots.
 
 Arming requires the actual boot command line to select device default denial, the current global parameter to remain zero, and a complete current topology. The parser accepts a documented strict ASCII command-line subset, rejects ambiguous quoting/escaping and duplicate/aliased target options, and does not mistake tokens after `--` for kernel parameters. A current global zero without boot provenance is insufficient. Already authorized non-root USB devices, active interfaces, unexpected hubs, missing topology or identity drift refuse arming without forced deauthorization.
@@ -16,7 +18,7 @@ Only the fixed `authorized_default` and `interface_authorized_default` attribute
 
 Original scope is checked under the same mutation guard. Durable and live Native exports use their saved canonical paths, including registrations that have not bound yet; VHCI imports are excluded. Legacy exports use their saved topology. Physical grants lack a historical controller path, so only the original same-boot sysfs generation and address can establish scope. Missing/replaced generations are unknown and require the existing explicit grant reconciliation; known other-controller records do not block this controller. Enrollment never retires these owners implicitly or substitutes a current Bus ID for an old device.
 
-The kernel observer retains every directory ancestor as well as each root interface. Two complete matching observations, with boot/global checks at both ends and an unchanged hub driver, are required. This detects observed changes; it is not an atomic kernel snapshot or exclusion of an external administrator.
+The kernel observer retains every directory ancestor as well as each root interface. Two complete matching observations, with boot/global checks at both ends and an unchanged hub driver, are required. A failed public inspection also consumes any previous preparation; a later arm requires a new explicit prepare. Saved device paths must contain a consistent USB bus and nested port chain before they can exclude an unrelated owner. This detects observed changes; it is not an atomic kernel snapshot or exclusion of an external administrator.
 
 ## Durable state and request outcomes
 
