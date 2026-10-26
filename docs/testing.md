@@ -1,5 +1,7 @@
 # 测试手册与证据要求
 
+E60[framed关闭报告](research/framed-management-race-validation.md)记录clean473fb3c7完整core1096+GUI18共1114/722输入与实际三ELF；四new/new Native/USBFS双栈pair锁clean1b59、独立coordinated v6→v10锁clean393，五PASS/十guest0/十五I/O/70完整Rootproof。第六mixed pair原FAIL/两guest0，所有guards真；old control独立target/test overlay实际101，固定96进程/8192Catalog全通过但不是USBcase。原失败、shared-target污染排除、旧failed gate计数修正和原加密QEMU原因未证实均保留。原check/Root/PCAP不弱化，升级两端后再启动导入；硬件/ARM/整体阶段仍未完成。
+
 E59[完整安装服务USB套件](../scripts/qemu_installed_usb/README.md)与[报告](research/installed-usb-data-validation.md)：两Ubuntu amd64交叉Native/USBFS双栈四PASS/八guest0、十二实际HID/FTDI轮次、双方live包升级、52原Rootproof及基线；十原FAIL/二十guest0单列保留，Native/v4间歇首次import IO仍未定位。完整软件1094/717输入锁clean d6e68915，三USB pair锁dd9390c4、Native/v4锁d6e68915，不重归属。boot PCAP与完整product-window分别保留，原strict classifier不改；真实硬件/ARM安装/完整Phase5未完成。
 
 E58完整磁盘[安装套件](../scripts/qemu_package/README.md)使用官方签名checksum镜像和真实systemd，独立于原initramfs USB套件；[最终报告](research/debian-installation-validation.md)锁fded两Ubuntu amd64完整cold流程、4 QEMU0、原生GUI0及真实journal fsync有限等待/总wait dpkg、retain/mask检查。旧五FAIL/两开发续跑保留；C LD_PRELOAD仅明确test fixture、不入产品包，不证明永久硬阻塞可取消。运行说明、依赖/隐私边界和未验收范围见套件README。

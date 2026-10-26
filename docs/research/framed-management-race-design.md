@@ -90,7 +90,8 @@ transport/service build artifacts were scoped-cleaned and actual source paths/
 counts checked. Never reuse cross-checkout target output as source proof.
 
 Full unchanged root/GUI gates and final-ELF installed Native/USBFS dual-stack
-I/O/upgrade regressions remain required before delivery. Freeze HEAD/source/ELFs
+I/O/upgrade regressions are recorded in the [final validation](framed-management-race-validation.md).
+Freeze HEAD/source/ELFs
 through every actual live local gate/QEMU handle and preserve all failures.
 Archive explicit public evidence without keys/disks, commit and normally push.
 Global README/site skill remains shared. Real G1/G2, installed ARM, Windows USB,
@@ -125,3 +126,8 @@ v6 actual I/O, upgrade the client while stopping its imports, then upgrade the
 server before restarting the client. Repeat new/new I/O, explicitly stop both
 and reuse for a third round. Keep the original Root/driver/PCAP/upgrade checks;
 this adds orchestration only and does not rewrite the mixed failure.
+
+The coordinated run at clean393ce5ce passes all original checks: three I/O
+rounds, client6/server12 Root proofs, both actual QEMU0, all guards and strict
+PCAP. This establishes the documented coordinated preview migration, not mixed
+rolling compatibility or the cause of the original E59 encrypted failure.

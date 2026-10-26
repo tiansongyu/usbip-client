@@ -1,0 +1,3 @@
+# Framed management close evidence
+
+Public originals, failed candidates, isolated old-source control, fixed-round stability, both complete software gates, package receipts and all six installed QEMU pairs are retained in originals.tar.gz. originals-manifest.json gives every exact member hash/size. Five paired operations pass; mixed-version migration remains failed. Private keys, disks, debs and ELFs are excluded. Development logs with contaminated build attribution are explicitly excluded from acceptance. Source identities and tests are separate from hardware compatibility. See ../../research/framed-management-race-validation.md for scope and corrections.

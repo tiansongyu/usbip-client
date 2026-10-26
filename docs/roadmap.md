@@ -1,5 +1,7 @@
 # 分阶段开发与验收计划
 
+E60[framed关闭修复及协同升级](research/framed-management-race-validation.md)完成完整1114软件执行和五positive安装USB pair（四双栈new/new、一两端协同v6→v10），保留第六mixed FAIL；新旧preview须协调更新两端后再启导入。原加密首次import原因未证实，旧失败与硬件/ARM/Windows/完整Phase0–7门槛不变。
+
 E58已实现[Ubuntu基础/GUI .deb及systemd安装流程](debian-installation.md)，[两amd64完整cold安装验收](research/debian-installation-validation.md)与原软件门通过；源码/包/ELF/夹具分别固定，默认不启服务且保留旧状态。四native CI配置产物构建与安装态验收分开；新unit内[Native/USBFS双栈I/O及双方live升级](research/installed-usb-data-validation.md)四targeted pair已通过，十FAIL保留且间歇import失败未定位；arm64完整安装、断电/旧未知协调、完整GUI/Phase5与硬件门槛继续未完成。
 
 本计划以真实 Linux USB 设备级重定向为目标。阶段严格按证据推进：文档、编译、模拟测试、真实设备枚举和日常可靠使用是不同完成条件。所有未附运行记录的条目都属于**规划 / 未验证**；不会因为创建目录、实现命令入口或依赖具有某项能力而自动完成阶段。

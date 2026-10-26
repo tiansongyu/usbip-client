@@ -5,6 +5,8 @@ description: Develop or review RustUSB USB/IP discovery, protocol, native backen
 
 # RustUSB 核心开发
 
+修改framed management关闭先读`docs/research/framed-management-race-design.md`与`framed-management-race-validation.md`。E60保唯一原connection到真双向关闭：active stream1开始server graceful，原EOS/消费/credit/FIN flush后ClosingIo外置TrackingIo同transport write shutdown+peer TLS EOF，64KiB bounded discard/1KiB/每poll32读，不作尾部h2语义保证。无新owner/FD/权限/schema，IO/close_notify/stop/deadline/quiet保留，raw1不改。1114软件/722输入锁473，五PASS/70Rootproof锁四1b59+一393；mixed FAIL须协调两端升级再启导入，不downgrade。old control仅test overlay且独立target101；跨checkout禁共用target作来源证据，污染两run排除。原失败、c59计数修正及E59加密根因未证实保持，不能宣称硬件/ARM/整体阶段完成。
+
 完整Ubuntu安装服务USB夹具见`scripts/qemu_installed_usb/README.md`与`docs/research/installed-usb-data-validation.md`。E59四Native/USBFS双栈targeted pair通过（三pair dd9390c4、Native/v4 d6e68915），八guest0/十二I/O轮/双方live升级/52原Rootproof；十原FAIL及Native/v4未定位间歇import IO不能重判或称修复。clean d6e68915全软件1094/717输入、原ELF保持。动态broker UID/原units，DAD/source route就绪；client升级后等原incoming terminal/verified，export Available不代释放。捕获完整boot和product-window，原classifier不改；原invocation journal stop/deactivate与PID/cgroup、Root exact kind/correlation/key/UID/resource/criterion分层核。正常released app proof可null但原Root必有；不扩为硬件/ARM/永久阻塞/完整Phase5验收。
 
 先读仓库根 `AGENTS.md`、`docs/architecture.md` 和相关 `docs/research/` 审计；范围以 `docs/requirements.md` 为准，进度见 `docs/work-log.md`。技能目录相对于仓库根，不依赖用户全局安装。其他 Agent 必须由 AGENTS.md 显式进入本文件。

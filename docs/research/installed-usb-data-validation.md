@@ -1,5 +1,10 @@
 # Installed service USB data and live upgrades
 
+Follow-up [E60 framed-close validation](framed-management-race-validation.md)
+records a new transport fix, four final-ELF dual-stack regressions and a
+coordinated old-preview migration. Its mixed new-client/old-server run fails.
+The E59 results and unresolved original cause below retain their original scope.
+
 2026-10-25. Four targeted paired runs pass on complete Ubuntu 22.04/24.04
 amd64 systems. Each performs three real QEMU HID/FTDI I/O rounds, a client
 package upgrade with live imports, a server upgrade with live exports and

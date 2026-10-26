@@ -1,0 +1,286 @@
+{
+  "utc": "2026-10-26T02:39:05.678977+00:00",
+  "paired_runs": 6,
+  "passed": 5,
+  "failed_retained": 1,
+  "actual_qemu_exits0": 12,
+  "passing_io_rounds": 15,
+  "passing_root_proofs": 70,
+  "matrix": [
+    {
+      "run": "rustusb-management-race-native-v4-20261026",
+      "passed": true,
+      "head": "1b59ee74f7a0e71ef5e2c4a1aa2ae1710ed17a8d",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "client_root_proofs": 6,
+      "server_root_proofs": 10,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-management-race-native-v6-20261026",
+      "passed": true,
+      "head": "1b59ee74f7a0e71ef5e2c4a1aa2ae1710ed17a8d",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 6,
+      "client_root_proofs": 6,
+      "server_root_proofs": 10,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-management-race-usbfs-v4-20261026",
+      "passed": true,
+      "head": "1b59ee74f7a0e71ef5e2c4a1aa2ae1710ed17a8d",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 4,
+      "client_root_proofs": 6,
+      "server_root_proofs": 4,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-management-race-usbfs-v6-20261026",
+      "passed": true,
+      "head": "1b59ee74f7a0e71ef5e2c4a1aa2ae1710ed17a8d",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "usbfs",
+      "family": 6,
+      "client_root_proofs": 6,
+      "server_root_proofs": 4,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    },
+    {
+      "run": "rustusb-management-race-native-v4-old-to-new-20261026",
+      "passed": false,
+      "head": "1b59ee74f7a0e71ef5e2c4a1aa2ae1710ed17a8d",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "failure": "Traceback (most recent call last):\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 120, in one\n    catalog=guest('client','discover')\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/run.py\", line 85, in guest\n    value=json.loads(vms[role].run(command,label))\n  File \"/home/ubuntu/github/usbip-client/scripts/qemu_installed_usb/vm.py\", line 60, in run\n    if result.returncode not in expected:raise RuntimeError(f'{self.role} {label} exit {result.returncode}')\nRuntimeError: client discover exit 1\n",
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true
+    },
+    {
+      "run": "rustusb-management-race-coordinated-v6-to-v10-20261026",
+      "passed": true,
+      "head": "393ce5ce0ccff78e20e9622fa7fc9f3e37edf2cf",
+      "qemu_exits": {
+        "server": 0,
+        "client": 0
+      },
+      "backend": "native",
+      "family": 4,
+      "client_root_proofs": 6,
+      "server_root_proofs": 12,
+      "head_guard": true,
+      "clean_guard": true,
+      "frozen_file_guard": true,
+      "pcap_review_passed": true
+    }
+  ],
+  "software": {
+    "head": "473fb3c7f6ae5c47e23f11def1d2ad2d14e77eb7",
+    "utc": "2026-10-26T02:05:59.118028+00:00",
+    "result": "PASS",
+    "commands": [
+      {
+        "name": "core",
+        "argv": [
+          "bash",
+          "scripts/check.sh"
+        ],
+        "exit": 0,
+        "passed": 1096,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "name": "gui",
+        "argv": [
+          "bash",
+          "scripts/check-gui.sh"
+        ],
+        "exit": 0,
+        "passed": 18,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "binaries": {
+      "target/release/rustusb": {
+        "sha256": "866b07513577f1cc35f86242ac5bcd76290691ba57256b8d66baaa4ad2fe68ec",
+        "bytes": 22455496
+      },
+      "target/release/rustusb-helper": {
+        "sha256": "475b2f97e8b4e31dd1af479193913c637d09dc8c3b1debd13442c0f88f6748f3",
+        "bytes": 7525544
+      },
+      "apps/rustusb-gui/target/release/rustusb-gui": {
+        "sha256": "7bdb41f76f384d8c1ffd3c5ca327968de599abf520eec7c3953eccaf97a1c356",
+        "bytes": 17912160
+      }
+    },
+    "guards": {
+      "head": true,
+      "clean": true,
+      "inputs": true
+    }
+  },
+  "software_input_count": 722,
+  "development_source_map": [
+    {
+      "head": "b3cdd4826895d253f47b591d4ea3e09b0c0ad44d",
+      "logs": [
+        "initial-concurrent.log"
+      ]
+    },
+    {
+      "head": "fededbe2f0f2aba16f6243f12587444ba27fba3c",
+      "logs": [
+        "initial-delayed-read.log"
+      ]
+    },
+    {
+      "head": "41540391a8838fd253086cc066959642e15d10c0",
+      "logs": [
+        "fixed-delayed-read.log",
+        "fixed-transport-suite.log"
+      ]
+    },
+    {
+      "head": "800f94c94f1574ff472d2902c1ae5ccc4c8639fc",
+      "logs": [
+        "graceful-transport-suite.log"
+      ]
+    },
+    {
+      "head": "980445be91625fba5bcc5914599a8314c63a10cf",
+      "logs": [
+        "final-transport-suite.log"
+      ]
+    },
+    {
+      "head": "5d265aa7b60a8992b70c601451c4c65479e24e01",
+      "logs": [
+        "diagnostic-half-close.log"
+      ]
+    },
+    {
+      "head": "da111ead74282b16d367c8ffb39acf43e5ead630",
+      "logs": [
+        "diagnostic-transport-suite.log",
+        "diagnostic-positive-only.log"
+      ]
+    },
+    {
+      "head": "805c267a9cec0e9389d7d7bf68895de6ac543410",
+      "logs": [
+        "retained-transport-suite.log"
+      ]
+    },
+    {
+      "head": "d6707a773fef25a72f1ae071d943807bfcf4250b",
+      "logs": [
+        "retained-noerror-transport-suite.log"
+      ]
+    },
+    {
+      "head": "d329fe32b9ab1e841a3a4d228dccabcf6496698d",
+      "logs": [
+        "owned-close-transport-suite.log",
+        "stability/summary.json"
+      ]
+    },
+    {
+      "head": "b9fc7a6cc3427d4ec77d719dd668657870096987",
+      "logs": [
+        "active-grace-transport-suite.log",
+        "active-grace-concurrent.log"
+      ]
+    },
+    {
+      "head": "7c45dadf981daf9c19e9fe415894a314d49d1c50",
+      "logs": [
+        "active-grace-typed-transport-suite.log",
+        "active-grace-typed-concurrent.log",
+        "active-stability/summary.json"
+      ]
+    },
+    {
+      "head": "530c93ab0fb61fc58615d92e96cf8f27326692bf",
+      "logs": [
+        "management-close-stage-diagnostic.log"
+      ]
+    },
+    {
+      "head": "15c8d099ccf6e82aaf982b86845438a3dec7ea24",
+      "logs": [
+        "peer-drain-rebuilt-transport-suite.log"
+      ]
+    },
+    {
+      "head": "c89dec61ea9c62e9fa9bf1a1b5f616ee10d55e23",
+      "logs": [
+        "final-peer-drain-transport-suite.log",
+        "final-peer-drain-concurrent.log",
+        "peer-drain-stability/summary.json"
+      ]
+    }
+  ],
+  "invalid_current_source_attribution": [
+    "development/peer-drain-transport-suite.log",
+    "development/peer-drain-concurrent.log"
+  ],
+  "isolated_old_control": {
+    "head": "530c93ab0fb61fc58615d92e96cf8f27326692bf",
+    "dirty_test_overlay": [
+      "crates/rustusb-transport/src/tls/tests/link.rs"
+    ],
+    "overlay_sha256": "c77a9bbd91f32bb7eb895d9f2095377d04ea230a92836063d153c797afd33ec4",
+    "current_test_identical": true,
+    "isolated_target": "/tmp/rustusb-management-race-old-target-20261025",
+    "actual_exit": 101,
+    "not_a_clean_control_build": true,
+    "verbose_source_path_verified": true
+  },
+  "archive": {
+    "sha256": "74685363f6d729f2f2a569a20539a30d3db70cd0c1d436bc8c8af21102f22d19",
+    "bytes": 3271453,
+    "members": 2250
+  },
+  "privacy": {
+    "exact_private_keys_checked": 42,
+    "private_disks_keys_debs_elfs_archived": false,
+    "archive_roundtrip": true
+  }
+}

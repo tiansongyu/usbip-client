@@ -50,8 +50,11 @@ Complete Ubuntu 22.04/24.04
 amd64 [QEMU lifecycle tests](docs/research/debian-installation-validation.md)
 cover installation, upgrade, reboot, removal and retained administrator state.
 Separate [installed USB data tests](docs/research/installed-usb-data-validation.md)
-cover Native/USBFS HID and FTDI I/O plus live upgrades on IPv4/IPv6. Retained
-intermittent import failures remain under investigation.
+cover Native/USBFS HID and FTDI I/O plus live upgrades on IPv4/IPv6.
+[Framed connection-close regressions](docs/research/framed-management-race-validation.md)
+and a coordinated old-preview upgrade now pass. **Upgrade both framed-v2 endpoints
+before restarting imports**; a new-client/old-server run remains failed.
+The original intermittent import failure's cause remains unproven.
 
 ## Use
 

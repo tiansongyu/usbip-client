@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-26：framed关闭证据与交付收尾
+
+- 沿原coordinated session91525终态日志/summary核clean393ce5ce PASS，两QEMU0、三I/O、client6/server12完整Rootproof、原baseline/strict PCAP/guards真；句柄已回收Unknown process不触发重跑。原四new/new PASS仍锁1b59、软件1114/722和两包仍锁473，mixed第六pair仍FAIL。无活跃cargo/QEMU后才改文档。
+- 显式归档2250成员/17,844,276 rawB，gzip3,271,453B/SHA74685363f6d729f2f2a569a20539a30d3db70cd0c1d436bc8c8af21102f22d19；包含所有候选/失败/隔离old control/三组固定轮次/两full gate/六pair/方法源码。逐成员hash/size回读及42实际私钥字节排除通过，keys/disks/debs/ELFs不入Git。额外audit逐原check_terminal/held/NULL核70positive Rootproof、真实UID/caps/运行ELF/原invocation stop顺序与driver baseline；failed mixed cleanup与operation分账，global readme-site四文件/symlink保持。
+- audit首稿误把server ready次数当cycle导致missing ready3，改读原每cycle server-snapshot，保留开发诊断；第二次audit通过。文档组合patch因testing标题错误原子拒绝、无部分写入，按真实标题后成功。未改产品/原测试判据。英文report/README/site及安装迁移指南、architecture/testing/compat/roadmap/AGENTS/项目skill同步事实与限制。发布与页面检查待实际结果。
+- 本地256链接/asset/SVG检查、JS语法与全diff通过；722 gate输入只13处文档/HTML改变、三ELF及原fixture/check字节保持。浏览器desktop1280/doc1265/键盘新link2px，实际390/doc375与无script私有副本三backend/迁移说明可见、console sample空。首视口仍1280不计窄屏，fresh capability分call后取得390；私有noJS首tag锚点失败按实际src修正。无新pixel审查，三owned tabs关闭/reset，loopback server原句柄INT实际0。外manifest全部实际tracked并逐hash/size核对。
+
 ## 2026-10-25：首次导入 I/O 失败定位（开始）
 
 - 新coordinated.py仅host编排，exact anchors组合原run.py；原upgrade owner检查抽取原字节复用，原Root/PCAP/asserts不削弱；生成源码/原方法/生成器hash保留。client升级停导入后原server升级/恢复核验完成才启动new/new；第三轮前显式停两端并核原baseline再reuse。py_compile/help/generated compile预检通过。首次组合patch README上下文漏前缀导致原子拒绝，无部分文件/guest动作；拆分后正常。该迁移仍待实际run，不改判原mixed FAIL。

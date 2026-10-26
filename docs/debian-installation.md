@@ -133,6 +133,18 @@ cooperative settings and explicitly stop/verify its original owners. A new
 preinst cannot retroactively prevent an older script from sending a signal.
 The three signal-override negative tests use the corrected v5/v6 gates.
 
+For affected old framed-v2 previews, coordinate both endpoints. A tested
+v6→v10 sequence passes only when both are upgraded before imports restart;
+the independent sequential new-client/old-server test fails its second Catalog.
+Unchanged ALPN does not guarantee mixed-preview compatibility. Stop new imports,
+allow the original owners to finish, inspect original cleanup/retained records,
+upgrade the client and server while keeping imports stopped, then explicitly
+start the configured services and verify discovery and device I/O. Follow the
+cooperative settings above; do not bypass TLS errors or silently fall back to
+plaintext/raw-v1. Exact source/package identities, four new/new dual-stack runs
+and the separate coordinated migration are in the
+[framed-close validation](research/framed-management-race-validation.md).
+
 Remove/purge disable recorded WantedBy links but preserve administrator masks,
 configuration, keys, broker account/UID and both services' persistent journals.
 No live configuration is shipped as a dpkg conffile. Do not delete retained data

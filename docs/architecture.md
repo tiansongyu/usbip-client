@@ -194,6 +194,8 @@ Native detach命令成功后，只对同一status属性两次已成功解析但�
 
 ### 显式framed-v2数据链
 
+[E60关闭契约](research/framed-management-race-design.md)与[验收](research/framed-management-race-validation.md)：server在唯一stream1 active期间开始graceful禁止新stream；原EOS/实际消费/credit/FIN flush后继续poll唯一原connection。外置于TrackingIo的ClosingIo在真实write shutdown后保同transport读至TLS peer EOF，64KiB bounded discard/1KiB/每poll32读预算，不声称尾部h2语义验证；UnexpectedEof/reset及原stop/deadline保留。原Root设备清理独立，raw1不改。新旧preview混合FAIL，需协调两端升级后才重启导入，不能凭同ALPN推断兼容；E59原加密间歇原因未证明。
+
 [设计](research/data-link-health-design.md)与[验收](research/data-link-health-validation.md)记录可选schema2/ALPN2。每个实际TCP/TLS连接仅一h2数据stream，driver独立poll控制帧/接收pump，metadata monitor不持设备或permit；flow credit只返还实际应用消费。真TLS DATA/FIN flush fence保留IMPORT证据，不以入队/PONG替代。Catalog和完整拒绝回复双方有界FIN/EOF并保IO至自然join；成功IMPORT继续同流URB。Raw1保持默认且heartbeat/RTT不可用。
 
 应用旧Session/Metrics/IPC1保持，新只读SessionHealth逐profile Read授权；私有disk2严格迁移/容量预留及epoch历史，probe不逐次fsync。所有actualowner停转/清理先于保留ACK等待，不把driver结束或新进程资源0当Root恢复证明。完整Phase3、pendingURB/内核active窗口和真实G1/G2未由软件626或QEMU十五项自动完成。
