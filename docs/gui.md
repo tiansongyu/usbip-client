@@ -132,8 +132,11 @@ draft on IPv4/IPv6, with competing-writer/private-directory refusal and shared T
 regressions. Unknown/expired outcomes remain conservative.
 [Package lifecycle validation](research/debian-installation-validation.md) adds
 full Ubuntu 22.04/24.04 amd64 install/upgrade/reboot/remove/purge, actual native
-window close and controlled journal wait. Power-loss durability, arm64 installed
-runtime, full GUI and hardware/Windows acceptance remain unfinished.
+window close and controlled journal wait. Separate
+[ARM64 cold-installation validation](research/arm64-installed-validation.md)
+covers both Ubuntu versions with actual ordinary-user windows and WM close0.
+ARM USB I/O, ARM GUI action/fault matrices, power-loss durability, full GUI and
+hardware/Windows acceptance remain unfinished.
 
 Run `scripts/check-gui.sh` for the independent GUI software gate. GTK is excluded
 from the root Native workspace; its root checks do not replace the GUI gate.

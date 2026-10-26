@@ -1,0 +1,146 @@
+{
+  "scope": "Two actual ARM64 cold package lifecycles and host software gates; no ARM USB I/O/hardware acceptance",
+  "runs": [
+    {
+      "release": "jammy",
+      "head": "76b4e7a35c5fae0308c24c538c66617745247137",
+      "summary": {
+        "passed": true,
+        "qemu_exit": 0,
+        "forced": false,
+        "stages": [
+          "install-upgrade",
+          "reboot",
+          "remove-purge"
+        ],
+        "first_qemu_exit": 0,
+        "collect_exit": 0,
+        "source_guard": true,
+        "binary_guard": true,
+        "head_guard": true
+      },
+      "guards": {
+        "initial_head": "76b4e7a35c5fae0308c24c538c66617745247137",
+        "head_guard": true,
+        "clean_guard": true,
+        "adapter_tool_guard": true
+      },
+      "check_records": 49,
+      "distinct_labels": 42,
+      "all_checks_passed": true,
+      "native_C_fixture": {
+        "sha256": "22d1c29b7baf860dfc1ed8f589713ded6c8f5e2cc2f9bde984d6e40122546b40",
+        "source_sha256": "56a50dc6aeca27b019774ae5d8808b395cbe1aba9d0aafafb49a90bab8280505",
+        "machine": "AArch64",
+        "compiled_in_actual_ARM_guest": true
+      },
+      "actual_executed_fixture": {
+        "sha256": "22d1c29b7baf860dfc1ed8f589713ded6c8f5e2cc2f9bde984d6e40122546b40",
+        "uid": 112
+      },
+      "fsync_entered": 1,
+      "fsync_returned0": 1
+    },
+    {
+      "release": "noble",
+      "head": "76b4e7a35c5fae0308c24c538c66617745247137",
+      "summary": {
+        "passed": true,
+        "qemu_exit": 0,
+        "forced": false,
+        "stages": [
+          "install-upgrade",
+          "reboot",
+          "remove-purge"
+        ],
+        "first_qemu_exit": 0,
+        "collect_exit": 0,
+        "source_guard": true,
+        "binary_guard": true,
+        "head_guard": true
+      },
+      "guards": {
+        "initial_head": "76b4e7a35c5fae0308c24c538c66617745247137",
+        "head_guard": true,
+        "clean_guard": true,
+        "adapter_tool_guard": true
+      },
+      "check_records": 50,
+      "distinct_labels": 42,
+      "all_checks_passed": true,
+      "native_C_fixture": {
+        "sha256": "0e273749e3554ec638010ea49090e079511c95fd796f1978197780f5232feb62",
+        "source_sha256": "56a50dc6aeca27b019774ae5d8808b395cbe1aba9d0aafafb49a90bab8280505",
+        "machine": "AArch64",
+        "compiled_in_actual_ARM_guest": true
+      },
+      "actual_executed_fixture": {
+        "sha256": "0e273749e3554ec638010ea49090e079511c95fd796f1978197780f5232feb62",
+        "uid": 108
+      },
+      "fsync_entered": 1,
+      "fsync_returned0": 1
+    }
+  ],
+  "actual_qemu_exits0": 4,
+  "forced": false,
+  "source_head": "76b4e7a35c5fae0308c24c538c66617745247137",
+  "CI_binary_source": "0316de7638c68b9360ec719194e9e0c4ae0fe454",
+  "software": {
+    "head": "76b4e7a35c5fae0308c24c538c66617745247137",
+    "utc": "2026-10-26T03:49:16.744181+00:00",
+    "result": "PASS",
+    "commands": [
+      {
+        "name": "core",
+        "argv": [
+          "bash",
+          "scripts/check.sh"
+        ],
+        "exit": 0,
+        "passed": 1096,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "name": "gui",
+        "argv": [
+          "bash",
+          "scripts/check-gui.sh"
+        ],
+        "exit": 0,
+        "passed": 18,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "binaries": {
+      "target/release/rustusb": {
+        "sha256": "866b07513577f1cc35f86242ac5bcd76290691ba57256b8d66baaa4ad2fe68ec",
+        "bytes": 22455496
+      },
+      "target/release/rustusb-helper": {
+        "sha256": "475b2f97e8b4e31dd1af479193913c637d09dc8c3b1debd13442c0f88f6748f3",
+        "bytes": 7525544
+      },
+      "apps/rustusb-gui/target/release/rustusb-gui": {
+        "sha256": "7bdb41f76f384d8c1ffd3c5ca327968de599abf520eec7c3953eccaf97a1c356",
+        "bytes": 17912160
+      }
+    },
+    "guards": {
+      "head": true,
+      "clean": true,
+      "inputs": true
+    }
+  },
+  "software_input_count": 731,
+  "exact_private_keys_checked": 14,
+  "private_bytes_archived": false,
+  "archive": {
+    "members": 673,
+    "bytes": 279186,
+    "sha256": "f76089cb926fa08c41b0b1a3830a6f372a183a1e8aa950bc8c13650cf9ab24e2",
+    "roundtrip": true
+  }
+}

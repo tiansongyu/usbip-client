@@ -1,5 +1,7 @@
 # 分阶段开发与验收计划
 
+E61[两Ubuntu ARM64冷安装](research/arm64-installed-validation.md)完成实际安装、原生GUI WM0、受控真实fsync升级、重启和remove/purge/保留状态，四QEMU0/42不同断言/所有guard；同clean76b4完整1114/731输入通过。原ARM CI包与同源控制字段升版各锁实际身份。下一步仍需ARM Native/USBFS数据I/O，硬件G1/G2、全GUI/Phase5、性能/存储/ISO、Windows与完整Phase0–7保持原范围。
+
 E60[framed关闭修复及协同升级](research/framed-management-race-validation.md)完成完整1114软件执行和五positive安装USB pair（四双栈new/new、一两端协同v6→v10），保留第六mixed FAIL；新旧preview须协调更新两端后再启导入。原加密首次import原因未证实，旧失败与硬件/ARM/Windows/完整Phase0–7门槛不变。
 
 E58已实现[Ubuntu基础/GUI .deb及systemd安装流程](debian-installation.md)，[两amd64完整cold安装验收](research/debian-installation-validation.md)与原软件门通过；源码/包/ELF/夹具分别固定，默认不启服务且保留旧状态。四native CI配置产物构建与安装态验收分开；新unit内[Native/USBFS双栈I/O及双方live升级](research/installed-usb-data-validation.md)四targeted pair已通过，十FAIL保留且间歇import失败未定位；arm64完整安装、断电/旧未知协调、完整GUI/Phase5与硬件门槛继续未完成。

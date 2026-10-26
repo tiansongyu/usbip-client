@@ -2,6 +2,11 @@
 
 ## 2026-10-26：ARM64完整安装环境（开始）
 
+- clean76b4e7a3两ARM cold实际session93245/84823均terminal0：各install/真实WM0/原fsync entered+returned0/三unsafe stop拒绝/upgrade0/reboot/remove/purge-retention全PASS；49/50条42不同断言、四QEMU0、无forced，原source/binary/head和额外clean/adapter/tool/四包guard真。冷机broker UID实际112/108（非prepare109或AMD常数）；原C source56a50d、ARM实际库22d1c2/0e2737与执行hash/PID/UID全相等。两初次actual cold无产品FAIL；只读observer首读.started当completed导致exit1，原件保留，修正仅观察脚本。
+- 同clean76b4原check.sh+check-gui.sh全部PASS，core1096/GUI18共1114、0failed/ignored、731 tracked非evidence输入及HEAD/clean/input真；CLI866b/helper475/GUI7bdb原三release字节保持，ARM执行包仍CI0316，formal +armtest1只控制字段，不重标源码/ELF归属。两actual cold owner结束后才改docs/README/site/规范。
+- cold证据673 exact成员/1,658,023 rawB，gzip279186B/SHAf76089cb926fa08c41b0b1a3830a6f372a183a1e8aa950bc8c13650cf9ab24e2，nested guest逐hash/size回读、14实际私钥文件字节序列排除通过；额外audit核动态UID/PID/C-source/library/return0/42labels、0316→76产品/包脚本不变及四global skill/symlink保持。原environment121成员独立不改。ARM USB I/O/真实板卡/全GUI/Phase0–7仍未验收；尚待页面QA、正常push与远端CI/Pages回执。
+- E61英文report/README/展示页及中文入口、安装/GUI/testing/compat/roadmap/acceptance/AGENTS/项目skill已同步ARM cold事实与未完成USB范围，未将原AMD/硬件结果重标ARM。259静态checks、JS语法、全diff通过；desktop1280/doc1265/newlink键盘2px，实际390/doc375与script-omitted390三backend/新ARMlink/未验收范围可见、console sample空，无pixel新声明。两owned tabs关闭/reset，preview原句柄INT实际0。731旧输入只13处docs/HTML改变且三ELF保持；证据outer manifest全成员须实际tracked后再push。下一ARM Native/USBFS I/O仍待执行。
+
 - E61从clean f9fdcdf9重读完整原目标，检查Git/日志/核心skill/验收/安装设计与现有Vm。上轮为已验证修复、原软件/QEMU/四平台CI与Pages发布进展，非blocked。当前aarch64只有原生CI，无安装/内核USB接受证据；host无qemu-system-aarch64/ARM固件，现有QEMU6.2，磁盘剩余404GiB。先写ARM64验收设计，保持完整Phase0–7/硬件范围，不缩成环境准备通过。
 - 查QEMU固定v6.2.0 virt原文及两Ubuntu dated ARM64镜像目录；拟用virt-6.2/cortex-a72/TCG、匹配QEMU与EDK2临时解包，不改host root/service/USB。读取工具目录前一次exec指定尚不存在workdir，进程创建被拒绝、没有下载动作；随后先建目录再开始原下载。GitHub专用artifact下载响应只存.private，禁止signed cap进入日志/Git。当前只有设计与依赖准备，尚无新boot/install/USB PASS。
 - 原APT下载/两镜像下载真实进程均0；qemu-system-arm6.2+dfsg-2ubuntu6.31及EDK2 2022.02-3ubuntu0.22.04.7逐APT SHA256匹配、仅临时解包，ldd无missing，virt-6.2/cortex-a72/两64MiB pflash确认。两official ARM64 image按原dated signed SUMS重新gpgv/逐真实bytes SHA256通过；CI0316 Jammy/Noble ARM ZIP皆API digest/size匹配解包，尚未执行。首下载脚本误把file_uri对象当路径实际exit1，原脚本/日志保留；检查schema后使用私有download_url完成，不输出cap。

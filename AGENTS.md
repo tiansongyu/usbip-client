@@ -1,5 +1,7 @@
 # RustUSB 开发约定
 
+ARM安装夹具改动先读`docs/research/arm64-installed-validation-design.md`与`arm64-installed-validation.md`。E61 clean76b4完整1114/731输入、两Ubuntu ARM64 cold各42不同断言/四QEMU0/无forced通过；原guest/C/GUI budget不改，host virt-6.2/cortex-a72/TCG/私有VARS及实际owner观测等待适配显式。实际ARM guest GCC编译原C并核源/运行库SHA，不能上传AMD .so冒ARM；两原CI0316包+formal +armtest1只Version/GUI Depends改变，payload/scripts严格相同，独立derived receipt不得伪native rebuild。broker UID实际112/108动态核，不沿用其他case。原prep锁dd3，cold/软件锁76b4，后续文档不重标；ARM USB I/O、硬件/性能/完整阶段未完成。
+
 E60见`docs/research/framed-management-race-{design,validation}.md`：active stream1时server graceful禁止新stream，原EOS/消费/credit/真FIN fence后继续poll唯一connection；ClosingIo外置TrackingIo，同transport真write关闭后有界peer TLS EOF drain，64KiB/1KiB/每poll32读，不声称尾部h2语义验证，不放宽close_notify/IO/stop/deadline。clean473完整1114/722输入及CLI866b/helper475/GUI7bdb；clean1b59四new/new双栈+clean393协调v6→v10五PASS/10guest0/15I/O/70Rootproof，mixed第六FAIL/2guest0不得改判或推同ALPN兼容。独立old530+精确test overlay101，shared-target两污染run排除、旧c59计数393pass/1fail修正不改FAIL；96固定进程全PASS非USBcase。原E59加密原因未证明；保持原Root/driver/PCAP与硬件/ARM/完整阶段边界。
 
 E59完整安装服务USB证据见`docs/research/installed-usb-data-validation.md`：Native/USBFS双栈四targeted pair/八guest0、三轮HID/FTDI/双方live升级/52完整Rootproof及baseline通过，三pair锁dd9390c4、Native/v4锁d6e68915；十原FAIL/二十guest0保留，Native/v4间歇首次import IO仍未定位，不称修复。clean d6e68915完整软件1076+18/717输入与原三ELF保持。DAD/prefsrc和原incoming terminal/verified屏障、boot/product-window完整PCAP分账、原strict classifier/Rootproof不弱化；新进程0不替代旧释放。G1/G2、arm64安装、永久阻塞/断电及完整Phase5仍未完成。

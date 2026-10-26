@@ -1,5 +1,10 @@
 # Debian package lifecycle validation
 
+Follow-up [E61 ARM64 cold-installation validation](arm64-installed-validation.md)
+passes both Ubuntu releases with matching native CI packages and an audited
+same-source revision upgrade. Its source/package/ELF/fixture identities are
+separate; the amd64 results below retain their original scope.
+
 2026-10-25. Two complete, fresh Ubuntu **amd64** QEMU installations pass the
 install → upgrade → real reboot → remove → purge sequence. This verifies the
 experimental base/GUI packages and systemd lifecycle described in the

@@ -5,6 +5,10 @@ preview packages. The base includes the CLI/TUI, root helper, nonroot agent unit
 and package lifecycle scripts. Building a package is not installation acceptance;
 see the [full Ubuntu validation](research/debian-installation-validation.md) and
 [design](research/debian-installation-design.md) for the actual scope.
+Separate [ARM64 cold-installation validation](research/arm64-installed-validation.md)
+covers both Ubuntu versions with matching native CI packages, an audited
+same-source revision upgrade, actual GUI close and real reboot. ARM USB I/O
+remains a separate unvalidated gate.
 Ubuntu 22.04/24.04 amd64 and arm64 are targets. Build on the oldest updated
 distribution you intend to support for each architecture; dependencies are derived
 from the actual binaries, including GTK/WebKit for GUI. Do not use an amd64 package
@@ -96,6 +100,12 @@ Select the matching distribution and architecture. The
 [publication receipt](evidence/debian-publication-84b751d2-20261025/receipt.json)
 records four downloaded ZIPs/eight packages and read-only ELF/source/license
 checks; CI binaries were not installed in the amd64 VM cases.
+
+The ARM64 cases instead execute matching CI0316 packages after verifying the ZIP,
+package and AArch64 payload hashes. Their higher test revisions change only
+Version and GUI exact Depends, with separate derivation receipts and identical
+payload/scripts. These are specific same-source lifecycle observations, not a
+claim that every later CI artifact or old-code migration was installed and tested.
 
 ## Upgrade, stop and remove
 

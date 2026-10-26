@@ -47,8 +47,9 @@ nonroot agent and optional desktop app. Follow the
 the matching artifact from a successful [GUI CI run](https://github.com/tiansongyu/usbip-client/actions/workflows/gui.yml).
 Fresh installs leave services disabled/inactive for explicit administrator setup.
 Complete Ubuntu 22.04/24.04
-amd64 [QEMU lifecycle tests](docs/research/debian-installation-validation.md)
-cover installation, upgrade, reboot, removal and retained administrator state.
+[amd64](docs/research/debian-installation-validation.md) and
+[arm64](docs/research/arm64-installed-validation.md) QEMU lifecycle tests cover
+installation, upgrade, reboot, removal and retained administrator state.
 Separate [installed USB data tests](docs/research/installed-usb-data-validation.md)
 cover Native/USBFS HID and FTDI I/O plus live upgrades on IPv4/IPv6.
 [Framed connection-close regressions](docs/research/framed-management-race-validation.md)

@@ -1,5 +1,7 @@
 # 测试手册与证据要求
 
+E61[ARM64冷安装](research/arm64-installed-validation.md)在clean76b4完成Ubuntu22.04/24.04两actual ARM case、四QEMU0/无forced，49/50条均42不同断言，包括普通用户GUI WM0、真实fsync等待/return0、三unsafe stop拒绝、真reboot/remove/purge与retention。完整原core1096+GUI18/731输入/三原ELF同source通过；两product-free prep锁dd3、原ARM binary包锁CI0316、formal控制字段升版独立记账，不是native重编或旧代码迁移。全部原guest/C/GUI budget保持，host平台/观测等待适配显式；ARM USB I/O、硬件及完整阶段仍缺。
+
 E60[framed关闭报告](research/framed-management-race-validation.md)记录clean473fb3c7完整core1096+GUI18共1114/722输入与实际三ELF；四new/new Native/USBFS双栈pair锁clean1b59、独立coordinated v6→v10锁clean393，五PASS/十guest0/十五I/O/70完整Rootproof。第六mixed pair原FAIL/两guest0，所有guards真；old control独立target/test overlay实际101，固定96进程/8192Catalog全通过但不是USBcase。原失败、shared-target污染排除、旧failed gate计数修正和原加密QEMU原因未证实均保留。原check/Root/PCAP不弱化，升级两端后再启动导入；硬件/ARM/整体阶段仍未完成。
 
 E59[完整安装服务USB套件](../scripts/qemu_installed_usb/README.md)与[报告](research/installed-usb-data-validation.md)：两Ubuntu amd64交叉Native/USBFS双栈四PASS/八guest0、十二实际HID/FTDI轮次、双方live包升级、52原Rootproof及基线；十原FAIL/二十guest0单列保留，Native/v4间歇首次import IO仍未定位。完整软件1094/717输入锁clean d6e68915，三USB pair锁dd9390c4、Native/v4锁d6e68915，不重归属。boot PCAP与完整product-window分别保留，原strict classifier不改；真实硬件/ARM安装/完整Phase5未完成。
