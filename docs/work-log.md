@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-26：导入 PM 验证与英文入口发布回执
+
+- 内容45c01bb2正常SSH push实际81099 exit0、远端main精确一致/primary clean；17最终文档快照逐commit blob相同，原三host ELF、722未改输入与四global readme-site源/Codex发现symlink不变。实际软件与USB执行仍锁ed1e8fef，不把内容提交重标为执行源。
+- 精确内容core40296008987四native job121482117312/117653/117812/117973、GUI40296008856四job121482116905/117214/117266/117319及Pages40296008970 check121482118568/deploy121482374277全部completed/success，primary run/job/step原响应保留。未fetch full CI log/每平台重算1138，不把metadata当实际ELF运行证据。
+- 十canonical HTTPS body全部200且逐45c01bb2 Gitblob字节同。公开CUA1280×720/390×844新报告/已知boot失败/无横溢及mobileSVG实观，GUI lazy图初未载、导航其实际section后完整加载，console空；viewport实读reset1280×720/public tab8保deliverable。无新pixel，键盘/CSP no-script证据归本地QA。发布档41成员614089 rawB，gzip105705B/SHA3471775a58d08f154b1de3811139d5088051e06a21bd38dd46e602494111592d，逐original/readback/manifest核验。
+- 最后仅提交发布回执和证据并普通push；原PM产品、QEMU方法、README与8个site源不改。E63为完整目标实际进展；11正向pair与原pre-product forced FAIL、E62旧FAIL/E59加密根因未证实分账保留。ARM virtual CDC/完整GUI故障、真实G1/G2、存储/ISO/性能/Windows和整体Phase0–7继续未完成，goal active。
+
 ## 2026-10-26：授权导入 PM 的软件与双架构数据验收
 
 - clean ed1e8fef原完整core1120+GUI18=1138/738输入及HEAD-clean-source guard通过，三实际host ELF锁1a22/aebc/2551；全部QEMU期间仓库/源码/ELF保持冻结，actual owners全部终结后才写证据/文档。产品commit已普通SSH push，四原生core40284815248/GUI40284815259与旧站点Pages40284815276全部success；仅primary run/job/step metadata，不重算每平台测试数或伪造full CI log。

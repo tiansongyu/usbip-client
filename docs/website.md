@@ -145,3 +145,11 @@ failure explicit. Earlier inventory figures keep their own revisions. The CSS,
 JavaScript, images, workflow and four global readme-site source files are unchanged.
 This is factual maintenance using the previously examined rstop hierarchy;
 publication of this updated HTML is checked separately.
+
+Content `45c01bb2` is published: Pages40296008970 and all four native jobs in
+core40296008987 and GUI40296008856 complete successfully. Ten canonical HTTPS
+bodies match its Git blobs. Actual public desktop/mobile DOM confirms the new
+report link and the retained boot-failure limitation; responsive and lazy images
+load, and the viewport is reset. No pixel review is claimed. See the
+[publication receipt](evidence/native-import-power-publication-45c01bb-20261026/manifest.json).
+The original software and USB execution remains attributed to `ed1e8fef`.
