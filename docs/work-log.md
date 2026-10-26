@@ -1,5 +1,10 @@
 # RustUSB 工作日志
 
+## 2026-10-26：持久控制器管理实现（开始）
+
+- 从clean0c3dd04c继续，完整重读原Phase0–7目标、当前工作日志/核心skill和相关源码。上一轮实际验证与发布属于进展；全目标继续active。先记录[实施契约](research/controller-enrollment-implementation.md)，再实现root-only opt-in controller管理，不能以更窄的只读报告代替实际持久意图与默认授权写入。
+- 沿用rustusb-development、writing-technical-design、technical-documentation及humanizer-zh。按设计skill明确要求，两已有agent分别只读审查现有持久file机制/真实worker所有权与Linux pinned sysfs/boot解析，仅写各自/tmp，不生成逐组件技能、不并行改产品。现有storage拒绝保持，未来target/release仍必须完成；本轮尚无产品实现或新验证结果。
+
 ## 2026-10-26：启动策略与句柄实验发布回执
 
 - 内容`32f345c6d09c0df724ab3bcdcaba9c8303dc7ae9`正常SSH push（session85038实际0），之后远端main逐SHA一致且工作区干净。software40339685702与GUI40339684834各四原生平台全部success，Pages40339684705的check/deploy成功；原API/job/step响应见[发布清单](evidence/storage-policy-publication-32f345c6-20261026/manifest.json)。只核主API状态，未下载CI完整日志或执行产物，不为每格重算测试数。
