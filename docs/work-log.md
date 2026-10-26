@@ -4,6 +4,7 @@
 
 - E62从clean73d8f9a0重读完整原目标，核Git/日志/核心skill与原installed/ARM/frame关闭设计、源码和实际输入。上轮ARM cold/软件/发布是已验证进展，非blocked；当前无活跃本地cargo/QEMU，32CPU/41GiB available可承载四独立pair。先写ARM USB设计，保持原guest/Root/driver/PCAP/并发IMPORT/失败判据；四Native/USBFS双栈×Jammy/Noble交叉role，预备盘只优化OS不替代cold。
 - 明确使用原Jammy native ARM CI0316 base在两OS运行和formal同源+armtest1升级，CLIff77/helpercf3e，Noble自己的CI ELF不冒称USB已测；实际UID必须动态读取。仅替换host VM import到已有ArmVm，额外冻结adapter/tools/firmware/parent disks/packages/源码与原HEAD/三hostELFs。当前只有设计，未有新ARM USB I/O裁决。
+- 新usb.py exact单一VM import组合原runner，保存原/生成/adapter与全部输入hash；原summary不改写，额外arm-verdict同时要求原PASS与source/tools/parents/packages/HEAD-clean守卫。沿用原ArmVm真实aarch64/dpkg/PID1与总wait；源码compile/组合compile、bare --help、259静态检查、diff与实际device help四设备确认通过。仍无新ARM USB I/O结果；commit后先原完整root/GUI，再同一source固定四pair。
 
 ## 2026-10-26：ARM64 包生命周期与 GUI 安装验收
 

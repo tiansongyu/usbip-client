@@ -53,3 +53,21 @@ base+GUI pair and clean ARM CI build receipt. Independently verify the API/ZIP
 digest before using them. It compares every payload member and control file,
 allows only Version/GUI exact Depends changes, and records its own generator hash
 and a distinct derivation receipt. It neither executes nor recompiles a binary.
+
+For the separate ARM kernel USB data matrix, use the closed product-free ARM
+prepared parents and base-only packages from the oldest supported distribution:
+
+```sh
+python3 scripts/qemu_arm64/usb.py --tool-root /private/extracted-tools/usr-root \
+  --prepared /private/arm64-prepared --output /private/arm-native-v4 \
+  --base /private/ci-pairs/jammy/rustusb_OLD_arm64.deb \
+  --upgrade /private/higher-pairs/jammy/rustusb_NEW_arm64.deb \
+  --backend native --family 4
+```
+
+Run `native`/`usbfs` × `4`/`6` separately. The adapter changes only the original
+VM import, retains original guest/Root/driver/PCAP/live-upgrade assertions, and
+adds actual ARM platform/identity plus frozen source/tools/parents/packages.
+`arm-verdict.json` requires both the unchanged inherited verdict and all extra
+guards. Never relabel an inherited FAIL from guest exits or cleanup alone.
+See the [matrix design](../../docs/research/arm64-usb-data-design.md).
