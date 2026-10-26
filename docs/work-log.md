@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-26：启动策略与句柄实验发布回执
+
+- 内容`32f345c6d09c0df724ab3bcdcaba9c8303dc7ae9`正常SSH push（session85038实际0），之后远端main逐SHA一致且工作区干净。software40339685702与GUI40339684834各四原生平台全部success，Pages40339684705的check/deploy成功；原API/job/step响应见[发布清单](evidence/storage-policy-publication-32f345c6-20261026/manifest.json)。只核主API状态，未下载CI完整日志或执行产物，不为每格重算测试数。
+- 线上8个canonical请求均200，逐字节匹配内容提交；公开tab8实际1280/document1265无横溢，新报告与存储禁用边界可见。初reload一图加载中，后续三图全载，warn/error样本空，tab保留交付；无新pixel声明。产品与测试脚本仍与54a一致、三release hash及四global readme-site源不变。
+- 发布归档57成员/1348330原始字节，gzip112830字节，SHA559f9e1906caf3d3a19d7141d1ba0b7c5c2145b38f3e6d2320ce7e8800343917；逐成员回读通过。runs-final是原完成响应的精确副本；观察进程session65081实际0。软件1166与本轮四组QEMU仍锁54a，回执提交不另称实测。
+- 本轮完成持久启动门的正反实验、绑定前后USBFS能力区分、两原I/O回归及英文README/网站维护，属于完整目标的实际进展。下一步实现持久enrollment intent与新的当前epoch收据；早期规则/ACL历史、open/control竞态、产品存储交接、硬件与全Phase0–7仍未完成，goal保持active。最终仅提交本回执并正常push，不强推。
+
 ## 2026-10-26：持久控制器授权与USBFS能力边界（开始）
 
 - 主证据1761成员/79084850原始字节，gzip7951895字节，SHA5fa10e793809432242f9f6d29d257bd173f86d3cde16847606f39ed43d426446；排除578包二进制文件及6实际私钥，逐成员回读通过。研究保留取件失败与旧假设更正。文档QA13文件/607链接锚点、site/JS/diff通过；CUA1280与390无横溢、新链接键盘焦点2px/三图加载、warn/error样本空，tab64关闭并请求reset。未重跑pixel/clipboard/reduced-motion/禁JS，全球readme-site四源及发现链接保持；发布尚待push观察。
