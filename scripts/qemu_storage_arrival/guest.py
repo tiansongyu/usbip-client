@@ -291,9 +291,9 @@ def flush_error():
     state=snapshot();saved=json.loads((OUT/'client-held.json').read_text())
     assert state['generation']==saved['generation'] and state['blocks']==saved['blocks']
     rows={int(r['scsi'].split(':')[-1]):r for r in state['blocks']}
-    assert set(rows)=={0,1} and rows[0]['ro']=='1' and rows[1]['ro']=='0'
+    assert set(rows)=={0,1} and rows[0]['ro']=='0' and rows[1]['ro']=='1'
     assert all(r['size']=='131072' and not r['partition'] for r in rows.values())
-    row=rows[1];node=Path('/dev')/row['name']
+    row=rows[0];node=Path('/dev')/row['name']
     write_cache=read(Path('/sys/class/block')/row['name']/'queue/write_cache')
     assert write_cache=='write back',write_cache
     fd=os.open(node,os.O_RDWR|os.O_DIRECT|os.O_CLOEXEC)
@@ -312,7 +312,7 @@ def flush_error():
             if not control:save('first-flush-failure.json',writes[-1])
             assert direct_read(node,offset,len(payload))==payload
     finally:buffer.close();os.close(fd)
-    result={'writes':writes,'write_cache':write_cache,'generation':state['generation'],
+    result={'writes':writes,'write_cache':write_cache,'generation':state['generation'],'lun':0,'state':state,
             'first_sync_exit':11,'explicit_second_control_exit':0,'clean_release_approved':False}
     save('flush-error.json',result)
     return result

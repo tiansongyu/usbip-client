@@ -50,7 +50,9 @@ def main():
     vms={role:Vm(out/role,parents[role],role,links[i]) for i,role in enumerate(['server','client'])}
     result={'passed':False,'head':head,'releases':releases,'scenario':args.scenario,'qemu_exits':{},'collection_exits':{}}
     qmp_records=[];qmp=None;daemon_future=None;pool=concurrent.futures.ThreadPoolExecutor(max_workers=2)
-    observations={}
+    observations={};client_attached=False
+    rw_lun=0 if args.scenario=='flush-error' else 1
+    result['lun_layout']={'writable':rw_lun,'read_only':1-rw_lun}
     def guest(role,action,*args):
         label=action+('-'+'-'.join(map(str,args)) if args else '')
         command='sudo python3 /var/tmp/rustusb-installed-fixture/guest.py '+shlex.join([action,*map(str,args)])
@@ -87,14 +89,14 @@ def main():
                 with backing.open('xb') as f:f.truncate(64*1024*1024)
                 file_node={'driver':'file','filename':str(backing),
                            'cache':{'direct':False,'no-flush':False}}
-                if lun==1 and args.scenario=='flush-error':
+                if lun==rw_lun and args.scenario=='flush-error':
                     config=server.private/'flush-once.conf'
                     config.write_text('[inject-error]\nevent = "flush_to_disk"\niotype = "flush"\nerrno = "5"\nonce = "on"\nimmediately = "off"\n')
                     save(out/'flush-injection.json',{'config_text':config.read_text(),'sha256':sha(config),
-                                                   'graph':'raw arrival-lun1 -> blkdebug arrival-debug -> file'})
+                                                   'graph':f'raw arrival-lun{rw_lun} -> blkdebug arrival-debug -> file'})
                     file_node={'driver':'blkdebug','node-name':'arrival-debug','config':str(config),
                                'image':file_node,'cache':{'direct':False,'no-flush':False}}
-                call('blockdev-add',{'driver':'raw','node-name':f'arrival-lun{lun}','read-only':lun==0,
+                call('blockdev-add',{'driver':'raw','node-name':f'arrival-lun{lun}','read-only':lun!=rw_lun,
                                     'cache':{'direct':False,'no-flush':False},
                                     'file':file_node})
                 call('device_add',{'driver':'scsi-hd','id':f'arrival-scsi{lun}','bus':'arrival-bot.0',
@@ -110,11 +112,13 @@ def main():
         daemon_future=pool.submit(server.run,'sudo python3 /var/tmp/rustusb-installed-fixture/guest.py serve','serve')
         guest('server','await-daemon')
         print('actual two-LUN enumeration; scenario '+args.scenario,flush=True)
-        guest('client','attach',bus);guest('server','snapshot','imported-1');guest('server','claim')
+        guest('client','attach',bus);client_attached=True
+        guest('server','snapshot','imported-1');guest('server','claim')
         if args.scenario=='normal':
-            guest('client','io',1);guest('client','detach');guest('server','snapshot','normal-detach')
+            guest('client','io',1);guest('client','detach');client_attached=False
+            guest('server','snapshot','normal-detach')
             print('round 2: actual daemon death differs from kernel data-owner release',flush=True)
-            guest('client','attach',bus);guest('client','io',2)
+            guest('client','attach',bus);client_attached=True;guest('client','io',2)
             old_connection=guest('server','snapshot','before-daemon-kill')['tcp_connections']
             assert len(old_connection)==1 and old_connection[0]['inode']>0
             guest('server','kill-daemon')
@@ -124,7 +128,7 @@ def main():
             guest('client','io',3)
             assert guest('server','snapshot','daemon-dead-io-live')['tcp_connections']==old_connection
             assert observations['client-io-2']['state']['generation']==observations['client-io-3']['state']['generation']
-            guest('server','reset-link');guest('client','empty')
+            guest('server','reset-link');guest('client','empty');client_attached=False
             final=guest('server','snapshot','fault-quarantine')
         else:
             guest('client','flush-error')
@@ -132,20 +136,20 @@ def main():
             errors=[e for e in qmp.events if e.get('event')=='BLOCK_IO_ERROR']
             assert len(errors)==1,errors
             detail=errors[0]['data']
-            assert detail['node-name']=='arrival-lun1' and detail['operation']=='write' and detail['action']=='report',detail
+            assert detail['node-name']=='arrival-lun0' and detail['operation']=='write' and detail['action']=='report',detail
             guest('server','kill-daemon')
             observations['server-serve']=json.loads(daemon_future.result());daemon_future=None
             save(out/'observations.json',observations)
-            guest('client','detach')
+            guest('client','detach');client_attached=False
             final=guest('server','snapshot','failed-flush-quarantine')
             trace=(server.out/'qemu.stderr').read_text(errors='replace')
-            senses=list(re.finditer(r'scsi_req_build_sense target 0 lun 1 tag (\d+) key 0x0b asc 0x00 ascq 0x06',trace))
+            senses=list(re.finditer(r'scsi_req_build_sense target 0 lun 0 tag (\d+) key 0x0b asc 0x00 ascq 0x06',trace))
             assert len(senses)==1,trace[-4000:]
             before=trace[:senses[0].start()]
-            parsed=list(re.finditer(r'scsi_req_parsed target 0 lun 1 tag '+senses[0].group(1)+r' command (\d+) ',before))
+            parsed=list(re.finditer(r'scsi_req_parsed target 0 lun 0 tag '+senses[0].group(1)+r' command (\d+) ',before))
             assert parsed and parsed[-1].group(1)=='53'
-            assert len(re.findall(r'scsi_req_parsed target 0 lun 1 tag \d+ command 53 ',trace))>=2
-            save(out/'flush-trace-verification.json',{'sense_tag':senses[0].group(1),'sense':[11,0,6],
+            assert len(re.findall(r'scsi_req_parsed target 0 lun 0 tag \d+ command 53 ',trace))>=2
+            save(out/'flush-trace-verification.json',{'lun':0,'sense_tag':senses[0].group(1),'sense':[11,0,6],
                                                     'failed_command':53,'qmp_error':errors[0]})
         assert final['driver']=='usbip-host' and final['authorized']=='1'
         result['passed']=True
@@ -163,6 +167,10 @@ def main():
                 daemon_future.result()
             except Exception:result['daemon_cleanup_error']=traceback.format_exc();result['passed']=False
         pool.shutdown(wait=True)
+        if client_attached:
+            try:result['failed_case_detach']=guest('client','detach')
+            except Exception:result['failed_case_detach_error']=traceback.format_exc()
+            result['passed']=False
         for role,vm in vms.items():
             if vm.process is not None and vm.process.poll() is None:
                 try:
@@ -175,21 +183,21 @@ def main():
             result['qemu_exits'][role]=vm.close()
             if result['qemu_exits'][role]!=0:result['passed']=False
             serial=(vm.out/'serial.log').read_text(errors='replace')
-            result[role+'-kernel-integrity']=not any(text in serial for text in physical.INTEGRITY_FAILURES)
+            result[role+'-kernel-integrity']=not any(text in serial for text in [*physical.INTEGRITY_FAILURES,'blocked for more than'])
             if not result[role+'-kernel-integrity']:result['passed']=False
         for link in links:link.close()
         result['guards']={'head':git('rev-parse','HEAD')==head,'clean':not git('status','--porcelain'),
                           'source':inputs()==source,'frozen':all(sha(Path(p))==h for p,h in frozen.items())}
         if not all(result['guards'].values()):result['passed']=False
         if result['passed']:
-            backing=vms['server'].private/'lun1.raw'
+            backing=vms['server'].private/f'lun{rw_lun}.raw'
             with backing.open('rb') as f:
                 rows=([observations['client-io-'+str(c)] for c in [1,2,3]] if args.scenario=='normal'
                       else observations['client-flush-error']['writes'])
                 for row in rows:
                     f.seek(row['offset']);data=f.read(row['bytes'])
                     if hashlib.sha256(data).hexdigest()!=row['sha256']:result['passed']=False
-            with (vms['server'].private/'lun0.raw').open('rb') as f:
+            with (vms['server'].private/f'lun{1-rw_lun}.raw').open('rb') as f:
                 if any(chunk.strip(b'\0') for chunk in iter(lambda:f.read(1024*1024),b'')):result['passed']=False
             result['backing_readback_after_actual_qemu_exit']=result['passed']
             result['backing_scope']='file-byte readback, not physical-media power-loss durability'

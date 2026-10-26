@@ -2,6 +2,9 @@
 
 ## 2026-10-26：存储接入前隔离机制（开始）
 
+- clean3b9完整软件1148+GUI18共1166次通过；两Ubuntu方向normal机制各三轮真实I/O、逐LUN同步、同内核socket在daemon死亡后继续I/O、定向reset隔离及离线backing读回通过，四guest正常0。两同源flush试验FAIL：QEMU确有LUN1 0xb/00/06和一次EIO，客户端却exit5；固定源码REQUEST SENSE对非零LUN返回25/00，不能放宽判据。下一独立试验交换fault布局为RW LUN0/RO LUN1，normal布局保持，不宣称修复非零LUN错误传递。
+- 两flush失败后的source先关机，client未detach，随后LVM/kernel worker阻塞；无栈，内部根因未定。保存原serial/QMP/进程身份后对两个自有client显式QMP quit，原host76596/12601实际exit1（chunk2e310f/878b98）；QEMU0是forced，不是正常关机。原result及窄integrity=true保持原件，报告必须补充hang/forced事实。两runner全部结束后才修改设计和夹具；后续在源关机前detach已知client，并把blocked-task列为失败。
+
 - 首clean `d99201ca` Jammy→Noble实际host27867 exit1：daemon-ready检查由普通ubuntu执行，无法穿过root0700证据目录而超时。原件证明daemon已监听且实际SIGKILL/wait=-9，两guest0/收集0/四guard真，仍保FAIL；尚无IMPORT或数据传输结果。修正为root只读就绪观察，不放宽目录权限或延长等待。同步补入绕页缓存的实际读回、RO读、claim后同代际核验和HCD inode记录，以免后续把缓存命中或路径相同夸大成机制证据。
 - 候选夹具另加入独立fresh-media一次flush EIO：严格首sg_sync11、QEMU命令0x35/感知码0xb00/06及同LUN write/report事件，随后显式新写入/同步0只作为once控制，不抹去首失败。新增仅GCC/sg3-utils的product-free派生镜像准备，保存原父收据/新hash/真实退出，避免每组重复下载。产品399输入/三ELF保持c55；下面将重新执行完整软件gate，再按同源冻结运行正式矩阵，尚未预称成功。
 

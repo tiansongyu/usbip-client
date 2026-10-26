@@ -44,4 +44,12 @@ The separate cache-error trial uses fixed QEMU 6.2 `raw -> blkdebug -> file`, a 
 
 ## Product work still required
 
+### QEMU 6.2 nonzero-LUN sense limitation and failed teardown
+
+The two initial cache-error trials at clean `3b9c5b2b` fail: the LUN1 SYNCHRONIZE CACHE trace contains the expected 0xb/00/06 sense and QMP reports the injected EIO, but the client receives 0x05/25/00 and `sg_sync` exits 5. QEMU's [fixed SCSI target-command path](https://github.com/qemu/qemu/blob/44f28df24767cf9dca1ddc9b23157737c4cbb645/hw/scsi/scsi-bus.c#L594) selects target emulation when a REQUEST SENSE has pending sense, then substitutes LUN_NOT_SUPPORTED whenever `req->lun != 0`. This explains the observed result; exit5 is not an acceptable substitute for the planned aborted-command check.
+
+The next independent fault trial will put the writable fault target at LUN0 and the read-only control at LUN1. The normal scenario keeps its original layout. This explicitly narrows the fault test to LUN0 on the unmodified emulator; it does not repair or verify nonzero-LUN error fidelity. Both actual mappings must be recorded and checked. Cache-error acceptance remains exit11 plus the matching LUN0 trace and QMP event, followed by a separately recorded explicit control.
+
+The failed runner also powered off the source before detaching the imported client. Both clients subsequently reported blocked LVM/kernel workers during shutdown. No kernel stack was captured, so the detailed blocking cause is unresolved. After repeated blocked-task reports and shutdown waits, each owned client received an externally recorded QMP `quit`; both original runners then actually returned exit1. Their QEMU exit0 values are forced process exits, not clean guest shutdown or release evidence. Original results remain unchanged. The next fixture must attempt explicit detach of a known held client before source teardown and reject blocked-task serial reports; a failed case must stay failed regardless of cleanup outcome.
+
 A successful mechanism would justify designing a root-owned controller enrollment and arrival receipt, exact-generation authorization, durable quarantine and explicit recovery workflow. It would not finish live local-storage handoff, checked client release acknowledgement, all-LUN completeness, encrypted-volume policy, composite/UAS support, USBFS storage, reboot/power-loss recovery or hardware acceptance. The original Phase 0–7 scope remains active.
