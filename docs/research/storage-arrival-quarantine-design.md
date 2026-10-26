@@ -25,6 +25,8 @@ The controller setting is part of the invariant, not a one-time setup hint. HCD 
 
 Run with full product-free Ubuntu 22.04/24.04 parents, first one server/client direction and then the reverse. Pin HEAD, all tracked non-evidence fixture inputs and parent image hashes for each actual pair. Product source and release executables remain unchanged; this is an upstream mechanism experiment, not a RustUSB storage feature or a new product test count.
 
+A separate tool-only preparation may add GCC and sg3-utils to new COW descendants of those parents. It must retain the original preparation receipt, source/parent hashes and actual guest exits, and produce a new derived-image hash before any mechanism run consumes it. It installs no RustUSB product or storage fixture. Final software checks, image preparation and actual mechanism results have separate records.
+
 Required observations include:
 
 - Initial unauthorized arrival, explicit generation-pinned bind/authorization, both LUNs on the client, successful writable-LUN data transfer and read-only-LUN write refusal.
@@ -35,6 +37,10 @@ Required observations include:
 - Where supported by fixed QEMU source, explicit flush-failure injection and checked command failure. Never relabel an unsupported or unexecuted fault as covered.
 
 Keep all failed trials, raw outputs, kernel logs, fixture versions, source guards and actual process exits. Host FAIL remains FAIL even if guests exit zero. Private keys, COW/backing disks, packages and executables are excluded from public evidence. The host's devices, mounts, modules, services and accounts are untouched.
+
+The initial fixture at `d99201ca` reaches unauthorized arrival, stub binding and device-only authorization on Jammy, then fails before IMPORT: its ordinary-user readiness check cannot traverse the root-owned 0700 evidence directory. The actual daemon was ready and was subsequently killed and waited; both guests exit zero, but the host remains FAIL. The corrected readiness observer runs as root without changing directory permissions. Final fixtures also pin HCD/PCI inodes, check claim identity again after close, use fresh aligned `O_DIRECT` reads for both LUNs, and record actual QEMU identities.
+
+The separate cache-error trial uses fixed QEMU 6.2 `raw -> blkdebug -> file`, a one-shot `flush_to_disk` EIO with `iotype=flush`, no sector restriction, `no-flush=false` and SCSI write-cache/report policy. The first explicit synchronizer follows a direct write without fsync. Acceptance requires the actual `sg_sync` categorized exit11, matching command 0x35 and sense 0xb/00/06 trace, and one QMP `BLOCK_IO_ERROR` with write/report action on the saved LUN graph. A second explicit write/sync is a once-consumption control, not automatic retry or a replacement verdict for the failed flush. See [QEMU block I/O](https://github.com/qemu/qemu/blob/44f28df24767cf9dca1ddc9b23157737c4cbb645/block/io.c), [blkdebug](https://github.com/qemu/qemu/blob/44f28df24767cf9dca1ddc9b23157737c4cbb645/block/blkdebug.c), and [sg_sync 1.46](https://github.com/doug-gilbert/sg3_utils/blob/b81d7816ca45f02bb3d50e4adde0222e8b66c2eb/src/sg_sync.c). Actual Ubuntu tool versions and bytes are recorded separately from these upstream references.
 
 ## Product work still required
 

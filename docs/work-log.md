@@ -2,6 +2,9 @@
 
 ## 2026-10-26：存储接入前隔离机制（开始）
 
+- 首clean `d99201ca` Jammy→Noble实际host27867 exit1：daemon-ready检查由普通ubuntu执行，无法穿过root0700证据目录而超时。原件证明daemon已监听且实际SIGKILL/wait=-9，两guest0/收集0/四guard真，仍保FAIL；尚无IMPORT或数据传输结果。修正为root只读就绪观察，不放宽目录权限或延长等待。同步补入绕页缓存的实际读回、RO读、claim后同代际核验和HCD inode记录，以免后续把缓存命中或路径相同夸大成机制证据。
+- 候选夹具另加入独立fresh-media一次flush EIO：严格首sg_sync11、QEMU命令0x35/感知码0xb00/06及同LUN write/report事件，随后显式新写入/同步0只作为once控制，不抹去首失败。新增仅GCC/sg3-utils的product-free派生镜像准备，保存原父收据/新hash/真实退出，避免每组重复下载。产品399输入/三ELF保持c55；下面将重新执行完整软件gate，再按同源冻结运行正式矩阵，尚未预称成功。
+
 - 上一轮实现和发布是实际进展；从干净 `0865f65848d3cac986e5366ff55b19d3d1c0e352` 继续完整原始目标。重新读取需求、项目约定、核心技能、架构与存储设计，现有扫描不授导出。下一步验证接入前独占边界，见[机制设计](research/storage-arrival-quarantine-design.md)；没有把现有安全拒绝当作存储功能完成。
 - 按 writing-technical-design 的明确要求，两个已有研究 agent 分别核对固定Linux授权/USBFS边界与Native故障/缓存机制，只写各自 `/tmp`。沿用 technical-documentation 与 humanizer-zh；遵守用户偏好，不生成逐组件skill。候选为专用新HCD先设设备/接口默认授权0，再绑定精确代际的Native stub并单独授权设备；HCD重建、旧USBFS能力和root外部变更的边界不能略去。
 - 实验只用两个授权的完整Ubuntu来宾、新合成多LUN普通文件盘及隔离数据网络；不操作宿主USB/块设备/模块/服务，不解除产品存储blockers。拟分别记录真实I/O、逐LUN缓存命令、原daemon wait、内核连接与隔离，不能把usbipd死亡当作旧USB释放。当前尚无本轮QEMU结果。

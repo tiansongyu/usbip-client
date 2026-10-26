@@ -3,8 +3,10 @@
 import errno
 import hashlib
 import json
+import mmap
 import os
 from pathlib import Path
+import re
 import signal
 import subprocess
 import sys
@@ -35,6 +37,8 @@ def run(args, expected=(0,)):
 
 def roots():
     return {p.name:{'path':str(p.resolve()), 'parent':str(p.resolve().parent),
+                    'identity':[p.stat().st_dev,p.stat().st_ino],
+                    'parent_identity':[p.resolve().parent.stat().st_dev,p.resolve().parent.stat().st_ino],
                     'authorized_default':read(p/'authorized_default'),
                     'interface_authorized_default':read(p/'interface_authorized_default')}
             for p in sorted(Path('/sys/bus/usb/devices').glob('usb*'))}
@@ -88,10 +92,18 @@ def source_check(label):
         assert state['roots'][name]['authorized_default'] == '0'
         assert state['roots'][name]['interface_authorized_default'] == '0'
         assert state['roots'][name]['path'] == fence['after'][name]['path']
+        assert state['roots'][name]['identity'] == fence['after'][name]['identity']
+        assert state['roots'][name]['parent_identity'] == fence['after'][name]['parent_identity']
     for name, row in fence['before'].items():
         assert state['roots'][name] == row
     assert not state['blocks'], state
     assert all(i['authorized']=='0' and i['driver'] is None for i in state['interfaces']), state
+    sockets=run(['ss','-Htne','state','established','src','192.0.2.1','and','sport','=',':3240','and','dst','192.0.2.2'])
+    state['tcp_raw']=sockets;state['tcp_connections']=[]
+    for line in sockets.splitlines():
+        fields=line.split();match=re.search(r'\bino:(\d+)\b',line)
+        assert len(fields)>=4 and match is not None,line
+        state['tcp_connections'].append({'local':fields[2],'peer':fields[3],'inode':int(match.group(1))})
     save('source-'+label+'.json',state)
     return state
 
@@ -109,6 +121,12 @@ def prepare(role):
     result = {'role':role,'roots':roots(),'kernel':run(['uname','-a']),
               'packages':run(['dpkg-query','-W','sg3-utils','linux-tools-'+read('/proc/sys/kernel/osrelease')]),
               'usbip':run(['usbip','version']), 'route':run(['ip','-j','route','get','192.0.2.'+('2' if role=='server' else '1')])}
+    files=[Path('/usr/lib/linux-tools')/read('/proc/sys/kernel/osrelease')/name for name in ['usbip','usbipd']]
+    files += [Path('/usr/bin/sg_sync'),HERE/'claim-denied',HERE/'claim-denied.c']
+    result['tool_files']={str(p):{'resolved':str(p.resolve()),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+                                'bytes':p.stat().st_size} for p in files}
+    result['tool_identity_scope']='file bytes; only the long usbipd additionally records a live /proc/PID/exe hash'
+    result['boot_id']=read('/proc/sys/kernel/random/boot_id')
     save('prepared.json',result)
     return result
 
@@ -180,6 +198,17 @@ def kill_daemon():
     return {'signal_sent':signal.SIGKILL,'pid':info['pid']}
 
 
+def await_daemon():
+    for _ in range(200):
+        if (OUT/'daemon-ready.json').exists():break
+        time.sleep(.05)
+    else:raise RuntimeError('root observer did not see daemon readiness')
+    info=json.loads((OUT/'daemon-ready.json').read_text())
+    assert hashlib.sha256(Path('/proc/'+str(info['pid'])+'/exe').read_bytes()).hexdigest()==info['exe_sha256']
+    assert run(['ss','-Hltn','sport','=',':3240']).strip()
+    return info
+
+
 def vhci():
     return {str(p):p.read_text() for p in sorted(Path('/sys/devices/platform').glob('vhci_hcd.*/status*'))}
 
@@ -203,6 +232,15 @@ def attach(bus):
     return state
 
 
+def direct_read(node,offset,length):
+    fd=os.open(node,os.O_RDONLY|os.O_DIRECT|os.O_CLOEXEC)
+    buffer=mmap.mmap(-1,length)
+    try:
+        assert os.preadv(fd,[buffer],offset)==length
+        return buffer[:]
+    finally:buffer.close();os.close(fd)
+
+
 def io(cycle):
     state=snapshot();saved=json.loads((OUT/'client-held.json').read_text())
     assert state['generation']==saved['generation'] and state['blocks']==saved['blocks']
@@ -216,8 +254,10 @@ def io(cycle):
     try:
         assert os.pwrite(fd,payload,offset)==len(payload)
         os.fsync(fd)
-        assert os.pread(fd,len(payload),offset)==payload
     finally:os.close(fd)
+    assert direct_read(node,offset,len(payload))==payload
+    ro_data=direct_read(Path('/dev')/rows[0]['name'],offset,len(payload))
+    assert ro_data==bytes(len(payload))
     refusals=[]
     try:
         fd=os.open(Path('/dev')/rows[0]['name'],os.O_RDWR|os.O_CLOEXEC)
@@ -229,6 +269,8 @@ def io(cycle):
         assert len(row['sg'])==1
         run(['sg_sync','--verbose','/dev/'+(row['sg'][0] if lun==0 else row['name'])])
     result={'cycle':cycle,'offset':offset,'bytes':len(payload),'sha256':hashlib.sha256(payload).hexdigest(),
+            'readback':'fresh O_DIRECT FD and aligned mmap buffer',
+            'ro_read_sha256':hashlib.sha256(ro_data).hexdigest(),
             'ro_write_errno':refusals[0],'state':state,'sync_luns':sorted(rows)}
     save('io-'+str(cycle)+'.json',result)
     return result
@@ -241,7 +283,39 @@ def empty():
         if rows and all(int(row[2])==4 for row in rows) and not Path(old['generation']['path']).exists():break
         time.sleep(.05)
     else:raise RuntimeError('original VHCI not NULL and gone')
-    return {'vhci':vhci(),'old_generation_gone':True,'no_target_blocks':not any(p.resolve().is_relative_to(Path(old['generation']['path'])) for p in Path('/sys/class/block').iterdir())}
+    assert not any(p.resolve().is_relative_to(Path(old['generation']['path'])) for p in Path('/sys/class/block').iterdir())
+    return {'vhci':vhci(),'old_generation_gone':True,'no_target_blocks':True}
+
+
+def flush_error():
+    state=snapshot();saved=json.loads((OUT/'client-held.json').read_text())
+    assert state['generation']==saved['generation'] and state['blocks']==saved['blocks']
+    rows={int(r['scsi'].split(':')[-1]):r for r in state['blocks']}
+    assert set(rows)=={0,1} and rows[0]['ro']=='1' and rows[1]['ro']=='0'
+    assert all(r['size']=='131072' and not r['partition'] for r in rows.values())
+    row=rows[1];node=Path('/dev')/row['name']
+    write_cache=read(Path('/sys/class/block')/row['name']/'queue/write_cache')
+    assert write_cache=='write back',write_cache
+    fd=os.open(node,os.O_RDWR|os.O_DIRECT|os.O_CLOEXEC)
+    buffer=mmap.mmap(-1,4096);writes=[]
+    try:
+        for control in [False,True]:
+            offset=(8+int(control))*1024*1024
+            payload=(('RUSTUSB-E66-FLUSH-'+str(control)+'\n').encode()*200)[:4096]
+            assert len(payload)==4096
+            buffer[:]=payload
+            assert os.pwritev(fd,[buffer],offset)==len(payload)
+            # No fsync, FUA, O_SYNC or close before this explicit SCSI command.
+            run(['sg_sync','--verbose','--verbose',node],expected=(0,) if control else (11,))
+            writes.append({'offset':offset,'bytes':len(payload),'sha256':hashlib.sha256(payload).hexdigest(),
+                           'control':control,'sync_command':commands[-1]})
+            if not control:save('first-flush-failure.json',writes[-1])
+            assert direct_read(node,offset,len(payload))==payload
+    finally:buffer.close();os.close(fd)
+    result={'writes':writes,'write_cache':write_cache,'generation':state['generation'],
+            'first_sync_exit':11,'explicit_second_control_exit':0,'clean_release_approved':False}
+    save('flush-error.json',result)
+    return result
 
 
 def detach():
@@ -266,10 +340,12 @@ def reset_link():
 
 
 def claim():
-    state=source_check('claim-probe');assert state['interfaces']
+    state=source_check('claim-probe');assert state['interfaces'] and state['configuration'] not in ('','0')
     p=target();node='/dev/bus/usb/'+read(p/'busnum').zfill(3)+'/'+read(p/'devnum').zfill(3)
     result=json.loads(run([HERE/'claim-denied',node,str(state['interfaces'][0]['number'])]))
     assert result['claim_rc']==-1 and result['errno']==errno.ENODEV
+    after=source_check('claim-probe-after')
+    assert all(after[k]==state[k] for k in ['generation','configuration','interfaces'])
     return result
 
 
@@ -280,7 +356,8 @@ def main():
     operations={'prepare':lambda:prepare(args[0]),'fence':fence,'bind':bind,'serve':serve,
                 'snapshot':lambda:source_check(args[0]),'attach':lambda:attach(args[0]),
                 'io':lambda:io(int(args[0])),'detach':detach,'empty':empty,'claim':claim,
-                'kill-daemon':kill_daemon,'reset-link':reset_link}
+                'kill-daemon':kill_daemon,'reset-link':reset_link,'await-daemon':await_daemon,
+                'flush-error':flush_error}
     result=operations[action]();save('action-'+action+'-'+str(os.getpid())+'.json',result)
     print(json.dumps(result),flush=True)
 
