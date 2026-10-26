@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-26：Native 导入设备运行时电源策略（开始）
+
+- E63从clean84045dfb重读完整Phase0–7原目标、AGENTS/核心skill、E62失败原件及两import源码。前轮E62定位/发布是实际进展，非blocked。按writing-technical-design显式要求两独立组件只读审查；沿docs/research、不按模板新增逐组件skill。两agent仅研究Linux5.15/6.8 PM与既有Native ownership/rustix1.1.5，不改仓库/运行测试/操作host。
+- clean840新original-Linux单ARM对照原session69621实际terminal0/QEMU0/HEAD-clean-input全真：auto/2000ms/suspended期望空events；只对导入3-1写delay=-1后active且精确key1 press/release；再control=auto仍active/精确events，预定[false,true,true]全部符合。物理设备参数不改、无RustUSB/TLS/hostUSB；只采同一连续import的bus/PM状态，无每阶段独立inode采样，不能当产品generation证明或原ARM矩阵PASS。
+- 固定源审查证实delay负值有独立usage hold，目标USB枚举在device_add前启use_autosuspend；sysfs写会丢resume错误，须读回并核active，缺属性/EIO不能静默视为禁PM。secure已有blocking owner/Observed/真实shutdown；legacy新PM失败若直接?会丢已知session，必须同锁补偿并向helper保留未释放receipt。提出兼容wrapper+非serialized详细失败结果，不改wire/journal/权限。设计先落`research/native-import-power-design.md`，仍proposed/未验收。
+- 研究归档163成员/1,634,475 rawB，gzip390265B/SHA1449b4bf5c2454b6f73eaa6639c8edffdab43bda48c48955020e45388aa39aae，逐成员回读/实际一SSH key字节及私钥/cap marker排除通过；24次raw HTTP429与必要主镜像成功读取原件均保留。用户暂停后已resume，核无遗留cargo/QEMU，原owner69621已terminal而不重启；未有产品代码修改/新完整软件或ARM正向声明。
+
 ## 2026-10-26：ARM64 Native/USBFS 数据路径（开始）
 
 - 内容c867452ae63de3e0dab8de430c3b98f1436b5f80已normal SSH push/remote main一致/clean。core40274949683四native与GUI40274949672四native全success，逐实际arch/fullgate及GUI build/upload step核验；Pages40274949682两job成功。仅primary metadata，不取新CI完整log/ELF或逐格重计1114。十线上HTTP200逐c867 source bytes同；live DOM1280/doc1265及390/doc375新调查link/未完成范围可见，console sample空，reset实读1280，无pixel/noJS等新增测试宣称。

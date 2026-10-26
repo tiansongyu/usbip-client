@@ -1,0 +1,3 @@
+# Native import PM research
+
+Original failures remain failed. New official-Linux USBIP control at clean84045dfb deliberately expects no HID events under auto/2000ms/suspended, exact events after only imported delay=-1, and exact events after explicit control=auto. Actual host/QEMU exit0 and frozen guards pass. This is diagnosis, not a production fix, full ARM matrix or independently sampled per-stage generation receipt. Fixed primary-source and ownership audits remain recommendations until implementation/validation. Private keys/disks/firmware variables are excluded; exact public members are verified by read-back.
