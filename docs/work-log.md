@@ -1,5 +1,12 @@
 # RustUSB 工作日志
 
+## 2026-10-26：存储占用检查发布回执
+
+- 内容提交 `34b7cc62eb0670c7cfdbff3c34c02af366f7181d` 已正常 SSH push；实际 push session94762 exit0，之后再次核对远端 main 与本地一致、工作区干净。软件 run40317082125 的四个平台、GUI run40317082299 的四个平台，以及 Pages run40317082163 的 check/deploy 均 completed/success，具体 job/step 原响应见[发布清单](evidence/storage-inspection-publication-34b7cc62-20261026/manifest.json)。只核对主 API 状态，未下载完整 CI 日志或程序，也未重算每个平台的测试次数。
+- 线上首页两条路径及六份资源共8个请求均200，逐字节匹配34b内容。首次错误地请求 `.nojekyll` 控制文件得到404，原失败保留；没有把它计入成功请求。公开 tab8 reload 后实际1280×720、document1265，新存储指南及禁用共享文案存在，三张图片已加载，warn/error查询为空，已保留为交付页面；未追加像素、移动端、剪贴板或 reduced-motion 验证。
+- 399产品输入、三份release程序、四份全局 readme-site 文件及Codex发现链接保持原值。发布原件36成员/693964 B，gzip109639 B，SHA `75dce43cde73e83b8cfcc7c4e881f458ed2afd8c93db0e90c3aa786e8b0c2c01`；归档器首轮误匹配自身私钥标记字符串，未创建目标归档，修为实际PEM/签名URL检测后成功，原方法和失败一并保存。
+- 本轮交付 root-only 有界存储占用报告、clean c55a6c57 的1166次软件测试、两Ubuntu存储QEMU及原Native数据回归、英文README/指南/网站与失败证据。存储转发、安全可写交接、完整4.6及真实硬件验收仍未完成，完整Phase0–7目标保持active。最后仅提交本发布回执与证据并普通push；回执提交不重标为新的软件或USB实测。
+
 ## 2026-10-26：USB 存储占用检查与交接设计（开始）
 
 - 原件最终归档721成员/3770712gzip B，SHAfe1f1fda43e2e9391382b922fbc09b3a30d0016646bd7a9f9bfe96a0db3f58e7；Linux105与USB83原件逐hash核验，三private SSH key逐bytes排除，原Native384清单原件不变，无ELF/盘/包/私钥。初collection成功版本的清单与方法另保留，最终补入read-only shape probe失败记录，未改原运行数据。见`evidence/storage-inspection-20261026/manifest.json`。
