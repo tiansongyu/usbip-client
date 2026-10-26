@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-26：持久控制器授权与USBFS能力边界（开始）
+
+- 上轮实际实现/验证/发布属于进展；从clean c6850e7d重读完整原需求，目标仍为全部Phase0–7。本轮先验证跨HCD/reboot的接入前策略与USBFS句柄边界，见`research/storage-controller-enrollment-design.md`，不把上游机制当产品存储完成。
+- 按writing-technical-design要求复用两个独立研究agent，仅写各自/tmp。发现generic unbind会经USB_DEVICE_REMOVE清USBFS已登记状态，先前“旧FD跨Native bind必然存活”的笼统推断撤回；绑定前/后两cohort必须独立实测。chmod前已通过VFS检查但尚未登记的open仍有竞态，单个ENODEV不能证明全部撤销。
+- 运行时双default0不跨HCD重建；boot usbcore.authorized_default=0候选影响全机USB，只在隔离guest显式设置，产品不得自动改宿主启动项。拟区分持久intent与当前boot/PCI/HCD/target receipt，先实测正反对照、真实reboot及非root实际FD。尚无本轮新测试裁决或产品放行。
+
 ## 2026-10-26：存储接入前隔离发布回执
 
 - 内容提交 `87e145503e217e35832636456eff231488f91f73` 已正常 SSH push（host59732实际exit0），远端main逐SHA一致、工作区干净。软件run40330234990与GUI run40330235076各四原生平台全部success，Pages run40330235181的check/deploy成功；原API与job/step响应保存在[发布清单](evidence/storage-arrival-publication-87e14550-20261026/manifest.json)。未下载CI完整日志/可执行产物，也未为每格重算测试数量。
