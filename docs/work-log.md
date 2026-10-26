@@ -2,6 +2,9 @@
 
 ## 2026-10-26：ARM64 Native/USBFS 数据路径（开始）
 
+- 内容c867452ae63de3e0dab8de430c3b98f1436b5f80已normal SSH push/remote main一致/clean。core40274949683四native与GUI40274949672四native全success，逐实际arch/fullgate及GUI build/upload step核验；Pages40274949682两job成功。仅primary metadata，不取新CI完整log/ELF或逐格重计1114。十线上HTTP200逐c867 source bytes同；live DOM1280/doc1265及390/doc375新调查link/未完成范围可见，console sample空，reset实读1280，无pixel/noJS等新增测试宣称。
+- 发布原件38成员/917026 rawB、gzip117501B/SHA031272c8d20db040935fb38bfdf7997132748b780b2b21977d885ffa9f47c4d7，逐成员回读与私钥/cap marker扫描通过，见`evidence/arm64-usb-publication-c867452a-20261026/receipt.json`。首四API快照一次shell参数过长在process创建前拒绝，原内存响应保持后逐文件保存；不改workflow裁决。最终只提交此发布回执/证据，不改归属37b/bed软件和原ARM ELF0316；PM产品策略/新包/完整ARM正向及全Phase0–7继续active，下一先审查两import路径generation/权限/partial cleanup。
+
 - cleanbed49原full gate仍1096+18=1114/734 inputs全PASS；四attempt2均导入HID/FTDI后首轮FAIL，原guest216空events，前一35B RX断言已过而TX未执行，host25s接收timeout为后果。八QEMU0/全部guard真；原句柄72131/40757/32380/71939均terminal1。另一Native/v4仅加QEMU输入元数据追踪仍FAIL/两QEMU0/guard真，key到达但无HID消费。未据枚举或guest0改判。
 - 五无RustUSB/TLS的单ARM guest均实际QEMU0/HEAD-clean-input真：首trace名称错未测试；第二原QMP本地HID成功，后root marker删除失败使第二方法未执行；原usbipd+usbip localhost两种注入均空events；xhci见注入前端点stop/内核URB unlink。最后物理1-1始终active/auto，导入3-1 auto/suspended/2000ms时空events，仅对3-1写on后active且同key1/100ms精确press/release成功。host整体仍1（含原负向），不是矩阵PASS或产品fix；全部owner实际join后才改docs，无全局PM/hostUSB/budget变化。
 - 固定Linux5.15 PM文档与QEMUv6.2.0支持runtime suspend解释；原矩阵无PM属性采样，不补造逐case因果。下一步先审查tool attach及secure anonymous import的generation/权限/partial cleanup，再实施per-import PM策略。八原FAIL及一trace FAIL保持。两次组合文档patch因附带未知末尾anchor原子拒绝，随后拆分写入，无部分覆盖；源下载429/404与诊断错误不作通过证据。
