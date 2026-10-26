@@ -1,5 +1,7 @@
 # 安全模型与发布门槛
 
+[启动策略与USBFS句柄验证](research/storage-controller-enrollment-validation.md)锁clean54a6b7a1：两Ubuntu策略试验及两组原正常I/O回归通过，八QEMU正常退出；同源软件1148+18通过。运行时defaults不跨HCD重建，boot设备默认0仍需单独设接口默认0；已登记pre-bind FD变ENODEV，post-bind FD仍可GET_DESCRIPTOR。open/同步control竞态仅源码推导，早期规则/ACL全历史未验证，产品enrollment与存储交接仍未实现。
+
 [存储检查](storage-inspection.md)只允许UID0读取目标相关的有限占用metadata。它不接受路径、不打开存储或USB节点，不停止服务/卸载/刷新/改驱动；单actual worker总await。proc非原子、隐藏namespace、内核引用与未探测加密等边界始终返回，RO/空usage/扫描结束不成为导出permit。见[设计与来源](research/storage-inspection-design.md)。
 
 E63[导入PM边界](research/native-import-power-validation.md)：操作仅在新授权且完整匹配的USED/local generation后执行，固定单组件NOFOLLOW/根owner/权限/type/同filesystem与前后原dev/inode/address/VID/PID核验；不写全局/源设备/替代代际/旧journal。PM失败保留operation与实际compensation/Observed owner，active不代Root释放证明。后续管理员改策略、system sleep/remote wakeup与永久kernel阻塞未保证；不新增设备能力或权限。

@@ -1,5 +1,7 @@
 # 测试手册与证据要求
 
+[启动策略与USBFS句柄验证](research/storage-controller-enrollment-validation.md)锁clean54a6b7a1：两Ubuntu策略试验及两组原正常I/O回归通过，八QEMU正常退出；同源软件1148+18通过。运行时defaults不跨HCD重建，boot设备默认0仍需单独设接口默认0；已登记pre-bind FD变ENODEV，post-bind FD仍可GET_DESCRIPTOR。open/同步control竞态仅源码推导，早期规则/ACL全历史未验证，产品enrollment与存储交接仍未实现。
+
 新增[存储接入前隔离验证](research/storage-arrival-quarantine-validation.md)：clean05f26ffb在两Ubuntu方向完成normal/flush四组上游机制试验，八guest正常退出；实际多LUN读写、源端隔离、daemon死亡后同内核连接继续I/O、定向reset与LUN0缓存错误通过。三次早期FAIL保留，其中两client阻塞后由QMP强制回收。产品不运行、不解除存储拒绝；软件1166次仍锁3b9c5b2b，硬件与完整存储交接未完成。
 
 新增[存储占用检查](storage-inspection.md)：root-only、只读、有界，报告LUN/分区/holder、可见线程的挂载/FD/映射和swap；空观察与coverage issues不授导出许可。[验证](research/storage-inspection-validation.md)锁clean c55a6c57，本地1166次软件检查、两Ubuntu x86_64 QEMU各12场景与原Native IPv4数据回归通过，首Jammy mmap失败保留。存储共享、完整需求4.6及硬件/全Phase仍未完成。

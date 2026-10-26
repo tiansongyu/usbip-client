@@ -1,5 +1,7 @@
 # RustUSB
 
+[启动策略与USBFS句柄实验](docs/research/storage-controller-enrollment-validation.md)在两种Ubuntu通过，另有两组原存储I/O回归通过。运行时策略会在控制器重建后丢失，绑定前后的句柄须分别处理；产品存储共享仍未启用。
+
 [存储接入前隔离实验](docs/research/storage-arrival-quarantine-validation.md)已完成两Ubuntu的四组最终QEMU机制验证，三次早期失败完整保留。它使用原生Linux工具，不代表RustUSB已经支持存储共享。
 
 新增[存储占用检查](docs/storage-inspection.md)：root-only、只读、有界，报告LUN/分区/holder、可见线程的挂载/FD/映射和swap；空观察与coverage issues不授导出许可。[验证](docs/research/storage-inspection-validation.md)锁clean c55a6c57，本地1166次软件检查、两Ubuntu x86_64 QEMU各12场景与原Native IPv4数据回归通过，首Jammy mmap失败保留。存储共享、完整需求4.6及硬件/全Phase仍未完成。

@@ -2,6 +2,11 @@
 
 ## 2026-10-26：持久控制器授权与USBFS能力边界（开始）
 
+- 主证据1761成员/79084850原始字节，gzip7951895字节，SHA5fa10e793809432242f9f6d29d257bd173f86d3cde16847606f39ed43d426446；排除578包二进制文件及6实际私钥，逐成员回读通过。研究保留取件失败与旧假设更正。文档QA13文件/607链接锚点、site/JS/diff通过；CUA1280与390无横溢、新链接键盘焦点2px/三图加载、warn/error样本空，tab64关闭并请求reset。未重跑pixel/clipboard/reduced-motion/禁JS，全球readme-site四源及发现链接保持；发布尚待push观察。
+
+- clean54a6b7a1软件1148+18全0、766输入稳定；原外层tool terminal响应在上下文切换后不可用，保留runner对两个真实child的exit0，不补造。两policy host74678/8002与两原normal回归40285/15948均实际exit0，八QEMU正常0、无forced、所有guard真。两cohort精确18→18→19/全18、RO1/fresh13；runtime HCD1/1本地存储正向、真实reboot冷接入0/1、再arm0/0精确授权无本地driver通过。
+- 同作者独立于runner的原件核对通过，各766输入逐54a Git、实际child close/wait、两boot/QEMU身份、HCD与USB代际、全部只读64MiB零盘均核对。它不是独立安全审计或新增USB执行。产品源/三ELF不变；英文报告、README与站点同步，产品enrollment仍proposed，完整Phase0–7继续。
+
 - 新guest-only夹具使用RO合成盘，明确root初始打开后降为UID/GID65534、无附加组/CapEff，固定GET_DESCRIPTOR18和fresh open/RO ioctl/绑定前后错误分账；实际probe close/wait及两QEMU boot进程去重记录。common Vm新增默认空的boot设备扩展点，仅新子类冷启动附盘；将运行原正常路径回归。Python compile、C严格语法检查、diff通过，尚无运行结果。
 
 - 上轮实际实现/验证/发布属于进展；从clean c6850e7d重读完整原需求，目标仍为全部Phase0–7。本轮先验证跨HCD/reboot的接入前策略与USBFS句柄边界，见`research/storage-controller-enrollment-design.md`，不把上游机制当产品存储完成。

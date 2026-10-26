@@ -1,6 +1,6 @@
 # Storage controller enrollment and USBFS capability boundary
 
-Status: proposed product design, with guest-only prerequisites to validate. Baseline: `c6850e7d6e866f1b72fff7a29e370a290895013f`, 2026-10-26. This continues requirement 4.6 and the [arrival experiment](storage-arrival-quarantine-validation.md); it does not enable RustUSB storage sharing or replace the full storage handoff requirement.
+Status: proposed product design. The [guest-only prerequisite experiments](storage-controller-enrollment-validation.md) now pass on both Ubuntu versions; no product enrollment API is added. Baseline: `c6850e7d6e866f1b72fff7a29e370a290895013f`, 2026-10-26. This continues requirement 4.6 and the [arrival experiment](storage-arrival-quarantine-validation.md); it does not enable RustUSB storage sharing or replace the full storage handoff requirement.
 
 ## Durable intent is not a live controller grant
 

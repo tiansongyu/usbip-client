@@ -275,6 +275,12 @@ Follow the [physical server guide](docs/rust-physical-server.md) to authorize ex
 
 ## What is verified
 
+[Boot-policy and USBFS lifetime experiments](docs/research/storage-controller-enrollment-validation.md)
+pass on Ubuntu 22.04/24.04 in QEMU: controller recreation loses runtime policy,
+boot denial survives it, and pre-bind/post-bind descriptors behave differently.
+Two original storage I/O regressions also pass. These are prerequisites for
+future storage enrollment; they do not enable product storage sharing.
+
 [Storage arrival experiments](docs/research/storage-arrival-quarantine-validation.md)
 verify source isolation, actual two-LUN I/O and LUN0 cache-error propagation on
 both Ubuntu versions using stock Linux USB/IP in QEMU. Three failed trials remain
