@@ -1,6 +1,8 @@
 # RustUSB 工作日志
 
-## 2026-10-26：ARM64完整安装环境（开始）
+## 2026-10-26：ARM64 包生命周期与 GUI 安装验收
+
+- E61 content96a93c38172c9646cae688524b276ee7f3ba1bdb已normal SSH push并核remote main。core40268921591四native与GUI40268921583四native全部success，实际arch/fullgate与GUI build/upload步骤逐核；Pages40268921580 check/deploy成功。四新artifact仅metadata，未下载/执行，不逐新CI格重计tests；真正执行ARM包仍原CI0316+formal controls-only revision。十canonical HTTP（七runtime/三pinned docs）全200/源字节一致，线上ARMlink与ARM I/O未验边界可见。发布13成员/144599 rawB/gzip8715B，SHAef003a89d89d49a0d5ca911d914535b4c15cb4f24a1382905b4416a841cca89f逐成员hash/size回读通过。最终仅receipt/docs提交不重归属cold+软件76b4/prepdd3/原ARM payload0316，完整目标继续active，下一ARM Native/USBFS数据I/O仍待执行。
 
 - clean76b4e7a3两ARM cold实际session93245/84823均terminal0：各install/真实WM0/原fsync entered+returned0/三unsafe stop拒绝/upgrade0/reboot/remove/purge-retention全PASS；49/50条42不同断言、四QEMU0、无forced，原source/binary/head和额外clean/adapter/tool/四包guard真。冷机broker UID实际112/108（非prepare109或AMD常数）；原C source56a50d、ARM实际库22d1c2/0e2737与执行hash/PID/UID全相等。两初次actual cold无产品FAIL；只读observer首读.started当completed导致exit1，原件保留，修正仅观察脚本。
 - 同clean76b4原check.sh+check-gui.sh全部PASS，core1096/GUI18共1114、0failed/ignored、731 tracked非evidence输入及HEAD/clean/input真；CLI866b/helper475/GUI7bdb原三release字节保持，ARM执行包仍CI0316，formal +armtest1只控制字段，不重标源码/ELF归属。两actual cold owner结束后才改docs/README/site/规范。

@@ -116,3 +116,27 @@ hashes. ARM Native/USBFS I/O, general physical USB compatibility, power loss,
 permanent kernel/FS blocks, storage/ISO, Windows USB and full Phase0–7 remain open.
 Original E59 intermittent failure cause and E60 mixed-preview FAIL retain their
 scope. Publication/CI results are recorded separately after actual push.
+
+## Publication receipt
+
+Content `96a93c38172c9646cae688524b276ee7f3ba1bdb` is normally pushed to the
+authorized SSH remote and independently verified as remote main. Core run
+[40268921591](https://github.com/tiansongyu/usbip-client/actions/runs/40268921591)
+and GUI run
+[40268921583](https://github.com/tiansongyu/usbip-client/actions/runs/40268921583)
+each pass all four Ubuntu22.04/24.04 × x86_64/aarch64 native jobs. Required actual
+architecture/full-gate steps and GUI package build/upload steps are successful.
+Pages run
+[40268921580](https://github.com/tiansongyu/usbip-client/actions/runs/40268921580)
+passes check/deploy. Four new package artifact metadata records are saved; these
+new CI binaries are not downloaded or executed, and per-job counts are not
+recounted by this metadata receipt.
+
+Seven deployed runtime files and three pinned documents return HTTP200 and match
+content96a93c38 byte-for-byte. Live DOM shows the ARM64 cold-validation link and
+pending ARM USB I/O boundary. The
+[publication receipt](../evidence/arm64-publication-96a93c38-20261026/receipt.json)
+has13 exact members/144599 raw bytes, gzip8715B, archive SHA256
+`ef003a89d89d49a0d5ca911d914535b4c15cb4f24a1382905b4416a841cca89f`,
+with complete hash/size round-trip. Later receipt commits do not relabel actual
+cold/software76b4, preparationdd3 or executed ARM payload0316.
