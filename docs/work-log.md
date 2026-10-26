@@ -1,5 +1,11 @@
 # RustUSB 工作日志
 
+## 2026-10-26：存储接入前隔离机制（开始）
+
+- 上一轮实现和发布是实际进展；从干净 `0865f65848d3cac986e5366ff55b19d3d1c0e352` 继续完整原始目标。重新读取需求、项目约定、核心技能、架构与存储设计，现有扫描不授导出。下一步验证接入前独占边界，见[机制设计](research/storage-arrival-quarantine-design.md)；没有把现有安全拒绝当作存储功能完成。
+- 按 writing-technical-design 的明确要求，两个已有研究 agent 分别核对固定Linux授权/USBFS边界与Native故障/缓存机制，只写各自 `/tmp`。沿用 technical-documentation 与 humanizer-zh；遵守用户偏好，不生成逐组件skill。候选为专用新HCD先设设备/接口默认授权0，再绑定精确代际的Native stub并单独授权设备；HCD重建、旧USBFS能力和root外部变更的边界不能略去。
+- 实验只用两个授权的完整Ubuntu来宾、新合成多LUN普通文件盘及隔离数据网络；不操作宿主USB/块设备/模块/服务，不解除产品存储blockers。拟分别记录真实I/O、逐LUN缓存命令、原daemon wait、内核连接与隔离，不能把usbipd死亡当作旧USB释放。当前尚无本轮QEMU结果。
+
 ## 2026-10-26：存储占用检查发布回执
 
 - 内容提交 `34b7cc62eb0670c7cfdbff3c34c02af366f7181d` 已正常 SSH push；实际 push session94762 exit0，之后再次核对远端 main 与本地一致、工作区干净。软件 run40317082125 的四个平台、GUI run40317082299 的四个平台，以及 Pages run40317082163 的 check/deploy 均 completed/success，具体 job/step 原响应见[发布清单](evidence/storage-inspection-publication-34b7cc62-20261026/manifest.json)。只核对主 API 状态，未下载完整 CI 日志或程序，也未重算每个平台的测试次数。
